@@ -1,0 +1,2 @@
+#.gitignore
+/Kopernicus/bin/* # This means that app folder and all subfolders and files will be ignored

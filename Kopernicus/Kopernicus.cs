@@ -42,6 +42,11 @@ namespace Kopernicus
 		// with one of the modder's design. KSP then loads the replacement planetary
 		// system just as it would have loaded the stock system.
 		public PSystem generateSystem() {
+			// Log the existing planetary prefab structure
+			Debug.Log ("---------- System Prefab Dump -----------");
+			KopernicusUtility.GameObjectWalk(PSystemManager.Instance.systemPrefab.gameObject);
+			Debug.Log ("-----------------------------------------");
+
 			Debug.Log ("Kopernicus generating planetary system 1X2.");
 			// PSystem class evidentally represents a Planetary System.
 			var tempGO = new GameObject ("KopernicusSystem");
