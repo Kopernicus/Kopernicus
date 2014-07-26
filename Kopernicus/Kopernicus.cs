@@ -36,19 +36,19 @@ public class KopernicusPlanet {
 }
 	
 
-public class KopernicusSystemSource:MonoBehaviour {
+public class KopernicusSystemSource {
 	// This function returns a PSystem that will replace the stock systemPrefab
 	// with one of the modder's design. KSP then loads the replacement planetary
 	// system just as it would have loaded the stock system.
 	public PSystem generateSystem() {
-			print ("Kopernicus generating planetary system 1X2.");
+			Debug.Log ("Kopernicus generating planetary system 1X2.");
 			// PSystem class evidentally represents a Planetary System.
 			var tempGO = new GameObject ("KopernicusSystem");
 			PSystem kps = tempGO.AddComponent<PSystem>();
-			print ("Kopernicus generating planetary system X3. KPS=");
-			print (kps);
-			print ("tempGO=");
-			print (tempGO);
+			Debug.Log  ("Kopernicus generating planetary system X3. KPS=");
+			Debug.Log  (kps);
+			Debug.Log  ("tempGO=");
+			Debug.Log  (tempGO);
 			//kps.Reset ();
 			kps.mainToolbarSelected = 2; // initial value in stock systemPrefab. Unknown significance.
 			kps.systemTimeScale = 1; 
@@ -79,8 +79,8 @@ public class KopernicusSystemSource:MonoBehaviour {
 
 			// How to attach a debugger... tried sdb without success but I lack experience
 			// with sdb
-			print ("Kopernicus generating planetary system RETURNING:");
-			print (kps);
+			Debug.Log  ("Kopernicus generating planetary system RETURNING:");
+			Debug.Log  (kps);
 			return kps;
 			//return PSystemManager.Instance.systemPrefab;
 	}
