@@ -31,6 +31,11 @@ using UnityEngine;
 
 namespace Kopernicus {
 
+public class KopernicusPlanet {
+		public static Orbit orbit;
+}
+	
+
 public class KopernicusSystemSource:MonoBehaviour {
 	// This function returns a PSystem that will replace the stock systemPrefab
 	// with one of the modder's design. KSP then loads the replacement planetary
@@ -49,31 +54,31 @@ public class KopernicusSystemSource:MonoBehaviour {
 			kps.systemTimeScale = 1; 
 			kps.systemScale = 1;
 			//kps.rootBody = PSystemManager.Instance.systemPrefab.rootBody.children[2]; // worked
-			kps.rootBody = kps.AddBody (null);
-			kps.rootBody.celestialBody = PSystemManager.Instance.systemPrefab.rootBody.celestialBody;
+			kps.rootBody = PSystemManager.Instance.systemPrefab.rootBody; // do nothing overt
 
-			CelestialBody eve = PSystemManager.Instance.systemPrefab.rootBody.children [1].celestialBody;
-			CelestialBody moho = PSystemManager.Instance.systemPrefab.rootBody.children [0].celestialBody;
-			CelestialBody kerbin = PSystemManager.Instance.systemPrefab.rootBody.children [2].celestialBody;
+			/*kps.rootBody = kps.AddBody (null); // many of these properties are set up by AddBody but not meaningfully
+			kps.rootBody.celestialBody = PSystemManager.Instance.systemPrefab.rootBody.celestialBody; //
+			kps.rootBody.planetariumCameraInitial = PSystemManager.Instance.systemPrefab.rootBody.planetariumCameraInitial;
+			kps.rootBody.flightGlobalsIndex = PSystemManager.Instance.systemPrefab.rootBody.flightGlobalsIndex;
+			kps.rootBody.pqsVersion = PSystemManager.Instance.systemPrefab.rootBody.pqsVersion;
+			kps.rootBody.scaledVersion = PSystemManager.Instance.systemPrefab.rootBody.scaledVersion;
+			kps.rootBody.resources = PSystemManager.Instance.systemPrefab.rootBody.resources; //
+			kps.rootBody.orbitRenderer = PSystemManager.Instance.systemPrefab.rootBody.orbitRenderer; //
+			kps.rootBody.orbitDriver = PSystemManager.Instance.systemPrefab.rootBody.orbitDriver; //
+			//XXkps.rootBody.children = new List<PSystemBody> ();*/
 
-			PSystemBody ch1 = kps.AddBody (kps.rootBody);
-			ch1.celestialBody = eve;
-			PSystemBody ch2 = kps.AddBody (kps.rootBody);
-			ch2.celestialBody = moho;
-			PSystemBody ch3 = kps.AddBody (kps.rootBody);
-			ch3.celestialBody = kerbin;
+			//CelestialBody eve = PSystemManager.Instance.systemPrefab.rootBody.children [1].celestialBody;
+			//CelestialBody moho = PSystemManager.Instance.systemPrefab.rootBody.children [0].celestialBody;
+			//CelestialBody kerbin = PSystemManager.Instance.systemPrefab.rootBody.children [2].celestialBody;
+			/*PSystemBody eve = PSystemManager.Instance.systemPrefab.rootBody.children [1];
+			PSystemBody moho = PSystemManager.Instance.systemPrefab.rootBody.children [0];
+			PSystemBody kerbin = PSystemManager.Instance.systemPrefab.rootBody.children [2];*/
 
-			print ("Kopernicus generating planetary system X4.");
+
 			kps.systemName = "Testar"; // default is "Unnamed"
-			print ("Kopernicus generating planetary system X5.");
-			//kps.mainToolbarSelected = 2; // initial value in stock systemPrefab. Unknown significance.
-			//kps.systemTimeScale = 1; 
-			//kps.systemScale = 1;
-			//kps.rootBody = PSystemManager.Instance.systemPrefab.rootBody;
-			// this is Mysteriously Necessary (tm). 
-			//kps.AddBody (kps.rootBody);
-			//kps.rootBody = kps.AddBody (PSystemManager.Instance.systemPrefab.rootBody);
-			//kps.rootBody = PSystemManager.Instance.systemPrefab.rootBody;
+
+			// How to attach a debugger... tried sdb without success but I lack experience
+			// with sdb
 			print ("Kopernicus generating planetary system RETURNING:");
 			print (kps);
 			return kps;
@@ -86,6 +91,9 @@ public class KopernicusSystemSource:MonoBehaviour {
 [KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
 public class Kopernicus:MonoBehaviour {
 		public void Awake() {
+
+			/* This was just code to make sure we were at the right point chronologically 
+			  in the startup sequence. */
 			print("Kopernicus.Awake called.");
 			print ("Instance at time of Awake: ");
 			if (PSystemManager.Instance == null) 
@@ -102,7 +110,12 @@ public class Kopernicus:MonoBehaviour {
 				}
 			}
 
+			// Classes will inherrit from this to support different sources of planetary systems
+			// e.g. a text file and data files, a planetfactory ce style thing making reference
+			// to existing planets, or some kind of procedural generator
 			KopernicusSystemSource src = new KopernicusSystemSource();
+			// more ersatz-debuggery. wish I knew how to attach the debugger to a running ksp mod
+			// should probably research this
 			/*print ("systemName"); print (PSystemManager.Instance.systemPrefab.systemName);
 			print ("mainToolbarSelected"); print (PSystemManager.Instance.systemPrefab.mainToolbarSelected);
 			print ("systemTimeScale"); print (PSystemManager.Instance.systemPrefab.systemTimeScale);
@@ -112,6 +125,7 @@ public class Kopernicus:MonoBehaviour {
 
 
 			PSystemManager.Instance.systemPrefab = src.generateSystem ();
+
 			print ("Kopernicus looking again at systemPrefab:");
 			print (PSystemManager.Instance.systemPrefab);
 		}
