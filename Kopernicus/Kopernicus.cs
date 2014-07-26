@@ -29,18 +29,19 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Kopernicus {
-
-public class KopernicusPlanet {
+namespace Kopernicus 
+{
+	public class KopernicusPlanet 
+	{
 		public static Orbit orbit;
-}
+	}
 	
 
-public class KopernicusSystemSource {
-	// This function returns a PSystem that will replace the stock systemPrefab
-	// with one of the modder's design. KSP then loads the replacement planetary
-	// system just as it would have loaded the stock system.
-	public PSystem generateSystem() {
+	public class KopernicusSystemSource {
+		// This function returns a PSystem that will replace the stock systemPrefab
+		// with one of the modder's design. KSP then loads the replacement planetary
+		// system just as it would have loaded the stock system.
+		public PSystem generateSystem() {
 			Debug.Log ("Kopernicus generating planetary system 1X2.");
 			// PSystem class evidentally represents a Planetary System.
 			var tempGO = new GameObject ("KopernicusSystem");
@@ -83,17 +84,19 @@ public class KopernicusSystemSource {
 			Debug.Log  (kps);
 			return kps;
 			//return PSystemManager.Instance.systemPrefab;
+		}
 	}
-}
 
 
 	//Instantly // MainMenu
-[KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
-public class Kopernicus:MonoBehaviour {
-		public void Awake() {
+	[KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
+	public class Kopernicus:MonoBehaviour 
+	{
+		public void Awake() 		/* This was just code to make sure we were at the right point chronologically in the startup sequence. */
+		{
+			// Prevent the Unity3D scene loader from culling this behavior
+			GameObject.DontDestroyOnLoad (this);
 
-			/* This was just code to make sure we were at the right point chronologically 
-			  in the startup sequence. */
 			print("Kopernicus.Awake called.");
 			print ("Instance at time of Awake: ");
 			if (PSystemManager.Instance == null) 
@@ -130,9 +133,7 @@ public class Kopernicus:MonoBehaviour {
 			print (PSystemManager.Instance.systemPrefab);
 		}
 
-}
-
-
+	}
 
 } //namespace
 
