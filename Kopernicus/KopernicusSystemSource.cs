@@ -69,9 +69,12 @@ namespace Kopernicus
 			//PSystemBody kerbin = PSystemManager.Instance.systemPrefab.rootBody.children [2];
 			
 			// ---------- TEMPORARY ------------
-			// Reparent the existing PSystemBody tree to the new system.  For testing purposes
-			system.rootBody = PSystemManager.Instance.systemPrefab.rootBody;
-			
+			// Clone the existing root body.  This tests that there are no magic dependencies from within the tree to the outside.  The
+			// prefab we return from this function has no links back into whatever KSP itself loads, proving that we can actually load
+			// a purely custom solar system
+			GameObject systemClone = (GameObject) UnityEngine.Object.Instantiate (PSystemManager.Instance.systemPrefab.rootBody.gameObject);
+			system.rootBody = systemClone.GetComponent<PSystemBody> ();
+
 			/*kps.rootBody = kps.AddBody (null); // many of these properties are set up by AddBody but not meaningfully
 			kps.rootBody.celestialBody = PSystemManager.Instance.systemPrefab.rootBody.celestialBody; //
 			kps.rootBody.planetariumCameraInitial = PSystemManager.Instance.systemPrefab.rootBody.planetariumCameraInitial;
@@ -112,7 +115,7 @@ namespace Kopernicus
 			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 			body.orbitDriver.UpdateOrbit ();
 			
-			/** Relavent snippet from scaled version dump 
+			/** Relavent snippet from scaled version dump ok 
 			 * [LOG 00:57:21.294] ---------- Scaled Version Dump -----------
 			 * [LOG 00:57:21.294] Dres (UnityEngine.GameObject)
 			 * [LOG 00:57:21.294]  >>> Components <<< 
