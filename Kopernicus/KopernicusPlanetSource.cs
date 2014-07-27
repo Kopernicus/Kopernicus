@@ -65,6 +65,8 @@ namespace Kopernicus
 			// It appears that it calculates SOI for you if you give it this stuff.
 			body.celestialBody.bodyDescription = "Merciful Kod, this thing just APPEARED! And unlike last time, it wasn't bird droppings on the telescope.";
 
+		
+
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
 			// from Squad, so storing these to files (and loading them) will be pretty easy.
 			if (orbit == null)
@@ -82,6 +84,16 @@ namespace Kopernicus
 			GameObject scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
 			scaledVersion.name = "Kopernicus";
 			body.scaledVersion = scaledVersion;
+
+			
+			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
+			body.celestialBody.isHomeWorld = false;
+			// function unknown at this time
+			//body.celestialBody.gMagnitudeAtCenter = prototype.celestialBody.gMagnitudeAtCenter;
+			// time warp limits
+			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
+
+
 
 			// Adjust the scaled space fader to our new celestial body
 			ScaledSpaceFader fader = scaledVersion.GetComponent<ScaledSpaceFader> ();
@@ -128,10 +140,18 @@ namespace Kopernicus
 			body.celestialBody.GeeASL = prototype.celestialBody.GeeASL; 
 			// This is the Standard gravitational parameter, i.e. mu
 			body.celestialBody.gravParameter = prototype.celestialBody.gravParameter; 
+
 			// It appears that it calculates SOI for you if you give it this stuff.
 			body.celestialBody.bodyDescription = prototype.celestialBody.bodyDescription;
 			// at the moment, this value is always "Generic" but I guess that might change.
 			body.celestialBody.bodyType = prototype.celestialBody.bodyType;
+
+			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
+			body.celestialBody.isHomeWorld = prototype.celestialBody.isHomeWorld;
+			// function unknown at this time
+			body.celestialBody.gMagnitudeAtCenter = prototype.celestialBody.gMagnitudeAtCenter;
+			// time warp limits
+			body.celestialBody.timeWarpAltitudeLimits = (float[])prototype.celestialBody.timeWarpAltitudeLimits.Clone();
 
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
 			// from Squad, so storing these to files (and loading them) will be pretty easy.
