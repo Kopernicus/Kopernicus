@@ -109,7 +109,15 @@ namespace Kopernicus
 			// rather than something that returns a planet. Perhaps it should be named differently
 			// from the GenerateSystem method to emphasize this difference in usage??
 			KopernicusPlanetSource.GeneratePlanet (system);
-			
+
+			// Try cloning a planet
+			Debug.Log ("Kopernicus Making a Laythe to orbit Dres, because that is how we roll.");
+			Orbit neworbit = new Orbit (1, 0, 5000000, 0, 0, 0, 0, Dres.celestialBody);
+			Debug.Log ("..Orbit made.");
+			StockPlanetSource.GenerateSystemBody (system,Dres,"Laythe",neworbit);
+			Debug.Log ("..KopernicusFinished making a Laythe.");
+
+
 			/** Relavent snippet from scaled version dump ok 
 			 * [LOG 00:57:21.294] ---------- Scaled Version Dump -----------
 			 * [LOG 00:57:21.294] Dres (UnityEngine.GameObject)

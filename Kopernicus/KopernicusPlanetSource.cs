@@ -42,10 +42,10 @@ namespace Kopernicus
 	// works (we can't make a planet *not* in a system and return it.)
 	public class KopernicusPlanetSource
 	{
-		public static PSystemBody GeneratePlanet (PSystem system) {
-			return GenerateSystemBody (system, system.rootBody);
+		public static PSystemBody GeneratePlanet (PSystem system, Orbit orbit = null) {
+			return GenerateSystemBody (system, system.rootBody, orbit);
 		}
-		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent) {
+		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, Orbit orbit = null) {
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and
 			// parent.
 			PSystemBody body = system.AddBody (parent);
@@ -67,7 +67,11 @@ namespace Kopernicus
 
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
 			// from Squad, so storing these to files (and loading them) will be pretty easy.
-			body.orbitDriver.orbit = new Orbit (0.0, 0.0, 150000000000, 0, 0, 0, 0, system.rootBody.celestialBody);
+			if (orbit == null)
+				body.orbitDriver.orbit = new Orbit (0.0, 0.0, 150000000000, 0, 0, 0, 0, system.rootBody.celestialBody);
+			else
+				body.orbitDriver.orbit = orbit;
+
 			body.orbitDriver.celestialBody = body.celestialBody;
 			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 			body.orbitDriver.UpdateOrbit ();
@@ -89,6 +93,87 @@ namespace Kopernicus
 		}
 
 
+	}
+
+	// Add a clone of a stock planet (in a different orbit)
+	// This is a kind of KopernicusPlanetSource
+	public class StockPlanetSource : KopernicusPlanetSource {
+		public static PSystemBody GeneratePlanet (PSystem system, string stockPlanetName, Orbit orbit = null) {
+			return GenerateSystemBody (system, system.rootBody, stockPlanetName, orbit);
+		}
+
+		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, string stockPlanetName, Orbit orbit = null) {
+			// AddBody makes the GameObject and stuff. It also attaches it to the system and
+			// parent.
+			PSystemBody body = system.AddBody (parent);
+			PSystemBody prototype = KopernicusUtility.FindBody (system.rootBody, stockPlanetName);
+
+			if (prototype == null) {
+				Debug.Log ("Kopernicus:StockPlanetSource can't find a stock planet named " + stockPlanetName);
+				return null;
+			}
+
+			// set up the various parameters
+			body.name = prototype.name;
+			body.orbitRenderer.orbitColor = prototype.orbitRenderer.orbitColor;
+			body.flightGlobalsIndex = prototype.flightGlobalsIndex;
+
+			// Some parameters of the celestialBody, which represents the actual planet...
+			// PSystemBody is more of a container that associates the planet with its orbit 
+			// and position in the planetary system, etc.
+			body.celestialBody.bodyName = prototype.celestialBody.bodyName;
+			body.celestialBody.Radius = prototype.celestialBody.Radius;
+
+			// This is g, not acceleration due to g, it turns out.
+			body.celestialBody.GeeASL = prototype.celestialBody.GeeASL; 
+			// This is the Standard gravitational parameter, i.e. mu
+			body.celestialBody.gravParameter = prototype.celestialBody.gravParameter; 
+			// It appears that it calculates SOI for you if you give it this stuff.
+			body.celestialBody.bodyDescription = prototype.celestialBody.bodyDescription;
+			// at the moment, this value is always "Generic" but I guess that might change.
+			body.celestialBody.bodyType = prototype.celestialBody.bodyType;
+
+			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
+			// from Squad, so storing these to files (and loading them) will be pretty easy.
+
+			//Debug.Log ("..About to assign orbit.");
+
+			// Note that we may have to adjust the celestialBody target here, because odds are
+			// we're putting a planet found in the systemPrefab into a system that is not the
+			// systemPrefab and has different celestialbodies. FIXME by having it look up the 
+			// body by name perhaps? That will break of course if you have, say, two Jools.
+
+			if (orbit == null)
+				body.orbitDriver.orbit = prototype.orbitDriver.orbit; // probably won't work if not going into a cloned systemprefab Sun
+			else
+				body.orbitDriver.orbit = orbit;
+
+ 
+
+			body.orbitDriver.celestialBody = body.celestialBody;
+			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+			body.orbitDriver.UpdateOrbit ();
+
+			//Debug.Log ("..About to clone the scaledversion.");
+			// Temporarily clone the Dres scaled version for the structure
+			// Find the dres prefab
+			GameObject scaledVersion = (GameObject)UnityEngine.Object.Instantiate(prototype.scaledVersion);
+			/*if (scaledVersion == null)
+				Debug.Log ("ScaledVersion is null");
+			else
+				Debug.Log ("ScaledVersion is not null.");*/
+			body.scaledVersion = scaledVersion;
+
+			//Debug.Log ("..About to assign fader.");
+			// Adjust the scaled space fader to our new celestial body
+			ScaledSpaceFader fader = scaledVersion.GetComponent<ScaledSpaceFader> ();
+			//Debug.Log ("fader: " + fader + " sv:", scaledVersion);
+			fader.celestialBody = body.celestialBody;
+
+			//Debug.Log ("..done.");
+			return body;
+
+		}
 	}
 }
 
