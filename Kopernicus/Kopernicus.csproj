@@ -32,10 +32,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\Applications\KSP\KSP.app\Contents\Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\KSP_linux_24\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\Applications\KSP\KSP.app\Contents\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\KSP_linux_24\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
