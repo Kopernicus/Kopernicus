@@ -4,11 +4,11 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 [assembly: AssemblyTitle ("Kopernicus")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("Planetary System replacer mod for Kerbal Space Program.")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
+[assembly: AssemblyCompany ("Licensed under the FSF LGPL version 3.")]
 [assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("bryce")]
+[assembly: AssemblyCopyright ("(C) 2014 Bryce Schroeder and Nathaniel Lewis")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".

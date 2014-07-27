@@ -43,6 +43,7 @@
     <Compile Include="Kopernicus.cs" />
     <Compile Include="KopernicusUtility.cs" />
     <Compile Include="KopernicusSystemSource.cs" />
+    <Compile Include="KopernicusPlanetSource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

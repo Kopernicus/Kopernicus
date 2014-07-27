@@ -90,6 +90,12 @@ namespace Kopernicus
 			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
 			
 			// Try to figure out where the PQS controller comes from
+			/*
+			 * [LOG 08:53:16.969] [Kopernicus]: KopernicusInjector.Awake(): Begin
+			   [LOG 08:53:16.971] [Kopernicus]: KopernicusSystemSource.GenerateSystem(): Where does the PQS controller come from???
+			   [LOG 08:53:16.973] [Kopernicus]: KopernicusInjector.Awake(): End
+			   */
+
 			if (Dres.celestialBody.pqsController == null) 
 			{	
 				Debug.Log ("[Kopernicus]: KopernicusSystemSource.GenerateSystem(): Where does the PQS controller come from???");
@@ -99,21 +105,10 @@ namespace Kopernicus
 			}
 			
 			// Create "Kopernicus"
-			PSystemBody body = system.AddBody(system.rootBody);
-
-			// Set some defaults for the new planet
-			body.name = "Kopernicus";
-			body.celestialBody.bodyName = "Kopernicus";
-			body.celestialBody.Radius = 300000;
-			body.orbitRenderer.orbitColor = Color.magenta;
-			body.flightGlobalsIndex = 100;
-
-			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
-			// from Squad, so storing these to files (and loading them) will be pretty easy.
-			body.orbitDriver.orbit = new Orbit (0.0, 0.0, 150000000000, 0, 0, 0, 0, system.rootBody.celestialBody);
-			body.orbitDriver.celestialBody = body.celestialBody;
-			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-			body.orbitDriver.UpdateOrbit ();
+			// Note that due to the way AddBody works, this is a function with side effects
+			// rather than something that returns a planet. Perhaps it should be named differently
+			// from the GenerateSystem method to emphasize this difference in usage??
+			KopernicusPlanetSource.GeneratePlanet (system);
 			
 			/** Relavent snippet from scaled version dump ok 
 			 * [LOG 00:57:21.294] ---------- Scaled Version Dump -----------
@@ -127,14 +122,7 @@ namespace Kopernicus
 			 * [LOG 00:57:21.295]  >>> ---------- <<< 
 			 * [LOG 00:57:21.295] -----------------------------------------
 			 */
-			// Temporarily clone the Dres scaled version for the structure
-			GameObject scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
-			scaledVersion.name = "Kopernicus";
-			body.scaledVersion = scaledVersion;
-			
-			// Adjust the scaled space fader to our new celestial body
-			ScaledSpaceFader fader = scaledVersion.GetComponent<ScaledSpaceFader> ();
-			fader.celestialBody = body.celestialBody;
+
 			
 			// Return the newly created planetary system
 			return system;

@@ -60,8 +60,9 @@ namespace Kopernicus
 			// and position in the planetary system, etc.
 			body.celestialBody.bodyName = "Kopernicus";
 			body.celestialBody.Radius = 300000;
-			body.celestialBody.GeeASL = 9.8; // not sure if g or acceleration due to g
+			body.celestialBody.GeeASL = 0.8; // This is g, not acceleration due to g, it turns out.
 			body.celestialBody.gravParameter = 398600.0; // guessing this is the Standard gravitational parameter, i.e. mu
+			// It appears that it calculates SOI for you if you give it this stuff.
 			body.celestialBody.bodyDescription = "Merciful Kod, this thing just APPEARED! And unlike last time, it wasn't bird droppings on the telescope.";
 
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
