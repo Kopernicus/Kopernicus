@@ -111,11 +111,11 @@ namespace Kopernicus
 			KopernicusPlanetSource.GeneratePlanet (system);
 
 			// Try cloning a planet
-			Debug.Log ("Kopernicus Making a Laythe to orbit Dres, because that is how we roll.");
-			Orbit neworbit = new Orbit (1, 0, 5000000, 0, 0, 0, 0, Dres.celestialBody);
+			Debug.Log ("Kopernicus Making a Pol to orbit Dres, because that is how we roll."); 
+			Orbit neworbit = new Orbit (90, 0, 500000, 0, 0, 0, 0, Dres.celestialBody);
 			Debug.Log ("..Orbit made.");
-			StockPlanetSource.GenerateSystemBody (system,Dres,"Laythe",neworbit);
-			Debug.Log ("..KopernicusFinished making a Laythe.");
+			StockPlanetSource.GenerateSystemBody (system,Dres,"Pol","Lop", neworbit);
+			Debug.Log ("..KopernicusFinished making a Pol.");
 
 
 			/** Relavent snippet from scaled version dump ok 

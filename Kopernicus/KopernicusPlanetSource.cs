@@ -98,11 +98,11 @@ namespace Kopernicus
 	// Add a clone of a stock planet (in a different orbit)
 	// This is a kind of KopernicusPlanetSource
 	public class StockPlanetSource : KopernicusPlanetSource {
-		public static PSystemBody GeneratePlanet (PSystem system, string stockPlanetName, Orbit orbit = null) {
-			return GenerateSystemBody (system, system.rootBody, stockPlanetName, orbit);
+		public static PSystemBody GeneratePlanet (PSystem system, string stockPlanetName, string newName, Orbit orbit = null) {
+			return GenerateSystemBody (system, system.rootBody, stockPlanetName, newName, orbit);
 		}
 
-		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, string stockPlanetName, Orbit orbit = null) {
+		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, string stockPlanetName, string newName, Orbit orbit = null) {
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and
 			// parent.
 			PSystemBody body = system.AddBody (parent);
@@ -114,14 +114,14 @@ namespace Kopernicus
 			}
 
 			// set up the various parameters
-			body.name = prototype.name;
+			body.name = newName;
 			body.orbitRenderer.orbitColor = prototype.orbitRenderer.orbitColor;
 			body.flightGlobalsIndex = prototype.flightGlobalsIndex;
 
 			// Some parameters of the celestialBody, which represents the actual planet...
 			// PSystemBody is more of a container that associates the planet with its orbit 
 			// and position in the planetary system, etc.
-			body.celestialBody.bodyName = prototype.celestialBody.bodyName;
+			body.celestialBody.bodyName = newName;
 			body.celestialBody.Radius = prototype.celestialBody.Radius;
 
 			// This is g, not acceleration due to g, it turns out.
