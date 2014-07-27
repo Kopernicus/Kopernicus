@@ -97,12 +97,20 @@ namespace Kopernicus
 			
 			// Create "Kopernicus"
 			PSystemBody body = system.AddBody(system.rootBody);
+
+			// Set some defaults for the new planet
 			body.name = "Kopernicus";
 			body.celestialBody.bodyName = "Kopernicus";
 			body.celestialBody.Radius = 300000;
-			body.orbitDriver.orbit = new Orbit (0.0, 0.0, 150000000000, 0, 0, 0, 0, system.rootBody.celestialBody);
 			body.orbitRenderer.orbitColor = Color.magenta;
 			body.flightGlobalsIndex = 100;
+
+			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
+			// from Squad, so storing these to files (and loading them) will be pretty easy.
+			body.orbitDriver.orbit = new Orbit (0.0, 0.0, 150000000000, 0, 0, 0, 0, system.rootBody.celestialBody);
+			body.orbitDriver.celestialBody = body.celestialBody;
+			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+			body.orbitDriver.UpdateOrbit ();
 			
 			/** Relavent snippet from scaled version dump 
 			 * [LOG 00:57:21.294] ---------- Scaled Version Dump -----------
