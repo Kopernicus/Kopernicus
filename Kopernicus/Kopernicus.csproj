@@ -42,6 +42,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Kopernicus.cs" />
     <Compile Include="KopernicusUtility.cs" />
+    <Compile Include="KopernicusSystemSource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
