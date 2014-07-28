@@ -78,7 +78,14 @@ namespace Kopernicus
 			// Note that due to the way AddBody works, this is a function with side effects
 			// rather than something that returns a planet. Perhaps it should be named differently
 			// from the GenerateSystem method to emphasize this difference in usage??
-			PSystemBody kopernicus = KopernicusPlanetSource.GeneratePlanet (system);
+			KopernicusPlanetSource.GeneratePlanet (system);
+
+			// Try cloning a planet
+			Debug.Log ("Kopernicus Making a Pol to orbit Dres, because that is how we roll."); 
+			Orbit neworbit = new Orbit (90, 0, 500000, 0, 0, 0, 0, Dres.celestialBody);
+			Debug.Log ("..Orbit made.");
+			StockPlanetSource.GenerateSystemBody (system,Dres,"Pol","Lop", neworbit);
+			Debug.Log ("..KopernicusFinished making a Pol.");
 			
 			// Return the newly created planetary system
 			return system;
