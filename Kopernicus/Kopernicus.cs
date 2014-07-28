@@ -87,13 +87,14 @@ namespace Kopernicus
 				GameObject Dres = localSpace.transform.FindChild("Dres").gameObject;
 				GameObject Duna = localSpace.transform.FindChild("Duna").gameObject;
 				GameObject Eve = localSpace.transform.FindChild("Eve").gameObject;
+				GameObject Kopernicus = localSpace.transform.FindChild("Kopernicus").gameObject;
 
-				// Create the PQS
-				GameObject gameObject = new GameObject("Kopernicus");
-				gameObject.transform.parent = localSpace.transform.FindChild("Kopernicus");
-				PQS controller = gameObject.AddComponent<PQS>();
+				// Create the PQS controller for Kopernicus
+				GameObject pqs = new GameObject();
+				pqs.transform.parent = Kopernicus.transform;
+				Kopernicus.GetComponent<CelestialBody>().pqsController = pqs.AddComponent<PQS>();
 
-				// A
+				// ADD ALL THE MODS!!! - EVENTUALLY
 
 				// Get the PQS component of Eeloo for exploratory purposes
 				KopernicusUtility.DumpPQS(Eeloo.GetComponentInChildren<PQS>());

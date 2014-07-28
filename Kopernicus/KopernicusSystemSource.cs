@@ -73,7 +73,7 @@ namespace Kopernicus
 			 * [LOG 08:53:16.971] [Kopernicus]: KopernicusSystemSource.GenerateSystem(): Where does the PQS controller come from???
 			 * [LOG 08:53:16.973] [Kopernicus]: KopernicusInjector.Awake(): End
 			 */
-			
+
 			// Create "Kopernicus"
 			// Note that due to the way AddBody works, this is a function with side effects
 			// rather than something that returns a planet. Perhaps it should be named differently
@@ -81,6 +81,7 @@ namespace Kopernicus
 			KopernicusPlanetSource.GeneratePlanet (system);
 
 			// Try cloning a planet
+			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
 			Debug.Log ("Kopernicus Making a Pol to orbit Dres, because that is how we roll."); 
 			Orbit neworbit = new Orbit (90, 0, 500000, 0, 0, 0, 0, Dres.celestialBody);
 			Debug.Log ("..Orbit made.");

@@ -60,12 +60,11 @@ namespace Kopernicus
 			// and position in the planetary system, etc.
 			body.celestialBody.bodyName = "Kopernicus";
 			body.celestialBody.Radius = 300000;
-			body.celestialBody.GeeASL = 0.8; // This is g, not acceleration due to g, it turns out.
+			body.celestialBody.GeeASL = 0.33; // This is g, not acceleration due to g, it turns out.
 			body.celestialBody.gravParameter = 398600.0; // guessing this is the Standard gravitational parameter, i.e. mu
+
 			// It appears that it calculates SOI for you if you give it this stuff.
 			body.celestialBody.bodyDescription = "Merciful Kod, this thing just APPEARED! And unlike last time, it wasn't bird droppings on the telescope.";
-
-		
 
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
 			// from Squad, so storing these to files (and loading them) will be pretty easy.
@@ -94,7 +93,7 @@ namespace Kopernicus
 			// Temporarily clone the Dres scaled version for the structure
 			// Find the dres prefab
 			Debug.Log ("----- Scaled Verision -----");
-			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Eeloo");
+			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
 			GameObject scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
 			scaledVersion.name = "Kopernicus";
 			body.scaledVersion = scaledVersion; 
@@ -131,15 +130,12 @@ namespace Kopernicus
 			SphereCollider collider = scaledVersion.GetComponent<SphereCollider> ();
 			Debug.Log ("Sphere Collider: Radius: " + collider.radius + ", {" + collider.center + "}");
 
-			
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
 			body.celestialBody.isHomeWorld = false;
 			// function unknown at this time
 			//body.celestialBody.gMagnitudeAtCenter = prototype.celestialBody.gMagnitudeAtCenter;
 			// time warp limits
 			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
-
-
 
 			// Adjust the scaled space fader to our new celestial body
 			ScaledSpaceFader fader = scaledVersion.GetComponent<ScaledSpaceFader> ();
