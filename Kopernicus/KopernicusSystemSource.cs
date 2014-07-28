@@ -61,13 +61,6 @@ namespace Kopernicus
 			system.systemScale         = 1.0;
 			system.mainToolbarSelected = 2;   // initial value in stock systemPrefab. Unknown significance.
 			
-			//CelestialBody eve = PSystemManager.Instance.systemPrefab.rootBody.children [1].celestialBody;
-			//CelestialBody moho = PSystemManager.Instance.systemPrefab.rootBody.children [0].celestialBody;
-			//CelestialBody kerbin = PSystemManager.Instance.systemPrefab.rootBody.children [2].celestialBody;
-			//PSystemBody eve = PSystemManager.Instance.systemPrefab.rootBody.children [1];
-			//PSystemBody moho = PSystemManager.Instance.systemPrefab.rootBody.children [0];
-			//PSystemBody kerbin = PSystemManager.Instance.systemPrefab.rootBody.children [2];
-			
 			// ---------- TEMPORARY ------------
 			// Clone the existing root body.  This tests that there are no magic dependencies from within the tree to the outside.  The
 			// prefab we return from this function has no links back into whatever KSP itself loads, proving that we can actually load
@@ -75,54 +68,17 @@ namespace Kopernicus
 			GameObject systemClone = (GameObject) UnityEngine.Object.Instantiate (PSystemManager.Instance.systemPrefab.rootBody.gameObject);
 			system.rootBody = systemClone.GetComponent<PSystemBody> ();
 
-			/*kps.rootBody = kps.AddBody (null); // many of these properties are set up by AddBody but not meaningfully
-			kps.rootBody.celestialBody = PSystemManager.Instance.systemPrefab.rootBody.celestialBody; //
-			kps.rootBody.planetariumCameraInitial = PSystemManager.Instance.systemPrefab.rootBody.planetariumCameraInitial;
-			kps.rootBody.flightGlobalsIndex = PSystemManager.Instance.systemPrefab.rootBody.flightGlobalsIndex;
-			kps.rootBody.pqsVersion = PSystemManager.Instance.systemPrefab.rootBody.pqsVersion;
-			kps.rootBody.scaledVersion = PSystemManager.Instance.systemPrefab.rootBody.scaledVersion;
-			kps.rootBody.resources = PSystemManager.Instance.systemPrefab.rootBody.resources; //
-			kps.rootBody.orbitRenderer = PSystemManager.Instance.systemPrefab.rootBody.orbitRenderer; //
-			kps.rootBody.orbitDriver = PSystemManager.Instance.systemPrefab.rootBody.orbitDriver; //
-			//XXkps.rootBody.children = new List<PSystemBody> ();*/
-			
-			// Find the dres prefab
-			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
-			
-			// Try to figure out where the PQS controller comes from
 			/*
 			 * [LOG 08:53:16.969] [Kopernicus]: KopernicusInjector.Awake(): Begin
-			   [LOG 08:53:16.971] [Kopernicus]: KopernicusSystemSource.GenerateSystem(): Where does the PQS controller come from???
-			   [LOG 08:53:16.973] [Kopernicus]: KopernicusInjector.Awake(): End
-			   */
-
-			if (Dres.celestialBody.pqsController == null) 
-			{	
-				Debug.Log ("[Kopernicus]: KopernicusSystemSource.GenerateSystem(): Where does the PQS controller come from???");
-			} else 
-			{
-				Debug.Log ("[Kopernicus]: KopernicusSystemSource.GenerateSystem(): Dres prefab has a PQS controller");
-			}
+			 * [LOG 08:53:16.971] [Kopernicus]: KopernicusSystemSource.GenerateSystem(): Where does the PQS controller come from???
+			 * [LOG 08:53:16.973] [Kopernicus]: KopernicusInjector.Awake(): End
+			 */
 			
 			// Create "Kopernicus"
 			// Note that due to the way AddBody works, this is a function with side effects
 			// rather than something that returns a planet. Perhaps it should be named differently
 			// from the GenerateSystem method to emphasize this difference in usage??
-			KopernicusPlanetSource.GeneratePlanet (system);
-			
-			/** Relavent snippet from scaled version dump ok 
-			 * [LOG 00:57:21.294] ---------- Scaled Version Dump -----------
-			 * [LOG 00:57:21.294] Dres (UnityEngine.GameObject)
-			 * [LOG 00:57:21.294]  >>> Components <<< 
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.Transform)
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.MeshFilter)
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.MeshRenderer)
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.SphereCollider)
-			 * [LOG 00:57:21.294]  Dres (ScaledSpaceFader)
-			 * [LOG 00:57:21.295]  >>> ---------- <<< 
-			 * [LOG 00:57:21.295] -----------------------------------------
-			 */
-
+			PSystemBody kopernicus = KopernicusPlanetSource.GeneratePlanet (system);
 			
 			// Return the newly created planetary system
 			return system;

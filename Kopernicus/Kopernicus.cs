@@ -79,23 +79,42 @@ namespace Kopernicus
 		{
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): Begin");
 
+			Debug.Log ("---------- Local Space Dump -----------");
+			GameObject localSpace = GameObject.Find (PSystemManager.Instance.localSpaceName);
+			if (localSpace) 
+			{
+				GameObject Eeloo = localSpace.transform.FindChild("Eeloo").gameObject;
+				GameObject Dres = localSpace.transform.FindChild("Dres").gameObject;
+				GameObject Duna = localSpace.transform.FindChild("Duna").gameObject;
+				GameObject Eve = localSpace.transform.FindChild("Eve").gameObject;
+
+				// Create the PQS
+				GameObject gameObject = new GameObject("Kopernicus");
+				gameObject.transform.parent = localSpace.transform.FindChild("Kopernicus");
+				PQS controller = gameObject.AddComponent<PQS>();
+
+				// A
+
+				// Get the PQS component of Eeloo for exploratory purposes
+				KopernicusUtility.DumpPQS(Eeloo.GetComponentInChildren<PQS>());
+				KopernicusUtility.DumpPQS(Dres.GetComponentInChildren<PQS>());
+				KopernicusUtility.DumpPQS(Duna.GetComponentInChildren<PQS>());
+				KopernicusUtility.DumpPQS(Eve.GetComponentInChildren<PQS>());
+
+				// Walk Eeloo local space
+				KopernicusUtility.GameObjectWalk(Eeloo);
+			}
+			Debug.Log ("-----------------------------------------");
+			
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
 		}
 
-		/**
-		 *  Start()
-		 **/
-		/*public void Start()
+		public void OnLevelWasLoaded(int level)
 		{
-			Debug.Log ("[Kopernicus]: KopernicusInjector.Start() called");
-			GameObject localSpace = GameObject.Find (PSystemManager.Instance.localSpaceName);
-
-			Debug.Log ("---------- Local Space Dump -----------");
-			KopernicusUtility.GameObjectWalk (localSpace);
-			Debug.Log ("-----------------------------------------\n");
-		}*/
-
+			Debug.Log ("[Kopernicus]: KopernicusInjector.OnLevelWasLoaded(): Begin");
+			
+			Debug.Log ("[Kopernicus]: KopernicusInjector.OnLevelWasLoaded(): End");
+		}
 	}
-
 } //namespace
 
