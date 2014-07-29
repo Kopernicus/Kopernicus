@@ -207,6 +207,7 @@ namespace Kopernicus
 			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoHeight.png"));
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
+			UnityEngine.Object.DestroyImmediate(map);
 
 			// Create the simplex height module
 			PQSMod_VertexSimplexHeight vertexSimplexHeight = mod.AddComponent<PQSMod_VertexSimplexHeight>();
@@ -287,6 +288,22 @@ namespace Kopernicus
 			vertexSimplexHeightAbsolute.modEnabled = true;
 			vertexSimplexHeightAbsolute.order = 30;
 
+			// Surface color map
+			mod = new GameObject();
+			mod.transform.parent = controllerRoot.gameObject.transform;
+			PQSMod_VertexColorMapBlend colorMap = mod.AddComponent<PQSMod_VertexColorMapBlend>();
+			colorMap.sphere = body.pqsVersion;
+			colorMap.blend = 1.0f;
+			colorMap.order = 500;
+			colorMap.modEnabled = true;
+
+			// Decompress and load the color
+			map = new Texture2D(4, 4, TextureFormat.RGB24, false);
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoColor.png"));
+			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
+			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
+			UnityEngine.Object.DestroyImmediate(map);
+
 			#endregion
 
 			#region PSystemBody.scaledVersion generation
@@ -295,15 +312,28 @@ namespace Kopernicus
 			body.scaledVersion.name = "Kopernicus";
 			//body.scaledVersion = new GameObject("Kopernicus");
 
-			// Create the mesh filter for the new world (eventually generate mesh from scratch or clone Jool and modify)
+			// Scale the mesh to the new body size
 			MeshFilter meshFilter = body.scaledVersion.GetComponent<MeshFilter> ();
 			Mesh scaledMesh = new Mesh();
 			KopernicusUtility.CopyMesh(Dres.scaledVersion.GetComponent<MeshFilter>().sharedMesh, scaledMesh);
 			meshFilter.mesh = scaledMesh;
 
-			// Create the mesh renderer for the scaled version
-			/*MeshRenderer meshRenderer   = body.scaledVersion.AddComponent<MeshRenderer> ();
-			meshRenderer.materials      = Dres.scaledVersion.GetComponent<MeshRenderer> ().sharedMaterials;
+			// Load and compress the color texture for the custom planet
+			Texture2D colorTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
+			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoColor.png"));
+			colorTexture.Compress(true);
+			colorTexture.Apply(true, true);
+
+			// Load and compress the color texture for the custom planet
+			Texture2D bumpTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
+			bumpTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/Callisto_NRM.png"));
+			bumpTexture.Compress(true);
+			bumpTexture.Apply(true, true);
+
+			// Write a new material for this texture
+			body.scaledVersion.renderer.material = new Material(Dres.scaledVersion.renderer.material.shader);
+			body.scaledVersion.renderer.material.SetTexture("_MainTex", colorTexture);
+			body.scaledVersion.renderer.material.SetTexture("_BumpMap", bumpTexture);
 
 			// Create the sphere collider
 			/*SphereCollider collider = body.scaledVersion.AddComponent<SphereCollider> ();
