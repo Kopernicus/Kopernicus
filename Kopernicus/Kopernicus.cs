@@ -79,11 +79,6 @@ namespace Kopernicus
 		{
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): Begin");
 
-			Transform Kopernicus = GameObject.Find (PSystemManager.Instance.localSpaceName).transform.FindChild ("Kopernicus");
-			if (Kopernicus != null) {
-				KopernicusUtility.GameObjectWalk(Kopernicus.gameObject);
-			}
-
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
 		}
 

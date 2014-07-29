@@ -91,6 +91,7 @@ namespace Kopernicus
 			#region PSystemBody.pqsVersion generation
 			// Create the PQS controller for Kopernicus
 			GameObject controllerRoot = new GameObject("Kopernicus");
+			controllerRoot.transform.parent = body.celestialBody.transform;
 			body.pqsVersion = controllerRoot.AddComponent<PQS>();
 			body.pqsVersion.surfaceMaterial = new Material(Shader.Find("Terrain/PQS/Sphere Projection SURFACE QUAD"));
 
@@ -113,6 +114,7 @@ namespace Kopernicus
 			celestialBodyTransform.requirements = PQS.ModiferRequirements.Default;
 			celestialBodyTransform.modEnabled = true;
 			celestialBodyTransform.order = 10;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the color PQS mods
 			mod = new GameObject("_Color");
@@ -129,6 +131,7 @@ namespace Kopernicus
 			vertexSimplexNoiseColor.requirements = PQS.ModiferRequirements.MeshColorChannel;
 			vertexSimplexNoiseColor.modEnabled = true;
 			vertexSimplexNoiseColor.order = 200;
+			body.pqsVersion.RebuildSphere();
 
 			PQSMod_HeightColorMap heightColorMap = mod.AddComponent<PQSMod_HeightColorMap>();
 			heightColorMap.sphere = body.pqsVersion;
@@ -153,6 +156,7 @@ namespace Kopernicus
 			heightColorMap.requirements = PQS.ModiferRequirements.MeshColorChannel;
 			heightColorMap.modEnabled = true;
 			heightColorMap.order = 201;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the alititude alpha mods
 			mod = new GameObject("_Material_ModProjection");
@@ -164,6 +168,7 @@ namespace Kopernicus
 			altitudeAlpha.requirements = PQS.ModiferRequirements.Default;
 			altitudeAlpha.modEnabled = false;
 			altitudeAlpha.order = 999999999;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the aerial perspective material
 			mod = new GameObject("_Material_AerialPerspective");
@@ -180,6 +185,7 @@ namespace Kopernicus
 			aerialPerspectiveMaterial.requirements = PQS.ModiferRequirements.Default;
 			aerialPerspectiveMaterial.modEnabled = true;
 			aerialPerspectiveMaterial.order = 100;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the UV planet relative position
 			mod = new GameObject("_Material_SurfaceQuads");
@@ -189,6 +195,7 @@ namespace Kopernicus
 			planetRelativePosition.requirements = PQS.ModiferRequirements.Default;
 			planetRelativePosition.modEnabled = true;
 			planetRelativePosition.order = 999999;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the height noise module
 			mod = new GameObject("_HeightNoise");
@@ -208,6 +215,7 @@ namespace Kopernicus
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
 			UnityEngine.Object.DestroyImmediate(map);
+			body.pqsVersion.RebuildSphere();
 
 			// Create the simplex height module
 			PQSMod_VertexSimplexHeight vertexSimplexHeight = mod.AddComponent<PQSMod_VertexSimplexHeight>();
@@ -220,6 +228,7 @@ namespace Kopernicus
 			vertexSimplexHeight.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 			vertexSimplexHeight.modEnabled = true;
 			vertexSimplexHeight.order = 21;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the flatten ocean module
 			PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
@@ -228,6 +237,7 @@ namespace Kopernicus
 			flattenOcean.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 			flattenOcean.modEnabled = true;
 			flattenOcean.order = 25;
+			body.pqsVersion.RebuildSphere();
 
 			// Creat the vertex height noise module
 			PQSMod_VertexHeightNoise vertexHeightNoise = mod.AddComponent<PQSMod_VertexHeightNoise>();
@@ -243,6 +253,7 @@ namespace Kopernicus
 			vertexHeightNoise.requirements = PQS.ModiferRequirements.MeshColorChannel;
 			vertexHeightNoise.modEnabled = true;
 			vertexHeightNoise.order = 22;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the material direction
 			mod = new GameObject("_Material_SunLight");
@@ -253,6 +264,7 @@ namespace Kopernicus
 			materialSetDirection.requirements = PQS.ModiferRequirements.Default;
 			materialSetDirection.modEnabled = true;
 			materialSetDirection.order = 100;
+			body.pqsVersion.RebuildSphere();
 
 			// Crete the quad mesh colliders
 			mod = new GameObject("QuadMeshColliders");
@@ -273,6 +285,7 @@ namespace Kopernicus
 			quadMeshColliders.requirements = PQS.ModiferRequirements.Default;
 			quadMeshColliders.modEnabled = true;
 			quadMeshColliders.order = 100;
+			body.pqsVersion.RebuildSphere();
 
 			// Create the simplex height absolute
 			mod = new GameObject("_FineDetail");
@@ -287,6 +300,7 @@ namespace Kopernicus
 			vertexSimplexHeightAbsolute.requirements = PQS.ModiferRequirements.Default;
 			vertexSimplexHeightAbsolute.modEnabled = true;
 			vertexSimplexHeightAbsolute.order = 30;
+			body.pqsVersion.RebuildSphere();
 
 			// Surface color map
 			mod = new GameObject();
@@ -296,6 +310,7 @@ namespace Kopernicus
 			colorMap.blend = 1.0f;
 			colorMap.order = 500;
 			colorMap.modEnabled = true;
+			body.pqsVersion.RebuildSphere();
 
 			// Decompress and load the color
 			map = new Texture2D(4, 4, TextureFormat.RGB24, false);
@@ -303,6 +318,7 @@ namespace Kopernicus
 			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
 			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
 			UnityEngine.Object.DestroyImmediate(map);
+			body.pqsVersion.RebuildSphere();
 
 			#endregion
 
