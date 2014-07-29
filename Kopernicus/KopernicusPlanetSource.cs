@@ -51,13 +51,12 @@ namespace Kopernicus
 			// Find Dres to use its stuff until we come up with a way of replacing it
 			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
 
+			/*Debug.Log("---- PQS DUMP BITCHES -----");
+			KopernicusUtility.GameObjectWalk(Dres.pqsVersion.gameObject);
+			Debug.Log("---------------------------");*/
+
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
-			if (Dres.pqsVersion != null) {
-				Debug.Log("---- PQS DUMP BITCHES -----");
-				KopernicusUtility.GameObjectWalk(Dres.pqsVersion.gameObject);
-				Debug.Log("---------------------------");
-			}
 
 			// set up the various parameters
 			body.name = "Kopernicus";
@@ -88,18 +87,18 @@ namespace Kopernicus
 			else
 				body.orbitDriver.orbit = orbit;
 
-			#region PSystemBody.pqsVersion generation
 
+			#region PSystemBody.pqsVersion generation
 			// Create the PQS controller for Kopernicus
 			GameObject controllerRoot = new GameObject("Kopernicus");
 			body.pqsVersion = controllerRoot.AddComponent<PQS>();
+			body.pqsVersion.surfaceMaterial = new Material(Shader.Find("Terrain/PQS/Sphere Projection SURFACE QUAD"));
 
 			// Create the celestial body transform
 			GameObject mod = new GameObject("_CelestialBody");
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_CelestialBodyTransform celestialBodyTransform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
 			celestialBodyTransform.sphere = body.pqsVersion;
-			celestialBodyTransform.body = body.celestialBody;
 			celestialBodyTransform.forceActivate = false;
 			celestialBodyTransform.deactivateAltitude = 115000;
 			celestialBodyTransform.forceRebuildOnTargetChange = false;
@@ -110,9 +109,10 @@ namespace Kopernicus
 			celestialBodyTransform.planetFade.valueStart = 0.0f;
 			celestialBodyTransform.planetFade.valueEnd = 1.0f;
 			celestialBodyTransform.planetFade.secondaryRenderers = new List<GameObject>();
+			celestialBodyTransform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
 			celestialBodyTransform.requirements = PQS.ModiferRequirements.Default;
 			celestialBodyTransform.modEnabled = true;
-			celestialBodyTransform.order = 0;
+			celestialBodyTransform.order = 10;
 
 			// Create the color PQS mods
 			mod = new GameObject("_Color");
@@ -349,6 +349,8 @@ namespace Kopernicus
 			fader.floatName        = "_Opacity";
 
 #endregion
+			// Print out a walk of the body
+			KopernicusUtility.GameObjectWalk (body.pqsVersion.gameObject);;
 
 			// Return the new body
 			return body;
