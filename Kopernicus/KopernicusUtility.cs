@@ -138,6 +138,44 @@ namespace Kopernicus
 				PSystemBodyWalk(c, prefix + "    ");
 			}
 		}
+
+		public static void CopyMesh(Mesh source, Mesh dest)
+		{
+			//ProfileTimer.Push("CopyMesh");
+			Vector3[] verts = new Vector3[source.vertexCount];
+			source.vertices.CopyTo(verts, 0);
+			dest.vertices = verts;
+			
+			int[] tris = new int[source.triangles.Length];
+			source.triangles.CopyTo(tris, 0);
+			dest.triangles = tris;
+			
+			Vector2[] uvs = new Vector2[source.uv.Length];
+			source.uv.CopyTo(uvs, 0);
+			dest.uv = uvs;
+			
+			Vector2[] uv2s = new Vector2[source.uv2.Length];
+			source.uv2.CopyTo(uv2s, 0);
+			dest.uv2 = uv2s;
+			
+			Vector3[] normals = new Vector3[source.normals.Length];
+			source.normals.CopyTo(normals, 0);
+			dest.normals = normals;
+			
+			Vector4[] tangents = new Vector4[source.tangents.Length];
+			source.tangents.CopyTo(tangents, 0);
+			dest.tangents = tangents;
+			
+			Color[] colors = new Color[source.colors.Length];
+			source.colors.CopyTo(colors, 0);
+			dest.colors = colors;
+			
+			Color32[] colors32 = new Color32[source.colors32.Length];
+			source.colors32.CopyTo(colors32, 0);
+			dest.colors32 = colors32;
+			
+			//ProfileTimer.Pop("CopyMesh");
+		}
 		
 		// Dump PQS members
 		public static void DumpPQS(PQS s)

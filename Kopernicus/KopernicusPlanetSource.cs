@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kopernicus
@@ -45,10 +46,18 @@ namespace Kopernicus
 		public static PSystemBody GeneratePlanet (PSystem system, Orbit orbit = null) {
 			return GenerateSystemBody (system, system.rootBody, orbit);
 		}
-		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, Orbit orbit = null) {
-			// AddBody makes the GameObject and stuff. It also attaches it to the system and
-			// parent.
+		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, Orbit orbit = null) 
+		{
+			// Find Dres to use its stuff until we come up with a way of replacing it
+			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
+
+			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
+			if (Dres.pqsVersion != null) {
+				Debug.Log("---- PQS DUMP BITCHES -----");
+				KopernicusUtility.GameObjectWalk(Dres.pqsVersion.gameObject);
+				Debug.Log("---------------------------");
+			}
 
 			// set up the various parameters
 			body.name = "Kopernicus";
@@ -62,88 +71,254 @@ namespace Kopernicus
 			body.celestialBody.Radius = 300000;
 			body.celestialBody.GeeASL = 0.33; // This is g, not acceleration due to g, it turns out.
 			body.celestialBody.gravParameter = 398600.0; // guessing this is the Standard gravitational parameter, i.e. mu
-
-			// It appears that it calculates SOI for you if you give it this stuff.
 			body.celestialBody.bodyDescription = "Merciful Kod, this thing just APPEARED! And unlike last time, it wasn't bird droppings on the telescope.";
+			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
+			
+			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
+			body.celestialBody.isHomeWorld = false;
+			//body.celestialBody.gMagnitudeAtCenter = prototype.celestialBody.gMagnitudeAtCenter; // function unknown at this time
 
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
 			// from Squad, so storing these to files (and loading them) will be pretty easy.
-			if (orbit == null)
+			body.orbitDriver.celestialBody = body.celestialBody;
+			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+			body.orbitDriver.UpdateOrbit ();
+			if (orbit == null) 
 				body.orbitDriver.orbit = new Orbit (0.0, 0.0, 150000000000, 0, 0, 0, 0, system.rootBody.celestialBody);
 			else
 				body.orbitDriver.orbit = orbit;
 
-			body.orbitDriver.celestialBody = body.celestialBody;
-			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-			body.orbitDriver.UpdateOrbit ();
+			#region PSystemBody.pqsVersion generation
 
-			/** Relavent snippet from scaled version dump ok 
-			 * [LOG 00:57:21.294] ---------- Scaled Version Dump -----------
-			 * [LOG 00:57:21.294] Dres (UnityEngine.GameObject)
-			 * [LOG 00:57:21.294]  >>> Components <<< 
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.Transform)
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.MeshFilter)
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.MeshRenderer)
-			 * [LOG 00:57:21.294]  Dres (UnityEngine.SphereCollider)
-			 * [LOG 00:57:21.294]  Dres (ScaledSpaceFader)
-			 * [LOG 00:57:21.295]  >>> ---------- <<< 
-			 * [LOG 00:57:21.295] -----------------------------------------
-			 */
+			// Create the PQS controller for Kopernicus
+			GameObject controllerRoot = new GameObject("Kopernicus");
+			body.pqsVersion = controllerRoot.AddComponent<PQS>();
 
-			// Temporarily clone the Dres scaled version for the structure
-			// Find the dres prefab
-			Debug.Log ("----- Scaled Verision -----");
-			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
-			GameObject scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
-			scaledVersion.name = "Kopernicus";
-			body.scaledVersion = scaledVersion; 
+			// Create the celestial body transform
+			GameObject mod = new GameObject("_CelestialBody");
+			mod.transform.parent = controllerRoot.transform;
+			PQSMod_CelestialBodyTransform celestialBodyTransform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
+			celestialBodyTransform.sphere = body.pqsVersion;
+			celestialBodyTransform.body = body.celestialBody;
+			celestialBodyTransform.forceActivate = false;
+			celestialBodyTransform.deactivateAltitude = 115000;
+			celestialBodyTransform.forceRebuildOnTargetChange = false;
+			celestialBodyTransform.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade();
+			celestialBodyTransform.planetFade.fadeFloatName = "_PlanetOpacity";
+			celestialBodyTransform.planetFade.fadeStart = 100000.0f;
+			celestialBodyTransform.planetFade.fadeEnd = 110000.0f;
+			celestialBodyTransform.planetFade.valueStart = 0.0f;
+			celestialBodyTransform.planetFade.valueEnd = 1.0f;
+			celestialBodyTransform.planetFade.secondaryRenderers = new List<GameObject>();
+			celestialBodyTransform.requirements = PQS.ModiferRequirements.Default;
+			celestialBodyTransform.modEnabled = true;
+			celestialBodyTransform.order = 0;
 
-			// Look at the transfor
-			Debug.Log ("Body Radius: " + Dres.celestialBody.Radius);
-			Debug.Log ("Scale: " + body.transform.localScale);
+			// Create the color PQS mods
+			mod = new GameObject("_Color");
+			mod.transform.parent = controllerRoot.transform;
+			PQSMod_VertexSimplexNoiseColor vertexSimplexNoiseColor = mod.AddComponent<PQSMod_VertexSimplexNoiseColor>();
+			vertexSimplexNoiseColor.sphere = body.pqsVersion;
+			vertexSimplexNoiseColor.seed = 45;
+			vertexSimplexNoiseColor.blend = 1.0f;
+			vertexSimplexNoiseColor.colorStart = new Color(0.768656731f, 0.6996614f, 0.653089464f, 1);
+			vertexSimplexNoiseColor.colorEnd = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+			vertexSimplexNoiseColor.octaves = 12.0;
+			vertexSimplexNoiseColor.persistence = 0.5;
+			vertexSimplexNoiseColor.frequency = 2.0;
+			vertexSimplexNoiseColor.requirements = PQS.ModiferRequirements.MeshColorChannel;
+			vertexSimplexNoiseColor.modEnabled = true;
+			vertexSimplexNoiseColor.order = 200;
 
-			// Look at the mesh renderer
-			MeshRenderer renderer = scaledVersion.GetComponent<MeshRenderer> ();
-			Debug.Log ("Material Name: " + renderer.material.name);
+			PQSMod_HeightColorMap heightColorMap = mod.AddComponent<PQSMod_HeightColorMap>();
+			heightColorMap.sphere = body.pqsVersion;
+			List<PQSMod_HeightColorMap.LandClass> landClasses = new List<PQSMod_HeightColorMap.LandClass>();
 
-			// Look at the mesh filter
-			MeshFilter filter = scaledVersion.GetComponent<MeshFilter> ();
-			Debug.Log ("Mesh Name: " + filter.mesh.name);
-			Debug.Log ("Mesh Vertex Count: " + filter.mesh.vertexCount);
+			PQSMod_HeightColorMap.LandClass landClass = new PQSMod_HeightColorMap.LandClass("AbyPl", 0.0, 0.5, new Color(0.0f, 0.0f, 0.0f, 1.0f), Color.white, double.NaN);
+			landClass.lerpToNext = true;
+			landClasses.Add(landClass);
 
-			// Analyze the maximums and minimuns
-			Vector3 maximum = new Vector3 (float.MinValue, float.MinValue, float.MinValue);
-			Vector3 minimum = new Vector3 (float.MaxValue, float.MaxValue, float.MaxValue);
-			foreach (Vector3 vertex in filter.mesh.vertices) 
-			{
-				minimum.x = (vertex.x < minimum.x) ? vertex.x : minimum.x;
-				minimum.y = (vertex.y < minimum.y) ? vertex.y : minimum.y;
-				minimum.z = (vertex.z < minimum.z) ? vertex.z : minimum.z;
-				maximum.x = (vertex.x > maximum.x) ? vertex.x : maximum.x;
-				maximum.y = (vertex.y > maximum.y) ? vertex.y : maximum.y;
-				maximum.z = (vertex.z > maximum.z) ? vertex.z : maximum.z;
-			}
-			Debug.Log ("Mesh Vertex Minimums: " + minimum);
-			Debug.Log ("Mesh Vertex Maximums: " + maximum);
+			landClass = new PQSMod_HeightColorMap.LandClass("Beach", 0.5, 0.550000011920929, new Color(0.164179087f, 0.164179087f, 0.164179087f, 1.0f), Color.white, double.NaN);
+			landClass.lerpToNext = true;
+			landClasses.Add(landClass);
 
-			// Look at the sphere collider
-			SphereCollider collider = scaledVersion.GetComponent<SphereCollider> ();
-			Debug.Log ("Sphere Collider: Radius: " + collider.radius + ", {" + collider.center + "}");
+			landClass = new PQSMod_HeightColorMap.LandClass("Beach", 0.550000011920929, 1.0, new Color(0.373134315f, 0.373134315f, 0.373134315f, 1.0f), Color.white, double.NaN);
+			landClass.lerpToNext = false;
+			landClasses.Add(landClass);
 
-			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
-			body.celestialBody.isHomeWorld = false;
-			// function unknown at this time
-			//body.celestialBody.gMagnitudeAtCenter = prototype.celestialBody.gMagnitudeAtCenter;
-			// time warp limits
-			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
+			// Generate an array from the land classes list
+			heightColorMap.landClasses = landClasses.ToArray();
+			heightColorMap.blend = 0.7f;
+			heightColorMap.lcCount = 3;
+			heightColorMap.requirements = PQS.ModiferRequirements.MeshColorChannel;
+			heightColorMap.modEnabled = true;
+			heightColorMap.order = 201;
 
-			// Adjust the scaled space fader to our new celestial body
-			ScaledSpaceFader fader = scaledVersion.GetComponent<ScaledSpaceFader> ();
-			fader.celestialBody = body.celestialBody;
+			// Create the alititude alpha mods
+			mod = new GameObject("_Material_ModProjection");
+			mod.transform.parent = controllerRoot.transform;
+			PQSMod_AltitudeAlpha altitudeAlpha = mod.AddComponent<PQSMod_AltitudeAlpha>();
+			altitudeAlpha.sphere = body.pqsVersion;
+			altitudeAlpha.atmosphereDepth = 4000.0;
+			altitudeAlpha.invert = false;
+			altitudeAlpha.requirements = PQS.ModiferRequirements.Default;
+			altitudeAlpha.modEnabled = false;
+			altitudeAlpha.order = 999999999;
 
-			// Print out other info
-			Debug.Log ("FadeStart: " + fader.fadeStart + ", FadeEnd: " + fader.fadeEnd + ", FloatName: " + fader.floatName);
-			Debug.Log ("------------------------------");
+			// Create the aerial perspective material
+			mod = new GameObject("_Material_AerialPerspective");
+			mod.transform.parent = controllerRoot.transform;
+			PQSMod_AerialPerspectiveMaterial aerialPerspectiveMaterial = mod.AddComponent<PQSMod_AerialPerspectiveMaterial>();
+			aerialPerspectiveMaterial.sphere = body.pqsVersion;
+			aerialPerspectiveMaterial.globalDensity = -0.00001f;
+			aerialPerspectiveMaterial.heightFalloff = 6.75f;
+			aerialPerspectiveMaterial.atmosphereDepth = 150000;
+			aerialPerspectiveMaterial.DEBUG_SetEveryFrame = true;
+			aerialPerspectiveMaterial.cameraAlt = 0;
+			aerialPerspectiveMaterial.cameraAtmosAlt = 0;
+			aerialPerspectiveMaterial.heightDensAtViewer = 0;
+			aerialPerspectiveMaterial.requirements = PQS.ModiferRequirements.Default;
+			aerialPerspectiveMaterial.modEnabled = true;
+			aerialPerspectiveMaterial.order = 100;
+
+			// Create the UV planet relative position
+			mod = new GameObject("_Material_SurfaceQuads");
+			mod.transform.parent = controllerRoot.transform;
+			PQSMod_UVPlanetRelativePosition planetRelativePosition = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
+			planetRelativePosition.sphere = body.pqsVersion;
+			planetRelativePosition.requirements = PQS.ModiferRequirements.Default;
+			planetRelativePosition.modEnabled = true;
+			planetRelativePosition.order = 999999;
+
+			// Create the height noise module
+			mod = new GameObject("_HeightNoise");
+			mod.transform.parent = controllerRoot.transform;
+			PQSMod_VertexHeightMap vertexHeightMap = mod.AddComponent<PQSMod_VertexHeightMap>();
+			vertexHeightMap.sphere = body.pqsVersion;
+			vertexHeightMap.heightMapDeformity = 3000.0;
+			vertexHeightMap.heightMapOffset = 0.0;
+			vertexHeightMap.scaleDeformityByRadius = false;
+			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
+			vertexHeightMap.modEnabled = true;
+			vertexHeightMap.order = 20;
+
+			// Load the heightmap for this planet
+			Texture2D map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoHeight.png"));
+			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
+			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
+
+			// Create the simplex height module
+			PQSMod_VertexSimplexHeight vertexSimplexHeight = mod.AddComponent<PQSMod_VertexSimplexHeight>();
+			vertexSimplexHeight.sphere = body.pqsVersion;
+			vertexSimplexHeight.seed = 670000;
+			vertexSimplexHeight.deformity = 1700.0;
+			vertexSimplexHeight.octaves = 12.0;
+			vertexSimplexHeight.persistence = 0.5;
+			vertexSimplexHeight.frequency = 4.0;
+			vertexSimplexHeight.requirements = PQS.ModiferRequirements.MeshCustomNormals;
+			vertexSimplexHeight.modEnabled = true;
+			vertexSimplexHeight.order = 21;
+
+			// Create the flatten ocean module
+			PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
+			flattenOcean.sphere = body.pqsVersion;
+			flattenOcean.oceanRadius = 1.0;
+			flattenOcean.requirements = PQS.ModiferRequirements.MeshCustomNormals;
+			flattenOcean.modEnabled = true;
+			flattenOcean.order = 25;
+
+			// Creat the vertex height noise module
+			PQSMod_VertexHeightNoise vertexHeightNoise = mod.AddComponent<PQSMod_VertexHeightNoise>();
+			vertexHeightNoise.sphere = body.pqsVersion;
+			vertexHeightNoise.noiseType = PQSMod_VertexHeightNoise.NoiseType.RiggedMultifractal;
+			vertexHeightNoise.deformity = 1000.0f;
+			vertexHeightNoise.seed = 5906;
+			vertexHeightNoise.frequency = 2.0f;
+			vertexHeightNoise.lacunarity = 2.5f;
+			vertexHeightNoise.persistance = 0.5f;
+			vertexHeightNoise.octaves = 4;
+			vertexHeightNoise.mode = LibNoise.Unity.QualityMode.Low;
+			vertexHeightNoise.requirements = PQS.ModiferRequirements.MeshColorChannel;
+			vertexHeightNoise.modEnabled = true;
+			vertexHeightNoise.order = 22;
+
+			// Create the material direction
+			mod = new GameObject("_Material_SunLight");
+			mod.transform.parent = controllerRoot.gameObject.transform;
+			PQSMod_MaterialSetDirection materialSetDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
+			materialSetDirection.sphere = body.pqsVersion;
+			materialSetDirection.valueName = "_sunLightDirection";
+			materialSetDirection.requirements = PQS.ModiferRequirements.Default;
+			materialSetDirection.modEnabled = true;
+			materialSetDirection.order = 100;
+
+			// Crete the quad mesh colliders
+			mod = new GameObject("QuadMeshColliders");
+			mod.transform.parent = controllerRoot.gameObject.transform;
+			PQSMod_QuadMeshColliders quadMeshColliders = mod.AddComponent<PQSMod_QuadMeshColliders>();
+			quadMeshColliders.sphere = body.pqsVersion;
+			quadMeshColliders.maxLevelOffset = 0;
+			quadMeshColliders.physicsMaterial = new PhysicMaterial();
+			quadMeshColliders.physicsMaterial.name = "Ground";
+			quadMeshColliders.physicsMaterial.dynamicFriction = 0.6f;
+			quadMeshColliders.physicsMaterial.staticFriction = 0.8f;
+			quadMeshColliders.physicsMaterial.bounciness = 0.0f;
+			quadMeshColliders.physicsMaterial.frictionDirection2 = Vector3.zero;
+			quadMeshColliders.physicsMaterial.dynamicFriction2 = 0.0f;
+			quadMeshColliders.physicsMaterial.staticFriction2 = 0.0f;
+			quadMeshColliders.physicsMaterial.frictionCombine = PhysicMaterialCombine.Maximum;
+			quadMeshColliders.physicsMaterial.bounceCombine = PhysicMaterialCombine.Average;
+			quadMeshColliders.requirements = PQS.ModiferRequirements.Default;
+			quadMeshColliders.modEnabled = true;
+			quadMeshColliders.order = 100;
+
+			// Create the simplex height absolute
+			mod = new GameObject("_FineDetail");
+			mod.transform.parent = controllerRoot.gameObject.transform;
+			PQSMod_VertexSimplexHeightAbsolute vertexSimplexHeightAbsolute = mod.AddComponent<PQSMod_VertexSimplexHeightAbsolute>();
+			vertexSimplexHeightAbsolute.sphere = body.pqsVersion;
+			vertexSimplexHeightAbsolute.seed = 4234;
+			vertexSimplexHeightAbsolute.deformity = 400.0;
+			vertexSimplexHeightAbsolute.octaves = 6.0;
+			vertexSimplexHeightAbsolute.persistence = 0.5;
+			vertexSimplexHeightAbsolute.frequency = 18.0;
+			vertexSimplexHeightAbsolute.requirements = PQS.ModiferRequirements.Default;
+			vertexSimplexHeightAbsolute.modEnabled = true;
+			vertexSimplexHeightAbsolute.order = 30;
+
+			#endregion
+
+			#region PSystemBody.scaledVersion generation
+			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
+			body.scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
+			body.scaledVersion.name = "Kopernicus";
+			//body.scaledVersion = new GameObject("Kopernicus");
+
+			// Create the mesh filter for the new world (eventually generate mesh from scratch or clone Jool and modify)
+			MeshFilter meshFilter = body.scaledVersion.GetComponent<MeshFilter> ();
+			Mesh scaledMesh = new Mesh();
+			KopernicusUtility.CopyMesh(Dres.scaledVersion.GetComponent<MeshFilter>().sharedMesh, scaledMesh);
+			meshFilter.mesh = scaledMesh;
+
+			// Create the mesh renderer for the scaled version
+			/*MeshRenderer meshRenderer   = body.scaledVersion.AddComponent<MeshRenderer> ();
+			meshRenderer.materials      = Dres.scaledVersion.GetComponent<MeshRenderer> ().sharedMaterials;
+
+			// Create the sphere collider
+			/*SphereCollider collider = body.scaledVersion.AddComponent<SphereCollider> ();
+			collider.center         = Vector3.zero;
+			collider.radius         = 1000.0f;*/
+
+			// Create the ScaledSpaceFader to fade the orbit out where we view it (maybe?)
+			//ScaledSpaceFader fader = body.scaledVersion.AddComponent<ScaledSpaceFader> ();
+			ScaledSpaceFader fader = body.scaledVersion.GetComponent<ScaledSpaceFader> ();
+			fader.celestialBody    = body.celestialBody;
+			fader.fadeStart        = 95000.0f;
+			fader.fadeEnd          = 100000.0f;
+			fader.floatName        = "_Opacity";
+
+#endregion
 
 			// Return the new body
 			return body;

@@ -68,12 +68,6 @@ namespace Kopernicus
 			GameObject systemClone = (GameObject) UnityEngine.Object.Instantiate (PSystemManager.Instance.systemPrefab.rootBody.gameObject);
 			system.rootBody = systemClone.GetComponent<PSystemBody> ();
 
-			/*
-			 * [LOG 08:53:16.969] [Kopernicus]: KopernicusInjector.Awake(): Begin
-			 * [LOG 08:53:16.971] [Kopernicus]: KopernicusSystemSource.GenerateSystem(): Where does the PQS controller come from???
-			 * [LOG 08:53:16.973] [Kopernicus]: KopernicusInjector.Awake(): End
-			 */
-
 			// Create "Kopernicus"
 			// Note that due to the way AddBody works, this is a function with side effects
 			// rather than something that returns a planet. Perhaps it should be named differently

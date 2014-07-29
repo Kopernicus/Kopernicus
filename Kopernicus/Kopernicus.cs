@@ -79,34 +79,11 @@ namespace Kopernicus
 		{
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): Begin");
 
-			Debug.Log ("---------- Local Space Dump -----------");
-			GameObject localSpace = GameObject.Find (PSystemManager.Instance.localSpaceName);
-			if (localSpace) 
-			{
-				GameObject Eeloo = localSpace.transform.FindChild("Eeloo").gameObject;
-				GameObject Dres = localSpace.transform.FindChild("Dres").gameObject;
-				GameObject Duna = localSpace.transform.FindChild("Duna").gameObject;
-				GameObject Eve = localSpace.transform.FindChild("Eve").gameObject;
-				GameObject Kopernicus = localSpace.transform.FindChild("Kopernicus").gameObject;
-
-				// Create the PQS controller for Kopernicus
-				GameObject pqs = new GameObject();
-				pqs.transform.parent = Kopernicus.transform;
-				Kopernicus.GetComponent<CelestialBody>().pqsController = pqs.AddComponent<PQS>();
-
-				// ADD ALL THE MODS!!! - EVENTUALLY
-
-				// Get the PQS component of Eeloo for exploratory purposes
-				KopernicusUtility.DumpPQS(Eeloo.GetComponentInChildren<PQS>());
-				KopernicusUtility.DumpPQS(Dres.GetComponentInChildren<PQS>());
-				KopernicusUtility.DumpPQS(Duna.GetComponentInChildren<PQS>());
-				KopernicusUtility.DumpPQS(Eve.GetComponentInChildren<PQS>());
-
-				// Walk Eeloo local space
-				KopernicusUtility.GameObjectWalk(Eeloo);
+			Transform Kopernicus = GameObject.Find (PSystemManager.Instance.localSpaceName).transform.FindChild ("Kopernicus");
+			if (Kopernicus != null) {
+				KopernicusUtility.GameObjectWalk(Kopernicus.gameObject);
 			}
-			Debug.Log ("-----------------------------------------");
-			
+
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
 		}
 
