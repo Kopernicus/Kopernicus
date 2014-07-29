@@ -92,6 +92,14 @@ namespace Kopernicus
 			return null;
 		}
 
+		/**
+		 * Returns the local space object
+		 */
+		public static GameObject GetLocalSpace ()
+		{
+			return GameObject.Find (PSystemManager.Instance.localSpaceName);
+		}
+
 		// Print out a tree containing all the objects in the game
 		public static void PerformObjectDump()
 		{
@@ -189,7 +197,7 @@ namespace Kopernicus
 			Debug.Log ("radiusMin: " + s.radiusMin);
 			Debug.Log ("circumference: " + s.circumference);
 			Debug.Log ("maxFrameEnd: " + s.maxFrameEnd);
-			Debug.Log ("normalUpdateList: " + s.normalUpdateList.Count);
+			//Debug.Log ("normalUpdateList: " + s.normalUpdateList.Count);
 			Debug.Log ("quadAllowBuild: " + s.quadAllowBuild);
 			Debug.Log ("isSubdivisionEnabled: " + s.isSubdivisionEnabled);
 			Debug.Log ("visibleRadius: " + s.visibleRadius);
@@ -229,10 +237,16 @@ namespace Kopernicus
 			Debug.Log ("maxFrametime: " + s.maxFrameTime);
 			Debug.Log ("meshCastShadows: " + s.meshCastShadows);
 			Debug.Log ("meshReceiveShadows: " + s.meshRecieveShadows);
-			Debug.Log ("surfaceMaterial: " + s.surfaceMaterial.name);
-			Debug.Log ("surfaceMaterialShader: " + s.surfaceMaterial.shader.name);
-			Debug.Log ("fallbackMaterial: " + s.fallbackMaterial.name);
-			Debug.Log ("fallbackMaterialShader: " + s.fallbackMaterial.shader.name);
+			if (s.surfaceMaterial != null) 
+			{
+				Debug.Log ("surfaceMaterial: " + s.surfaceMaterial.name);
+				Debug.Log ("surfaceMaterialShader: " + s.surfaceMaterial.shader.name);
+			}
+			if (s.fallbackMaterial != null) 
+			{
+				Debug.Log ("fallbackMaterial: " + s.fallbackMaterial.name);
+				Debug.Log ("fallbackMaterialShader: " + s.fallbackMaterial.shader.name);
+			}
 			Debug.Log ("frameTimeDelta: " + s.frameTimeDelta);
 			Debug.Log ("isalive: " + s.isAlive);
 			Debug.Log ("isactive: " + s.isActive);
