@@ -69,7 +69,9 @@ namespace Kopernicus
 			body.celestialBody.GeeASL = 0.33; // This is g, not acceleration due to g, it turns out.
 			body.celestialBody.gravParameter = 398600.0; // guessing this is the Standard gravitational parameter, i.e. mu
 			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
-			
+			body.celestialBody.rotationPeriod = 34800.0;
+			body.celestialBody.rotates = true;
+
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
 			body.celestialBody.isHomeWorld = false;
 			//body.celestialBody.gMagnitudeAtCenter = prototype.celestialBody.gMagnitudeAtCenter; // function unknown at this time
@@ -326,15 +328,21 @@ namespace Kopernicus
 
 			#region PSystemBody.scaledVersion generation
 			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
+			//body.scaledVersion = new GameObject("Kopernicus");
 			body.scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
 			body.scaledVersion.name = "Kopernicus";
-			//body.scaledVersion = new GameObject("Kopernicus");
+
+			// Make sure the scaled version cooresponds to the size of the body
+			// Improvement upon NathanKell's method.  Turns out that the localScale is directly related
+			// to the planet size.  Jool's local scale is {1,1,1}, Kerbin's is {0.1,0.1,0.1}.  Jool's 
+			// radius is 6000 km, Kerbin's is 600 km.  Notice the relation?  Turns out all the planets
+			// share the same scaled version mesh.  The scale is just different.
+			float scale = (float) body.celestialBody.Radius / 6000000.0f;
+			body.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
 			// Scale the mesh to the new body size
-			MeshFilter meshFilter = body.scaledVersion.GetComponent<MeshFilter> ();
-			Mesh scaledMesh = new Mesh();
-			KopernicusUtility.CopyMesh(Dres.scaledVersion.GetComponent<MeshFilter>().sharedMesh, scaledMesh);
-			meshFilter.mesh = scaledMesh;
+			/*MeshFilter meshFilter = body.scaledVersion.AddComponent<MeshFilter> ();
+			meshFilter.sharedMesh = Dres.scaledVersion.GetComponent<MeshFilter>().sharedMesh;*/
 
 			// Load and compress the color texture for the custom planet
 			Texture2D colorTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
