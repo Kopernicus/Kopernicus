@@ -67,6 +67,32 @@ namespace Kopernicus
 		}
 
 		/**
+		 * Recursively searches for a component in the game object heirarchy
+		 **/
+		public static T RecursivelyGetComponent<T> (Transform transform) where T : Component
+		{
+			// Do we have this component?
+			T component = transform.GetComponent<T> ();
+
+			// If we didn't find the component, loop through children
+			if (component == null) 
+			{
+				foreach(Transform child in transform)
+				{
+					// Is it in the child?
+					component = RecursivelyGetComponent<T>(child);
+
+					// If we found it, break out
+					if(component != null) 
+						break;
+				}
+			}
+
+			// Return the component we found
+			return component;
+		}
+
+		/**
 		 * Recursively searches for a named PSystemBody
 		 *
 		 * @param body Parent body to begin search in

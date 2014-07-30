@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 using UnityEngine;
 
@@ -39,6 +40,12 @@ namespace Kopernicus
 	[KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
 	public class KopernicusInjector : MonoBehaviour 
 	{
+		// are we searching for the archives?
+		public bool searchForArchives = false;
+
+		// clone of the system prefab
+		public PSystem systemPrefab = null;
+
 		/**
 		 * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
 		 * it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
@@ -65,6 +72,10 @@ namespace Kopernicus
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
 			PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();
 
+			// SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
+			RDArchivesController archivesController = KopernicusUtility.RecursivelyGetComponent<RDArchivesController> (AssetBase.RnDTechTree.GetRDScreenPrefab ().transform);
+			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
+
 			// Register a handler for the PSystemReady event.  Called after spawning the system is successful.
 			PSystemManager.Instance.OnPSystemReady.Add (OnPSystemReady);
 
@@ -79,16 +90,19 @@ namespace Kopernicus
 		{
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): Begin");
 
+			// Run the PQS mod alteration
 			KopernicusPlanetSource.AlterPQSMods ("Kopernicus");
+
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
 		}
 
-		public void OnLevelWasLoaded(int level)
+		/*public void OnLevelWasLoaded(int level)
 		{
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnLevelWasLoaded(): Begin");
-			
+
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnLevelWasLoaded(): End");
-		}
+		}*/
 	}
+
 } //namespace
 

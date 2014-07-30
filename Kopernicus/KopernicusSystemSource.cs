@@ -37,7 +37,30 @@ namespace Kopernicus
 	{
 		// System name
 		public const String systemName = "Kopernican System";
-		
+
+		// This function generates a duplicate of a PSystem
+		public static PSystem DuplicateSystem(PSystem originalSystem)
+		{	
+			// Create a new planetary system object
+			GameObject gameObject = new GameObject (originalSystem.systemName);
+			UnityEngine.Object.DontDestroyOnLoad (gameObject);
+			PSystem system = gameObject.AddComponent<PSystem> ();
+			
+			// Set the planetary system defaults (pulled from PSystemManager.Instance.systemPrefab)
+			system.systemName          = originalSystem.systemName;
+			system.systemTimeScale     = 1.0; 
+			system.systemScale         = 1.0;
+			system.mainToolbarSelected = 2;   // initial value in stock systemPrefab. Unknown significance.
+
+			// Clone the root body of the system (we could set it up from scratch, but we do need the pqsVersion entries, which this DOES NOT copy
+			GameObject rootBody = (GameObject) UnityEngine.Object.Instantiate (originalSystem.rootBody.gameObject);
+			UnityEngine.Object.DontDestroyOnLoad (rootBody);
+			system.rootBody = rootBody.GetComponent<PSystemBody> ();
+
+			// Return the new system
+			return system;
+		}
+
 		// This function returns a PSystem that will replace the stock systemPrefab
 		// with one of the modder's design. KSP then loads the replacement planetary
 		// system just as it would have loaded the stock system.
@@ -51,38 +74,14 @@ namespace Kopernicus
 				return null;
 			}
 			
-			// Create a new planetary system object
-			GameObject gameObject = new GameObject (systemName);
-			PSystem system = gameObject.AddComponent<PSystem> ();
-			
-			// Set the planetary system defaults (pulled from PSystemManager.Instance.systemPrefab)
-			system.systemName          = systemName;
-			system.systemTimeScale     = 1.0; 
-			system.systemScale         = 1.0;
-			system.mainToolbarSelected = 2;   // initial value in stock systemPrefab. Unknown significance.
-			
-			// ---------- TEMPORARY ------------
-			// Clone the existing root body.  This tests that there are no magic dependencies from within the tree to the outside.  The
-			// prefab we return from this function has no links back into whatever KSP itself loads, proving that we can actually load
-			// a purely custom solar system
-			GameObject systemClone = (GameObject) UnityEngine.Object.Instantiate (PSystemManager.Instance.systemPrefab.rootBody.gameObject);
-			system.rootBody = systemClone.GetComponent<PSystemBody> ();
+			// Setup the template solar system object from the original game
+			PSystem system = DuplicateSystem (PSystemManager.Instance.systemPrefab);
 
 			// Create "Kopernicus"
 			// Note that due to the way AddBody works, this is a function with side effects
 			// rather than something that returns a planet. Perhaps it should be named differently
 			// from the GenerateSystem method to emphasize this difference in usage??
 			KopernicusPlanetSource.GeneratePlanet (system);
-
-			// Try cloning a planet
-			/*
-			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
-			Debug.Log ("Kopernicus Making a Pol to orbit Dres, because that is how we roll."); 
-			Orbit neworbit = new Orbit (90, 0, 500000, 0, 0, 0, 0, Dres.celestialBody);
-			Debug.Log ("..Orbit made.");
-			StockPlanetSource.GenerateSystemBody (system,Dres,"Pol","Lop", neworbit);
-			Debug.Log ("..KopernicusFinished making a Pol.");
-			*/
 			
 			// Return the newly created planetary system
 			return system;

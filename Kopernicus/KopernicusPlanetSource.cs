@@ -46,22 +46,27 @@ namespace Kopernicus
 		public static PSystemBody GeneratePlanet (PSystem system, Orbit orbit = null) {
 			return GenerateSystemBody (system, system.rootBody, orbit);
 		}
-		public static void AlterPQSMods(string planetName) {
-			PQS p = KopernicusUtility.GetLocalSpace ().transform.FindChild (planetName).GetComponentInChildren<PQS>();
-			p.radius = 300000;
+		public static void AlterPQSMods(string planetName) 
+		{
+			CelestialBody cb = KopernicusUtility.GetLocalSpace ().transform.FindChild (planetName).GetComponent<CelestialBody> ();
+			PQS p = cb.pqsController;
+			p.radius = cb.Radius;
+			p.maxQuadLenghtsPerFrame = 0.001f;
 
 			// Surface color map
 			GameObject mod = new GameObject("_LandClass");
+			UnityEngine.Object.DontDestroyOnLoad (mod);
 			mod.transform.parent = p.gameObject.transform;
-			PQSMod_VertexColorMapBlend colorMap = mod.AddComponent<PQSMod_VertexColorMapBlend>();
+			PQSMod_VertexColorMap colorMap = mod.AddComponent<PQSMod_VertexColorMap>();
 			colorMap.sphere = p;
-			colorMap.blend = 1.0f;
 			colorMap.order = 500;
 			colorMap.modEnabled = true;
 
 			// Decompress and load the color
 			Texture2D map = new Texture2D(4, 4, TextureFormat.RGB24, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoColor.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsColor.png"));
+			p.surfaceMaterial.mainTexture = map;
+
 			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
 			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
 			UnityEngine.Object.DestroyImmediate(map);
@@ -69,7 +74,8 @@ namespace Kopernicus
 			// Rewrite the terrain
 			PQSMod_VertexHeightMap vertexHeightMap = p.GetComponentInChildren<PQSMod_VertexHeightMap> ();
 			vertexHeightMap.sphere = p;
-			vertexHeightMap.heightMapDeformity = 3000.0;
+			vertexHeightMap.heightMapDeformity = 10000.0;
+			//vertexHeightMap.heightMapDeformity = 29457.0;
 			vertexHeightMap.heightMapOffset = 0.0;
 			vertexHeightMap.scaleDeformityByRadius = false;
 			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
@@ -78,10 +84,58 @@ namespace Kopernicus
 
 			// Load the heightmap for this planet
 			map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoHeight.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsHeight.png"));
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
 			UnityEngine.Object.DestroyImmediate(map);
+
+			// Maker some purrty craters
+			mod = new GameObject ("_Craters");
+			UnityEngine.Object.DontDestroyOnLoad (mod);
+			mod.transform.parent = p.gameObject.transform;
+			PQSMod_VoronoiCraters craters = mod.AddComponent<PQSMod_VoronoiCraters> ();
+			craters.sphere = p;
+			craters.modEnabled = true;
+			craters.order = 250;
+			craters.deformation = 125;
+			craters.voronoiSeed = 824;
+			craters.voronoiDisplacement = 0;
+			craters.voronoiFrequency = 5;
+			craters.simplexSeed = 123123;
+			craters.simplexOctaves = 3;
+			craters.simplexPersistence = 0.5;
+			craters.jitter = 0.1f;
+			craters.jitterHeight = 3;
+			craters.craterColourRamp = new Gradient ();
+			craters.rFactor = 1;
+			craters.rOffset = 1;
+			craters.colorOpacity = 0.2f;
+
+			// Crater curve keyframes
+			List<Keyframe> keyframes = new List<Keyframe> ();
+			keyframes.Add (new Keyframe (-0.9982381f, - 0.7411783f));
+			keyframes.Add (new Keyframe (-0.9332262f, - 0.7678316f));
+			keyframes.Add (new Keyframe (-0.8990405f, -0.7433339f));
+			keyframes.Add (new Keyframe (-0.7445966f, -0.8581167f));
+			keyframes.Add (new Keyframe (-0.4499771f, -0.1392395f));
+			keyframes.Add (new Keyframe (-0.4015177f, 0.2551735f));
+			keyframes.Add (new Keyframe (-0.2297457f, 0.002857953f));
+			keyframes.Add (new Keyframe (0.2724952f, 0.00423781f));
+			keyframes.Add (new Keyframe (0.9998434f, -0.004090764f));
+			craters.craterCurve = new AnimationCurve(keyframes.ToArray());
+
+			// Jitter curve keyframes
+			keyframes.Clear();
+			keyframes.Add (new Keyframe (-1.000701f, 0.4278412f));
+			keyframes.Add (new Keyframe (-0.7884969f, 0.09487452f));
+			keyframes.Add (new Keyframe (-0.6091803f, 0.072019f));
+            keyframes.Add (new Keyframe (-0.3930514f, 0.3903495f));
+  	        keyframes.Add (new Keyframe (-0.3584836f, 0.8643304f));
+            keyframes.Add (new Keyframe (-0.2988068f, 0.002564805f));
+			keyframes.Add (new Keyframe (0.9970253f, 0.003401639f));
+			craters.jitterCurve = new AnimationCurve (keyframes.ToArray ());
+
+			// Commit the changes
 			p.RebuildSphere ();
 
 		}
@@ -105,12 +159,16 @@ namespace Kopernicus
 			// and position in the planetary system, etc.
 			body.celestialBody.bodyName = "Kopernicus";
 			body.celestialBody.bodyDescription = "Merciful Kod, this thing just APPEARED! And unlike last time, it wasn't bird droppings on the telescope.";
-			body.celestialBody.Radius = 300000;
-			body.celestialBody.GeeASL = 0.33; // This is g, not acceleration due to g, it turns out.
-			body.celestialBody.gravParameter = 398600.0; // guessing this is the Standard gravitational parameter, i.e. mu
+			body.celestialBody.Radius = 320000;
+			//body.celestialBody.Radius = 3380100;
+			body.celestialBody.GeeASL = 0.3; // This is g, not acceleration due to g, it turns out.
+			//body.celestialBody.gravParameter = 398600.0; // guessing this is the Standard gravitational parameter, i.e. mu
+			//body.celestialBody.Mass = 6.4185E+23;
+			body.celestialBody.Mass = 4.5154812E+21;
 			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
-			body.celestialBody.rotationPeriod = 34800.0;
+			body.celestialBody.rotationPeriod = 88642.6848;
 			body.celestialBody.rotates = true;
+			body.celestialBody.BiomeMap = Dres.celestialBody.BiomeMap;
 
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
 			body.celestialBody.isHomeWorld = false;
@@ -370,6 +428,7 @@ namespace Kopernicus
 			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
 			//body.scaledVersion = new GameObject("Kopernicus");
 			body.scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
+			UnityEngine.Object.DontDestroyOnLoad (body.scaledVersion);
 			body.scaledVersion.name = "Kopernicus";
 
 			// Make sure the scaled version cooresponds to the size of the body
@@ -386,18 +445,18 @@ namespace Kopernicus
 
 			// Load and compress the color texture for the custom planet
 			Texture2D colorTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
-			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoColor.png"));
-			colorTexture.Compress(true);
-			colorTexture.Apply(true, true);
+			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsColor.png"));
+			//colorTexture.Compress(true);
+			//colorTexture.Apply(true, true);
 
 			// Load and compress the color texture for the custom planet
 			Texture2D bumpTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
-			bumpTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/Callisto_NRM.png"));
-			bumpTexture.Compress(true);
-			bumpTexture.Apply(true, true);
+			bumpTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/Mars_NRM.png"));
+			//bumpTexture.Compress(true);
+			//bumpTexture.Apply(true, true);
 
 			// Write a new material for this texture
-			body.scaledVersion.renderer.material = new Material(Dres.scaledVersion.renderer.material.shader);
+			body.scaledVersion.renderer.material = new Material(Dres.scaledVersion.renderer.material);
 			body.scaledVersion.renderer.material.SetTexture("_MainTex", colorTexture);
 			body.scaledVersion.renderer.material.SetTexture("_BumpMap", bumpTexture);
 
@@ -485,8 +544,6 @@ namespace Kopernicus
 				body.orbitDriver.orbit = prototype.orbitDriver.orbit; // probably won't work if not going into a cloned systemprefab Sun
 			else
 				body.orbitDriver.orbit = orbit;
-
- 
 
 			body.orbitDriver.celestialBody = body.celestialBody;
 			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
