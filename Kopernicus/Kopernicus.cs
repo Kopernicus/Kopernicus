@@ -91,7 +91,7 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): Begin");
 
 			// Run the PQS mod alteration
-			KopernicusPlanetSource.AlterPQSMods ("Kopernicus");
+			KopernicusPlanetSource.ActivateSystemBody("Kopernicus");
 
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
 		}
