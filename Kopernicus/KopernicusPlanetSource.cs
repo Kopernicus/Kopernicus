@@ -46,6 +46,46 @@ namespace Kopernicus
 		public static PSystemBody GeneratePlanet (PSystem system, Orbit orbit = null) {
 			return GenerateSystemBody (system, system.rootBody, orbit);
 		}
+		public static void AlterPQSMods(string planetName) {
+			PQS p = KopernicusUtility.GetLocalSpace ().transform.FindChild (planetName).GetComponentInChildren<PQS>();
+			p.radius = 300000;
+
+			// Surface color map
+			GameObject mod = new GameObject("_LandClass");
+			mod.transform.parent = p.gameObject.transform;
+			PQSMod_VertexColorMapBlend colorMap = mod.AddComponent<PQSMod_VertexColorMapBlend>();
+			colorMap.sphere = p;
+			colorMap.blend = 1.0f;
+			colorMap.order = 500;
+			colorMap.modEnabled = true;
+
+			// Decompress and load the color
+			Texture2D map = new Texture2D(4, 4, TextureFormat.RGB24, false);
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoColor.png"));
+			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
+			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
+			UnityEngine.Object.DestroyImmediate(map);
+
+			// Rewrite the terrain
+			PQSMod_VertexHeightMap vertexHeightMap = p.GetComponentInChildren<PQSMod_VertexHeightMap> ();
+			vertexHeightMap.sphere = p;
+			vertexHeightMap.heightMapDeformity = 3000.0;
+			vertexHeightMap.heightMapOffset = 0.0;
+			vertexHeightMap.scaleDeformityByRadius = false;
+			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
+			vertexHeightMap.modEnabled = true;
+			vertexHeightMap.order = 20;
+
+			// Load the heightmap for this planet
+			map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/CallistoHeight.png"));
+			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
+			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
+			UnityEngine.Object.DestroyImmediate(map);
+			p.RebuildSphere ();
+
+		}
+
 		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, Orbit orbit = null) 
 		{
 			// Use Dres as the template to clone ( :( )
