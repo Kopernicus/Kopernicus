@@ -40,12 +40,6 @@ namespace Kopernicus
 	[KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
 	public class KopernicusInjector : MonoBehaviour 
 	{
-		// are we searching for the archives?
-		public bool searchForArchives = false;
-
-		// clone of the system prefab
-		public PSystem systemPrefab = null;
-
 		/**
 		 * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
 		 * it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
