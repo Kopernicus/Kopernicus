@@ -120,6 +120,8 @@ namespace Kopernicus
 			body.pqsVersion.radius = body.celestialBody.Radius;
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
 
+			Debug.Log("Local Space shader: " + body.pqsVersion.surfaceMaterial.shader.name);
+
 			// Create the PQS controller for Kopernicus
 			/*GameObject controllerRoot = new GameObject("Kopernicus");
 			UnityEngine.Object.DontDestroyOnLoad(controllerRoot);
@@ -430,14 +432,12 @@ namespace Kopernicus
 			UnityEngine.Object.DestroyImmediate(map);
 			#endregion
 
-
 			#region PSystemBody.scaledVersion generation
 			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
-			//body.scaledVersion = new GameObject("Kopernicus");
-			body.scaledVersion = (GameObject) UnityEngine.Object.Instantiate(Dres.scaledVersion);
+			body.scaledVersion = new GameObject("Kopernicus");
+			body.scaledVersion.layer = Dres.scaledVersion.layer;
 			UnityEngine.Object.DontDestroyOnLoad (body.scaledVersion);
 			body.scaledVersion.SetActive(false);
-			body.scaledVersion.name = "Kopernicus";
 
 			// Make sure the scaled version cooresponds to the size of the body
 			// Improvement upon NathanKell's method.  Turns out that the localScale is directly related
@@ -448,34 +448,34 @@ namespace Kopernicus
 			body.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
 			// Scale the mesh to the new body size
-			/*MeshFilter meshFilter = body.scaledVersion.AddComponent<MeshFilter> ();
-			meshFilter.sharedMesh = Dres.scaledVersion.GetComponent<MeshFilter>().sharedMesh;*/
+			MeshFilter meshFilter = body.scaledVersion.AddComponent<MeshFilter> ();
+			meshFilter.sharedMesh = Dres.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 
 			// Load and compress the color texture for the custom planet
 			Texture2D colorTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
 			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsColor.png"));
-			//colorTexture.Compress(true);
-			//colorTexture.Apply(true, true);
+			colorTexture.Compress(true);
+			colorTexture.Apply(true, true);
 
 			// Load and compress the color texture for the custom planet
 			Texture2D bumpTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
 			bumpTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/Mars_NRM.png"));
-			//bumpTexture.Compress(true);
-			//bumpTexture.Apply(true, true);
+			bumpTexture.Compress(true);
+			bumpTexture.Apply(true, true);
 
 			// Write a new material for this texture
-			body.scaledVersion.renderer.material = new Material(Dres.scaledVersion.renderer.material);
-			body.scaledVersion.renderer.material.SetTexture("_MainTex", colorTexture);
-			body.scaledVersion.renderer.material.SetTexture("_BumpMap", bumpTexture);
+			MeshRenderer renderer = body.scaledVersion.AddComponent<MeshRenderer>();
+			renderer.material = new Material(Dres.scaledVersion.renderer.material);
+			renderer.material.SetTexture("_MainTex", colorTexture);
+			renderer.material.SetTexture("_BumpMap", bumpTexture);
 
 			// Create the sphere collider
-			/*SphereCollider collider = body.scaledVersion.AddComponent<SphereCollider> ();
+			SphereCollider collider = body.scaledVersion.AddComponent<SphereCollider> ();
 			collider.center         = Vector3.zero;
-			collider.radius         = 1000.0f;*/
+			collider.radius         = 1000.0f;
 
 			// Create the ScaledSpaceFader to fade the orbit out where we view it (maybe?)
-			//ScaledSpaceFader fader = body.scaledVersion.AddComponent<ScaledSpaceFader> ();
-			ScaledSpaceFader fader = body.scaledVersion.GetComponent<ScaledSpaceFader> ();
+			ScaledSpaceFader fader = body.scaledVersion.AddComponent<ScaledSpaceFader> ();
 			fader.celestialBody    = body.celestialBody;
 			fader.fadeStart        = 95000.0f;
 			fader.fadeEnd          = 100000.0f;

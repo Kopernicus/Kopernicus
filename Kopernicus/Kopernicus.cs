@@ -70,8 +70,10 @@ namespace Kopernicus
 			RDArchivesController archivesController = KopernicusUtility.RecursivelyGetComponent<RDArchivesController> (AssetBase.RnDTechTree.GetRDScreenPrefab ().transform);
 			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
-			// Register a handler for the PSystemReady event.  Called after spawning the system is successful.
+			// Register hanlders for important game events.
 			PSystemManager.Instance.OnPSystemReady.Add (OnPSystemReady);
+			GameEvents.onGUIRnDComplexSpawn.Add (OnRnDComplexSpawn);
+			GameEvents.onGUIRnDComplexDespawn.Add (OnRnDComplexDespawn);
 
 			// Done executing the awake function
 			Debug.Log ("[Kopernicus]: KopernicusInjector.Awake(): End");
@@ -90,12 +92,26 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
 		}
 
-		/*public void OnLevelWasLoaded(int level)
+		/**
+		 * Well ain't this a bitch - Since we can't generate prefab objects at runtime, the scaled version in the prefab is 
+		 * technically live.  This means it will end up getting rendered.  This is bad - it just randomly pops around the view.  
+		 * We disable it to prevent this problem and then manually enable the scaled space verison later.  However, when the 
+		 * RnD center clones scaledVersion internally for the icons, it gets a disabled object.  We have to enable
+		 * scaledVersion in the prefab only while in the RnD center.  This is pretty hacky, but I don't see a way
+		 * around it unless we can remove an arbitrary game object from the render queue in such a way that Instantiate 
+		 * doesn't copy it
+		 **/
+		public void OnRnDComplexSpawn()
 		{
-			Debug.Log ("[Kopernicus]: KopernicusInjector.OnLevelWasLoaded(): Begin");
+			PSystemBody body = KopernicusUtility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Kopernicus");
+			body.scaledVersion.SetActive (true);
+		}
 
-			Debug.Log ("[Kopernicus]: KopernicusInjector.OnLevelWasLoaded(): End");
-		}*/
+		public void OnRnDComplexDespawn()
+		{
+			PSystemBody body = KopernicusUtility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Kopernicus");
+			body.scaledVersion.SetActive (false);
+		}
 	}
 
 } //namespace
