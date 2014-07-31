@@ -79,6 +79,16 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: KopernicusInjector.Awake(): End");
 		}
 
+		public void Update()
+		{
+			if( Input.GetKeyDown( KeyCode.P ) && Input.GetKey( KeyCode.LeftControl ) )
+			{
+				Debug.Log("--------- Live PQS ------------");
+				KopernicusUtility.DumpPQS(FlightGlobals.currentMainBody.pqsController);
+				Debug.Log("-------------------------------");
+			}
+		}
+
 		/**
 		 *  OnPSystemReady() called when the PSystem is loaded.  Somehow get a handle?
 		 **/

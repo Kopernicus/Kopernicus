@@ -58,6 +58,11 @@ namespace Kopernicus
 			{
 				body.pqsController.gameObject.SetActive (true);
 				body.pqsController.RebuildSphere ();
+
+				// Dump PQS of Kerbin post init
+				Debug.Log("--------- Kopernicus Post-Init PQS ------------");
+				KopernicusUtility.DumpPQS(body.pqsController);
+				Debug.Log("-----------------------------------------------");
 			}
 
 			// Activate the scaled space body
@@ -114,34 +119,54 @@ namespace Kopernicus
 
 			#region PSystemBody.pqsVersion generation
 
-			// Establish our PQS as a clone of Dres (disable so it behaves kind of like a prefab) (creating our own is invisible? ground works 
-			// though... i'm saying material problem).  Problem the same reason i can't make my own scaled version....
-			body.pqsVersion = UnityEngine.Object.Instantiate(Dres.pqsVersion) as PQS;
-			UnityEngine.Object.DontDestroyOnLoad(body.pqsVersion);
-			body.pqsVersion.gameObject.SetActive(false);
+			// Dump the raw PQS of Dres
+			Debug.Log("--------- Dres Prefab PQS ------------");
+			KopernicusUtility.DumpPQS(Dres.pqsVersion);
+			Debug.Log("--------------------------------------");
 
-			// Set some basic information about the PQS
-			body.pqsVersion.name = "Kopernicus";
-			body.pqsVersion.radius = body.celestialBody.Radius;
+			// Proof that our issue is just a PQS config problem.  We can instantiate Dres's PQS, delete all the PQS mods,
+			// and add our custom ones.  This works, but generating our own from scratch doesn't quite work yet.
+			GameObject controllerRoot              = UnityEngine.Object.Instantiate(Dres.pqsVersion.gameObject) as GameObject;
+			body.pqsVersion                        = controllerRoot.GetComponent<PQS>();
+			body.pqsVersion.name                   = "Kopernicus";
+			body.pqsVersion.radius                 = body.celestialBody.Radius;
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
 
-			//Debug.Log("Local Space shader: " + body.pqsVersion.surfaceMaterial.shader.name);
+			// Delete all of the mods in the cloned PQS (to show we can bring up one from scratch)
+			foreach(Transform t in controllerRoot.transform)
+			{
+				t.parent = null;
+				UnityEngine.Object.Destroy(t);
+			}
+			
+			// TEMPORARIES
+			GameObject mod = null;
+			Texture2D map  = null;
 
 			// Create the PQS controller for Kopernicus
-			/*GameObject controllerRoot = new GameObject("Kopernicus");
+			//GameObject controllerRoot = new GameObject("Kopernicus");
 			UnityEngine.Object.DontDestroyOnLoad(controllerRoot);
 			controllerRoot.SetActive(false);
 
 			//controllerRoot.transform.parent = body.celestialBody.transform;
-			body.pqsVersion = controllerRoot.AddComponent<PQS>();
-			body.pqsVersion.surfaceMaterial = new Material(Dres.pqsVersion.surfaceMaterial);
+			//body.pqsVersion = controllerRoot.AddComponent<PQS>();
+			/*body.pqsVersion.surfaceMaterial = new Material(Dres.pqsVersion.surfaceMaterial);
 			body.pqsVersion.fallbackMaterial = new Material(Dres.pqsVersion.fallbackMaterial);
 			body.pqsVersion.radius = body.celestialBody.Radius;
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
 			body.pqsVersion.meshRecieveShadows = true;
+			body.pqsVersion.isSubdivisionEnabled = true;
+			body.pqsVersion.maxFrameTime = 0.075f;
+			body.pqsVersion.surfaceRelativeQuads = true;
+			body.pqsVersion.subdivisionThreshold = 1;
+			body.pqsVersion.collapseSeaLevelValue = 2.0f;*/
+
+			Debug.Log("--------- Kopernicus Pre-Init PQS ------------");
+			KopernicusUtility.DumpPQS(body.pqsVersion);
+			Debug.Log("-----------------------------------------------");
 
 			// Create the celestial body transform
-			GameObject mod = new GameObject("_CelestialBody");
+			mod = new GameObject("_CelestialBody");
 			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_CelestialBodyTransform celestialBodyTransform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
@@ -251,9 +276,10 @@ namespace Kopernicus
 			mod = new GameObject("_HeightNoise");
 			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
-			PQSMod_VertexHeightMap vertexHeightMap = mod.AddComponent<PQSMod_VertexHeightMap>();
+			PQSMod_VertexHeightMap vertexHeightMap = mod.gameObject.AddComponent<PQSMod_VertexHeightMap>();
 			vertexHeightMap.sphere = body.pqsVersion;
-			vertexHeightMap.heightMapDeformity = 3000.0;
+			//vertexHeightMap.heightMapDeformity = 29457.0;
+			vertexHeightMap.heightMapDeformity = 10000.0;
 			vertexHeightMap.heightMapOffset = 0.0;
 			vertexHeightMap.scaleDeformityByRadius = false;
 			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
@@ -261,7 +287,7 @@ namespace Kopernicus
 			vertexHeightMap.order = 20;
 
 			// Load the heightmap for this planet
-			Texture2D map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
+			map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
 			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsHeight.png"));
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
@@ -304,7 +330,7 @@ namespace Kopernicus
 			vertexHeightNoise.requirements = PQS.ModiferRequirements.MeshColorChannel;
 			vertexHeightNoise.modEnabled = true;
 			vertexHeightNoise.order = 22;
-			//body.pqsVersion.RebuildSphere();
+			//body.pqsVersion.RebuildSphere();*/
 
 			// Create the material direction
 			mod = new GameObject("_Material_SunLight");
@@ -357,8 +383,7 @@ namespace Kopernicus
 			//body.pqsVersion.RebuildSphere();*/
 
 			// Surface color map
-			GameObject mod = new GameObject("_LandClass");
-			//mod = new GameObject("_LandClass");
+			mod = new GameObject("_LandClass");
 			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = body.pqsVersion.gameObject.transform;
 			PQSMod_VertexColorMapBlend colorMap = mod.AddComponent<PQSMod_VertexColorMapBlend>();
@@ -368,75 +393,14 @@ namespace Kopernicus
 			colorMap.modEnabled = true;
 
 			// Decompress and load the color
-			Texture2D map = new Texture2D(4, 4, TextureFormat.RGB24, false);
-			//map = new Texture2D(4, 4, TextureFormat.RGB24, false);
+			map = new Texture2D(4, 4, TextureFormat.RGB24, false);
 			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsColor.png"));
 			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
 			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
 			UnityEngine.Object.DestroyImmediate(map);
 
-			// Maker some purrty craters
-			mod = new GameObject ("_Craters");
-			UnityEngine.Object.DontDestroyOnLoad (mod);
-			mod.transform.parent = body.pqsVersion.gameObject.transform;
-			PQSMod_VoronoiCraters craters = mod.AddComponent<PQSMod_VoronoiCraters> ();
-			craters.sphere = body.pqsVersion;
-			craters.modEnabled = true;
-			craters.order = 250;
-			craters.deformation = 125;
-			craters.voronoiSeed = 824;
-			craters.voronoiDisplacement = 0;
-			craters.voronoiFrequency = 5;
-			craters.simplexSeed = 123123;
-			craters.simplexOctaves = 3;
-			craters.simplexPersistence = 0.5;
-			craters.jitter = 0.1f;
-			craters.jitterHeight = 3;
-			craters.craterColourRamp = new Gradient ();
-			craters.rFactor = 1;
-			craters.rOffset = 1;
-			craters.colorOpacity = 0.2f;
-			
-			// Crater curve keyframes
-			List<Keyframe> keyframes = new List<Keyframe> ();
-			keyframes.Add (new Keyframe (-0.9982381f, - 0.7411783f));
-			keyframes.Add (new Keyframe (-0.9332262f, - 0.7678316f));
-			keyframes.Add (new Keyframe (-0.8990405f, -0.7433339f));
-			keyframes.Add (new Keyframe (-0.7445966f, -0.8581167f));
-			keyframes.Add (new Keyframe (-0.4499771f, -0.1392395f));
-			keyframes.Add (new Keyframe (-0.4015177f, 0.2551735f));
-			keyframes.Add (new Keyframe (-0.2297457f, 0.002857953f));
-			keyframes.Add (new Keyframe (0.2724952f, 0.00423781f));
-			keyframes.Add (new Keyframe (0.9998434f, -0.004090764f));
-			craters.craterCurve = new AnimationCurve(keyframes.ToArray());
-			
-			// Jitter curve keyframes
-			keyframes.Clear();
-			keyframes.Add (new Keyframe (-1.000701f, 0.4278412f));
-			keyframes.Add (new Keyframe (-0.7884969f, 0.09487452f));
-			keyframes.Add (new Keyframe (-0.6091803f, 0.072019f));
-			keyframes.Add (new Keyframe (-0.3930514f, 0.3903495f));
-			keyframes.Add (new Keyframe (-0.3584836f, 0.8643304f));
-			keyframes.Add (new Keyframe (-0.2988068f, 0.002564805f));
-			keyframes.Add (new Keyframe (0.9970253f, 0.003401639f));
-			craters.jitterCurve = new AnimationCurve (keyframes.ToArray ());
-
-			// --------- TEMPORARY ---------- REWRITE TERRAIN UNTIL WE FIGURE OUT HOW TO GET OUR PQS WORKING ------------
-			PQSMod_VertexHeightMap vertexHeightMap = KopernicusUtility.RecursivelyGetComponent<PQSMod_VertexHeightMap>(body.pqsVersion.transform);
-			vertexHeightMap.heightMapDeformity = 10000.0;
-			//vertexHeightMap.heightMapDeformity = 29457.0;
-			vertexHeightMap.heightMapOffset = 0.0;
-			vertexHeightMap.scaleDeformityByRadius = false;
-			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
-			vertexHeightMap.modEnabled = true;
-			vertexHeightMap.order = 20;
-
-			// Load the heightmap for this planet
-			map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsHeight.png"));
-			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
-			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
-			UnityEngine.Object.DestroyImmediate(map);
+			// Dump the game object
+			KopernicusUtility.GameObjectWalk(controllerRoot);
 
 			#endregion
 
