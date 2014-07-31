@@ -153,8 +153,8 @@ namespace Kopernicus
 			celestialBodyTransform.planetFade.fadeFloatName = "_PlanetOpacity";
 			celestialBodyTransform.planetFade.fadeStart = 100000.0f;
 			celestialBodyTransform.planetFade.fadeEnd = 110000.0f;
-			celestialBodyTransform.planetFade.valueStart = 1.0f;
-			celestialBodyTransform.planetFade.valueEnd = 0.0f;
+			celestialBodyTransform.planetFade.valueStart = 0.0f;
+			celestialBodyTransform.planetFade.valueEnd = 1.0f;
 			celestialBodyTransform.planetFade.secondaryRenderers = new List<GameObject>();
 			celestialBodyTransform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
 			celestialBodyTransform.requirements = PQS.ModiferRequirements.Default;
