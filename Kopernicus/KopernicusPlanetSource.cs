@@ -63,12 +63,16 @@ namespace Kopernicus
 			// Activate the scaled space body
 			Transform scaledVersion = ScaledSpace.Instance.transform.FindChild (planetName);
 			scaledVersion.gameObject.SetActive (true);
+
+			// Set the celestial body of the scaled space fader
+			scaledVersion.GetComponent<ScaledSpaceFader> ().celestialBody = body;
 		}
 
 		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, Orbit orbit = null) 
 		{
 			// Use Dres as the template to clone ( :( )
 			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
+			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
@@ -92,6 +96,7 @@ namespace Kopernicus
 			body.celestialBody.rotationPeriod         = 88642.6848;
 			body.celestialBody.rotates                = true;
 			body.celestialBody.BiomeMap               = Dres.celestialBody.BiomeMap;
+			body.celestialBody.scienceValues          = Dres.celestialBody.scienceValues;
 
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
 			body.celestialBody.isHomeWorld            = false;
@@ -120,7 +125,7 @@ namespace Kopernicus
 			body.pqsVersion.radius = body.celestialBody.Radius;
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
 
-			Debug.Log("Local Space shader: " + body.pqsVersion.surfaceMaterial.shader.name);
+			//Debug.Log("Local Space shader: " + body.pqsVersion.surfaceMaterial.shader.name);
 
 			// Create the PQS controller for Kopernicus
 			/*GameObject controllerRoot = new GameObject("Kopernicus");
@@ -132,6 +137,7 @@ namespace Kopernicus
 			body.pqsVersion.surfaceMaterial = new Material(Dres.pqsVersion.surfaceMaterial);
 			body.pqsVersion.fallbackMaterial = new Material(Dres.pqsVersion.fallbackMaterial);
 			body.pqsVersion.radius = body.celestialBody.Radius;
+			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
 			body.pqsVersion.meshRecieveShadows = true;
 
 			// Create the celestial body transform
@@ -140,7 +146,6 @@ namespace Kopernicus
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_CelestialBodyTransform celestialBodyTransform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
 			celestialBodyTransform.sphere = body.pqsVersion;
-			celestialBodyTransform.body = body.celestialBody;
 			celestialBodyTransform.forceActivate = false;
 			celestialBodyTransform.deactivateAltitude = 115000;
 			celestialBodyTransform.forceRebuildOnTargetChange = false;
@@ -148,8 +153,8 @@ namespace Kopernicus
 			celestialBodyTransform.planetFade.fadeFloatName = "_PlanetOpacity";
 			celestialBodyTransform.planetFade.fadeStart = 100000.0f;
 			celestialBodyTransform.planetFade.fadeEnd = 110000.0f;
-			celestialBodyTransform.planetFade.valueStart = 0.0f;
-			celestialBodyTransform.planetFade.valueEnd = 1.0f;
+			celestialBodyTransform.planetFade.valueStart = 1.0f;
+			celestialBodyTransform.planetFade.valueEnd = 0.0f;
 			celestialBodyTransform.planetFade.secondaryRenderers = new List<GameObject>();
 			celestialBodyTransform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
 			celestialBodyTransform.requirements = PQS.ModiferRequirements.Default;
@@ -353,6 +358,7 @@ namespace Kopernicus
 
 			// Surface color map
 			GameObject mod = new GameObject("_LandClass");
+			//mod = new GameObject("_LandClass");
 			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = body.pqsVersion.gameObject.transform;
 			PQSMod_VertexColorMapBlend colorMap = mod.AddComponent<PQSMod_VertexColorMapBlend>();
@@ -363,6 +369,7 @@ namespace Kopernicus
 
 			// Decompress and load the color
 			Texture2D map = new Texture2D(4, 4, TextureFormat.RGB24, false);
+			//map = new Texture2D(4, 4, TextureFormat.RGB24, false);
 			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsColor.png"));
 			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
 			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
@@ -430,26 +437,53 @@ namespace Kopernicus
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
 			UnityEngine.Object.DestroyImmediate(map);
+
 			#endregion
 
 			#region PSystemBody.scaledVersion generation
+
 			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
 			body.scaledVersion = new GameObject("Kopernicus");
-			body.scaledVersion.layer = Dres.scaledVersion.layer;
+			body.scaledVersion.layer = 10;
 			UnityEngine.Object.DontDestroyOnLoad (body.scaledVersion);
 			body.scaledVersion.SetActive(false);
 
 			// Make sure the scaled version cooresponds to the size of the body
-			// Improvement upon NathanKell's method.  Turns out that the localScale is directly related
-			// to the planet size.  Jool's local scale is {1,1,1}, Kerbin's is {0.1,0.1,0.1}.  Jool's 
-			// radius is 6000 km, Kerbin's is 600 km.  Notice the relation?  Turns out all the planets
-			// share the same scaled version mesh.  The scale is just different.
+			// Turns out that the localScale is directly related to the planet size.  
+			// Jool's local scale is {1,1,1}, Kerbin's is {0.1,0.1,0.1}.  Jool's 
+			// radius is 6000 km, Kerbin's is 600 km.  Notice the relation?
 			float scale = (float) body.celestialBody.Radius / 6000000.0f;
 			body.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
 			// Scale the mesh to the new body size
+			Mesh mesh = new Mesh();
+			KopernicusUtility.CopyMesh(Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh, mesh);
+
+			// Iterate though the UVs
+			// Geosphere with a radius of 1000, cooresponds to an object 6000km in radius
+			Vector3[] vertices = mesh.vertices;
+			for(int i = 0; i < mesh.vertexCount; i++)
+			{
+				// Get the height offset from the height map
+				Vector2 uv = mesh.uv[i];
+				float displacement = vertexHeightMap.heightMap.GetPixelFloat(uv.x, uv.y);
+
+				// Since this is a geosphere, normalizing the vertex gives the vector to translate on
+				Vector3 v = vertices[i];
+				v.Normalize();
+
+				// Calculate the real height displacement (in meters), normalized vector "v" scale (1 unit = 6 km)
+				displacement = (float) vertexHeightMap.heightMapOffset + (displacement * (float) vertexHeightMap.heightMapDeformity);
+				Vector3 offset = v * ((displacement / 6000.0f) / scale);
+
+				// Adjust the displacement
+				vertices[i] += offset;
+			}
+			mesh.vertices = vertices;
+
+			// Create the mesh filter
 			MeshFilter meshFilter = body.scaledVersion.AddComponent<MeshFilter> ();
-			meshFilter.sharedMesh = Dres.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+			meshFilter.mesh = mesh;
 
 			// Load and compress the color texture for the custom planet
 			Texture2D colorTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
@@ -463,9 +497,11 @@ namespace Kopernicus
 			bumpTexture.Compress(true);
 			bumpTexture.Apply(true, true);
 
-			// Write a new material for this texture
+			// Create the renderer and material for the scaled version
 			MeshRenderer renderer = body.scaledVersion.AddComponent<MeshRenderer>();
-			renderer.material = new Material(Dres.scaledVersion.renderer.material);
+			renderer.material = new Material(Shader.Find("Terrain/Scaled Planet (Simple)"));
+			renderer.material.SetColor("_Color", Color.white);
+			renderer.material.SetColor("_SpecColor", Color.black);
 			renderer.material.SetTexture("_MainTex", colorTexture);
 			renderer.material.SetTexture("_BumpMap", bumpTexture);
 

@@ -1,13 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/KopernicusPlanetSource.cs">
     <Files>
-      <File FileName="Kopernicus/Kopernicus.cs" Line="35" Column="19" />
-      <File FileName="Kopernicus/KopernicusUtility.cs" Line="224" Column="46" />
-      <File FileName="Kopernicus/KopernicusSystemSource.cs" Line="53" Column="4" />
-      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="60" Column="53" />
-      <File FileName="../RealSolarSystem/Source/RealSolarSystem.cs" Line="1376" Column="67" />
-      <File FileName="../PlanetFactory/PlanetFactory/PlanetFactory.cs" Line="1361" Column="88" />
+      <File FileName="Kopernicus/Kopernicus.cs" Line="77" Column="4" />
+      <File FileName="Kopernicus/KopernicusUtility.cs" Line="70" Column="71" />
+      <File FileName="Kopernicus/KopernicusSystemSource.cs" Line="47" Column="57" />
+      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="436" Column="6" />
+      <File FileName="../RealSolarSystem/Source/RealSolarSystem.cs" Line="1332" Column="34" />
+      <File FileName="../PlanetFactory/PlanetFactory/PlanetFactory.cs" Line="425" Column="94" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
