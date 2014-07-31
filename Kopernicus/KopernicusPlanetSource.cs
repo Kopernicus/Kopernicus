@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
@@ -58,6 +59,9 @@ namespace Kopernicus
 			{
 				body.pqsController.gameObject.SetActive (true);
 				body.pqsController.RebuildSphere ();
+				
+				// Dump the game object
+				KopernicusUtility.GameObjectWalk(body.pqsController.gameObject);
 
 				// Dump PQS of Kerbin post init
 				Debug.Log("--------- Kopernicus Post-Init PQS ------------");
@@ -124,6 +128,14 @@ namespace Kopernicus
 			KopernicusUtility.DumpPQS(Dres.pqsVersion);
 			Debug.Log("--------------------------------------");
 
+			// Possibly a reflection based dump
+			Type type = (typeof (PQS));
+			foreach(MemberInfo member in type.GetMembers())
+			{
+				Debug.Log("PQS has member: " + member.Name);
+				// Access by reflection?
+			}
+
 			// Proof that our issue is just a PQS config problem.  We can instantiate Dres's PQS, delete all the PQS mods,
 			// and add our custom ones.  This works, but generating our own from scratch doesn't quite work yet.
 			GameObject controllerRoot              = UnityEngine.Object.Instantiate(Dres.pqsVersion.gameObject) as GameObject;
@@ -133,10 +145,11 @@ namespace Kopernicus
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
 
 			// Delete all of the mods in the cloned PQS (to show we can bring up one from scratch)
-			foreach(Transform t in controllerRoot.transform)
+			PQSMod[] mods = controllerRoot.GetComponentsInChildren<PQSMod>();
+			foreach(PQSMod m in mods)
 			{
-				t.parent = null;
-				UnityEngine.Object.Destroy(t);
+				m.transform.parent = null;
+				UnityEngine.Object.Destroy(m.gameObject);
 			}
 			
 			// TEMPORARIES
@@ -400,7 +413,8 @@ namespace Kopernicus
 			UnityEngine.Object.DestroyImmediate(map);
 
 			// Dump the game object
-			KopernicusUtility.GameObjectWalk(controllerRoot);
+			// Game object walk here is inaccurate.  Deleted mods aren't actually deleted until the next frame cycle
+			//KopernicusUtility.GameObjectWalk(controllerRoot);
 
 			#endregion
 
