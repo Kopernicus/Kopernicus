@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
@@ -210,99 +211,38 @@ namespace Kopernicus
 			
 			//ProfileTimer.Pop("CopyMesh");
 		}
-		
-		// Dump PQS members
-		public static void DumpPQS(PQS s)
+
+		// Dump an object by reflection
+		public static void DumpObject(object o, string title = "---------")
 		{
-			Debug.Log ("------------ PQS Data -----------");
-			Debug.Log ("useSharedMaterial: " + s.useSharedMaterial);
-			Debug.Log ("radius: " + s.radius);
-			Debug.Log ("radiusSquared: " + s.radiusSquared);
-			Debug.Log ("radiusDelta: " + s.radiusDelta);
-			Debug.Log ("radiusMax: " + s.radiusMax);
-			Debug.Log ("radiusMin: " + s.radiusMin);
-			Debug.Log ("circumference: " + s.circumference);
-			Debug.Log ("maxFrameEnd: " + s.maxFrameEnd);
-			//Debug.Log ("normalUpdateList: " + s.normalUpdateList.Count);
-			Debug.Log ("quadAllowBuild: " + s.quadAllowBuild);
-			Debug.Log ("isSubdivisionEnabled: " + s.isSubdivisionEnabled);
-			Debug.Log ("visibleRadius: " + s.visibleRadius);
-			Debug.Log ("visRadDelta: " + s.visRadDelta);
-			Debug.Log ("visRad: " + s.visRad);
-			Debug.Log ("horizonDistance: " + s.horizonDistance);
-			Debug.Log ("minDetailDistance: " + s.minDetailDistance);
-			Debug.Log ("maxDetailDistance: " + s.maxDetailDistance);
-			Debug.Log ("transformRotation: " + s.transformRotation);
-			Debug.Log ("transformPosition: " + s.transformPosition);
-			Debug.Log ("reqUV2: " + s.reqUV2);
-			Debug.Log ("reqAssignTangets: " + s.reqAssignTangents);
-			Debug.Log ("reqUVQuad: " + s.reqUVQuad);
-			Debug.Log ("reqSphereUV: " + s.reqSphereUV);
-			Debug.Log ("reqBuildTangents: " + s.reqBuildTangents);
-			Debug.Log ("reqGnomonicCoords: " + s.reqGnomonicCoords);
-			Debug.Log ("reqVertexMapCoords: " + s.reqVertexMapCoods);
-			Debug.Log ("reqColorChannel: " + s.reqColorChannel);
-			Debug.Log ("reqCustomNormals: " + s.reqCustomNormals);
-			Debug.Log ("cancelUpdate: " + s.cancelUpdate);
-			Debug.Log ("subdivisionThreshold: " + s.subdivisionThreshold);
-			Debug.Log ("subdivisionThresholds: " + s.subdivisionThresholds);
-			Debug.Log ("quadCount: " + s.quadCount);
-			Debug.Log ("quadCounts: " + s.quadCounts);
-			Debug.Log ("quads: " + s.quads);
-			Debug.Log ("collapseThreshold: " + s.collapseThreshold);
-			Debug.Log ("collapseThresholds: " + s.collapseThresholds);
-			Debug.Log ("collapseDelta: " + s.collapseDelta);
-			Debug.Log ("sx: " + s.sx);
-			Debug.Log ("sy: " + s.sy);
-			Debug.Log ("isFakeBuild: " + s.isFakeBuild);
-			Debug.Log ("maxLevelAtCurrentTgtSpeed: " + s.maxLevelAtCurrentTgtSpeed);
-			Debug.Log ("collapseSeaLevelValue: " + s.collapseSeaLevelValue);
-			Debug.Log ("minLevel: " + s.minLevel);
-			Debug.Log ("maxLevel: " + s.maxLevel);
-			Debug.Log ("seed: " + s.seed);
-			Debug.Log ("maxFrametime: " + s.maxFrameTime);
-			Debug.Log ("meshCastShadows: " + s.meshCastShadows);
-			Debug.Log ("meshReceiveShadows: " + s.meshRecieveShadows);
-			if (s.surfaceMaterial != null) 
+			// Dump the raw PQS of Dres (by reflection)
+			Debug.Log("---------" + title + "------------");
+			foreach (FieldInfo field in o.GetType().GetFields()) 
 			{
-				Debug.Log ("surfaceMaterial: " + s.surfaceMaterial.name);
-				Debug.Log ("surfaceMaterialShader: " + s.surfaceMaterial.shader.name);
+				if (!field.IsStatic)
+				{
+					Debug.Log (field.Name + " = " + field.GetValue (o));
+				}
 			}
-			if (s.fallbackMaterial != null) 
+			Debug.Log("--------------------------------------");
+		}
+
+		/**
+		 * Copy one objects fields to another object via reflection
+		 * @param source Object to copy fields from
+		 * @param destination Object to copy fields to
+		 **/
+		public static void CopyObjectFields<T> (T source, T destination)
+		{
+			// Reflection based copy
+			foreach (FieldInfo field in (typeof (T)).GetFields()) 
 			{
-				Debug.Log ("fallbackMaterial: " + s.fallbackMaterial.name);
-				Debug.Log ("fallbackMaterialShader: " + s.fallbackMaterial.shader.name);
+				// Only copy non static fields
+				if (!field.IsStatic)
+				{
+					field.SetValue(destination, field.GetValue(source));
+				}
 			}
-			Debug.Log ("frameTimeDelta: " + s.frameTimeDelta);
-			Debug.Log ("isalive: " + s.isAlive);
-			Debug.Log ("isactive: " + s.isActive);
-			Debug.Log ("isdisabled: " + s.isDisabled);
-			Debug.Log ("isstarted: " + s.isStarted);
-			Debug.Log ("isthinking: " + s.isThinking);
-			Debug.Log ("surfaceRelativeQuads: " + s.surfaceRelativeQuads);
-			Debug.Log ("buildTangents: " + s.buildTangents);
-			Debug.Log ("isBuildingMaps: " + s.isBuildingMaps);
-			if (s.target)
-				Debug.Log ("target: " + s.target.name);
-			else
-				Debug.Log ("target: null");
-			Debug.Log ("targetSpeed: " + s.targetSpeed);
-			Debug.Log ("targetHeight: " + s.targetHeight);
-			Debug.Log ("targetVelocity: " + s.targetVelocity);
-			Debug.Log ("relativeTargetPosition: " + s.relativeTargetPosition);
-			Debug.Log ("relativeTargetPositionNormalized: " + s.relativeTargetPositionNormalized);
-			Debug.Log ("detailAltitudeQuads: " + s.detailAltitudeQuads);
-			Debug.Log ("detailAltitudeMax: " + s.detailAltitudeMax);
-			Debug.Log ("detailDelta: " + s.detailDelta);
-			Debug.Log ("detailSeaLevelQuads: " + s.detailSeaLevelQuads);
-			Debug.Log ("detailRad: " + s.detailRad);
-			Debug.Log ("mapOcean: " + s.mapOcean);
-			Debug.Log ("mapOceanHeight: " + s.mapOceanHeight);
-			Debug.Log ("mapOceanColor: " + s.mapOceanColor);
-			Debug.Log ("mapFilename: " + s.mapFilename);
-			Debug.Log ("mapFilesize: " + s.mapFilesize);
-			Debug.Log ("mapMaxHeight: " + s.mapMaxHeight);
-			Debug.Log ("--------------------------------");
 		}
 	}
 }

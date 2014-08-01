@@ -79,13 +79,14 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: KopernicusInjector.Awake(): End");
 		}
 
+		/**
+		 * If Control-P are pressed, dump the PQS of the current live body
+		 **/
 		public void Update()
 		{
 			if( Input.GetKeyDown( KeyCode.P ) && Input.GetKey( KeyCode.LeftControl ) )
 			{
-				Debug.Log("--------- Live PQS ------------");
-				KopernicusUtility.DumpPQS(FlightGlobals.currentMainBody.pqsController);
-				Debug.Log("-------------------------------");
+				KopernicusUtility.DumpObject(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
 			}
 		}
 

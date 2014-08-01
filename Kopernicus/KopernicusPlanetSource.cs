@@ -33,6 +33,17 @@ using UnityEngine;
 
 namespace Kopernicus
 {
+	// Constants found in planet creation
+	namespace Constants
+	{
+		public class GameLayers
+		{
+			// Layer for the scaled verion
+			public const int ScaledSpace = 10;
+			public const int LocalSpace = 15;
+		}
+	}
+
 	// This class will add a planet. It will be supplanted by
 	// versions which do more useful things, such as loading a planet from
 	// configuration files, loading and modifying a stock planet from KSP's
@@ -64,9 +75,7 @@ namespace Kopernicus
 				KopernicusUtility.GameObjectWalk(body.pqsController.gameObject);
 
 				// Dump PQS of Kerbin post init
-				Debug.Log("--------- Kopernicus Post-Init PQS ------------");
-				KopernicusUtility.DumpPQS(body.pqsController);
-				Debug.Log("-----------------------------------------------");
+				KopernicusUtility.DumpObject(body.pqsController, " Kopernicus Post-Init PQS ");
 			}
 
 			// Activate the scaled space body
@@ -123,63 +132,22 @@ namespace Kopernicus
 
 			#region PSystemBody.pqsVersion generation
 
-			// Dump the raw PQS of Dres
-			Debug.Log("--------- Dres Prefab PQS ------------");
-			KopernicusUtility.DumpPQS(Dres.pqsVersion);
-			Debug.Log("--------------------------------------");
-
-			// Possibly a reflection based dump
-			Type type = (typeof (PQS));
-			foreach(MemberInfo member in type.GetMembers())
-			{
-				Debug.Log("PQS has member: " + member.Name);
-				// Access by reflection?
-			}
-
-			// Proof that our issue is just a PQS config problem.  We can instantiate Dres's PQS, delete all the PQS mods,
-			// and add our custom ones.  This works, but generating our own from scratch doesn't quite work yet.
-			GameObject controllerRoot              = UnityEngine.Object.Instantiate(Dres.pqsVersion.gameObject) as GameObject;
-			body.pqsVersion                        = controllerRoot.GetComponent<PQS>();
-			body.pqsVersion.name                   = "Kopernicus";
-			body.pqsVersion.radius                 = body.celestialBody.Radius;
-			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
-
-			// Delete all of the mods in the cloned PQS (to show we can bring up one from scratch)
-			PQSMod[] mods = controllerRoot.GetComponentsInChildren<PQSMod>();
-			foreach(PQSMod m in mods)
-			{
-				m.transform.parent = null;
-				UnityEngine.Object.Destroy(m.gameObject);
-			}
-			
-			// TEMPORARIES
-			GameObject mod = null;
-			Texture2D map  = null;
-
-			// Create the PQS controller for Kopernicus
-			//GameObject controllerRoot = new GameObject("Kopernicus");
+			// Create the PQS controller game object for Kopernicus
+			GameObject controllerRoot       = new GameObject("Kopernicus");
+			controllerRoot.layer            = Constants.GameLayers.LocalSpace;
 			UnityEngine.Object.DontDestroyOnLoad(controllerRoot);
 			controllerRoot.SetActive(false);
 
-			//controllerRoot.transform.parent = body.celestialBody.transform;
-			//body.pqsVersion = controllerRoot.AddComponent<PQS>();
-			/*body.pqsVersion.surfaceMaterial = new Material(Dres.pqsVersion.surfaceMaterial);
+			// Create the PQS object and pull all the values from Dres (has some future proofing i guess? adapts to PQS changes)
+			body.pqsVersion = controllerRoot.AddComponent<PQS>();
+			KopernicusUtility.CopyObjectFields(Dres.pqsVersion, body.pqsVersion);
+			body.pqsVersion.surfaceMaterial = new Material(Dres.pqsVersion.surfaceMaterial);
 			body.pqsVersion.fallbackMaterial = new Material(Dres.pqsVersion.fallbackMaterial);
 			body.pqsVersion.radius = body.celestialBody.Radius;
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
-			body.pqsVersion.meshRecieveShadows = true;
-			body.pqsVersion.isSubdivisionEnabled = true;
-			body.pqsVersion.maxFrameTime = 0.075f;
-			body.pqsVersion.surfaceRelativeQuads = true;
-			body.pqsVersion.subdivisionThreshold = 1;
-			body.pqsVersion.collapseSeaLevelValue = 2.0f;*/
-
-			Debug.Log("--------- Kopernicus Pre-Init PQS ------------");
-			KopernicusUtility.DumpPQS(body.pqsVersion);
-			Debug.Log("-----------------------------------------------");
 
 			// Create the celestial body transform
-			mod = new GameObject("_CelestialBody");
+			GameObject mod = new GameObject("_CelestialBody");
 			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_CelestialBodyTransform celestialBodyTransform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
@@ -300,7 +268,7 @@ namespace Kopernicus
 			vertexHeightMap.order = 20;
 
 			// Load the heightmap for this planet
-			map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
+			Texture2D map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
 			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsHeight.png"));
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
@@ -422,7 +390,7 @@ namespace Kopernicus
 
 			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
 			body.scaledVersion = new GameObject("Kopernicus");
-			body.scaledVersion.layer = 10;
+			body.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
 			UnityEngine.Object.DontDestroyOnLoad (body.scaledVersion);
 			body.scaledVersion.SetActive(false);
 
