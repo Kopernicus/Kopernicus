@@ -515,8 +515,8 @@ namespace Kopernicus
 			rv.Map.Compress (false);
 			// If it will let us take in an indexed color PNG that would be preferable - bcs
 			rv.Map.Apply(true, false);
-			//rv.nonExactThreshold = 0.01f; // Possibly related to color matching? Or is it spatial?
-			rv.exactSearch = true;
+			//rv.nonExactThreshold = 0.1f; // Possibly related to color matching? Or is it spatial?
+			//rv.exactSearch = true;
 			rv.Attributes = new CBAttributeMap.MapAttribute[3];
 
 			rv.Attributes [0] = new CBAttributeMap.MapAttribute ();
@@ -527,7 +527,7 @@ namespace Kopernicus
 			rv.Attributes [1] = new CBAttributeMap.MapAttribute ();
 			rv.Attributes [1].name = "Mares";
 			rv.Attributes [1].value = 1.0f;
-			rv.Attributes [1].mapColor = new Color (0x24, 0x0E, 0x01);
+			rv.Attributes [1].mapColor = new Color (0x25, 0x0E, 0x01);
 
 			rv.Attributes [2] = new CBAttributeMap.MapAttribute ();
 			rv.Attributes [2].name = "Dunes";
