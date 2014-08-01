@@ -98,20 +98,17 @@ namespace Kopernicus
 				atmosphereRenderInfo.mainCamera = PSystemManager.Instance.scaledSpaceCamera.transform;
 				atmosphereRenderInfo.planet = body;
 			}
-
-			// Analyze what could be causing this issue
-			KopernicusUtility.DumpObject (atmosphereRenderInfo, " Atmosphere Render Info ");
 		}
 
 		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, String name, Orbit orbit = null) 
 		{
-			// We use resources from these worlds
-			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");  // Need PQS object parameters
 			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");  // Need the geosphere for scaled version
-			//PSystemBody Duna = KopernicusUtility.FindBody (system.rootBody, "Duna");
-			PSystemBody Laythe = KopernicusUtility.FindBody (system.rootBody, "Laythe");
+			PSystemBody Laythe = KopernicusUtility.FindBody (system.rootBody, "Laythe"); // Need pqs and ocean definitions
 
-			KopernicusUtility.GameObjectWalk(Laythe.pqsVersion.gameObject);
+			KopernicusUtility.DumpObject (Laythe.celestialBody, " Laythe Celestial Body ");
+			KopernicusUtility.DumpObject (Laythe.pqsVersion, " Laythe PQS ");
+			Transform ocean = KopernicusUtility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
+			KopernicusUtility.DumpObject (ocean.GetComponent<PQS> (), " Laythe Ocean PQS ");
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
@@ -131,11 +128,11 @@ namespace Kopernicus
 			body.celestialBody.GeeASL                 = 0.3;
 			//body.celestialBody.Mass                   = 6.4185E+23;
 			body.celestialBody.Mass                   = 4.5154812E+21;
-			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
+			body.celestialBody.timeWarpAltitudeLimits = (float[])Laythe.celestialBody.timeWarpAltitudeLimits.Clone();
 			body.celestialBody.rotationPeriod         = 88642.6848;
 			body.celestialBody.rotates                = true;
 			body.celestialBody.BiomeMap               = GenerateCBAttributeMap(name);//Dres.celestialBody.BiomeMap;//
-			body.celestialBody.scienceValues          = Dres.celestialBody.scienceValues;
+			body.celestialBody.scienceValues          = Laythe.celestialBody.scienceValues;
 
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
 			// I think this just affects where the Planetarium/Tracking station starts.
@@ -162,9 +159,11 @@ namespace Kopernicus
 
 			// Create the PQS object and pull all the values from Dres (has some future proofing i guess? adapts to PQS changes)
 			body.pqsVersion = controllerRoot.AddComponent<PQS>();
-			KopernicusUtility.CopyObjectFields(Dres.pqsVersion, body.pqsVersion);
-			body.pqsVersion.surfaceMaterial = new Material(Dres.pqsVersion.surfaceMaterial);
-			body.pqsVersion.fallbackMaterial = new Material(Dres.pqsVersion.fallbackMaterial);
+			KopernicusUtility.CopyObjectFields(Laythe.pqsVersion, body.pqsVersion);
+			//body.pqsVersion.surfaceMaterial = new Material(Shader.Find("Terrain/PQS/Sphere Projection SURFACE QUAD"));
+			//body.pqsVersion.fallbackMaterial = new Material(Shader.Find("Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback) "));
+			body.pqsVersion.surfaceMaterial = new Material(Laythe.pqsVersion.surfaceMaterial);     // use until we determine all the functions of the shader textures
+			body.pqsVersion.fallbackMaterial = new Material(Laythe.pqsVersion.fallbackMaterial);
 			body.pqsVersion.radius = body.celestialBody.Radius;
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
 
@@ -524,6 +523,9 @@ namespace Kopernicus
 			body.celestialBody.maxAtmosphereAltitude = 50000.0f;  // i guess this is so the math doesn't drag out?
 			body.celestialBody.useLegacyAtmosphere = true;
 			body.celestialBody.atmosphericAmbientColor = new Color(0.306f, 0.187f, 0.235f, 1.000f);
+
+			// ---------------- For bodies with oceans ----------
+			//body.celestialBody.o
 
 			#endregion
 
