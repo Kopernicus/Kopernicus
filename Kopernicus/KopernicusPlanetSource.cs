@@ -108,28 +108,10 @@ namespace Kopernicus
 			// We use resources from these worlds
 			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");  // Need PQS object parameters
 			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");  // Need the geosphere for scaled version
-			PSystemBody Duna = KopernicusUtility.FindBody (system.rootBody, "Duna");
+			//PSystemBody Duna = KopernicusUtility.FindBody (system.rootBody, "Duna");
+			PSystemBody Laythe = KopernicusUtility.FindBody (system.rootBody, "Laythe");
 
-			KopernicusUtility.DumpObject (Duna.celestialBody, " Kerbin Celestial Body ");
-
-			// Dump material information for rim aerial
-			//Material m = Duna.scaledVersion.renderer.material;
-			//Debug.Log ("Color = " + m.GetColor ("_Color"));
-			//Debug.Log ("SpecColor = " + m.GetColor ("_SpecColor"));
-			//Debug.Log ("Shininess = " + m.GetFloat ("_Shininess"));
-			//Debug.Log ("Rim Power = " + m.GetFloat ("_rimPower"));
-			//Debug.Log ("Rim Blend = " + m.GetFloat ("_rimBlend"));
-			//Texture2D dunaRimColorRamp = m.GetTexture ("_rimColorRamp") as Texture2D;
-			//if (dunaRimColorRamp) {
-			//	Debug.Log ("Rim Color Ramp = " + dunaRimColorRamp.name);
-			//}
-
-			// We need a hook into this
-			AtmosphereFromGround g = KopernicusUtility.RecursivelyGetComponent<AtmosphereFromGround> (Duna.scaledVersion.transform);
-			//Debug.Log ("Layer: " + g.gameObject.layer);
-			//Debug.Log ("Scale: " + g.transform.localScale);
-			//Debug.Log ("Mesh used: " + g.GetComponent<MeshFilter> ().mesh.name);
-			//Debug.Log ("Shader used: " + g.renderer.material.shader.name);
+			KopernicusUtility.GameObjectWalk(Laythe.pqsVersion.gameObject);
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
@@ -436,7 +418,7 @@ namespace Kopernicus
 			float scale = (float) body.celestialBody.Radius / 6000000.0f;
 			body.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
-			// Scale the mesh to the new body size
+			// Generate a mesh to fit the PQS we generated (it would be cool to generate this FROM the PQS)
 			Mesh mesh = new Mesh();
 			KopernicusUtility.CopyMesh(Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh, mesh);
 
@@ -461,6 +443,7 @@ namespace Kopernicus
 				vertices[i] += offset;
 			}
 			mesh.vertices = vertices;
+			mesh.RecalculateNormals();
 
 			// Create the mesh filter
 			MeshFilter meshFilter = body.scaledVersion.AddComponent<MeshFilter> ();
@@ -475,9 +458,9 @@ namespace Kopernicus
 			// Load and compress the color texture for the custom planet
 			Texture2D normalTexture = new Texture2D(4, 4, TextureFormat.RGB24, true);
 			normalTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Normals.png"));
-			normalTexture = GameDatabase.BitmapToUnityNormalMap(normalTexture);
-			//normalTexture.Compress(true);
-			//normalTexture.Apply(true, true);
+			//normalTexture = GameDatabase.BitmapToUnityNormalMap(normalTexture);
+			normalTexture.Compress(true);
+			normalTexture.Apply(true, true);
 
 			// Create the renderer and material for the scaled version
 			MeshRenderer renderer = body.scaledVersion.AddComponent<MeshRenderer>();
@@ -500,28 +483,35 @@ namespace Kopernicus
 			fader.fadeEnd          = 100000.0f;
 			fader.floatName        = "_Opacity";
 
-			// Load the atmosphere gradient
+			//--------------------- PROPERTIES EXCLUSIVE TO BODIES WITH ATMOSPHERE
+
+			// Load the atmosphere gradient (compress it, does not need to be high quality)
 			Texture2D atmosphereGradient = new Texture2D(4, 4, TextureFormat.RGB24, true);
 			atmosphereGradient.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/AtmosphereGradient.png"));
+			atmosphereGradient.Compress(true);
+			atmosphereGradient.wrapMode = TextureWrapMode.Clamp;
+			atmosphereGradient.mipMapBias = 0.0f;
+			atmosphereGradient.Apply(true, true);
+
+			// Set the additional settings in the scaledVersion body's shader
+			renderer.material.SetFloat("_rimPower", 2.06f);
+			renderer.material.SetFloat("_rimBlend", 0.3f);
+			renderer.material.SetTexture("_rimColorRamp", atmosphereGradient);
 
 			// Atmosphere specific properties (for scaled version root) (copied from duna) 
 			MaterialSetDirection materialLightDirection = body.scaledVersion.AddComponent<MaterialSetDirection>();
-			renderer.material.SetFloat("_rimPower", 2.06f);
-			renderer.material.SetFloat("_rimBlend", 0.3f);
-			renderer.material.SetTexture("_rimColorRamp", atmosphereGradient);  // should dump this texture and see contents
+			materialLightDirection.valueName            = "_localLightDirection";
 
 			// Create the atmosphere shell itself
 			GameObject scaledAtmosphere               = new GameObject("atmosphere");
 			scaledAtmosphere.transform.parent         = body.scaledVersion.transform;
-			scaledAtmosphere.transform.localScale     = Vector3.one * 1.2f;
 			scaledAtmosphere.layer                    = Constants.GameLayers.ScaledSpaceAtmosphere;
 			meshFilter                                = scaledAtmosphere.AddComponent<MeshFilter>();
+			meshFilter.sharedMesh                     = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 			renderer                                  = scaledAtmosphere.AddComponent<MeshRenderer>();
-
+			renderer.material                         = new Material(Shader.Find("AtmosphereFromGround"));
 			AtmosphereFromGround atmosphereRenderInfo = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
 			atmosphereRenderInfo.waveLength           = new Color(0.509f, 0.588f, 0.643f, 0.000f);
-			meshFilter.sharedMesh                     = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
-			scaledAtmosphere.renderer.material        = new Material(g.renderer.material);
 
 			// Technical info for atmosphere
 			body.celestialBody.atmosphere = true;
