@@ -113,10 +113,11 @@ namespace Kopernicus
 			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
 			body.celestialBody.rotationPeriod         = 88642.6848;
 			body.celestialBody.rotates                = true;
-			body.celestialBody.BiomeMap               = Dres.celestialBody.BiomeMap;
+			body.celestialBody.BiomeMap = GenerateCBAttributeMap();//Dres.celestialBody.BiomeMap;//
 			body.celestialBody.scienceValues          = Dres.celestialBody.scienceValues;
 
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
+			// I think this just affects where the Planetarium/Tracking station starts.
 			body.celestialBody.isHomeWorld            = false;
 
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
@@ -469,7 +470,45 @@ namespace Kopernicus
 			return body;
 		}
 
+		// This function generates the biomes for the planet. (Coupled with an
+		// appropriate Texture2D.)
+		public static CBAttributeMap GenerateCBAttributeMap() {
+			Debug.Log ("[Kopernicus] GenerateCBAttributeMap begins");
+			CBAttributeMap rv = new CBAttributeMap();
 
+			rv.Map = new Texture2D(4, 4, TextureFormat.RGB24, false);
+			Debug.Log ("[Kopernicus] rv.Map="+rv.Map);
+			rv.Map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/KopernicusBiomes.png"));
+			//rv.Map.Compress(true); // This might make the edges funny.
+			rv.Map.Compress (false);
+			// If it will let us take in an indexed color PNG that would be preferable - bcs
+			rv.Map.Apply(true, false);
+			//rv.nonExactThreshold = 0.1f; // Possibly related to color matching? Or is it spatial?
+			//rv.exactSearch = true;
+			rv.Attributes = new CBAttributeMap.MapAttribute[3];
+
+			rv.Attributes [0] = new CBAttributeMap.MapAttribute ();
+			rv.Attributes [0].name = "PolarCaps";
+			rv.Attributes [0].value = 1.5f;
+			rv.Attributes [0].mapColor = new Color (0xF9, 0xF4, 0xE5);
+
+			rv.Attributes [1] = new CBAttributeMap.MapAttribute ();
+			rv.Attributes [1].name = "Mares";
+			rv.Attributes [1].value = 1.0f;
+			rv.Attributes [1].mapColor = new Color (0x25, 0x0E, 0x01);
+
+			rv.Attributes [2] = new CBAttributeMap.MapAttribute ();
+			rv.Attributes [2].name = "Dunes";
+			rv.Attributes [2].value = 1.0f;
+			rv.Attributes [2].mapColor = new Color (0xff, 0x00, 0x00);
+
+			rv.defaultAttribute = rv.Attributes [2];
+
+
+			Debug.Log ("[Kopernicus] GenerateCBAttributeMap ends");
+
+			return rv;
+		}
 	}
 
 	// Add a clone of a stock planet (in a different orbit)
@@ -557,6 +596,8 @@ namespace Kopernicus
 			return body;
 
 		}
+
+
 	}
 }
 
