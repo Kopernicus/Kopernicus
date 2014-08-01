@@ -81,7 +81,7 @@ namespace Kopernicus
 			// Note that due to the way AddBody works, this is a function with side effects
 			// rather than something that returns a planet. Perhaps it should be named differently
 			// from the GenerateSystem method to emphasize this difference in usage??
-			KopernicusPlanetSource.GeneratePlanet (system);
+			KopernicusPlanetSource.GeneratePlanet (system, "Kopernicus");
 			
 			// Return the newly created planetary system
 			return system;

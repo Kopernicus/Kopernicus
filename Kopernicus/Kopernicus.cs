@@ -87,6 +87,7 @@ namespace Kopernicus
 			if( Input.GetKeyDown( KeyCode.P ) && Input.GetKey( KeyCode.LeftControl ) )
 			{
 				KopernicusUtility.DumpObject(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
+				KopernicusUtility.GameObjectWalk(FlightGlobals.currentMainBody.pqsController.gameObject);
 			}
 		}
 

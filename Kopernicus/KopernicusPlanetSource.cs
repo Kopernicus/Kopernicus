@@ -27,18 +27,20 @@
  */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
 {
-	// Constants found in planet creation
+	// Constants found in planet creation (if things break in the future, check these first)
 	namespace Constants
 	{
 		public class GameLayers
 		{
 			// Layer for the scaled verion
+			public const int ScaledSpaceAtmosphere = 9;
 			public const int ScaledSpace = 10;
 			public const int LocalSpace = 15;
 		}
@@ -55,9 +57,12 @@ namespace Kopernicus
 	// works (we can't make a planet *not* in a system and return it.)
 	public class KopernicusPlanetSource
 	{
-		public static PSystemBody GeneratePlanet (PSystem system, Orbit orbit = null) 
+		// Path of the plugin (will eventually not matter much)
+		const string PluginDirectory = "GameData/Kopernicus/Plugins/PluginData/";
+
+		public static PSystemBody GeneratePlanet (PSystem system, string name, Orbit orbit = null) 
 		{
-			return GenerateSystemBody (system, system.rootBody, orbit);
+			return GenerateSystemBody (system, system.rootBody, name, orbit);
 		}
 
 		public static void ActivateSystemBody(string planetName) 
@@ -73,37 +78,71 @@ namespace Kopernicus
 				
 				// Dump the game object
 				KopernicusUtility.GameObjectWalk(body.pqsController.gameObject);
-
-				// Dump PQS of Kerbin post init
-				KopernicusUtility.DumpObject(body.pqsController, " Kopernicus Post-Init PQS ");
 			}
 
 			// Activate the scaled space body
 			Transform scaledVersion = ScaledSpace.Instance.transform.FindChild (planetName);
 			scaledVersion.gameObject.SetActive (true);
 
+			// Setup things because PSystemManager.SetupScaled (CelestialBody cb, GameObject scaled) seems to be failing to do it properly.
+			// Is it because the scaled version is disabled (SetActive(false))?  does GetComponentInChildren<T> not work in that case?
+			// Note sun corona also will need lights setup
 			// Set the celestial body of the scaled space fader
 			scaledVersion.GetComponent<ScaledSpaceFader> ().celestialBody = body;
+
+			// Update the atmosphere render info wrangler
+			AtmosphereFromGround atmosphereRenderInfo = scaledVersion.GetComponentInChildren<AtmosphereFromGround> ();
+			if (atmosphereRenderInfo != null) 
+			{
+				atmosphereRenderInfo.sunLight = PSystemManager.Instance.sun.gameObject;
+				atmosphereRenderInfo.mainCamera = PSystemManager.Instance.scaledSpaceCamera.transform;
+				atmosphereRenderInfo.planet = body;
+			}
+
+			// Analyze what could be causing this issue
+			KopernicusUtility.DumpObject (atmosphereRenderInfo, " Atmosphere Render Info ");
 		}
 
-		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, Orbit orbit = null) 
+		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, String name, Orbit orbit = null) 
 		{
-			// Use Dres as the template to clone ( :( )
-			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");
-			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");
+			// We use resources from these worlds
+			PSystemBody Dres = KopernicusUtility.FindBody (system.rootBody, "Dres");  // Need PQS object parameters
+			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");  // Need the geosphere for scaled version
+			PSystemBody Duna = KopernicusUtility.FindBody (system.rootBody, "Duna");
+
+			KopernicusUtility.DumpObject (Duna.celestialBody, " Kerbin Celestial Body ");
+
+			// Dump material information for rim aerial
+			//Material m = Duna.scaledVersion.renderer.material;
+			//Debug.Log ("Color = " + m.GetColor ("_Color"));
+			//Debug.Log ("SpecColor = " + m.GetColor ("_SpecColor"));
+			//Debug.Log ("Shininess = " + m.GetFloat ("_Shininess"));
+			//Debug.Log ("Rim Power = " + m.GetFloat ("_rimPower"));
+			//Debug.Log ("Rim Blend = " + m.GetFloat ("_rimBlend"));
+			//Texture2D dunaRimColorRamp = m.GetTexture ("_rimColorRamp") as Texture2D;
+			//if (dunaRimColorRamp) {
+			//	Debug.Log ("Rim Color Ramp = " + dunaRimColorRamp.name);
+			//}
+
+			// We need a hook into this
+			AtmosphereFromGround g = KopernicusUtility.RecursivelyGetComponent<AtmosphereFromGround> (Duna.scaledVersion.transform);
+			//Debug.Log ("Layer: " + g.gameObject.layer);
+			//Debug.Log ("Scale: " + g.transform.localScale);
+			//Debug.Log ("Mesh used: " + g.GetComponent<MeshFilter> ().mesh.name);
+			//Debug.Log ("Shader used: " + g.renderer.material.shader.name);
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
 
 			// set up the various parameters
-			body.name = "Kopernicus";
+			body.name = name;
 			body.orbitRenderer.orbitColor = Color.magenta;
 			body.flightGlobalsIndex = 100;
 
 			// Some parameters of the celestialBody, which represents the actual planet...
 			// PSystemBody is more of a container that associates the planet with its orbit 
 			// and position in the planetary system, etc.
-			body.celestialBody.bodyName               = "Kopernicus";
+			body.celestialBody.bodyName               = name;
 			body.celestialBody.bodyDescription        = "Merciful Kod, this thing just APPEARED! And unlike last time, it wasn't bird droppings on the telescope.";
 			body.celestialBody.Radius                 = 320000;
 			//body.celestialBody.Radius                 = 3380100;
@@ -113,7 +152,7 @@ namespace Kopernicus
 			body.celestialBody.timeWarpAltitudeLimits = (float[])Dres.celestialBody.timeWarpAltitudeLimits.Clone();
 			body.celestialBody.rotationPeriod         = 88642.6848;
 			body.celestialBody.rotates                = true;
-			body.celestialBody.BiomeMap = GenerateCBAttributeMap();//Dres.celestialBody.BiomeMap;//
+			body.celestialBody.BiomeMap               = GenerateCBAttributeMap(name);//Dres.celestialBody.BiomeMap;//
 			body.celestialBody.scienceValues          = Dres.celestialBody.scienceValues;
 
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
@@ -134,7 +173,7 @@ namespace Kopernicus
 			#region PSystemBody.pqsVersion generation
 
 			// Create the PQS controller game object for Kopernicus
-			GameObject controllerRoot       = new GameObject("Kopernicus");
+			GameObject controllerRoot       = new GameObject(name);
 			controllerRoot.layer            = Constants.GameLayers.LocalSpace;
 			UnityEngine.Object.DontDestroyOnLoad(controllerRoot);
 			controllerRoot.SetActive(false);
@@ -262,7 +301,7 @@ namespace Kopernicus
 			vertexHeightMap.sphere = body.pqsVersion;
 			//vertexHeightMap.heightMapDeformity = 29457.0;
 			vertexHeightMap.heightMapDeformity = 10000.0;
-			vertexHeightMap.heightMapOffset = 0.0;
+			vertexHeightMap.heightMapOffset = -2000.0;
 			vertexHeightMap.scaleDeformityByRadius = false;
 			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
 			vertexHeightMap.modEnabled = true;
@@ -270,7 +309,7 @@ namespace Kopernicus
 
 			// Load the heightmap for this planet
 			Texture2D map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsHeight.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Height.png"));
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
 			UnityEngine.Object.DestroyImmediate(map);
@@ -368,29 +407,24 @@ namespace Kopernicus
 			mod = new GameObject("_LandClass");
 			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = body.pqsVersion.gameObject.transform;
-			PQSMod_VertexColorMapBlend colorMap = mod.AddComponent<PQSMod_VertexColorMapBlend>();
+			PQSMod_VertexColorMap colorMap = mod.AddComponent<PQSMod_VertexColorMap>();
 			colorMap.sphere = body.pqsVersion;
-			colorMap.blend = 1.0f;
 			colorMap.order = 500;
 			colorMap.modEnabled = true;
 
 			// Decompress and load the color
 			map = new Texture2D(4, 4, TextureFormat.RGB24, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsColor.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Color.png"));
 			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
 			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
 			UnityEngine.Object.DestroyImmediate(map);
-
-			// Dump the game object
-			// Game object walk here is inaccurate.  Deleted mods aren't actually deleted until the next frame cycle
-			//KopernicusUtility.GameObjectWalk(controllerRoot);
 
 			#endregion
 
 			#region PSystemBody.scaledVersion generation
 
 			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
-			body.scaledVersion = new GameObject("Kopernicus");
+			body.scaledVersion = new GameObject(name);
 			body.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
 			UnityEngine.Object.DontDestroyOnLoad (body.scaledVersion);
 			body.scaledVersion.SetActive(false);
@@ -434,23 +468,25 @@ namespace Kopernicus
 
 			// Load and compress the color texture for the custom planet
 			Texture2D colorTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
-			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/MarsColor.png"));
+			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Color.png"));
 			colorTexture.Compress(true);
 			colorTexture.Apply(true, true);
 
 			// Load and compress the color texture for the custom planet
-			Texture2D bumpTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
-			bumpTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/Mars_NRM.png"));
-			bumpTexture.Compress(true);
-			bumpTexture.Apply(true, true);
+			Texture2D normalTexture = new Texture2D(4, 4, TextureFormat.RGB24, true);
+			normalTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Normals.png"));
+			normalTexture = GameDatabase.BitmapToUnityNormalMap(normalTexture);
+			//normalTexture.Compress(true);
+			//normalTexture.Apply(true, true);
 
 			// Create the renderer and material for the scaled version
 			MeshRenderer renderer = body.scaledVersion.AddComponent<MeshRenderer>();
-			renderer.material = new Material(Shader.Find("Terrain/Scaled Planet (Simple)"));
+			//renderer.material = new Material(Shader.Find("Terrain/Scaled Planet (Simple)"));   // for atmosphereless planets
+			renderer.material = new Material(Shader.Find("Terrain/Scaled Planet (RimAerial)"));
 			renderer.material.SetColor("_Color", Color.white);
 			renderer.material.SetColor("_SpecColor", Color.black);
 			renderer.material.SetTexture("_MainTex", colorTexture);
-			renderer.material.SetTexture("_BumpMap", bumpTexture);
+			renderer.material.SetTexture("_BumpMap", normalTexture);
 
 			// Create the sphere collider
 			SphereCollider collider = body.scaledVersion.AddComponent<SphereCollider> ();
@@ -463,7 +499,42 @@ namespace Kopernicus
 			fader.fadeStart        = 95000.0f;
 			fader.fadeEnd          = 100000.0f;
 			fader.floatName        = "_Opacity";
-		
+
+			// Load the atmosphere gradient
+			Texture2D atmosphereGradient = new Texture2D(4, 4, TextureFormat.RGB24, true);
+			atmosphereGradient.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/AtmosphereGradient.png"));
+
+			// Atmosphere specific properties (for scaled version root) (copied from duna) 
+			MaterialSetDirection materialLightDirection = body.scaledVersion.AddComponent<MaterialSetDirection>();
+			renderer.material.SetFloat("_rimPower", 2.06f);
+			renderer.material.SetFloat("_rimBlend", 0.3f);
+			renderer.material.SetTexture("_rimColorRamp", atmosphereGradient);  // should dump this texture and see contents
+
+			// Create the atmosphere shell itself
+			GameObject scaledAtmosphere               = new GameObject("atmosphere");
+			scaledAtmosphere.transform.parent         = body.scaledVersion.transform;
+			scaledAtmosphere.transform.localScale     = Vector3.one * 1.2f;
+			scaledAtmosphere.layer                    = Constants.GameLayers.ScaledSpaceAtmosphere;
+			meshFilter                                = scaledAtmosphere.AddComponent<MeshFilter>();
+			renderer                                  = scaledAtmosphere.AddComponent<MeshRenderer>();
+
+			AtmosphereFromGround atmosphereRenderInfo = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+			atmosphereRenderInfo.waveLength           = new Color(0.509f, 0.588f, 0.643f, 0.000f);
+			meshFilter.sharedMesh                     = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+			scaledAtmosphere.renderer.material        = new Material(g.renderer.material);
+
+			// Technical info for atmosphere
+			body.celestialBody.atmosphere = true;
+			body.celestialBody.atmosphereContainsOxygen = false;
+			body.celestialBody.staticPressureASL = 1.0; // can't find anything that references this, especially with the equation in mind - where is this used?
+			body.celestialBody.altitudeMultiplier = 1.4285f; // ditto
+			body.celestialBody.atmosphereScaleHeight = 3.0;   // pressure (in atm) = atmosphereMultipler * e ^ -(altitude / (atmosphereScaleHeight * 1000))
+			body.celestialBody.atmosphereMultiplier = 0.2f;
+			body.celestialBody.atmoshpereTemperatureMultiplier = 1.0f; // how does this coorespond?
+			body.celestialBody.maxAtmosphereAltitude = 50000.0f;  // i guess this is so the math doesn't drag out?
+			body.celestialBody.useLegacyAtmosphere = true;
+			body.celestialBody.atmosphericAmbientColor = new Color(0.306f, 0.187f, 0.235f, 1.000f);
+
 			#endregion
 
 			// Return the new body
@@ -472,13 +543,14 @@ namespace Kopernicus
 
 		// This function generates the biomes for the planet. (Coupled with an
 		// appropriate Texture2D.)
-		public static CBAttributeMap GenerateCBAttributeMap() {
+		public static CBAttributeMap GenerateCBAttributeMap(string name) 
+		{
 			Debug.Log ("[Kopernicus] GenerateCBAttributeMap begins");
 			CBAttributeMap rv = new CBAttributeMap();
 
 			rv.Map = new Texture2D(4, 4, TextureFormat.RGB24, false);
 			Debug.Log ("[Kopernicus] rv.Map="+rv.Map);
-			rv.Map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Plugins/PluginData/KopernicusBiomes.png"));
+			rv.Map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Biomes.png"));
 			//rv.Map.Compress(true); // This might make the edges funny.
 			rv.Map.Compress (false);
 			// If it will let us take in an indexed color PNG that would be preferable - bcs
