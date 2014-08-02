@@ -65,41 +65,6 @@ namespace Kopernicus
 			return GenerateSystemBody (system, system.rootBody, name, orbit);
 		}
 
-		public static void ActivateSystemBody(string planetName) 
-		{
-			// Get the PSystemBody for the planet
-			CelestialBody body = KopernicusUtility.GetLocalSpace().transform.FindChild(planetName).GetComponent<CelestialBody> ();
-
-			// Activate the PQS controller (if we have one)
-			if (body.pqsController != null) 
-			{
-				body.pqsController.gameObject.SetActive (true);
-				body.pqsController.RebuildSphere ();
-				
-				// Dump the game object
-				KopernicusUtility.GameObjectWalk(body.pqsController.gameObject);
-			}
-
-			// Activate the scaled space body
-			Transform scaledVersion = ScaledSpace.Instance.transform.FindChild (planetName);
-			scaledVersion.gameObject.SetActive (true);
-
-			// Setup things because PSystemManager.SetupScaled (CelestialBody cb, GameObject scaled) seems to be failing to do it properly.
-			// Is it because the scaled version is disabled (SetActive(false))?  does GetComponentInChildren<T> not work in that case?
-			// Note sun corona also will need lights setup
-			// Set the celestial body of the scaled space fader
-			scaledVersion.GetComponent<ScaledSpaceFader> ().celestialBody = body;
-
-			// Update the atmosphere render info wrangler
-			AtmosphereFromGround atmosphereRenderInfo = scaledVersion.GetComponentInChildren<AtmosphereFromGround> ();
-			if (atmosphereRenderInfo != null) 
-			{
-				atmosphereRenderInfo.sunLight = PSystemManager.Instance.sun.gameObject;
-				atmosphereRenderInfo.mainCamera = PSystemManager.Instance.scaledSpaceCamera.transform;
-				atmosphereRenderInfo.planet = body;
-			}
-		}
-
 		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, String name, Orbit orbit = null) 
 		{
 			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");  // Need the geosphere for scaled version
@@ -107,8 +72,8 @@ namespace Kopernicus
 
 			KopernicusUtility.DumpObject (Laythe.celestialBody, " Laythe Celestial Body ");
 			KopernicusUtility.DumpObject (Laythe.pqsVersion, " Laythe PQS ");
-			Transform ocean = KopernicusUtility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
-			KopernicusUtility.DumpObject (ocean.GetComponent<PQS> (), " Laythe Ocean PQS ");
+			Transform laytheOcean = KopernicusUtility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
+			KopernicusUtility.DumpObject (laytheOcean.GetComponent<PQS> (), " Laythe Ocean PQS ");
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
@@ -151,11 +116,17 @@ namespace Kopernicus
 
 			#region PSystemBody.pqsVersion generation
 
+			// Unity objects do this cool thing where if they are the child of a disabled object, they don't
+			// activate - but locally they could still be "enabled."  If you Instantiate it, and then reparent
+			// it, it will become active automatically.  This is great here so we can generate pseudo-prefabs
+			GameObject deactivator = new GameObject();
+			deactivator.SetActive(false);
+			UnityEngine.Object.DontDestroyOnLoad(deactivator);
+
 			// Create the PQS controller game object for Kopernicus
 			GameObject controllerRoot       = new GameObject(name);
 			controllerRoot.layer            = Constants.GameLayers.LocalSpace;
-			UnityEngine.Object.DontDestroyOnLoad(controllerRoot);
-			controllerRoot.SetActive(false);
+			controllerRoot.transform.parent = deactivator.transform;
 
 			// Create the PQS object and pull all the values from Dres (has some future proofing i guess? adapts to PQS changes)
 			body.pqsVersion = controllerRoot.AddComponent<PQS>();
@@ -166,10 +137,10 @@ namespace Kopernicus
 			body.pqsVersion.fallbackMaterial = new Material(Laythe.pqsVersion.fallbackMaterial);
 			body.pqsVersion.radius = body.celestialBody.Radius;
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
+			body.pqsVersion.mapOcean = false;
 
 			// Create the celestial body transform
 			GameObject mod = new GameObject("_CelestialBody");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_CelestialBodyTransform celestialBodyTransform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
 			celestialBodyTransform.sphere = body.pqsVersion;
@@ -187,11 +158,9 @@ namespace Kopernicus
 			celestialBodyTransform.requirements = PQS.ModiferRequirements.Default;
 			celestialBodyTransform.modEnabled = true;
 			celestialBodyTransform.order = 10;
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the color PQS mods
 			mod = new GameObject("_Color");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_VertexSimplexNoiseColor vertexSimplexNoiseColor = mod.AddComponent<PQSMod_VertexSimplexNoiseColor>();
 			vertexSimplexNoiseColor.sphere = body.pqsVersion;
@@ -205,7 +174,6 @@ namespace Kopernicus
 			vertexSimplexNoiseColor.requirements = PQS.ModiferRequirements.MeshColorChannel;
 			vertexSimplexNoiseColor.modEnabled = true;
 			vertexSimplexNoiseColor.order = 200;
-			//body.pqsVersion.RebuildSphere();
 
 			PQSMod_HeightColorMap heightColorMap = mod.AddComponent<PQSMod_HeightColorMap>();
 			heightColorMap.sphere = body.pqsVersion;
@@ -230,11 +198,9 @@ namespace Kopernicus
 			heightColorMap.requirements = PQS.ModiferRequirements.MeshColorChannel;
 			heightColorMap.modEnabled = true;
 			heightColorMap.order = 201;
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the alititude alpha mods
 			mod = new GameObject("_Material_ModProjection");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_AltitudeAlpha altitudeAlpha = mod.AddComponent<PQSMod_AltitudeAlpha>();
 			altitudeAlpha.sphere = body.pqsVersion;
@@ -243,11 +209,9 @@ namespace Kopernicus
 			altitudeAlpha.requirements = PQS.ModiferRequirements.Default;
 			altitudeAlpha.modEnabled = false;
 			altitudeAlpha.order = 999999999;
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the aerial perspective material
 			mod = new GameObject("_Material_AerialPerspective");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_AerialPerspectiveMaterial aerialPerspectiveMaterial = mod.AddComponent<PQSMod_AerialPerspectiveMaterial>();
 			aerialPerspectiveMaterial.sphere = body.pqsVersion;
@@ -261,22 +225,18 @@ namespace Kopernicus
 			aerialPerspectiveMaterial.requirements = PQS.ModiferRequirements.Default;
 			aerialPerspectiveMaterial.modEnabled = true;
 			aerialPerspectiveMaterial.order = 100;
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the UV planet relative position
 			mod = new GameObject("_Material_SurfaceQuads");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_UVPlanetRelativePosition planetRelativePosition = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
 			planetRelativePosition.sphere = body.pqsVersion;
 			planetRelativePosition.requirements = PQS.ModiferRequirements.Default;
 			planetRelativePosition.modEnabled = true;
 			planetRelativePosition.order = 999999;
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the height noise module
 			mod = new GameObject("_HeightNoise");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.transform;
 			PQSMod_VertexHeightMap vertexHeightMap = mod.gameObject.AddComponent<PQSMod_VertexHeightMap>();
 			vertexHeightMap.sphere = body.pqsVersion;
@@ -294,7 +254,6 @@ namespace Kopernicus
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
 			UnityEngine.Object.DestroyImmediate(map);
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the simplex height module
 			PQSMod_VertexSimplexHeight vertexSimplexHeight = mod.AddComponent<PQSMod_VertexSimplexHeight>();
@@ -307,7 +266,6 @@ namespace Kopernicus
 			vertexSimplexHeight.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 			vertexSimplexHeight.modEnabled = true;
 			vertexSimplexHeight.order = 21;
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the flatten ocean module
 			PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
@@ -316,7 +274,6 @@ namespace Kopernicus
 			flattenOcean.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 			flattenOcean.modEnabled = true;
 			flattenOcean.order = 25;
-			//body.pqsVersion.RebuildSphere();
 
 			// Creat the vertex height noise module
 			PQSMod_VertexHeightNoise vertexHeightNoise = mod.AddComponent<PQSMod_VertexHeightNoise>();
@@ -332,11 +289,9 @@ namespace Kopernicus
 			vertexHeightNoise.requirements = PQS.ModiferRequirements.MeshColorChannel;
 			vertexHeightNoise.modEnabled = true;
 			vertexHeightNoise.order = 22;
-			//body.pqsVersion.RebuildSphere();*/
 
 			// Create the material direction
 			mod = new GameObject("_Material_SunLight");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.gameObject.transform;
 			PQSMod_MaterialSetDirection materialSetDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
 			materialSetDirection.sphere = body.pqsVersion;
@@ -344,11 +299,9 @@ namespace Kopernicus
 			materialSetDirection.requirements = PQS.ModiferRequirements.Default;
 			materialSetDirection.modEnabled = true;
 			materialSetDirection.order = 100;
-			//body.pqsVersion.RebuildSphere();
 
 			// Crete the quad mesh colliders
 			mod = new GameObject("QuadMeshColliders");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.gameObject.transform;
 			PQSMod_QuadMeshColliders quadMeshColliders = mod.AddComponent<PQSMod_QuadMeshColliders>();
 			quadMeshColliders.sphere = body.pqsVersion;
@@ -366,11 +319,9 @@ namespace Kopernicus
 			quadMeshColliders.requirements = PQS.ModiferRequirements.Default;
 			quadMeshColliders.modEnabled = true;
 			quadMeshColliders.order = 100;
-			//body.pqsVersion.RebuildSphere();
 
 			// Create the simplex height absolute
 			mod = new GameObject("_FineDetail");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = controllerRoot.gameObject.transform;
 			PQSMod_VertexSimplexHeightAbsolute vertexSimplexHeightAbsolute = mod.AddComponent<PQSMod_VertexSimplexHeightAbsolute>();
 			vertexSimplexHeightAbsolute.sphere = body.pqsVersion;
@@ -382,11 +333,9 @@ namespace Kopernicus
 			vertexSimplexHeightAbsolute.requirements = PQS.ModiferRequirements.Default;
 			vertexSimplexHeightAbsolute.modEnabled = true;
 			vertexSimplexHeightAbsolute.order = 30;
-			//body.pqsVersion.RebuildSphere();*/
 
 			// Surface color map
 			mod = new GameObject("_LandClass");
-			UnityEngine.Object.DontDestroyOnLoad(mod);
 			mod.transform.parent = body.pqsVersion.gameObject.transform;
 			PQSMod_VertexColorMap colorMap = mod.AddComponent<PQSMod_VertexColorMap>();
 			colorMap.sphere = body.pqsVersion;
@@ -402,16 +351,12 @@ namespace Kopernicus
 
 			#endregion
 
-			// Create the oceans
-			createOceans (body.pqsVersion, body.celestialBody);
-
 			#region PSystemBody.scaledVersion generation
 
-			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
+			// Create the scaled version of the planet for use in map view
 			body.scaledVersion = new GameObject(name);
 			body.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
-			UnityEngine.Object.DontDestroyOnLoad (body.scaledVersion);
-			body.scaledVersion.SetActive(false);
+			body.scaledVersion.transform.parent = deactivator.transform;
 
 			// Make sure the scaled version cooresponds to the size of the body
 			// Turns out that the localScale is directly related to the planet size.  
@@ -485,6 +430,9 @@ namespace Kopernicus
 			fader.fadeEnd          = 100000.0f;
 			fader.floatName        = "_Opacity";
 
+			#endregion
+
+			#region Atmosphere 
 			//--------------------- PROPERTIES EXCLUSIVE TO BODIES WITH ATMOSPHERE
 
 			// Load the atmosphere gradient (compress it, does not need to be high quality)
@@ -526,35 +474,30 @@ namespace Kopernicus
 			body.celestialBody.maxAtmosphereAltitude = 50000.0f;  // i guess this is so the math doesn't drag out?
 			body.celestialBody.useLegacyAtmosphere = true;
 			body.celestialBody.atmosphericAmbientColor = new Color(0.306f, 0.187f, 0.235f, 1.000f);
+			#endregion
 
-			// ---------------- For bodies with oceans ----------
-			//body.celestialBody.o
+			#region Ocean
+			// ---------------- FOR BODIES WITH OCEANS ----------
+			/*body.celestialBody.ocean = true;
+
+			// Setup the laythe ocean info in master pqs
+			body.pqsVersion.mapOcean = true;
+			body.pqsVersion.mapOceanColor = new Color(0.117f, 0.126f, 0.157f, 1.000f);
+			body.pqsVersion.mapOceanHeight = 0.0;
+
+			// Clone the Laythe ocean config
+			GameObject oceanRoot = UnityEngine.Object.Instantiate(laytheOcean.gameObject) as GameObject;
+			oceanRoot.name = name + "Ocean";
+			oceanRoot.transform.parent = body.pqsVersion.transform;
+			PQS oceanPQS = oceanRoot.GetComponent<PQS>();
+			oceanPQS.radius = body.pqsVersion.radius;
+			oceanPQS.parentSphere = body.pqsVersion;*/
 
 			#endregion
 
 			// Return the new body
 			return body;
 		}
-
-		// Generate the oceans for a planet
-		public static void createOceans(PQS pqsVersion, CelestialBody cb) {
-			cb.ocean = true;
-
-			// start by cloning the laythe ocean
-			PQS Laythe = KopernicusUtility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Laythe").pqsVersion;
-
-			GameObject LaytheOcean = Laythe.transform.Find ("LaytheOcean").gameObject;//.GetComponent<PQS>();
-			//KopernicusUtility.DumpObject (LaytheOcean);
-			GameObject LaytheOceanClone = (GameObject)UnityEngine.GameObject.Instantiate(LaytheOcean);
-
-			PQS oceans = LaytheOceanClone.GetComponent<PQS> ();
-			oceans.radius = cb.Radius; // resize to fit our planet
-
-			UnityEngine.Object.DontDestroyOnLoad (LaytheOceanClone);
-			LaytheOceanClone.SetActive (false);
-			LaytheOceanClone.transform.parent = pqsVersion.gameObject.transform;
-		}
-
 
 		// This function generates the biomes for the planet. (Coupled with an
 		// appropriate Texture2D.)

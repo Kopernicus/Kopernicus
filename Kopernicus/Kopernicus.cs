@@ -72,8 +72,6 @@ namespace Kopernicus
 
 			// Register hanlders for important game events.
 			PSystemManager.Instance.OnPSystemReady.Add (OnPSystemReady);
-			GameEvents.onGUIRnDComplexSpawn.Add (OnRnDComplexSpawn);
-			GameEvents.onGUIRnDComplexDespawn.Add (OnRnDComplexDespawn);
 
 			// Done executing the awake function
 			Debug.Log ("[Kopernicus]: KopernicusInjector.Awake(): End");
@@ -88,6 +86,12 @@ namespace Kopernicus
 			{
 				KopernicusUtility.DumpObject(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
 				KopernicusUtility.GameObjectWalk(FlightGlobals.currentMainBody.pqsController.gameObject);
+
+				Transform t = KopernicusUtility.FindInChildren(FlightGlobals.currentMainBody.pqsController.transform, FlightGlobals.currentMainBody.bodyName + "Ocean");
+				if(t != null)
+				{
+					KopernicusUtility.DumpObject(t.GetComponent<PQS>(), " Ocean PQS ");
+				}
 			}
 		}
 
@@ -98,31 +102,24 @@ namespace Kopernicus
 		{
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): Begin");
 
-			// Run the PQS mod alteration
-			KopernicusPlanetSource.ActivateSystemBody("Kopernicus");
+
+			// Get the PSystemBody for the planet
+			CelestialBody body = KopernicusUtility.GetLocalSpace().transform.FindChild("Kopernicus").GetComponent<CelestialBody> ();
+			
+			// Browse through PQS
+			if (body.pqsController != null) 
+			{
+				foreach(PQS p in body.pqsController.ChildSpheres)
+				{
+					Debug.Log("Found Child Sphere: " + p);
+				}
+				
+				// Dump the game object
+				KopernicusUtility.GameObjectWalk(body.pqsController.gameObject);
+			}
+
 
 			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
-		}
-
-		/**
-		 * Well ain't this a bitch - Since we can't generate prefab objects at runtime, the scaled version in the prefab is 
-		 * technically live.  This means it will end up getting rendered.  This is bad - it just randomly pops around the view.  
-		 * We disable it to prevent this problem and then manually enable the scaled space verison later.  However, when the 
-		 * RnD center clones scaledVersion internally for the icons, it gets a disabled object.  We have to enable
-		 * scaledVersion in the prefab only while in the RnD center.  This is pretty hacky, but I don't see a way
-		 * around it unless we can remove an arbitrary game object from the render queue in such a way that Instantiate 
-		 * doesn't copy it
-		 **/
-		public void OnRnDComplexSpawn()
-		{
-			PSystemBody body = KopernicusUtility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Kopernicus");
-			body.scaledVersion.SetActive (true);
-		}
-
-		public void OnRnDComplexDespawn()
-		{
-			PSystemBody body = KopernicusUtility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Kopernicus");
-			body.scaledVersion.SetActive (false);
 		}
 	}
 
