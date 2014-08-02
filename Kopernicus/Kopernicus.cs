@@ -97,6 +97,12 @@ namespace Kopernicus
 				foreach(PQS p in FlightGlobals.currentMainBody.pqsController.ChildSpheres)
 				{
 					KopernicusUtility.DumpObject(p, " " + p.ToString() + " ");
+
+					// Components of this child
+					foreach(PQSMod m in p.GetComponentsInChildren<PQSMod>())
+					{
+						KopernicusUtility.DumpObject(m, " " + m.ToString() + " ");
+					}
 				}
 			}
 		}

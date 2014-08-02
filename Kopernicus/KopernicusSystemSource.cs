@@ -82,7 +82,8 @@ namespace Kopernicus
 			// rather than something that returns a planet. Perhaps it should be named differently
 			// from the GenerateSystem method to emphasize this difference in usage??
 			KopernicusPlanetSource.GeneratePlanet (system, "Kopernicus");
-			
+			//StockPlanetSource.GeneratePlanet(system, "Laythe", "Bob", new Orbit (0.0, 0.0, 47500000000, 0, 0, 0, 0, system.rootBody.celestialBody));
+
 			// Return the newly created planetary system
 			return system;
 		}

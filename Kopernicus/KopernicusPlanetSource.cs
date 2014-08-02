@@ -109,7 +109,7 @@ namespace Kopernicus
 			body.orbitDriver.updateMode               = OrbitDriver.UpdateMode.UPDATE;
 			body.orbitDriver.UpdateOrbit ();
 			if (orbit == null) 
-				body.orbitDriver.orbit = new Orbit (0.0, 0.0, 150000000000, 0, 0, 0, 0, system.rootBody.celestialBody);
+				body.orbitDriver.orbit = new Orbit (0.0, 0.0, 47500000000, 0, 0, 0, 0, system.rootBody.celestialBody);
 			else
 				body.orbitDriver.orbit = orbit;
 
@@ -487,23 +487,69 @@ namespace Kopernicus
 			body.pqsVersion.mapOceanColor = new Color(0.117f, 0.126f, 0.157f, 1.000f);
 			body.pqsVersion.mapOceanHeight = 0.0f;
 
-			// Clone the Laythe ocean config
-			GameObject oceanRoot = UnityEngine.Object.Instantiate(laytheOcean.gameObject) as GameObject;
+			// Generate the PQS object
+			GameObject oceanRoot       = new GameObject(name + "Ocean");
 			oceanRoot.transform.parent = body.pqsVersion.transform;
-			oceanRoot.name = name + "Ocean";
+			oceanRoot.layer            = Constants.GameLayers.LocalSpace;
+			PQS oceanPQS               = oceanRoot.AddComponent<PQS>();
 
-			PQS oceanPQS = oceanRoot.GetComponent<PQS>();
-			oceanPQS.radius = body.pqsVersion.radius;
-			oceanPQS.parentSphere = body.pqsVersion;
-			oceanPQS.useSharedMaterial = true;
+			// Setup the PQS object data
+			KopernicusUtility.CopyObjectFields<PQS>(laytheOcean.GetComponent<PQS>(), oceanPQS);
+			oceanPQS.radius            = body.pqsVersion.radius;
+			oceanPQS.surfaceMaterial   = new Material(laytheOcean.GetComponent<PQS>().surfaceMaterial);
+			oceanPQS.fallbackMaterial  = new Material(laytheOcean.GetComponent<PQS>().fallbackMaterial);
 
-			PQSMod_RemoveQuadMap removeQuadMap = KopernicusUtility.RecursivelyGetComponent<PQSMod_RemoveQuadMap>(oceanPQS.transform);
-			removeQuadMap.map = vertexHeightMap.heightMap;
-			removeQuadMap.mapDeformity = vertexHeightMap.heightMapDeformity;
-			removeQuadMap.minHeight = 0;
+			// Create the aerial perspective material
+			mod = new GameObject("_Material_AerialPerspective");
+			mod.transform.parent = oceanRoot.transform;
+			aerialPerspectiveMaterial = mod.AddComponent<PQSMod_AerialPerspectiveMaterial>();
+			aerialPerspectiveMaterial.sphere = body.pqsVersion;
+			aerialPerspectiveMaterial.globalDensity = -0.00001f;
+			aerialPerspectiveMaterial.heightFalloff = 6.75f;
+			aerialPerspectiveMaterial.atmosphereDepth = 150000;
+			aerialPerspectiveMaterial.DEBUG_SetEveryFrame = true;
+			aerialPerspectiveMaterial.cameraAlt = 0;
+			aerialPerspectiveMaterial.cameraAtmosAlt = 0;
+			aerialPerspectiveMaterial.heightDensAtViewer = 0;
+			aerialPerspectiveMaterial.requirements = PQS.ModiferRequirements.Default;
+			aerialPerspectiveMaterial.modEnabled = true;
+			aerialPerspectiveMaterial.order = 100;
+			
+			// Create the UV planet relative position
+			mod = new GameObject("_Material_SurfaceQuads");
+			mod.transform.parent = oceanRoot.transform;
+			planetRelativePosition = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
+			planetRelativePosition.sphere = body.pqsVersion;
+			planetRelativePosition.requirements = PQS.ModiferRequirements.Default;
+			planetRelativePosition.modEnabled = true;
+			planetRelativePosition.order = 100;
+
+			// Create the quad remover
+			mod = new GameObject("QuadRemoveMap");
+			mod.transform.parent = oceanRoot.transform;
+			PQSMod_RemoveQuadMap removeQuadMap = mod.AddComponent<PQSMod_RemoveQuadMap>();
+			removeQuadMap.mapDeformity = 0.0f;
+			removeQuadMap.minHeight = 0.0f;
 			removeQuadMap.maxHeight = 0.5f;
+			removeQuadMap.requirements = PQS.ModiferRequirements.Default;
+			removeQuadMap.modEnabled = true;
+			removeQuadMap.order = 1000;
 
+			// Load the heightmap into whatever the hell this is
+			map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Height.png"));
+			removeQuadMap.map = ScriptableObject.CreateInstance<MapSO>();
+			removeQuadMap.map.CreateMap(MapSO.MapDepth.Greyscale, map);
+			UnityEngine.Object.DestroyImmediate(map);
 
+			// Setup the ocean effects
+			mod = new GameObject("OceanFX");
+			mod.transform.parent = oceanRoot.transform;
+			PQSMod_OceanFX oceanFX = mod.AddComponent<PQSMod_OceanFX>();
+			oceanFX.watermain = KopernicusUtility.RecursivelyGetComponent<PQSMod_OceanFX>(laytheOcean).watermain.Clone() as Texture2D[];
+			oceanFX.requirements = PQS.ModiferRequirements.Default;
+			oceanFX.modEnabled = true;
+			oceanFX.order = 100;
 
 			#endregion
 
@@ -577,91 +623,52 @@ namespace Kopernicus
 
 	// Add a clone of a stock planet (in a different orbit)
 	// This is a kind of KopernicusPlanetSource
-	public class StockPlanetSource : KopernicusPlanetSource {
-		public static PSystemBody GeneratePlanet (PSystem system, string stockPlanetName, string newName, Orbit orbit = null) {
-			return GenerateSystemBody (system, system.rootBody, stockPlanetName, newName, orbit);
+	public class StockPlanetSource 
+	{
+		public static PSystemBody GeneratePlanet (PSystem system, string templateName, string name, Orbit orbit) 
+		{
+			return GenerateSystemBody (system, system.rootBody, templateName, name, orbit);
 		}
 
-		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, string stockPlanetName, string newName, Orbit orbit = null) {
-			// AddBody makes the GameObject and stuff. It also attaches it to the system and
-			// parent.
-			PSystemBody body = system.AddBody (parent);
-			PSystemBody prototype = KopernicusUtility.FindBody (system.rootBody, stockPlanetName);
+		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, string templateName, string name, Orbit orbit) 
+		{
+			// Look up the template body
+			PSystemBody template = KopernicusUtility.FindBody (system.rootBody, templateName);
 
-			if (prototype == null) {
-				Debug.Log ("Kopernicus:StockPlanetSource can't find a stock planet named " + stockPlanetName);
-				return null;
-			}
+			// Create a new celestial body as a clone of this template
+			PSystemBody clone = system.AddBody (parent);
+			clone.name = name;
 
-			// set up the various parameters
-			body.name = newName;
-			body.orbitRenderer.orbitColor = prototype.orbitRenderer.orbitColor;
-			body.flightGlobalsIndex = prototype.flightGlobalsIndex;
+			// Set up the celestial body of the clone (back up the orbit driver)
+			KopernicusUtility.CopyObjectFields<CelestialBody> (template.celestialBody, clone.celestialBody);
+			clone.celestialBody.bodyName = name;
+			clone.celestialBody.orbitingBodies = null;
+			clone.celestialBody.orbitDriver = clone.orbitDriver;
+			clone.flightGlobalsIndex = 100 + template.flightGlobalsIndex;
 
-			// Some parameters of the celestialBody, which represents the actual planet...
-			// PSystemBody is more of a container that associates the planet with its orbit 
-			// and position in the planetary system, etc.
-			body.celestialBody.bodyName = newName;
-			body.celestialBody.Radius = prototype.celestialBody.Radius;
+			// Setup the orbit driver
+			clone.orbitRenderer.orbitColor = template.orbitRenderer.orbitColor;
+			clone.orbitDriver.orbit = orbit;
+			clone.orbitDriver.celestialBody = clone.celestialBody;
+			clone.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 
-			// This is g, not acceleration due to g, it turns out.
-			body.celestialBody.GeeASL = prototype.celestialBody.GeeASL; 
-			// This is the Standard gravitational parameter, i.e. mu
-			body.celestialBody.gravParameter = prototype.celestialBody.gravParameter; 
+			// Setup the deactivator object
+			GameObject deactivator = new GameObject ("Deactivator");
+			deactivator.SetActive (false);
+			UnityEngine.Object.DontDestroyOnLoad (deactivator);
 
-			// It appears that it calculates SOI for you if you give it this stuff.
-			body.celestialBody.bodyDescription = prototype.celestialBody.bodyDescription;
-			// at the moment, this value is always "Generic" but I guess that might change.
-			body.celestialBody.bodyType = prototype.celestialBody.bodyType;
+			// Clone the template's PQS
+			clone.pqsVersion = UnityEngine.Object.Instantiate (template.pqsVersion) as PQS;
+			clone.pqsVersion.transform.parent = deactivator.transform;
+			clone.pqsVersion.name = name;
 
-			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
-			body.celestialBody.isHomeWorld = prototype.celestialBody.isHomeWorld;
-			// function unknown at this time
-			body.celestialBody.gMagnitudeAtCenter = prototype.celestialBody.gMagnitudeAtCenter;
-			// time warp limits
-			body.celestialBody.timeWarpAltitudeLimits = (float[])prototype.celestialBody.timeWarpAltitudeLimits.Clone();
+			// Clone the scaled space
+			clone.scaledVersion = UnityEngine.Object.Instantiate (template.scaledVersion) as GameObject;
+			clone.scaledVersion.transform.parent = deactivator.transform;
+			clone.scaledVersion.name = name;
 
-			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
-			// from Squad, so storing these to files (and loading them) will be pretty easy.
-
-			//Debug.Log ("..About to assign orbit.");
-
-			// Note that we may have to adjust the celestialBody target here, because odds are
-			// we're putting a planet found in the systemPrefab into a system that is not the
-			// systemPrefab and has different celestialbodies. FIXME by having it look up the 
-			// body by name perhaps? That will break of course if you have, say, two Jools.
-
-			if (orbit == null)
-				body.orbitDriver.orbit = prototype.orbitDriver.orbit; // probably won't work if not going into a cloned systemprefab Sun
-			else
-				body.orbitDriver.orbit = orbit;
-
-			body.orbitDriver.celestialBody = body.celestialBody;
-			body.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-			body.orbitDriver.UpdateOrbit ();
-
-			//Debug.Log ("..About to clone the scaledversion.");
-			// Temporarily clone the Dres scaled version for the structure
-			// Find the dres prefab
-			GameObject scaledVersion = (GameObject)UnityEngine.Object.Instantiate(prototype.scaledVersion);
-			/*if (scaledVersion == null)
-				Debug.Log ("ScaledVersion is null");
-			else
-				Debug.Log ("ScaledVersion is not null.");*/
-			body.scaledVersion = scaledVersion;
-
-			//Debug.Log ("..About to assign fader.");
-			// Adjust the scaled space fader to our new celestial body
-			ScaledSpaceFader fader = scaledVersion.GetComponent<ScaledSpaceFader> ();
-			//Debug.Log ("fader: " + fader + " sv:", scaledVersion);
-			fader.celestialBody = body.celestialBody;
-
-			//Debug.Log ("..done.");
-			return body;
-
+			return clone;
 		}
-
-
 	}
 }
 

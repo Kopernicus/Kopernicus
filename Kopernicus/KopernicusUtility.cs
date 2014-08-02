@@ -46,25 +46,31 @@ namespace Kopernicus
 		 */
 		public static Transform FindInChildren (Transform transform, string name)
 		{
-			// Is this child in our immediate children
-			Transform t = transform.Find (name);
+			// Is this null?
+			if (transform == null) 
+			{
+				return null;
+			}
+
+			// Are the names equivalent
+			if (transform.name == name) 
+			{
+				return transform;
+			}
 
 			// If we did not find a transform, search through the children
-			if (t == null) 
+			foreach (Transform child in transform) 
 			{
-				foreach (Transform child in transform) 
+				// Recurse into the child
+				Transform t = FindInChildren (child, name);
+				if(t != null)
 				{
-					// Recurse into the child
-					t = FindInChildren (child, name);
-					if(t != null)
-					{
-						break;
-					}
+					return t;
 				}
 			}
 
 			// Return the transform (will be null if it was not found)
-			return t;
+			return null;
 		}
 
 		/**
