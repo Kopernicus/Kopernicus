@@ -96,12 +96,19 @@ namespace Kopernicus
 				// Dump the child PQSs
 				foreach(PQS p in FlightGlobals.currentMainBody.pqsController.ChildSpheres)
 				{
+					// Dump the child PQS info
 					KopernicusUtility.DumpObject(p, " " + p.ToString() + " ");
 
 					// Components of this child
 					foreach(PQSMod m in p.GetComponentsInChildren<PQSMod>())
 					{
 						KopernicusUtility.DumpObject(m, " " + m.ToString() + " ");
+					}
+
+					// Print out information on all of the quads in the child
+					foreach(PQ q in p.GetComponentsInChildren<PQ>())
+					{
+						Debug.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name);
 					}
 				}
 			}

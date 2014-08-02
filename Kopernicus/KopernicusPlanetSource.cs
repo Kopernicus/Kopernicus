@@ -524,7 +524,7 @@ namespace Kopernicus
 			planetRelativePosition.modEnabled = true;
 			planetRelativePosition.order = 100;
 
-			// Create the quad remover
+			// Create the quad map remover (da fuck?)
 			mod = new GameObject("QuadRemoveMap");
 			mod.transform.parent = oceanRoot.transform;
 			PQSMod_RemoveQuadMap removeQuadMap = mod.AddComponent<PQSMod_RemoveQuadMap>();
