@@ -403,6 +403,9 @@ namespace Kopernicus
 
 			#endregion
 
+			// Create the oceans
+			createOceans (body.pqsVersion, body.celestialBody);
+
 			#region PSystemBody.scaledVersion generation
 
 			// Create the scaled version of the planet for use in map view (i've tried generating it on my own but it just doesn't appear.  hmm)
@@ -530,6 +533,26 @@ namespace Kopernicus
 			// Return the new body
 			return body;
 		}
+
+		// Generate the oceans for a planet
+		public static void createOceans(PQS pqsVersion, CelestialBody cb) {
+			cb.ocean = true;
+
+			// start by cloning the laythe ocean
+			PQS Laythe = KopernicusUtility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Laythe").pqsVersion;
+
+			GameObject LaytheOcean = Laythe.transform.Find ("LaytheOcean").gameObject;//.GetComponent<PQS>();
+			//KopernicusUtility.DumpObject (LaytheOcean);
+			GameObject LaytheOceanClone = (GameObject)UnityEngine.GameObject.Instantiate(LaytheOcean);
+
+			PQS oceans = LaytheOceanClone.GetComponent<PQS> ();
+			oceans.radius = cb.Radius; // resize to fit our planet
+
+			UnityEngine.Object.DontDestroyOnLoad (LaytheOceanClone);
+			LaytheOceanClone.SetActive (false);
+			LaytheOceanClone.transform.parent = pqsVersion.gameObject.transform;
+		}
+
 
 		// This function generates the biomes for the planet. (Coupled with an
 		// appropriate Texture2D.)
