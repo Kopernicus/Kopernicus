@@ -518,7 +518,7 @@ namespace Kopernicus
 		// appropriate Texture2D.)
 		public static CBAttributeMap GenerateCBAttributeMap(string name) 
 		{
-			Debug.Log ("[Kopernicus] GenerateCBAttributeMap begins");
+			Debug.Log ("[Kopernicus] GenerateCBAttributeMap begins  r4");
 			CBAttributeMap rv = new CBAttributeMap();
 
 			rv.Map = new Texture2D(4, 4, TextureFormat.RGB24, false);
@@ -528,28 +528,47 @@ namespace Kopernicus
 			rv.Map.Compress (false);
 			// If it will let us take in an indexed color PNG that would be preferable - bcs
 			rv.Map.Apply(true, false);
-			//rv.nonExactThreshold = 0.1f; // Possibly related to color matching? Or is it spatial?
-			//rv.exactSearch = true;
+			//rv.nonExactThreshold = -1f; // This will theoretically return the "best match". It also depends on float comparison, but at least it's to a constant.
+			rv.nonExactThreshold = 0.05f; // 0.6 0.0 0.4 matches 1 0 0 at .33 so .1 is fairly generous and should be reduced for maps with many colors
+			// "exact" match is a broken concept (floats should never be compared to floats with == or !=) and (as implemented as of KSP .24.2) should
+			// never be used.
+			rv.exactSearch = false;
 			rv.Attributes = new CBAttributeMap.MapAttribute[3];
 
 			rv.Attributes [0] = new CBAttributeMap.MapAttribute ();
 			rv.Attributes [0].name = "PolarCaps";
 			rv.Attributes [0].value = 1.5f;
-			rv.Attributes [0].mapColor = new Color (0xF9, 0xF4, 0xE5);
+			rv.Attributes [0].mapColor = new Color (0f, 1f, 0f);
 
 			rv.Attributes [1] = new CBAttributeMap.MapAttribute ();
 			rv.Attributes [1].name = "Mares";
 			rv.Attributes [1].value = 1.0f;
-			rv.Attributes [1].mapColor = new Color (0x25, 0x0E, 0x01);
+			rv.Attributes [1].mapColor = new Color (0f, 0f, 1f);
 
 			rv.Attributes [2] = new CBAttributeMap.MapAttribute ();
 			rv.Attributes [2].name = "Dunes";
 			rv.Attributes [2].value = 1.0f;
-			rv.Attributes [2].mapColor = new Color (0xff, 0x00, 0x00);
+			rv.Attributes [2].mapColor = new Color (1f, 0f, 0f);
 
-			rv.defaultAttribute = rv.Attributes [2];
+			rv.defaultAttribute = rv.Attributes [0];
+			/*
+			// Troubleshooting fosssil
+			Vector4 pixelBilinear;
+			Vector4 color;
+			for (float lat = -3f; lat < 3f; lat += .1f)
+				for (float lon = 0f; lon < 6f; lon += .1f) {
+					float innerlon = lon - 1.5707963267948966f;
+					
+					float v = (float)(lat / 3.1415926535897931) + 0.5f;
+					float u = (float)(innerlon / 6.2831853071795862f);
+					pixelBilinear = rv.Map.GetPixelBilinear (u, v); 
+					color = rv.Attributes [2].mapColor;
+					
 
-
+					Debug.Log ("X<A "+ lat + " "+lon+" clr="+ color + " pbl=" + pixelBilinear+" rv=" + rv.GetAtt (lat, lon).name + ":" + 
+				           (color-pixelBilinear).sqrMagnitude);
+				}
+			*/
 			Debug.Log ("[Kopernicus] GenerateCBAttributeMap ends");
 
 			return rv;
