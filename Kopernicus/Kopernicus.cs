@@ -38,7 +38,7 @@ namespace Kopernicus
 {
 	// Hook the PSystemSpawn (creation of the planetary system) event in the KSP initialization lifecycle
 	[KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
-	public class KopernicusInjector : MonoBehaviour 
+	public class Injector : MonoBehaviour 
 	{
 		/**
 		 * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
@@ -50,18 +50,15 @@ namespace Kopernicus
 		public void Awake()
 		{
 			// We're ALIVE
-			Debug.Log("[Kopernicus]: KopernicusInjector.Awake(): Begin");
+			Debug.Log("[Kopernicus]: Injector.Awake(): Begin");
 
 			// If the planetary manager does not work, well, error out
 			if (PSystemManager.Instance == null) 
 			{
 				// Log the error
-				Debug.LogError("[Kopernicus]: KopernicusInjector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
+				Debug.LogError("[Kopernicus]: Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
 				return;
 			}
-
-			// Prevent the Unity3D scene loader from culling this behavior (Please don't kill us)
-			DontDestroyOnLoad (this);
 
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
 			PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();
@@ -70,56 +67,50 @@ namespace Kopernicus
 			RDArchivesController archivesController = KopernicusUtility.RecursivelyGetComponent<RDArchivesController> (AssetBase.RnDTechTree.GetRDScreenPrefab ().transform);
 			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
-			// Register hanlders for important game events.
-			PSystemManager.Instance.OnPSystemReady.Add (OnPSystemReady);
-
 			// Done executing the awake function
-			Debug.Log ("[Kopernicus]: KopernicusInjector.Awake(): End");
+			Debug.Log ("[Kopernicus]: Injector.Awake(): End");
 		}
 
+		// Log the destruction of the injector
+		public void OnDestroy()
+		{
+			Debug.Log ("[Kopernicus]: Injection Complete");
+		}
+	}
+
+	// Mod runtime utilitues
+	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	public class RuntimeUtility : MonoBehaviour
+	{
 		/**
-		 * If Control-P are pressed, dump the PQS of the current live body
+		 * If Control-P are pressed, dump the PQS data of the current live body
 		 **/
 		public void Update()
 		{
+			// Print out the PQS state
 			if( Input.GetKeyDown( KeyCode.P ) && Input.GetKey( KeyCode.LeftControl ) )
 			{
+				// Log the state of the PQS
 				KopernicusUtility.DumpObject(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
-				KopernicusUtility.GameObjectWalk(FlightGlobals.currentMainBody.pqsController.gameObject);
 
-				Transform t = KopernicusUtility.FindInChildren(FlightGlobals.currentMainBody.pqsController.transform, FlightGlobals.currentMainBody.bodyName + "Ocean");
-				if(t != null)
+				// Dump the child PQSs
+				foreach(PQS p in FlightGlobals.currentMainBody.pqsController.ChildSpheres)
 				{
-					KopernicusUtility.DumpObject(t.GetComponent<PQS>(), " Ocean PQS ");
+					KopernicusUtility.DumpObject(p, " " + p.ToString() + " ");
 				}
 			}
 		}
-
+		
 		/**
-		 *  OnPSystemReady() called when the PSystem is loaded.  Somehow get a handle?
+		 * Awake() - flag this class as don't destroy on load
 		 **/
-		public void OnPSystemReady()
+		public void Awake ()
 		{
-			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): Begin");
+			// Make sure the runtime utility isn't killed
+			DontDestroyOnLoad (this);
 
-
-			// Get the PSystemBody for the planet
-			CelestialBody body = KopernicusUtility.GetLocalSpace().transform.FindChild("Kopernicus").GetComponent<CelestialBody> ();
-			
-			// Browse through PQS
-			if (body.pqsController != null) 
-			{
-				foreach(PQS p in body.pqsController.ChildSpheres)
-				{
-					Debug.Log("Found Child Sphere: " + p);
-				}
-				
-				// Dump the game object
-				KopernicusUtility.GameObjectWalk(body.pqsController.gameObject);
-			}
-
-
-			Debug.Log ("[Kopernicus]: KopernicusInjector.OnPSystemReady(): End");
+			// Log
+			Debug.Log ("[Kopernicus]: RuntimeUtility Started");
 		}
 	}
 

@@ -70,10 +70,10 @@ namespace Kopernicus
 			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");  // Need the geosphere for scaled version
 			PSystemBody Laythe = KopernicusUtility.FindBody (system.rootBody, "Laythe"); // Need pqs and ocean definitions
 
-			KopernicusUtility.DumpObject (Laythe.celestialBody, " Laythe Celestial Body ");
-			KopernicusUtility.DumpObject (Laythe.pqsVersion, " Laythe PQS ");
+			//KopernicusUtility.DumpObject (Laythe.celestialBody, " Laythe Celestial Body ");
+			//KopernicusUtility.DumpObject (Laythe.pqsVersion, " Laythe PQS ");
 			Transform laytheOcean = KopernicusUtility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
-			KopernicusUtility.DumpObject (laytheOcean.GetComponent<PQS> (), " Laythe Ocean PQS ");
+			//KopernicusUtility.DumpObject (laytheOcean.GetComponent<PQS> (), " Laythe Ocean PQS ");
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
@@ -267,13 +267,14 @@ namespace Kopernicus
 			vertexSimplexHeight.modEnabled = true;
 			vertexSimplexHeight.order = 21;
 
+			// SERIOUSLY RECOMMENDED FOR NO OCEAN WORLDS
 			// Create the flatten ocean module
-			PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
+			/*PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
 			flattenOcean.sphere = body.pqsVersion;
 			flattenOcean.oceanRadius = 1.0;
 			flattenOcean.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 			flattenOcean.modEnabled = true;
-			flattenOcean.order = 25;
+			flattenOcean.order = 25;*/
 
 			// Creat the vertex height noise module
 			PQSMod_VertexHeightNoise vertexHeightNoise = mod.AddComponent<PQSMod_VertexHeightNoise>();
@@ -358,6 +359,7 @@ namespace Kopernicus
 			body.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
 			body.scaledVersion.transform.parent = deactivator.transform;
 
+			// DEPRECATED - USE PQSMeshWrapper
 			// Make sure the scaled version cooresponds to the size of the body
 			// Turns out that the localScale is directly related to the planet size.  
 			// Jool's local scale is {1,1,1}, Kerbin's is {0.1,0.1,0.1}.  Jool's 
@@ -478,22 +480,35 @@ namespace Kopernicus
 
 			#region Ocean
 			// ---------------- FOR BODIES WITH OCEANS ----------
-			/*body.celestialBody.ocean = true;
+			body.celestialBody.ocean = true;
 
 			// Setup the laythe ocean info in master pqs
 			body.pqsVersion.mapOcean = true;
 			body.pqsVersion.mapOceanColor = new Color(0.117f, 0.126f, 0.157f, 1.000f);
-			body.pqsVersion.mapOceanHeight = 0.0;
+			body.pqsVersion.mapOceanHeight = 0.0f;
 
 			// Clone the Laythe ocean config
 			GameObject oceanRoot = UnityEngine.Object.Instantiate(laytheOcean.gameObject) as GameObject;
-			oceanRoot.name = name + "Ocean";
 			oceanRoot.transform.parent = body.pqsVersion.transform;
+			oceanRoot.name = name + "Ocean";
+
 			PQS oceanPQS = oceanRoot.GetComponent<PQS>();
 			oceanPQS.radius = body.pqsVersion.radius;
-			oceanPQS.parentSphere = body.pqsVersion;*/
+			oceanPQS.parentSphere = body.pqsVersion;
+			oceanPQS.useSharedMaterial = true;
+
+			PQSMod_RemoveQuadMap removeQuadMap = KopernicusUtility.RecursivelyGetComponent<PQSMod_RemoveQuadMap>(oceanPQS.transform);
+			removeQuadMap.map = vertexHeightMap.heightMap;
+			removeQuadMap.mapDeformity = vertexHeightMap.heightMapDeformity;
+			removeQuadMap.minHeight = 0;
+			removeQuadMap.maxHeight = 0.5f;
+
+
 
 			#endregion
+
+			// Dump the constructed structure
+			KopernicusUtility.GameObjectWalk (deactivator);
 
 			// Return the new body
 			return body;
