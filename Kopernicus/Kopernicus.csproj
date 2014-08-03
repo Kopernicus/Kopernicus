@@ -43,11 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Kopernicus.cs" />
     <Compile Include="KopernicusUtility.cs" />
     <Compile Include="KopernicusSystemSource.cs" />
     <Compile Include="KopernicusPlanetSource.cs" />
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
+    <Compile Include="RuntimeUtility.cs" />
+    <Compile Include="Injector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -100,6 +100,7 @@ namespace Kopernicus
 			body.celestialBody.rotates                = true;
 			body.celestialBody.BiomeMap               = GenerateCBAttributeMap(name);//Dres.celestialBody.BiomeMap;//
 			body.celestialBody.scienceValues          = Laythe.celestialBody.scienceValues;
+			body.celestialBody.ocean                  = false;
 
 			// Presumably true of Kerbin. I do not know what the consequences are of messing with this exactly.
 			// I think this just affects where the Planetarium/Tracking station starts.
