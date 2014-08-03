@@ -47,6 +47,10 @@
     <Compile Include="KopernicusUtility.cs" />
     <Compile Include="KopernicusSystemSource.cs" />
     <Compile Include="KopernicusPlanetSource.cs" />
+    <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="MaterialWrapper\" />
+  </ItemGroup>
 </Project>
