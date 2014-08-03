@@ -473,10 +473,10 @@ namespace Kopernicus
 			body.celestialBody.atmosphereContainsOxygen = false;
 			body.celestialBody.staticPressureASL = 1.0; // can't find anything that references this, especially with the equation in mind - where is this used?
 			body.celestialBody.altitudeMultiplier = 1.4285f; // ditto
-			body.celestialBody.atmosphereScaleHeight = 3.0;   // pressure (in atm) = atmosphereMultipler * e ^ -(altitude / (atmosphereScaleHeight * 1000))
-			body.celestialBody.atmosphereMultiplier = 0.2f;
+			body.celestialBody.atmosphereScaleHeight = 4.0;   // pressure (in atm) = atmosphereMultipler * e ^ -(altitude / (atmosphereScaleHeight * 1000))
+			body.celestialBody.atmosphereMultiplier = 0.8f;
 			body.celestialBody.atmoshpereTemperatureMultiplier = 1.0f; // how does this coorespond?
-			body.celestialBody.maxAtmosphereAltitude = 50000.0f;  // i guess this is so the math doesn't drag out?
+			body.celestialBody.maxAtmosphereAltitude = 55000.0f;  // i guess this is so the math doesn't drag out?
 			body.celestialBody.useLegacyAtmosphere = true;
 			body.celestialBody.atmosphericAmbientColor = new Color(0.306f, 0.187f, 0.235f, 1.000f);
 			#endregion
