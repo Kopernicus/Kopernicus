@@ -108,7 +108,28 @@ namespace Kopernicus
 					// Print out information on all of the quads in the child
 					foreach(PQ q in p.GetComponentsInChildren<PQ>())
 					{
-						Debug.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name);
+						Debug.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name + ") @ " + q.transform.position);
+						// Add line renderer
+
+						// Then create renderer itself...
+						GameObject g = new GameObject("_debug");
+						LineRenderer line = g.AddComponent<LineRenderer>();
+						g.transform.parent = q.transform;
+
+						// Local transform
+						g.transform.localPosition = Vector3.zero;
+						g.transform.localScale = Vector3.one;
+						g.transform.localEulerAngles = Vector3.zero; 
+
+						line.useWorldSpace = false;
+						
+						// Make it render a red to yellow triangle, 1 meter wide and 2 meters long
+						line.material = new Material( Shader.Find( "Particles/Additive" ) );
+						line.SetColors( Color.green, Color.green );
+						line.SetWidth(50, 50);
+						line.SetVertexCount( 2 );
+						line.SetPosition( 0, Vector3.zero);
+						line.SetPosition( 1, Vector3.forward * -500.0f );
 					}
 				}
 			}

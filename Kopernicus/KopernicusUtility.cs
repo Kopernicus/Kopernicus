@@ -98,6 +98,47 @@ namespace Kopernicus
 			// Return the component we found
 			return component;
 		}
+		
+		// Dump an object by reflection
+		public static void DumpObject(object o, string title = "---------")
+		{
+			// Dump the raw PQS of Dres (by reflection)
+			Debug.Log("---------" + title + "------------");
+			foreach (FieldInfo field in o.GetType().GetFields()) 
+			{
+				if (!field.IsStatic)
+				{
+					Debug.Log (field.Name + " = " + field.GetValue (o));
+				}
+			}
+			Debug.Log("--------------------------------------");
+		}
+		
+		/**
+		 * Copy one objects fields to another object via reflection
+		 * @param source Object to copy fields from
+		 * @param destination Object to copy fields to
+		 **/
+		public static void CopyObjectFields<T> (T source, T destination)
+		{
+			// Reflection based copy
+			foreach (FieldInfo field in (typeof (T)).GetFields()) 
+			{
+				// Only copy non static fields
+				if (!field.IsStatic)
+				{
+					field.SetValue(destination, field.GetValue(source));
+				}
+			}
+		}
+		
+		/**
+		 * Returns the local space object
+		 */
+		public static GameObject GetLocalSpace ()
+		{
+			return GameObject.Find (PSystemManager.Instance.localSpaceName);
+		}
 
 		/**
 		 * Recursively searches for a named PSystemBody
@@ -123,14 +164,6 @@ namespace Kopernicus
 
 			// Return null because we didn't find shit
 			return null;
-		}
-
-		/**
-		 * Returns the local space object
-		 */
-		public static GameObject GetLocalSpace ()
-		{
-			return GameObject.Find (PSystemManager.Instance.localSpaceName);
 		}
 
 		// Print out a tree containing all the objects in the game
@@ -216,39 +249,6 @@ namespace Kopernicus
 			dest.colors32 = colors32;
 			
 			//ProfileTimer.Pop("CopyMesh");
-		}
-
-		// Dump an object by reflection
-		public static void DumpObject(object o, string title = "---------")
-		{
-			// Dump the raw PQS of Dres (by reflection)
-			Debug.Log("---------" + title + "------------");
-			foreach (FieldInfo field in o.GetType().GetFields()) 
-			{
-				if (!field.IsStatic)
-				{
-					Debug.Log (field.Name + " = " + field.GetValue (o));
-				}
-			}
-			Debug.Log("--------------------------------------");
-		}
-
-		/**
-		 * Copy one objects fields to another object via reflection
-		 * @param source Object to copy fields from
-		 * @param destination Object to copy fields to
-		 **/
-		public static void CopyObjectFields<T> (T source, T destination)
-		{
-			// Reflection based copy
-			foreach (FieldInfo field in (typeof (T)).GetFields()) 
-			{
-				// Only copy non static fields
-				if (!field.IsStatic)
-				{
-					field.SetValue(destination, field.GetValue(source));
-				}
-			}
 		}
 	}
 }

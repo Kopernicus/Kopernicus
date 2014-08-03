@@ -32,6 +32,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+using Kopernicus.MaterialWrapper;
+
 namespace Kopernicus
 {
 	// Constants found in planet creation (if things break in the future, check these first)
@@ -492,12 +494,13 @@ namespace Kopernicus
 			oceanRoot.transform.parent = body.pqsVersion.transform;
 			oceanRoot.layer            = Constants.GameLayers.LocalSpace;
 			PQS oceanPQS               = oceanRoot.AddComponent<PQS>();
+			celestialBodyTransform.planetFade.secondaryRenderers.Add(oceanRoot);
 
 			// Setup the PQS object data
 			KopernicusUtility.CopyObjectFields<PQS>(laytheOcean.GetComponent<PQS>(), oceanPQS);
 			oceanPQS.radius            = body.pqsVersion.radius;
-			oceanPQS.surfaceMaterial   = new Material(laytheOcean.GetComponent<PQS>().surfaceMaterial);
-			oceanPQS.fallbackMaterial  = new Material(laytheOcean.GetComponent<PQS>().fallbackMaterial);
+			oceanPQS.surfaceMaterial   = new PQSOceanSurfaceQuad(laytheOcean.GetComponent<PQS>().surfaceMaterial);
+			(oceanPQS.surfaceMaterial as PQSOceanSurfaceQuad).Log();
 
 			// Create the aerial perspective material
 			mod = new GameObject("_Material_AerialPerspective");
