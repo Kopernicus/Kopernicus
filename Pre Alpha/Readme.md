@@ -6,7 +6,7 @@ Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com)
                    Nathaniel R. Lewis (linux.robotdude@gmail.com) 
 
 About
-——
+-----
 Kopernicus is a KSP add-on that allows for modification of stock planets and the creation of new planets via modification of the system prefab.  Why is this advantageous you might ask?  Previous planet adder mods, such as Planet Factory, modified the live planetary system and had to keep multiple hacks actively running to provide these worlds.  We strive to provide the least hacky solution by introducing planets into the game in the exact same manner Squad would.  
 
 Kopernicus is a one step process.  It is started before the planetary system is created and rewrites a property called PSystemManager.Instance.systemPrefab.  The game itself then creates *our* planetary system as if it were blessed by Squad themselves.  Our very own Brood Parasite!  The mod’s function ends here, and it terminates.  Kopernicus introduced worlds require zero maintenance by third party code, all support is driven entirely by built in functionality.  This yields an incredibly stable and incredibly flexible environment for planetary creation.
@@ -19,14 +19,16 @@ We have yet to see if removing or rearranging the other bodies causes any sort o
 
 
 Instructions
-——————
+------------
+
 1) Copy the contents of the GameData/ folder to KSP’s GameData/ folder
 2) Launch KSP and enjoy!
 3) Please report any bugs you may find to either or both of the email addresses above.
 
 
 Information
-—————
+-----------
+
 This release is not configurable, as a configuration system has not been written yet.  A new planet called “Kopernicus” will be added to the game via modification of the system prefab.  This completes the function of the mod, and since the magic is worked before the PSystem spawn, technically, PlanetFactory can actually run on top of this mod. Although I will be required to find you and kill you for doing this.  
 
 Kopernicus uses the real height map and surface texture from Mars, obtained from the Real Solar System texture package.  The license for which is included as RSStextures.txt.
@@ -44,7 +46,8 @@ The ocean is disabled because it looked stupid (mainly because we don’t fully 
 We have yet to explore progress tree integration and contracts.
 
 Debugging Features
-—————————
+------------------
+
 After the Kopernicus.Injector behavior rewrites the system prefab and terminates, a behavior called Kopernicus.RuntimeUtility is started to provide debugging functions.
 
 PQS Inspector (Control-P): Pressing Control-P will explode your console with information about the PQS controller of the body currently being orbited
