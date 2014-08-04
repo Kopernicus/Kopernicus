@@ -127,18 +127,18 @@ namespace Kopernicus
 			if( Input.GetKeyDown( KeyCode.P ) && Input.GetKey( KeyCode.LeftControl ) )
 			{
 				// Log the state of the PQS
-				KopernicusUtility.DumpObject(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
+				KopernicusUtility.DumpObjectFields(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
 
 				// Dump the child PQSs
 				foreach(PQS p in FlightGlobals.currentMainBody.pqsController.ChildSpheres)
 				{
 					// Dump the child PQS info
-					KopernicusUtility.DumpObject(p, " " + p.ToString() + " ");
+					KopernicusUtility.DumpObjectFields(p, " " + p.ToString() + " ");
 					
 					// Dump components of this child
 					foreach(PQSMod m in p.GetComponentsInChildren<PQSMod>())
 					{
-						KopernicusUtility.DumpObject(m, " " + m.ToString() + " ");
+						KopernicusUtility.DumpObjectFields(m, " " + m.ToString() + " ");
 					}
 					
 					// Print out information on all of the quads in the child

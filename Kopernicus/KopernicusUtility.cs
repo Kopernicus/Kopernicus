@@ -100,7 +100,7 @@ namespace Kopernicus
 		}
 		
 		// Dump an object by reflection
-		public static void DumpObject(object o, string title = "---------")
+		public static void DumpObjectFields(object o, string title = "---------")
 		{
 			// Dump the raw PQS of Dres (by reflection)
 			Debug.Log("---------" + title + "------------");
@@ -110,6 +110,17 @@ namespace Kopernicus
 				{
 					Debug.Log (field.Name + " = " + field.GetValue (o));
 				}
+			}
+			Debug.Log("--------------------------------------");
+		}
+
+		public static void DumpObjectProperties(object o, string title = "---------")
+		{
+			// Iterate through all of the properties
+			Debug.Log("--------- " + title + " ------------");
+			foreach (PropertyInfo property in o.GetType().GetProperties()) 
+			{
+				Debug.Log (property.Name + " = " + property.GetValue(o, null));
 			}
 			Debug.Log("--------------------------------------");
 		}

@@ -49,6 +49,15 @@
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
     <Compile Include="RuntimeUtility.cs" />
     <Compile Include="Injector.cs" />
+    <Compile Include="MaterialWrapper\PQSMainOptimised.cs" />
+    <Compile Include="MaterialWrapper\AtmosphereFromGround.cs" />
+    <Compile Include="MaterialWrapper\PQSMainShader.cs" />
+    <Compile Include="MaterialWrapper\PQSOceanSurfaceQuadFallback.cs" />
+    <Compile Include="MaterialWrapper\PQSProjectionFallback.cs" />
+    <Compile Include="MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
+    <Compile Include="MaterialWrapper\ScaledPlanetRimAerial.cs" />
+    <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
+    <Compile Include="MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -110,7 +110,6 @@ namespace Kopernicus
 			// from Squad, so storing these to files (and loading them) will be pretty easy.
 			body.orbitDriver.celestialBody            = body.celestialBody;
 			body.orbitDriver.updateMode               = OrbitDriver.UpdateMode.UPDATE;
-			body.orbitDriver.UpdateOrbit ();
 			if (orbit == null) 
 				body.orbitDriver.orbit = new Orbit (0.0, 0.0, 47500000000, 0, 0, 0, 0, system.rootBody.celestialBody);
 			else
@@ -134,13 +133,18 @@ namespace Kopernicus
 			// Create the PQS object and pull all the values from Dres (has some future proofing i guess? adapts to PQS changes)
 			body.pqsVersion = controllerRoot.AddComponent<PQS>();
 			KopernicusUtility.CopyObjectFields(Laythe.pqsVersion, body.pqsVersion);
-			//body.pqsVersion.surfaceMaterial = new Material(Shader.Find("Terrain/PQS/Sphere Projection SURFACE QUAD"));
-			//body.pqsVersion.fallbackMaterial = new Material(Shader.Find("Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback) "));
-			body.pqsVersion.surfaceMaterial = new Material(Laythe.pqsVersion.surfaceMaterial);     // use until we determine all the functions of the shader textures
-			body.pqsVersion.fallbackMaterial = new Material(Laythe.pqsVersion.fallbackMaterial);
+			//body.pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuad();
+			//body.pqsVersion.fallbackMaterial = new PQSProjectionFallback();
+			body.pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelative(Laythe.pqsVersion.surfaceMaterial); // use until we determine all the functions of the shader textures
+			body.pqsVersion.fallbackMaterial = new PQSProjectionFallback(Laythe.pqsVersion.fallbackMaterial);
 			body.pqsVersion.radius = body.celestialBody.Radius;
-			body.pqsVersion.maxQuadLenghtsPerFrame = 0.001f;
+			body.pqsVersion.maxQuadLenghtsPerFrame = 0.03f;
 			body.pqsVersion.mapOcean = false;
+			body.pqsVersion.minLevel = 1;
+			body.pqsVersion.maxLevel = 10;
+			body.pqsVersion.minDetailDistance = 8;
+			KopernicusUtility.DumpObjectProperties(body.pqsVersion.surfaceMaterial, " Surface Material ");
+			KopernicusUtility.DumpObjectProperties(body.pqsVersion.fallbackMaterial, " Fallback Material ");
 
 			// Create the celestial body transform
 			GameObject mod = new GameObject("_CelestialBody");
@@ -245,7 +249,7 @@ namespace Kopernicus
 			vertexHeightMap.sphere = body.pqsVersion;
 			//vertexHeightMap.heightMapDeformity = 29457.0;
 			vertexHeightMap.heightMapDeformity = 10000.0;
-			vertexHeightMap.heightMapOffset = -2000.0;
+			vertexHeightMap.heightMapOffset = 0.0;
 			vertexHeightMap.scaleDeformityByRadius = false;
 			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
 			vertexHeightMap.modEnabled = true;
@@ -272,12 +276,12 @@ namespace Kopernicus
 
 			// SERIOUSLY RECOMMENDED FOR NO OCEAN WORLDS
 			// Create the flatten ocean module
-			/*PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
+			PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
 			flattenOcean.sphere = body.pqsVersion;
 			flattenOcean.oceanRadius = 1.0;
 			flattenOcean.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 			flattenOcean.modEnabled = true;
-			flattenOcean.order = 25;*/
+			flattenOcean.order = 25;
 
 			// Creat the vertex height noise module
 			PQSMod_VertexHeightNoise vertexHeightNoise = mod.AddComponent<PQSMod_VertexHeightNoise>();
@@ -416,12 +420,13 @@ namespace Kopernicus
 
 			// Create the renderer and material for the scaled version
 			MeshRenderer renderer = body.scaledVersion.AddComponent<MeshRenderer>();
-			//renderer.material = new Material(Shader.Find("Terrain/Scaled Planet (Simple)"));   // for atmosphereless planets
-			renderer.material = new Material(Shader.Find("Terrain/Scaled Planet (RimAerial)"));
-			renderer.material.SetColor("_Color", Color.white);
-			renderer.material.SetColor("_SpecColor", Color.black);
-			renderer.material.SetTexture("_MainTex", colorTexture);
-			renderer.material.SetTexture("_BumpMap", normalTexture);
+			//ScaledPlanetSimple material = new ScaledPlanetSimple();   // for atmosphereless planets
+			ScaledPlanetRimAerial material = new ScaledPlanetRimAerial();
+			material.color       = Color.white;
+			material.specColor   = Color.black;
+			material.mainTexture = colorTexture;
+			material.bumpMap     = normalTexture;
+			renderer.material    = material;
 
 			// Create the sphere collider
 			SphereCollider collider = body.scaledVersion.AddComponent<SphereCollider> ();
@@ -449,9 +454,9 @@ namespace Kopernicus
 			atmosphereGradient.Apply(true, true);
 
 			// Set the additional settings in the scaledVersion body's shader
-			renderer.material.SetFloat("_rimPower", 2.06f);
-			renderer.material.SetFloat("_rimBlend", 0.3f);
-			renderer.material.SetTexture("_rimColorRamp", atmosphereGradient);
+			material.rimPower = 2.06f;
+			material.rimBlend = 0.3f;
+			material.rimColorRamp = atmosphereGradient;
 
 			// Atmosphere specific properties (for scaled version root) (copied from duna) 
 			MaterialSetDirection materialLightDirection = body.scaledVersion.AddComponent<MaterialSetDirection>();
@@ -464,13 +469,13 @@ namespace Kopernicus
 			meshFilter                                = scaledAtmosphere.AddComponent<MeshFilter>();
 			meshFilter.sharedMesh                     = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 			renderer                                  = scaledAtmosphere.AddComponent<MeshRenderer>();
-			renderer.material                         = new Material(Shader.Find("AtmosphereFromGround"));
+			renderer.material                         = new Kopernicus.MaterialWrapper.AtmosphereFromGround();
 			AtmosphereFromGround atmosphereRenderInfo = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
 			atmosphereRenderInfo.waveLength           = new Color(0.509f, 0.588f, 0.643f, 0.000f);
 
 			// Technical info for atmosphere
 			body.celestialBody.atmosphere = true;
-			body.celestialBody.atmosphereContainsOxygen = false;
+			body.celestialBody.atmosphereContainsOxygen = true;
 			body.celestialBody.staticPressureASL = 1.0; // can't find anything that references this, especially with the equation in mind - where is this used?
 			body.celestialBody.altitudeMultiplier = 1.4285f; // ditto
 			body.celestialBody.atmosphereScaleHeight = 4.0;   // pressure (in atm) = atmosphereMultipler * e ^ -(altitude / (atmosphereScaleHeight * 1000))
@@ -483,7 +488,7 @@ namespace Kopernicus
 
 			#region Ocean
 			// ---------------- FOR BODIES WITH OCEANS ----------
-			body.celestialBody.ocean = true;
+			/*body.celestialBody.ocean = true;
 
 			// Setup the laythe ocean info in master pqs
 			body.pqsVersion.mapOcean = true;
@@ -495,13 +500,17 @@ namespace Kopernicus
 			oceanRoot.transform.parent = body.pqsVersion.transform;
 			oceanRoot.layer            = Constants.GameLayers.LocalSpace;
 			PQS oceanPQS               = oceanRoot.AddComponent<PQS>();
+
+			// Add this new PQS to the secondary renderers of the altitude fade controller
 			celestialBodyTransform.planetFade.secondaryRenderers.Add(oceanRoot);
 
 			// Setup the PQS object data
 			KopernicusUtility.CopyObjectFields<PQS>(laytheOcean.GetComponent<PQS>(), oceanPQS);
 			oceanPQS.radius            = body.pqsVersion.radius;
 			oceanPQS.surfaceMaterial   = new PQSOceanSurfaceQuad(laytheOcean.GetComponent<PQS>().surfaceMaterial);
-			(oceanPQS.surfaceMaterial as PQSOceanSurfaceQuad).Log();
+			oceanPQS.fallbackMaterial  = new PQSOceanSurfaceQuadFallback(laytheOcean.GetComponent<PQS>().fallbackMaterial);
+			KopernicusUtility.DumpObjectProperties(oceanPQS.surfaceMaterial, oceanPQS.surfaceMaterial.ToString());
+			KopernicusUtility.DumpObjectProperties(oceanPQS.fallbackMaterial, oceanPQS.fallbackMaterial.ToString());
 
 			// Create the aerial perspective material
 			mod = new GameObject("_Material_AerialPerspective");
@@ -553,7 +562,7 @@ namespace Kopernicus
 			oceanFX.watermain = KopernicusUtility.RecursivelyGetComponent<PQSMod_OceanFX>(laytheOcean).watermain.Clone() as Texture2D[];
 			oceanFX.requirements = PQS.ModiferRequirements.Default;
 			oceanFX.modEnabled = true;
-			oceanFX.order = 100;
+			oceanFX.order = 100;*/
 
 			#endregion
 
