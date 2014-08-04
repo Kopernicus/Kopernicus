@@ -22,7 +22,9 @@ Instructions
 ------------
 
 1) Copy the contents of the GameData/ folder to KSP’s GameData/ folder
+
 2) Launch KSP and enjoy!
+
 3) Please report any bugs you may find to either or both of the email addresses above.
 
 
