@@ -138,13 +138,17 @@ namespace Kopernicus
 			body.pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelative(Laythe.pqsVersion.surfaceMaterial); // use until we determine all the functions of the shader textures
 			body.pqsVersion.fallbackMaterial = new PQSProjectionFallback(Laythe.pqsVersion.fallbackMaterial);
 			body.pqsVersion.radius = body.celestialBody.Radius;
-			body.pqsVersion.maxQuadLenghtsPerFrame = 0.03f;
 			body.pqsVersion.mapOcean = false;
+
+			// Debug
+			KopernicusUtility.DumpObjectProperties(body.pqsVersion.surfaceMaterial, " Surface Material ");
+			KopernicusUtility.DumpObjectProperties(body.pqsVersion.fallbackMaterial, " Fallback Material ");
+
+			// Detail defaults
+			body.pqsVersion.maxQuadLenghtsPerFrame = 0.03f;
 			body.pqsVersion.minLevel = 1;
 			body.pqsVersion.maxLevel = 10;
 			body.pqsVersion.minDetailDistance = 8;
-			KopernicusUtility.DumpObjectProperties(body.pqsVersion.surfaceMaterial, " Surface Material ");
-			KopernicusUtility.DumpObjectProperties(body.pqsVersion.fallbackMaterial, " Fallback Material ");
 
 			// Create the celestial body transform
 			GameObject mod = new GameObject("_CelestialBody");
@@ -249,7 +253,7 @@ namespace Kopernicus
 			vertexHeightMap.sphere = body.pqsVersion;
 			//vertexHeightMap.heightMapDeformity = 29457.0;
 			vertexHeightMap.heightMapDeformity = 10000.0;
-			vertexHeightMap.heightMapOffset = 0.0;
+			vertexHeightMap.heightMapOffset = -1000.0;
 			vertexHeightMap.scaleDeformityByRadius = false;
 			vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
 			vertexHeightMap.modEnabled = true;
