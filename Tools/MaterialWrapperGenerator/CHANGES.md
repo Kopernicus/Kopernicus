@@ -5,9 +5,10 @@ Version 1.1
 -----------
 Properties for shaders can be accessed by a numerical id which can be retrived with a static call to Shader.PropertyToID(string).  This is a significantly faster process than looking them up with strings.  The generator now synthesizes a singleton property storage class for the material wrapper to hold these IDs.  Exact IDs are retrieved in the singleton's constructor.
 
+<pre>
 protected class Properties 
 {
-    private const string propertyNameKey = “”;
+    private const string propertyNameKey = “_propertyName”;
     public int propertyNameID { get; private set; }
 
     private const string shaderName = “Path/To/Shader”;
@@ -30,6 +31,7 @@ protected class Properties
         }
     }
 }
+</pre>
 
 
 Version 1.0
