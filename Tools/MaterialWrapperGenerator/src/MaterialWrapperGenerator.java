@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
-import java.beans.Introspector;
 
 /**
  *
@@ -33,116 +32,64 @@ import java.beans.Introspector;
  */
 public class MaterialWrapperGenerator
 {
-    /**
-     * @param result Match result from a regular expression parser for the property
-     * @return 
-     */
-    public static LinkedList<String> generatePropertyForMatchResult(MatchResult result) throws Exception
+    public static LinkedList<String> synthesizeInternalPropertiesClass(LinkedList<ShaderProperty> properties, String shaderName)
     {
-        // String to hold property constants
+        // Create a linked list for lines of code
         LinkedList<String> p = new LinkedList<>();
         
-        // Extract the important values of the property
-        String key = result.group(1);
-        String description = result.group(2);
-        String type = result.group(3);
-        String initializer = result.group(4);
+        // Synthesize the shader accessor
+        p.add("// Internal property ID tracking object\n");
+        p.add("protected class Properties\n");
+        p.add("{\n");
         
-        // Generate the short hand name of this key
-        String property = Introspector.decapitalize(key.replaceFirst("_", ""));
-        
-        // Synthesize a comment
-        p.add("// " + description + ", default = " + initializer + "\n");
-        
-        // Synthesize the string constant for the key
-        p.add("private const string " + property + "Key = \"" + key + "\";\n");
-        
-        // Operation depends on type
-        if("Color".equals(type))
+        // Synthesize the shader for material property
+        p.add("    // Return the shader for this wrapper\n");
+        p.add("    private const string shaderName = \"" + shaderName + "\";\n");
+        p.add("    public static Shader shader\n");
+        p.add("    {\n");
+        p.add("        get { return Shader.Find (shaderName); }\n");
+        p.add("    }\n\n");
+                
+        // Synthesize the class properties
+        for(ShaderProperty property : properties)
         {
-            p.add("public Color " + property + "\n");
-            p.add("{\n");
-            p.add("    get { return GetColor (" + property + "Key); }\n");
-            p.add("    set { SetColor (" + property + "Key, value); }\n");
-            p.add("}\n\n");
-        } 
-        
-        // If the type is a float
-        else if("Float".equals(type))
-        {
-            p.add("public float " + property + "\n");
-            p.add("{\n");
-            p.add("    get { return GetFloat (" + property + "Key); }\n");
-            p.add("    set { SetFloat (" + property + "Key, value); }\n");
-            p.add("}\n\n");
+            // Format the code for this property
+            for(String line : property.synthesizePropertyIdStorage())
+            {
+                p.add("    " + line);
+            }
         }
         
-        // If the type is a range
-        else if(type.contains("Range"))
-        {
-            // Use a regular expression to parse this
-            String rangeRegex = "Range\\((.+),(.+)\\)";
-            Scanner rangeFinder = new Scanner(type);
-            rangeFinder.findInLine(rangeRegex);
-            MatchResult r = rangeFinder.match();
-            
-            p.add("public float " + property + "\n");
-            p.add("{\n");
-            p.add("    get { return GetFloat (" + property + "Key); }\n");
-            p.add("    set { SetFloat (" + property + "Key, Mathf.Clamp(value," + r.group(1) + "f," + r.group(2) + "f)); }\n");
-            p.add("}\n\n");
-            
-            rangeFinder.close();
-        }
+        // Synthesize single accessor / allocator
+        p.add("    // Singleton instance\n");
+        p.add("    private static Properties singleton = null;\n");
+        p.add("    public static Properties Instance\n");
+        p.add("    {\n");
+        p.add("        get\n");
+        p.add("        {\n");
+        p.add("            // Construct the singleton if it does not exist\n");
+        p.add("            if(singleton == null)\n"); 
+        p.add("                singleton = new Properties();\n");
+        p.add("\n");
+        p.add("            return singleton;\n");
+        p.add("        }\n");
+        p.add("    }\n\n");
         
-        // If the type is a vector
-        else if("Vector".equals(type))
+        // Synthesize constructor
+        p.add("    private Properties()\n");
+        p.add("    {\n");
+        for(ShaderProperty property : properties)
         {
-            p.add("public Vector4 " + property + "\n");
-            p.add("{\n");
-            p.add("    get { return GetVector (" + property + "Key); }\n");
-            p.add("    set { SetVector (" + property + "Key, value); }\n");
-            p.add("}\n\n");
+            // Format the code for this property
+            for(String line : property.synthesizePropertyIdInitialization())
+            {
+                p.add("        " + line);
+            }
         }
+        p.add("    }\n");
+        p.add("}\n\n");
         
-        // If the type is a 2D texture
-        else if("2D".equals(type))
-        {
-            p.add("public Texture2D " + property + "\n");
-            p.add("{\n");
-            p.add("    get { return GetTexture (" + property + "Key) as Texture2D; }\n");
-            p.add("    set { SetTexture (" + property + "Key, value); }\n");
-            p.add("}\n\n");
-        }
-        
-        // If the type is a 3D texture
-        else if("3D".equals(type))
-        {
-            p.add("public Texture3D " + property + "\n");
-            p.add("{\n");
-            p.add("    get { return GetTexture (" + property + "Key) as Texture3D; }\n");
-            p.add("    set { SetTexture (" + property + "Key, value); }\n");
-            p.add("}\n\n");
-        }
-        
-        // If the type is a cubemap texture
-        else if("CUBE".equals(type))
-        {
-            p.add("public Cubemap " + property + "\n");
-            p.add("{\n");
-            p.add("    get { return GetTexture (" + property + "Key) as Cubemap; }\n");
-            p.add("    set { SetTexture (" + property + "Key, value); }\n");
-            p.add("}\n\n");
-        }
-        
-        // Error
-        else
-        {
-            // Don't process
-            throw new Exception("Key: " + key + " has an unrecognized type");
-        }
-        
-        // Return the generated property
+        // Return the lines of code
         return p;
     }
     
@@ -168,7 +115,9 @@ public class MaterialWrapperGenerator
         Pattern shaderNamePattern = Pattern.compile(shaderNameRegex);
         
         // List to hold all of our strings
-        LinkedList<String> content = new LinkedList<>();
+        LinkedList<ShaderProperty> shaderProperties = new LinkedList<>();
+        LinkedList<String>         content          = new LinkedList<>();
+        String                     shaderResource   = "";
         
         // Open the shader file (get the filename with no extension and no whitespace)
         File shader = new File(args[0]);
@@ -182,24 +131,11 @@ public class MaterialWrapperGenerator
         while(nameFinder.hasNextLine())
         {
             // Get the results of running the regular expresison
-            String property = nameFinder.findInLine(shaderNamePattern);
-            
-            // If we found a result in this line
-            if(property != null)
+            if(nameFinder.findInLine(shaderNamePattern) != null)
             {
-                // Get the match result from the name finder
+                // Retrieve the shader name
                 MatchResult result = nameFinder.match();
-
-                // Declare name
-                System.out.println(" --> Shader Name = " + result.group(1));
-                
-                // Synthesize the shader for material property
-                content.add("// Return the shader for this wrapper\n");
-                content.add("private const string shaderName = \"" + result.group(1) + "\";\n");
-                content.add("private static Shader shaderForMaterial\n");
-                content.add("{\n");
-                content.add("    get { return Shader.Find (shaderName); }\n");
-                content.add("}\n\n");
+                shaderResource = result.group(1);
                 
                 // Found the name, get out
                 break;
@@ -214,7 +150,7 @@ public class MaterialWrapperGenerator
         Scanner parameters = new Scanner(shader);
         
         // Iterate through the shader file looking for strings that match our pattern
-        System.out.println(" --> Generating Parameters");
+        System.out.println(" --> Discovering Parameters for \"" + shaderResource + "\"");
         while(parameters.hasNextLine())
         {
             // Get the results of running the regular expresison
@@ -223,10 +159,11 @@ public class MaterialWrapperGenerator
             // If we found a result in this line
             if(property != null)
             {
+                // Get the match result for this property
                 MatchResult result = parameters.match();
-
-                // Loop through all of the lines in parameters
-                content.addAll(MaterialWrapperGenerator.generatePropertyForMatchResult(result));
+                
+                // Create a shader property to hold (and generate useful) information
+                shaderProperties.add(new ShaderProperty(result.group(1), result.group(3), result.group(4), result.group(2)));
             }
             
             // Advance to the next line
@@ -234,20 +171,31 @@ public class MaterialWrapperGenerator
         }
         parameters.close();
         
+        // Synthesize the internal properties class
+        System.out.println(" --> Synthesizing Property Storage Class");
+        content.addAll(MaterialWrapperGenerator.synthesizeInternalPropertiesClass(shaderProperties, shaderResource));
+        
+        // Synthesize the accessor properties
+        System.out.println(" --> Synthesizing Properties");
+        for(ShaderProperty sProperty : shaderProperties)
+        {
+            content.addAll(sProperty.synthesizeProperty());
+        }
+        
         // Synthesize the constructors
         System.out.println(" --> Sythesizing Constructor");
-        content.add("public " + shaderName + "() : base(shaderForMaterial)\n");
+        content.add("public " + shaderName + "() : base(Properties.shader)\n");
         content.add("{\n");
         content.add("}\n\n");
         content.add("public " + shaderName + "(string contents) : base(contents)\n");
         content.add("{\n");
-        content.add("    base.shader = shaderForMaterial;\n");
+        content.add("    base.shader = Properties.shader;\n");
         content.add("}\n\n");
         content.add("public " + shaderName + "(Material material) : base(material)\n");
         content.add("{\n");
         content.add("    // Throw exception if this material was not the proper material\n");
-        content.add("    if (material.shader.name != shaderName)\n");
-        content.add("        throw new InvalidOperationException(\"" + shaderName + " material requires the \\\"\" + shaderName + \"\\\" shader\");\n");
+        content.add("    if (material.shader.name != Properties.shader.name)\n");
+        content.add("        throw new InvalidOperationException(\"Type Mismatch: " + shaderResource + " shader required\");\n");
         content.add("}\n\n");
         
         // Synthesize the final file

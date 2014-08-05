@@ -9,115 +9,181 @@ namespace Kopernicus
     {
         public class PQSProjectionFallback : Material
         {
-            // Return the shader for this wrapper
-            private const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback) ";
-            private static Shader shaderForMaterial
+            // Internal property ID tracking object
+            protected class Properties
             {
-                get { return Shader.Find (shaderName); }
+                // Return the shader for this wrapper
+                private const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback) ";
+                public static Shader shader
+                {
+                    get { return Shader.Find (shaderName); }
+                }
+
+                // Saturation, default = 1
+                private const string saturationKey = "_saturation";
+                public int saturationID { get; private set; }
+
+                // Contrast, default = 1
+                private const string contrastKey = "_contrast";
+                public int contrastID { get; private set; }
+
+                // Colour Unsaturation (A = Factor), default = (1,1,1,0)
+                private const string tintColorKey = "_tintColor";
+                public int tintColorID { get; private set; }
+
+                // Near Tiling, default = 1000
+                private const string texTilingKey = "_texTiling";
+                public int texTilingID { get; private set; }
+
+                // Near Blend, default = 0.5
+                private const string texPowerKey = "_texPower";
+                public int texPowerID { get; private set; }
+
+                // Far Blend, default = 0.5
+                private const string multiPowerKey = "_multiPower";
+                public int multiPowerID { get; private set; }
+
+                // NearFar Start, default = 2000
+                private const string groundTexStartKey = "_groundTexStart";
+                public int groundTexStartID { get; private set; }
+
+                // NearFar Start, default = 10000
+                private const string groundTexEndKey = "_groundTexEnd";
+                public int groundTexEndID { get; private set; }
+
+                // Multifactor, default = 0.5
+                private const string multiFactorKey = "_multiFactor";
+                public int multiFactorID { get; private set; }
+
+                // Main Texture, default = "white" {}
+                private const string mainTexKey = "_mainTex";
+                public int mainTexID { get; private set; }
+
+                // PlanetOpacity, default = 1
+                private const string planetOpacityKey = "_PlanetOpacity";
+                public int planetOpacityID { get; private set; }
+
+                // Singleton instance
+                private static Properties singleton = null;
+                public static Properties Instance
+                {
+                    get
+                    {
+                        // Construct the singleton if it does not exist
+                        if(singleton == null)
+                            singleton = new Properties();
+            
+                        return singleton;
+                    }
+                }
+
+                private Properties()
+                {
+                    saturationID = Shader.PropertyToID(saturationKey);
+                    contrastID = Shader.PropertyToID(contrastKey);
+                    tintColorID = Shader.PropertyToID(tintColorKey);
+                    texTilingID = Shader.PropertyToID(texTilingKey);
+                    texPowerID = Shader.PropertyToID(texPowerKey);
+                    multiPowerID = Shader.PropertyToID(multiPowerKey);
+                    groundTexStartID = Shader.PropertyToID(groundTexStartKey);
+                    groundTexEndID = Shader.PropertyToID(groundTexEndKey);
+                    multiFactorID = Shader.PropertyToID(multiFactorKey);
+                    mainTexID = Shader.PropertyToID(mainTexKey);
+                    planetOpacityID = Shader.PropertyToID(planetOpacityKey);
+                }
             }
 
             // Saturation, default = 1
-            private const string saturationKey = "_saturation";
             public float saturation
             {
-                get { return GetFloat (saturationKey); }
-                set { SetFloat (saturationKey, value); }
+                get { return GetFloat (Properties.Instance.saturationID); }
+                set { SetFloat (Properties.Instance.saturationID, value); }
             }
 
             // Contrast, default = 1
-            private const string contrastKey = "_contrast";
             public float contrast
             {
-                get { return GetFloat (contrastKey); }
-                set { SetFloat (contrastKey, value); }
+                get { return GetFloat (Properties.Instance.contrastID); }
+                set { SetFloat (Properties.Instance.contrastID, value); }
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-            private const string tintColorKey = "_tintColor";
             public Color tintColor
             {
-                get { return GetColor (tintColorKey); }
-                set { SetColor (tintColorKey, value); }
+                get { return GetColor (Properties.Instance.tintColorID); }
+                set { SetColor (Properties.Instance.tintColorID, value); }
             }
 
             // Near Tiling, default = 1000
-            private const string texTilingKey = "_texTiling";
             public float texTiling
             {
-                get { return GetFloat (texTilingKey); }
-                set { SetFloat (texTilingKey, value); }
+                get { return GetFloat (Properties.Instance.texTilingID); }
+                set { SetFloat (Properties.Instance.texTilingID, value); }
             }
 
             // Near Blend, default = 0.5
-            private const string texPowerKey = "_texPower";
             public float texPower
             {
-                get { return GetFloat (texPowerKey); }
-                set { SetFloat (texPowerKey, value); }
+                get { return GetFloat (Properties.Instance.texPowerID); }
+                set { SetFloat (Properties.Instance.texPowerID, value); }
             }
 
             // Far Blend, default = 0.5
-            private const string multiPowerKey = "_multiPower";
             public float multiPower
             {
-                get { return GetFloat (multiPowerKey); }
-                set { SetFloat (multiPowerKey, value); }
+                get { return GetFloat (Properties.Instance.multiPowerID); }
+                set { SetFloat (Properties.Instance.multiPowerID, value); }
             }
 
             // NearFar Start, default = 2000
-            private const string groundTexStartKey = "_groundTexStart";
             public float groundTexStart
             {
-                get { return GetFloat (groundTexStartKey); }
-                set { SetFloat (groundTexStartKey, value); }
+                get { return GetFloat (Properties.Instance.groundTexStartID); }
+                set { SetFloat (Properties.Instance.groundTexStartID, value); }
             }
 
             // NearFar Start, default = 10000
-            private const string groundTexEndKey = "_groundTexEnd";
             public float groundTexEnd
             {
-                get { return GetFloat (groundTexEndKey); }
-                set { SetFloat (groundTexEndKey, value); }
+                get { return GetFloat (Properties.Instance.groundTexEndID); }
+                set { SetFloat (Properties.Instance.groundTexEndID, value); }
             }
 
             // Multifactor, default = 0.5
-            private const string multiFactorKey = "_multiFactor";
             public float multiFactor
             {
-                get { return GetFloat (multiFactorKey); }
-                set { SetFloat (multiFactorKey, value); }
+                get { return GetFloat (Properties.Instance.multiFactorID); }
+                set { SetFloat (Properties.Instance.multiFactorID, value); }
             }
 
             // Main Texture, default = "white" {}
-            private const string mainTexKey = "_mainTex";
             public Texture2D mainTex
             {
-                get { return GetTexture (mainTexKey) as Texture2D; }
-                set { SetTexture (mainTexKey, value); }
+                get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.mainTexID, value); }
             }
 
             // PlanetOpacity, default = 1
-            private const string planetOpacityKey = "_PlanetOpacity";
             public float planetOpacity
             {
-                get { return GetFloat (planetOpacityKey); }
-                set { SetFloat (planetOpacityKey, value); }
+                get { return GetFloat (Properties.Instance.planetOpacityID); }
+                set { SetFloat (Properties.Instance.planetOpacityID, value); }
             }
 
-            public PQSProjectionFallback() : base(shaderForMaterial)
+            public PQSProjectionFallback() : base(Properties.shader)
             {
             }
 
             public PQSProjectionFallback(string contents) : base(contents)
             {
-                base.shader = shaderForMaterial;
+                base.shader = Properties.shader;
             }
 
             public PQSProjectionFallback(Material material) : base(material)
             {
                 // Throw exception if this material was not the proper material
-                if (material.shader.name != shaderName)
-                    throw new InvalidOperationException("PQSProjectionFallback material requires the \"" + shaderName + "\" shader");
+                if (material.shader.name != Properties.shader.name)
+                    throw new InvalidOperationException("Type Mismatch: Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback)  shader required");
             }
 
         }

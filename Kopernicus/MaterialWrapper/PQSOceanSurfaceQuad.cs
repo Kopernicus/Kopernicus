@@ -9,211 +9,330 @@ namespace Kopernicus
     {
         public class PQSOceanSurfaceQuad : Material
         {
-            // Return the shader for this wrapper
-            private const string shaderName = "Terrain/PQS/Ocean Surface Quad";
-            private static Shader shaderForMaterial
+            // Internal property ID tracking object
+            protected class Properties
             {
-                get { return Shader.Find (shaderName); }
+                // Return the shader for this wrapper
+                private const string shaderName = "Terrain/PQS/Ocean Surface Quad";
+                public static Shader shader
+                {
+                    get { return Shader.Find (shaderName); }
+                }
+
+                // Main Color, default = (1,1,1,1)
+                private const string colorKey = "_Color";
+                public int colorID { get; private set; }
+
+                // Color From Space, default = (1,1,1,1)
+                private const string colorFromSpaceKey = "_ColorFromSpace";
+                public int colorFromSpaceID { get; private set; }
+
+                // Specular Color, default = (1,1,1,1)
+                private const string specColorKey = "_SpecColor";
+                public int specColorID { get; private set; }
+
+                // Shininess, default = 0.078125
+                private const string shininessKey = "_Shininess";
+                public int shininessID { get; private set; }
+
+                // Gloss, default = 0.078125
+                private const string glossKey = "_Gloss";
+                public int glossID { get; private set; }
+
+                // Tex Tiling, default = 1
+                private const string tilingKey = "_tiling";
+                public int tilingID { get; private set; }
+
+                // Tex0, default = "white" {}
+                private const string waterTexKey = "_WaterTex";
+                public int waterTexID { get; private set; }
+
+                // Tex1, default = "white" {}
+                private const string waterTex1Key = "_WaterTex1";
+                public int waterTex1ID { get; private set; }
+
+                // Normal Tiling, default = 1
+                private const string bTilingKey = "_bTiling";
+                public int bTilingID { get; private set; }
+
+                // Normalmap0, default = "bump" {}
+                private const string bumpMapKey = "_BumpMap";
+                public int bumpMapID { get; private set; }
+
+                // Water Movement, default = 1
+                private const string displacementKey = "_displacement";
+                public int displacementID { get; private set; }
+
+                // Water Freq, default = 1
+                private const string dispFreqKey = "_dispFreq";
+                public int dispFreqID { get; private set; }
+
+                // Mix, default = 1
+                private const string mixKey = "_Mix";
+                public int mixID { get; private set; }
+
+                // Opacity, default = 1
+                private const string oceanOpacityKey = "_oceanOpacity";
+                public int oceanOpacityID { get; private set; }
+
+                // Falloff Power, default = 1
+                private const string falloffPowerKey = "_falloffPower";
+                public int falloffPowerID { get; private set; }
+
+                // Falloff Exp, default = 2
+                private const string falloffExpKey = "_falloffExp";
+                public int falloffExpID { get; private set; }
+
+                // AP Fog Color, default = (0,0,1,1)
+                private const string fogColorKey = "_fogColor";
+                public int fogColorID { get; private set; }
+
+                // AP Height Fall Off, default = 1
+                private const string heightFallOffKey = "_heightFallOff";
+                public int heightFallOffID { get; private set; }
+
+                // AP Global Density, default = 1
+                private const string globalDensityKey = "_globalDensity";
+                public int globalDensityID { get; private set; }
+
+                // AP Atmosphere Depth, default = 1
+                private const string atmosphereDepthKey = "_atmosphereDepth";
+                public int atmosphereDepthID { get; private set; }
+
+                // FogColorRamp, default = "white" {}
+                private const string fogColorRampKey = "_fogColorRamp";
+                public int fogColorRampID { get; private set; }
+
+                // FadeStart, default = 1
+                private const string fadeStartKey = "_fadeStart";
+                public int fadeStartID { get; private set; }
+
+                // FadeEnd, default = 1
+                private const string fadeEndKey = "_fadeEnd";
+                public int fadeEndID { get; private set; }
+
+                // PlanetOpacity, default = 1
+                private const string planetOpacityKey = "_PlanetOpacity";
+                public int planetOpacityID { get; private set; }
+
+                // Singleton instance
+                private static Properties singleton = null;
+                public static Properties Instance
+                {
+                    get
+                    {
+                        // Construct the singleton if it does not exist
+                        if(singleton == null)
+                            singleton = new Properties();
+            
+                        return singleton;
+                    }
+                }
+
+                private Properties()
+                {
+                    colorID = Shader.PropertyToID(colorKey);
+                    colorFromSpaceID = Shader.PropertyToID(colorFromSpaceKey);
+                    specColorID = Shader.PropertyToID(specColorKey);
+                    shininessID = Shader.PropertyToID(shininessKey);
+                    glossID = Shader.PropertyToID(glossKey);
+                    tilingID = Shader.PropertyToID(tilingKey);
+                    waterTexID = Shader.PropertyToID(waterTexKey);
+                    waterTex1ID = Shader.PropertyToID(waterTex1Key);
+                    bTilingID = Shader.PropertyToID(bTilingKey);
+                    bumpMapID = Shader.PropertyToID(bumpMapKey);
+                    displacementID = Shader.PropertyToID(displacementKey);
+                    dispFreqID = Shader.PropertyToID(dispFreqKey);
+                    mixID = Shader.PropertyToID(mixKey);
+                    oceanOpacityID = Shader.PropertyToID(oceanOpacityKey);
+                    falloffPowerID = Shader.PropertyToID(falloffPowerKey);
+                    falloffExpID = Shader.PropertyToID(falloffExpKey);
+                    fogColorID = Shader.PropertyToID(fogColorKey);
+                    heightFallOffID = Shader.PropertyToID(heightFallOffKey);
+                    globalDensityID = Shader.PropertyToID(globalDensityKey);
+                    atmosphereDepthID = Shader.PropertyToID(atmosphereDepthKey);
+                    fogColorRampID = Shader.PropertyToID(fogColorRampKey);
+                    fadeStartID = Shader.PropertyToID(fadeStartKey);
+                    fadeEndID = Shader.PropertyToID(fadeEndKey);
+                    planetOpacityID = Shader.PropertyToID(planetOpacityKey);
+                }
             }
 
             // Color From Space, default = (1,1,1,1)
-            private const string colorFromSpaceKey = "_ColorFromSpace";
             public Color colorFromSpace
             {
-                get { return GetColor (colorFromSpaceKey); }
-                set { SetColor (colorFromSpaceKey, value); }
+                get { return GetColor (Properties.Instance.colorFromSpaceID); }
+                set { SetColor (Properties.Instance.colorFromSpaceID, value); }
             }
 
             // Specular Color, default = (1,1,1,1)
-            private const string specColorKey = "_SpecColor";
             public Color specColor
             {
-                get { return GetColor (specColorKey); }
-                set { SetColor (specColorKey, value); }
+                get { return GetColor (Properties.Instance.specColorID); }
+                set { SetColor (Properties.Instance.specColorID, value); }
             }
 
             // Shininess, default = 0.078125
-            private const string shininessKey = "_Shininess";
             public float shininess
             {
-                get { return GetFloat (shininessKey); }
-                set { SetFloat (shininessKey, Mathf.Clamp(value,0.01f,1f)); }
+                get { return GetFloat (Properties.Instance.shininessID); }
+                set { SetFloat (Properties.Instance.shininessID, Mathf.Clamp(value,0.01f,1f)); }
             }
 
             // Gloss, default = 0.078125
-            private const string glossKey = "_Gloss";
             public float gloss
             {
-                get { return GetFloat (glossKey); }
-                set { SetFloat (glossKey, Mathf.Clamp(value,0.01f,1f)); }
+                get { return GetFloat (Properties.Instance.glossID); }
+                set { SetFloat (Properties.Instance.glossID, Mathf.Clamp(value,0.01f,1f)); }
             }
 
             // Tex Tiling, default = 1
-            private const string tilingKey = "_tiling";
             public float tiling
             {
-                get { return GetFloat (tilingKey); }
-                set { SetFloat (tilingKey, value); }
+                get { return GetFloat (Properties.Instance.tilingID); }
+                set { SetFloat (Properties.Instance.tilingID, value); }
             }
 
             // Tex0, default = "white" {}
-            private const string waterTexKey = "_WaterTex";
             public Texture2D waterTex
             {
-                get { return GetTexture (waterTexKey) as Texture2D; }
-                set { SetTexture (waterTexKey, value); }
+                get { return GetTexture (Properties.Instance.waterTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.waterTexID, value); }
             }
 
             // Tex1, default = "white" {}
-            private const string waterTex1Key = "_WaterTex1";
             public Texture2D waterTex1
             {
-                get { return GetTexture (waterTex1Key) as Texture2D; }
-                set { SetTexture (waterTex1Key, value); }
+                get { return GetTexture (Properties.Instance.waterTex1ID) as Texture2D; }
+                set { SetTexture (Properties.Instance.waterTex1ID, value); }
             }
 
             // Normal Tiling, default = 1
-            private const string bTilingKey = "_bTiling";
             public float bTiling
             {
-                get { return GetFloat (bTilingKey); }
-                set { SetFloat (bTilingKey, value); }
+                get { return GetFloat (Properties.Instance.bTilingID); }
+                set { SetFloat (Properties.Instance.bTilingID, value); }
             }
 
             // Normalmap0, default = "bump" {}
-            private const string bumpMapKey = "_BumpMap";
             public Texture2D bumpMap
             {
-                get { return GetTexture (bumpMapKey) as Texture2D; }
-                set { SetTexture (bumpMapKey, value); }
+                get { return GetTexture (Properties.Instance.bumpMapID) as Texture2D; }
+                set { SetTexture (Properties.Instance.bumpMapID, value); }
             }
 
             // Water Movement, default = 1
-            private const string displacementKey = "_displacement";
             public float displacement
             {
-                get { return GetFloat (displacementKey); }
-                set { SetFloat (displacementKey, value); }
+                get { return GetFloat (Properties.Instance.displacementID); }
+                set { SetFloat (Properties.Instance.displacementID, value); }
             }
 
             // Water Freq, default = 1
-            private const string dispFreqKey = "_dispFreq";
             public float dispFreq
             {
-                get { return GetFloat (dispFreqKey); }
-                set { SetFloat (dispFreqKey, value); }
+                get { return GetFloat (Properties.Instance.dispFreqID); }
+                set { SetFloat (Properties.Instance.dispFreqID, value); }
             }
 
             // Mix, default = 1
-            private const string mixKey = "_Mix";
             public float mix
             {
-                get { return GetFloat (mixKey); }
-                set { SetFloat (mixKey, value); }
+                get { return GetFloat (Properties.Instance.mixID); }
+                set { SetFloat (Properties.Instance.mixID, value); }
             }
 
             // Opacity, default = 1
-            private const string oceanOpacityKey = "_oceanOpacity";
             public float oceanOpacity
             {
-                get { return GetFloat (oceanOpacityKey); }
-                set { SetFloat (oceanOpacityKey, value); }
+                get { return GetFloat (Properties.Instance.oceanOpacityID); }
+                set { SetFloat (Properties.Instance.oceanOpacityID, value); }
             }
 
             // Falloff Power, default = 1
-            private const string falloffPowerKey = "_falloffPower";
             public float falloffPower
             {
-                get { return GetFloat (falloffPowerKey); }
-                set { SetFloat (falloffPowerKey, value); }
+                get { return GetFloat (Properties.Instance.falloffPowerID); }
+                set { SetFloat (Properties.Instance.falloffPowerID, value); }
             }
 
             // Falloff Exp, default = 2
-            private const string falloffExpKey = "_falloffExp";
             public float falloffExp
             {
-                get { return GetFloat (falloffExpKey); }
-                set { SetFloat (falloffExpKey, value); }
+                get { return GetFloat (Properties.Instance.falloffExpID); }
+                set { SetFloat (Properties.Instance.falloffExpID, value); }
             }
 
             // AP Fog Color, default = (0,0,1,1)
-            private const string fogColorKey = "_fogColor";
             public Color fogColor
             {
-                get { return GetColor (fogColorKey); }
-                set { SetColor (fogColorKey, value); }
+                get { return GetColor (Properties.Instance.fogColorID); }
+                set { SetColor (Properties.Instance.fogColorID, value); }
             }
 
             // AP Height Fall Off, default = 1
-            private const string heightFallOffKey = "_heightFallOff";
             public float heightFallOff
             {
-                get { return GetFloat (heightFallOffKey); }
-                set { SetFloat (heightFallOffKey, value); }
+                get { return GetFloat (Properties.Instance.heightFallOffID); }
+                set { SetFloat (Properties.Instance.heightFallOffID, value); }
             }
 
             // AP Global Density, default = 1
-            private const string globalDensityKey = "_globalDensity";
             public float globalDensity
             {
-                get { return GetFloat (globalDensityKey); }
-                set { SetFloat (globalDensityKey, value); }
+                get { return GetFloat (Properties.Instance.globalDensityID); }
+                set { SetFloat (Properties.Instance.globalDensityID, value); }
             }
 
             // AP Atmosphere Depth, default = 1
-            private const string atmosphereDepthKey = "_atmosphereDepth";
             public float atmosphereDepth
             {
-                get { return GetFloat (atmosphereDepthKey); }
-                set { SetFloat (atmosphereDepthKey, value); }
+                get { return GetFloat (Properties.Instance.atmosphereDepthID); }
+                set { SetFloat (Properties.Instance.atmosphereDepthID, value); }
             }
 
             // FogColorRamp, default = "white" {}
-            private const string fogColorRampKey = "_fogColorRamp";
             public Texture2D fogColorRamp
             {
-                get { return GetTexture (fogColorRampKey) as Texture2D; }
-                set { SetTexture (fogColorRampKey, value); }
+                get { return GetTexture (Properties.Instance.fogColorRampID) as Texture2D; }
+                set { SetTexture (Properties.Instance.fogColorRampID, value); }
             }
 
             // FadeStart, default = 1
-            private const string fadeStartKey = "_fadeStart";
             public float fadeStart
             {
-                get { return GetFloat (fadeStartKey); }
-                set { SetFloat (fadeStartKey, value); }
+                get { return GetFloat (Properties.Instance.fadeStartID); }
+                set { SetFloat (Properties.Instance.fadeStartID, value); }
             }
 
             // FadeEnd, default = 1
-            private const string fadeEndKey = "_fadeEnd";
             public float fadeEnd
             {
-                get { return GetFloat (fadeEndKey); }
-                set { SetFloat (fadeEndKey, value); }
+                get { return GetFloat (Properties.Instance.fadeEndID); }
+                set { SetFloat (Properties.Instance.fadeEndID, value); }
             }
 
             // PlanetOpacity, default = 1
-            private const string planetOpacityKey = "_PlanetOpacity";
             public float planetOpacity
             {
-                get { return GetFloat (planetOpacityKey); }
-                set { SetFloat (planetOpacityKey, value); }
+                get { return GetFloat (Properties.Instance.planetOpacityID); }
+                set { SetFloat (Properties.Instance.planetOpacityID, value); }
             }
 
-            public PQSOceanSurfaceQuad() : base(shaderForMaterial)
+            public PQSOceanSurfaceQuad() : base(Properties.shader)
             {
             }
 
             public PQSOceanSurfaceQuad(string contents) : base(contents)
             {
-                base.shader = shaderForMaterial;
+                base.shader = Properties.shader;
             }
 
             public PQSOceanSurfaceQuad(Material material) : base(material)
             {
                 // Throw exception if this material was not the proper material
-                if (material.shader.name != shaderName)
-                    throw new InvalidOperationException("PQSOceanSurfaceQuad material requires the \"" + shaderName + "\" shader");
+                if (material.shader.name != Properties.shader.name)
+                    throw new InvalidOperationException("Type Mismatch: Terrain/PQS/Ocean Surface Quad shader required");
             }
 
         }

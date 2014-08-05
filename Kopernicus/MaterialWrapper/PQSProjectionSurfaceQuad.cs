@@ -9,331 +9,505 @@ namespace Kopernicus
     {
         public class PQSProjectionSurfaceQuad : Material
         {
-            // Return the shader for this wrapper
-            private const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD";
-            private static Shader shaderForMaterial
+            // Internal property ID tracking object
+            protected class Properties
             {
-                get { return Shader.Find (shaderName); }
+                // Return the shader for this wrapper
+                private const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD";
+                public static Shader shader
+                {
+                    get { return Shader.Find (shaderName); }
+                }
+
+                // Saturation, default = 1
+                private const string saturationKey = "_saturation";
+                public int saturationID { get; private set; }
+
+                // Contrast, default = 1
+                private const string contrastKey = "_contrast";
+                public int contrastID { get; private set; }
+
+                // Colour Unsaturation (A = Factor), default = (1,1,1,0)
+                private const string tintColorKey = "_tintColor";
+                public int tintColorID { get; private set; }
+
+                // Near Tiling, default = 1000
+                private const string texTilingKey = "_texTiling";
+                public int texTilingID { get; private set; }
+
+                // Near Blend, default = 0.5
+                private const string texPowerKey = "_texPower";
+                public int texPowerID { get; private set; }
+
+                // Far Blend, default = 0.5
+                private const string multiPowerKey = "_multiPower";
+                public int multiPowerID { get; private set; }
+
+                // NearFar Start, default = 2000
+                private const string groundTexStartKey = "_groundTexStart";
+                public int groundTexStartID { get; private set; }
+
+                // NearFar Start, default = 10000
+                private const string groundTexEndKey = "_groundTexEnd";
+                public int groundTexEndID { get; private set; }
+
+                // Steep Tiling, default = 1
+                private const string steepTilingKey = "_steepTiling";
+                public int steepTilingID { get; private set; }
+
+                // Steep Blend, default = 1
+                private const string steepPowerKey = "_steepPower";
+                public int steepPowerID { get; private set; }
+
+                // Steep Fade Start, default = 20000
+                private const string steepTexStartKey = "_steepTexStart";
+                public int steepTexStartID { get; private set; }
+
+                // Steep Fade End, default = 30000
+                private const string steepTexEndKey = "_steepTexEnd";
+                public int steepTexEndID { get; private set; }
+
+                // Deep ground, default = "white" {}
+                private const string deepTexKey = "_deepTex";
+                public int deepTexID { get; private set; }
+
+                // Deep MT, default = "white" {}
+                private const string deepMultiTexKey = "_deepMultiTex";
+                public int deepMultiTexID { get; private set; }
+
+                // Deep MT Tiling, default = 1
+                private const string deepMultiFactorKey = "_deepMultiFactor";
+                public int deepMultiFactorID { get; private set; }
+
+                // Main Texture, default = "white" {}
+                private const string mainTexKey = "_mainTex";
+                public int mainTexID { get; private set; }
+
+                // Main MT, default = "white" {}
+                private const string mainMultiTexKey = "_mainMultiTex";
+                public int mainMultiTexID { get; private set; }
+
+                // Main MT Tiling, default = 1
+                private const string mainMultiFactorKey = "_mainMultiFactor";
+                public int mainMultiFactorID { get; private set; }
+
+                // High Ground, default = "white" {}
+                private const string highTexKey = "_highTex";
+                public int highTexID { get; private set; }
+
+                // High MT, default = "white" {}
+                private const string highMultiTexKey = "_highMultiTex";
+                public int highMultiTexID { get; private set; }
+
+                // High MT Tiling, default = 1
+                private const string highMultiFactorKey = "_highMultiFactor";
+                public int highMultiFactorID { get; private set; }
+
+                // Snow, default = "white" {}
+                private const string snowTexKey = "_snowTex";
+                public int snowTexID { get; private set; }
+
+                // Snow MT, default = "white" {}
+                private const string snowMultiTexKey = "_snowMultiTex";
+                public int snowMultiTexID { get; private set; }
+
+                // Snow MT Tiling, default = 1
+                private const string snowMultiFactorKey = "_snowMultiFactor";
+                public int snowMultiFactorID { get; private set; }
+
+                // Steep Texture, default = "white" {}
+                private const string steepTexKey = "_steepTex";
+                public int steepTexID { get; private set; }
+
+                // Deep Start, default = 0
+                private const string deepStartKey = "_deepStart";
+                public int deepStartID { get; private set; }
+
+                // Deep End, default = 0.3
+                private const string deepEndKey = "_deepEnd";
+                public int deepEndID { get; private set; }
+
+                // Main lower boundary start, default = 0
+                private const string mainLoStartKey = "_mainLoStart";
+                public int mainLoStartID { get; private set; }
+
+                // Main lower boundary end, default = 0.5
+                private const string mainLoEndKey = "_mainLoEnd";
+                public int mainLoEndID { get; private set; }
+
+                // Main upper boundary start, default = 0.3
+                private const string mainHiStartKey = "_mainHiStart";
+                public int mainHiStartID { get; private set; }
+
+                // Main upper boundary end, default = 0.5
+                private const string mainHiEndKey = "_mainHiEnd";
+                public int mainHiEndID { get; private set; }
+
+                // High lower boundary start, default = 0.6
+                private const string hiLoStartKey = "_hiLoStart";
+                public int hiLoStartID { get; private set; }
+
+                // High lower boundary end, default = 0.6
+                private const string hiLoEndKey = "_hiLoEnd";
+                public int hiLoEndID { get; private set; }
+
+                // High upper boundary start, default = 0.6
+                private const string hiHiStartKey = "_hiHiStart";
+                public int hiHiStartID { get; private set; }
+
+                // High upper boundary end, default = 0.9
+                private const string hiHiEndKey = "_hiHiEnd";
+                public int hiHiEndID { get; private set; }
+
+                // Snow Start, default = 0.9
+                private const string snowStartKey = "_snowStart";
+                public int snowStartID { get; private set; }
+
+                // Snow End, default = 1
+                private const string snowEndKey = "_snowEnd";
+                public int snowEndID { get; private set; }
+
+                // PlanetOpacity, default = 1
+                private const string planetOpacityKey = "_PlanetOpacity";
+                public int planetOpacityID { get; private set; }
+
+                // Singleton instance
+                private static Properties singleton = null;
+                public static Properties Instance
+                {
+                    get
+                    {
+                        // Construct the singleton if it does not exist
+                        if(singleton == null)
+                            singleton = new Properties();
+            
+                        return singleton;
+                    }
+                }
+
+                private Properties()
+                {
+                    saturationID = Shader.PropertyToID(saturationKey);
+                    contrastID = Shader.PropertyToID(contrastKey);
+                    tintColorID = Shader.PropertyToID(tintColorKey);
+                    texTilingID = Shader.PropertyToID(texTilingKey);
+                    texPowerID = Shader.PropertyToID(texPowerKey);
+                    multiPowerID = Shader.PropertyToID(multiPowerKey);
+                    groundTexStartID = Shader.PropertyToID(groundTexStartKey);
+                    groundTexEndID = Shader.PropertyToID(groundTexEndKey);
+                    steepTilingID = Shader.PropertyToID(steepTilingKey);
+                    steepPowerID = Shader.PropertyToID(steepPowerKey);
+                    steepTexStartID = Shader.PropertyToID(steepTexStartKey);
+                    steepTexEndID = Shader.PropertyToID(steepTexEndKey);
+                    deepTexID = Shader.PropertyToID(deepTexKey);
+                    deepMultiTexID = Shader.PropertyToID(deepMultiTexKey);
+                    deepMultiFactorID = Shader.PropertyToID(deepMultiFactorKey);
+                    mainTexID = Shader.PropertyToID(mainTexKey);
+                    mainMultiTexID = Shader.PropertyToID(mainMultiTexKey);
+                    mainMultiFactorID = Shader.PropertyToID(mainMultiFactorKey);
+                    highTexID = Shader.PropertyToID(highTexKey);
+                    highMultiTexID = Shader.PropertyToID(highMultiTexKey);
+                    highMultiFactorID = Shader.PropertyToID(highMultiFactorKey);
+                    snowTexID = Shader.PropertyToID(snowTexKey);
+                    snowMultiTexID = Shader.PropertyToID(snowMultiTexKey);
+                    snowMultiFactorID = Shader.PropertyToID(snowMultiFactorKey);
+                    steepTexID = Shader.PropertyToID(steepTexKey);
+                    deepStartID = Shader.PropertyToID(deepStartKey);
+                    deepEndID = Shader.PropertyToID(deepEndKey);
+                    mainLoStartID = Shader.PropertyToID(mainLoStartKey);
+                    mainLoEndID = Shader.PropertyToID(mainLoEndKey);
+                    mainHiStartID = Shader.PropertyToID(mainHiStartKey);
+                    mainHiEndID = Shader.PropertyToID(mainHiEndKey);
+                    hiLoStartID = Shader.PropertyToID(hiLoStartKey);
+                    hiLoEndID = Shader.PropertyToID(hiLoEndKey);
+                    hiHiStartID = Shader.PropertyToID(hiHiStartKey);
+                    hiHiEndID = Shader.PropertyToID(hiHiEndKey);
+                    snowStartID = Shader.PropertyToID(snowStartKey);
+                    snowEndID = Shader.PropertyToID(snowEndKey);
+                    planetOpacityID = Shader.PropertyToID(planetOpacityKey);
+                }
             }
 
             // Saturation, default = 1
-            private const string saturationKey = "_saturation";
             public float saturation
             {
-                get { return GetFloat (saturationKey); }
-                set { SetFloat (saturationKey, value); }
+                get { return GetFloat (Properties.Instance.saturationID); }
+                set { SetFloat (Properties.Instance.saturationID, value); }
             }
 
             // Contrast, default = 1
-            private const string contrastKey = "_contrast";
             public float contrast
             {
-                get { return GetFloat (contrastKey); }
-                set { SetFloat (contrastKey, value); }
+                get { return GetFloat (Properties.Instance.contrastID); }
+                set { SetFloat (Properties.Instance.contrastID, value); }
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-            private const string tintColorKey = "_tintColor";
             public Color tintColor
             {
-                get { return GetColor (tintColorKey); }
-                set { SetColor (tintColorKey, value); }
+                get { return GetColor (Properties.Instance.tintColorID); }
+                set { SetColor (Properties.Instance.tintColorID, value); }
             }
 
             // Near Tiling, default = 1000
-            private const string texTilingKey = "_texTiling";
             public float texTiling
             {
-                get { return GetFloat (texTilingKey); }
-                set { SetFloat (texTilingKey, value); }
+                get { return GetFloat (Properties.Instance.texTilingID); }
+                set { SetFloat (Properties.Instance.texTilingID, value); }
             }
 
             // Near Blend, default = 0.5
-            private const string texPowerKey = "_texPower";
             public float texPower
             {
-                get { return GetFloat (texPowerKey); }
-                set { SetFloat (texPowerKey, value); }
+                get { return GetFloat (Properties.Instance.texPowerID); }
+                set { SetFloat (Properties.Instance.texPowerID, value); }
             }
 
             // Far Blend, default = 0.5
-            private const string multiPowerKey = "_multiPower";
             public float multiPower
             {
-                get { return GetFloat (multiPowerKey); }
-                set { SetFloat (multiPowerKey, value); }
+                get { return GetFloat (Properties.Instance.multiPowerID); }
+                set { SetFloat (Properties.Instance.multiPowerID, value); }
             }
 
             // NearFar Start, default = 2000
-            private const string groundTexStartKey = "_groundTexStart";
             public float groundTexStart
             {
-                get { return GetFloat (groundTexStartKey); }
-                set { SetFloat (groundTexStartKey, value); }
+                get { return GetFloat (Properties.Instance.groundTexStartID); }
+                set { SetFloat (Properties.Instance.groundTexStartID, value); }
             }
 
             // NearFar Start, default = 10000
-            private const string groundTexEndKey = "_groundTexEnd";
             public float groundTexEnd
             {
-                get { return GetFloat (groundTexEndKey); }
-                set { SetFloat (groundTexEndKey, value); }
+                get { return GetFloat (Properties.Instance.groundTexEndID); }
+                set { SetFloat (Properties.Instance.groundTexEndID, value); }
             }
 
             // Steep Tiling, default = 1
-            private const string steepTilingKey = "_steepTiling";
             public float steepTiling
             {
-                get { return GetFloat (steepTilingKey); }
-                set { SetFloat (steepTilingKey, value); }
+                get { return GetFloat (Properties.Instance.steepTilingID); }
+                set { SetFloat (Properties.Instance.steepTilingID, value); }
             }
 
             // Steep Blend, default = 1
-            private const string steepPowerKey = "_steepPower";
             public float steepPower
             {
-                get { return GetFloat (steepPowerKey); }
-                set { SetFloat (steepPowerKey, value); }
+                get { return GetFloat (Properties.Instance.steepPowerID); }
+                set { SetFloat (Properties.Instance.steepPowerID, value); }
             }
 
             // Steep Fade Start, default = 20000
-            private const string steepTexStartKey = "_steepTexStart";
             public float steepTexStart
             {
-                get { return GetFloat (steepTexStartKey); }
-                set { SetFloat (steepTexStartKey, value); }
+                get { return GetFloat (Properties.Instance.steepTexStartID); }
+                set { SetFloat (Properties.Instance.steepTexStartID, value); }
             }
 
             // Steep Fade End, default = 30000
-            private const string steepTexEndKey = "_steepTexEnd";
             public float steepTexEnd
             {
-                get { return GetFloat (steepTexEndKey); }
-                set { SetFloat (steepTexEndKey, value); }
+                get { return GetFloat (Properties.Instance.steepTexEndID); }
+                set { SetFloat (Properties.Instance.steepTexEndID, value); }
             }
 
             // Deep ground, default = "white" {}
-            private const string deepTexKey = "_deepTex";
             public Texture2D deepTex
             {
-                get { return GetTexture (deepTexKey) as Texture2D; }
-                set { SetTexture (deepTexKey, value); }
+                get { return GetTexture (Properties.Instance.deepTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.deepTexID, value); }
             }
 
             // Deep MT, default = "white" {}
-            private const string deepMultiTexKey = "_deepMultiTex";
             public Texture2D deepMultiTex
             {
-                get { return GetTexture (deepMultiTexKey) as Texture2D; }
-                set { SetTexture (deepMultiTexKey, value); }
+                get { return GetTexture (Properties.Instance.deepMultiTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.deepMultiTexID, value); }
             }
 
             // Deep MT Tiling, default = 1
-            private const string deepMultiFactorKey = "_deepMultiFactor";
             public float deepMultiFactor
             {
-                get { return GetFloat (deepMultiFactorKey); }
-                set { SetFloat (deepMultiFactorKey, value); }
+                get { return GetFloat (Properties.Instance.deepMultiFactorID); }
+                set { SetFloat (Properties.Instance.deepMultiFactorID, value); }
             }
 
             // Main Texture, default = "white" {}
-            private const string mainTexKey = "_mainTex";
             public Texture2D mainTex
             {
-                get { return GetTexture (mainTexKey) as Texture2D; }
-                set { SetTexture (mainTexKey, value); }
+                get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.mainTexID, value); }
             }
 
             // Main MT, default = "white" {}
-            private const string mainMultiTexKey = "_mainMultiTex";
             public Texture2D mainMultiTex
             {
-                get { return GetTexture (mainMultiTexKey) as Texture2D; }
-                set { SetTexture (mainMultiTexKey, value); }
+                get { return GetTexture (Properties.Instance.mainMultiTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.mainMultiTexID, value); }
             }
 
             // Main MT Tiling, default = 1
-            private const string mainMultiFactorKey = "_mainMultiFactor";
             public float mainMultiFactor
             {
-                get { return GetFloat (mainMultiFactorKey); }
-                set { SetFloat (mainMultiFactorKey, value); }
+                get { return GetFloat (Properties.Instance.mainMultiFactorID); }
+                set { SetFloat (Properties.Instance.mainMultiFactorID, value); }
             }
 
             // High Ground, default = "white" {}
-            private const string highTexKey = "_highTex";
             public Texture2D highTex
             {
-                get { return GetTexture (highTexKey) as Texture2D; }
-                set { SetTexture (highTexKey, value); }
+                get { return GetTexture (Properties.Instance.highTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.highTexID, value); }
             }
 
             // High MT, default = "white" {}
-            private const string highMultiTexKey = "_highMultiTex";
             public Texture2D highMultiTex
             {
-                get { return GetTexture (highMultiTexKey) as Texture2D; }
-                set { SetTexture (highMultiTexKey, value); }
+                get { return GetTexture (Properties.Instance.highMultiTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.highMultiTexID, value); }
             }
 
             // High MT Tiling, default = 1
-            private const string highMultiFactorKey = "_highMultiFactor";
             public float highMultiFactor
             {
-                get { return GetFloat (highMultiFactorKey); }
-                set { SetFloat (highMultiFactorKey, value); }
+                get { return GetFloat (Properties.Instance.highMultiFactorID); }
+                set { SetFloat (Properties.Instance.highMultiFactorID, value); }
             }
 
             // Snow, default = "white" {}
-            private const string snowTexKey = "_snowTex";
             public Texture2D snowTex
             {
-                get { return GetTexture (snowTexKey) as Texture2D; }
-                set { SetTexture (snowTexKey, value); }
+                get { return GetTexture (Properties.Instance.snowTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.snowTexID, value); }
             }
 
             // Snow MT, default = "white" {}
-            private const string snowMultiTexKey = "_snowMultiTex";
             public Texture2D snowMultiTex
             {
-                get { return GetTexture (snowMultiTexKey) as Texture2D; }
-                set { SetTexture (snowMultiTexKey, value); }
+                get { return GetTexture (Properties.Instance.snowMultiTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.snowMultiTexID, value); }
             }
 
             // Snow MT Tiling, default = 1
-            private const string snowMultiFactorKey = "_snowMultiFactor";
             public float snowMultiFactor
             {
-                get { return GetFloat (snowMultiFactorKey); }
-                set { SetFloat (snowMultiFactorKey, value); }
+                get { return GetFloat (Properties.Instance.snowMultiFactorID); }
+                set { SetFloat (Properties.Instance.snowMultiFactorID, value); }
             }
 
             // Steep Texture, default = "white" {}
-            private const string steepTexKey = "_steepTex";
             public Texture2D steepTex
             {
-                get { return GetTexture (steepTexKey) as Texture2D; }
-                set { SetTexture (steepTexKey, value); }
+                get { return GetTexture (Properties.Instance.steepTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.steepTexID, value); }
             }
 
             // Deep Start, default = 0
-            private const string deepStartKey = "_deepStart";
             public float deepStart
             {
-                get { return GetFloat (deepStartKey); }
-                set { SetFloat (deepStartKey, value); }
+                get { return GetFloat (Properties.Instance.deepStartID); }
+                set { SetFloat (Properties.Instance.deepStartID, value); }
             }
 
             // Deep End, default = 0.3
-            private const string deepEndKey = "_deepEnd";
             public float deepEnd
             {
-                get { return GetFloat (deepEndKey); }
-                set { SetFloat (deepEndKey, value); }
+                get { return GetFloat (Properties.Instance.deepEndID); }
+                set { SetFloat (Properties.Instance.deepEndID, value); }
             }
 
             // Main lower boundary start, default = 0
-            private const string mainLoStartKey = "_mainLoStart";
             public float mainLoStart
             {
-                get { return GetFloat (mainLoStartKey); }
-                set { SetFloat (mainLoStartKey, value); }
+                get { return GetFloat (Properties.Instance.mainLoStartID); }
+                set { SetFloat (Properties.Instance.mainLoStartID, value); }
             }
 
             // Main lower boundary end, default = 0.5
-            private const string mainLoEndKey = "_mainLoEnd";
             public float mainLoEnd
             {
-                get { return GetFloat (mainLoEndKey); }
-                set { SetFloat (mainLoEndKey, value); }
+                get { return GetFloat (Properties.Instance.mainLoEndID); }
+                set { SetFloat (Properties.Instance.mainLoEndID, value); }
             }
 
             // Main upper boundary start, default = 0.3
-            private const string mainHiStartKey = "_mainHiStart";
             public float mainHiStart
             {
-                get { return GetFloat (mainHiStartKey); }
-                set { SetFloat (mainHiStartKey, value); }
+                get { return GetFloat (Properties.Instance.mainHiStartID); }
+                set { SetFloat (Properties.Instance.mainHiStartID, value); }
             }
 
             // Main upper boundary end, default = 0.5
-            private const string mainHiEndKey = "_mainHiEnd";
             public float mainHiEnd
             {
-                get { return GetFloat (mainHiEndKey); }
-                set { SetFloat (mainHiEndKey, value); }
+                get { return GetFloat (Properties.Instance.mainHiEndID); }
+                set { SetFloat (Properties.Instance.mainHiEndID, value); }
             }
 
             // High lower boundary start, default = 0.6
-            private const string hiLoStartKey = "_hiLoStart";
             public float hiLoStart
             {
-                get { return GetFloat (hiLoStartKey); }
-                set { SetFloat (hiLoStartKey, value); }
+                get { return GetFloat (Properties.Instance.hiLoStartID); }
+                set { SetFloat (Properties.Instance.hiLoStartID, value); }
             }
 
             // High lower boundary end, default = 0.6
-            private const string hiLoEndKey = "_hiLoEnd";
             public float hiLoEnd
             {
-                get { return GetFloat (hiLoEndKey); }
-                set { SetFloat (hiLoEndKey, value); }
+                get { return GetFloat (Properties.Instance.hiLoEndID); }
+                set { SetFloat (Properties.Instance.hiLoEndID, value); }
             }
 
             // High upper boundary start, default = 0.6
-            private const string hiHiStartKey = "_hiHiStart";
             public float hiHiStart
             {
-                get { return GetFloat (hiHiStartKey); }
-                set { SetFloat (hiHiStartKey, value); }
+                get { return GetFloat (Properties.Instance.hiHiStartID); }
+                set { SetFloat (Properties.Instance.hiHiStartID, value); }
             }
 
             // High upper boundary end, default = 0.9
-            private const string hiHiEndKey = "_hiHiEnd";
             public float hiHiEnd
             {
-                get { return GetFloat (hiHiEndKey); }
-                set { SetFloat (hiHiEndKey, value); }
+                get { return GetFloat (Properties.Instance.hiHiEndID); }
+                set { SetFloat (Properties.Instance.hiHiEndID, value); }
             }
 
             // Snow Start, default = 0.9
-            private const string snowStartKey = "_snowStart";
             public float snowStart
             {
-                get { return GetFloat (snowStartKey); }
-                set { SetFloat (snowStartKey, value); }
+                get { return GetFloat (Properties.Instance.snowStartID); }
+                set { SetFloat (Properties.Instance.snowStartID, value); }
             }
 
             // Snow End, default = 1
-            private const string snowEndKey = "_snowEnd";
             public float snowEnd
             {
-                get { return GetFloat (snowEndKey); }
-                set { SetFloat (snowEndKey, value); }
+                get { return GetFloat (Properties.Instance.snowEndID); }
+                set { SetFloat (Properties.Instance.snowEndID, value); }
             }
 
             // PlanetOpacity, default = 1
-            private const string planetOpacityKey = "_PlanetOpacity";
             public float planetOpacity
             {
-                get { return GetFloat (planetOpacityKey); }
-                set { SetFloat (planetOpacityKey, value); }
+                get { return GetFloat (Properties.Instance.planetOpacityID); }
+                set { SetFloat (Properties.Instance.planetOpacityID, value); }
             }
 
-            public PQSProjectionSurfaceQuad() : base(shaderForMaterial)
+            public PQSProjectionSurfaceQuad() : base(Properties.shader)
             {
             }
 
             public PQSProjectionSurfaceQuad(string contents) : base(contents)
             {
-                base.shader = shaderForMaterial;
+                base.shader = Properties.shader;
             }
 
             public PQSProjectionSurfaceQuad(Material material) : base(material)
             {
                 // Throw exception if this material was not the proper material
-                if (material.shader.name != shaderName)
-                    throw new InvalidOperationException("PQSProjectionSurfaceQuad material requires the \"" + shaderName + "\" shader");
+                if (material.shader.name != Properties.shader.name)
+                    throw new InvalidOperationException("Type Mismatch: Terrain/PQS/Sphere Projection SURFACE QUAD shader required");
             }
 
         }

@@ -9,107 +9,174 @@ namespace Kopernicus
     {
         public class ScaledPlanetRimAerial : Material
         {
-            // Return the shader for this wrapper
-            private const string shaderName = "Terrain/Scaled Planet (RimAerial)";
-            private static Shader shaderForMaterial
+            // Internal property ID tracking object
+            protected class Properties
             {
-                get { return Shader.Find (shaderName); }
+                // Return the shader for this wrapper
+                private const string shaderName = "Terrain/Scaled Planet (RimAerial)";
+                public static Shader shader
+                {
+                    get { return Shader.Find (shaderName); }
+                }
+
+                // Main Color, default = (1,1,1,1)
+                private const string colorKey = "_Color";
+                public int colorID { get; private set; }
+
+                // Specular Color, default = (0.5,0.5,0.5,1)
+                private const string specColorKey = "_SpecColor";
+                public int specColorID { get; private set; }
+
+                // Shininess, default = 0.078125
+                private const string shininessKey = "_Shininess";
+                public int shininessID { get; private set; }
+
+                // Base (RGB) Gloss (A), default = "white" {}
+                private const string mainTexKey = "_MainTex";
+                public int mainTexID { get; private set; }
+
+                // Normalmap, default = "bump" {}
+                private const string bumpMapKey = "_BumpMap";
+                public int bumpMapID { get; private set; }
+
+                // Opacity, default = 1
+                private const string opacityKey = "_Opacity";
+                public int opacityID { get; private set; }
+
+                // Rim Power, default = 3
+                private const string rimPowerKey = "_rimPower";
+                public int rimPowerID { get; private set; }
+
+                // Rim Blend, default = 1
+                private const string rimBlendKey = "_rimBlend";
+                public int rimBlendID { get; private set; }
+
+                // RimColorRamp, default = "white" {}
+                private const string rimColorRampKey = "_rimColorRamp";
+                public int rimColorRampID { get; private set; }
+
+                // LightDirection, default = (1,0,0,0)
+                private const string localLightDirectionKey = "_localLightDirection";
+                public int localLightDirectionID { get; private set; }
+
+                // Resource Map (RGB), default = "black" {}
+                private const string resourceMapKey = "_ResourceMap";
+                public int resourceMapID { get; private set; }
+
+                // Singleton instance
+                private static Properties singleton = null;
+                public static Properties Instance
+                {
+                    get
+                    {
+                        // Construct the singleton if it does not exist
+                        if(singleton == null)
+                            singleton = new Properties();
+            
+                        return singleton;
+                    }
+                }
+
+                private Properties()
+                {
+                    colorID = Shader.PropertyToID(colorKey);
+                    specColorID = Shader.PropertyToID(specColorKey);
+                    shininessID = Shader.PropertyToID(shininessKey);
+                    mainTexID = Shader.PropertyToID(mainTexKey);
+                    bumpMapID = Shader.PropertyToID(bumpMapKey);
+                    opacityID = Shader.PropertyToID(opacityKey);
+                    rimPowerID = Shader.PropertyToID(rimPowerKey);
+                    rimBlendID = Shader.PropertyToID(rimBlendKey);
+                    rimColorRampID = Shader.PropertyToID(rimColorRampKey);
+                    localLightDirectionID = Shader.PropertyToID(localLightDirectionKey);
+                    resourceMapID = Shader.PropertyToID(resourceMapKey);
+                }
             }
 
             // Specular Color, default = (0.5,0.5,0.5,1)
-            private const string specColorKey = "_SpecColor";
             public Color specColor
             {
-                get { return GetColor (specColorKey); }
-                set { SetColor (specColorKey, value); }
+                get { return GetColor (Properties.Instance.specColorID); }
+                set { SetColor (Properties.Instance.specColorID, value); }
             }
 
             // Shininess, default = 0.078125
-            private const string shininessKey = "_Shininess";
             public float shininess
             {
-                get { return GetFloat (shininessKey); }
-                set { SetFloat (shininessKey, Mathf.Clamp(value,0.03f,1f)); }
+                get { return GetFloat (Properties.Instance.shininessID); }
+                set { SetFloat (Properties.Instance.shininessID, Mathf.Clamp(value,0.03f,1f)); }
             }
 
             // Base (RGB) Gloss (A), default = "white" {}
-            private const string mainTexKey = "_MainTex";
             public Texture2D mainTex
             {
-                get { return GetTexture (mainTexKey) as Texture2D; }
-                set { SetTexture (mainTexKey, value); }
+                get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
+                set { SetTexture (Properties.Instance.mainTexID, value); }
             }
 
             // Normalmap, default = "bump" {}
-            private const string bumpMapKey = "_BumpMap";
             public Texture2D bumpMap
             {
-                get { return GetTexture (bumpMapKey) as Texture2D; }
-                set { SetTexture (bumpMapKey, value); }
+                get { return GetTexture (Properties.Instance.bumpMapID) as Texture2D; }
+                set { SetTexture (Properties.Instance.bumpMapID, value); }
             }
 
             // Opacity, default = 1
-            private const string opacityKey = "_Opacity";
             public float opacity
             {
-                get { return GetFloat (opacityKey); }
-                set { SetFloat (opacityKey, Mathf.Clamp(value,0f,1f)); }
+                get { return GetFloat (Properties.Instance.opacityID); }
+                set { SetFloat (Properties.Instance.opacityID, Mathf.Clamp(value,0f,1f)); }
             }
 
             // Rim Power, default = 3
-            private const string rimPowerKey = "_rimPower";
             public float rimPower
             {
-                get { return GetFloat (rimPowerKey); }
-                set { SetFloat (rimPowerKey, value); }
+                get { return GetFloat (Properties.Instance.rimPowerID); }
+                set { SetFloat (Properties.Instance.rimPowerID, value); }
             }
 
             // Rim Blend, default = 1
-            private const string rimBlendKey = "_rimBlend";
             public float rimBlend
             {
-                get { return GetFloat (rimBlendKey); }
-                set { SetFloat (rimBlendKey, value); }
+                get { return GetFloat (Properties.Instance.rimBlendID); }
+                set { SetFloat (Properties.Instance.rimBlendID, value); }
             }
 
             // RimColorRamp, default = "white" {}
-            private const string rimColorRampKey = "_rimColorRamp";
             public Texture2D rimColorRamp
             {
-                get { return GetTexture (rimColorRampKey) as Texture2D; }
-                set { SetTexture (rimColorRampKey, value); }
+                get { return GetTexture (Properties.Instance.rimColorRampID) as Texture2D; }
+                set { SetTexture (Properties.Instance.rimColorRampID, value); }
             }
 
             // LightDirection, default = (1,0,0,0)
-            private const string localLightDirectionKey = "_localLightDirection";
             public Vector4 localLightDirection
             {
-                get { return GetVector (localLightDirectionKey); }
-                set { SetVector (localLightDirectionKey, value); }
+                get { return GetVector (Properties.Instance.localLightDirectionID); }
+                set { SetVector (Properties.Instance.localLightDirectionID, value); }
             }
 
             // Resource Map (RGB), default = "black" {}
-            private const string resourceMapKey = "_ResourceMap";
             public Texture2D resourceMap
             {
-                get { return GetTexture (resourceMapKey) as Texture2D; }
-                set { SetTexture (resourceMapKey, value); }
+                get { return GetTexture (Properties.Instance.resourceMapID) as Texture2D; }
+                set { SetTexture (Properties.Instance.resourceMapID, value); }
             }
 
-            public ScaledPlanetRimAerial() : base(shaderForMaterial)
+            public ScaledPlanetRimAerial() : base(Properties.shader)
             {
             }
 
             public ScaledPlanetRimAerial(string contents) : base(contents)
             {
-                base.shader = shaderForMaterial;
+                base.shader = Properties.shader;
             }
 
             public ScaledPlanetRimAerial(Material material) : base(material)
             {
                 // Throw exception if this material was not the proper material
-                if (material.shader.name != shaderName)
-                    throw new InvalidOperationException("ScaledPlanetRimAerial material requires the \"" + shaderName + "\" shader");
+                if (material.shader.name != Properties.shader.name)
+                    throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (RimAerial) shader required");
             }
 
         }
