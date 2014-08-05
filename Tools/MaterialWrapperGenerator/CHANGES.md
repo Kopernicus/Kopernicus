@@ -9,7 +9,7 @@ Properties for shaders can be accessed by a numerical id which can be retrived w
 protected class Properties 
 {
     private const string propertyNameKey = “_propertyName”;
-    public int propertyNameID { get; private set; }
+    public int propertyNameId { get; private set; }
 
     private const string shaderName = “Path/To/Shader”;
     public Shader shader
@@ -18,7 +18,7 @@ protected class Properties
     }
     public Properties()
     {
-        propertyNameId = Properties.shader.GetPropertyID(propertyNameKey);
+        propertyNameId = Properties.shader.PropertyToID(propertyNameKey);
     }
 
     private static Properties singleton = null;
