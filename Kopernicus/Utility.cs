@@ -32,8 +32,34 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	public class KopernicusUtility
+	public class Utility
 	{
+		/**
+		 * @return LocalSpace game object
+		 */
+		public static GameObject LocalSpace
+		{
+			get { return GameObject.Find (PSystemManager.Instance.localSpaceName); }
+		}
+		
+		/**
+		 * Copy one objects fields to another object via reflection
+		 * @param source Object to copy fields from
+		 * @param destination Object to copy fields to
+		 **/
+		public static void CopyObjectFields<T> (T source, T destination)
+		{
+			// Reflection based copy
+			foreach (FieldInfo field in (typeof (T)).GetFields()) 
+			{
+				// Only copy non static fields
+				if (!field.IsStatic)
+				{
+					field.SetValue(destination, field.GetValue(source));
+				}
+			}
+		}
+
 		/**
 		 * Recursively searches for a named transform in the Transform heirarchy.  The requirement of
 		 * such a function is sad.  This should really be in the Unity3D API.  Transform.Find() only
@@ -72,32 +98,6 @@ namespace Kopernicus
 			// Return the transform (will be null if it was not found)
 			return null;
 		}
-
-		/**
-		 * Recursively searches for a component in the game object heirarchy
-		 **/
-		public static T RecursivelyGetComponent<T> (Transform transform) where T : Component
-		{
-			// Do we have this component?
-			T component = transform.GetComponent<T> ();
-
-			// If we didn't find the component, loop through children
-			if (component == null) 
-			{
-				foreach(Transform child in transform)
-				{
-					// Is it in the child?
-					component = RecursivelyGetComponent<T>(child);
-
-					// If we found it, break out
-					if(component != null) 
-						break;
-				}
-			}
-
-			// Return the component we found
-			return component;
-		}
 		
 		// Dump an object by reflection
 		public static void DumpObjectFields(object o, string title = "---------")
@@ -123,32 +123,6 @@ namespace Kopernicus
 				Debug.Log (property.Name + " = " + property.GetValue(o, null));
 			}
 			Debug.Log("--------------------------------------");
-		}
-		
-		/**
-		 * Copy one objects fields to another object via reflection
-		 * @param source Object to copy fields from
-		 * @param destination Object to copy fields to
-		 **/
-		public static void CopyObjectFields<T> (T source, T destination)
-		{
-			// Reflection based copy
-			foreach (FieldInfo field in (typeof (T)).GetFields()) 
-			{
-				// Only copy non static fields
-				if (!field.IsStatic)
-				{
-					field.SetValue(destination, field.GetValue(source));
-				}
-			}
-		}
-		
-		/**
-		 * Returns the local space object
-		 */
-		public static GameObject GetLocalSpace ()
-		{
-			return GameObject.Find (PSystemManager.Instance.localSpaceName);
 		}
 
 		/**

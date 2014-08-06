@@ -1,14 +1,28 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/MaterialWrapper/AtmosphereFromGround.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/RuntimeUtility.cs">
     <Files>
-      <File FileName="Kopernicus/Injector.cs" Line="15" Column="51" />
-      <File FileName="Kopernicus/KopernicusUtility.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/KopernicusSystemSource.cs" Line="84" Column="4" />
-      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="139" Column="36" />
-      <File FileName="Kopernicus/RuntimeUtility.cs" Line="141" Column="36" />
-      <File FileName="Kopernicus/MaterialWrapper/AtmosphereFromGround.cs" Line="52" Column="59" />
+      <File FileName="Kopernicus/Injector.cs" Line="59" Column="18" />
+      <File FileName="Kopernicus/Utility.cs" Line="1" Column="1" />
+      <File FileName="Kopernicus/KopernicusSystemSource.cs" Line="1" Column="1" />
+      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="1" Column="1" />
+      <File FileName="Kopernicus/RuntimeUtility.cs" Line="100" Column="6" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Kopernicus" expanded="True">
+            <Node name="RuntimeUtility.cs" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="ClassPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

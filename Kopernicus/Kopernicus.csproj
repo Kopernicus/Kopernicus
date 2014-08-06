@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="KopernicusUtility.cs" />
     <Compile Include="KopernicusSystemSource.cs" />
     <Compile Include="KopernicusPlanetSource.cs" />
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
@@ -58,9 +57,16 @@
     <Compile Include="MaterialWrapper\ScaledPlanetRimAerial.cs" />
     <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
+    <Compile Include="Utility.cs" />
+    <Compile Include="Configuration\Loader.cs" />
+    <Compile Include="Configuration\Body.cs" />
+    <Compile Include="Configuration\Parser.cs" />
+    <Compile Include="Configuration\Properties.cs" />
+    <Compile Include="Configuration\Template.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="MaterialWrapper\" />
+    <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>

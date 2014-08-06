@@ -69,13 +69,13 @@ namespace Kopernicus
 
 		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, String name, Orbit orbit = null) 
 		{
-			PSystemBody Jool = KopernicusUtility.FindBody (system.rootBody, "Jool");  // Need the geosphere for scaled version
-			PSystemBody Laythe = KopernicusUtility.FindBody (system.rootBody, "Laythe"); // Need pqs and ocean definitions
+			PSystemBody Jool = Utility.FindBody (system.rootBody, "Jool");  // Need the geosphere for scaled version
+			PSystemBody Laythe = Utility.FindBody (system.rootBody, "Laythe"); // Need pqs and ocean definitions
 
-			//KopernicusUtility.DumpObject (Laythe.celestialBody, " Laythe Celestial Body ");
-			//KopernicusUtility.DumpObject (Laythe.pqsVersion, " Laythe PQS ");
-			Transform laytheOcean = KopernicusUtility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
-			//KopernicusUtility.DumpObject (laytheOcean.GetComponent<PQS> (), " Laythe Ocean PQS ");
+			//Utility.DumpObject (Laythe.celestialBody, " Laythe Celestial Body ");
+			//Utility.DumpObject (Laythe.pqsVersion, " Laythe PQS ");
+			Transform laytheOcean = Utility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
+			//Utility.DumpObject (laytheOcean.GetComponent<PQS> (), " Laythe Ocean PQS ");
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.
 			PSystemBody body = system.AddBody (parent);
@@ -132,7 +132,7 @@ namespace Kopernicus
 
 			// Create the PQS object and pull all the values from Dres (has some future proofing i guess? adapts to PQS changes)
 			body.pqsVersion = controllerRoot.AddComponent<PQS>();
-			KopernicusUtility.CopyObjectFields(Laythe.pqsVersion, body.pqsVersion);
+			Utility.CopyObjectFields(Laythe.pqsVersion, body.pqsVersion);
 			//body.pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuad();
 			//body.pqsVersion.fallbackMaterial = new PQSProjectionFallback();
 			body.pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelative(Laythe.pqsVersion.surfaceMaterial); // use until we determine all the functions of the shader textures
@@ -141,8 +141,8 @@ namespace Kopernicus
 			body.pqsVersion.mapOcean = false;
 
 			// Debug
-			KopernicusUtility.DumpObjectProperties(body.pqsVersion.surfaceMaterial, " Surface Material ");
-			KopernicusUtility.DumpObjectProperties(body.pqsVersion.fallbackMaterial, " Fallback Material ");
+			Utility.DumpObjectProperties(body.pqsVersion.surfaceMaterial, " Surface Material ");
+			Utility.DumpObjectProperties(body.pqsVersion.fallbackMaterial, " Fallback Material ");
 
 			// Detail defaults
 			body.pqsVersion.maxQuadLenghtsPerFrame = 0.03f;
@@ -380,7 +380,7 @@ namespace Kopernicus
 
 			// Generate a mesh to fit the PQS we generated (it would be cool to generate this FROM the PQS)
 			Mesh mesh = new Mesh();
-			KopernicusUtility.CopyMesh(Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh, mesh);
+			Utility.CopyMesh(Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh, mesh);
 
 			// Iterate though the UVs
 			// Geosphere with a radius of 1000, cooresponds to an object 6000km in radius
@@ -509,12 +509,12 @@ namespace Kopernicus
 			celestialBodyTransform.planetFade.secondaryRenderers.Add(oceanRoot);
 
 			// Setup the PQS object data
-			KopernicusUtility.CopyObjectFields<PQS>(laytheOcean.GetComponent<PQS>(), oceanPQS);
+			Utility.CopyObjectFields<PQS>(laytheOcean.GetComponent<PQS>(), oceanPQS);
 			oceanPQS.radius            = body.pqsVersion.radius;
 			oceanPQS.surfaceMaterial   = new PQSOceanSurfaceQuad(laytheOcean.GetComponent<PQS>().surfaceMaterial);
 			oceanPQS.fallbackMaterial  = new PQSOceanSurfaceQuadFallback(laytheOcean.GetComponent<PQS>().fallbackMaterial);
-			KopernicusUtility.DumpObjectProperties(oceanPQS.surfaceMaterial, oceanPQS.surfaceMaterial.ToString());
-			KopernicusUtility.DumpObjectProperties(oceanPQS.fallbackMaterial, oceanPQS.fallbackMaterial.ToString());
+			Utility.DumpObjectProperties(oceanPQS.surfaceMaterial, oceanPQS.surfaceMaterial.ToString());
+			Utility.DumpObjectProperties(oceanPQS.fallbackMaterial, oceanPQS.fallbackMaterial.ToString());
 
 			// Create the aerial perspective material
 			mod = new GameObject("_Material_AerialPerspective");
@@ -563,7 +563,7 @@ namespace Kopernicus
 			mod = new GameObject("OceanFX");
 			mod.transform.parent = oceanRoot.transform;
 			PQSMod_OceanFX oceanFX = mod.AddComponent<PQSMod_OceanFX>();
-			oceanFX.watermain = KopernicusUtility.RecursivelyGetComponent<PQSMod_OceanFX>(laytheOcean).watermain.Clone() as Texture2D[];
+			oceanFX.watermain = Utility.RecursivelyGetComponent<PQSMod_OceanFX>(laytheOcean).watermain.Clone() as Texture2D[];
 			oceanFX.requirements = PQS.ModiferRequirements.Default;
 			oceanFX.modEnabled = true;
 			oceanFX.order = 100;*/
@@ -571,7 +571,7 @@ namespace Kopernicus
 			#endregion
 
 			// Dump the constructed structure
-			KopernicusUtility.GameObjectWalk (deactivator);
+			Utility.GameObjectWalk (deactivator);
 
 			// Return the new body
 			return body;
@@ -650,14 +650,14 @@ namespace Kopernicus
 		public static PSystemBody GenerateSystemBody(PSystem system, PSystemBody parent, string templateName, string name, Orbit orbit) 
 		{
 			// Look up the template body
-			PSystemBody template = KopernicusUtility.FindBody (system.rootBody, templateName);
+			PSystemBody template = Utility.FindBody (system.rootBody, templateName);
 
 			// Create a new celestial body as a clone of this template
 			PSystemBody clone = system.AddBody (parent);
 			clone.name = name;
 
 			// Set up the celestial body of the clone (back up the orbit driver)
-			KopernicusUtility.CopyObjectFields<CelestialBody> (template.celestialBody, clone.celestialBody);
+			Utility.CopyObjectFields<CelestialBody> (template.celestialBody, clone.celestialBody);
 			clone.celestialBody.bodyName = name;
 			clone.celestialBody.orbitingBodies = null;
 			clone.celestialBody.orbitDriver = clone.orbitDriver;
