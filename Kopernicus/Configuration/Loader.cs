@@ -36,11 +36,55 @@ namespace Kopernicus
 {
 	namespace Configuration
 	{
+		/**
+		 * Class to manage and load configurations for Kopernicus
+		 **/
 		public class Loader
 		{
+			// Name of the config node group which manages Kopernicus
+			private const string name = "Kopernicus";
+
+			// Collection of the original system bodies for use as templates 
+			// (please people - don't depend on these)
+			private Dictionary <string, PSystemBody> templates = new Dictionary<string, PSystemBody>();
+
+			// Get all of the bodies
+			private void GetBodies (PSystemBody root, ref List<PSystemBody> bodies)
+			{
+				// If we have a root object
+				if(root != null)
+				{
+					bodies.Add(root);
+					foreach(PSystemBody body in root.children)
+					{
+						GetBodies(body, ref bodies);
+					}
+				}
+			}
+
+			// Setup the loader
+			// To get the system, do "PSystemManager.Instance.systemPrefab = (new Loader()).Generate();"
 			public Loader ()
 			{
+				// Generate the template list from the system prefab
+				List<PSystemBody> bodies = new List<PSystemBody>();
+				GetBodies(PSystemManager.Instance.systemPrefab.rootBody, ref bodies);
+				foreach(PSystemBody body in bodies)
+				{
+					templates.Add(body.celestialBody.bodyName, body);
+					Debug.Log("[Kopernicus]: Configuration.Loader: \"" + body.celestialBody.bodyName + "\" available as template");
+				}
 
+				// Do other stuff?
+			}
+
+			/**
+			 * Generates the system prefab from the configuration 
+			 * @return System prefab object
+			 **/
+			public PSystem Generate()
+			{
+				return null;
 			}
 		}
 	}

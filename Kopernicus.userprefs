@@ -1,18 +1,21 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/RuntimeUtility.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/Loader.cs">
     <Files>
-      <File FileName="Kopernicus/Injector.cs" Line="59" Column="18" />
-      <File FileName="Kopernicus/Utility.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/KopernicusSystemSource.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/RuntimeUtility.cs" Line="100" Column="6" />
+      <File FileName="Kopernicus/Injector.cs" Line="58" Column="21" />
+      <File FileName="Kopernicus/Utility.cs" Line="137" Column="4" />
+      <File FileName="Kopernicus/Configuration/Loader.cs" Line="61" Column="7" />
+      <File FileName="Kopernicus/Configuration/Body.cs" Line="32" Column="1" />
+      <File FileName="Kopernicus/Configuration/Parser.cs" Line="41" Column="17" />
+      <File FileName="Kopernicus/Configuration/Template.cs" Line="28" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Kopernicus" expanded="True">
-            <Node name="RuntimeUtility.cs" selected="True" />
+            <Node name="Configuration" expanded="True">
+              <Node name="Loader.cs" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>

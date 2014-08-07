@@ -36,8 +36,14 @@ namespace Kopernicus
 {
 	namespace Configuration
 	{
+		/**
+		 * Class which manages loading from config nodes via reflection and 
+		 * attribution
+		 **/
 		public class Parser
 		{
+
+
 			public Parser ()
 			{
 
