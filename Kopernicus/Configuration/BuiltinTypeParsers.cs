@@ -53,6 +53,146 @@ namespace Kopernicus
 				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
 			}
 		}
+
+		/** Parser for color */
+		public class ColorParser : IParsable
+		{
+			public Color value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseColor(s);
+			}
+			public ColorParser()
+			{
+
+			}
+		}
+		
+		/** Parser for color32 */
+		public class Color32Parser : IParsable
+		{
+			public Color32 value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseColor32(s);
+			}
+			public Color32Parser()
+			{
+				
+			}
+		}
+		
+		/** Parser for enum */
+		public class EnumParser<T> : IParsable where T : Enum
+		{
+			public T value;
+			public void SetFromString(string s)
+			{
+				value = (T) ConfigNode.ParseEnum(typeof (T), s);
+			}
+			public EnumParser ()
+			{
+				
+			}
+		}
+		
+		/** Parser for matrix 4x4 */
+		public class Matrix4x4Parser : IParsable 
+		{
+			public Matrix4x4 value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseMatrix4x4(s);
+			}
+			public Matrix4x4Parser ()
+			{
+				
+			}
+		}
+		
+		/** Parser for quaternion */
+		public class QuaternionParser : IParsable
+		{
+			public Quaternion value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseQuaternion(s);
+			}
+			public QuaternionParser()
+			{
+				
+			}
+		}
+		
+		/** Parser for dual quaternion */
+		public class QuaternionDParser : IParsable
+		{
+			public QuaternionD value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseQuaternion(s);
+			}
+			public QuaternionDParser()
+			{
+				
+			}
+		}
+		
+		/** Parser for vec2 **/
+		public class Vector2Parser : IParsable
+		{
+			public Vector2 value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseVector2(s);
+			}
+			public Vector2Parser()
+			{
+				
+			}
+		}
+		
+		/** Parser for vec3 **/
+		public class Vector3Parser : IParsable
+		{
+			public Vector3 value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseVector3(s);
+			}
+			public Vector3Parser()
+			{
+				
+			}
+		}
+		
+		/** Parser for vec3d **/
+		public class Vector3DParser : IParsable
+		{
+			public Vector3d value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseVector3D(s);
+			}
+			public Vector3DParser()
+			{
+				
+			}
+		}
+		
+		/** Parser for vec4 **/
+		public class Vector4Parser : IParsable
+		{
+			public Vector4 value;
+			public void SetFromString(string s)
+			{
+				value = ConfigNode.ParseVector4(s);
+			}
+			public Vector4Parser()
+			{
+				
+			}
+		}
 	}
 }
 
