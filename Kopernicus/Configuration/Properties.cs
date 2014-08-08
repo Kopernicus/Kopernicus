@@ -34,6 +34,8 @@ namespace Kopernicus
 	{
 		public class Properties
 		{
+			// Atmosphere
+
 			public Properties ()
 			{
 

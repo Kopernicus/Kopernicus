@@ -40,6 +40,7 @@
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\Applications\KSP\KSP.app\Contents\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Configuration\Parser.cs" />
     <Compile Include="Configuration\Properties.cs" />
     <Compile Include="Configuration\Template.cs" />
+    <Compile Include="Configuration\BuiltinTypeParsers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

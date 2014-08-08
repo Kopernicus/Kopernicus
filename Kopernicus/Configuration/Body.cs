@@ -34,15 +34,96 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
+	namespace Configuration 
 	{
-		public class Body
+		public class Body : IParserEventSubscriber
 		{
-			public Body ()
-			{
+			// Name of this body
+			[ParserTarget("name", optional = false, allowMerge = false)]
+			public string name;
 
+			// Template property of a body (not loaded automagically)
+			[PreApply]
+			[ParserTarget("Template", optional = true, allowMerge = false)]
+			private Template template;
+
+			// Properties template of a body
+			//[ParserTarget("Properties", optional = true, allowMerge = true)]
+			//private Properties properties;
+
+			// Orbit
+			// PQS
+
+			// Get a PSystemBody from this object
+			public PSystemBody Generate()
+			{
+				return null;
+			}
+
+			// Parser Apply Event
+			public void Apply(ConfigNode node)
+			{
+				// Check on templatey shit
+			}
+
+			// Parser Post Apply Event
+			public void PostApply(ConfigNode node)
+			{
+				Debug.Log("[Kopernicus]: Configuration.Body: Loaded body named: " + name);
 			}
 		}
 	}
 }
+
+/**
+	//
+	// Methods
+	//
+	public PSystemBody AddBody (PSystemBody parent)
+	{
+		GameObject gameObject = new GameObject ();
+		gameObject.transform.parent = base.transform;
+		gameObject.name = . (123326);
+		PSystemBody pSystemBody = gameObject.AddComponent<PSystemBody> ();
+		if (parent != null)
+		{
+			while (true)
+			{
+				switch (6)
+				{
+				case 0:
+					continue;
+				}
+				break;
+			}
+			if (!true)
+			{
+				RuntimeMethodHandle arg_53_0 = methodof (PSystem.AddBody (PSystemBody)).MethodHandle;
+			}
+			parent.children.Add (pSystemBody);
+		}
+		GameObject gameObject2 = new GameObject ();
+		gameObject2.transform.parent = gameObject.transform;
+		gameObject2.name = . (123349);
+		pSystemBody.celestialBody = gameObject2.AddComponent<CelestialBody> ();
+		pSystemBody.resources = gameObject2.AddComponent<PResource> ();
+		if (parent != null)
+		{
+			while (true)
+			{
+				switch (7)
+				{
+				case 0:
+					continue;
+				}
+				break;
+			}
+			pSystemBody.orbitDriver = gameObject2.AddComponent<OrbitDriver> ();
+			pSystemBody.orbitDriver.referenceBody = parent.celestialBody;
+			pSystemBody.orbitRenderer = gameObject2.AddComponent<OrbitRenderer> ();
+		}
+		return pSystemBody;
+	}
+}
+*/
 

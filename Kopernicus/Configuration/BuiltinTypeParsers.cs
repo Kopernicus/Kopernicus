@@ -1,4 +1,4 @@
-/** 
+/**
  * Kopernicus Planetary System Modifier
  * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
@@ -36,29 +36,21 @@ namespace Kopernicus
 {
 	namespace Configuration
 	{
-		public class Template : IParserEventSubscriber
+		/**
+		 * Simple parser for numerics
+		 **/
+		public class NumericParsable<T> : IParsable
 		{
-			// PSystemBody to use as a template
-			public PSystemBody body;
-
-			// Name of the body to use for the template
-			[ParserTarget("name", optional = false, allowMerge = false)]
-			private string name 
+			public T value;
+			private MethodInfo parserMethod;
+			public void SetFromString(string s)
 			{
-				// Crawl the system prefab for the body
-				set { body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value);}
+				value = (T) parserMethod.Invoke (null, new object[] {s});
 			}
-
-			// Apply event
-			public void Apply(ConfigNode node)
+			public NumericParsable()
 			{
-
-			}
-
-			// Post apply event
-			public void PostApply(ConfigNode node)
-			{
-				Debug.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
+				// Get the parse method for this object
+				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
 			}
 		}
 	}

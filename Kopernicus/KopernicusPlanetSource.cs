@@ -60,7 +60,7 @@ namespace Kopernicus
 	public class KopernicusPlanetSource
 	{
 		// Path of the plugin (will eventually not matter much)
-		const string PluginDirectory = "GameData/Kopernicus/Plugins/PluginData/";
+		const string PluginDirectory = "GameData/Kopernicus/PluginData/";
 
 		public static PSystemBody GeneratePlanet (PSystem system, string name, Orbit orbit = null) 
 		{

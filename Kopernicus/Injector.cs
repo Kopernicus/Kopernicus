@@ -61,7 +61,7 @@ namespace Kopernicus
 			}
 
 			// test the loader
-			PSystem dummy = (new Configuration.Loader()).Generate();
+			//PSystem dummy = (new Configuration.Loader()).Generate();
 
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
 			PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();

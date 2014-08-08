@@ -41,6 +41,27 @@ namespace Kopernicus
 		{
 			get { return GameObject.Find (PSystemManager.Instance.localSpaceName); }
 		}
+
+		// Static object representing the deactivator
+		private static GameObject deactivator;
+
+		/**
+		 * Get an object which is deactivated, essentially, and children are prefabs
+		 * @return shared deactivated object for making prefabs
+		 */
+		public static GameObject Deactivator
+		{
+			get
+			{
+				if(deactivator == null)
+				{
+					deactivator = new GameObject ("__deactivator");
+					deactivator.SetActive (false);
+					UnityEngine.Object.DontDestroyOnLoad (deactivator);
+				}
+				return deactivator;
+			}
+		}
 		
 		/**
 		 * Copy one objects fields to another object via reflection
@@ -136,7 +157,7 @@ namespace Kopernicus
 		public static PSystemBody FindBody (PSystemBody body, string name)
 		{
 			// Is this the body wer are looking for?
-			if (body.celestialBody.name == name)
+			if (body.celestialBody.bodyName == name)
 				return body;
 
 			// Otherwise search children

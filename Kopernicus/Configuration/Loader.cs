@@ -42,40 +42,16 @@ namespace Kopernicus
 		public class Loader
 		{
 			// Name of the config node group which manages Kopernicus
-			private const string name = "Kopernicus";
+			private const string rootNodeName = "Kopernicus";
 
-			// Collection of the original system bodies for use as templates 
-			// (please people - don't depend on these)
-			private Dictionary <string, PSystemBody> templates = new Dictionary<string, PSystemBody>();
-
-			// Get all of the bodies
-			private void GetBodies (PSystemBody root, ref List<PSystemBody> bodies)
-			{
-				// If we have a root object
-				if(root != null)
-				{
-					bodies.Add(root);
-					foreach(PSystemBody body in root.children)
-					{
-						GetBodies(body, ref bodies);
-					}
-				}
-			}
+			// Name of the config type which holds the body definition
+			private const string bodyNodeName = "Body";
 
 			// Setup the loader
 			// To get the system, do "PSystemManager.Instance.systemPrefab = (new Loader()).Generate();"
 			public Loader ()
 			{
-				// Generate the template list from the system prefab
-				List<PSystemBody> bodies = new List<PSystemBody>();
-				GetBodies(PSystemManager.Instance.systemPrefab.rootBody, ref bodies);
-				foreach(PSystemBody body in bodies)
-				{
-					templates.Add(body.celestialBody.bodyName, body);
-					Debug.Log("[Kopernicus]: Configuration.Loader: \"" + body.celestialBody.bodyName + "\" available as template");
-				}
 
-				// Do other stuff?
 			}
 
 			/**
@@ -84,6 +60,18 @@ namespace Kopernicus
 			 **/
 			public PSystem Generate()
 			{
+				// Retrieve the root config node
+				ConfigNode rootConfig = GameDatabase.Instance.GetConfigs (rootNodeName) [0].config;
+
+				// Iterate through body configs
+				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName))
+				{
+					// Create a new body
+					//PSystemBody body = Parser.CreateObjectFromConfigNode<Body>(bodyNode).Generate();
+					Body b = Parser.CreateObjectFromConfigNode<Body>(bodyNode);
+					Debug.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + b.name);
+				}
+
 				return null;
 			}
 		}
