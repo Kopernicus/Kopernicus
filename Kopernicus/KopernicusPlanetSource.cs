@@ -82,7 +82,6 @@ namespace Kopernicus
 
 			// set up the various parameters
 			body.name = name;
-			body.orbitRenderer.orbitColor = Color.magenta;
 			body.flightGlobalsIndex = 100;
 
 			// Some parameters of the celestialBody, which represents the actual planet...
@@ -108,6 +107,7 @@ namespace Kopernicus
 
 			// Setup the orbit of "Kopernicus."  The "Orbit" class actually is built to support serialization straight
 			// from Squad, so storing these to files (and loading them) will be pretty easy.
+			body.orbitRenderer.orbitColor             = Color.magenta;
 			body.orbitDriver.celestialBody            = body.celestialBody;
 			body.orbitDriver.updateMode               = OrbitDriver.UpdateMode.UPDATE;
 			if (orbit == null) 

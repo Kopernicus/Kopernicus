@@ -60,16 +60,20 @@ namespace Kopernicus
 			 **/
 			public PSystem Generate()
 			{
+				// Dictionary of bodies generated
+				Dictionary<string, PSystemBody> bodies = new Dictionary<string, PSystemBody>();
+
 				// Retrieve the root config node
 				ConfigNode rootConfig = GameDatabase.Instance.GetConfigs (rootNodeName) [0].config;
 
 				// Iterate through body configs
 				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName))
 				{
-					// Create a new body
-					//PSystemBody body = Parser.CreateObjectFromConfigNode<Body>(bodyNode).Generate();
-					Body b = Parser.CreateObjectFromConfigNode<Body>(bodyNode);
-					Debug.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + b.name);
+					// Load this body from the 
+					PSystemBody body = Parser.CreateObjectFromConfigNode<Body>(bodyNode).generatedBody;
+					bodies.Add(body.celestialBody.name, body);
+
+					Debug.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + body.celestialBody.bodyName);
 				}
 
 				return null;

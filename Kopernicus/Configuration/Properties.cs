@@ -27,18 +27,94 @@
  */
 
 using System;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
+
+using UnityEngine;
 
 namespace Kopernicus
 {
 	namespace Configuration
 	{
-		public class Properties
+		[RequireConfigType(ConfigType.Node)]
+		public class Properties : IParserEventSubscriber
 		{
-			// Atmosphere
+			// Celestial body to edit
+			public CelestialBody celestialBody { get; private set; }
 
-			public Properties ()
+			// Body description
+			[ParserTarget("description", optional = true, allowMerge = false)]
+			private string description 
 			{
+				set { celestialBody.bodyDescription = value; }
+			}
 
+			// Radius
+			[ParserTarget("radius", optional = true, allowMerge = false)]
+			private NumericParser<double> radius 
+			{
+				set { celestialBody.Radius = value.value; }
+			}
+			
+			// GeeASL
+			[ParserTarget("geeASL", optional = true, allowMerge = false)]
+			private NumericParser<double> geeASL 
+			{
+				set { celestialBody.GeeASL = value.value; }
+			}
+			
+			// Mass
+			[ParserTarget("mass", optional = true, allowMerge = false)]
+			private NumericParser<double> mass
+			{
+				set { celestialBody.Mass = value.value; }
+			}
+			
+			// Does the body rotate?
+			[ParserTarget("rotates", optional = true, allowMerge = false)]
+			private NumericParser<bool> rotates
+			{
+				set { celestialBody.rotates = value.value; }
+			}
+			
+			// Rotation period of the world
+			[ParserTarget("rotationPeriod", optional = true, allowMerge = false)]
+			private NumericParser<double> rotationPeriod
+			{
+				set { celestialBody.rotationPeriod = value.value; }
+			}
+			
+			// Is this the home world
+			[ParserTarget("isHomeWorld", optional = true, allowMerge = false)]
+			private NumericParser<bool> isHomeWorld
+			{
+				set { celestialBody.isHomeWorld = value.value; }
+			}
+
+			// Time warp altitude limits
+			[ParserTarget("timewarpAltitudeLimits", optional = true, allowMerge = false)]
+			private NumericCollectionParser<float> timewarpAltitudeLimits 
+			{
+				set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray (); }
+			}
+
+			// science values need a decoder
+
+			// biome map needs a parser
+
+			public void Apply (ConfigNode node) { }
+
+			public void PostApply (ConfigNode node)
+			{
+				Utility.DumpObjectFields(celestialBody.scienceValues, " Science Values ");
+			}
+
+			// Properties requires a celestial body referece, as this class
+			// is designed to edit the body
+			public Properties (CelestialBody celestialBody)
+			{
+				this.celestialBody = celestialBody;
 			}
 		}
 	}

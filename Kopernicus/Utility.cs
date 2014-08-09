@@ -28,6 +28,9 @@
 
 using System;
 using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Kopernicus
@@ -49,7 +52,7 @@ namespace Kopernicus
 		 * Get an object which is deactivated, essentially, and children are prefabs
 		 * @return shared deactivated object for making prefabs
 		 */
-		public static GameObject Deactivator
+		public static Transform Deactivator
 		{
 			get
 			{
@@ -59,7 +62,7 @@ namespace Kopernicus
 					deactivator.SetActive (false);
 					UnityEngine.Object.DontDestroyOnLoad (deactivator);
 				}
-				return deactivator;
+				return deactivator.transform;
 			}
 		}
 		
@@ -191,8 +194,12 @@ namespace Kopernicus
 		}
 
 		// Print out the tree of components 
-		public static void GameObjectWalk(GameObject o, String prefix = "")
+		public static void GameObjectWalk (GameObject o, String prefix = "")
 		{
+			// If null, don't do anything
+			if (o == null) 
+				return;
+
 			// Print this object
 			Debug.Log (prefix + o);
 			Debug.Log (prefix + " >>> Components <<< ");
@@ -205,7 +212,8 @@ namespace Kopernicus
 			// Game objects are related to each other via transforms in Unity3D.
 			foreach (Transform b in o.transform) 
 			{
-				GameObjectWalk(b.gameObject, "    " + prefix);
+				if(b != null)
+					GameObjectWalk(b.gameObject, "    " + prefix);
 			}
 		}
 
@@ -255,6 +263,158 @@ namespace Kopernicus
 			dest.colors32 = colors32;
 			
 			//ProfileTimer.Pop("CopyMesh");
+		}
+
+		/** 
+		 * Enumerable class to iterate over parents.  Defined to allow us to use Linq
+		 * and predicates. 
+		 *
+		 * See examples: http://msdn.microsoft.com/en-us/library/78dfe2yb(v=vs.110).aspx
+		 **/
+		public class ParentEnumerator : IEnumerable<GameObject>
+		{
+			// The game object who and whose parents are going to be enumerated
+			private GameObject initial;
+
+			// Enumerator class
+			public class Enumerator : IEnumerator<GameObject>
+			{
+				public GameObject original;
+				public GameObject current;
+
+				public Enumerator (GameObject initial)
+				{
+					this.original = initial;
+					this.current = this.original;
+				}
+
+				public bool MoveNext ()
+				{
+					if (current.transform.parent != null && current.transform.parent == current.transform) 
+					{
+						current = current.transform.parent.gameObject;
+						return true;
+					} 
+					else 
+					{
+						return false;
+					}
+				}
+
+				public void Reset ()
+				{	
+					current = original;
+				}
+
+				void IDisposable.Dispose () { }
+
+				public GameObject Current 
+				{
+					get { return current; }
+				}
+
+				object IEnumerator.Current 
+				{
+					get { return Current; }
+				}
+			}
+
+			public Enumerator GetEnumerator()
+			{
+				return new Enumerator(initial);
+			}
+
+		    IEnumerator IEnumerable.GetEnumerator()
+			{
+				return (IEnumerator) GetEnumerator();
+			}
+			
+			IEnumerator<GameObject> IEnumerable<GameObject>.GetEnumerator()
+			{
+				return (IEnumerator<GameObject>) GetEnumerator();
+			}
+			
+			public ParentEnumerator (GameObject initial)
+			{
+				this.initial = initial;
+			}
+		}
+
+		/** 
+		 * Enumerable class to iterate over parents.  Defined to allow us to use Linq
+		 * and predicates.  Allows this fun operation to find a sun closest to us under 
+		 * the tree
+		 * 
+		 *     Utility.ReferenceBodyEnumerator e = new Utility.ReferenceBodyEnumerator(FlightGlobals.currentMainBody);
+		 *     CelestialBody sun = e.First(p => p.GetComponentsInChildren(typeof (ScaledSun), true).Length > 0);
+		 *
+		 * See examples: http://msdn.microsoft.com/en-us/library/78dfe2yb(v=vs.110).aspx
+		 **/
+		public class ReferenceBodyEnumerator : IEnumerable<CelestialBody>
+		{
+			// The game object who and whose parents are going to be enumerated
+			private CelestialBody initial;
+			
+			// Enumerator class
+			public class Enumerator : IEnumerator<CelestialBody>
+			{
+				public CelestialBody original;
+				public CelestialBody current;
+				
+				public Enumerator (CelestialBody initial)
+				{
+					this.original = initial;
+					this.current = this.original;
+				}
+				
+				public bool MoveNext ()
+				{
+					if (current.referenceBody != null) 
+					{
+						current = current.referenceBody;
+						return true;
+					} 
+				
+					return false;
+				}
+				
+				public void Reset ()
+				{	
+					current = original;
+				}
+				
+				void IDisposable.Dispose () { }
+				
+				public CelestialBody Current 
+				{
+					get { return current; }
+				}
+				
+				object IEnumerator.Current 
+				{
+					get { return Current; }
+				}
+			}
+			
+			public Enumerator GetEnumerator()
+			{
+				return new Enumerator(initial);
+			}
+			
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return (IEnumerator) GetEnumerator();
+			}
+			
+			IEnumerator<CelestialBody> IEnumerable<CelestialBody>.GetEnumerator()
+			{
+				return (IEnumerator<CelestialBody>) GetEnumerator();
+			}
+			
+			public ReferenceBodyEnumerator (CelestialBody initial)
+			{
+				this.initial = initial;
+			}
 		}
 	}
 }

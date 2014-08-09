@@ -39,7 +39,8 @@ namespace Kopernicus
 		/**
 		 * Simple parser for numerics
 		 **/
-		public class NumericParsable<T> : IParsable
+		[RequireConfigType(ConfigType.Value)]
+		public class NumericParser<T> : IParsable
 		{
 			public T value;
 			private MethodInfo parserMethod;
@@ -47,7 +48,35 @@ namespace Kopernicus
 			{
 				value = (T) parserMethod.Invoke (null, new object[] {s});
 			}
-			public NumericParsable()
+			public NumericParser()
+			{
+				// Get the parse method for this object
+				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
+			}
+			public NumericParser(T i)
+			{
+				value = i;
+			}
+		}
+
+		/* Simple parser for numeric collections */
+		[RequireConfigType(ConfigType.Value)]
+		public class NumericCollectionParser<T> : IParsable
+		{
+			public List<T> value;
+			private MethodInfo parserMethod;
+			public void SetFromString (string s)
+			{
+				// Need a new list
+				value = new List<T> ();
+
+				// Get the tokens of this string
+				foreach (string e in s.Split(' ')) 
+				{
+					value.Add((T) parserMethod.Invoke (null, new object[] {e}));
+				}
+			}
+			public NumericCollectionParser()
 			{
 				// Get the parse method for this object
 				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
@@ -55,6 +84,7 @@ namespace Kopernicus
 		}
 
 		/** Parser for color */
+		[RequireConfigType(ConfigType.Value)]
 		public class ColorParser : IParsable
 		{
 			public Color value;
@@ -69,6 +99,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for color32 */
+		[RequireConfigType(ConfigType.Value)]
 		public class Color32Parser : IParsable
 		{
 			public Color32 value;
@@ -81,14 +112,15 @@ namespace Kopernicus
 				
 			}
 		}
-		
+
 		/** Parser for enum */
-		public class EnumParser<T> : IParsable where T : Enum
+		[RequireConfigType(ConfigType.Value)]
+		public class EnumParser<T> : IParsable where T : struct, IConvertible
 		{
 			public T value;
 			public void SetFromString(string s)
 			{
-				value = (T) ConfigNode.ParseEnum(typeof (T), s);
+				value = (T) (object) ConfigNode.ParseEnum(typeof (T), s);
 			}
 			public EnumParser ()
 			{
@@ -97,6 +129,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for matrix 4x4 */
+		[RequireConfigType(ConfigType.Value)]
 		public class Matrix4x4Parser : IParsable 
 		{
 			public Matrix4x4 value;
@@ -111,6 +144,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for quaternion */
+		[RequireConfigType(ConfigType.Value)]
 		public class QuaternionParser : IParsable
 		{
 			public Quaternion value;
@@ -125,6 +159,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for dual quaternion */
+		[RequireConfigType(ConfigType.Value)]
 		public class QuaternionDParser : IParsable
 		{
 			public QuaternionD value;
@@ -139,6 +174,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for vec2 **/
+		[RequireConfigType(ConfigType.Value)]
 		public class Vector2Parser : IParsable
 		{
 			public Vector2 value;
@@ -153,6 +189,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for vec3 **/
+		[RequireConfigType(ConfigType.Value)]
 		public class Vector3Parser : IParsable
 		{
 			public Vector3 value;
@@ -167,6 +204,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for vec3d **/
+		[RequireConfigType(ConfigType.Value)]
 		public class Vector3DParser : IParsable
 		{
 			public Vector3d value;
@@ -181,6 +219,7 @@ namespace Kopernicus
 		}
 		
 		/** Parser for vec4 **/
+		[RequireConfigType(ConfigType.Value)]
 		public class Vector4Parser : IParsable
 		{
 			public Vector4 value;

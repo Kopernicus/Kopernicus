@@ -73,6 +73,24 @@ namespace Kopernicus
 
 			}
 		}
+
+		/* Types of config node entries */
+		public enum ConfigType
+		{
+			Value,
+			Node
+		}
+
+		/* Attribute indicating the type of config node data this can load from - node or value */
+		[AttributeUsage(AttributeTargets.Class)]
+		public class RequireConfigType : Attribute
+		{
+			public ConfigType type { get; private set; }
+			public RequireConfigType (ConfigType type)
+			{
+				this.type = type;
+			}
+		}
 		
 		/**
 		 * Exception representing a missing field
@@ -177,7 +195,7 @@ namespace Kopernicus
 							postapplyMembers.Add(member);
 					}
 				}
-				
+
 				// Process the preapply members
 				foreach (MemberInfo member in preapplyMembers)
 					LoadObjectMemberFromConfigurationNode (member, o, node);
@@ -205,35 +223,42 @@ namespace Kopernicus
 			private static void LoadObjectMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node)
 			{
 				// Get the parser target, only one is allowed so it will be first
-				ParserTarget target = (member.GetCustomAttributes((typeof (ParserTarget)), true) as ParserTarget[])[0];
-				Debug.Log("[Kopernicus]: Configuration.Parser: ParserTarget = (" + target.fieldName + ", optional = " + target.optional + ", allowsMerge = " + target.allowMerge + ")");
+				ParserTarget target = (member.GetCustomAttributes ((typeof(ParserTarget)), true) as ParserTarget[]) [0];
+				Debug.Log ("[Kopernicus]: Configuration.Parser: ParserTarget = (" + target.fieldName + ", optional = " + target.optional + ", allowsMerge = " + target.allowMerge + ")");
 				
 				// Figure out if this field exists and if we care
-				bool isNode = node.HasNode(target.fieldName);
-				bool isValue = node.HasValue(target.fieldName);
-				
-				// Verify that this situation is okay
-				if(!target.optional && (!isNode && !isValue))
-				{
-					// Error - non optional field is missing
-					throw new TargetMissingException("Missing non-optional field: " + o.GetType() + "." + target.fieldName);
-				}
+				bool isNode = node.HasNode (target.fieldName);
+				bool isValue = node.HasValue (target.fieldName);
 				
 				// Obtain the type the member is (can only be field or property)
 				Type targetType = null;
 				object targetValue = null;
-				if(member.MemberType == MemberTypes.Field)
-				{
+				if (member.MemberType == MemberTypes.Field) {
 					targetType = (member as FieldInfo).FieldType;
-					targetValue = (member as FieldInfo).GetValue(o);
-				}
-				else
-				{
+					targetValue = (member as FieldInfo).GetValue (o);
+				} else {
 					targetType = (member as PropertyInfo).PropertyType;
-					if((member as PropertyInfo).CanRead)
-						targetValue = (member as PropertyInfo).GetValue(o, null);
+					if ((member as PropertyInfo).CanRead)
+						targetValue = (member as PropertyInfo).GetValue (o, null);
 				}
-				Debug.Log("[Kopernicus]: Configuration.Parser:   Type = " + targetType + ", isNode = " + isNode + ", isValue = " + isValue);
+				Debug.Log ("[Kopernicus]: Configuration.Parser:   Type = " + targetType + ", isNode = " + isNode + ", isValue = " + isValue);
+				
+				// Verify that this situation is okay
+				if (!(target.allowMerge && targetValue != null) && (!target.optional && (!isNode && !isValue)))
+				{
+					// Error - non optional field is missing
+					throw new TargetMissingException ("Missing non-optional field: " + o.GetType () + "." + target.fieldName);
+				}
+
+				// Does this node have a required config source type (and if so, check if valid)
+				RequireConfigType[] attributes = member.GetCustomAttributes (typeof(RequireConfigType), true) as RequireConfigType[];
+				if (attributes.Length > 0) 
+				{
+					if((attributes[0].type == ConfigType.Node && !isNode) || (attributes[0].type == ConfigType.Value && !isValue))
+					{
+						throw new TargetTypeMismatchException (target.fieldName + " requires config value of " + attributes[0].type);
+					}
+				}
 				
 				// If this object is a value (attempt no merge here)
 				if(isValue)
@@ -252,9 +277,7 @@ namespace Kopernicus
 						targetParsable.SetFromString(node.GetValue(target.fieldName));
 						targetValue = targetParsable;
 					}
-					
-					// Collection of parsable type detection?
-					
+
 					// Throw exception or print error
 					else
 					{
@@ -278,6 +301,9 @@ namespace Kopernicus
 						LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName));
 					}
 				}
+
+				// Didn't exist....
+				else return;
 				
 				// If the member type is a field, set the value
 				if(member.MemberType == MemberTypes.Field)

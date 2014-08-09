@@ -38,38 +38,97 @@ namespace Kopernicus
 	{
 		public class Body : IParserEventSubscriber
 		{
-			// Name of this body
-			[ParserTarget("name", optional = false, allowMerge = false)]
-			public string name;
+			// Body we are trying to edit
+			public PSystemBody generatedBody { get; private set; }
 
+			// Name of this body
+			[PreApply]
+			[ParserTarget("name", optional = false, allowMerge = false)]
+			public string name { get; private set; }
+			
 			// Template property of a body (not loaded automagically)
 			[PreApply]
 			[ParserTarget("Template", optional = true, allowMerge = false)]
 			private Template template;
 
-			// Properties template of a body
-			//[ParserTarget("Properties", optional = true, allowMerge = true)]
-			//private Properties properties;
+			// Flight globals index of this body
+			[ParserTarget("flightGlobalsIndex", optional = false, allowMerge = false)]
+			public NumericParser<int> flightGlobalsIndex 
+			{
+				set { generatedBody.flightGlobalsIndex = value.value; }
+			}
+
+			// Celestial body properties
+			[ParserTarget("Properties", optional = true, allowMerge = true)]
+			private Properties properties;
 
 			// Orbit
 			// PQS
-
-			// Get a PSystemBody from this object
-			public PSystemBody Generate()
-			{
-				return null;
-			}
+			// Atmosphere
+			// Sun
 
 			// Parser Apply Event
-			public void Apply(ConfigNode node)
+			public void Apply (ConfigNode node)
 			{
-				// Check on templatey shit
+				// If we have a template, generatedBody *is* the template body
+				if (template != null) 
+				{
+					generatedBody = template.body;
+
+					// Patch PQS names
+					if(generatedBody.pqsVersion != null)
+					{
+						// Patch all of the PQS names
+						foreach(PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
+						{
+							Debug.Log ("[Kopernicus]: Configuration.Body: Patching \"" + p.name + "\"");
+							p.name = p.name.Replace(template.body.celestialBody.bodyName, name);
+						}
+					}
+
+					// Patch all of the names with the new name
+					generatedBody.name = name;
+					generatedBody.celestialBody.bodyName = name;
+					generatedBody.scaledVersion.name = name;
+				}
+
+				// Otherwise we have to generate all the things for this body
+				else 
+				{
+					// Create the PSystemBody object
+					GameObject generatedBodyGameObject = new GameObject(name);
+					generatedBodyGameObject.transform.parent = Utility.Deactivator;
+					generatedBody = generatedBodyGameObject.AddComponent<PSystemBody>();
+
+					// Create the celestial body
+					GameObject generatedBodyProperties = new GameObject(name);
+					generatedBodyProperties.transform.parent = generatedBodyGameObject.transform;
+					generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody>();
+					generatedBody.resources = generatedBodyProperties.AddComponent<PResource>();
+
+					// temporary - as this should be created by orbit
+					generatedBody.orbitDriver = generatedBodyProperties.AddComponent<OrbitDriver>();
+					generatedBody.orbitRenderer = generatedBodyProperties.AddComponent<OrbitRenderer>();
+
+					// sensible defaults
+					generatedBody.celestialBody.bodyName = name;
+					generatedBody.celestialBody.atmosphere = false;
+					generatedBody.celestialBody.ocean = false;
+				}
+
+				// By default we have no orbiting bodies
+				generatedBody.celestialBody.orbitingBodies = new List<CelestialBody>();
+
+				// Create the properties object with the celestial body
+				properties = new Properties(generatedBody.celestialBody);
 			}
 
 			// Parser Post Apply Event
 			public void PostApply(ConfigNode node)
 			{
-				Debug.Log("[Kopernicus]: Configuration.Body: Loaded body named: " + name);
+				//Debug.Log("[Kopernicus]: Configuration.Body: Loaded body named: " + name);
+				Utility.DumpObjectFields(generatedBody.celestialBody, " Post Load Celestial Body ");
+
 			}
 		}
 	}

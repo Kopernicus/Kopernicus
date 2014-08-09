@@ -19,10 +19,6 @@ namespace Kopernicus
                     get { return Shader.Find (shaderName); }
                 }
 
-                // Main Color, default = (1,1,1,1)
-                private const string colorKey = "_Color";
-                public int colorID { get; private set; }
-
                 // Specular Color, default = (0.5,0.5,0.5,1)
                 private const string specColorKey = "_SpecColor";
                 public int specColorID { get; private set; }
@@ -61,9 +57,8 @@ namespace Kopernicus
                     }
                 }
 
-                private Properties()
+                protected Properties()
                 {
-                    colorID = Shader.PropertyToID(colorKey);
                     specColorID = Shader.PropertyToID(specColorKey);
                     shininessID = Shader.PropertyToID(shininessKey);
                     mainTexID = Shader.PropertyToID(mainTexKey);

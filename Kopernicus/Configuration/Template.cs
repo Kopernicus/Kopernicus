@@ -29,6 +29,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
@@ -38,27 +39,70 @@ namespace Kopernicus
 	{
 		public class Template : IParserEventSubscriber
 		{
-			// PSystemBody to use as a template
+			// Cloned PSystemBody to expose to the config system
 			public PSystemBody body;
 
+			// PSystemBody to use as a template in lookup & clone
+			private PSystemBody originalBody; 
+
 			// Name of the body to use for the template
+			[PreApply]
 			[ParserTarget("name", optional = false, allowMerge = false)]
 			private string name 
 			{
 				// Crawl the system prefab for the body
-				set { body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value);}
+				set 
+				{ 
+					originalBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value);
+					if(originalBody == null)
+					{
+						throw new TemplateNotFoundException("Unable to find: " + value);
+					}
+				}
 			}
 
-			// Apply event
-			public void Apply(ConfigNode node)
-			{
+			// Collection of PQS mods to remove 
+			// something about a collection (probably strings)
+			// a collection of mods
 
+			// Apply event
+			public void Apply (ConfigNode node)
+			{
+				// Instantiate (clone) the template body
+				GameObject bodyGameObject = UnityEngine.Object.Instantiate (originalBody.gameObject) as GameObject;
+				bodyGameObject.name = originalBody.name;
+				bodyGameObject.transform.parent = Utility.Deactivator;
+				body = bodyGameObject.GetComponent<PSystemBody> ();
+
+				// Clone the scaled version
+				body.scaledVersion = UnityEngine.Object.Instantiate (originalBody.scaledVersion) as GameObject;
+				body.scaledVersion.transform.parent = Utility.Deactivator;
+				body.scaledVersion.name = originalBody.scaledVersion.name;
+				
+				// Clone the PQS version (if it has one)
+				if (body.pqsVersion != null) 
+				{
+					body.pqsVersion = UnityEngine.Object.Instantiate (originalBody.pqsVersion) as PQS;
+					body.pqsVersion.transform.parent = Utility.Deactivator;
+					body.pqsVersion.name = originalBody.pqsVersion.name;
+				}
 			}
 
 			// Post apply event
 			public void PostApply(ConfigNode node)
 			{
+				// Do something about removing PQS
+
 				Debug.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
+			}
+
+			// Private exception to throw in the case the template doesn't load
+			private class TemplateNotFoundException : Exception
+			{
+				public TemplateNotFoundException(string s) : base(s)
+				{
+
+				}
 			}
 		}
 	}
