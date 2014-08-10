@@ -39,103 +39,6 @@ namespace Kopernicus
 	namespace Configuration
 	{
 		/**
-		 * Attribute used to tag a property or field which can be targeted by the parser
-		 **/
-		[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-		public class ParserTarget : Attribute
-		{
-			// Storage key in config node tree.  If null, key is determined with reflection
-			public string fieldName = null;
-
-			// Flag indiciating whether the presence of this value is required
-			public bool optional = true;
-
-			// Flag indiciating whether the contents of the config tree can be merged
-			// via reflection with a potentially present field.  If the field is null,
-			// this flag is disregarged
-			public bool allowMerge = true;
-
-			// Constructor sets name
-			public ParserTarget(string fieldName = null)
-			{
-				this.fieldName = fieldName;
-			}
-		}
-
-		/**
-		 * Attribute indicating this parser target should be processed before calling Apply()
-		 **/
-		[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-		public class PreApply : Attribute
-		{
-			public PreApply()
-			{
-
-			}
-		}
-
-		/* Types of config node entries */
-		public enum ConfigType
-		{
-			Value,
-			Node
-		}
-
-		/* Attribute indicating the type of config node data this can load from - node or value */
-		[AttributeUsage(AttributeTargets.Class)]
-		public class RequireConfigType : Attribute
-		{
-			public ConfigType type { get; private set; }
-			public RequireConfigType (ConfigType type)
-			{
-				this.type = type;
-			}
-		}
-		
-		/**
-		 * Exception representing a missing field
-		 **/
-		public class TargetMissingException : Exception
-		{
-			public TargetMissingException (string message) : base(message)
-			{
-				
-			}
-		}
-		
-		/**
-		 * Exception representing a field having the wrong storage type (i.e. string field is set to node)
-		 **/
-		public class TargetTypeMismatchException : Exception
-		{
-			public TargetTypeMismatchException (string message) : base(message)
-			{
-				
-			}
-		}
-
-		/**
-		 * Interface a class can implement to get events from the parser
-		 **/
-		public interface IParserEventSubscriber
-		{
-			// Apply Event - called after [PreApply] targets have been processed, but before the rest
-			void Apply (ConfigNode node);    
-
-			// Post Apply Event = called after all targets have been applied
-			void PostApply (ConfigNode node);
-		}
-
-		/**
-		 * Interface a class can implment to support conversion from a string
-		 **/
-		public interface IParsable
-		{
-			// Set value from string
-			void SetFromString (string s);
-		}
-
-		/**
 		 * Class which manages loading from config nodes via reflection and 
 		 * attribution
 		 **/
@@ -144,26 +47,16 @@ namespace Kopernicus
 			// Create an object form a configuration node (Generic)
 			public static T CreateObjectFromConfigNode <T> (ConfigNode node) where T : class, new()
 			{
-				// Allocate an instance of "type"
 				T o = new T ();
-				
-				// Populate this object with the load object from configuration
 				LoadObjectFromConfigurationNode (o, node);
-				
-				// Return the new object
 				return o;
 			}
 
 			// Create an object form a configuration node (Runtime type identification)
 			public static object CreateObjectFromConfigNode (Type type, ConfigNode node)
 			{
-				// Allocate an instance of "type"
 				object o = Activator.CreateInstance (type);
-
-				// Populate this object with the load object from configuration
 				LoadObjectFromConfigurationNode (o, node);
-
-				// Return the new object
 				return o;
 			}
 
@@ -179,38 +72,167 @@ namespace Kopernicus
 				IParserEventSubscriber subscriber = o as IParserEventSubscriber;
 
 				// Generate two lists -> those tagged preapply and those not
-				List<MemberInfo> preapplyMembers = new List<MemberInfo> ();
-				List<MemberInfo> postapplyMembers = new List<MemberInfo> ();
+				List<KeyValuePair<bool,MemberInfo> > preapplyMembers = new List<KeyValuePair<bool,MemberInfo> > ();
+				List<KeyValuePair<bool,MemberInfo> > postapplyMembers = new List<KeyValuePair<bool,MemberInfo> > ();
 
 				// Discover members tagged with parser attributes
 				foreach (MemberInfo member in o.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)) 
 				{
-					// Is this member a valid target?
-					if(member.GetCustomAttributes((typeof (ParserTarget)), true).Length > 0)
+					// Is this member a parser target?
+					ParserTarget[] attributes = member.GetCustomAttributes ((typeof(ParserTarget)), true) as ParserTarget[];
+					if (attributes.Length > 0) 
 					{
-						// If this collection has the preapply attribute, we need to process it
-						if(member.GetCustomAttributes((typeof (PreApply)), true).Length > 0)
-							preapplyMembers.Add(member);
+						// If this member is a collection
+						bool isCollection = attributes[0].GetType().Equals(typeof(ParserTargetCollection));
+						KeyValuePair<bool, MemberInfo> entry = new KeyValuePair<bool, MemberInfo>(isCollection, member);
+
+						// If this member has the preapply attribute, we need to process it
+						if (member.GetCustomAttributes ((typeof(PreApply)), true).Length > 0)
+							preapplyMembers.Add (entry);
 						else
-							postapplyMembers.Add(member);
+							postapplyMembers.Add (entry);
 					}
 				}
 
 				// Process the preapply members
-				foreach (MemberInfo member in preapplyMembers)
-					LoadObjectMemberFromConfigurationNode (member, o, node);
+				foreach (KeyValuePair<bool, MemberInfo> member in preapplyMembers)
+				{
+					if(member.Key)
+					{
+						LoadCollectionMemberFromConfigurationNode(member.Value, o, node);
+					}
+					else
+					{
+						LoadObjectMemberFromConfigurationNode (member.Value, o, node);
+					}
+				}
 
 				// Call Apply
 				if (subscriber != null) 
 					subscriber.Apply (node); 
 				
 				// Process the postapply members
-				foreach (MemberInfo member in postapplyMembers)
-					LoadObjectMemberFromConfigurationNode (member, o, node);
+				foreach (KeyValuePair<bool, MemberInfo> member in postapplyMembers)
+				{
+					if(member.Key)
+					{
+						LoadCollectionMemberFromConfigurationNode(member.Value, o, node);
+					}
+					else
+					{
+						LoadObjectMemberFromConfigurationNode (member.Value, o, node);
+					}
+				}
 
 				// Call PostApply
 				if (subscriber != null)
 					subscriber.PostApply (node);
+			}
+
+			/** 
+			 * Load collection for ParserTargetCollection
+			 * 
+			 * @param member Member to load data for
+			 * @param o Instance of the object which owns member
+			 * @param node Configuration node from which to load data
+			 **/
+			private static void LoadCollectionMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node)
+			{
+				// Get the target attribute
+				ParserTargetCollection target = (member.GetCustomAttributes ((typeof(ParserTargetCollection)), true) as ParserTargetCollection[]) [0];
+
+				// Figure out if this field exists and if we care
+				bool isNode = node.HasNode (target.fieldName);
+				bool isValue = node.HasValue (target.fieldName);
+
+				// Obtain the type the member is (can only be field or property)
+				Type targetType = null;
+				object targetValue = null;
+				if (member.MemberType == MemberTypes.Field) 
+				{
+					targetType = (member as FieldInfo).FieldType;
+					targetValue = (member as FieldInfo).GetValue (o);
+				} 
+				else 
+				{
+					targetType = (member as PropertyInfo).PropertyType;
+					if ((member as PropertyInfo).CanRead) 
+					{
+						targetValue = (member as PropertyInfo).GetValue (o, null);
+					}
+				}
+
+				// If there was no data found for this node
+				if (!isNode && !isValue) 
+				{
+					if (!target.optional && !(target.allowMerge && targetValue != null)) 
+					{
+						// Error - non optional field is missing
+						throw new ParserTargetMissingException ("Missing non-optional field: " + o.GetType () + "." + target.fieldName);
+					}
+
+					// Nothing to do, so return
+					return;
+				}
+
+				// If we are dealing with a generic collection
+				if (targetType.IsGenericType) 
+				{
+					// If the target is a generic dictionary
+					if ((typeof(IDictionary)).IsAssignableFrom (targetType)) 
+					{
+						throw new Exception ("Generic dictionaries are unsupported at this time");
+					} 
+
+					// If the target is a generic collection
+					else if ((typeof(IList)).IsAssignableFrom (targetType))
+					{
+						// We need a node for this decoding
+						if(!isNode)
+						{
+							throw new Exception("Loading a generic list requires sources to be nodes");
+						}
+
+						// Get the target value as a collection
+						IList collection = targetValue as IList;
+						
+						// Get the internal type of this collection
+						Type genericType = targetType.GetGenericArguments () [0];
+
+						// Create a new collection if merge is disallowed or if the collection is null
+						if (collection == null || !target.allowMerge) 
+						{
+							collection = Activator.CreateInstance (targetType) as IList;
+						}
+
+						// Iterate over all of the nodes in this node
+						foreach (ConfigNode subnode in node.nodes) 
+						{
+							// Check for the name significance
+							if (target.nameSignificance == NameSignificance.None) 
+							{
+								// Just processes the contents of the node
+								collection.Add (CreateObjectFromConfigNode (genericType, subnode));
+							}
+
+							// Otherwise throw an exception because we don't support named ones yet
+							else if (target.nameSignificance == NameSignificance.Type) 
+							{
+								throw new Exception ("Name significance = type: Unsupported at this time");
+							}
+						}
+					}
+				}
+
+				// If we are dealing with a non generic collection
+				else 
+				{
+					// Check for invalid scenarios
+					if (target.nameSignificance == NameSignificance.None) 
+					{
+						throw new Exception ("Can not infer type from non generic target; can not infer type from zero name significance");
+					}
+				}
 			}
 
 			/**
@@ -224,7 +246,6 @@ namespace Kopernicus
 			{
 				// Get the parser target, only one is allowed so it will be first
 				ParserTarget target = (member.GetCustomAttributes ((typeof(ParserTarget)), true) as ParserTarget[]) [0];
-				//Debug.Log ("[Kopernicus]: Configuration.Parser: ParserTarget = (" + target.fieldName + ", optional = " + target.optional + ", allowsMerge = " + target.allowMerge + ")");
 				
 				// Figure out if this field exists and if we care
 				bool isNode = node.HasNode (target.fieldName);
@@ -233,21 +254,31 @@ namespace Kopernicus
 				// Obtain the type the member is (can only be field or property)
 				Type targetType = null;
 				object targetValue = null;
-				if (member.MemberType == MemberTypes.Field) {
+				if (member.MemberType == MemberTypes.Field) 
+				{
 					targetType = (member as FieldInfo).FieldType;
 					targetValue = (member as FieldInfo).GetValue (o);
-				} else {
+				} 
+				else 
+				{
 					targetType = (member as PropertyInfo).PropertyType;
 					if ((member as PropertyInfo).CanRead)
+					{
 						targetValue = (member as PropertyInfo).GetValue (o, null);
+					}
 				}
-				//Debug.Log ("[Kopernicus]: Configuration.Parser:   Type = " + targetType + ", isNode = " + isNode + ", isValue = " + isValue);
-				
-				// Verify that this situation is okay
-				if (!(target.allowMerge && targetValue != null) && (!target.optional && (!isNode && !isValue)))
+
+				// If there was no data found for this node
+				if (!isNode && !isValue) 
 				{
-					// Error - non optional field is missing
-					throw new TargetMissingException ("Missing non-optional field: " + o.GetType () + "." + target.fieldName);
+					if (!target.optional && !(target.allowMerge && targetValue != null)) 
+					{
+						// Error - non optional field is missing
+						throw new ParserTargetMissingException ("Missing non-optional field: " + o.GetType () + "." + target.fieldName);
+					}
+					
+					// Nothing to do, so return
+					return;
 				}
 
 				// Does this node have a required config source type (and if so, check if valid)
@@ -256,7 +287,7 @@ namespace Kopernicus
 				{
 					if((attributes[0].type == ConfigType.Node && !isNode) || (attributes[0].type == ConfigType.Value && !isValue))
 					{
-						throw new TargetTypeMismatchException (target.fieldName + " requires config value of " + attributes[0].type);
+						throw new ParserTargetTypeMismatchException (target.fieldName + " requires config value of " + attributes[0].type);
 					}
 				}
 				
@@ -282,6 +313,7 @@ namespace Kopernicus
 					else
 					{
 						Debug.LogError("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
+						return;
 					}
 				}
 				
@@ -301,9 +333,6 @@ namespace Kopernicus
 						LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName));
 					}
 				}
-
-				// Didn't exist....
-				else return;
 				
 				// If the member type is a field, set the value
 				if(member.MemberType == MemberTypes.Field)

@@ -136,19 +136,24 @@ namespace Kopernicus
 			public void PostApply (ConfigNode node)
 			{
 				// First step is to check whether an orbit has been defined
-				if (orbit != null) 
-				{
+				if (orbit != null) {
 					// If this body needs orbit controllers, create them
-					if(generatedBody.orbitDriver == null)
-					{
-						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
-						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
+					if (generatedBody.orbitDriver == null) {
+						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
+						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
 					}
 
 					// Setup orbit
 					generatedBody.orbitDriver.orbit = orbit.orbit;
 					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 					generatedBody.orbitRenderer.orbitColor = orbit.color.value;
+				}
+
+				// If this body was generated from a template
+				if (template != null) 
+				{
+					// Correct the scaling of the the scaled version (we actually need to regenerate the mesh)
+					generatedBody.scaledVersion.transform.localScale = template.scale * (float)(generatedBody.celestialBody.Radius / template.radius);
 				}
 				
 				// Adjust any PQS settings required

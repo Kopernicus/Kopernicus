@@ -42,6 +42,12 @@ namespace Kopernicus
 			// Cloned PSystemBody to expose to the config system
 			public PSystemBody body;
 
+			// Initial radius of the body
+			public double radius { get; private set; }
+
+			// Initial scale of the body
+			public Vector3 scale { get; private set; }
+
 			// PSystemBody to use as a template in lookup & clone
 			private PSystemBody originalBody; 
 
@@ -87,6 +93,10 @@ namespace Kopernicus
 					body.pqsVersion.transform.parent = Utility.Deactivator;
 					body.pqsVersion.name = originalBody.pqsVersion.name;
 				}
+
+				// Store the initial radius (so scaled version can be computed)
+				radius = body.celestialBody.Radius;
+				scale = body.scaledVersion.transform.localScale;
 			}
 
 			// Post apply event

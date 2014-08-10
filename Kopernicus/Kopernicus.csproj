@@ -64,15 +64,32 @@
     <Compile Include="Utility.cs" />
     <Compile Include="Configuration\Loader.cs" />
     <Compile Include="Configuration\Body.cs" />
-    <Compile Include="Configuration\Parser.cs" />
     <Compile Include="Configuration\Properties.cs" />
     <Compile Include="Configuration\Template.cs" />
     <Compile Include="Configuration\BuiltinTypeParsers.cs" />
     <Compile Include="Configuration\OrbitLoader.cs" />
+    <Compile Include="Configuration\ScienceValues.cs" />
+    <Compile Include="Configuration\Parser\Parser.cs" />
+    <Compile Include="Configuration\Biome.cs" />
+    <Compile Include="Configuration\Parser\Attributes\ParserTarget.cs" />
+    <Compile Include="Configuration\Parser\Attributes\PreApply.cs" />
+    <Compile Include="Configuration\Parser\Attributes\ParserTargetCollection.cs" />
+    <Compile Include="Configuration\Parser\Attributes\RequireConfigType.cs" />
+    <Compile Include="Configuration\Parser\Enumerations\ConfigType.cs" />
+    <Compile Include="Configuration\Parser\Enumerations\NameSignificance.cs" />
+    <Compile Include="Configuration\Parser\Interfaces\IParsable.cs" />
+    <Compile Include="Configuration\Parser\Interfaces\IParserEventSubscriber.cs" />
+    <Compile Include="Configuration\Parser\Exceptions\ParserTargetTypeMismatchException.cs" />
+    <Compile Include="Configuration\Parser\Exceptions\ParserTargetMissingException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="MaterialWrapper\" />
     <Folder Include="Configuration\" />
+    <Folder Include="Configuration\Parser\" />
+    <Folder Include="Configuration\Parser\Attributes\" />
+    <Folder Include="Configuration\Parser\Enumerations\" />
+    <Folder Include="Configuration\Parser\Interfaces\" />
+    <Folder Include="Configuration\Parser\Exceptions\" />
   </ItemGroup>
 </Project>

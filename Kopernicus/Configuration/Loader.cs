@@ -97,7 +97,9 @@ namespace Kopernicus
 						// Get the Body object for the reference body
 						Body parent = null;
 						if(!bodies.TryGetValue(body.Value.referenceBody, out parent))
+						{
 							throw new Exception("\"" + body.Value.referenceBody + "\" not found.");
+						}
 
 						// Setup the orbit of the body
 						parent.generatedBody.children.Add(body.Value.generatedBody);

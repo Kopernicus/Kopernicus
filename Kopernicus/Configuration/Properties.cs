@@ -44,70 +44,82 @@ namespace Kopernicus
 			public CelestialBody celestialBody { get; private set; }
 
 			// Body description
-			[ParserTarget("description", optional = true, allowMerge = false)]
+			[ParserTarget("description", optional = true)]
 			private string description 
 			{
 				set { celestialBody.bodyDescription = value; }
 			}
 
 			// Radius
-			[ParserTarget("radius", optional = true, allowMerge = false)]
+			[ParserTarget("radius", optional = true)]
 			private NumericParser<double> radius 
 			{
 				set { celestialBody.Radius = value.value; }
 			}
 			
 			// GeeASL
-			[ParserTarget("geeASL", optional = true, allowMerge = false)]
+			[ParserTarget("geeASL", optional = true)]
 			private NumericParser<double> geeASL 
 			{
 				set { celestialBody.GeeASL = value.value; }
 			}
 			
 			// Mass
-			[ParserTarget("mass", optional = true, allowMerge = false)]
+			[ParserTarget("mass", optional = true)]
 			private NumericParser<double> mass
 			{
 				set { celestialBody.Mass = value.value; }
 			}
 			
 			// Does the body rotate?
-			[ParserTarget("rotates", optional = true, allowMerge = false)]
+			[ParserTarget("rotates", optional = true)]
 			private NumericParser<bool> rotates
 			{
 				set { celestialBody.rotates = value.value; }
 			}
 			
 			// Rotation period of the world
-			[ParserTarget("rotationPeriod", optional = true, allowMerge = false)]
+			[ParserTarget("rotationPeriod", optional = true)]
 			private NumericParser<double> rotationPeriod
 			{
 				set { celestialBody.rotationPeriod = value.value; }
 			}
 			
 			// Is this the home world
-			[ParserTarget("isHomeWorld", optional = true, allowMerge = false)]
+			[ParserTarget("isHomeWorld", optional = true)]
 			private NumericParser<bool> isHomeWorld
 			{
 				set { celestialBody.isHomeWorld = value.value; }
 			}
 
 			// Time warp altitude limits
-			[ParserTarget("timewarpAltitudeLimits", optional = true, allowMerge = false)]
+			[ParserTarget("timewarpAltitudeLimits", optional = true)]
 			private NumericCollectionParser<float> timewarpAltitudeLimits 
 			{
 				set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray (); }
 			}
 
-			// science values need a decoder
+			// Science values of this body
+			[ParserTarget("ScienceValues", optional = true, allowMerge = true)]
+			private ScienceValues scienceValues;
 
-			// biome map needs a parser
+			// Biomes of this body
+			[ParserTargetCollection("Biomes", optional = true, nameSignificance = NameSignificance.None)]
+			private List<Biome> biomes;
 
 			public void Apply (ConfigNode node) { }
 
 			public void PostApply (ConfigNode node)
 			{
-				Utility.DumpObjectFields(celestialBody.scienceValues, " Science Values ");
+				Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
+
+				if (celestialBody.BiomeMap != null) {
+					foreach(CBAttributeMap.MapAttribute biome in celestialBody.BiomeMap.Attributes)
+					{
+						Debug.Log("Found Biome: " + biome.name + " : " + biome.mapColor);
+					}
+				} else 
+					Debug.Log("No Biome Map");
 			}
 
 			// Properties requires a celestial body referece, as this class
@@ -115,6 +127,13 @@ namespace Kopernicus
 			public Properties (CelestialBody celestialBody)
 			{
 				this.celestialBody = celestialBody;
+
+				// We need a science values object
+				if (this.celestialBody.scienceValues == null) 
+					this.celestialBody.scienceValues = new CelestialBodyScienceParams();
+
+				// Create the science values cache
+				scienceValues = new ScienceValues(this.celestialBody.scienceValues);
 			}
 		}
 	}
