@@ -111,7 +111,6 @@ namespace Kopernicus
 
 				// Stage 4 - elect root body
 				system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
-
 				return system;
 			}
 		}

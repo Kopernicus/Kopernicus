@@ -91,7 +91,7 @@ namespace Kopernicus
 						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
 
-						Utility.GameObjectWalk(generatedBody.pqsVersion.gameObject);
+						//Utility.GameObjectWalk(generatedBody.pqsVersion.gameObject);
 					}
 
 					// Patch all of the names with the new name
@@ -150,9 +150,18 @@ namespace Kopernicus
 					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 					generatedBody.orbitRenderer.orbitColor = orbit.color.value;
 				}
+				
+				// Adjust any PQS settings required
+				if (generatedBody.pqsVersion != null) 
+				{
+					// Adjust the radius of the PQSs appropriately
+					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
+						p.radius = generatedBody.celestialBody.Radius;
+					
+					//Utility.GameObjectWalk(generatedBody.pqsVersion.gameObject);
+				}
 
-				Debug.Log("[Kopernicus]: Configuration.Body: index = " + generatedBody.flightGlobalsIndex);
-				Utility.DumpObjectFields(generatedBody.celestialBody, " Post Load Celestial Body ");
+
 			}
 		}
 	}

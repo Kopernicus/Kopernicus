@@ -37,6 +37,7 @@ namespace Kopernicus
 {
 	namespace Configuration
 	{
+		// See: http://en.wikipedia.org/wiki/Argument_of_periapsis#mediaviewer/File:Orbit1.svg
 		[RequireConfigType(ConfigType.Node)]
 		public class OrbitLoader
 		{
@@ -75,7 +76,6 @@ namespace Kopernicus
 				set { orbit.LAN = value.value; }
 			}
 
-			// See: http://en.wikipedia.org/wiki/Argument_of_periapsis#mediaviewer/File:Orbit1.svg
 			[ParserTarget("argumentOfPeriapsis", optional = true, allowMerge = false)]
 			public NumericParser<double> argumentOfPeriapsis
 			{
