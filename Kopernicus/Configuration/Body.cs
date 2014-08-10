@@ -56,10 +56,7 @@ namespace Kopernicus
 			[ParserTarget("flightGlobalsIndex", optional = true, allowMerge = false)]
 			public NumericParser<int> flightGlobalsIndex 
 			{
-				set {
-					Debug.Log("FlightGlobalsIndex (\"" + name + "\") = " + value.value);
-					generatedBody.flightGlobalsIndex = value.value; 
-				}
+				set { generatedBody.flightGlobalsIndex = value.value; }
 			}
 
 			// Template property of a body - responsible for generating a PSystemBody from an existing one

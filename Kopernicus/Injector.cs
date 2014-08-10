@@ -52,6 +52,9 @@ namespace Kopernicus
 			// We're ALIVE
 			Debug.Log("[Kopernicus]: Injector.Awake(): Begin");
 
+			// Yo garbage collector - we have work to do man
+			DontDestroyOnLoad(this);
+
 			// If the planetary manager does not work, well, error out
 			if (PSystemManager.Instance == null) 
 			{
@@ -68,8 +71,22 @@ namespace Kopernicus
 			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren ((typeof(RDArchivesController)), true)[0] as RDArchivesController;
 			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
+			// Add a handler so that we can do post spawn fixups.  
+			PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
+
 			// Done executing the awake function
 			Debug.Log ("[Kopernicus]: Injector.Awake(): End");
+		}
+
+		// Post spawn fixups (ewwwww........)
+		public void PostSpawnFixups ()
+		{
+			// For some reason the game doesn't find nouveau Kerbin
+			Debug.Log("[Kopernicus]: OnPSystemReady() => Fixing space center celestial body");
+			SpaceCenter.Instance.cb = Planetarium.fetch.Home;
+
+			// Fixups complete, time to surrender to fate
+			Destroy (this);
 		}
 
 		// Log the destruction of the injector

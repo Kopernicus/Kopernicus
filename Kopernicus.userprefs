@@ -1,23 +1,23 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/Parser.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Injector.cs">
     <Files>
-      <File FileName="Kopernicus/Injector.cs" Line="69" Column="46" />
-      <File FileName="Kopernicus/Utility.cs" Line="58" Column="53" />
-      <File FileName="Kopernicus/Configuration/Loader.cs" Line="56" Column="4" />
-      <File FileName="Kopernicus/Configuration/Body.cs" Line="50" Column="27" />
-      <File FileName="Kopernicus/Configuration/Parser.cs" Line="258" Column="116" />
-      <File FileName="Kopernicus/Configuration/Template.cs" Line="39" Column="5" />
-      <File FileName="Kopernicus/Configuration/Properties.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/Configuration/BuiltinTypeParsers.cs" Line="194" Column="40" />
+      <File FileName="Kopernicus/Injector.cs" Line="62" Column="72" />
+      <File FileName="Kopernicus/Utility.cs" Line="293" Column="73" />
+      <File FileName="Kopernicus/Configuration/Parser.cs" Line="284" Column="21" />
+      <File FileName="Kopernicus/Configuration/Loader.cs" Line="77" Column="6" />
+      <File FileName="Kopernicus/Configuration/Body.cs" Line="46" Column="5" />
+      <File FileName="Kopernicus/Configuration/Template.cs" Line="88" Column="58" />
+      <File FileName="Kopernicus/Configuration/Properties.cs" Line="5" Column="53" />
+      <File FileName="Kopernicus/Configuration/OrbitLoader.cs" Line="68" Column="5" />
+      <File FileName="Kopernicus/RuntimeUtility.cs" Line="138" Column="72" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Kopernicus" expanded="True">
-            <Node name="Configuration" expanded="True">
-              <Node name="Parser.cs" selected="True" />
-            </Node>
+          <Node name="Kopernicus" expanded="True" selected="True">
+            <Node name="References" expanded="True" />
+            <Node name="Configuration" expanded="True" />
           </Node>
         </State>
       </Pad>

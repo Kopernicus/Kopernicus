@@ -15,21 +15,16 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\KSP_linux\GameData\Kopernicus\Plugins</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="cp ${SolutionDir}/bin/Debug/Kopernicus.dll &quot;${SolutionDir}/../Pre Alpha/GameData/Kopernicus/Plugins&quot;" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\..\KSP_linux\GameData\Kopernicus\Plugins</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -38,13 +33,16 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\ksp-0.24\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\KSP_linux\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\ksp-0.24\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\KSP_linux\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\ksp-0.24\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\KSP_linux\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
