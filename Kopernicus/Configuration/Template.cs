@@ -73,6 +73,7 @@ namespace Kopernicus
 				bodyGameObject.name = originalBody.name;
 				bodyGameObject.transform.parent = Utility.Deactivator;
 				body = bodyGameObject.GetComponent<PSystemBody> ();
+				body.children = new List<PSystemBody>();
 
 				// Clone the scaled version
 				body.scaledVersion = UnityEngine.Object.Instantiate (originalBody.scaledVersion) as GameObject;

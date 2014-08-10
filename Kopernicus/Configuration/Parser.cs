@@ -224,7 +224,7 @@ namespace Kopernicus
 			{
 				// Get the parser target, only one is allowed so it will be first
 				ParserTarget target = (member.GetCustomAttributes ((typeof(ParserTarget)), true) as ParserTarget[]) [0];
-				Debug.Log ("[Kopernicus]: Configuration.Parser: ParserTarget = (" + target.fieldName + ", optional = " + target.optional + ", allowsMerge = " + target.allowMerge + ")");
+				//Debug.Log ("[Kopernicus]: Configuration.Parser: ParserTarget = (" + target.fieldName + ", optional = " + target.optional + ", allowsMerge = " + target.allowMerge + ")");
 				
 				// Figure out if this field exists and if we care
 				bool isNode = node.HasNode (target.fieldName);
@@ -241,7 +241,7 @@ namespace Kopernicus
 					if ((member as PropertyInfo).CanRead)
 						targetValue = (member as PropertyInfo).GetValue (o, null);
 				}
-				Debug.Log ("[Kopernicus]: Configuration.Parser:   Type = " + targetType + ", isNode = " + isNode + ", isValue = " + isValue);
+				//Debug.Log ("[Kopernicus]: Configuration.Parser:   Type = " + targetType + ", isNode = " + isNode + ", isValue = " + isValue);
 				
 				// Verify that this situation is okay
 				if (!(target.allowMerge && targetValue != null) && (!target.optional && (!isNode && !isValue)))
@@ -281,7 +281,7 @@ namespace Kopernicus
 					// Throw exception or print error
 					else
 					{
-						Debug.Log("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
+						Debug.LogError("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
 					}
 				}
 				

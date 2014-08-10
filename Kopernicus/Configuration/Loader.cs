@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
@@ -58,25 +59,60 @@ namespace Kopernicus
 			 * Generates the system prefab from the configuration 
 			 * @return System prefab object
 			 **/
-			public PSystem Generate()
+			public PSystem Generate ()
 			{
 				// Dictionary of bodies generated
-				Dictionary<string, PSystemBody> bodies = new Dictionary<string, PSystemBody>();
+				Dictionary<string, Body> bodies = new Dictionary<string, Body> ();
 
 				// Retrieve the root config node
 				ConfigNode rootConfig = GameDatabase.Instance.GetConfigs (rootNodeName) [0].config;
 
-				// Iterate through body configs
-				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName))
+				// Stage 1 - Load all of the bodies
+				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName)) 
 				{
 					// Load this body from the 
-					PSystemBody body = Parser.CreateObjectFromConfigNode<Body>(bodyNode).generatedBody;
-					bodies.Add(body.celestialBody.name, body);
+					Body body = Parser.CreateObjectFromConfigNode<Body> (bodyNode);
+					bodies.Add (body.name, body);
 
-					Debug.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + body.celestialBody.bodyName);
+					Debug.Log ("[Kopernicus]: Configuration.Loader: Loaded Body: " + body.name);
 				}
 
-				return null;
+				// Stage 2 - create a new planetary system object
+				GameObject gameObject = new GameObject ("Kopernicus");
+				gameObject.transform.parent = Utility.Deactivator;
+				PSystem system = gameObject.AddComponent<PSystem> ();
+				
+				// Set the planetary system defaults (pulled from PSystemManager.Instance.systemPrefab)
+				system.systemName          = "Kopernicus";
+				system.systemTimeScale     = 1.0; 
+				system.systemScale         = 1.0;
+				system.mainToolbarSelected = 2;   // initial value in stock systemPrefab. Unknown significance.
+
+				// Stage 3 - Glue all the orbits together in the defined pattern
+				foreach (KeyValuePair<string, Body> body in bodies) 
+				{
+					// If this body is in orbit around another body
+					if(body.Value.referenceBody != null)
+					{
+						// Get the Body object for the reference body
+						Body parent = null;
+						if(!bodies.TryGetValue(body.Value.referenceBody, out parent))
+							throw new Exception("\"" + body.Value.referenceBody + "\" not found.");
+
+						// Setup the orbit of the body
+						parent.generatedBody.children.Add(body.Value.generatedBody);
+						body.Value.generatedBody.orbitDriver.referenceBody = parent.generatedBody.celestialBody;
+						body.Value.generatedBody.orbitDriver.orbit.referenceBody = parent.generatedBody.celestialBody;
+					}
+
+					// Parent the generated body to the PSystem
+					body.Value.generatedBody.transform.parent = system.transform;
+				}
+
+				// Stage 4 - elect root body
+				system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
+
+				return system;
 			}
 		}
 	}

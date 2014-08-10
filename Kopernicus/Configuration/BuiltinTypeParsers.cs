@@ -94,7 +94,7 @@ namespace Kopernicus
 			}
 			public ColorParser()
 			{
-
+				value = Color.white;
 			}
 		}
 		

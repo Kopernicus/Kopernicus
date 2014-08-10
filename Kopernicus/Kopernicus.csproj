@@ -70,6 +70,7 @@
     <Compile Include="Configuration\Properties.cs" />
     <Compile Include="Configuration\Template.cs" />
     <Compile Include="Configuration\BuiltinTypeParsers.cs" />
+    <Compile Include="Configuration\OrbitLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

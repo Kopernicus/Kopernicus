@@ -41,28 +41,40 @@ namespace Kopernicus
 			// Body we are trying to edit
 			public PSystemBody generatedBody { get; private set; }
 
+			// Reference body of the generated object
+			public string referenceBody 
+			{
+				get { return (orbit != null) ? orbit.referenceBody : null; }
+			}
+
 			// Name of this body
 			[PreApply]
 			[ParserTarget("name", optional = false, allowMerge = false)]
 			public string name { get; private set; }
 			
-			// Template property of a body (not loaded automagically)
+			// Flight globals index of this body - for computing reference id
+			[ParserTarget("flightGlobalsIndex", optional = true, allowMerge = false)]
+			public NumericParser<int> flightGlobalsIndex 
+			{
+				set {
+					Debug.Log("FlightGlobalsIndex (\"" + name + "\") = " + value.value);
+					generatedBody.flightGlobalsIndex = value.value; 
+				}
+			}
+
+			// Template property of a body - responsible for generating a PSystemBody from an existing one
 			[PreApply]
 			[ParserTarget("Template", optional = true, allowMerge = false)]
 			private Template template;
 
-			// Flight globals index of this body
-			[ParserTarget("flightGlobalsIndex", optional = false, allowMerge = false)]
-			public NumericParser<int> flightGlobalsIndex 
-			{
-				set { generatedBody.flightGlobalsIndex = value.value; }
-			}
-
-			// Celestial body properties
+			// Celestial body properties (description, mass, etc.)
 			[ParserTarget("Properties", optional = true, allowMerge = true)]
 			private Properties properties;
 
-			// Orbit
+			// Wrapper around KSP's Orbit class for editing/loading
+			[ParserTarget("Orbit", optional = true, allowMerge = true)]
+			private OrbitLoader orbit;
+
 			// PQS
 			// Atmosphere
 			// Sun
@@ -76,39 +88,42 @@ namespace Kopernicus
 					generatedBody = template.body;
 
 					// Patch PQS names
-					if(generatedBody.pqsVersion != null)
+					if (generatedBody.pqsVersion != null) 
 					{
 						// Patch all of the PQS names
-						foreach(PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
-						{
-							Debug.Log ("[Kopernicus]: Configuration.Body: Patching \"" + p.name + "\"");
-							p.name = p.name.Replace(template.body.celestialBody.bodyName, name);
-						}
+						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
+							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
+
+						Utility.GameObjectWalk(generatedBody.pqsVersion.gameObject);
 					}
 
 					// Patch all of the names with the new name
 					generatedBody.name = name;
 					generatedBody.celestialBody.bodyName = name;
 					generatedBody.scaledVersion.name = name;
+					
+					// If this body has an orbit driver, it has an orbit (sun by default does NOT have a driver).
+					// create the orbit driver so parameters can be merged
+					if (generatedBody.orbitDriver != null) 
+					{
+						orbit = new OrbitLoader(generatedBody.orbitDriver.orbit, generatedBody.orbitRenderer.orbitColor);
+					}
 				}
 
 				// Otherwise we have to generate all the things for this body
 				else 
 				{
 					// Create the PSystemBody object
-					GameObject generatedBodyGameObject = new GameObject(name);
+					GameObject generatedBodyGameObject = new GameObject (name);
 					generatedBodyGameObject.transform.parent = Utility.Deactivator;
-					generatedBody = generatedBodyGameObject.AddComponent<PSystemBody>();
+					generatedBody = generatedBodyGameObject.AddComponent<PSystemBody> ();
+					generatedBody.flightGlobalsIndex = 0;
 
 					// Create the celestial body
-					GameObject generatedBodyProperties = new GameObject(name);
+					GameObject generatedBodyProperties = new GameObject (name);
 					generatedBodyProperties.transform.parent = generatedBodyGameObject.transform;
-					generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody>();
-					generatedBody.resources = generatedBodyProperties.AddComponent<PResource>();
-
-					// temporary - as this should be created by orbit
-					generatedBody.orbitDriver = generatedBodyProperties.AddComponent<OrbitDriver>();
-					generatedBody.orbitRenderer = generatedBodyProperties.AddComponent<OrbitRenderer>();
+					generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody> ();
+					generatedBody.resources = generatedBodyProperties.AddComponent<PResource> ();
 
 					// sensible defaults
 					generatedBody.celestialBody.bodyName = name;
@@ -116,73 +131,32 @@ namespace Kopernicus
 					generatedBody.celestialBody.ocean = false;
 				}
 
-				// By default we have no orbiting bodies
-				generatedBody.celestialBody.orbitingBodies = new List<CelestialBody>();
-
 				// Create the properties object with the celestial body
-				properties = new Properties(generatedBody.celestialBody);
+				properties = new Properties (generatedBody.celestialBody);
 			}
 
 			// Parser Post Apply Event
-			public void PostApply(ConfigNode node)
+			public void PostApply (ConfigNode node)
 			{
-				//Debug.Log("[Kopernicus]: Configuration.Body: Loaded body named: " + name);
+				// First step is to check whether an orbit has been defined
+				if (orbit != null) 
+				{
+					// If this body needs orbit controllers, create them
+					if(generatedBody.orbitDriver == null)
+					{
+						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
+						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
+					}
+
+					// Setup orbit
+					generatedBody.orbitDriver.orbit = orbit.orbit;
+					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+					generatedBody.orbitRenderer.orbitColor = orbit.color.value;
+				}
+
+				Debug.Log("[Kopernicus]: Configuration.Body: index = " + generatedBody.flightGlobalsIndex);
 				Utility.DumpObjectFields(generatedBody.celestialBody, " Post Load Celestial Body ");
-
 			}
 		}
 	}
 }
-
-/**
-	//
-	// Methods
-	//
-	public PSystemBody AddBody (PSystemBody parent)
-	{
-		GameObject gameObject = new GameObject ();
-		gameObject.transform.parent = base.transform;
-		gameObject.name = . (123326);
-		PSystemBody pSystemBody = gameObject.AddComponent<PSystemBody> ();
-		if (parent != null)
-		{
-			while (true)
-			{
-				switch (6)
-				{
-				case 0:
-					continue;
-				}
-				break;
-			}
-			if (!true)
-			{
-				RuntimeMethodHandle arg_53_0 = methodof (PSystem.AddBody (PSystemBody)).MethodHandle;
-			}
-			parent.children.Add (pSystemBody);
-		}
-		GameObject gameObject2 = new GameObject ();
-		gameObject2.transform.parent = gameObject.transform;
-		gameObject2.name = . (123349);
-		pSystemBody.celestialBody = gameObject2.AddComponent<CelestialBody> ();
-		pSystemBody.resources = gameObject2.AddComponent<PResource> ();
-		if (parent != null)
-		{
-			while (true)
-			{
-				switch (7)
-				{
-				case 0:
-					continue;
-				}
-				break;
-			}
-			pSystemBody.orbitDriver = gameObject2.AddComponent<OrbitDriver> ();
-			pSystemBody.orbitDriver.referenceBody = parent.celestialBody;
-			pSystemBody.orbitRenderer = gameObject2.AddComponent<OrbitRenderer> ();
-		}
-		return pSystemBody;
-	}
-}
-*/
-
