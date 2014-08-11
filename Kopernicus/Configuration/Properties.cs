@@ -156,7 +156,7 @@ namespace Kopernicus
 					this.celestialBody.BiomeMap.defaultAttribute = new CBAttributeMap.MapAttribute ();
 					this.celestialBody.BiomeMap.Attributes = new CBAttributeMap.MapAttribute[0];
 					this.celestialBody.BiomeMap.exactSearch = false;
-					this.celestialBody.BiomeMap.nonExactThreshold = -1f; // blame this if things go wrong
+					this.celestialBody.BiomeMap.nonExactThreshold = 0.05f; // blame this if things go wrong
 				}
 
 				// Populate the biomes list with any existing map attributes

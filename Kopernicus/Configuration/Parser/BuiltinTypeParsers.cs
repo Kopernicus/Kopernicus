@@ -238,8 +238,14 @@ namespace Kopernicus
 		public class Texture2DParser : IParsable
 		{
 			public Texture2D value;
-			public void SetFromString(string s)
+			public void SetFromString (string s)
 			{
+				// Throw exception if this texture doesn't exist
+				if (!GameDatabase.Instance.ExistsTexture (s)) 
+				{
+					throw new Exception("Texture \"" + s + "\" not found");
+				}
+
 				// Get the texture URL
 				value = GameDatabase.Instance.GetTexture(s, false);
 			}

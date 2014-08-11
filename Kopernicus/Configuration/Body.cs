@@ -90,8 +90,6 @@ namespace Kopernicus
 						// Patch all of the PQS names
 						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
-
-						//Utility.GameObjectWalk(generatedBody.pqsVersion.gameObject);
 					}
 
 					// Patch all of the names with the new name
@@ -162,8 +160,6 @@ namespace Kopernicus
 					// Adjust the radius of the PQSs appropriately
 					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 						p.radius = generatedBody.celestialBody.Radius;
-					
-					//Utility.GameObjectWalk(generatedBody.pqsVersion.gameObject);
 				}
 
 
