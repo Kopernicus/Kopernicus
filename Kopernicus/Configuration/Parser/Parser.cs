@@ -203,10 +203,11 @@ namespace Kopernicus
 						if (collection == null || !target.allowMerge) 
 						{
 							collection = Activator.CreateInstance (targetType) as IList;
+							targetValue = collection;
 						}
 
 						// Iterate over all of the nodes in this node
-						foreach (ConfigNode subnode in node.nodes) 
+						foreach (ConfigNode subnode in node.GetNode(target.fieldName).nodes) 
 						{
 							// Check for the name significance
 							if (target.nameSignificance == NameSignificance.None) 
@@ -232,6 +233,18 @@ namespace Kopernicus
 					{
 						throw new Exception ("Can not infer type from non generic target; can not infer type from zero name significance");
 					}
+				}
+				
+				// If the member type is a field, set the value
+				if(member.MemberType == MemberTypes.Field)
+				{
+					(member as FieldInfo).SetValue(o, targetValue);
+				}
+				
+				// If the member wasn't a field, it must be a property.  If the property is writable, set it.
+				else if((member as PropertyInfo).CanWrite)
+				{
+					(member as PropertyInfo).SetValue(o, targetValue, null);
 				}
 			}
 

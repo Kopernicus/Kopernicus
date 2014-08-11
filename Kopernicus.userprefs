@@ -1,15 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/ScienceValues.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/Parser/Parser.cs">
     <Files>
       <File FileName="Kopernicus/Injector.cs" Line="89" Column="19" />
       <File FileName="Kopernicus/Utility.cs" Line="293" Column="73" />
-      <File FileName="Kopernicus/Configuration/Parser/Parser.cs" Line="290" Column="23" />
+      <File FileName="Kopernicus/Configuration/Parser/Parser.cs" Line="201" Column="1" />
       <File FileName="Kopernicus/Configuration/Body.cs" Line="73" Column="30" />
       <File FileName="Kopernicus/Configuration/Template.cs" Line="30" Column="25" />
-      <File FileName="Kopernicus/Configuration/Properties.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="49" Column="3" />
-      <File FileName="Kopernicus/Configuration/ScienceValues.cs" Line="43" Column="38" />
+      <File FileName="Kopernicus/Configuration/Properties.cs" Line="105" Column="1" />
+      <File FileName="Kopernicus/Configuration/ScienceValues.cs" Line="90" Column="1" />
+      <File FileName="Kopernicus/Configuration/Biome.cs" Line="72" Column="32" />
+      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="610" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -17,12 +18,8 @@
           <Node name="Kopernicus" expanded="True">
             <Node name="Configuration" expanded="True">
               <Node name="Parser" expanded="True">
-                <Node name="Attributes" expanded="True" />
-                <Node name="Enumerations" expanded="True" />
-                <Node name="Exceptions" expanded="True" />
-                <Node name="Interfaces" expanded="True" />
+                <Node name="Parser.cs" selected="True" />
               </Node>
-              <Node name="ScienceValues.cs" selected="True" />
             </Node>
           </Node>
         </State>

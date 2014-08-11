@@ -43,18 +43,21 @@ namespace Kopernicus
 			public CBAttributeMap.MapAttribute attribute { get; private set; }
 
 			// The name of this biome
+			[ParserTarget("name")]
 			private string name 
 			{
 				set { attribute.name = value; }
 			}
 
 			// The science multiplier for this value
+			[ParserTarget("value")]
 			private NumericParser<float> value 
 			{
 				set { attribute.value = value.value; }
 			}
 
 			// The color in the map for this attribute
+			[ParserTarget("color")]
 			private ColorParser color 
 			{
 				set { attribute.mapColor = value.value; }
