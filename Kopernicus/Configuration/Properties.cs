@@ -105,35 +105,63 @@ namespace Kopernicus
 
 			// Biomes of this body
 			[ParserTargetCollection("Biomes", optional = true, nameSignificance = NameSignificance.None)]
-			private List<Biome> biomes;
+			private List<Biome> biomes = new List<Biome>();
+
+			// Biome definition texture
+			[ParserTarget("biomeMap", optional = true)]
+			private Texture2DParser biomeMap 
+			{
+				set { celestialBody.BiomeMap.Map = value.value; }
+			}
+
 
 			public void Apply (ConfigNode node) { }
 
 			public void PostApply (ConfigNode node)
 			{
+				// Migrate the biome attributes to the biome map
+				celestialBody.BiomeMap.Attributes = new CBAttributeMap.MapAttribute[biomes.Count];
+				int index = 0;
+				foreach (Biome biome in biomes) 
+				{
+					celestialBody.BiomeMap.Attributes[index++] = biome.attribute;
+				}
+
+				// Debug the science fields
 				Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
 
-				if (celestialBody.BiomeMap != null) {
-					foreach(CBAttributeMap.MapAttribute biome in celestialBody.BiomeMap.Attributes)
-					{
-						Debug.Log("Found Biome: " + biome.name + " : " + biome.mapColor);
-					}
-				} else 
-					Debug.Log("No Biome Map");
+				// Debug the biomes
+				foreach(CBAttributeMap.MapAttribute biome in celestialBody.BiomeMap.Attributes)
+				{
+					Debug.Log("Found Biome: " + biome.name + " : " + biome.mapColor);
+				}
 			}
 
-			// Properties requires a celestial body referece, as this class
-			// is designed to edit the body
+			// Properties requires a celestial body referece, as this class is designed to edit the body
 			public Properties (CelestialBody celestialBody)
 			{
 				this.celestialBody = celestialBody;
 
-				// We need a science values object
+				// We require a science values object
 				if (this.celestialBody.scienceValues == null) 
-					this.celestialBody.scienceValues = new CelestialBodyScienceParams();
-
+					this.celestialBody.scienceValues = new CelestialBodyScienceParams ();
+				
 				// Create the science values cache
-				scienceValues = new ScienceValues(this.celestialBody.scienceValues);
+				scienceValues = new ScienceValues (this.celestialBody.scienceValues);
+
+				// We require a map attributes object
+				if (this.celestialBody.BiomeMap == null) 
+				{
+					this.celestialBody.BiomeMap = new CBAttributeMap ();
+					this.celestialBody.BiomeMap.defaultAttribute = new CBAttributeMap.MapAttribute ();
+					this.celestialBody.BiomeMap.Attributes = new CBAttributeMap.MapAttribute[0];
+					this.celestialBody.BiomeMap.exactSearch = false;
+					this.celestialBody.BiomeMap.nonExactThreshold = -1f; // blame this if things go wrong
+				}
+
+				// Populate the biomes list with any existing map attributes
+				foreach (CBAttributeMap.MapAttribute attribute in this.celestialBody.BiomeMap.Attributes) 
+					biomes.Add(new Biome(attribute));
 			}
 		}
 	}

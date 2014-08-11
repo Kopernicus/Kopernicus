@@ -39,9 +39,37 @@ namespace Kopernicus
 	{
 		public class Biome
 		{
+			// The map attribute we are creating
+			public CBAttributeMap.MapAttribute attribute { get; private set; }
+
+			// The name of this biome
+			private string name 
+			{
+				set { attribute.name = value; }
+			}
+
+			// The science multiplier for this value
+			private NumericParser<float> value 
+			{
+				set { attribute.value = value.value; }
+			}
+
+			// The color in the map for this attribute
+			private ColorParser color 
+			{
+				set { attribute.mapColor = value.value; }
+			}
+
+			// Allocate the biome descriptor
 			public Biome ()
 			{
-
+				attribute = new CBAttributeMap.MapAttribute();
+			}
+			
+			// Allocate the biome descriptor
+			public Biome (CBAttributeMap.MapAttribute attribute)
+			{
+				this.attribute = attribute;
 			}
 		}
 	}

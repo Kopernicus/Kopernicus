@@ -232,6 +232,26 @@ namespace Kopernicus
 				
 			}
 		}
+		
+		/** Parser for Texture2D **/
+		[RequireConfigType(ConfigType.Value)]
+		public class Texture2DParser : IParsable
+		{
+			public Texture2D value;
+			public void SetFromString(string s)
+			{
+				// Get the texture URL
+				value = GameDatabase.Instance.GetTexture(s, false);
+			}
+			public Texture2DParser ()
+			{
+				
+			}
+			public Texture2DParser (Texture2D value)
+			{
+				this.value = value;
+			}
+		}
 	}
 }
 

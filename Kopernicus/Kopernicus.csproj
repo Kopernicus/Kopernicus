@@ -66,7 +66,6 @@
     <Compile Include="Configuration\Body.cs" />
     <Compile Include="Configuration\Properties.cs" />
     <Compile Include="Configuration\Template.cs" />
-    <Compile Include="Configuration\BuiltinTypeParsers.cs" />
     <Compile Include="Configuration\OrbitLoader.cs" />
     <Compile Include="Configuration\ScienceValues.cs" />
     <Compile Include="Configuration\Parser\Parser.cs" />
@@ -81,6 +80,7 @@
     <Compile Include="Configuration\Parser\Interfaces\IParserEventSubscriber.cs" />
     <Compile Include="Configuration\Parser\Exceptions\ParserTargetTypeMismatchException.cs" />
     <Compile Include="Configuration\Parser\Exceptions\ParserTargetMissingException.cs" />
+    <Compile Include="Configuration\Parser\BuiltinTypeParsers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
