@@ -71,11 +71,11 @@ namespace Kopernicus
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{
 				// Do we have material edits
-				if (!node.HasNode ("Material")) 
+				if (!node.HasNode (materialNodeName)) 
 					return;
 
 				// Get any existing material we might have on this scaled version
-				Material material = scaledVersion.renderer.material;
+				Material material = scaledVersion.renderer.sharedMaterial;
 				ConfigNode data = node.GetNode (materialNodeName);
 
 				if (type.value != BodyType.Star) 
@@ -93,29 +93,36 @@ namespace Kopernicus
 					// If we have an atmosphere
 					if (type.value == BodyType.Atmospheric) 
 					{
+						ScaledPlanetRimAerialLoader newMaterial = null;
 						if (material != null) 
 						{
-							scaledVersion.renderer.material = new ScaledPlanetRimAerialLoader (material);
-							Parser.LoadObjectFromConfigurationNode (scaledVersion.renderer.material, data);
+							newMaterial = new ScaledPlanetRimAerialLoader (material);
+							Parser.LoadObjectFromConfigurationNode (newMaterial, data);
 						} 
 						else 
 						{
-							scaledVersion.renderer.material = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data);
+							newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data);
 						}
+						newMaterial.name = Guid.NewGuid().ToString();
+						scaledVersion.renderer.material = newMaterial;
+						Debug.Log("Ramp: " + (newMaterial as ScaledPlanetRimAerial).rimColorRamp);
 					}
 
 					// Otherwise we are a vacuum body
 					else 
 					{
+						ScaledPlanetSimpleLoader newMaterial = null;
 						if (material != null) 
 						{
-							scaledVersion.renderer.material = new ScaledPlanetSimpleLoader (material);
-							Parser.LoadObjectFromConfigurationNode (scaledVersion.renderer.material, data);
+							newMaterial = new ScaledPlanetSimpleLoader (material);
+							Parser.LoadObjectFromConfigurationNode (newMaterial, data);
 						} 
 						else 
 						{
-							scaledVersion.renderer.material = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data);
+							newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data);
 						}
+						newMaterial.name = Guid.NewGuid().ToString();
+						scaledVersion.renderer.material = newMaterial;
 					}
 				}
 

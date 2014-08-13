@@ -88,6 +88,7 @@ namespace Kopernicus
 
             public ScaledPlanetRimAerial() : base()
             {
+				base.shader = Properties.shader;
             }
 
             public ScaledPlanetRimAerial(string contents) : base(contents)
