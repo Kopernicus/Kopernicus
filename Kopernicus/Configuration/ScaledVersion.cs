@@ -51,7 +51,7 @@ namespace Kopernicus
 			// Type of object this body's scaled version is
 			[PreApply]
 			[ParserTarget("type", optional = true)]
-			private EnumParser<BodyType> type;
+			public EnumParser<BodyType> type { get; private set; }
 
 			// Set the altitude where the fade to scaled space starts
 			[ParserTarget("fadeStart", optional = true)]

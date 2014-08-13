@@ -47,7 +47,7 @@ namespace Kopernicus
 			public double radius { get; private set; }
 
 			// Initial scale of the body
-			public Vector3 scale { get; private set; }
+			public float scaledRadius { get; private set; }
 
 			// Initial type of the body
 			public BodyType type { get; private set; }
@@ -76,7 +76,7 @@ namespace Kopernicus
 			// a collection of mods
 
 			// Apply event
-			public void Apply (ConfigNode node)
+			void IParserEventSubscriber.Apply (ConfigNode node)
 			{
 				// Instantiate (clone) the template body
 				GameObject bodyGameObject = UnityEngine.Object.Instantiate (originalBody.gameObject) as GameObject;
@@ -100,11 +100,18 @@ namespace Kopernicus
 
 				// Store the initial radius (so scaled version can be computed)
 				radius = body.celestialBody.Radius;
-				scale = body.scaledVersion.transform.localScale;
+
+				// Store the scaled radius
+				SphereCollider[] colliders = body.scaledVersion.GetComponentsInChildren<SphereCollider> (true);
+				if (colliders.Length > 0) 
+				{
+					scaledRadius = colliders[0].radius;
+				} else
+					scaledRadius = 0.0f;
 			}
 
 			// Post apply event
-			public void PostApply(ConfigNode node)
+			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
 				// Do removals here
 

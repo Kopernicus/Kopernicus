@@ -175,13 +175,39 @@ namespace Kopernicus
 					orbit.Apply(generatedBody);
 				}
 
-				// TODO - Generate scaled version mesh and atmosphere mesh
-
-				// If this body was generated from a template
-				if (template != null) 
+				// We need to generate new scaled space meshes if a) we are using a template and we've change either the radius or type of body, 
+				// or b) we aren't using a template
+				if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
+				    || template == null)
 				{
-					// Correct the scaling of the the scaled version (we actually need to regenerate the mesh)
-					generatedBody.scaledVersion.transform.localScale = template.scale * (float)(generatedBody.celestialBody.Radius / template.radius);
+					// Regenerate the scaled space mesh
+					generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = ComputeScaledSpaceMesh(generatedBody);
+					generatedBody.scaledVersion.transform.localScale = Vector3.one;
+
+					// If we have an atmosphere, generate that too
+					if(generatedBody.celestialBody.atmosphere)
+					{
+						// Find atmosphere from ground
+						AtmosphereFromGround[] afgs = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true);
+						if(afgs.Length > 0)
+						{
+							// Get the atmosphere from ground
+							AtmosphereFromGround atmosphereFromGround = afgs[0];
+
+							// We need to get the body for Jool (to steal it's mesh)
+							PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
+							const double rJool = 6000000.0f;
+							
+							// Generate a duplicate of the Jool mesh
+							Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
+							
+							// Scale this mesh to fit this body
+							Utility.ScaleVerts (mesh, (float)(generatedBody.celestialBody.Radius / rJool));
+
+							// Set the shared mesh
+							atmosphereFromGround.GetComponent<MeshFilter>().sharedMesh = mesh;
+						}
+					}
 				}
 
 				// Adjust any PQS settings required
@@ -194,6 +220,68 @@ namespace Kopernicus
 
 				// Post gen celestial body
 				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
+			}
+
+			// Generate the scaled space mesh using PQS (all results use scale of 1)
+			// Need to implement a partial PQS solver, so I can get the actual surface
+			public static Mesh ComputeScaledSpaceMesh (PSystemBody body)
+			{
+				// We need to get the body for Jool (to steal it's mesh)
+				PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
+				const double rJool = 6000000.0f;
+				const double rScaledJool = 1000.0f;
+				const float rMetersToScaledUnits = (float) (rJool / rScaledJool);
+
+				// Generate a duplicate of the Jool mesh
+				Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
+
+				// Scale this mesh to fit this body
+				Utility.ScaleVerts (mesh, (float)(body.celestialBody.Radius / rJool));
+				//double rScaledBody = (body.celestialBody.Radius / rJool) * rScaledJool;
+
+				// If this body has a PQS, we can create a more detailed object
+				if (body.pqsVersion != null) 
+				{
+					// Find the vertex height map in the PQS
+					PQSMod_VertexHeightMap[] maps = body.pqsVersion.GetComponentsInChildren<PQSMod_VertexHeightMap>(true);
+					if(maps.Length > 0)
+					{
+						// Choose the first height map
+						PQSMod_VertexHeightMap vertexHeightMap = maps[0];
+
+						// Generate the PQS modifications
+						Vector3[] vertices = mesh.vertices;
+						for(int i = 0; i < mesh.vertexCount; i++)
+						{
+							// Get the height offset from the height map
+							Vector2 uv = mesh.uv[i];
+							float displacement = vertexHeightMap.heightMap.GetPixelFloat(uv.x, uv.y);
+							
+							// Since this is a geosphere, normalizing the vertex gives the vector to translate on
+							Vector3 v = vertices[i];
+							v.Normalize();
+							
+							// Calculate the real height displacement (in meters), normalized vector "v" scale (1 unit = 6 km)
+							displacement = (float) vertexHeightMap.heightMapOffset + (displacement * (float) vertexHeightMap.heightMapDeformity);
+							Vector3 offset = v * (displacement / rMetersToScaledUnits);
+							
+							// Adjust the displacement
+							vertices[i] += offset;
+						}
+						mesh.vertices = vertices;
+						mesh.RecalculateNormals();
+
+					} else
+					{
+						Debug.LogError("PQS BODY HAS NO VERTEX HEIGHT MAP");
+						Debug.LogError("-------- PQS ----------");
+						Utility.GameObjectWalk(body.pqsVersion.gameObject);
+						Debug.LogError("-----------------------");
+					}
+				}
+
+				// Return the generated scaled space mesh
+				return mesh;
 			}
 		}
 	}

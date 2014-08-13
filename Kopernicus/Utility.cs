@@ -266,6 +266,63 @@ namespace Kopernicus
 			//ProfileTimer.Pop("CopyMesh");
 		}
 
+		public static Mesh DuplicateMesh(Mesh source)
+		{
+			// Create new mesh object
+			Mesh dest = new Mesh();
+
+			//ProfileTimer.Push("CopyMesh");
+			Vector3[] verts = new Vector3[source.vertexCount];
+			source.vertices.CopyTo(verts, 0);
+			dest.vertices = verts;
+			
+			int[] tris = new int[source.triangles.Length];
+			source.triangles.CopyTo(tris, 0);
+			dest.triangles = tris;
+			
+			Vector2[] uvs = new Vector2[source.uv.Length];
+			source.uv.CopyTo(uvs, 0);
+			dest.uv = uvs;
+			
+			Vector2[] uv2s = new Vector2[source.uv2.Length];
+			source.uv2.CopyTo(uv2s, 0);
+			dest.uv2 = uv2s;
+			
+			Vector3[] normals = new Vector3[source.normals.Length];
+			source.normals.CopyTo(normals, 0);
+			dest.normals = normals;
+			
+			Vector4[] tangents = new Vector4[source.tangents.Length];
+			source.tangents.CopyTo(tangents, 0);
+			dest.tangents = tangents;
+			
+			Color[] colors = new Color[source.colors.Length];
+			source.colors.CopyTo(colors, 0);
+			dest.colors = colors;
+			
+			Color32[] colors32 = new Color32[source.colors32.Length];
+			source.colors32.CopyTo(colors32, 0);
+			dest.colors32 = colors32;
+			
+			//ProfileTimer.Pop("CopyMesh");
+			return dest;
+		}
+
+		// Taken from Nathankell's RSS Utils.cs; uniformly scaled vertices
+		public static void ScaleVerts(Mesh mesh, float scaleFactor)
+		{
+			//ProfileTimer.Push("ScaleVerts");
+			Vector3[] vertices = new Vector3[mesh.vertexCount];
+			for (int i = 0; i < mesh.vertexCount; i++)
+			{
+				Vector3 v = mesh.vertices[i];
+				v *= scaleFactor;
+				vertices[i] = v;
+			}
+			mesh.vertices = vertices;
+			//ProfileTimer.Pop("ScaleVerts");
+		}
+
 		/** 
 		 * Enumerable class to iterate over parents.  Defined to allow us to use Linq
 		 * and predicates. 
