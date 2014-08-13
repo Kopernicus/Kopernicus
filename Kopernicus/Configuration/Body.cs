@@ -29,9 +29,8 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
-using UnityEngine;
 
-using Kopernicus.MaterialWrapper;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -75,8 +74,8 @@ namespace Kopernicus
 			private OrbitLoader orbit;
 
 			// Wrapper around the settings for the world's scaled version
-			//[ParserTarget("ScaledVersion", optional = true, allowMerge = true)]
-			//private ScaledVersion scaledVersion;
+			[ParserTarget("ScaledVersion", optional = true, allowMerge = true)]
+			private ScaledVersion scaledVersion;
 
 			// PQS
 			// Atmosphere
@@ -101,15 +100,14 @@ namespace Kopernicus
 							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
 					}
 					
-					// Ensure this body has orbit drivers
-					if (generatedBody.orbitDriver == null) 
+					// If this body has an orbit, create editor/loader
+					if (generatedBody.orbitDriver != null) 
 					{
-						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
-						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
+						orbit = new OrbitLoader(generatedBody);
 					}
 					
 					// Create the scaled version editor/loader
-					//scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
+					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
 				}
 
 				// Otherwise we have to generate all the things for this body
@@ -132,10 +130,6 @@ namespace Kopernicus
 					generatedBody.celestialBody.atmosphere = false;
 					generatedBody.celestialBody.ocean = false;
 
-					// Create orbit drivers
-					generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
-					generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
-
 					// Create the scaled version
 					generatedBody.scaledVersion = new GameObject(name);
 					generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
@@ -147,22 +141,29 @@ namespace Kopernicus
 					collider.radius = 1000.0f;
 
 					// Create the scaled version editor/loader
-					//scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
+					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
 				}
 
 				// Create property editor/loader objects
 				properties = new Properties (generatedBody.celestialBody);
-				orbit = new OrbitLoader(generatedBody);
 			}
 
 			// Parser Post Apply Event
 			public void PostApply (ConfigNode node)
 			{
-				// If the reference body is null, we assume it doesn't orbit anything
-				if (orbit.referenceBody == null) 
+				// If an orbit is defined, we orbit something
+				if (orbit != null) 
 				{
-					UnityEngine.Object.Destroy(generatedBody.orbitDriver);
-					UnityEngine.Object.Destroy(generatedBody.orbitRenderer);
+					// If this body needs orbit controllers, create them
+					if (generatedBody.orbitDriver == null) 
+					{
+						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
+						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
+					}
+
+					// Setup orbit
+					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+					orbit.populateOrbitProperties(generatedBody);
 				}
 
 				// If this body was generated from a template
