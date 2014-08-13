@@ -36,18 +36,6 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	// Constants found in planet creation (if things break in the future, check these first)
-	namespace Constants
-	{
-		public class GameLayers
-		{
-			// Layer for the scaled verion
-			public const int ScaledSpaceAtmosphere = 9;
-			public const int ScaledSpace = 10;
-			public const int LocalSpace = 15;
-		}
-	}
-
 	// This class will add a planet. It will be supplanted by
 	// versions which do more useful things, such as loading a planet from
 	// configuration files, loading and modifying a stock planet from KSP's

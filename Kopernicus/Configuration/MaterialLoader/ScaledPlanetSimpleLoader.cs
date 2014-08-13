@@ -30,52 +30,57 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
+
+using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
 	namespace Configuration
 	{
 		[RequireConfigType(ConfigType.Node)]
-		public class Biome
+		public class ScaledPlanetSimpleLoader : ScaledPlanetSimple
 		{
-			// The map attribute object we are creating
-			public CBAttributeMap.MapAttribute attribute { get; private set; }
-
-			// The name of this biome
-			[ParserTarget("name")]
-			private string name 
+			// Wrapper functions for loading from config (until ParserTarget redo)
+			[ParserTarget("color", optional = true)]
+			private ColorParser colorSetter 
 			{
-				set { attribute.name = value; }
+				set { base.color = value.value; }
 			}
 
-			// The science multiplier for this biome
-			[ParserTarget("value")]
-			private NumericParser<float> value 
+			[ParserTarget("specular", optional = true)]
+			private ColorParser specularSetter 
 			{
-				set { attribute.value = value.value; }
+				set { base.specColor = value.value; }
 			}
 
-			// The color in the map for this attribute
-			[ParserTarget("color")]
-			private ColorParser color 
+			[ParserTarget("shininess", optional = true)]
+			private NumericParser<float> shininessSetter 
 			{
-				set { attribute.mapColor = value.value; }
-			}
-
-			// Allocate the biome descriptor
-			public Biome ()
-			{
-				attribute = new CBAttributeMap.MapAttribute();
+				set {  base.shininess = value.value; }
 			}
 			
-			// Get reference to existing biome descriptor
-			public Biome (CBAttributeMap.MapAttribute attribute)
+			[ParserTarget("texture", optional = true)]
+			private Texture2DParser textureSetter 
 			{
-				this.attribute = attribute;
+				set { base.mainTexture = value.value; }
 			}
+			
+			[ParserTarget("normals", optional = true)]
+			private Texture2DParser normalsSetter 
+			{
+				set { base.bumpMap = value.value; }
+			}
+			
+			[ParserTarget("resources", optional = true)]
+			private Texture2DParser resourcesSetter 
+			{
+				set { base.resourceMap = value.value; }
+			}
+			
+			public ScaledPlanetSimpleLoader () : base() { }
+			public ScaledPlanetSimpleLoader (string contents) : base (contents) { }
+			public ScaledPlanetSimpleLoader (Material material) : base(material) { }
 		}
 	}
 }
-

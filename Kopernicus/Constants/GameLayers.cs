@@ -1,4 +1,4 @@
-/** 
+/**
  * Kopernicus Planetary System Modifier
  * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
@@ -27,54 +27,24 @@
  */
 
 using System;
-using System.Reflection;
+using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-
+using System.Reflection;
 using UnityEngine;
+
+using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration
+	// Constants found in planet creation (if things break in the future, check these first)
+	namespace Constants
 	{
-		[RequireConfigType(ConfigType.Node)]
-		public class Biome
+		public class GameLayers
 		{
-			// The map attribute object we are creating
-			public CBAttributeMap.MapAttribute attribute { get; private set; }
-
-			// The name of this biome
-			[ParserTarget("name")]
-			private string name 
-			{
-				set { attribute.name = value; }
-			}
-
-			// The science multiplier for this biome
-			[ParserTarget("value")]
-			private NumericParser<float> value 
-			{
-				set { attribute.value = value.value; }
-			}
-
-			// The color in the map for this attribute
-			[ParserTarget("color")]
-			private ColorParser color 
-			{
-				set { attribute.mapColor = value.value; }
-			}
-
-			// Allocate the biome descriptor
-			public Biome ()
-			{
-				attribute = new CBAttributeMap.MapAttribute();
-			}
-			
-			// Get reference to existing biome descriptor
-			public Biome (CBAttributeMap.MapAttribute attribute)
-			{
-				this.attribute = attribute;
-			}
+			// Layer for the scaled verion
+			public const int ScaledSpaceAtmosphere = 9;
+			public const int ScaledSpace = 10;
+			public const int LocalSpace = 15;
 		}
 	}
 }

@@ -1,25 +1,25 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/Parser/Parser.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/Body.cs">
     <Files>
       <File FileName="Kopernicus/Injector.cs" Line="89" Column="19" />
       <File FileName="Kopernicus/Utility.cs" Line="293" Column="73" />
-      <File FileName="Kopernicus/Configuration/Parser/Parser.cs" Line="201" Column="1" />
-      <File FileName="Kopernicus/Configuration/Body.cs" Line="73" Column="30" />
-      <File FileName="Kopernicus/Configuration/Template.cs" Line="30" Column="25" />
-      <File FileName="Kopernicus/Configuration/Properties.cs" Line="105" Column="1" />
+      <File FileName="Kopernicus/Configuration/Parser/Parser.cs" Line="191" Column="18" />
+      <File FileName="Kopernicus/Configuration/Body.cs" Line="49" Column="4" />
+      <File FileName="Kopernicus/Configuration/Template.cs" Line="101" Column="1" />
+      <File FileName="Kopernicus/Configuration/Properties.cs" Line="105" Column="4" />
       <File FileName="Kopernicus/Configuration/ScienceValues.cs" Line="90" Column="1" />
-      <File FileName="Kopernicus/Configuration/Biome.cs" Line="72" Column="32" />
+      <File FileName="Kopernicus/Configuration/Biome.cs" Line="44" Column="4" />
       <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="610" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Kopernicus" expanded="True">
+            <Node name="References" expanded="True" />
             <Node name="Configuration" expanded="True">
-              <Node name="Parser" expanded="True">
-                <Node name="Parser.cs" selected="True" />
-              </Node>
+              <Node name="Parser" expanded="True" />
+              <Node name="Body.cs" selected="True" />
             </Node>
           </Node>
         </State>

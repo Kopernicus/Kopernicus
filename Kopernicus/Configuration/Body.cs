@@ -29,13 +29,15 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
-
 using UnityEngine;
+
+using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
 	namespace Configuration 
 	{
+		[RequireConfigType(ConfigType.Node)]
 		public class Body : IParserEventSubscriber
 		{
 			// Body we are trying to edit
@@ -72,6 +74,10 @@ namespace Kopernicus
 			[ParserTarget("Orbit", optional = true, allowMerge = true)]
 			private OrbitLoader orbit;
 
+			// Wrapper around the settings for the world's scaled version
+			//[ParserTarget("ScaledVersion", optional = true, allowMerge = true)]
+			//private ScaledVersion scaledVersion;
+
 			// PQS
 			// Atmosphere
 			// Sun
@@ -84,25 +90,26 @@ namespace Kopernicus
 				{
 					generatedBody = template.body;
 
-					// Patch PQS names
+					// Patch the game object names in the template
+					generatedBody.name = name;
+					generatedBody.celestialBody.bodyName = name;
+					generatedBody.scaledVersion.name = name;
 					if (generatedBody.pqsVersion != null) 
 					{
 						// Patch all of the PQS names
 						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
 					}
-
-					// Patch all of the names with the new name
-					generatedBody.name = name;
-					generatedBody.celestialBody.bodyName = name;
-					generatedBody.scaledVersion.name = name;
 					
-					// If this body has an orbit driver, it has an orbit (sun by default does NOT have a driver).
-					// create the orbit driver so parameters can be merged
-					if (generatedBody.orbitDriver != null) 
+					// Ensure this body has orbit drivers
+					if (generatedBody.orbitDriver == null) 
 					{
-						orbit = new OrbitLoader(generatedBody.orbitDriver.orbit, generatedBody.orbitRenderer.orbitColor);
+						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
+						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
 					}
+					
+					// Create the scaled version editor/loader
+					//scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
 				}
 
 				// Otherwise we have to generate all the things for this body
@@ -120,31 +127,42 @@ namespace Kopernicus
 					generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody> ();
 					generatedBody.resources = generatedBodyProperties.AddComponent<PResource> ();
 
-					// sensible defaults
+					// Sensible defaults 
 					generatedBody.celestialBody.bodyName = name;
 					generatedBody.celestialBody.atmosphere = false;
 					generatedBody.celestialBody.ocean = false;
+
+					// Create orbit drivers
+					generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
+					generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
+
+					// Create the scaled version
+					generatedBody.scaledVersion = new GameObject(name);
+					generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
+					generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
+
+					// Create the sphere collider for the scaled version (IS THIS OKAY FOR SUNs????)
+					SphereCollider collider = generatedBody.scaledVersion.AddComponent<SphereCollider>();
+					collider.center = Vector3.zero;
+					collider.radius = 1000.0f;
+
+					// Create the scaled version editor/loader
+					//scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
 				}
 
-				// Create the properties object with the celestial body
+				// Create property editor/loader objects
 				properties = new Properties (generatedBody.celestialBody);
+				orbit = new OrbitLoader(generatedBody);
 			}
 
 			// Parser Post Apply Event
 			public void PostApply (ConfigNode node)
 			{
-				// First step is to check whether an orbit has been defined
-				if (orbit != null) {
-					// If this body needs orbit controllers, create them
-					if (generatedBody.orbitDriver == null) {
-						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
-						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
-					}
-
-					// Setup orbit
-					generatedBody.orbitDriver.orbit = orbit.orbit;
-					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-					generatedBody.orbitRenderer.orbitColor = orbit.color.value;
+				// If the reference body is null, we assume it doesn't orbit anything
+				if (orbit.referenceBody == null) 
+				{
+					UnityEngine.Object.Destroy(generatedBody.orbitDriver);
+					UnityEngine.Object.Destroy(generatedBody.orbitRenderer);
 				}
 
 				// If this body was generated from a template
@@ -153,7 +171,7 @@ namespace Kopernicus
 					// Correct the scaling of the the scaled version (we actually need to regenerate the mesh)
 					generatedBody.scaledVersion.transform.localScale = template.scale * (float)(generatedBody.celestialBody.Radius / template.radius);
 				}
-				
+
 				// Adjust any PQS settings required
 				if (generatedBody.pqsVersion != null) 
 				{
@@ -161,8 +179,6 @@ namespace Kopernicus
 					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 						p.radius = generatedBody.celestialBody.Radius;
 				}
-
-
 			}
 		}
 	}

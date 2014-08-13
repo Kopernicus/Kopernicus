@@ -121,9 +121,8 @@ namespace Kopernicus
 
             public ScaledPlanetSimple(Material material) : base(material)
             {
-                // Throw exception if this material was not the proper material
-                if (material.shader.name != Properties.shader.name)
-                    throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (Simple) shader required");
+                // Constructor copies properties from other material, force our shader
+				base.shader = Properties.shader;
             }
 
         }

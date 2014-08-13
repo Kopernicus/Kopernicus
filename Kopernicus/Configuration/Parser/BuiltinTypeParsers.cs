@@ -53,7 +53,7 @@ namespace Kopernicus
 				// Get the parse method for this object
 				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
 			}
-			public NumericParser(T i)
+			public NumericParser(T i) : this()
 			{
 				value = i;
 			}
@@ -81,6 +81,14 @@ namespace Kopernicus
 				// Get the parse method for this object
 				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
 			}
+			public NumericCollectionParser(T[] i) : this()
+			{
+				value = new List<T>(i);
+			}
+			public NumericCollectionParser(List<T> i) : this()
+			{
+				value = i;
+			}
 		}
 
 		/** Parser for color */
@@ -95,6 +103,10 @@ namespace Kopernicus
 			public ColorParser()
 			{
 				value = Color.white;
+			}
+			public ColorParser(Color i)
+			{
+				value = i;
 			}
 		}
 		
@@ -125,6 +137,10 @@ namespace Kopernicus
 			public EnumParser ()
 			{
 				
+			}
+			public EnumParser (T i)
+			{
+				value = i;
 			}
 		}
 		

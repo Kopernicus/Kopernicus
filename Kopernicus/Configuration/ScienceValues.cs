@@ -37,6 +37,7 @@ namespace Kopernicus
 {
 	namespace Configuration
 	{
+		[RequireConfigType(ConfigType.Node)]
 		public class ScienceValues
 		{
 			// Science parameters we are going to be modifying

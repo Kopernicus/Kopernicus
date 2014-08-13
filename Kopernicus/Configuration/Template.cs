@@ -37,6 +37,7 @@ namespace Kopernicus
 {
 	namespace Configuration
 	{
+		[RequireConfigType(ConfigType.Node)]
 		public class Template : IParserEventSubscriber
 		{
 			// Cloned PSystemBody to expose to the config system
@@ -47,6 +48,9 @@ namespace Kopernicus
 
 			// Initial scale of the body
 			public Vector3 scale { get; private set; }
+
+			// Initial type of the body
+			public BodyType type { get; private set; }
 
 			// PSystemBody to use as a template in lookup & clone
 			private PSystemBody originalBody; 
@@ -79,7 +83,7 @@ namespace Kopernicus
 				bodyGameObject.name = originalBody.name;
 				bodyGameObject.transform.parent = Utility.Deactivator;
 				body = bodyGameObject.GetComponent<PSystemBody> ();
-				body.children = new List<PSystemBody>();
+				body.children = new List<PSystemBody> ();
 
 				// Clone the scaled version
 				body.scaledVersion = UnityEngine.Object.Instantiate (originalBody.scaledVersion) as GameObject;
@@ -102,7 +106,19 @@ namespace Kopernicus
 			// Post apply event
 			public void PostApply(ConfigNode node)
 			{
-				// Do something about removing PQS
+				// Do removals here
+
+				
+				// If we can find sun corona, we're a sun
+				if (body.scaledVersion.GetComponentsInChildren(typeof(ScaledSun), true).Length > 0)
+					type = BodyType.Star;
+				else 
+				{
+					if(body.celestialBody.atmosphere)
+						type = BodyType.Atmospheric;
+					else
+						type = BodyType.Vacuum;
+				}
 
 				Debug.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
 			}

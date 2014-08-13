@@ -144,7 +144,8 @@ namespace Kopernicus
 			Debug.Log("--------- " + title + " ------------");
 			foreach (PropertyInfo property in o.GetType().GetProperties()) 
 			{
-				Debug.Log (property.Name + " = " + property.GetValue(o, null));
+				if(property.CanRead)
+					Debug.Log (property.Name + " = " + property.GetValue(o, null));
 			}
 			Debug.Log("--------------------------------------");
 		}

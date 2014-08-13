@@ -95,15 +95,10 @@ namespace Kopernicus
                 base.shader = Properties.shader;
             }
 
-            public ScaledPlanetRimAerial(Material material)
+			public ScaledPlanetRimAerial(Material material) : base(material)
             {
 				// Copy the shader
-				base.shader = material.shader;
-				base.CopyPropertiesFromMaterial(material);
-
-                // Throw exception if this material was not the proper material
-                if (material.shader.name != Properties.shader.name)
-                    throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (RimAerial) shader required");
+				base.shader = Properties.shader;
             }
 
         }

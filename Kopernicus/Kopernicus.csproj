@@ -58,8 +58,6 @@
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuadFallback.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionFallback.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
-    <Compile Include="MaterialWrapper\ScaledPlanetRimAerial.cs" />
-    <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Configuration\Loader.cs" />
@@ -81,6 +79,14 @@
     <Compile Include="Configuration\Parser\Exceptions\ParserTargetTypeMismatchException.cs" />
     <Compile Include="Configuration\Parser\Exceptions\ParserTargetMissingException.cs" />
     <Compile Include="Configuration\Parser\BuiltinTypeParsers.cs" />
+    <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
+    <Compile Include="MaterialWrapper\ScaledPlanetRimAerial.cs" />
+    <Compile Include="Configuration\ScaledVersion.cs" />
+    <Compile Include="Constants\GameLayers.cs" />
+    <Compile Include="MaterialWrapper\EmissiveMultiRampSunspots.cs" />
+    <Compile Include="Configuration\BodyType.cs" />
+    <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\ScaledPlanetSimpleLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -91,5 +97,7 @@
     <Folder Include="Configuration\Parser\Enumerations\" />
     <Folder Include="Configuration\Parser\Interfaces\" />
     <Folder Include="Configuration\Parser\Exceptions\" />
+    <Folder Include="Constants\" />
+    <Folder Include="Configuration\MaterialLoader\" />
   </ItemGroup>
 </Project>

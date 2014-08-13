@@ -41,71 +41,95 @@ namespace Kopernicus
 		[RequireConfigType(ConfigType.Node)]
 		public class OrbitLoader
 		{
-			// KSP orbit object we are editing
-			public Orbit orbit { get; private set ; }
+			// Orbit driver and orbit renderer we are generating data for
+			private OrbitDriver orbitDriver;
+			private OrbitRenderer orbitRenderer;
 
 			// Orbit renderer color
-			[ParserTarget("color", optional = true, allowMerge = false)]
-			public ColorParser color = new ColorParser();
-
-			// Reference body to orbit
-			[ParserTarget("referenceBody", optional = true, allowMerge = false)]
-			public string referenceBody = null;
-
-			[ParserTarget("inclination", optional = true, allowMerge = false)]
-			public NumericParser<double> inclination 
+			[ParserTarget("color", optional = true)]
+			private ColorParser color 
 			{
-				set { orbit.inclination = value.value; }
+				set { orbitRenderer.orbitColor = value.value; }
+			}
+
+			// CamVsSmaRatios
+			[ParserTarget("camVsSmaRatio", optional = true)]
+			private NumericCollectionParser<float> camVsSmaRatioBounds 
+			{
+				set
+				{
+					// Throw an exception if an incorrect number of values were passed
+					if(value.value.Count != 2)
+						throw new Exception("camVsSmaRatioBounds: Incorrect number of arguments passed");
+
+					// Set the bounds in orbit renderer
+					orbitRenderer.lowerCamVsSmaRatio = value.value[0];
+					orbitRenderer.upperCamVsSmaRatio = value.value[1];
+				}
+			}
+
+			[ParserTarget("inclination", optional = true)]
+			private NumericParser<double> inclination 
+			{
+				set { orbitDriver.orbit.inclination = value.value; }
 			}
 			
-			[ParserTarget("eccentricity", optional = true, allowMerge = false)]
-			public NumericParser<double> eccentricity
+			[ParserTarget("eccentricity", optional = true)]
+			private NumericParser<double> eccentricity
 			{
-				set { orbit.eccentricity = value.value; }
+				set { orbitDriver.orbit.eccentricity = value.value; }
 			}
 
-			[ParserTarget("semiMajorAxis", optional = true, allowMerge = false)]
-			public NumericParser<double> semiMajorAxis
+			[ParserTarget("semiMajorAxis", optional = true)]
+			private NumericParser<double> semiMajorAxis
 			{
-				set { orbit.semiMajorAxis = value.value; }
+				set { orbitDriver.orbit.semiMajorAxis = value.value; }
 			}
 
-			[ParserTarget("longitudeOfAscendingNode", optional = true, allowMerge = false)]
-			public NumericParser<double> longitudeOfAscendingNode
+			[ParserTarget("longitudeOfAscendingNode", optional = true)]
+			private NumericParser<double> longitudeOfAscendingNode
 			{
-				set { orbit.LAN = value.value; }
+				set { orbitDriver.orbit.LAN = value.value; }
 			}
 
-			[ParserTarget("argumentOfPeriapsis", optional = true, allowMerge = false)]
-			public NumericParser<double> argumentOfPeriapsis
+			[ParserTarget("argumentOfPeriapsis", optional = true)]
+			private NumericParser<double> argumentOfPeriapsis
 			{
-				set { orbit.argumentOfPeriapsis = value.value; }
+				set { orbitDriver.orbit.argumentOfPeriapsis = value.value; }
 			}
 
-			[ParserTarget("meanAnomalyAtEpoch", optional = true, allowMerge = false)]
-			public NumericParser<double> meanAnomalyAtEpoch
+			[ParserTarget("meanAnomalyAtEpoch", optional = true)]
+			private NumericParser<double> meanAnomalyAtEpoch
 			{
-				set { orbit.meanAnomalyAtEpoch = value.value; }
+				set { orbitDriver.orbit.meanAnomalyAtEpoch = value.value; }
 			}
 
-			[ParserTarget("epoch", optional = true, allowMerge = false)]
-			public NumericParser<double> epoch
+			[ParserTarget("epoch", optional = true)]
+			private NumericParser<double> epoch
 			{
-				set { orbit.epoch = value.value; }
+				set { orbitDriver.orbit.epoch = value.value; }
 			}
+			
+			// Reference body to orbit
+			[ParserTarget("referenceBody", optional = true)]
+			public string referenceBody { get; private set; }
 
-			// Construct an empty orbit
-			public OrbitLoader ()
+			// Copy orbit details provided
+			public OrbitLoader (PSystemBody body)
 			{
-				orbit = new Orbit();
+				// Reference body defaults to null
+				referenceBody = null;
 
-			}
+				// Get the orbit driver and renderer of this body
+				orbitRenderer = body.orbitRenderer;
+				orbitDriver = body.orbitDriver;
 
-			// Copy orbit provided
-			public OrbitLoader (Orbit orbit, Color color)
-			{
-				this.orbit = orbit;
-				this.color.value = color;
+				// Make sure the orbit driver is in update mode
+				orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+
+				// Make sure we have an orbit object
+				if(orbitDriver.orbit == null)
+					orbitDriver.orbit = new Orbit();
 			}
 		}
 	}
