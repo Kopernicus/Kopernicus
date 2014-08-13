@@ -244,8 +244,9 @@ namespace Kopernicus
 					// In order to generate the scaled space we have to enable the mods.  Since this is
 					// a prefab they don't get disabled as kill game performance.  To resolve this we 
 					// clone the PQS, use it, and then delete it when done
-					PQS pqsVersion = (PQS) UnityEngine.Object.Instantiate(body.pqsVersion);
-
+					GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(body.pqsVersion.gameObject) as GameObject;
+					PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
+				
 					// Find and enable the PQS mods in the cloned PQS
 					PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true);
 					foreach(PQSMod mod in mods)
@@ -300,7 +301,7 @@ namespace Kopernicus
 					}
 
 					// Cleanup
-					UnityEngine.Object.Destroy(pqsVersion.gameObject);
+					UnityEngine.Object.Destroy(pqsVersionGameObject);
 				}
 
 				// Return the generated scaled space mesh
