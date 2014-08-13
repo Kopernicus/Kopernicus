@@ -32,6 +32,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+// Disable the "private fields `` is assigned but its value is never used warning"
+#pragma warning disable 0414
+
 namespace Kopernicus
 {
 	namespace Configuration 
@@ -76,9 +79,12 @@ namespace Kopernicus
 			// Wrapper around the settings for the world's scaled version
 			[ParserTarget("ScaledVersion", optional = true, allowMerge = true)]
 			private ScaledVersion scaledVersion;
+			
+			// Wrapper around the settings for the world's atmosphere
+			[ParserTarget("Atmosphere", optional = true, allowMerge = true)]
+			private Atmosphere atmosphere;
 
 			// PQS
-			// Atmosphere
 			// Sun
 
 			// Parser Apply Event
@@ -135,7 +141,7 @@ namespace Kopernicus
 					generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
 					generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
 
-					// Create the sphere collider for the scaled version (IS THIS OKAY FOR SUNs????)
+					// Create the sphere collider for the scaled version (TODO - IS THIS OKAY FOR SUNs????)
 					SphereCollider collider = generatedBody.scaledVersion.AddComponent<SphereCollider>();
 					collider.center = Vector3.zero;
 					collider.radius = 1000.0f;
@@ -146,6 +152,9 @@ namespace Kopernicus
 
 				// Create property editor/loader objects
 				properties = new Properties (generatedBody.celestialBody);
+
+				// Atmospheric settings
+				atmosphere = new Atmosphere(generatedBody.celestialBody, generatedBody.scaledVersion);
 			}
 
 			// Parser Post Apply Event
@@ -163,8 +172,10 @@ namespace Kopernicus
 
 					// Setup orbit
 					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-					orbit.populateOrbitProperties(generatedBody);
+					orbit.Apply(generatedBody);
 				}
+
+				// TODO - Generate scaled version mesh and atmosphere mesh
 
 				// If this body was generated from a template
 				if (template != null) 
@@ -180,7 +191,12 @@ namespace Kopernicus
 					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 						p.radius = generatedBody.celestialBody.Radius;
 				}
+
+				// Post gen celestial body
+				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
 			}
 		}
 	}
 }
+
+#pragma warning restore 0414

@@ -99,7 +99,7 @@ namespace Kopernicus
 			public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] {0f, 1f});
 
 			// Populate the PSystemBody with the results of the orbit loader
-			public void populateOrbitProperties(PSystemBody body)
+			public void Apply(PSystemBody body)
 			{
 				body.orbitDriver.orbit = orbit;
 				body.orbitRenderer.orbitColor = color.value;

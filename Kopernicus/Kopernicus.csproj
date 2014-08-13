@@ -87,6 +87,7 @@
     <Compile Include="Configuration\BodyType.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetSimpleLoader.cs" />
+    <Compile Include="Configuration\Atmosphere.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
