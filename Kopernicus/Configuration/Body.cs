@@ -223,61 +223,84 @@ namespace Kopernicus
 			}
 
 			// Generate the scaled space mesh using PQS (all results use scale of 1)
-			// Need to implement a partial PQS solver, so I can get the actual surface
 			public static Mesh ComputeScaledSpaceMesh (PSystemBody body)
 			{
 				// We need to get the body for Jool (to steal it's mesh)
 				PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
 				const double rJool = 6000000.0f;
 				const double rScaledJool = 1000.0f;
-				const float rMetersToScaledUnits = (float) (rJool / rScaledJool);
+				const double rMetersToScaledUnits = (float) (rJool / rScaledJool);
 
 				// Generate a duplicate of the Jool mesh
 				Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
 
 				// Scale this mesh to fit this body
 				Utility.ScaleVerts (mesh, (float)(body.celestialBody.Radius / rJool));
-				//double rScaledBody = (body.celestialBody.Radius / rJool) * rScaledJool;
+				double rScaledBody = (body.celestialBody.Radius / rJool) * rScaledJool;
 
 				// If this body has a PQS, we can create a more detailed object
 				if (body.pqsVersion != null) 
 				{
-					// Find the vertex height map in the PQS
-					PQSMod_VertexHeightMap[] maps = body.pqsVersion.GetComponentsInChildren<PQSMod_VertexHeightMap>(true);
-					if(maps.Length > 0)
-					{
-						// Choose the first height map
-						PQSMod_VertexHeightMap vertexHeightMap = maps[0];
+					// In order to generate the scaled space we have to enable the mods.  Since this is
+					// a prefab they don't get disabled as kill game performance.  To resolve this we 
+					// clone the PQS, use it, and then delete it when done
+					PQS pqsVersion = (PQS) UnityEngine.Object.Instantiate(body.pqsVersion);
 
+					// Find and enable the PQS mods in the cloned PQS
+					PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true);
+					foreach(PQSMod mod in mods)
+					{
+						mod.OnSetup();
+					}
+
+					// If we were able to find PQS mods
+					if(mods.Length > 0)
+					{
 						// Generate the PQS modifications
 						Vector3[] vertices = mesh.vertices;
 						for(int i = 0; i < mesh.vertexCount; i++)
 						{
-							// Get the height offset from the height map
+							// Get the UV coordinate of this vertex
 							Vector2 uv = mesh.uv[i];
-							float displacement = vertexHeightMap.heightMap.GetPixelFloat(uv.x, uv.y);
-							
+
 							// Since this is a geosphere, normalizing the vertex gives the vector to translate on
-							Vector3 v = vertices[i];
-							v.Normalize();
+							Vector3 direction = vertices[i];
+							direction.Normalize();
+
+							// Build the vertex data object for the PQS mods
+							PQS.VertexBuildData vertex = new PQS.VertexBuildData();
+							vertex.directionFromCenter = direction;
+							vertex.vertHeight = rScaledBody;
+							vertex.u = uv.x;
+							vertex.v = uv.y;
 							
+							// Build from the PQS
+							foreach(PQSMod mod in mods)
+							{
+								mod.OnVertexBuildHeight(vertex);
+							}
+
 							// Calculate the real height displacement (in meters), normalized vector "v" scale (1 unit = 6 km)
-							displacement = (float) vertexHeightMap.heightMapOffset + (displacement * (float) vertexHeightMap.heightMapDeformity);
-							Vector3 offset = v * (displacement / rMetersToScaledUnits);
+							Vector3 offset = direction * (float) (vertex.vertHeight / rMetersToScaledUnits);
 							
 							// Adjust the displacement
 							vertices[i] += offset;
 						}
 						mesh.vertices = vertices;
 						mesh.RecalculateNormals();
+					}
 
-					} else
+					// Otherwise log an error
+					else
 					{
-						Debug.LogError("PQS BODY HAS NO VERTEX HEIGHT MAP");
+						Debug.LogError("PQS BODY HAS NO PQS MODS");
 						Debug.LogError("-------- PQS ----------");
 						Utility.GameObjectWalk(body.pqsVersion.gameObject);
 						Debug.LogError("-----------------------");
 					}
+
+					// Cleanup
+					UnityEngine.Object.Destroy(pqsVersion.gameObject);
 				}
 
 				// Return the generated scaled space mesh
