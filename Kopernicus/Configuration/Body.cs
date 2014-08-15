@@ -29,6 +29,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
@@ -53,11 +54,11 @@ namespace Kopernicus
 
 			// Name of this body
 			[PreApply]
-			[ParserTarget("name", optional = false, allowMerge = false)]
+			[ParserTarget("name", optional = false)]
 			public string name { get; private set; }
 			
 			// Flight globals index of this body - for computing reference id
-			[ParserTarget("flightGlobalsIndex", optional = true, allowMerge = false)]
+			[ParserTarget("flightGlobalsIndex", optional = true)]
 			public NumericParser<int> flightGlobalsIndex 
 			{
 				set { generatedBody.flightGlobalsIndex = value.value; }
@@ -65,7 +66,7 @@ namespace Kopernicus
 
 			// Template property of a body - responsible for generating a PSystemBody from an existing one
 			[PreApply]
-			[ParserTarget("Template", optional = true, allowMerge = false)]
+			[ParserTarget("Template", optional = true)]
 			private Template template;
 
 			// Celestial body properties (description, mass, etc.)
@@ -247,15 +248,14 @@ namespace Kopernicus
 					GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(body.pqsVersion.gameObject) as GameObject;
 					PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 				
-					// Find and enable the PQS mods in the cloned PQS
-					PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true);
+					// Find and enable the PQS mods that modify height
+					IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(mod => (mod.GetType().ToString().Contains("VertexHeight") || 
+					                                                                                          mod.GetType().ToString().Contains("VertexSimplexHeight")));
 					foreach(PQSMod mod in mods)
-					{
 						mod.OnSetup();
-					}
 
 					// If we were able to find PQS mods
-					if(mods.Length > 0)
+					if(mods.Count() > 0)
 					{
 						// Generate the PQS modifications
 						Vector3[] vertices = mesh.vertices;
@@ -264,7 +264,7 @@ namespace Kopernicus
 							// Get the UV coordinate of this vertex
 							Vector2 uv = mesh.uv[i];
 
-							// Since this is a geosphere, normalizing the vertex gives the vector to translate on
+							// Since this is a geosphere, normalizing the vertex gives the direction from center center
 							Vector3 direction = vertices[i];
 							direction.Normalize();
 
@@ -277,11 +277,9 @@ namespace Kopernicus
 							
 							// Build from the PQS
 							foreach(PQSMod mod in mods)
-							{
 								mod.OnVertexBuildHeight(vertex);
-							}
 
-							// Calculate the real height displacement (in meters), normalized vector "v" scale (1 unit = 6 km)
+							// Calculate the displacement from center along the direction from center scaled to the model
 							Vector3 offset = direction * (float) (vertex.vertHeight / rMetersToScaledUnits);
 							
 							// Adjust the displacement
