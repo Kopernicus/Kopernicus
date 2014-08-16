@@ -174,7 +174,6 @@ namespace Kopernicus
 					GameObject scaledAtmosphere       = new GameObject("atmosphere");
 					scaledAtmosphere.transform.parent = scaledVersion.transform;
 					scaledAtmosphere.layer            = Constants.GameLayers.ScaledSpaceAtmosphere;
-					//meshFilter.sharedMesh             = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 					MeshRenderer renderer             = scaledAtmosphere.AddComponent<MeshRenderer>();
 					renderer.material                 = new Kopernicus.MaterialWrapper.AtmosphereFromGround();
 					scaledAtmosphere.AddComponent<MeshFilter>();

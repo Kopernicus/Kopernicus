@@ -46,9 +46,6 @@ namespace Kopernicus
 			// Initial radius of the body
 			public double radius { get; private set; }
 
-			// Initial scale of the body
-			public float scaledRadius { get; private set; }
-
 			// Initial type of the body
 			public BodyType type { get; private set; }
 
@@ -57,7 +54,7 @@ namespace Kopernicus
 
 			// Name of the body to use for the template
 			[PreApply]
-			[ParserTarget("name", optional = false, allowMerge = false)]
+			[ParserTarget("name", optional = false)]
 			private string name 
 			{
 				// Crawl the system prefab for the body
@@ -70,6 +67,15 @@ namespace Kopernicus
 					}
 				}
 			}
+
+			// Should we strip the atmosphere off
+			[ParserTarget("removeAtmosphere", optional = true)]
+			private NumericParser<bool> removeAtmosphere = new NumericParser<bool>(false);
+
+			// Should we strip the ocean off
+			[ParserTarget("removeOcean", optional = true)]
+			private NumericParser<bool> removeOcean = new NumericParser<bool>(false);
+
 
 			// Collection of PQS mods to remove 
 			// something about a collection (probably strings)
@@ -100,32 +106,51 @@ namespace Kopernicus
 
 				// Store the initial radius (so scaled version can be computed)
 				radius = body.celestialBody.Radius;
-
-				// Store the scaled radius
-				SphereCollider[] colliders = body.scaledVersion.GetComponentsInChildren<SphereCollider> (true);
-				if (colliders.Length > 0) 
-				{
-					scaledRadius = colliders[0].radius;
-				} else
-					scaledRadius = 0.0f;
 			}
 
 			// Post apply event
-			void IParserEventSubscriber.PostApply(ConfigNode node)
+			void IParserEventSubscriber.PostApply (ConfigNode node)
 			{
-				// Do removals here
+				// Should we remove the atmosphere
+				if (body.celestialBody.atmosphere && removeAtmosphere.value) 
+				{
+					// Find atmosphere from ground and destroy the game object
+					AtmosphereFromGround atmosphere = body.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0];
+					atmosphere.transform.parent = null;
+					UnityEngine.Object.Destroy(atmosphere.gameObject);
 
+					// Destroy the light controller
+					MaterialSetDirection light = body.scaledVersion.GetComponentsInChildren<MaterialSetDirection>(true)[0];
+					UnityEngine.Object.Destroy(light);
+
+					// No more atmosphere :(
+					body.celestialBody.atmosphere = false;
+				}
+
+				// Should we remove the ocean?
+				if (body.celestialBody.ocean && removeOcean.value) 
+				{
+					// Find atmosphere the ocean PQS
+					PQS ocean = body.pqsVersion.GetComponentsInChildren<PQS>(true).Where(pqs => pqs != body.pqsVersion).First();
+					PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).First();
+
+					// Destroy the ocean PQS (this could be bad - destroying the secondary fades...)
+					cbt.planetFade.secondaryRenderers.Remove(ocean.gameObject);
+					cbt.secondaryFades = null;
+					ocean.transform.parent = null;
+					UnityEngine.Object.Destroy(ocean);
+					
+					// No more ocean :(
+					body.celestialBody.ocean = false;
+				}
 				
-				// If we can find sun corona, we're a sun
+				// Figure out what kind of body we are
 				if (body.scaledVersion.GetComponentsInChildren(typeof(ScaledSun), true).Length > 0)
 					type = BodyType.Star;
-				else 
-				{
-					if(body.celestialBody.atmosphere)
-						type = BodyType.Atmospheric;
-					else
-						type = BodyType.Vacuum;
-				}
+				else if(body.celestialBody.atmosphere)
+					type = BodyType.Atmospheric;
+				else
+					type = BodyType.Vacuum;
 
 				Debug.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
 			}

@@ -102,7 +102,6 @@ namespace Kopernicus
 					generatedBody.scaledVersion.name = name;
 					if (generatedBody.pqsVersion != null) 
 					{
-						// Patch all of the PQS names
 						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
 					}
@@ -199,13 +198,9 @@ namespace Kopernicus
 							PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
 							const double rJool = 6000000.0f;
 							
-							// Generate a duplicate of the Jool mesh
+							// Generate mesh using Jool as a template
 							Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
-							
-							// Scale this mesh to fit this body
 							Utility.ScaleVerts (mesh, (float)(generatedBody.celestialBody.Radius / rJool));
-
-							// Set the shared mesh
 							atmosphereFromGround.GetComponent<MeshFilter>().sharedMesh = mesh;
 						}
 					}

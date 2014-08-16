@@ -70,14 +70,17 @@ namespace Kopernicus
 			// Parser apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{
-				// Do we have material edits
-				if (!node.HasNode (materialNodeName)) 
-					return;
-
 				// Get any existing material we might have on this scaled version
 				Material material = scaledVersion.renderer.sharedMaterial;
 				ConfigNode data = node.GetNode (materialNodeName);
 
+				// Check for bad condition (no material, no new material)
+				if (material == null && data == null) 
+				{
+					throw new Exception("Scaled version has no material information");
+				}
+
+				// Are we a planet or moon?
 				if (type.value != BodyType.Star) 
 				{
 					// If we are not a star, we need a scaled space fader and a sphere collider
@@ -90,41 +93,42 @@ namespace Kopernicus
 
 					// sphere collider? can the root body have one?
 
-					// If we have an atmosphere
+					// Generate new atmospheric body material
 					if (type.value == BodyType.Atmospheric) 
 					{
 						ScaledPlanetRimAerialLoader newMaterial = null;
 						if (material != null) 
 						{
 							newMaterial = new ScaledPlanetRimAerialLoader (material);
-							Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+							if(data != null)
+								Parser.LoadObjectFromConfigurationNode (newMaterial, data);
 						} 
-						else 
+						else
 						{
 							newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data);
 						}
 						newMaterial.name = Guid.NewGuid().ToString();
 						newMaterial.rimColorRamp.wrapMode = TextureWrapMode.Clamp;
 						newMaterial.rimColorRamp.mipMapBias = 0.0f;
-						scaledVersion.renderer.material = newMaterial;
-						Debug.Log("Ramp: " + (newMaterial as ScaledPlanetRimAerial).rimColorRamp);
+						scaledVersion.renderer.sharedMaterial = newMaterial;
 					}
 
-					// Otherwise we are a vacuum body
+					// Generate new vacuum body material
 					else 
 					{
 						ScaledPlanetSimpleLoader newMaterial = null;
 						if (material != null) 
 						{
 							newMaterial = new ScaledPlanetSimpleLoader (material);
-							Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+							if(data != null)
+								Parser.LoadObjectFromConfigurationNode (newMaterial, data);
 						} 
-						else 
+						else
 						{
 							newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data);
 						}
 						newMaterial.name = Guid.NewGuid().ToString();
-						scaledVersion.renderer.material = newMaterial;
+						scaledVersion.renderer.sharedMaterial = newMaterial;
 					}
 				}
 
@@ -133,14 +137,16 @@ namespace Kopernicus
 				{
 					Debug.LogWarning("[Kopernicus]: Configuration.ScaledVersion: Implement modification of star scaled version");
 
+					// Generate new star scaled version
 					if (material != null) 
 					{
-						scaledVersion.renderer.material = new EmissiveMultiRampSunspots (material);
-						Parser.LoadObjectFromConfigurationNode (scaledVersion.renderer.material, data);
+						scaledVersion.renderer.sharedMaterial = new EmissiveMultiRampSunspots (material);
+						if(data != null)
+							Parser.LoadObjectFromConfigurationNode (scaledVersion.renderer.material, data);
 					} 
-					else 
+					else
 					{
-						scaledVersion.renderer.material = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspots> (data);
+						scaledVersion.renderer.sharedMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspots> (data);
 					}
 				}
 			}
