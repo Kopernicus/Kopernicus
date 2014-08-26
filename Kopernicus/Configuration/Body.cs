@@ -85,7 +85,10 @@ namespace Kopernicus
 			[ParserTarget("Atmosphere", optional = true, allowMerge = true)]
 			private Atmosphere atmosphere;
 
-			// PQS
+			// Wrapper arounc the settings for the PQS
+			[ParserTarget("PQS", optional = true, allowMerge = true)]
+			private PQSLoader pqs;
+
 			// Sun
 
 			// Parser Apply Event
@@ -111,7 +114,13 @@ namespace Kopernicus
 					{
 						orbit = new OrbitLoader(generatedBody);
 					}
-					
+
+					// If this body has a PQS, create editor/loader
+					if (generatedBody.pqsVersion != null)
+					{
+						pqs = new PQSLoader(generatedBody.pqsVersion);
+					}
+
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
 				}
@@ -141,11 +150,6 @@ namespace Kopernicus
 					generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
 					generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
 
-					// Create the sphere collider for the scaled version (TODO - IS THIS OKAY FOR SUNs????)
-					SphereCollider collider = generatedBody.scaledVersion.AddComponent<SphereCollider>();
-					collider.center = Vector3.zero;
-					collider.radius = 1000.0f;
-
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
 				}
@@ -174,9 +178,21 @@ namespace Kopernicus
 					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 					orbit.Apply(generatedBody);
 				}
+				
+				// If a PQS version was definied
+				if (pqs != null) 
+				{
+					// Assign the generated PQS to our new world
+					generatedBody.pqsVersion = pqs.pqsVersion;
 
-				// We need to generate new scaled space meshes if a) we are using a template and we've change either the radius or type of body, 
-				// or b) we aren't using a template
+					// Adjust the radius of the PQSs appropriately
+					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
+						p.radius = generatedBody.celestialBody.Radius;
+				}
+
+				// We need to generate new scaled space meshes if 
+				//   a) we are using a template and we've change either the radius or type of body
+				//   b) we aren't using a template
 				if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
 				    || template == null)
 				{
@@ -204,14 +220,6 @@ namespace Kopernicus
 							atmosphereFromGround.GetComponent<MeshFilter>().sharedMesh = mesh;
 						}
 					}
-				}
-
-				// Adjust any PQS settings required
-				if (generatedBody.pqsVersion != null) 
-				{
-					// Adjust the radius of the PQSs appropriately
-					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
-						p.radius = generatedBody.celestialBody.Radius;
 				}
 
 				// Post gen celestial body

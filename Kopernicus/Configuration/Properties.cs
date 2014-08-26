@@ -115,9 +115,9 @@ namespace Kopernicus
 			}
 
 
-			public void Apply (ConfigNode node) { }
+			void IParserEventSubscriber.Apply (ConfigNode node) { }
 
-			public void PostApply (ConfigNode node)
+			void IParserEventSubscriber.PostApply (ConfigNode node)
 			{
 				// Migrate the biome attributes to the biome map
 				celestialBody.BiomeMap.Attributes = new CBAttributeMap.MapAttribute[biomes.Count];
@@ -130,7 +130,7 @@ namespace Kopernicus
 				// Debug the science fields
 				Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
 
-				// Debug the biomes
+				// Debug the biomes (TODO - remove)
 				foreach(CBAttributeMap.MapAttribute biome in celestialBody.BiomeMap.Attributes)
 				{
 					Debug.Log("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);

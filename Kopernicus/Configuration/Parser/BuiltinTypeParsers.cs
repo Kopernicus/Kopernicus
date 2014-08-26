@@ -280,7 +280,7 @@ namespace Kopernicus
 		public class AnimationCurveParser : IParserEventSubscriber
 		{
 			// Animation curve we are generating
-			public AnimationCurve curve;
+			public AnimationCurve curve { get; private set; }
 
 			// Build the curve from data found in the node
 			void IParserEventSubscriber.Apply(ConfigNode node)
@@ -325,6 +325,72 @@ namespace Kopernicus
 			public AnimationCurveParser (AnimationCurve curve = null)
 			{
 				this.curve = curve;
+			}
+		}
+
+		/** Parser for Physics Material **/
+		[RequireConfigType(ConfigType.Node)]
+		public class PhysicsMaterialParser : IParserEventSubscriber
+		{
+			// Physics material we are generating
+			public PhysicMaterial material { get; private set; }
+
+			// Physics material parameters
+			[ParserTarget("bounceCombine", optional = true)]
+			private EnumParser<PhysicMaterialCombine> bounceCombine
+			{
+				set { material.bounceCombine = value.value; }
+			}
+
+			[ParserTarget("frictionCombine", optional = true)]
+			private EnumParser<PhysicMaterialCombine> frictionCombine
+			{
+				set { material.frictionCombine = value.value; }
+			}
+			
+			[ParserTarget("frictionDirection2", optional = true)]
+			private Vector3Parser frictionDirection2
+			{
+				set { material.frictionDirection2 = value.value; }
+			}
+
+			[ParserTarget("bounciness", optional = true)]
+			private NumericParser<float> bounciness
+			{
+				set { material.bounciness = value.value; }
+			}
+			
+			[ParserTarget("staticFriction", optional = true)]
+			private NumericParser<float> staticFriction
+			{
+				set { material.staticFriction = value.value; }
+			}
+			
+			[ParserTarget("staticFriction2", optional = true)]
+			private NumericParser<float> staticFriction2
+			{
+				set { material.staticFriction2 = value.value; }
+			}
+			
+			[ParserTarget("dynamicFriction", optional = true)]
+			private NumericParser<float> dynamicFriction
+			{
+				set { material.dynamicFriction = value.value; }
+			}
+			
+			[ParserTarget("dynamicFriction2", optional = true)]
+			private NumericParser<float> dynamicFriction2
+			{
+				set { material.dynamicFriction2 = value.value; }
+			}
+
+			void IParserEventSubscriber.Apply(ConfigNode node) { }
+			void IParserEventSubscriber.PostApply(ConfigNode node) { }
+
+			// Initializing constructor
+			public PhysicsMaterialParser (PhysicMaterial material = null)
+			{
+				this.material = material;
 			}
 		}
 	}

@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\KSP_linux\GameData\Kopernicus\Plugins</OutputPath>
+    <OutputPath>..\..\..\..\..\Applications\KSP\GameData\Kopernicus\Plugins</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\..\KSP_linux\GameData\Kopernicus\Plugins</OutputPath>
+    <OutputPath>..\..\..\..\..\Applications\KSP\GameData\Kopernicus\Plugins</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -33,15 +33,15 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\KSP_linux\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\Applications\KSP\KSP.app\Contents\Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\KSP_linux\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\..\..\Applications\KSP\KSP.app\Contents\Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\KSP_linux\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\Applications\KSP\KSP.app\Contents\Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -84,10 +84,11 @@
     <Compile Include="Configuration\ScaledVersion.cs" />
     <Compile Include="Constants\GameLayers.cs" />
     <Compile Include="MaterialWrapper\EmissiveMultiRampSunspots.cs" />
-    <Compile Include="Configuration\BodyType.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetSimpleLoader.cs" />
     <Compile Include="Configuration\Atmosphere.cs" />
+    <Compile Include="Configuration\PQSLoader.cs" />
+    <Compile Include="Configuration\Enumerations\BodyType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -100,5 +101,6 @@
     <Folder Include="Configuration\Parser\Exceptions\" />
     <Folder Include="Constants\" />
     <Folder Include="Configuration\MaterialLoader\" />
+    <Folder Include="Configuration\Enumerations\" />
   </ItemGroup>
 </Project>

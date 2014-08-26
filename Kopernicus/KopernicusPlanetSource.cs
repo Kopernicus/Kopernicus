@@ -106,17 +106,10 @@ namespace Kopernicus
 
 			#region PSystemBody.pqsVersion generation
 
-			// Unity objects do this cool thing where if they are the child of a disabled object, they don't
-			// activate - but locally they could still be "enabled."  If you Instantiate it, and then reparent
-			// it, it will become active automatically.  This is great here so we can generate pseudo-prefabs
-			GameObject deactivator = new GameObject();
-			deactivator.SetActive(false);
-			UnityEngine.Object.DontDestroyOnLoad(deactivator);
-
 			// Create the PQS controller game object for Kopernicus
 			GameObject controllerRoot       = new GameObject(name);
 			controllerRoot.layer            = Constants.GameLayers.LocalSpace;
-			controllerRoot.transform.parent = deactivator.transform;
+			controllerRoot.transform.parent = Utility.Deactivator;
 
 			// Create the PQS object and pull all the values from Dres (has some future proofing i guess? adapts to PQS changes)
 			body.pqsVersion = controllerRoot.AddComponent<PQS>();
@@ -356,7 +349,7 @@ namespace Kopernicus
 			// Create the scaled version of the planet for use in map view
 			body.scaledVersion = new GameObject(name);
 			body.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
-			body.scaledVersion.transform.parent = deactivator.transform;
+			body.scaledVersion.transform.parent = Utility.Deactivator;
 
 			// DEPRECATED - USE PQSMeshWrapper
 			// Make sure the scaled version cooresponds to the size of the body
@@ -557,9 +550,6 @@ namespace Kopernicus
 			oceanFX.order = 100;*/
 
 			#endregion
-
-			// Dump the constructed structure
-			Utility.GameObjectWalk (deactivator);
 
 			// Return the new body
 			return body;

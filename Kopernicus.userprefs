@@ -1,35 +1,6 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/Body.cs">
-    <Files>
-      <File FileName="Kopernicus/KopernicusPlanetSource.cs" Line="414" Column="39" />
-      <File FileName="Kopernicus/Configuration/Body.cs" Line="304" Column="44" />
-      <File FileName="Kopernicus/Configuration/Template.cs" Line="110" Column="26" />
-      <File FileName="Kopernicus/Configuration/ScienceValues.cs" Line="90" Column="1" />
-      <File FileName="Kopernicus/Configuration/ScaledVersion.cs" Line="54" Column="4" />
-      <File FileName="Kopernicus/Configuration/Atmosphere.cs" Line="118" Column="5" />
-      <File FileName="Kopernicus/Utility.cs" Line="323" Column="6" />
-      <File FileName="Kopernicus/Injector.cs" Line="89" Column="19" />
-    </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Kopernicus" expanded="True">
-            <Node name="Configuration" expanded="True">
-              <Node name="Parser" expanded="True" />
-              <Node name="Body.cs" selected="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
-    </Pads>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

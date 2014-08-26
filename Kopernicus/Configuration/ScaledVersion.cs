@@ -91,7 +91,13 @@ namespace Kopernicus
 						fader.celestialBody = owner;
 					}
 
-					// sphere collider? can the root body have one?
+					// Add a sphere collider if we need one
+					if (scaledVersion.GetComponent<SphereCollider> () == null)
+					{
+						SphereCollider collider = scaledVersion.AddComponent<SphereCollider>();
+						collider.center = Vector3.zero;
+						collider.radius = 1000.0f;
+					}
 
 					// Generate new atmospheric body material
 					if (type.value == BodyType.Atmospheric) 
