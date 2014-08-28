@@ -96,6 +96,31 @@ namespace Kopernicus
 				set { rimColorRamp = value.value; }
 			}
 
+			[ParserTarget("Gradient", optional = true)]
+			private Gradient rimColorRampGradientSetter 
+			{
+				set 
+				{
+					// Generate the ramp from a gradient
+					Texture2D ramp = new Texture2D(512, 1);
+					Color[] colors = ramp.GetPixels(0);
+					for(int i = 0; i < colors.Length; i++)
+					{
+						// Compute the position in the gradient
+						float k = ((float) i) / ((float) colors.Length);
+						colors[i] = value.ColorAt(k);
+					}
+					ramp.SetPixels(colors, 0);
+					ramp.Apply(true, false);
+
+					//byte[] data = ramp.EncodeToPNG();
+					//System.IO.File.WriteAllBytes(KSPUtil.ApplicationRootPath + "test.png", data);
+
+					// Set the color ramp
+					rimColorRamp = ramp;
+				}
+			}
+
 			public ScaledPlanetRimAerialLoader () : base() { }
 			public ScaledPlanetRimAerialLoader (string contents) : base (contents) { }
 			public ScaledPlanetRimAerialLoader (Material material) : base(material) { }
