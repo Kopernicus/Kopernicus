@@ -1,6 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench>
+    <Files>
+      <File FileName="Kopernicus/Injector.cs" Line="62" Column="19" />
+      <File FileName="Kopernicus/Configuration/Body.cs" Line="224" Column="5" />
+      <File FileName="Kopernicus/Configuration/Biome.cs" Line="82" Column="1" />
+      <File FileName="Kopernicus/Configuration/Parser/BuiltinTypeParsers.cs" Line="280" Column="36" />
+      <File FileName="Kopernicus/Configuration/MaterialLoader/ScaledPlanetRimAerialLoader.cs" Line="101" Column="5" />
+      <File FileName="Kopernicus/Configuration/Loader.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -68,7 +68,7 @@ namespace Kopernicus
 			//PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();
 
 			// SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
-			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren ((typeof(RDArchivesController)), true)[0] as RDArchivesController;
+			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController>(true)[0];
 			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
 			// Add a handler so that we can do post spawn fixups.  

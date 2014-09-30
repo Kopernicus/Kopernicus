@@ -90,6 +90,8 @@
     <Compile Include="Configuration\PQSLoader.cs" />
     <Compile Include="Configuration\Enumerations\BodyType.cs" />
     <Compile Include="Configuration\Gradient.cs" />
+    <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
+    <Compile Include="Configuration\Corona.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

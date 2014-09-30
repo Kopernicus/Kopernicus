@@ -67,6 +67,10 @@ namespace Kopernicus
 				set { scaledVersion.GetComponent<ScaledSpaceFader> ().fadeEnd = value.value; }
 			}
 
+			// Coronas for a star's scaled version
+			[ParserTargetCollection("Coronas", optional = true, allowMerge = true)]
+			private List<Corona> coronas = new List<Corona>();
+
 			// Parser apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{
@@ -141,24 +145,57 @@ namespace Kopernicus
 				// Otherwise we are a star
 				else 
 				{
-					Debug.LogWarning("[Kopernicus]: Configuration.ScaledVersion: Implement modification of star scaled version");
+					Debug.LogWarning("[Kopernicus]: Configuration.ScaledVersion: Complete implemention of modification of star scaled version");
 
-					// Generate new star scaled version
-					if (material != null) 
+					// Add the SunShaderController behavior
+					if(scaledVersion.GetComponent<SunShaderController>() == null)
+						scaledVersion.AddComponent<SunShaderController>();
+
+					// Add the ScaledSun behavior
+					// TODO - apparently there can only be one of these (or it destroys itself)
+					if(scaledVersion.GetComponent<ScaledSun>() == null)
+						scaledVersion.AddComponent<ScaledSun>();
+
+					// Generate a new material for the star
+					EmissiveMultiRampSunspotsLoader newMaterial = null;
+					if(material != null)
 					{
-						scaledVersion.renderer.sharedMaterial = new EmissiveMultiRampSunspots (material);
+						newMaterial = new EmissiveMultiRampSunspotsLoader (material);
 						if(data != null)
-							Parser.LoadObjectFromConfigurationNode (scaledVersion.renderer.material, data);
-					} 
+							Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+					}
 					else
 					{
-						scaledVersion.renderer.sharedMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspots> (data);
+						newMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader> (data);
 					}
+
+					newMaterial.name = Guid.NewGuid().ToString();
+					scaledVersion.renderer.sharedMaterial = newMaterial;
 				}
 			}
 
 			// Post apply event
-			void IParserEventSubscriber.PostApply (ConfigNode node) { }
+			void IParserEventSubscriber.PostApply (ConfigNode node)
+			{
+				Debug.Log("============= Scaled Version Dump ===================");
+				Utility.GameObjectWalk(scaledVersion);
+				Debug.Log("===========================================");
+
+				// If we are a star, we need to generate the coronas 
+				if (type.value == BodyType.Star) 
+				{
+					// debug
+					Utility.DumpObjectProperties(scaledVersion.renderer.sharedMaterial, " Star Material ");
+					foreach(SunCoronas c in scaledVersion.GetComponentsInChildren<SunCoronas>(true))
+						Utility.DumpObjectFields(c, " Solar Corona ");
+
+					// Generate all the coronas
+					foreach(Corona corona in coronas)
+					{
+						// TODO - implement generation
+					}
+				}
+			}
 
 			/**
 			 * Default constructor - takes the scaledVersion game object
