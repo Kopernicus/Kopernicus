@@ -1,13 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Configuration/PQSLoader.cs">
     <Files>
-      <File FileName="Kopernicus/Injector.cs" Line="62" Column="19" />
-      <File FileName="Kopernicus/Configuration/Body.cs" Line="224" Column="5" />
-      <File FileName="Kopernicus/Configuration/Biome.cs" Line="82" Column="1" />
-      <File FileName="Kopernicus/Configuration/Parser/BuiltinTypeParsers.cs" Line="280" Column="36" />
-      <File FileName="Kopernicus/Configuration/MaterialLoader/ScaledPlanetRimAerialLoader.cs" Line="101" Column="5" />
-      <File FileName="Kopernicus/Configuration/Loader.cs" Line="1" Column="1" />
+      <File FileName="Kopernicus/Configuration/Parser/BuiltinTypeParsers.cs" Line="254" Column="16" />
+      <File FileName="Kopernicus/Configuration/Loader.cs" Line="77" Column="82" />
+      <File FileName="Kopernicus/Configuration/ScaledVersion.cs" Line="157" Column="14" />
+      <File FileName="../StarSystems/Source/Source/StarSystems/Creator/Star.cs" Line="1" Column="1" />
+      <File FileName="../StarSystems/Source/Source/StarSystems/StarSystem.cs" Line="183" Column="55" />
+      <File FileName="Kopernicus/Configuration/Corona.cs" Line="47" Column="5" />
+      <File FileName="Kopernicus/Configuration/Body.cs" Line="200" Column="89" />
+      <File FileName="Kopernicus/Configuration/PQSLoader.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

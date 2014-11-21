@@ -41,7 +41,15 @@ namespace Kopernicus
 		[RequireConfigType(ConfigType.Node)]
 		public class Corona : IParserEventSubscriber
 		{
+			void IParserEventSubscriber.Apply (ConfigNode n)
+			{
 
+			}
+
+			void IParserEventSubscriber.PostApply (ConfigNode n)
+			{
+
+			}
 		}
 	}
 }
