@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -33,15 +33,15 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\0.25.0\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\0.25.0\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\0.25.0\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -94,16 +94,5 @@
     <Compile Include="Configuration\Corona.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="MaterialWrapper\" />
-    <Folder Include="Configuration\" />
-    <Folder Include="Configuration\Parser\" />
-    <Folder Include="Configuration\Parser\Attributes\" />
-    <Folder Include="Configuration\Parser\Enumerations\" />
-    <Folder Include="Configuration\Parser\Interfaces\" />
-    <Folder Include="Configuration\Parser\Exceptions\" />
-    <Folder Include="Constants\" />
-    <Folder Include="Configuration\MaterialLoader\" />
-    <Folder Include="Configuration\Enumerations\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

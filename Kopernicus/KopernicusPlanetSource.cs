@@ -85,7 +85,7 @@ namespace Kopernicus
 			body.celestialBody.timeWarpAltitudeLimits = (float[])Laythe.celestialBody.timeWarpAltitudeLimits.Clone();
 			body.celestialBody.rotationPeriod         = 88642.6848;
 			body.celestialBody.rotates                = true;
-			body.celestialBody.BiomeMap               = GenerateCBAttributeMap(name);//Dres.celestialBody.BiomeMap;//
+			body.celestialBody.BiomeMap               = GenerateCBAttributeMapSO(name);//Dres.celestialBody.BiomeMap;//
 			body.celestialBody.scienceValues          = Laythe.celestialBody.scienceValues;
 			body.celestialBody.ocean                  = false;
 
@@ -557,41 +557,41 @@ namespace Kopernicus
 
 		// This function generates the biomes for the planet. (Coupled with an
 		// appropriate Texture2D.)
-		public static CBAttributeMap GenerateCBAttributeMap(string name) 
+		public static CBAttributeMapSO GenerateCBAttributeMapSO(string name)
 		{
-			Debug.Log ("[Kopernicus] GenerateCBAttributeMap begins  r4");
-			CBAttributeMap rv = new CBAttributeMap();
-
-			rv.Map = new Texture2D(4, 4, TextureFormat.RGB24, false);
-			Debug.Log ("[Kopernicus] rv.Map="+rv.Map);
-			rv.Map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Biomes.png"));
-			//rv.Map.Compress(true); // This might make the edges funny.
-			rv.Map.Compress (false);
+			Debug.Log("[Kopernicus] GenerateCBAttributeMapSO begins  r4");
+			CBAttributeMapSO rv = ScriptableObject.CreateInstance<CBAttributeMapSO>();
+			Texture2D map = new Texture2D(4, 4, TextureFormat.RGB24, false);
+			Debug.Log("[Kopernicus] map=" + map);
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Biomes.png"));
+			//map.Compress(true); // This might make the edges funny.
+			map.Compress(false);
 			// If it will let us take in an indexed color PNG that would be preferable - bcs
-			rv.Map.Apply(true, false);
+			map.Apply(true, false);
+			rv.CreateMap(MapSO.MapDepth.RGB, map);
 			//rv.nonExactThreshold = -1f; // This will theoretically return the "best match". It also depends on float comparison, but at least it's to a constant.
 			rv.nonExactThreshold = 0.05f; // 0.6 0.0 0.4 matches 1 0 0 at .33 so .1 is fairly generous and should be reduced for maps with many colors
 			// "exact" match is a broken concept (floats should never be compared to floats with == or !=) and (as implemented as of KSP .24.2) should
 			// never be used.
 			rv.exactSearch = false;
-			rv.Attributes = new CBAttributeMap.MapAttribute[3];
+			rv.Attributes = new CBAttributeMapSO.MapAttribute[3];
 
-			rv.Attributes [0] = new CBAttributeMap.MapAttribute ();
-			rv.Attributes [0].name = "PolarCaps";
-			rv.Attributes [0].value = 1.5f;
-			rv.Attributes [0].mapColor = new Color (0f, 1f, 0f);
+			rv.Attributes[0] = new CBAttributeMapSO.MapAttribute();
+			rv.Attributes[0].name = "PolarCaps";
+			rv.Attributes[0].value = 1.5f;
+			rv.Attributes[0].mapColor = new Color(0f, 1f, 0f);
 
-			rv.Attributes [1] = new CBAttributeMap.MapAttribute ();
-			rv.Attributes [1].name = "Mares";
-			rv.Attributes [1].value = 1.0f;
-			rv.Attributes [1].mapColor = new Color (0f, 0f, 1f);
+			rv.Attributes[1] = new CBAttributeMapSO.MapAttribute();
+			rv.Attributes[1].name = "Mares";
+			rv.Attributes[1].value = 1.0f;
+			rv.Attributes[1].mapColor = new Color(0f, 0f, 1f);
 
-			rv.Attributes [2] = new CBAttributeMap.MapAttribute ();
-			rv.Attributes [2].name = "Dunes";
-			rv.Attributes [2].value = 1.0f;
-			rv.Attributes [2].mapColor = new Color (1f, 0f, 0f);
+			rv.Attributes[2] = new CBAttributeMapSO.MapAttribute();
+			rv.Attributes[2].name = "Dunes";
+			rv.Attributes[2].value = 1.0f;
+			rv.Attributes[2].mapColor = new Color(1f, 0f, 0f);
 
-			rv.defaultAttribute = rv.Attributes [0];
+			//rv.defaultAttribute = rv.Attributes [0];
 			/*
 			// Troubleshooting fosssil
 			Vector4 pixelBilinear;
@@ -610,7 +610,7 @@ namespace Kopernicus
 				           (color-pixelBilinear).sqrMagnitude);
 				}
 			*/
-			Debug.Log ("[Kopernicus] GenerateCBAttributeMap ends");
+			Debug.Log("[Kopernicus] GenerateCBAttributeMapSO ends");
 
 			return rv;
 		}

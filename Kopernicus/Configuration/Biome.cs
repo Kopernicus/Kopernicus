@@ -41,7 +41,7 @@ namespace Kopernicus
 		public class Biome
 		{
 			// The map attribute object we are creating
-			public CBAttributeMap.MapAttribute attribute { get; private set; }
+			public CBAttributeMapSO.MapAttribute attribute { get; private set; }
 
 			// The name of this biome
 			[ParserTarget("name")]
@@ -67,11 +67,11 @@ namespace Kopernicus
 			// Allocate the biome descriptor
 			public Biome ()
 			{
-				attribute = new CBAttributeMap.MapAttribute();
+				attribute = new CBAttributeMapSO.MapAttribute();
 			}
 			
 			// Get reference to existing biome descriptor
-			public Biome (CBAttributeMap.MapAttribute attribute)
+			public Biome (CBAttributeMapSO.MapAttribute attribute)
 			{
 				this.attribute = attribute;
 			}
