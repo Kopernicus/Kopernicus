@@ -111,7 +111,10 @@ namespace Kopernicus
 			[ParserTarget("biomeMap", optional = true)]
 			private Texture2DParser biomeMap 
 			{
-				set { celestialBody.BiomeMap.Map = value.value; }
+				set
+				{
+					celestialBody.BiomeMap.CreateMap(MapSO.MapDepth.RGB, value.value);
+				}
 			}
 
 
@@ -120,7 +123,7 @@ namespace Kopernicus
 			void IParserEventSubscriber.PostApply (ConfigNode node)
 			{
 				// Migrate the biome attributes to the biome map
-				celestialBody.BiomeMap.Attributes = new CBAttributeMap.MapAttribute[biomes.Count];
+				celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[biomes.Count];
 				int index = 0;
 				foreach (Biome biome in biomes) 
 				{
@@ -131,7 +134,7 @@ namespace Kopernicus
 				Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
 
 				// Debug the biomes (TODO - remove)
-				foreach(CBAttributeMap.MapAttribute biome in celestialBody.BiomeMap.Attributes)
+				foreach(CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes)
 				{
 					Debug.Log("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
 				}
@@ -152,15 +155,15 @@ namespace Kopernicus
 				// We require a map attributes object
 				if (this.celestialBody.BiomeMap == null) 
 				{
-					this.celestialBody.BiomeMap = new CBAttributeMap ();
-					this.celestialBody.BiomeMap.defaultAttribute = new CBAttributeMap.MapAttribute ();
-					this.celestialBody.BiomeMap.Attributes = new CBAttributeMap.MapAttribute[0];
+					this.celestialBody.BiomeMap = ScriptableObject.CreateInstance<CBAttributeMapSO>();
+					//this.celestialBody.BiomeMap.defaultAttribute = new CBAttributeMapSO.MapAttribute ();
+					this.celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[0];
 					this.celestialBody.BiomeMap.exactSearch = false;
 					this.celestialBody.BiomeMap.nonExactThreshold = 0.05f; // blame this if things go wrong
 				}
 
 				// Populate the biomes list with any existing map attributes
-				foreach (CBAttributeMap.MapAttribute attribute in this.celestialBody.BiomeMap.Attributes) 
+				foreach (CBAttributeMapSO.MapAttribute attribute in this.celestialBody.BiomeMap.Attributes) 
 					biomes.Add(new Biome(attribute));
 			}
 		}
