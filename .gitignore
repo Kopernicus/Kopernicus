@@ -13,3 +13,5 @@ Kopernicus/bin/Release/System.Xml.dll
 Kopernicus/bin/Release/TDx.TDxInput.dll
 Kopernicus/bin/Release/UnityEngine.dll
 /Kopernicus/bin/Release/UnityEngine.dll.mdb
+Kopernicus/obj/*
+*.suo
