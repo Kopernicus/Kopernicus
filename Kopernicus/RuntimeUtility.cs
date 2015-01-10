@@ -151,7 +151,7 @@ namespace Kopernicus
 			}
 
 			// If we want to debug the locations of PQ nodes
-			if (Input.GetKeyDown (KeyCode.LeftBracket) && Input.GetKey (KeyCode.LeftControl)) 
+			if (Input.GetKeyDown (KeyCode.Semicolon) && Input.GetKey (KeyCode.LeftControl)) 
 			{
 				// New list for the debugger 
 				List<GameObject> renderers = new List<GameObject>();
@@ -181,7 +181,7 @@ namespace Kopernicus
 			}
 
 			// If we want to clean up 
-			if (Input.GetKeyDown (KeyCode.RightBracket) && Input.GetKey (KeyCode.LeftControl)) 
+			if (Input.GetKeyDown (KeyCode.Slash) && Input.GetKey (KeyCode.LeftControl)) 
 			{
 				// Disable all of the renderers in the list
 				foreach(GameObject r in quadSurfaceNormalRenderers)
