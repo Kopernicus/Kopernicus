@@ -119,12 +119,14 @@ namespace Kopernicus
 		}
 		
 		/**
-		 * If Control-P are pressed, dump the PQS data of the current live body
+		 * If Mod-P are pressed, dump the PQS data of the current live body
 		 **/
 		public void Update()
 		{
-			// Print out the PQS state
-			if( Input.GetKeyDown( KeyCode.P ) && Input.GetKey( KeyCode.LeftControl ) )
+            bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
+            
+            // Print out the PQS state
+            if (Input.GetKeyDown(KeyCode.P) && isModDown)
 			{
 				// Log the state of the PQS
 				Utility.DumpObjectFields(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
@@ -150,8 +152,8 @@ namespace Kopernicus
 				}
 			}
 
-			// If we want to debug the locations of PQ nodes
-			if (Input.GetKeyDown (KeyCode.Semicolon) && Input.GetKey (KeyCode.LeftControl)) 
+			// If we want to debug the locations of PQ nodes (Mod-;)
+            if (Input.GetKeyDown(KeyCode.Semicolon) && isModDown)
 			{
 				// New list for the debugger 
 				List<GameObject> renderers = new List<GameObject>();
@@ -180,8 +182,8 @@ namespace Kopernicus
 				Debug.Log("[Kopernicus]: RuntimeUtility.Update(): " + renderers.Count + " PQ surface normal renderer(s) created");
 			}
 
-			// If we want to clean up 
-			if (Input.GetKeyDown (KeyCode.Slash) && Input.GetKey (KeyCode.LeftControl)) 
+			// If we want to clean up (Mod-/)
+            if (Input.GetKeyDown(KeyCode.Slash) && isModDown)
 			{
 				// Disable all of the renderers in the list
 				foreach(GameObject r in quadSurfaceNormalRenderers)
