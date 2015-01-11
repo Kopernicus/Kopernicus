@@ -123,10 +123,10 @@ namespace Kopernicus
 		 **/
 		public void Update()
 		{
-            bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
+			bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
             
-            // Print out the PQS state
-            if (Input.GetKeyDown(KeyCode.P) && isModDown)
+			// Print out the PQS state
+			if (Input.GetKeyDown(KeyCode.P) && isModDown)
 			{
 				// Log the state of the PQS
 				Utility.DumpObjectFields(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
@@ -153,7 +153,7 @@ namespace Kopernicus
 			}
 
 			// If we want to debug the locations of PQ nodes (Mod-;)
-            if (Input.GetKeyDown(KeyCode.Semicolon) && isModDown)
+			if (Input.GetKeyDown(KeyCode.Semicolon) && isModDown)
 			{
 				// New list for the debugger 
 				List<GameObject> renderers = new List<GameObject>();
@@ -183,7 +183,7 @@ namespace Kopernicus
 			}
 
 			// If we want to clean up (Mod-/)
-            if (Input.GetKeyDown(KeyCode.Slash) && isModDown)
+			if (Input.GetKeyDown(KeyCode.Slash) && isModDown)
 			{
 				// Disable all of the renderers in the list
 				foreach(GameObject r in quadSurfaceNormalRenderers)
