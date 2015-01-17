@@ -85,6 +85,20 @@ namespace Kopernicus
 				set { celestialBody.rotationPeriod = value.value; }
 			}
 			
+			// Is the body tidally locked to its parent?
+			[ParserTarget("tidallyLocked", optional = true)]
+			private NumericParser<bool> tidallyLocked
+			{
+				set { celestialBody.tidallyLocked = value.value; }
+			}
+
+			// Initial rotation of the world
+			[ParserTarget("initialRotation", optional = true)]
+			private NumericParser<double> initialRotation
+			{
+				set { celestialBody.initialRotation = value.value; }
+			}
+			
 			// Is this the home world
 			[ParserTarget("isHomeWorld", optional = true)]
 			private NumericParser<bool> isHomeWorld
