@@ -39,7 +39,7 @@ namespace Kopernicus
 	{
 		// See: http://en.wikipedia.org/wiki/Argument_of_periapsis#mediaviewer/File:Orbit1.svg
 		[RequireConfigType(ConfigType.Node)]
-		public class OrbitLoader
+		public class OrbitLoader : IParserEventSubscriber
 		{
 			// KSP orbit objects we are editing
 			public Orbit orbit { get; private set ; }
@@ -97,6 +97,16 @@ namespace Kopernicus
 			// Orbit rendering bounds
 			[ParserTarget("cameraSmaRatioBounds", optional = true)]
 			public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] {0f, 1f});
+
+			void IParserEventSubscriber.Apply(ConfigNode node)
+			{
+
+			}
+
+			void IParserEventSubscriber.PostApply(ConfigNode node)
+			{
+				Debug.Log ("Reference Body = " + referenceBody);
+			}
 
 			// Populate the PSystemBody with the results of the orbit loader
 			public void Apply(PSystemBody body)
