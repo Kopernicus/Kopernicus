@@ -113,6 +113,13 @@ namespace Kopernicus
 				set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray (); }
 			}
 
+			// Sphere of Influence
+			[ParserTarget("sphereOfInfluence", optional = true)]
+			private NumericParser<double> sphereOfInfluence
+			{
+				set { celestialBody.sphereOfInfluence = value.value; }
+			}
+
 			// Science values of this body
 			[ParserTarget("ScienceValues", optional = true, allowMerge = true)]
 			private ScienceValues scienceValues;

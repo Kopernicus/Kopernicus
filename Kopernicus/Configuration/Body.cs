@@ -196,9 +196,17 @@ namespace Kopernicus
 				if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
 				    || template == null)
 				{
-					// Regenerate the scaled space mesh
+					const double rJool = 6000000.0;
+					const float  rScaled = 1000.0f;
+
+					// Compute scale between Jool and this body
+					float scale = (float)(generatedBody.celestialBody.Radius / rJool);
+					generatedBody.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
+
+					// Apply mesh to the body
 					generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = ComputeScaledSpaceMesh(generatedBody);
-					generatedBody.scaledVersion.transform.localScale = Vector3.one;
+					SphereCollider collider = generatedBody.scaledVersion.GetComponent<SphereCollider>();
+					if (collider != null) collider.radius = rScaled;
 
 					// If we have an atmosphere, generate that too
 					if(generatedBody.celestialBody.atmosphere)
@@ -212,11 +220,10 @@ namespace Kopernicus
 
 							// We need to get the body for Jool (to steal it's mesh)
 							PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-							const double rJool = 6000000.0f;
 							
 							// Generate mesh using Jool as a template
 							Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
-							Utility.ScaleVerts (mesh, (float)(generatedBody.celestialBody.Radius / rJool));
+							//Utility.ScaleVerts (mesh, (float)(generatedBody.celestialBody.Radius / rJool));
 							atmosphereFromGround.GetComponent<MeshFilter>().sharedMesh = mesh;
 						}
 					}
@@ -231,16 +238,11 @@ namespace Kopernicus
 			{
 				// We need to get the body for Jool (to steal it's mesh)
 				PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-				const double rJool = 6000000.0f;
 				const double rScaledJool = 1000.0f;
-				const double rMetersToScaledUnits = (float) (rJool / rScaledJool);
+			    double rMetersToScaledUnits = (float) (rScaledJool / body.celestialBody.Radius);
 
 				// Generate a duplicate of the Jool mesh
 				Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
-
-				// Scale this mesh to fit this body
-				Utility.ScaleVerts (mesh, (float)(body.celestialBody.Radius / rJool));
-				double rScaledBody = (body.celestialBody.Radius / rJool) * rScaledJool;
 
 				// If this body has a PQS, we can create a more detailed object
 				if (body.pqsVersion != null) 
@@ -274,19 +276,16 @@ namespace Kopernicus
 							// Build the vertex data object for the PQS mods
 							PQS.VertexBuildData vertex = new PQS.VertexBuildData();
 							vertex.directionFromCenter = direction;
-							vertex.vertHeight = rScaledBody;
+							vertex.vertHeight = body.celestialBody.Radius;
 							vertex.u = uv.x;
 							vertex.v = uv.y;
 							
 							// Build from the PQS
 							foreach(PQSMod mod in mods)
 								mod.OnVertexBuildHeight(vertex);
-
-							// Calculate the displacement from center along the direction from center scaled to the model
-							Vector3 offset = direction * (float) (vertex.vertHeight / rMetersToScaledUnits);
 							
 							// Adjust the displacement
-							vertices[i] += offset;
+							vertices [i] = direction * (float)(vertex.vertHeight * rMetersToScaledUnits);
 						}
 						mesh.vertices = vertices;
 						mesh.RecalculateNormals();

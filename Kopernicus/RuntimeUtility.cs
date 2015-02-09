@@ -209,8 +209,9 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: RuntimeUtility Started");
 
 			// Log the reference ids
-			foreach (CelestialBody body in PSystemManager.Instance.localBodies) {
-				Debug.Log("Body \"" + body.name + "\" = " + PSystemManager.Instance.localBodies.IndexOf(body));
+			foreach (CelestialBody body in PSystemManager.Instance.localBodies) 
+			{
+				Debug.Log("Body \"" + body.name + "\" = " + PSystemManager.Instance.localBodies.IndexOf(body) + ", SOI = " + body.sphereOfInfluence);
 			}
 		}
 	}
