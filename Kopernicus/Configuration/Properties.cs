@@ -136,21 +136,26 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply (ConfigNode node)
 			{
-				// Migrate the biome attributes to the biome map
-				celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[biomes.Count];
-				int index = 0;
-				foreach (Biome biome in biomes) 
+				// If biomes have been provided in the config, strip any existing biomes
+				if (biomes.Count > 0) 
 				{
-					celestialBody.BiomeMap.Attributes[index++] = biome.attribute;
+					// We require a map attributes object
+					celestialBody.BiomeMap = ScriptableObject.CreateInstance<CBAttributeMapSO>();
+					celestialBody.BiomeMap.exactSearch = false;
+					celestialBody.BiomeMap.nonExactThreshold = 0.05f; // blame this if things go wrong
+
+					// Migrate the biome attributes to the biome map
+					celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
 				}
 
-				// Debug the science fields
+				// Debug the fields (TODO - remove)
 				Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
-
-				// Debug the biomes (TODO - remove)
-				foreach(CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes)
+				if (celestialBody.BiomeMap != null) 
 				{
-					Debug.Log("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
+					foreach (CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes) 
+					{
+						Debug.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
+					}
 				}
 			}
 
@@ -165,20 +170,6 @@ namespace Kopernicus
 				
 				// Create the science values cache
 				scienceValues = new ScienceValues (this.celestialBody.scienceValues);
-
-				// We require a map attributes object
-				if (this.celestialBody.BiomeMap == null) 
-				{
-					this.celestialBody.BiomeMap = ScriptableObject.CreateInstance<CBAttributeMapSO>();
-					//this.celestialBody.BiomeMap.defaultAttribute = new CBAttributeMapSO.MapAttribute ();
-					this.celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[0];
-					this.celestialBody.BiomeMap.exactSearch = false;
-					this.celestialBody.BiomeMap.nonExactThreshold = 0.05f; // blame this if things go wrong
-				}
-
-				// Populate the biomes list with any existing map attributes
-				foreach (CBAttributeMapSO.MapAttribute attribute in this.celestialBody.BiomeMap.Attributes) 
-					biomes.Add(new Biome(attribute));
 			}
 		}
 	}

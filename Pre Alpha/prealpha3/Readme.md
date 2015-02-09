@@ -1,8 +1,8 @@
 Kopernicus Pre-Alpha Release 3
 ==============================
-August 13th, 2014
+February 8th, 2015
 
-Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com)
+Copyright (C) 2015 Bryce C Schroeder (bryce.schroeder@gmail.com)
                    Nathaniel R. Lewis (linux.robotdude@gmail.com) 
 
 About
