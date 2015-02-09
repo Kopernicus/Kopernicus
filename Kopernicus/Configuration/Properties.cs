@@ -130,14 +130,7 @@ namespace Kopernicus
 
 			// Biome definition texture
 			[ParserTarget("biomeMap", optional = true)]
-			private Texture2DParser biomeMap 
-			{
-				set
-				{
-					celestialBody.BiomeMap.CreateMap(MapSO.MapDepth.RGB, value.value);
-				}
-			}
-
+			private Texture2DParser biomeMap;
 
 			void IParserEventSubscriber.Apply (ConfigNode node) { }
 
@@ -152,6 +145,7 @@ namespace Kopernicus
 					celestialBody.BiomeMap.nonExactThreshold = 0.05f; // blame this if things go wrong
 
 					// Migrate the biome attributes to the biome map
+					celestialBody.BiomeMap.CreateMap(MapSO.MapDepth.RGB, biomeMap.value);
 					celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
 				}
 
