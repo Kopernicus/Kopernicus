@@ -33,6 +33,8 @@ using System.Linq;
 
 using UnityEngine;
 
+using System.IO;
+
 // Disable the "private fields `` is assigned but its value is never used warning"
 #pragma warning disable 0414
 
@@ -43,6 +45,9 @@ namespace Kopernicus
 		[RequireConfigType(ConfigType.Node)]
 		public class Body : IParserEventSubscriber
 		{
+			// Path of the plugin (will eventually not matter much)
+			private const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
+
 			// Body we are trying to edit
 			public PSystemBody generatedBody { get; private set; }
 
@@ -203,8 +208,26 @@ namespace Kopernicus
 					float scale = (float)(generatedBody.celestialBody.Radius / rJool);
 					generatedBody.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
+					// Attempt to load a cached version of the scale space
+					string CacheDirectory = KSPUtil.ApplicationRootPath + ScaledSpaceCacheDirectory;
+					string CacheFile = CacheDirectory + "/" + generatedBody.name + ".bin";
+					Directory.CreateDirectory (CacheDirectory);
+					if (File.Exists (CacheFile)) 
+					{
+						Debug.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
+						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = Utility.DeserializeMesh (CacheFile);
+					} 
+
+					// Otherwise we have to generate the mesh
+					else 
+					{
+						Debug.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
+						Mesh scaledVersionMesh = ComputeScaledSpaceMesh(generatedBody);
+						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = scaledVersionMesh;
+						Utility.SerializeMesh (scaledVersionMesh, CacheFile);
+					}
+
 					// Apply mesh to the body
-					generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = ComputeScaledSpaceMesh(generatedBody);
 					SphereCollider collider = generatedBody.scaledVersion.GetComponent<SphereCollider>();
 					if (collider != null) collider.radius = rScaled;
 
@@ -289,6 +312,7 @@ namespace Kopernicus
 						}
 						mesh.vertices = vertices;
 						mesh.RecalculateNormals();
+						mesh.RecalculateBounds ();
 					}
 
 					// Otherwise log an error

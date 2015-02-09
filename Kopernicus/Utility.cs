@@ -323,6 +323,87 @@ namespace Kopernicus
 			//ProfileTimer.Pop("ScaleVerts");
 		}
 
+		// Serialize a mesh to disk
+		public static void SerializeMesh(Mesh mesh, string path)
+		{
+			// Open an output filestream
+			System.IO.FileStream outputStream = new System.IO.FileStream (path, System.IO.FileMode.Create, System.IO.FileAccess.Write);
+			System.IO.BinaryWriter writer = new System.IO.BinaryWriter (outputStream);
+
+			// Write the vertex count of the mesh
+			writer.Write (mesh.vertices.Length);
+			foreach(Vector3 vertex in mesh.vertices) 
+			{
+				writer.Write (vertex.x);
+				writer.Write (vertex.y);
+				writer.Write (vertex.z);
+			}
+			writer.Write (mesh.uv.Length);
+			foreach(Vector2 uv in mesh.uv) 
+			{
+				writer.Write (uv.x);
+				writer.Write (uv.y);
+			}
+			writer.Write (mesh.triangles.Length);
+			foreach(int triangle in mesh.triangles) 
+			{
+				writer.Write(triangle);
+			}
+
+			// Finish writing
+			writer.Close ();
+			outputStream.Close ();
+		}
+
+		// Deserialize a mesh from disk
+		public static Mesh DeserializeMesh(string path)
+		{
+			System.IO.FileStream inputStream = new System.IO.FileStream (path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+			System.IO.BinaryReader reader = new System.IO.BinaryReader (inputStream);
+
+			// Get the vertices
+			int count = reader.ReadInt32 ();
+			Vector3[] vertices = new Vector3[count];
+			for (int i = 0; i < count; i++) 
+			{
+				Vector3 vertex;
+				vertex.x = reader.ReadSingle ();
+				vertex.y = reader.ReadSingle ();
+				vertex.z = reader.ReadSingle ();
+				vertices [i] = vertex;
+			}
+
+			// Get the uvs
+			int uv_count = reader.ReadInt32 ();
+			Vector2[] uvs = new Vector2[uv_count];
+			for (int i = 0; i < uv_count; i++) 
+			{
+				Vector2 uv;
+				uv.x = reader.ReadSingle();
+				uv.y = reader.ReadSingle();
+				uvs[i] = uv;
+			}
+
+			// Get the triangles
+			int tris_count = reader.ReadInt32 ();
+			int[] triangles = new int[tris_count];
+			for (int i = 0; i < tris_count; i++)
+				triangles [i] = reader.ReadInt32 ();
+
+			// Close
+			reader.Close ();
+			inputStream.Close ();
+
+			// Create the mesh
+			Mesh m = new Mesh ();
+			m.vertices = vertices;
+			m.triangles = triangles;
+			m.uv = uvs;
+			m.RecalculateNormals ();
+			m.RecalculateBounds ();
+			return m;
+		}
+
 		/** 
 		 * Enumerable class to iterate over parents.  Defined to allow us to use Linq
 		 * and predicates. 

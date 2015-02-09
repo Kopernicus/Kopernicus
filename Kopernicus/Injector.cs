@@ -63,6 +63,9 @@ namespace Kopernicus
 				return;
 			}
 
+			// Get the current time
+			DateTime start = DateTime.Now;
+
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
 			PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
 			//PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();
@@ -75,7 +78,8 @@ namespace Kopernicus
 			PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
 
 			// Done executing the awake function
-			Debug.Log ("[Kopernicus]: Injector.Awake(): End");
+			TimeSpan duration = (DateTime.Now - start);
+			Debug.Log ("[Kopernicus]: Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
 		}
 
 		// Post spawn fixups (ewwwww........)
