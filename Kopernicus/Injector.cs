@@ -67,8 +67,8 @@ namespace Kopernicus
 			DateTime start = DateTime.Now;
 
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
-			PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
-			//PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();
+			// PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
+			PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();
 
 			// SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
 			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController>(true)[0];

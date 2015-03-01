@@ -74,14 +74,18 @@ namespace Kopernicus
 				return null;
 			}
 			
-			// Setup the template solar system object from the original game
-			PSystem system = DuplicateSystem (PSystemManager.Instance.systemPrefab);
+			// Setup the config-loaded PSystem
+            PSystem system = (new Configuration.Loader()).Generate();
 
-			// Create "Kopernicus"
-			// Note that due to the way AddBody works, this is a function with side effects
-			// rather than something that returns a planet. Perhaps it should be named differently
-			// from the GenerateSystem method to emphasize this difference in usage??
-			KopernicusPlanetSource.GeneratePlanet (system, "Kopernicus");
+			// Check if "Kopernicus" is activated
+            if (GameDatabase.Instance.GetConfigs("Kopernicus")[0].config.GetValue("Kopernicus") == "true")
+            {
+                // Create "Kopernicus"
+		        // Note that due to the way AddBody works, this is a function with side effects
+			    // rather than something that returns a planet. Perhaps it should be named differently
+			    // from the GenerateSystem method to emphasize this difference in usage??
+			    KopernicusPlanetSource.GeneratePlanet (system, "Kopernicus");
+            }
 			//StockPlanetSource.GeneratePlanet(system, "Laythe", "Bob", new Orbit (0.0, 0.0, 47500000000, 0, 0, 0, 0, system.rootBody.celestialBody));
 
 			// Return the newly created planetary system

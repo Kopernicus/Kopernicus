@@ -48,7 +48,7 @@ namespace Kopernicus
 	public class KopernicusPlanetSource
 	{
 		// Path of the plugin (will eventually not matter much)
-		const string PluginDirectory = "GameData/Kopernicus/PluginData/";
+		const string PluginDirectory = "GameData/Kopernicus/Planets/";
 
 		public static PSystemBody GeneratePlanet (PSystem system, string name, Orbit orbit = null) 
 		{
@@ -242,7 +242,7 @@ namespace Kopernicus
 
 			// Load the heightmap for this planet
 			Texture2D map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Height.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + name + "/Height.png"));
 			vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
 			vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
 			UnityEngine.Object.DestroyImmediate(map);
@@ -337,7 +337,7 @@ namespace Kopernicus
 
 			// Decompress and load the color
 			map = new Texture2D(4, 4, TextureFormat.RGB24, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Color.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + name + "/Color.png"));
 			colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
 			colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
 			UnityEngine.Object.DestroyImmediate(map);
@@ -392,13 +392,13 @@ namespace Kopernicus
 
 			// Load and compress the color texture for the custom planet
 			Texture2D colorTexture = new Texture2D(4, 4, TextureFormat.RGBA32, true);
-			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Color.png"));
+			colorTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + name + "/Color.png"));
 			colorTexture.Compress(true);
 			colorTexture.Apply(true, true);
 
 			// Load and compress the color texture for the custom planet
 			Texture2D normalTexture = new Texture2D(4, 4, TextureFormat.RGB24, true);
-			normalTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Normals.png"));
+			normalTexture.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + name + "/Normals.png"));
 			//normalTexture = GameDatabase.BitmapToUnityNormalMap(normalTexture);
 			normalTexture.Compress(true);
 			normalTexture.Apply(true, true);
@@ -432,7 +432,7 @@ namespace Kopernicus
 
 			// Load the atmosphere gradient (compress it, does not need to be high quality)
 			Texture2D atmosphereGradient = new Texture2D(4, 4, TextureFormat.RGB24, true);
-			atmosphereGradient.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/AtmosphereGradient.png"));
+			atmosphereGradient.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + name + "/AtmosphereGradient.png"));
 			atmosphereGradient.Compress(true);
 			atmosphereGradient.wrapMode = TextureWrapMode.Clamp;
 			atmosphereGradient.mipMapBias = 0.0f;
@@ -535,7 +535,7 @@ namespace Kopernicus
 
 			// Load the heightmap into whatever the hell this is
 			map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Height.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + name + "/Height.png"));
 			removeQuadMap.map = ScriptableObject.CreateInstance<MapSO>();
 			removeQuadMap.map.CreateMap(MapSO.MapDepth.Greyscale, map);
 			UnityEngine.Object.DestroyImmediate(map);
@@ -563,7 +563,7 @@ namespace Kopernicus
 			CBAttributeMapSO rv = ScriptableObject.CreateInstance<CBAttributeMapSO>();
 			Texture2D map = new Texture2D(4, 4, TextureFormat.RGB24, false);
 			Debug.Log("[Kopernicus] map=" + map);
-			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + "/Planets/" + name + "/Biomes.png"));
+			map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + PluginDirectory + name + "/Biomes.png"));
 			//map.Compress(true); // This might make the edges funny.
 			map.Compress(false);
 			// If it will let us take in an indexed color PNG that would be preferable - bcs
