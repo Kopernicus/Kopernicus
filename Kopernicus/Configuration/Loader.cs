@@ -40,7 +40,7 @@ namespace Kopernicus
 		/**
 		 * Class to manage and load configurations for Kopernicus
 		 **/
-		public class Loader : MonoBehaviour
+		public class Loader
 		{
 			// Name of the config node group which manages Kopernicus
 			private const string rootNodeName = "Kopernicus";
