@@ -115,16 +115,15 @@ namespace Kopernicus
 				system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
 
 				// Stage 5 - sort by distance from parent (discover how this effects local bodies)
-				RecursivelySortBodies (system.rootBody);
-
+           		RecursivelySortBodies (system.rootBody);
 				return system;
 			}
 
 			// Sort bodies by distance from parent body
 			private void RecursivelySortBodies (PSystemBody body)
 			{
-				body.children = body.children.OrderBy (b => b.celestialBody.orbit.semiMajorAxis * (1 + b.celestialBody.orbit.eccentricity)).ToList ();
-				foreach (PSystemBody child in body.children) 
+                body.children = body.children.OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList();
+                foreach (PSystemBody child in body.children) 
 				{
 					RecursivelySortBodies (child);
 				}
