@@ -1,13 +1,14 @@
 ﻿<Properties StartupItem="Kopernicus/Kopernicus.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/Injector.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kopernicus/StarLightSwitcher.cs">
     <Files>
-      <File FileName="Kopernicus/Configuration/Loader.cs" Line="1" Column="1" />
+      <File FileName="Kopernicus/Configuration/Loader.cs" Line="52" Column="52" />
       <File FileName="Kopernicus/Configuration/Body.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/Configuration/Properties.cs" Line="5" Column="5" />
-      <File FileName="Kopernicus/RuntimeUtility.cs" Line="23" Column="23" />
+      <File FileName="Kopernicus/Configuration/Properties.cs" Line="1" Column="1" />
+      <File FileName="Kopernicus/RuntimeUtility.cs" Line="16" Column="16" />
       <File FileName="Kopernicus/Utility.cs" Line="1" Column="1" />
-      <File FileName="Kopernicus/Injector.cs" Line="53" Column="53" />
+      <File FileName="Kopernicus/Injector.cs" Line="19" Column="19" />
+      <File FileName="Kopernicus/StarLightSwitcher.cs" Line="6" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
