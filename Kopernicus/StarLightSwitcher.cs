@@ -61,6 +61,8 @@ namespace Kopernicus
                 {
                     if (node.HasNode("powerCurve"))
                         powerNodes.Add(node.GetValue("name"), node.GetNode("powerCurve")); // Add custom powerCurve to our Dictionary
+                    else
+                        powerNodes.Add(node.GetValue("name"), powerNodes["Sun"]);
                 }
             }
 		}
@@ -108,7 +110,7 @@ namespace Kopernicus
             {
                 foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
                 {
-                    if (powerNodes[CB.bodyName] != null) // Sure is sure
+                    if (powerNodes[CB.bodyName].GetType() == typeof(ConfigNode)) // Sure is sure
                     {
                         sp.powerCurve = new FloatCurve();
                         sp.powerCurve.Load(powerNodes[CB.bodyName]); // Apply our custom powerCurve
