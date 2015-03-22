@@ -32,8 +32,6 @@
  * 
  */
 
-using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -47,6 +45,9 @@ namespace Kopernicus
 		// List of celestial bodies that are stars
 		private List<CelestialBody> stars;
 
+        // Custom powerCurves
+        private Dictionary<string, ConfigNode> powerNodes = new Dictionary<string,ConfigNode>();
+
 		// MonoBehavior.Awake()
 		void Awake()
 		{
@@ -54,6 +55,14 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: StarLightSwitcher Started");
 			DontDestroyOnLoad (this);
 			stars = PSystemManager.Instance.localBodies.Where (body => body.scaledBody.GetComponentsInChildren<SunShaderController> (true).Length > 0).ToList ();
+            foreach (ConfigNode root in GameDatabase.Instance.GetConfigNodes("Kopernicus")) // I have NO idea, why this doesn't works....
+            {                                                                               // foreach (ConfigNode node in GameDatabase.Instance.GetConfigNode("Kopernicus").GetNodes("Body"))
+                foreach (ConfigNode node in root.GetNodes("Body"))
+                {
+                    if (node.HasNode("powerCurve"))
+                        powerNodes.Add(node.GetValue("name"), node.GetNode("powerCurve")); // Add custom powerCurve to our Dictionary
+                }
+            }
 		}
 
         void Update()
@@ -92,6 +101,18 @@ namespace Kopernicus
             foreach (ModuleDeployableSolarPanel panel in FindObjectsOfType(typeof(ModuleDeployableSolarPanel)))
             {
                 panel.OnStart(PartModule.StartState.Orbital);
+            }
+
+            if (FlightGlobals.ActiveVessel != null)
+            {
+                foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
+                {
+                    if (powerNodes[CB.bodyName] != null) // Sure is sure
+                    {
+                        sp.powerCurve = new FloatCurve();
+                        sp.powerCurve.Load(powerNodes[CB.bodyName]); // Apply our custom powerCurve
+                    }
+                }
             }
         }
     }
