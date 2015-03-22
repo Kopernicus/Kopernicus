@@ -86,7 +86,8 @@ namespace Kopernicus
             Debug.Log("Active sun set to: " + CB.name);
 
             //Set sunflare color
-			Sun.Instance.sunFlare.color = CB.light.color;
+			//TODO - Fix getting the sun flare color
+			//Sun.Instance.sunFlare.color = CB.light.color;
 
             //Reset solar panels (Credit to Kcreator)
             foreach (ModuleDeployableSolarPanel panel in FindObjectsOfType(typeof(ModuleDeployableSolarPanel)))
