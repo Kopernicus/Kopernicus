@@ -48,9 +48,6 @@ namespace Kopernicus
 			// Name of the config type which holds the body definition
 			private const string bodyNodeName = "Body";
 
-            // Dictionary for all the Stars
-            Dictionary<string, CelestialBody> stars = new Dictionary<string, CelestialBody>();
-
 			// Setup the loader
 			// To get the system, do "PSystemManager.Instance.systemPrefab = (new Loader()).Generate();"
 			public Loader ()
@@ -112,27 +109,7 @@ namespace Kopernicus
 
 					// Parent the generated body to the PSystem
 					body.Value.generatedBody.transform.parent = system.transform;
-
-                    // Get all the Stars
-                    if (body.Value.generatedBody.scaledVersion.GetComponentsInChildren(typeof(ScaledSun), true).Length > 0)
-                    {
-                        stars.Add(body.Value.name, body.Value.generatedBody.celestialBody);
-                    }
 				}
-
-                // Create starlight controller
-                GameObject StarLightSwitcherObj = new GameObject("StarLightSwitcher", typeof(StarLightSwitcher));
-                GameObject.DontDestroyOnLoad(StarLightSwitcherObj);
-                StarLightSwitcherObj.GetComponent<StarLightSwitcher>().AddStar(stars["Sun"]);
-                foreach (string StarName in stars.Keys)
-                {
-                    CelestialBody star = stars.First(item => item.Value.bodyName == StarName).Value;
-                    //Add stars to dictionary
-                    StarLightSwitcherObj.GetComponent<StarLightSwitcher>()
-                        .AddStar(stars[StarName]);
-                }
-
-                Debug.Log("Starlight controller created");
                 
 				// Stage 4 - elect root body
 				system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
