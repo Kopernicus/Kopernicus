@@ -70,11 +70,26 @@ namespace Kopernicus
 				// Stage 1 - Load all of the bodies
 				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName)) 
 				{
-					// Load this body from the 
-					Body body = Parser.CreateObjectFromConfigNode<Body> (bodyNode);
-					bodies.Add (body.name, body);
+					// Create a logger for this body
+					Logger bodyLogger = new Logger (bodyNode.GetValue ("name") + ".Body");
+					bodyLogger.SetAsActive ();
 
-					Debug.Log ("[Kopernicus]: Configuration.Loader: Loaded Body: " + body.name);
+					// Attempt to create the body
+					try
+					{
+						Body body = Parser.CreateObjectFromConfigNode<Body> (bodyNode);
+						bodies.Add (body.name, body);
+						Logger.Default.Log ("[Kopernicus]: Configuration.Loader: Loaded Body: " + body.name);
+					} 
+					catch (Exception e) 
+					{
+						bodyLogger.LogException (e);
+						Logger.Default.Log ("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue ("name"));
+					}
+
+					// Restore default logger
+					bodyLogger.Flush ();
+					Logger.Default.SetAsActive ();
 				}
 
 				// Stage 2 - create a new planetary system object

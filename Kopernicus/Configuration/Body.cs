@@ -239,14 +239,14 @@ namespace Kopernicus
 					Directory.CreateDirectory (CacheDirectory);
 					if (File.Exists (CacheFile)) 
 					{
-						Debug.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
+						Logger.Active.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
 						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = Utility.DeserializeMesh (CacheFile);
 					} 
 
 					// Otherwise we have to generate the mesh
 					else 
 					{
-						Debug.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
+						Logger.Active.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
 						Mesh scaledVersionMesh = ComputeScaledSpaceMesh(generatedBody);
 						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = scaledVersionMesh;
 						Utility.SerializeMesh (scaledVersionMesh, CacheFile);
@@ -322,10 +322,10 @@ namespace Kopernicus
 					// Otherwise log an error
 					else
 					{
-						Debug.LogError("PQS BODY HAS NO PQS MODS");
-						Debug.LogError("-------- PQS ----------");
+						Logger.Active.Log("PQS BODY HAS NO PQS MODS");
+						Logger.Active.Log("-------- PQS ----------");
 						Utility.GameObjectWalk(body.pqsVersion.gameObject);
-						Debug.LogError("-----------------------");
+						Logger.Active.Log("-----------------------");
 					}
 
 					// Cleanup

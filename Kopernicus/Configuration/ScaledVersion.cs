@@ -153,7 +153,7 @@ namespace Kopernicus
 				// Otherwise we are a star
 				else 
 				{
-					Debug.Log("[Kopernicus]: Configuration.ScaledVersion: Incomplete implemention of modification of star scaled version");
+					Logger.Active.Log("[Kopernicus]: Configuration.ScaledVersion: Incomplete implemention of modification of star scaled version");
 
 					// Add the SunShaderController behavior
 					if(scaledVersion.GetComponent<SunShaderController>() == null)
@@ -188,9 +188,9 @@ namespace Kopernicus
 			// Post apply event
 			void IParserEventSubscriber.PostApply (ConfigNode node)
 			{
-				Debug.Log("============= Scaled Version Dump ===================");
+				Logger.Active.Log("============= Scaled Version Dump ===================");
 				Utility.GameObjectWalk(scaledVersion);
-				Debug.Log("===========================================");
+				Logger.Active.Log("===========================================");
 
 				// If we are a star, we need to generate the coronas 
 				if (type.value == BodyType.Star) 

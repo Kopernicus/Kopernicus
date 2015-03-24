@@ -127,27 +127,27 @@ namespace Kopernicus
 		public static void DumpObjectFields(object o, string title = "---------")
 		{
 			// Dump the raw PQS of Dres (by reflection)
-			Debug.Log("---------" + title + "------------");
+			Logger.Active.Log("---------" + title + "------------");
 			foreach (FieldInfo field in o.GetType().GetFields()) 
 			{
 				if (!field.IsStatic)
 				{
-					Debug.Log (field.Name + " = " + field.GetValue (o));
+					Logger.Active.Log (field.Name + " = " + field.GetValue (o));
 				}
 			}
-			Debug.Log("--------------------------------------");
+			Logger.Active.Log("--------------------------------------");
 		}
 
 		public static void DumpObjectProperties(object o, string title = "---------")
 		{
 			// Iterate through all of the properties
-			Debug.Log("--------- " + title + " ------------");
+			Logger.Active.Log("--------- " + title + " ------------");
 			foreach (PropertyInfo property in o.GetType().GetProperties()) 
 			{
 				if(property.CanRead)
-					Debug.Log (property.Name + " = " + property.GetValue(o, null));
+					Logger.Active.Log (property.Name + " = " + property.GetValue(o, null));
 			}
-			Debug.Log("--------------------------------------");
+			Logger.Active.Log("--------------------------------------");
 		}
 
 		/**
@@ -193,7 +193,7 @@ namespace Kopernicus
 		// Print out a tree containing all the objects in the game
 		public static void PerformObjectDump()
 		{
-			Debug.Log ("--------- Object Dump -----------");
+			Logger.Active.Log ("--------- Object Dump -----------");
 			foreach (GameObject b in GameObject.FindObjectsOfType(typeof (GameObject))) 
 			{
 				// Essentially, we iterate through all game objects currently alive and search for 
@@ -205,7 +205,7 @@ namespace Kopernicus
 					GameObjectWalk(b, "");
 				}
 			}
-			Debug.Log ("---------------------------------");
+			Logger.Active.Log ("---------------------------------");
 		}
 
 		// Print out the tree of components 
@@ -216,13 +216,13 @@ namespace Kopernicus
 				return;
 
 			// Print this object
-			Debug.Log (prefix + o);
-			Debug.Log (prefix + " >>> Components <<< ");
+			Logger.Active.Log (prefix + o);
+			Logger.Active.Log (prefix + " >>> Components <<< ");
 			foreach (Component c in o.GetComponents(typeof(Component))) 
 			{
-				Debug.Log(prefix + " " + c);
+				Logger.Active.Log(prefix + " " + c);
 			}
-			Debug.Log (prefix + " >>> ---------- <<< ");
+			Logger.Active.Log (prefix + " >>> ---------- <<< ");
 			
 			// Game objects are related to each other via transforms in Unity3D.
 			foreach (Transform b in o.transform) 
@@ -235,7 +235,7 @@ namespace Kopernicus
 		// Print out the celestial bodies
 		public static void PSystemBodyWalk(PSystemBody b, String prefix = "")
 		{
-			Debug.Log (prefix + b.celestialBody.bodyName + ":" + b.flightGlobalsIndex);
+			Logger.Active.Log (prefix + b.celestialBody.bodyName + ":" + b.flightGlobalsIndex);
 			foreach (PSystemBody c in b.children) 
 			{
 				PSystemBodyWalk(c, prefix + "    ");
@@ -573,7 +573,7 @@ namespace Kopernicus
 		public static void Log(object s)
 		{
 			#if DEBUG
-			Debug.Log(s);
+			Logger.Active.Log(s);
 			#endif
 		}
 	}

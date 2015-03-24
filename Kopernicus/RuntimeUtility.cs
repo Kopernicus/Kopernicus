@@ -147,9 +147,12 @@ namespace Kopernicus
 					foreach(PQ q in p.GetComponentsInChildren<PQ>())
 					{
 						// Log information about the quad
-						Debug.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name + ") @ " + q.transform.position);
+						Logger.Default.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name + ") @ " + q.transform.position);
 					}
 				}
+
+				// Flush logger
+				Logger.Default.Flush ();
 			}
 
 			// If we want to debug the locations of PQ nodes (Mod-;)
@@ -179,7 +182,8 @@ namespace Kopernicus
 				quadSurfaceNormalRenderers = renderers;
 
 				// Log
-				Debug.Log("[Kopernicus]: RuntimeUtility.Update(): " + renderers.Count + " PQ surface normal renderer(s) created");
+				Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + renderers.Count + " PQ surface normal renderer(s) created");
+				Logger.Default.Flush ();
 			}
 
 			// If we want to clean up (Mod-/)
@@ -193,7 +197,8 @@ namespace Kopernicus
 				}
 				
 				// Log
-				Debug.Log("[Kopernicus]: RuntimeUtility.Update(): " + quadSurfaceNormalRenderers.Count + " PQ surface normal renderer(s) disabled");
+				Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + quadSurfaceNormalRenderers.Count + " PQ surface normal renderer(s) disabled");
+				Logger.Default.Flush ();
 			}
 		}
 		
@@ -206,13 +211,16 @@ namespace Kopernicus
 			DontDestroyOnLoad (this);
 			
 			// Log
-			Debug.Log ("[Kopernicus]: RuntimeUtility Started");
+			Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
 
 			// Log the reference ids
 			foreach (CelestialBody body in PSystemManager.Instance.localBodies) 
 			{
-				Debug.Log("Body \"" + body.name + "\" = " + PSystemManager.Instance.localBodies.IndexOf(body) + ", SOI = " + body.sphereOfInfluence);
+				Logger.Default.Log("Body \"" + body.name + "\" = " + PSystemManager.Instance.localBodies.IndexOf(body) + ", SOI = " + body.sphereOfInfluence);
 			}
+
+			// Flush logger
+			Logger.Default.Flush ();
 		}
 	}
 }

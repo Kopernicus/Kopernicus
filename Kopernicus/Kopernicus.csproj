@@ -104,7 +104,11 @@
     <Compile Include="Configuration\MaterialLoader\PQSProjectionAerialQuadRelativeLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSProjectionFallbackLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSProjectionSurfaceQuadLoader.cs" />
+    <Compile Include="Logger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Configuration\PQSModLoader\" />
+  </ItemGroup>
 </Project>

@@ -105,7 +105,7 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
-				Debug.Log ("Reference Body = " + referenceBody);
+				Logger.Active.Log("Reference Body = " + referenceBody);
 			}
 
 			// Populate the PSystemBody with the results of the orbit loader

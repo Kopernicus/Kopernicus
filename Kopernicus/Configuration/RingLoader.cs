@@ -208,7 +208,6 @@ namespace Kopernicus
                 //MeshRenderer PlanetRenderer = (MeshRenderer)ScaledPlanet.GetComponentsInChildren<MeshRenderer>()[0]; 
                 MeshRenderer RingRender = (MeshRenderer)RingObject.AddComponent<MeshRenderer>();
                 RingRender.material = ScaledPlanet.renderer.material;
-                Debug.Log(1);
                 if (ring.unlit)
                 {
                     RingRender.material.shader = Shader.Find("Unlit/Transparent");

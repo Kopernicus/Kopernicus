@@ -286,7 +286,7 @@ namespace Kopernicus
 				}
 
 				#if DEBUG
-				Debug.Log("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
+				Logger.Active.Log("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
 				#endif
 
 				// If there was no data found for this node
@@ -333,7 +333,7 @@ namespace Kopernicus
 					// Throw exception or print error
 					else
 					{
-						Debug.LogError("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
+						Logger.Active.Log("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
 						return;
 					}
 				}

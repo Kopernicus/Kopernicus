@@ -142,6 +142,7 @@ namespace Kopernicus
 					
 					// No more ocean :(
 					body.celestialBody.ocean = false;
+					body.pqsVersion.mapOcean = false;
 				}
 
 				// Selectively remove PQS Mods
@@ -150,6 +151,12 @@ namespace Kopernicus
 					// Dump the PQS of the body
 					Utility.Log ("Surface Shader = " + originalBody.pqsVersion.surfaceMaterial.shader.name);
 					Utility.Log ("Fallback Shader = " + originalBody.pqsVersion.fallbackMaterial.shader.name);
+
+					if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/PQS Main - Optimised") {
+						MaterialWrapper.PQSMainOptimised m = new Kopernicus.MaterialWrapper.PQSMainOptimised (originalBody.pqsVersion.surfaceMaterial);
+						Utility.DumpObjectProperties (m, " ---- Surface Material ---- ");
+					}
+
 					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, "  ");
 				}
 				
@@ -161,7 +168,7 @@ namespace Kopernicus
 				else
 					type = BodyType.Vacuum;
 
-				Debug.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\" - " + type );
+				Logger.Active.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\" - " + type );
 			}
 
 			// Private exception to throw in the case the template doesn't load
