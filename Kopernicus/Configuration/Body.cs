@@ -94,6 +94,10 @@ namespace Kopernicus
 			[ParserTarget("PQS", optional = true, allowMerge = true)]
 			private PQSLoader pqs;
 
+            // Wrapper around KSP's Orbit class for editing/loading
+            [ParserTarget("Rings", optional = true, allowMerge = true)]
+            private RingLoader ring;
+
 			// Sun
 
 			// Parser Apply Event
@@ -128,6 +132,9 @@ namespace Kopernicus
 
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
+
+                    // Create our RingLoader
+                    ring = new RingLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Otherwise we have to generate all the things for this body
@@ -157,6 +164,9 @@ namespace Kopernicus
 
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
+
+                    // Create our RingLoader
+                    ring = new RingLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Create property editor/loader objects

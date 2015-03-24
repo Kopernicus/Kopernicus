@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="KopernicusSystemSource.cs" />
     <Compile Include="KopernicusPlanetSource.cs" />
