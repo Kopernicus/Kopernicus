@@ -148,7 +148,9 @@ namespace Kopernicus
 				if (originalBody.pqsVersion != null) 
 				{
 					// Dump the PQS of the body
-					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, " Found PQS ");
+					Utility.Log ("Surface Shader = " + originalBody.pqsVersion.surfaceMaterial.shader.name);
+					Utility.Log ("Fallback Shader = " + originalBody.pqsVersion.fallbackMaterial.shader.name);
+					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, "  ");
 				}
 				
 				// Figure out what kind of body we are
