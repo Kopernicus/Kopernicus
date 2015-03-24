@@ -43,7 +43,7 @@ public class ShaderProperty
         p.add("// " + description + ", default = " + initializer + "\n");
 
         // Synthesize the string constant for the key
-        p.add("private const string " + name + "Key = \"" + key + "\";\n");
+        p.add("public const string " + name + "Key = \"" + key + "\";\n");
 
         // Synthesize the property id storage
         p.add("public int " + name + "ID { get; private set; }\n\n");
@@ -135,6 +135,16 @@ public class ShaderProperty
             p.add("    get { return GetTexture (Properties.Instance." + name + "ID) as Texture2D; }\n");
             p.add("    set { SetTexture (Properties.Instance." + name + "ID, value); }\n");
             p.add("}\n\n");
+            p.add("public Vector2 " + name + "Scale\n");
+            p.add("{\n");
+            p.add("    get { return GetTextureScale (Properties." + name + "Key); }\n");
+            p.add("    set { SetTextureScale (Properties." + name + "Key, value); }\n");
+            p.add("}\n\n");
+            p.add("public Vector2 " + name + "Offset\n");
+            p.add("{\n");
+            p.add("    get { return GetTextureOffset (Properties." + name + "Key); }\n");
+            p.add("    set { SetTextureOffset (Properties." + name + "Key, value); }\n");
+            p.add("}\n\n");
         }
 
         // If the type is a 3D texture
@@ -206,6 +216,22 @@ public class ShaderProperty
         p.add("{\n");
         p.add("    set { base." + name + " = value.value; }\n");
         p.add("}\n\n");
+
+        // Should we generate the scale/offset properties?
+        if("2D".equals(type))
+        {
+            p.add("[ParserTarget(\"" + name + "Scale\", optional = true)]\n");
+            p.add("private Vector2Parser " + name + "ScaleSetter\n");
+            p.add("{\n");
+            p.add("    set { base." + name + "Scale = value.value; }\n");
+            p.add("}\n\n");
+
+            p.add("[ParserTarget(\"" + name + "Offset\", optional = true)]\n");
+            p.add("private Vector2Parser " + name + "OffsetSetter\n");
+            p.add("{\n");
+            p.add("    set { base." + name + "Offset = value.value; }\n");
+            p.add("}\n\n");
+        }
 
         // Return the generated property
         return p;
