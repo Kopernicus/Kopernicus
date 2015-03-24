@@ -99,6 +99,8 @@ namespace Kopernicus
             private RingLoader ring;
 
 			// Sun
+			[ParserTarget("SolarPowerCurve", optional = true, allowMerge = false)]
+			private FloatCurveParser solarPowerCurve;
 
 			// Parser Apply Event
 			public void Apply (ConfigNode node)
@@ -205,6 +207,19 @@ namespace Kopernicus
 						p.radius = generatedBody.celestialBody.Radius;
 				}
 
+				// If this body is a star
+				if (scaledVersion.type.value == BodyType.Star) 
+				{
+					// Get the Kopernicus star component from the scaled version
+					KopernicusStarComponent component = generatedBody.scaledVersion.GetComponent<KopernicusStarComponent> ();
+
+					// If we have defined a custom power curve, load it
+					if (solarPowerCurve != null) 
+					{
+						component.powerCurve = solarPowerCurve.curve;
+					}
+				}
+
 				// We need to generate new scaled space meshes if 
 				//   a) we are using a template and we've change either the radius or type of body
 				//   b) we aren't using a template
@@ -240,26 +255,6 @@ namespace Kopernicus
 					// Apply mesh to the body
 					SphereCollider collider = generatedBody.scaledVersion.GetComponent<SphereCollider>();
 					if (collider != null) collider.radius = rScaled;
-
-					// If we have an atmosphere, generate that too
-					if(generatedBody.celestialBody.atmosphere)
-					{
-						// Find atmosphere from ground
-						AtmosphereFromGround[] afgs = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true);
-						if(afgs.Length > 0)
-						{
-							// Get the atmosphere from ground
-							AtmosphereFromGround atmosphereFromGround = afgs[0];
-
-							// We need to get the body for Jool (to steal it's mesh)
-							PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-							
-							// Generate mesh using Jool as a template
-							Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
-							//Utility.ScaleVerts (mesh, (float)(generatedBody.celestialBody.Radius / rJool));
-							atmosphereFromGround.GetComponent<MeshFilter>().sharedMesh = mesh;
-						}
-					}
 				}
 
 				// Post gen celestial body
@@ -270,12 +265,11 @@ namespace Kopernicus
 			public static Mesh ComputeScaledSpaceMesh (PSystemBody body)
 			{
 				// We need to get the body for Jool (to steal it's mesh)
-				PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
 				const double rScaledJool = 1000.0f;
 			    double rMetersToScaledUnits = (float) (rScaledJool / body.celestialBody.Radius);
 
 				// Generate a duplicate of the Jool mesh
-				Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
+				Mesh mesh = Utility.DuplicateMesh (Utility.ReferenceGeosphere());
 
 				// If this body has a PQS, we can create a more detailed object
 				if (body.pqsVersion != null) 

@@ -15,3 +15,4 @@ Kopernicus/bin/Release/UnityEngine.dll
 /Kopernicus/bin/Release/UnityEngine.dll.mdb
 Kopernicus/obj/*
 *.suo
+Kopernicus.userprefs

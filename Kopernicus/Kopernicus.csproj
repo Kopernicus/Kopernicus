@@ -60,6 +60,7 @@
     <Compile Include="MaterialWrapper\PQSProjectionFallback.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
+    <Compile Include="StarLightSwitcher.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Configuration\Loader.cs" />
     <Compile Include="Configuration\Body.cs" />
@@ -90,9 +91,12 @@
     <Compile Include="Configuration\Atmosphere.cs" />
     <Compile Include="Configuration\PQSLoader.cs" />
     <Compile Include="Configuration\Enumerations\BodyType.cs" />
-    <Compile Include="Configuration\Gradient.cs" />
     <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
     <Compile Include="Configuration\Corona.cs" />
+    <Compile Include="Configuration\Parser\Gradient.cs" />
+    <Compile Include="KopernicusStarComponent.cs" />
+    <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
+    <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

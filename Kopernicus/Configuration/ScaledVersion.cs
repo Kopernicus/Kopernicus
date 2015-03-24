@@ -47,6 +47,7 @@ namespace Kopernicus
 			// Scaled representation of a planet for map view to modify
 			private GameObject scaledVersion;
 			private CelestialBody owner;
+			private KopernicusStarComponent component;
 
 			// Type of object this body's scaled version is
 			[PreApply]
@@ -67,8 +68,15 @@ namespace Kopernicus
 				set { scaledVersion.GetComponent<ScaledSpaceFader> ().fadeEnd = value.value; }
 			}
 
+			// Set the color that the star emits
+			[ParserTarget("solarLightColor", optional = true)]
+			private ColorParser solarLightColor 
+			{
+				set { component.lightColor = value.value; }
+			}
+
 			// Coronas for a star's scaled version
-			[ParserTargetCollection("Coronas", optional = true, allowMerge = true)]
+			[ParserTargetCollection("Coronas", optional = true, nameSignificance = NameSignificance.None)]
 			private List<Corona> coronas = new List<Corona>();
 
 			// Parser apply event
@@ -145,7 +153,7 @@ namespace Kopernicus
 				// Otherwise we are a star
 				else 
 				{
-					Debug.LogWarning("[Kopernicus]: Configuration.ScaledVersion: Complete implemention of modification of star scaled version");
+					Debug.Log("[Kopernicus]: Configuration.ScaledVersion: Incomplete implemention of modification of star scaled version");
 
 					// Add the SunShaderController behavior
 					if(scaledVersion.GetComponent<SunShaderController>() == null)
@@ -155,6 +163,9 @@ namespace Kopernicus
 					// TODO - apparently there can only be one of these (or it destroys itself)
 					if(scaledVersion.GetComponent<ScaledSun>() == null)
 						scaledVersion.AddComponent<ScaledSun>();
+
+					// Add the Kopernicus star componenet
+					component = scaledVersion.AddComponent<KopernicusStarComponent> ();
 
 					// Generate a new material for the star
 					EmissiveMultiRampSunspotsLoader newMaterial = null;
@@ -184,16 +195,27 @@ namespace Kopernicus
 				// If we are a star, we need to generate the coronas 
 				if (type.value == BodyType.Star) 
 				{
+					// Apply custom coronas
+					if (coronas.Count > 0) 
+					{
+						// Nuke existing ones
+						foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
+						{
+							corona.transform.parent = null;
+							GameObject.Destroy (corona.gameObject);
+						}
+
+						// Apply new ones
+						foreach (Corona corona in coronas) 
+						{
+							corona.corona.transform.parent = scaledVersion.transform;
+						}
+					}
+
 					// debug
 					Utility.DumpObjectProperties(scaledVersion.renderer.sharedMaterial, " Star Material ");
 					foreach(SunCoronas c in scaledVersion.GetComponentsInChildren<SunCoronas>(true))
 						Utility.DumpObjectFields(c, " Solar Corona ");
-
-					// Generate all the coronas
-					foreach(Corona corona in coronas)
-					{
-						// TODO - implement generation
-					}
 				}
 			}
 

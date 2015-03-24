@@ -275,6 +275,35 @@ namespace Kopernicus
 			}
 		}
 
+		/** Parser for a float curve **/
+		[RequireConfigType(ConfigType.Node)]
+		public class FloatCurveParser : IParserEventSubscriber
+		{
+			public FloatCurve curve { get; private set; }
+
+			// Build the curve from the data found in the node
+			void IParserEventSubscriber.Apply(ConfigNode node)
+			{
+				curve = new FloatCurve ();
+				curve.Load (node);
+			}
+
+			// We don't use this
+			void IParserEventSubscriber.PostApply(ConfigNode node) { Debug.Log ("Power Curve = " + curve); }
+
+			// Default constructor
+			public FloatCurveParser ()
+			{
+				this.curve = null;
+			}
+
+			// Default constructor
+			public FloatCurveParser (FloatCurve curve)
+			{
+				this.curve = curve;
+			}
+		}
+
 		/** Parser for animation curve **/
 		[RequireConfigType(ConfigType.Node)]
 		public class AnimationCurveParser : IParserEventSubscriber

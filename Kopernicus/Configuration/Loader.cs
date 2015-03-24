@@ -110,7 +110,7 @@ namespace Kopernicus
 					// Parent the generated body to the PSystem
 					body.Value.generatedBody.transform.parent = system.transform;
 				}
-
+                
 				// Stage 4 - elect root body
 				system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
 

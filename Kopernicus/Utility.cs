@@ -176,6 +176,20 @@ namespace Kopernicus
 			return null;
 		}
 
+		/** 
+		 * Get the reference Geosphere of KSP (Jool's scaled space mesh)
+		 * 
+		 * @return The reference geosphere (1000 unit radius)
+		 */
+		public static Mesh ReferenceGeosphere()
+		{
+			// We need to get the body for Jool (to steal it's mesh)
+			PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
+
+			// Return it's mesh
+			return Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh;
+		}
+
 		// Print out a tree containing all the objects in the game
 		public static void PerformObjectDump()
 		{
@@ -554,6 +568,13 @@ namespace Kopernicus
 			{
 				this.initial = initial;
 			}
+		}
+
+		public static void Log(object s)
+		{
+			#if DEBUG
+			Debug.Log(s);
+			#endif
 		}
 	}
 }

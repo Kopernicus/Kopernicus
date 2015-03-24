@@ -176,7 +176,8 @@ namespace Kopernicus
 					scaledAtmosphere.layer            = Constants.GameLayers.ScaledSpaceAtmosphere;
 					MeshRenderer renderer             = scaledAtmosphere.AddComponent<MeshRenderer>();
 					renderer.material                 = new Kopernicus.MaterialWrapper.AtmosphereFromGround();
-					scaledAtmosphere.AddComponent<MeshFilter>();
+					MeshFilter meshFilter             = scaledAtmosphere.AddComponent<MeshFilter>();
+					meshFilter.sharedMesh             = Utility.ReferenceGeosphere ();
 					scaledAtmosphere.AddComponent<AtmosphereFromGround>();
 				}
 			}
