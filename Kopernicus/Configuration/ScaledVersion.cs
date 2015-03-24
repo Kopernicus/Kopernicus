@@ -76,7 +76,7 @@ namespace Kopernicus
 			}
 
 			// Coronas for a star's scaled version
-			[ParserTargetCollection("Coronas", optional = true, allowMerge = true)]
+			[ParserTargetCollection("Coronas", optional = true, nameSignificance = NameSignificance.None)]
 			private List<Corona> coronas = new List<Corona>();
 
 			// Parser apply event
@@ -195,16 +195,27 @@ namespace Kopernicus
 				// If we are a star, we need to generate the coronas 
 				if (type.value == BodyType.Star) 
 				{
+					// Apply custom coronas
+					if (coronas.Count > 0) 
+					{
+						// Nuke existing ones
+						foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
+						{
+							corona.transform.parent = null;
+							GameObject.Destroy (corona.gameObject);
+						}
+
+						// Apply new ones
+						foreach (Corona corona in coronas) 
+						{
+							corona.corona.transform.parent = scaledVersion.transform;
+						}
+					}
+
 					// debug
 					Utility.DumpObjectProperties(scaledVersion.renderer.sharedMaterial, " Star Material ");
 					foreach(SunCoronas c in scaledVersion.GetComponentsInChildren<SunCoronas>(true))
 						Utility.DumpObjectFields(c, " Solar Corona ");
-
-					// Generate all the coronas
-					foreach(Corona corona in coronas)
-					{
-						// TODO - implement generation
-					}
 				}
 			}
 

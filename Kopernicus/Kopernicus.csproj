@@ -95,6 +95,7 @@
     <Compile Include="Configuration\Parser\Gradient.cs" />
     <Compile Include="KopernicusStarComponent.cs" />
     <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
+    <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

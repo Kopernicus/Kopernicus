@@ -39,16 +39,66 @@ namespace Kopernicus
 	namespace Configuration
 	{
 		[RequireConfigType(ConfigType.Node)]
-		public class Corona : IParserEventSubscriber
+		public class Corona
 		{
-			void IParserEventSubscriber.Apply (ConfigNode n)
-			{
+			// The generated corona
+			private SunCoronas coronaComponent;
+			public GameObject corona { get; private set; }
 
+			// Material definition for the Corona
+			[ParserTarget("scaleSpeed", optional = true, allowMerge = true)]
+			private NumericParser<float> scaleSpeed
+			{
+				set { coronaComponent.scaleSpeed = value.value; }
 			}
 
-			void IParserEventSubscriber.PostApply (ConfigNode n)
+			[ParserTarget("scaleLimitY", optional = true, allowMerge = true)]
+			private NumericParser<float> scaleLimitY 
 			{
+				set { coronaComponent.scaleLimitY = value.value; }
+			}
 
+			[ParserTarget("scaleLimitX", optional = true, allowMerge = true)]
+			private NumericParser<float> scaleLimitX
+			{
+				set { coronaComponent.scaleLimitX = value.value; }
+			}
+
+			[ParserTarget("updateInterval", optional = true, allowMerge = true)]
+			private NumericParser<float> updateInterval
+			{
+				set { coronaComponent.updateInterval = value.value; }
+			}
+
+			[ParserTarget("speed", optional = true, allowMerge = true)]
+			private NumericParser<int> speed
+			{
+				set { coronaComponent.Speed = value.value; }
+			}
+
+			[ParserTarget("rotation", optional = true, allowMerge = true)]
+			private NumericParser<float> rotation
+			{
+				set { coronaComponent.Rotation = value.value; }
+			}
+
+			[ParserTarget("Material", optional = true, allowMerge = true)]
+			private ParticleAddSmoothLoader material;
+
+			public Corona()
+			{
+				// We need to get the body for the Sun (to steal it's corona mesh)
+				PSystemBody sun = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Sun");
+
+				// Clone a default Corona
+				corona = GameObject.Instantiate (sun.scaledVersion.GetComponentsInChildren<SunCoronas> (true).First ().gameObject) as GameObject;
+				corona.transform.parent = Utility.Deactivator;
+				coronaComponent = corona.GetComponent<SunCoronas> ();
+
+				// Setup the material loader
+				material = new ParticleAddSmoothLoader (corona.renderer.material);
+				material.name = Guid.NewGuid().ToString();
+				corona.renderer.sharedMaterial = material;
 			}
 		}
 	}

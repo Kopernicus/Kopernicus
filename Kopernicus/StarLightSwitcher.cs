@@ -51,39 +51,6 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: StarLightSwitcher Started");
 			DontDestroyOnLoad (this);
 			stars = PSystemManager.Instance.localBodies.Where (body => body.scaledBody.GetComponentsInChildren<KopernicusStarComponent> (true).Length > 0).ToList ();
-
-            // Load StarColors
-            /*ConfigNode root = GameDatabase.Instance.GetConfigs("Kopernicus")[0].config;
-            foreach (ConfigNode body in root.GetNodes("Body"))
-            {
-                if (body.HasNode("StarColor"))
-                {
-                    ConfigNode color = body.GetNode("StarColor");
-                    Dictionary<string, Vector4> colorValues = new Dictionary<string, Vector4>();
-                    string bodyName = body.GetValue("name");
-                    colorValues.Add("lightColor", ConfigNode.ParseVector4(color.GetValue("lightColor") ?? "0,0,0,0"));
-                    colorValues.Add("emitColor0", ConfigNode.ParseVector4(color.GetValue("emitColor0") ?? "0,0,0,0"));
-                    colorValues.Add("emitColor1", ConfigNode.ParseVector4(color.GetValue("emitColor1") ?? "0,0,0,0"));
-                    colorValues.Add("sunspotColor", ConfigNode.ParseVector4(color.GetValue("sunspotColor") ?? "0,0,0,0"));
-                    colorValues.Add("rimColor", ConfigNode.ParseVector4(color.GetValue("rimColor") ?? "0,0,0,0"));
-
-                    mainTex.Add(bodyName, GameDatabase.Instance.GetTexture(color.GetValue("coronaTexture") ?? "", false));
-                    starColor.Add(bodyName, colorValues);
-                }
-            }
-
-            // Apply StarColor to Star
-            foreach (CelestialBody star in stars)
-            {
-                if (starColor.Keys.Contains(star.bodyName))
-                {
-                    starTransform[star.bodyName].renderer.material.SetColor("_EmitColor0", ColorConvert(starColor[star.bodyName]["emitColor0"]));
-                    starTransform[star.bodyName].renderer.material.SetColor("_EmitColor1", ColorConvert(starColor[star.bodyName]["emitColor1"]));
-                    starTransform[star.bodyName].renderer.material.SetColor("_SunspotColor", ColorConvert(starColor[star.bodyName]["sunspotColor"]));
-                    starTransform[star.bodyName].renderer.material.SetColor("_RimColor", ColorConvert(starColor[star.bodyName]["rimColor"]));
-                    
-                }
-            }*/
 		}
 
         void Update()
@@ -130,16 +97,6 @@ namespace Kopernicus
 					sp.powerCurve = component.powerCurve;
                 }
             }
-
-            // Update Corona texture
-            /*if (starTransform.Keys.Contains(CB.bodyName))
-            {
-                foreach (SunCoronas Corona in starTransform[CB.bodyName].GetComponentsInChildren<SunCoronas>())
-                {
-                    if (mainTex.Keys.Contains(CB.bodyName))
-                        Corona.renderer.material.mainTexture = mainTex[CB.bodyName];
-                }
-            }*/
         }
     }
 }

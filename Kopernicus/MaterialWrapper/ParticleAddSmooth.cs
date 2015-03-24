@@ -74,8 +74,7 @@ namespace Kopernicus
             public ParticleAddSmooth(Material material) : base(material)
             {
                 // Throw exception if this material was not the proper material
-                if (material.shader.name != Properties.shader.name)
-                    throw new InvalidOperationException("Type Mismatch: Particles/Additive (Soft) shader required");
+				base.shader = Properties.shader;
             }
 
         }

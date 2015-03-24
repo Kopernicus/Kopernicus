@@ -255,12 +255,11 @@ namespace Kopernicus
 			public static Mesh ComputeScaledSpaceMesh (PSystemBody body)
 			{
 				// We need to get the body for Jool (to steal it's mesh)
-				PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
 				const double rScaledJool = 1000.0f;
 			    double rMetersToScaledUnits = (float) (rScaledJool / body.celestialBody.Radius);
 
 				// Generate a duplicate of the Jool mesh
-				Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
+				Mesh mesh = Utility.DuplicateMesh (Utility.ReferenceGeosphere());
 
 				// If this body has a PQS, we can create a more detailed object
 				if (body.pqsVersion != null) 

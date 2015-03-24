@@ -166,9 +166,6 @@ namespace Kopernicus
 				// If we don't already have an atmospheric shell generated
 				if (scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true).Length == 0) 
 				{
-					// We need to get the body for Jool (to steal it's mesh)
-					PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-
 					// Add the material light direction behavior
 					MaterialSetDirection materialLightDirection = scaledVersion.AddComponent<MaterialSetDirection>();
 					materialLightDirection.valueName            = "_localLightDirection";
@@ -180,7 +177,7 @@ namespace Kopernicus
 					MeshRenderer renderer             = scaledAtmosphere.AddComponent<MeshRenderer>();
 					renderer.material                 = new Kopernicus.MaterialWrapper.AtmosphereFromGround();
 					MeshFilter meshFilter             = scaledAtmosphere.AddComponent<MeshFilter>();
-					meshFilter.sharedMesh             = Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh;
+					meshFilter.sharedMesh             = Utility.ReferenceGeosphere ();
 					scaledAtmosphere.AddComponent<AtmosphereFromGround>();
 				}
 			}
