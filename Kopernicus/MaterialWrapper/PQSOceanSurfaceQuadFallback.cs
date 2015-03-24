@@ -20,47 +20,47 @@ namespace Kopernicus
                 }
 
                 // Main Color, default = (1,1,1,1)
-                private const string colorKey = "_Color";
+                public const string colorKey = "_Color";
                 public int colorID { get; private set; }
 
                 // Color From Space, default = (1,1,1,1)
-                private const string colorFromSpaceKey = "_ColorFromSpace";
+                public const string colorFromSpaceKey = "_ColorFromSpace";
                 public int colorFromSpaceID { get; private set; }
 
                 // Specular Color, default = (1,1,1,1)
-                private const string specColorKey = "_SpecColor";
+                public const string specColorKey = "_SpecColor";
                 public int specColorID { get; private set; }
 
                 // Shininess, default = 0.078125
-                private const string shininessKey = "_Shininess";
+                public const string shininessKey = "_Shininess";
                 public int shininessID { get; private set; }
 
                 // Gloss, default = 0.078125
-                private const string glossKey = "_Gloss";
+                public const string glossKey = "_Gloss";
                 public int glossID { get; private set; }
 
                 // Tex Tiling, default = 1
-                private const string tilingKey = "_tiling";
+                public const string tilingKey = "_tiling";
                 public int tilingID { get; private set; }
 
                 // Tex0, default = "white" {}
-                private const string waterTexKey = "_WaterTex";
+                public const string waterTexKey = "_WaterTex";
                 public int waterTexID { get; private set; }
 
                 // Tex1, default = "white" {}
-                private const string waterTex1Key = "_WaterTex1";
+                public const string waterTex1Key = "_WaterTex1";
                 public int waterTex1ID { get; private set; }
 
                 // FadeStart, default = 1
-                private const string fadeStartKey = "_fadeStart";
+                public const string fadeStartKey = "_fadeStart";
                 public int fadeStartID { get; private set; }
 
                 // FadeEnd, default = 1
-                private const string fadeEndKey = "_fadeEnd";
+                public const string fadeEndKey = "_fadeEnd";
                 public int fadeEndID { get; private set; }
 
                 // PlanetOpacity, default = 1
-                private const string planetOpacityKey = "_PlanetOpacity";
+                public const string planetOpacityKey = "_PlanetOpacity";
                 public int planetOpacityID { get; private set; }
 
                 // Singleton instance
@@ -135,11 +135,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.waterTexID, value); }
             }
 
+            public Vector2 waterTexScale
+            {
+                get { return GetTextureScale (Properties.waterTexKey); }
+                set { SetTextureScale (Properties.waterTexKey, value); }
+            }
+
+            public Vector2 waterTexOffset
+            {
+                get { return GetTextureOffset (Properties.waterTexKey); }
+                set { SetTextureOffset (Properties.waterTexKey, value); }
+            }
+
             // Tex1, default = "white" {}
             public Texture2D waterTex1
             {
                 get { return GetTexture (Properties.Instance.waterTex1ID) as Texture2D; }
                 set { SetTexture (Properties.Instance.waterTex1ID, value); }
+            }
+
+            public Vector2 waterTex1Scale
+            {
+                get { return GetTextureScale (Properties.waterTex1Key); }
+                set { SetTextureScale (Properties.waterTex1Key, value); }
+            }
+
+            public Vector2 waterTex1Offset
+            {
+                get { return GetTextureOffset (Properties.waterTex1Key); }
+                set { SetTextureOffset (Properties.waterTex1Key, value); }
             }
 
             // FadeStart, default = 1

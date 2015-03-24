@@ -102,11 +102,35 @@ namespace Kopernicus
                 set { base.deepTex = value.value; }
             }
 
+            [ParserTarget("deepTexScale", optional = true)]
+            private Vector2Parser deepTexScaleSetter
+            {
+                set { base.deepTexScale = value.value; }
+            }
+
+            [ParserTarget("deepTexOffset", optional = true)]
+            private Vector2Parser deepTexOffsetSetter
+            {
+                set { base.deepTexOffset = value.value; }
+            }
+
             // Deep MT, default = "white" {}
             [ParserTarget("deepMultiTex", optional = true)]
             private Texture2DParser deepMultiTexSetter
             {
                 set { base.deepMultiTex = value.value; }
+            }
+
+            [ParserTarget("deepMultiTexScale", optional = true)]
+            private Vector2Parser deepMultiTexScaleSetter
+            {
+                set { base.deepMultiTexScale = value.value; }
+            }
+
+            [ParserTarget("deepMultiTexOffset", optional = true)]
+            private Vector2Parser deepMultiTexOffsetSetter
+            {
+                set { base.deepMultiTexOffset = value.value; }
             }
 
             // Deep MT Tiling, default = 1
@@ -123,11 +147,35 @@ namespace Kopernicus
                 set { base.mainTex = value.value; }
             }
 
+            [ParserTarget("mainTexScale", optional = true)]
+            private Vector2Parser mainTexScaleSetter
+            {
+                set { base.mainTexScale = value.value; }
+            }
+
+            [ParserTarget("mainTexOffset", optional = true)]
+            private Vector2Parser mainTexOffsetSetter
+            {
+                set { base.mainTexOffset = value.value; }
+            }
+
             // Main MT, default = "white" {}
             [ParserTarget("mainMultiTex", optional = true)]
             private Texture2DParser mainMultiTexSetter
             {
                 set { base.mainMultiTex = value.value; }
+            }
+
+            [ParserTarget("mainMultiTexScale", optional = true)]
+            private Vector2Parser mainMultiTexScaleSetter
+            {
+                set { base.mainMultiTexScale = value.value; }
+            }
+
+            [ParserTarget("mainMultiTexOffset", optional = true)]
+            private Vector2Parser mainMultiTexOffsetSetter
+            {
+                set { base.mainMultiTexOffset = value.value; }
             }
 
             // Main MT Tiling, default = 1
@@ -144,11 +192,35 @@ namespace Kopernicus
                 set { base.highTex = value.value; }
             }
 
+            [ParserTarget("highTexScale", optional = true)]
+            private Vector2Parser highTexScaleSetter
+            {
+                set { base.highTexScale = value.value; }
+            }
+
+            [ParserTarget("highTexOffset", optional = true)]
+            private Vector2Parser highTexOffsetSetter
+            {
+                set { base.highTexOffset = value.value; }
+            }
+
             // High MT, default = "white" {}
             [ParserTarget("highMultiTex", optional = true)]
             private Texture2DParser highMultiTexSetter
             {
                 set { base.highMultiTex = value.value; }
+            }
+
+            [ParserTarget("highMultiTexScale", optional = true)]
+            private Vector2Parser highMultiTexScaleSetter
+            {
+                set { base.highMultiTexScale = value.value; }
+            }
+
+            [ParserTarget("highMultiTexOffset", optional = true)]
+            private Vector2Parser highMultiTexOffsetSetter
+            {
+                set { base.highMultiTexOffset = value.value; }
             }
 
             // High MT Tiling, default = 1
@@ -165,11 +237,35 @@ namespace Kopernicus
                 set { base.snowTex = value.value; }
             }
 
+            [ParserTarget("snowTexScale", optional = true)]
+            private Vector2Parser snowTexScaleSetter
+            {
+                set { base.snowTexScale = value.value; }
+            }
+
+            [ParserTarget("snowTexOffset", optional = true)]
+            private Vector2Parser snowTexOffsetSetter
+            {
+                set { base.snowTexOffset = value.value; }
+            }
+
             // Snow MT, default = "white" {}
             [ParserTarget("snowMultiTex", optional = true)]
             private Texture2DParser snowMultiTexSetter
             {
                 set { base.snowMultiTex = value.value; }
+            }
+
+            [ParserTarget("snowMultiTexScale", optional = true)]
+            private Vector2Parser snowMultiTexScaleSetter
+            {
+                set { base.snowMultiTexScale = value.value; }
+            }
+
+            [ParserTarget("snowMultiTexOffset", optional = true)]
+            private Vector2Parser snowMultiTexOffsetSetter
+            {
+                set { base.snowMultiTexOffset = value.value; }
             }
 
             // Snow MT Tiling, default = 1
@@ -184,6 +280,18 @@ namespace Kopernicus
             private Texture2DParser steepTexSetter
             {
                 set { base.steepTex = value.value; }
+            }
+
+            [ParserTarget("steepTexScale", optional = true)]
+            private Vector2Parser steepTexScaleSetter
+            {
+                set { base.steepTexScale = value.value; }
+            }
+
+            [ParserTarget("steepTexOffset", optional = true)]
+            private Vector2Parser steepTexOffsetSetter
+            {
+                set { base.steepTexOffset = value.value; }
             }
 
             // Deep Start, default = 0

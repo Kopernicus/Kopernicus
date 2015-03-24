@@ -20,159 +20,159 @@ namespace Kopernicus
                 }
 
                 // Saturation, default = 1
-                private const string saturationKey = "_saturation";
+                public const string saturationKey = "_saturation";
                 public int saturationID { get; private set; }
 
                 // Contrast, default = 1
-                private const string contrastKey = "_contrast";
+                public const string contrastKey = "_contrast";
                 public int contrastID { get; private set; }
 
                 // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-                private const string tintColorKey = "_tintColor";
+                public const string tintColorKey = "_tintColor";
                 public int tintColorID { get; private set; }
 
                 // Near Blend, default = 0.5
-                private const string powerNearKey = "_powerNear";
+                public const string powerNearKey = "_powerNear";
                 public int powerNearID { get; private set; }
 
                 // Far Blend, default = 0.5
-                private const string powerFarKey = "_powerFar";
+                public const string powerFarKey = "_powerFar";
                 public int powerFarID { get; private set; }
 
                 // NearFar Start, default = 2000
-                private const string groundTexStartKey = "_groundTexStart";
+                public const string groundTexStartKey = "_groundTexStart";
                 public int groundTexStartID { get; private set; }
 
                 // NearFar End, default = 10000
-                private const string groundTexEndKey = "_groundTexEnd";
+                public const string groundTexEndKey = "_groundTexEnd";
                 public int groundTexEndID { get; private set; }
 
                 // Steep Blend, default = 1
-                private const string steepPowerKey = "_steepPower";
+                public const string steepPowerKey = "_steepPower";
                 public int steepPowerID { get; private set; }
 
                 // Steep Fade Start, default = 20000
-                private const string steepTexStartKey = "_steepTexStart";
+                public const string steepTexStartKey = "_steepTexStart";
                 public int steepTexStartID { get; private set; }
 
                 // Steep Fade End, default = 30000
-                private const string steepTexEndKey = "_steepTexEnd";
+                public const string steepTexEndKey = "_steepTexEnd";
                 public int steepTexEndID { get; private set; }
 
                 // Steep Texture, default = "white" {}
-                private const string steepTexKey = "_steepTex";
+                public const string steepTexKey = "_steepTex";
                 public int steepTexID { get; private set; }
 
                 // Steep Bump Map, default = "bump" {}
-                private const string steepBumpMapKey = "_steepBumpMap";
+                public const string steepBumpMapKey = "_steepBumpMap";
                 public int steepBumpMapID { get; private set; }
 
                 // Steep Near Tiling, default = 1
-                private const string steepNearTilingKey = "_steepNearTiling";
+                public const string steepNearTilingKey = "_steepNearTiling";
                 public int steepNearTilingID { get; private set; }
 
                 // Steep Far Tiling, default = 1
-                private const string steepTilingKey = "_steepTiling";
+                public const string steepTilingKey = "_steepTiling";
                 public int steepTilingID { get; private set; }
 
                 // Low Texture, default = "white" {}
-                private const string lowTexKey = "_lowTex";
+                public const string lowTexKey = "_lowTex";
                 public int lowTexID { get; private set; }
 
                 // Low Bump Map, default = "bump" {}
-                private const string lowBumpMapKey = "_lowBumpMap";
+                public const string lowBumpMapKey = "_lowBumpMap";
                 public int lowBumpMapID { get; private set; }
 
                 // Low Near Tiling, default = 1000
-                private const string lowNearTilingKey = "_lowNearTiling";
+                public const string lowNearTilingKey = "_lowNearTiling";
                 public int lowNearTilingID { get; private set; }
 
                 // Low Far Tiling, default = 10
-                private const string lowMultiFactorKey = "_lowMultiFactor";
+                public const string lowMultiFactorKey = "_lowMultiFactor";
                 public int lowMultiFactorID { get; private set; }
 
                 // Low Bump Near Tiling, default = 1
-                private const string lowBumpNearTilingKey = "_lowBumpNearTiling";
+                public const string lowBumpNearTilingKey = "_lowBumpNearTiling";
                 public int lowBumpNearTilingID { get; private set; }
 
                 // Low Bump Far Tiling, default = 1
-                private const string lowBumpFarTilingKey = "_lowBumpFarTiling";
+                public const string lowBumpFarTilingKey = "_lowBumpFarTiling";
                 public int lowBumpFarTilingID { get; private set; }
 
                 // Mid Texture, default = "white" {}
-                private const string midTexKey = "_midTex";
+                public const string midTexKey = "_midTex";
                 public int midTexID { get; private set; }
 
                 // Mid Bump Map, default = "bump" {}
-                private const string midBumpMapKey = "_midBumpMap";
+                public const string midBumpMapKey = "_midBumpMap";
                 public int midBumpMapID { get; private set; }
 
                 // Mid Near Tiling, default = 1000
-                private const string midNearTilingKey = "_midNearTiling";
+                public const string midNearTilingKey = "_midNearTiling";
                 public int midNearTilingID { get; private set; }
 
                 // Mid Far Tiling, default = 10
-                private const string midMultiFactorKey = "_midMultiFactor";
+                public const string midMultiFactorKey = "_midMultiFactor";
                 public int midMultiFactorID { get; private set; }
 
                 // Mid Bump Near Tiling, default = 1
-                private const string midBumpNearTilingKey = "_midBumpNearTiling";
+                public const string midBumpNearTilingKey = "_midBumpNearTiling";
                 public int midBumpNearTilingID { get; private set; }
 
                 // Mid Bump Far Tiling, default = 1
-                private const string midBumpFarTilingKey = "_midBumpFarTiling";
+                public const string midBumpFarTilingKey = "_midBumpFarTiling";
                 public int midBumpFarTilingID { get; private set; }
 
                 // High Texture, default = "white" {}
-                private const string highTexKey = "_highTex";
+                public const string highTexKey = "_highTex";
                 public int highTexID { get; private set; }
 
                 // High Bump Map, default = "bump" {}
-                private const string highBumpMapKey = "_highBumpMap";
+                public const string highBumpMapKey = "_highBumpMap";
                 public int highBumpMapID { get; private set; }
 
                 // High Near Tiling, default = 1000
-                private const string highNearTilingKey = "_highNearTiling";
+                public const string highNearTilingKey = "_highNearTiling";
                 public int highNearTilingID { get; private set; }
 
                 // High Far Tiling, default = 10
-                private const string highMultiFactorKey = "_highMultiFactor";
+                public const string highMultiFactorKey = "_highMultiFactor";
                 public int highMultiFactorID { get; private set; }
 
                 // High Bump Near Tiling, default = 1
-                private const string highBumpNearTilingKey = "_highBumpNearTiling";
+                public const string highBumpNearTilingKey = "_highBumpNearTiling";
                 public int highBumpNearTilingID { get; private set; }
 
                 // High Bump Far Tiling, default = 1
-                private const string highBumpFarTilingKey = "_highBumpFarTiling";
+                public const string highBumpFarTilingKey = "_highBumpFarTiling";
                 public int highBumpFarTilingID { get; private set; }
 
                 // Low Transition Start, default = 0
-                private const string lowStartKey = "_lowStart";
+                public const string lowStartKey = "_lowStart";
                 public int lowStartID { get; private set; }
 
                 // Low Transition End, default = 0.3
-                private const string lowEndKey = "_lowEnd";
+                public const string lowEndKey = "_lowEnd";
                 public int lowEndID { get; private set; }
 
                 // High Transition Start, default = 0.8
-                private const string highStartKey = "_highStart";
+                public const string highStartKey = "_highStart";
                 public int highStartID { get; private set; }
 
                 // High Transition End, default = 1
-                private const string highEndKey = "_highEnd";
+                public const string highEndKey = "_highEnd";
                 public int highEndID { get; private set; }
 
                 // AP Global Density, default = 1
-                private const string globalDensityKey = "_globalDensity";
+                public const string globalDensityKey = "_globalDensity";
                 public int globalDensityID { get; private set; }
 
                 // FogColorRamp, default = "white" {}
-                private const string fogColorRampKey = "_fogColorRamp";
+                public const string fogColorRampKey = "_fogColorRamp";
                 public int fogColorRampID { get; private set; }
 
                 // PlanetOpacity, default = 1
-                private const string planetOpacityKey = "_PlanetOpacity";
+                public const string planetOpacityKey = "_PlanetOpacity";
                 public int planetOpacityID { get; private set; }
 
                 // Singleton instance
@@ -310,11 +310,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.steepTexID, value); }
             }
 
+            public Vector2 steepTexScale
+            {
+                get { return GetTextureScale (Properties.steepTexKey); }
+                set { SetTextureScale (Properties.steepTexKey, value); }
+            }
+
+            public Vector2 steepTexOffset
+            {
+                get { return GetTextureOffset (Properties.steepTexKey); }
+                set { SetTextureOffset (Properties.steepTexKey, value); }
+            }
+
             // Steep Bump Map, default = "bump" {}
             public Texture2D steepBumpMap
             {
                 get { return GetTexture (Properties.Instance.steepBumpMapID) as Texture2D; }
                 set { SetTexture (Properties.Instance.steepBumpMapID, value); }
+            }
+
+            public Vector2 steepBumpMapScale
+            {
+                get { return GetTextureScale (Properties.steepBumpMapKey); }
+                set { SetTextureScale (Properties.steepBumpMapKey, value); }
+            }
+
+            public Vector2 steepBumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.steepBumpMapKey); }
+                set { SetTextureOffset (Properties.steepBumpMapKey, value); }
             }
 
             // Steep Near Tiling, default = 1
@@ -338,11 +362,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.lowTexID, value); }
             }
 
+            public Vector2 lowTexScale
+            {
+                get { return GetTextureScale (Properties.lowTexKey); }
+                set { SetTextureScale (Properties.lowTexKey, value); }
+            }
+
+            public Vector2 lowTexOffset
+            {
+                get { return GetTextureOffset (Properties.lowTexKey); }
+                set { SetTextureOffset (Properties.lowTexKey, value); }
+            }
+
             // Low Bump Map, default = "bump" {}
             public Texture2D lowBumpMap
             {
                 get { return GetTexture (Properties.Instance.lowBumpMapID) as Texture2D; }
                 set { SetTexture (Properties.Instance.lowBumpMapID, value); }
+            }
+
+            public Vector2 lowBumpMapScale
+            {
+                get { return GetTextureScale (Properties.lowBumpMapKey); }
+                set { SetTextureScale (Properties.lowBumpMapKey, value); }
+            }
+
+            public Vector2 lowBumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.lowBumpMapKey); }
+                set { SetTextureOffset (Properties.lowBumpMapKey, value); }
             }
 
             // Low Near Tiling, default = 1000
@@ -380,11 +428,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.midTexID, value); }
             }
 
+            public Vector2 midTexScale
+            {
+                get { return GetTextureScale (Properties.midTexKey); }
+                set { SetTextureScale (Properties.midTexKey, value); }
+            }
+
+            public Vector2 midTexOffset
+            {
+                get { return GetTextureOffset (Properties.midTexKey); }
+                set { SetTextureOffset (Properties.midTexKey, value); }
+            }
+
             // Mid Bump Map, default = "bump" {}
             public Texture2D midBumpMap
             {
                 get { return GetTexture (Properties.Instance.midBumpMapID) as Texture2D; }
                 set { SetTexture (Properties.Instance.midBumpMapID, value); }
+            }
+
+            public Vector2 midBumpMapScale
+            {
+                get { return GetTextureScale (Properties.midBumpMapKey); }
+                set { SetTextureScale (Properties.midBumpMapKey, value); }
+            }
+
+            public Vector2 midBumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.midBumpMapKey); }
+                set { SetTextureOffset (Properties.midBumpMapKey, value); }
             }
 
             // Mid Near Tiling, default = 1000
@@ -422,11 +494,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.highTexID, value); }
             }
 
+            public Vector2 highTexScale
+            {
+                get { return GetTextureScale (Properties.highTexKey); }
+                set { SetTextureScale (Properties.highTexKey, value); }
+            }
+
+            public Vector2 highTexOffset
+            {
+                get { return GetTextureOffset (Properties.highTexKey); }
+                set { SetTextureOffset (Properties.highTexKey, value); }
+            }
+
             // High Bump Map, default = "bump" {}
             public Texture2D highBumpMap
             {
                 get { return GetTexture (Properties.Instance.highBumpMapID) as Texture2D; }
                 set { SetTexture (Properties.Instance.highBumpMapID, value); }
+            }
+
+            public Vector2 highBumpMapScale
+            {
+                get { return GetTextureScale (Properties.highBumpMapKey); }
+                set { SetTextureScale (Properties.highBumpMapKey, value); }
+            }
+
+            public Vector2 highBumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.highBumpMapKey); }
+                set { SetTextureOffset (Properties.highBumpMapKey, value); }
             }
 
             // High Near Tiling, default = 1000
@@ -497,6 +593,18 @@ namespace Kopernicus
             {
                 get { return GetTexture (Properties.Instance.fogColorRampID) as Texture2D; }
                 set { SetTexture (Properties.Instance.fogColorRampID, value); }
+            }
+
+            public Vector2 fogColorRampScale
+            {
+                get { return GetTextureScale (Properties.fogColorRampKey); }
+                set { SetTextureScale (Properties.fogColorRampKey, value); }
+            }
+
+            public Vector2 fogColorRampOffset
+            {
+                get { return GetTextureOffset (Properties.fogColorRampKey); }
+                set { SetTextureOffset (Properties.fogColorRampKey, value); }
             }
 
             // PlanetOpacity, default = 1

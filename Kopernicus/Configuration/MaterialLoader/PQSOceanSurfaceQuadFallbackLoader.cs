@@ -60,11 +60,35 @@ namespace Kopernicus
                 set { base.waterTex = value.value; }
             }
 
+            [ParserTarget("waterTexScale", optional = true)]
+            private Vector2Parser waterTexScaleSetter
+            {
+                set { base.waterTexScale = value.value; }
+            }
+
+            [ParserTarget("waterTexOffset", optional = true)]
+            private Vector2Parser waterTexOffsetSetter
+            {
+                set { base.waterTexOffset = value.value; }
+            }
+
             // Tex1, default = "white" {}
             [ParserTarget("waterTex1", optional = true)]
             private Texture2DParser waterTex1Setter
             {
                 set { base.waterTex1 = value.value; }
+            }
+
+            [ParserTarget("waterTex1Scale", optional = true)]
+            private Vector2Parser waterTex1ScaleSetter
+            {
+                set { base.waterTex1Scale = value.value; }
+            }
+
+            [ParserTarget("waterTex1Offset", optional = true)]
+            private Vector2Parser waterTex1OffsetSetter
+            {
+                set { base.waterTex1Offset = value.value; }
             }
 
             // FadeStart, default = 1

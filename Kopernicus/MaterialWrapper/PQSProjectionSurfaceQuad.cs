@@ -20,155 +20,155 @@ namespace Kopernicus
                 }
 
                 // Saturation, default = 1
-                private const string saturationKey = "_saturation";
+                public const string saturationKey = "_saturation";
                 public int saturationID { get; private set; }
 
                 // Contrast, default = 1
-                private const string contrastKey = "_contrast";
+                public const string contrastKey = "_contrast";
                 public int contrastID { get; private set; }
 
                 // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-                private const string tintColorKey = "_tintColor";
+                public const string tintColorKey = "_tintColor";
                 public int tintColorID { get; private set; }
 
                 // Near Tiling, default = 1000
-                private const string texTilingKey = "_texTiling";
+                public const string texTilingKey = "_texTiling";
                 public int texTilingID { get; private set; }
 
                 // Near Blend, default = 0.5
-                private const string texPowerKey = "_texPower";
+                public const string texPowerKey = "_texPower";
                 public int texPowerID { get; private set; }
 
                 // Far Blend, default = 0.5
-                private const string multiPowerKey = "_multiPower";
+                public const string multiPowerKey = "_multiPower";
                 public int multiPowerID { get; private set; }
 
                 // NearFar Start, default = 2000
-                private const string groundTexStartKey = "_groundTexStart";
+                public const string groundTexStartKey = "_groundTexStart";
                 public int groundTexStartID { get; private set; }
 
                 // NearFar Start, default = 10000
-                private const string groundTexEndKey = "_groundTexEnd";
+                public const string groundTexEndKey = "_groundTexEnd";
                 public int groundTexEndID { get; private set; }
 
                 // Steep Tiling, default = 1
-                private const string steepTilingKey = "_steepTiling";
+                public const string steepTilingKey = "_steepTiling";
                 public int steepTilingID { get; private set; }
 
                 // Steep Blend, default = 1
-                private const string steepPowerKey = "_steepPower";
+                public const string steepPowerKey = "_steepPower";
                 public int steepPowerID { get; private set; }
 
                 // Steep Fade Start, default = 20000
-                private const string steepTexStartKey = "_steepTexStart";
+                public const string steepTexStartKey = "_steepTexStart";
                 public int steepTexStartID { get; private set; }
 
                 // Steep Fade End, default = 30000
-                private const string steepTexEndKey = "_steepTexEnd";
+                public const string steepTexEndKey = "_steepTexEnd";
                 public int steepTexEndID { get; private set; }
 
                 // Deep ground, default = "white" {}
-                private const string deepTexKey = "_deepTex";
+                public const string deepTexKey = "_deepTex";
                 public int deepTexID { get; private set; }
 
                 // Deep MT, default = "white" {}
-                private const string deepMultiTexKey = "_deepMultiTex";
+                public const string deepMultiTexKey = "_deepMultiTex";
                 public int deepMultiTexID { get; private set; }
 
                 // Deep MT Tiling, default = 1
-                private const string deepMultiFactorKey = "_deepMultiFactor";
+                public const string deepMultiFactorKey = "_deepMultiFactor";
                 public int deepMultiFactorID { get; private set; }
 
                 // Main Texture, default = "white" {}
-                private const string mainTexKey = "_mainTex";
+                public const string mainTexKey = "_mainTex";
                 public int mainTexID { get; private set; }
 
                 // Main MT, default = "white" {}
-                private const string mainMultiTexKey = "_mainMultiTex";
+                public const string mainMultiTexKey = "_mainMultiTex";
                 public int mainMultiTexID { get; private set; }
 
                 // Main MT Tiling, default = 1
-                private const string mainMultiFactorKey = "_mainMultiFactor";
+                public const string mainMultiFactorKey = "_mainMultiFactor";
                 public int mainMultiFactorID { get; private set; }
 
                 // High Ground, default = "white" {}
-                private const string highTexKey = "_highTex";
+                public const string highTexKey = "_highTex";
                 public int highTexID { get; private set; }
 
                 // High MT, default = "white" {}
-                private const string highMultiTexKey = "_highMultiTex";
+                public const string highMultiTexKey = "_highMultiTex";
                 public int highMultiTexID { get; private set; }
 
                 // High MT Tiling, default = 1
-                private const string highMultiFactorKey = "_highMultiFactor";
+                public const string highMultiFactorKey = "_highMultiFactor";
                 public int highMultiFactorID { get; private set; }
 
                 // Snow, default = "white" {}
-                private const string snowTexKey = "_snowTex";
+                public const string snowTexKey = "_snowTex";
                 public int snowTexID { get; private set; }
 
                 // Snow MT, default = "white" {}
-                private const string snowMultiTexKey = "_snowMultiTex";
+                public const string snowMultiTexKey = "_snowMultiTex";
                 public int snowMultiTexID { get; private set; }
 
                 // Snow MT Tiling, default = 1
-                private const string snowMultiFactorKey = "_snowMultiFactor";
+                public const string snowMultiFactorKey = "_snowMultiFactor";
                 public int snowMultiFactorID { get; private set; }
 
                 // Steep Texture, default = "white" {}
-                private const string steepTexKey = "_steepTex";
+                public const string steepTexKey = "_steepTex";
                 public int steepTexID { get; private set; }
 
                 // Deep Start, default = 0
-                private const string deepStartKey = "_deepStart";
+                public const string deepStartKey = "_deepStart";
                 public int deepStartID { get; private set; }
 
                 // Deep End, default = 0.3
-                private const string deepEndKey = "_deepEnd";
+                public const string deepEndKey = "_deepEnd";
                 public int deepEndID { get; private set; }
 
                 // Main lower boundary start, default = 0
-                private const string mainLoStartKey = "_mainLoStart";
+                public const string mainLoStartKey = "_mainLoStart";
                 public int mainLoStartID { get; private set; }
 
                 // Main lower boundary end, default = 0.5
-                private const string mainLoEndKey = "_mainLoEnd";
+                public const string mainLoEndKey = "_mainLoEnd";
                 public int mainLoEndID { get; private set; }
 
                 // Main upper boundary start, default = 0.3
-                private const string mainHiStartKey = "_mainHiStart";
+                public const string mainHiStartKey = "_mainHiStart";
                 public int mainHiStartID { get; private set; }
 
                 // Main upper boundary end, default = 0.5
-                private const string mainHiEndKey = "_mainHiEnd";
+                public const string mainHiEndKey = "_mainHiEnd";
                 public int mainHiEndID { get; private set; }
 
                 // High lower boundary start, default = 0.6
-                private const string hiLoStartKey = "_hiLoStart";
+                public const string hiLoStartKey = "_hiLoStart";
                 public int hiLoStartID { get; private set; }
 
                 // High lower boundary end, default = 0.6
-                private const string hiLoEndKey = "_hiLoEnd";
+                public const string hiLoEndKey = "_hiLoEnd";
                 public int hiLoEndID { get; private set; }
 
                 // High upper boundary start, default = 0.6
-                private const string hiHiStartKey = "_hiHiStart";
+                public const string hiHiStartKey = "_hiHiStart";
                 public int hiHiStartID { get; private set; }
 
                 // High upper boundary end, default = 0.9
-                private const string hiHiEndKey = "_hiHiEnd";
+                public const string hiHiEndKey = "_hiHiEnd";
                 public int hiHiEndID { get; private set; }
 
                 // Snow Start, default = 0.9
-                private const string snowStartKey = "_snowStart";
+                public const string snowStartKey = "_snowStart";
                 public int snowStartID { get; private set; }
 
                 // Snow End, default = 1
-                private const string snowEndKey = "_snowEnd";
+                public const string snowEndKey = "_snowEnd";
                 public int snowEndID { get; private set; }
 
                 // PlanetOpacity, default = 1
-                private const string planetOpacityKey = "_PlanetOpacity";
+                public const string planetOpacityKey = "_PlanetOpacity";
                 public int planetOpacityID { get; private set; }
 
                 // Singleton instance
@@ -319,11 +319,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.deepTexID, value); }
             }
 
+            public Vector2 deepTexScale
+            {
+                get { return GetTextureScale (Properties.deepTexKey); }
+                set { SetTextureScale (Properties.deepTexKey, value); }
+            }
+
+            public Vector2 deepTexOffset
+            {
+                get { return GetTextureOffset (Properties.deepTexKey); }
+                set { SetTextureOffset (Properties.deepTexKey, value); }
+            }
+
             // Deep MT, default = "white" {}
             public Texture2D deepMultiTex
             {
                 get { return GetTexture (Properties.Instance.deepMultiTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.deepMultiTexID, value); }
+            }
+
+            public Vector2 deepMultiTexScale
+            {
+                get { return GetTextureScale (Properties.deepMultiTexKey); }
+                set { SetTextureScale (Properties.deepMultiTexKey, value); }
+            }
+
+            public Vector2 deepMultiTexOffset
+            {
+                get { return GetTextureOffset (Properties.deepMultiTexKey); }
+                set { SetTextureOffset (Properties.deepMultiTexKey, value); }
             }
 
             // Deep MT Tiling, default = 1
@@ -340,11 +364,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.mainTexID, value); }
             }
 
+            public Vector2 mainTexScale
+            {
+                get { return GetTextureScale (Properties.mainTexKey); }
+                set { SetTextureScale (Properties.mainTexKey, value); }
+            }
+
+            public Vector2 mainTexOffset
+            {
+                get { return GetTextureOffset (Properties.mainTexKey); }
+                set { SetTextureOffset (Properties.mainTexKey, value); }
+            }
+
             // Main MT, default = "white" {}
             public Texture2D mainMultiTex
             {
                 get { return GetTexture (Properties.Instance.mainMultiTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.mainMultiTexID, value); }
+            }
+
+            public Vector2 mainMultiTexScale
+            {
+                get { return GetTextureScale (Properties.mainMultiTexKey); }
+                set { SetTextureScale (Properties.mainMultiTexKey, value); }
+            }
+
+            public Vector2 mainMultiTexOffset
+            {
+                get { return GetTextureOffset (Properties.mainMultiTexKey); }
+                set { SetTextureOffset (Properties.mainMultiTexKey, value); }
             }
 
             // Main MT Tiling, default = 1
@@ -361,11 +409,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.highTexID, value); }
             }
 
+            public Vector2 highTexScale
+            {
+                get { return GetTextureScale (Properties.highTexKey); }
+                set { SetTextureScale (Properties.highTexKey, value); }
+            }
+
+            public Vector2 highTexOffset
+            {
+                get { return GetTextureOffset (Properties.highTexKey); }
+                set { SetTextureOffset (Properties.highTexKey, value); }
+            }
+
             // High MT, default = "white" {}
             public Texture2D highMultiTex
             {
                 get { return GetTexture (Properties.Instance.highMultiTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.highMultiTexID, value); }
+            }
+
+            public Vector2 highMultiTexScale
+            {
+                get { return GetTextureScale (Properties.highMultiTexKey); }
+                set { SetTextureScale (Properties.highMultiTexKey, value); }
+            }
+
+            public Vector2 highMultiTexOffset
+            {
+                get { return GetTextureOffset (Properties.highMultiTexKey); }
+                set { SetTextureOffset (Properties.highMultiTexKey, value); }
             }
 
             // High MT Tiling, default = 1
@@ -382,11 +454,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.snowTexID, value); }
             }
 
+            public Vector2 snowTexScale
+            {
+                get { return GetTextureScale (Properties.snowTexKey); }
+                set { SetTextureScale (Properties.snowTexKey, value); }
+            }
+
+            public Vector2 snowTexOffset
+            {
+                get { return GetTextureOffset (Properties.snowTexKey); }
+                set { SetTextureOffset (Properties.snowTexKey, value); }
+            }
+
             // Snow MT, default = "white" {}
             public Texture2D snowMultiTex
             {
                 get { return GetTexture (Properties.Instance.snowMultiTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.snowMultiTexID, value); }
+            }
+
+            public Vector2 snowMultiTexScale
+            {
+                get { return GetTextureScale (Properties.snowMultiTexKey); }
+                set { SetTextureScale (Properties.snowMultiTexKey, value); }
+            }
+
+            public Vector2 snowMultiTexOffset
+            {
+                get { return GetTextureOffset (Properties.snowMultiTexKey); }
+                set { SetTextureOffset (Properties.snowMultiTexKey, value); }
             }
 
             // Snow MT Tiling, default = 1
@@ -401,6 +497,18 @@ namespace Kopernicus
             {
                 get { return GetTexture (Properties.Instance.steepTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.steepTexID, value); }
+            }
+
+            public Vector2 steepTexScale
+            {
+                get { return GetTextureScale (Properties.steepTexKey); }
+                set { SetTextureScale (Properties.steepTexKey, value); }
+            }
+
+            public Vector2 steepTexOffset
+            {
+                get { return GetTextureOffset (Properties.steepTexKey); }
+                set { SetTextureOffset (Properties.steepTexKey, value); }
             }
 
             // Deep Start, default = 0

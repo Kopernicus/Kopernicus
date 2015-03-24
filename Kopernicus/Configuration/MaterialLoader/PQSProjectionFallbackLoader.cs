@@ -81,6 +81,18 @@ namespace Kopernicus
                 set { base.mainTex = value.value; }
             }
 
+            [ParserTarget("mainTexScale", optional = true)]
+            private Vector2Parser mainTexScaleSetter
+            {
+                set { base.mainTexScale = value.value; }
+            }
+
+            [ParserTarget("mainTexOffset", optional = true)]
+            private Vector2Parser mainTexOffsetSetter
+            {
+                set { base.mainTexOffset = value.value; }
+            }
+
             // PlanetOpacity, default = 1
             [ParserTarget("planetOpacity", optional = true)]
             private NumericParser<float> planetOpacitySetter

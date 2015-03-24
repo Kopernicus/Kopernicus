@@ -88,11 +88,35 @@ namespace Kopernicus
                 set { base.steepTex = value.value; }
             }
 
+            [ParserTarget("steepTexScale", optional = true)]
+            private Vector2Parser steepTexScaleSetter
+            {
+                set { base.steepTexScale = value.value; }
+            }
+
+            [ParserTarget("steepTexOffset", optional = true)]
+            private Vector2Parser steepTexOffsetSetter
+            {
+                set { base.steepTexOffset = value.value; }
+            }
+
             // Steep Bump Map, default = "bump" {}
             [ParserTarget("steepBumpMap", optional = true)]
             private Texture2DParser steepBumpMapSetter
             {
                 set { base.steepBumpMap = value.value; }
+            }
+
+            [ParserTarget("steepBumpMapScale", optional = true)]
+            private Vector2Parser steepBumpMapScaleSetter
+            {
+                set { base.steepBumpMapScale = value.value; }
+            }
+
+            [ParserTarget("steepBumpMapOffset", optional = true)]
+            private Vector2Parser steepBumpMapOffsetSetter
+            {
+                set { base.steepBumpMapOffset = value.value; }
             }
 
             // Steep Near Tiling, default = 1
@@ -116,11 +140,35 @@ namespace Kopernicus
                 set { base.lowTex = value.value; }
             }
 
+            [ParserTarget("lowTexScale", optional = true)]
+            private Vector2Parser lowTexScaleSetter
+            {
+                set { base.lowTexScale = value.value; }
+            }
+
+            [ParserTarget("lowTexOffset", optional = true)]
+            private Vector2Parser lowTexOffsetSetter
+            {
+                set { base.lowTexOffset = value.value; }
+            }
+
             // Low Bump Map, default = "bump" {}
             [ParserTarget("lowBumpMap", optional = true)]
             private Texture2DParser lowBumpMapSetter
             {
                 set { base.lowBumpMap = value.value; }
+            }
+
+            [ParserTarget("lowBumpMapScale", optional = true)]
+            private Vector2Parser lowBumpMapScaleSetter
+            {
+                set { base.lowBumpMapScale = value.value; }
+            }
+
+            [ParserTarget("lowBumpMapOffset", optional = true)]
+            private Vector2Parser lowBumpMapOffsetSetter
+            {
+                set { base.lowBumpMapOffset = value.value; }
             }
 
             // Low Near Tiling, default = 1000
@@ -158,11 +206,35 @@ namespace Kopernicus
                 set { base.midTex = value.value; }
             }
 
+            [ParserTarget("midTexScale", optional = true)]
+            private Vector2Parser midTexScaleSetter
+            {
+                set { base.midTexScale = value.value; }
+            }
+
+            [ParserTarget("midTexOffset", optional = true)]
+            private Vector2Parser midTexOffsetSetter
+            {
+                set { base.midTexOffset = value.value; }
+            }
+
             // Mid Bump Map, default = "bump" {}
             [ParserTarget("midBumpMap", optional = true)]
             private Texture2DParser midBumpMapSetter
             {
                 set { base.midBumpMap = value.value; }
+            }
+
+            [ParserTarget("midBumpMapScale", optional = true)]
+            private Vector2Parser midBumpMapScaleSetter
+            {
+                set { base.midBumpMapScale = value.value; }
+            }
+
+            [ParserTarget("midBumpMapOffset", optional = true)]
+            private Vector2Parser midBumpMapOffsetSetter
+            {
+                set { base.midBumpMapOffset = value.value; }
             }
 
             // Mid Near Tiling, default = 1000
@@ -200,11 +272,35 @@ namespace Kopernicus
                 set { base.highTex = value.value; }
             }
 
+            [ParserTarget("highTexScale", optional = true)]
+            private Vector2Parser highTexScaleSetter
+            {
+                set { base.highTexScale = value.value; }
+            }
+
+            [ParserTarget("highTexOffset", optional = true)]
+            private Vector2Parser highTexOffsetSetter
+            {
+                set { base.highTexOffset = value.value; }
+            }
+
             // High Bump Map, default = "bump" {}
             [ParserTarget("highBumpMap", optional = true)]
             private Texture2DParser highBumpMapSetter
             {
                 set { base.highBumpMap = value.value; }
+            }
+
+            [ParserTarget("highBumpMapScale", optional = true)]
+            private Vector2Parser highBumpMapScaleSetter
+            {
+                set { base.highBumpMapScale = value.value; }
+            }
+
+            [ParserTarget("highBumpMapOffset", optional = true)]
+            private Vector2Parser highBumpMapOffsetSetter
+            {
+                set { base.highBumpMapOffset = value.value; }
             }
 
             // High Near Tiling, default = 1000
@@ -275,6 +371,18 @@ namespace Kopernicus
             private Texture2DParser fogColorRampSetter
             {
                 set { base.fogColorRamp = value.value; }
+            }
+
+            [ParserTarget("fogColorRampScale", optional = true)]
+            private Vector2Parser fogColorRampScaleSetter
+            {
+                set { base.fogColorRampScale = value.value; }
+            }
+
+            [ParserTarget("fogColorRampOffset", optional = true)]
+            private Vector2Parser fogColorRampOffsetSetter
+            {
+                set { base.fogColorRampOffset = value.value; }
             }
 
             // PlanetOpacity, default = 1
