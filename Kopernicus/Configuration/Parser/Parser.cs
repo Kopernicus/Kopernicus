@@ -219,7 +219,11 @@ namespace Kopernicus
 							// Otherwise throw an exception because we don't support named ones yet
 							else if (target.nameSignificance == NameSignificance.Type) 
 							{
-								throw new Exception ("Name significance = type: Unsupported at this time");
+								// Generate the type from the name
+								Type elementType = Type.GetType (target.typePrefix + subnode.name);
+
+								// Add the object to the collection
+								collection.Add (CreateObjectFromConfigNode (elementType, subnode));
 							}
 						}
 					}

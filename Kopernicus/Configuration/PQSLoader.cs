@@ -59,6 +59,10 @@ namespace Kopernicus
 				set { collider.physicsMaterial = value.material; }
 			}
 
+			// PQS Mods
+			[ParserTargetCollection("Mods", optional = true, typePrefix = "Kopernicus.Configuration.")]
+			private List<object> mods = new List<object> (); 
+
 			/**
 			 * Constructor for new PQS
 			 **/

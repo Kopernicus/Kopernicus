@@ -38,6 +38,9 @@ namespace Kopernicus
 		{
 			// Node name significance - does the name mean anything
 			public NameSignificance nameSignificance = NameSignificance.None;
+
+			// Namespace of any generated classes for NameSignificance.Type
+			public string typePrefix = "";
 			
 			// Constructor sets name
 			public ParserTargetCollection(string fieldName = null) : base (fieldName) { }
