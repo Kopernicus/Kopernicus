@@ -143,6 +143,13 @@ namespace Kopernicus
 					// No more ocean :(
 					body.celestialBody.ocean = false;
 				}
+
+				// Selectively remove PQS Mods
+				if (originalBody.pqsVersion != null) 
+				{
+					// Dump the PQS of the body
+					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, " Found PQS ");
+				}
 				
 				// Figure out what kind of body we are
 				if (body.scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0)
