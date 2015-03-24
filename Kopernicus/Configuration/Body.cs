@@ -230,26 +230,6 @@ namespace Kopernicus
 					// Apply mesh to the body
 					SphereCollider collider = generatedBody.scaledVersion.GetComponent<SphereCollider>();
 					if (collider != null) collider.radius = rScaled;
-
-					// If we have an atmosphere, generate that too
-					if(generatedBody.celestialBody.atmosphere)
-					{
-						// Find atmosphere from ground
-						AtmosphereFromGround[] afgs = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true);
-						if(afgs.Length > 0)
-						{
-							// Get the atmosphere from ground
-							AtmosphereFromGround atmosphereFromGround = afgs[0];
-
-							// We need to get the body for Jool (to steal it's mesh)
-							PSystemBody Jool = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-							
-							// Generate mesh using Jool as a template
-							Mesh mesh = Utility.DuplicateMesh (Jool.scaledVersion.GetComponent<MeshFilter> ().sharedMesh);
-							//Utility.ScaleVerts (mesh, (float)(generatedBody.celestialBody.Radius / rJool));
-							atmosphereFromGround.GetComponent<MeshFilter>().sharedMesh = mesh;
-						}
-					}
 				}
 
 				// Post gen celestial body
