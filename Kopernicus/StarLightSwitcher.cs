@@ -44,43 +44,16 @@ namespace Kopernicus
 		// List of celestial bodies that are stars
 		private List<CelestialBody> stars;
 
-        // Custom powerCurves
-        private Dictionary<string, ConfigNode> powerNodes = new Dictionary<string,ConfigNode>();
-
-        // StarTransforms
-        private Dictionary<string, Transform> starTransform = new Dictionary<string,Transform>();
-
-        // Store StarColors 
-        private Dictionary<string, Dictionary<string, Vector4>> starColor = new Dictionary<string, Dictionary<string, Vector4>>();
-
-        // StarTexture
-        private Dictionary<string, Texture2D> mainTex = new Dictionary<string,Texture2D>();
-
 		// MonoBehavior.Awake()
 		void Awake()
 		{
 			// Don't kill us
 			Debug.Log ("[Kopernicus]: StarLightSwitcher Started");
 			DontDestroyOnLoad (this);
-			stars = PSystemManager.Instance.localBodies.Where (body => body.scaledBody.GetComponentsInChildren<SunShaderController> (true).Length > 0).ToList ();
-
-            // Load custom powerCurves
-            foreach (ConfigNode node in GameDatabase.Instance.GetConfigNodes("Kopernicus")[0].GetNodes("Body"))
-            {                                                                               
-                if (node.HasNode("powerCurve"))
-                    powerNodes.Add(node.GetValue("name"), node.GetNode("powerCurve")); // Add custom powerCurve to our Dictionary
-                else
-                    powerNodes.Add(node.GetValue("name"), powerNodes["Sun"]);
-            }
-
-            // Get StarTransforms
-            foreach (Transform TransformStar in ScaledSpace.Instance.scaledSpaceTransforms)
-            {
-                starTransform[TransformStar.name] = TransformStar;
-            }
+			stars = PSystemManager.Instance.localBodies.Where (body => body.scaledBody.GetComponentsInChildren<KopernicusStarComponent> (true).Length > 0).ToList ();
 
             // Load StarColors
-            ConfigNode root = GameDatabase.Instance.GetConfigs("Kopernicus")[0].config;
+            /*ConfigNode root = GameDatabase.Instance.GetConfigs("Kopernicus")[0].config;
             foreach (ConfigNode body in root.GetNodes("Body"))
             {
                 if (body.HasNode("StarColor"))
@@ -110,7 +83,7 @@ namespace Kopernicus
                     starTransform[star.bodyName].renderer.material.SetColor("_RimColor", ColorConvert(starColor[star.bodyName]["rimColor"]));
                     
                 }
-            }
+            }*/
 		}
 
         void Update()
@@ -137,47 +110,36 @@ namespace Kopernicus
 		// Set the active sun object
         public void SetSun(CelestialBody CB)
         {
-            //Set star as active star
+            // Set star as active star
             Sun.Instance.sun = CB;
             Planetarium.fetch.Sun = CB;
-            Debug.Log("Active sun set to: " + CB.name);
+            Debug.Log("[Kopernicus]: StarLightSwitcher: Active star = " + CB.name);
 
-            //Set sunflare color
-            Sun.Instance.sunFlare.color = (starColor.Keys.Contains(CB.bodyName)) ? ColorConvert(starColor[CB.bodyName]["lightColor"]) : new Color(1.0f, 1.0f, 1.0f, 1.0f);
+			// Get the star component
+			KopernicusStarComponent component = CB.scaledBody.GetComponent<KopernicusStarComponent> ();
 
-            //Reset solar panels (Credit to Kcreator)
-            foreach (ModuleDeployableSolarPanel panel in FindObjectsOfType(typeof(ModuleDeployableSolarPanel)))
-            {
-                panel.OnStart(PartModule.StartState.Orbital);
-            }
+            // Set sunflare color
+			Sun.Instance.sunFlare.color = component.lightColor;
 
             // Set custom powerCurve for solar panels
             if (FlightGlobals.ActiveVessel != null)
             {
                 foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
                 {
-                    if (powerNodes[CB.bodyName].GetType() == typeof(ConfigNode)) // Sure is sure
-                    {
-                        sp.powerCurve = new FloatCurve();
-                        sp.powerCurve.Load(powerNodes[CB.bodyName]); // Apply our custom powerCurve
-                    }
+					sp.OnStart (PartModule.StartState.Orbital);
+					sp.powerCurve = component.powerCurve;
                 }
             }
 
             // Update Corona texture
-            if (starTransform.Keys.Contains(CB.bodyName))
+            /*if (starTransform.Keys.Contains(CB.bodyName))
             {
                 foreach (SunCoronas Corona in starTransform[CB.bodyName].GetComponentsInChildren<SunCoronas>())
                 {
                     if (mainTex.Keys.Contains(CB.bodyName))
                         Corona.renderer.material.mainTexture = mainTex[CB.bodyName];
                 }
-            }
+            }*/
         }
-
-        public Color ColorConvert(Vector4 c) {
-            return new Color(c.x, c.y, c.z, c.w);
-        }
-
     }
 }

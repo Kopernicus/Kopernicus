@@ -555,6 +555,13 @@ namespace Kopernicus
 				this.initial = initial;
 			}
 		}
+
+		public static void Log(object s)
+		{
+			#if DEBUG
+			Debug.Log(s);
+			#endif
+		}
 	}
 }
 

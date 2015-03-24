@@ -95,6 +95,8 @@ namespace Kopernicus
 			private PQSLoader pqs;
 
 			// Sun
+			[ParserTarget("SolarPowerCurve", optional = true, allowMerge = false)]
+			private FloatCurveParser solarPowerCurve;
 
 			// Parser Apply Event
 			public void Apply (ConfigNode node)
@@ -193,6 +195,19 @@ namespace Kopernicus
 					// Adjust the radius of the PQSs appropriately
 					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 						p.radius = generatedBody.celestialBody.Radius;
+				}
+
+				// If this body is a star
+				if (scaledVersion.type.value == BodyType.Star) 
+				{
+					// Get the Kopernicus star component from the scaled version
+					KopernicusStarComponent component = generatedBody.scaledVersion.GetComponent<KopernicusStarComponent> ();
+
+					// If we have defined a custom power curve, load it
+					if (solarPowerCurve != null) 
+					{
+						component.powerCurve = solarPowerCurve.curve;
+					}
 				}
 
 				// We need to generate new scaled space meshes if 

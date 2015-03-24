@@ -281,8 +281,9 @@ namespace Kopernicus
 					}
 				}
 
-				
+				#if DEBUG
 				Debug.Log("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
+				#endif
 
 				// If there was no data found for this node
 				if (!isNode && !isValue) 

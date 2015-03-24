@@ -47,6 +47,7 @@ namespace Kopernicus
 			// Scaled representation of a planet for map view to modify
 			private GameObject scaledVersion;
 			private CelestialBody owner;
+			private KopernicusStarComponent component;
 
 			// Type of object this body's scaled version is
 			[PreApply]
@@ -65,6 +66,13 @@ namespace Kopernicus
 			private NumericParser<float> fadeEnd
 			{
 				set { scaledVersion.GetComponent<ScaledSpaceFader> ().fadeEnd = value.value; }
+			}
+
+			// Set the color that the star emits
+			[ParserTarget("solarLightColor", optional = true)]
+			private ColorParser solarLightColor 
+			{
+				set { component.lightColor = value.value; }
 			}
 
 			// Coronas for a star's scaled version
@@ -145,7 +153,7 @@ namespace Kopernicus
 				// Otherwise we are a star
 				else 
 				{
-					Debug.LogWarning("[Kopernicus]: Configuration.ScaledVersion: Complete implemention of modification of star scaled version");
+					Debug.Log("[Kopernicus]: Configuration.ScaledVersion: Incomplete implemention of modification of star scaled version");
 
 					// Add the SunShaderController behavior
 					if(scaledVersion.GetComponent<SunShaderController>() == null)
@@ -155,6 +163,9 @@ namespace Kopernicus
 					// TODO - apparently there can only be one of these (or it destroys itself)
 					if(scaledVersion.GetComponent<ScaledSun>() == null)
 						scaledVersion.AddComponent<ScaledSun>();
+
+					// Add the Kopernicus star componenet
+					component = scaledVersion.AddComponent<KopernicusStarComponent> ();
 
 					// Generate a new material for the star
 					EmissiveMultiRampSunspotsLoader newMaterial = null;

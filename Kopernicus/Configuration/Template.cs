@@ -145,14 +145,14 @@ namespace Kopernicus
 				}
 				
 				// Figure out what kind of body we are
-				if (body.scaledVersion.GetComponentsInChildren(typeof(ScaledSun), true).Length > 0)
+				if (body.scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0)
 					type = BodyType.Star;
 				else if(body.celestialBody.atmosphere)
 					type = BodyType.Atmospheric;
 				else
 					type = BodyType.Vacuum;
 
-				Debug.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
+				Debug.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\" - " + type );
 			}
 
 			// Private exception to throw in the case the template doesn't load
