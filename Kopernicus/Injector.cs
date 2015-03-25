@@ -51,7 +51,7 @@ namespace Kopernicus
 		{
 			// We're ALIVE
 			Logger.Default.SetAsActive ();
-			Logger.Default.Log("[Kopernicus]: Injector.Awake(): Begin");
+			Logger.Default.Log("Injector.Awake(): Begin");
 
 			// Yo garbage collector - we have work to do man
 			DontDestroyOnLoad(this);
@@ -60,7 +60,7 @@ namespace Kopernicus
 			if (PSystemManager.Instance == null) 
 			{
 				// Log the error
-				Logger.Default.Log("[Kopernicus]: Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
+				Logger.Default.Log("Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
 				return;
 			}
 
@@ -79,7 +79,7 @@ namespace Kopernicus
 
 			// Done executing the awake function
 			TimeSpan duration = (DateTime.Now - start);
-			Logger.Default.Log("[Kopernicus]: Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
+			Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
 			Logger.Default.Flush ();
 		}
 
@@ -87,8 +87,13 @@ namespace Kopernicus
 		public void PostSpawnFixups ()
 		{
 			// For some reason the game doesn't find nouveau Kerbin
-			Logger.Default.Log("[Kopernicus]: OnPSystemReady() => Fixing space center celestial body");
+			Logger.Default.Log("Injector.PostSpawnFixups() => Fixing space center celestial body");
 			SpaceCenter.Instance.cb = Planetarium.fetch.Home;
+
+			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
+			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
+			double maximumDistance = rootBody.children.Max (b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
+			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
 			// Find all textures
 			/*foreach(Texture t in Resources.FindObjectsOfTypeAll<Texture>())
@@ -101,7 +106,7 @@ namespace Kopernicus
 		// Log the destruction of the injector
 		public void OnDestroy()
 		{
-			Logger.Default.Log("[Kopernicus]: Injection Complete");
+			Logger.Default.Log("Injection Complete");
 			Logger.Default.Flush ();
 		}
 	}
