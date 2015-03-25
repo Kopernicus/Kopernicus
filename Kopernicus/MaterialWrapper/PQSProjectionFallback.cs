@@ -20,47 +20,47 @@ namespace Kopernicus
                 }
 
                 // Saturation, default = 1
-                private const string saturationKey = "_saturation";
+                public const string saturationKey = "_saturation";
                 public int saturationID { get; private set; }
 
                 // Contrast, default = 1
-                private const string contrastKey = "_contrast";
+                public const string contrastKey = "_contrast";
                 public int contrastID { get; private set; }
 
                 // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-                private const string tintColorKey = "_tintColor";
+                public const string tintColorKey = "_tintColor";
                 public int tintColorID { get; private set; }
 
                 // Near Tiling, default = 1000
-                private const string texTilingKey = "_texTiling";
+                public const string texTilingKey = "_texTiling";
                 public int texTilingID { get; private set; }
 
                 // Near Blend, default = 0.5
-                private const string texPowerKey = "_texPower";
+                public const string texPowerKey = "_texPower";
                 public int texPowerID { get; private set; }
 
                 // Far Blend, default = 0.5
-                private const string multiPowerKey = "_multiPower";
+                public const string multiPowerKey = "_multiPower";
                 public int multiPowerID { get; private set; }
 
                 // NearFar Start, default = 2000
-                private const string groundTexStartKey = "_groundTexStart";
+                public const string groundTexStartKey = "_groundTexStart";
                 public int groundTexStartID { get; private set; }
 
                 // NearFar Start, default = 10000
-                private const string groundTexEndKey = "_groundTexEnd";
+                public const string groundTexEndKey = "_groundTexEnd";
                 public int groundTexEndID { get; private set; }
 
                 // Multifactor, default = 0.5
-                private const string multiFactorKey = "_multiFactor";
+                public const string multiFactorKey = "_multiFactor";
                 public int multiFactorID { get; private set; }
 
                 // Main Texture, default = "white" {}
-                private const string mainTexKey = "_mainTex";
+                public const string mainTexKey = "_mainTex";
                 public int mainTexID { get; private set; }
 
                 // PlanetOpacity, default = 1
-                private const string planetOpacityKey = "_PlanetOpacity";
+                public const string planetOpacityKey = "_PlanetOpacity";
                 public int planetOpacityID { get; private set; }
 
                 // Singleton instance
@@ -161,6 +161,18 @@ namespace Kopernicus
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.mainTexID, value); }
+            }
+
+            public Vector2 mainTexScale
+            {
+                get { return GetTextureScale (Properties.mainTexKey); }
+                set { SetTextureScale (Properties.mainTexKey, value); }
+            }
+
+            public Vector2 mainTexOffset
+            {
+                get { return GetTextureOffset (Properties.mainTexKey); }
+                set { SetTextureOffset (Properties.mainTexKey, value); }
             }
 
             // PlanetOpacity, default = 1

@@ -155,7 +155,7 @@ namespace Kopernicus
 				{
 					foreach (CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes) 
 					{
-						Debug.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
+						Logger.Active.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
 					}
 				}
 			}

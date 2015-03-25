@@ -289,7 +289,7 @@ namespace Kopernicus
 			}
 
 			// We don't use this
-			void IParserEventSubscriber.PostApply(ConfigNode node) { Debug.Log ("Power Curve = " + curve); }
+			void IParserEventSubscriber.PostApply(ConfigNode node) {  }
 
 			// Default constructor
 			public FloatCurveParser ()

@@ -36,12 +36,12 @@ public class MaterialWrapperGenerator
     {
         // Create a linked list for lines of code
         LinkedList<String> p = new LinkedList<>();
-        
+
         // Synthesize the shader accessor
         p.add("// Internal property ID tracking object\n");
         p.add("protected class Properties\n");
         p.add("{\n");
-        
+
         // Synthesize the shader for material property
         p.add("    // Return the shader for this wrapper\n");
         p.add("    private const string shaderName = \"" + shaderName + "\";\n");
@@ -49,7 +49,7 @@ public class MaterialWrapperGenerator
         p.add("    {\n");
         p.add("        get { return Shader.Find (shaderName); }\n");
         p.add("    }\n\n");
-                
+
         // Synthesize the class properties
         for(ShaderProperty property : properties)
         {
@@ -59,7 +59,7 @@ public class MaterialWrapperGenerator
                 p.add("    " + line);
             }
         }
-        
+
         // Synthesize single accessor / allocator
         p.add("    // Singleton instance\n");
         p.add("    private static Properties singleton = null;\n");
@@ -68,13 +68,13 @@ public class MaterialWrapperGenerator
         p.add("        get\n");
         p.add("        {\n");
         p.add("            // Construct the singleton if it does not exist\n");
-        p.add("            if(singleton == null)\n"); 
+        p.add("            if(singleton == null)\n");
         p.add("                singleton = new Properties();\n");
         p.add("\n");
         p.add("            return singleton;\n");
         p.add("        }\n");
         p.add("    }\n\n");
-        
+
         // Synthesize constructor
         p.add("    private Properties()\n");
         p.add("    {\n");
@@ -88,16 +88,16 @@ public class MaterialWrapperGenerator
         }
         p.add("    }\n");
         p.add("}\n\n");
-        
+
         // Return the lines of code
         return p;
     }
-    
+
     /**
      * @param args the command line arguments
      * @throws java.io.FileNotFoundException
      */
-    public static void main(String[] args) throws FileNotFoundException, Exception 
+    public static void main(String[] args) throws FileNotFoundException, Exception
     {
         // Check properties
         if(args.length < 2)
@@ -105,27 +105,28 @@ public class MaterialWrapperGenerator
             System.err.println("Usage: java MaterialWrapperGenerator <path to .shader file>  <namespace of .cs file>");
             return;
         }
-        
+
         // Shader property regular expression & compile to pattern
         String propertyRegex = " (.+) \\(\"(.+)\", (.+)\\) = (.+)";
         Pattern propertyPattern = Pattern.compile(propertyRegex);
-        
+
         // Shader name regular expression
         String shaderNameRegex = "Shader \"(.+)\"";
         Pattern shaderNamePattern = Pattern.compile(shaderNameRegex);
-        
+
         // List to hold all of our strings
         LinkedList<ShaderProperty> shaderProperties = new LinkedList<>();
         LinkedList<String>         content          = new LinkedList<>();
+        LinkedList<String>         loaderContent    = new LinkedList<>();
         String                     shaderResource   = "";
-        
+
         // Open the shader file (get the filename with no extension and no whitespace)
         File shader = new File(args[0]);
         String shaderName = shader.getName().replaceFirst("[.][^.]+$", "").replaceAll("(\\s|/|\\-|,)", "");
-        
+
         // Declare our intent
         System.out.println("Processing \"" + args[0] + "\" ==> " + shaderName + ".cs");
-        
+
         // Find the shader name of this material (ex. Terrain/PQS/Ocean Surface Quad")
         Scanner nameFinder = new Scanner(shader);
         while(nameFinder.hasNextLine())
@@ -136,52 +137,52 @@ public class MaterialWrapperGenerator
                 // Retrieve the shader name
                 MatchResult result = nameFinder.match();
                 shaderResource = result.group(1);
-                
+
                 // Found the name, get out
                 break;
             }
-            
+
             // Advance to the next line
             nameFinder.nextLine();
         }
         nameFinder.close();
-        
+
         // Open the parameters file, search for parameters with regex
         Scanner parameters = new Scanner(shader);
-        
+
         // Iterate through the shader file looking for strings that match our pattern
         System.out.println(" --> Discovering Parameters for \"" + shaderResource + "\"");
         while(parameters.hasNextLine())
         {
             // Get the results of running the regular expresison
             String property = parameters.findInLine(propertyPattern);
-            
+
             // If we found a result in this line
             if(property != null)
             {
                 // Get the match result for this property
                 MatchResult result = parameters.match();
-                
+
                 // Create a shader property to hold (and generate useful) information
                 shaderProperties.add(new ShaderProperty(result.group(1), result.group(3), result.group(4), result.group(2)));
             }
-            
+
             // Advance to the next line
             parameters.nextLine();
         }
         parameters.close();
-        
+
         // Synthesize the internal properties class
         System.out.println(" --> Synthesizing Property Storage Class");
         content.addAll(MaterialWrapperGenerator.synthesizeInternalPropertiesClass(shaderProperties, shaderResource));
-        
+
         // Synthesize the accessor properties
         System.out.println(" --> Synthesizing Properties");
         for(ShaderProperty sProperty : shaderProperties)
         {
             content.addAll(sProperty.synthesizeProperty());
         }
-        
+
         // Synthesize the constructors
         System.out.println(" --> Sythesizing Constructor");
         content.add("public " + shaderName + "() : base(Properties.shader)\n");
@@ -197,7 +198,21 @@ public class MaterialWrapperGenerator
         content.add("    if (material.shader.name != Properties.shader.name)\n");
         content.add("        throw new InvalidOperationException(\"Type Mismatch: " + shaderResource + " shader required\");\n");
         content.add("}\n\n");
-        
+
+        // Synthesize loader properties
+        System.out.println(" --> Synthesizing Loader Properties");
+        for(ShaderProperty sProperty : shaderProperties)
+        {
+            loaderContent.addAll(sProperty.synthesizePropertySetter());
+        }
+
+        // Synthesize loader constructor
+        System.out.println(" --> Synthesizing Loader Constructor");
+        loaderContent.add("// Constructors\n");
+        loaderContent.add("public " + shaderName + "Loader () : base() { }\n");
+        loaderContent.add("public " + shaderName + "Loader (string contents) : base (contents) { }\n");
+        loaderContent.add("public " + shaderName + "Loader (Material material) : base(material) { }\n");
+
         // Synthesize the final file
         System.out.println(" --> Writing " + shaderName + ".cs");
         PrintWriter writer = new PrintWriter(shaderName + ".cs", "UTF-8");
@@ -216,7 +231,28 @@ public class MaterialWrapperGenerator
         writer.print("    }\n");
         writer.print("}\n");
         writer.close();
+
+        // Syncthesize the configuration system file
+        System.out.println(" --> Writing " + shaderName + "Loader.cs");
+        writer = new PrintWriter(shaderName + "Loader.cs", "UTF-8");
+        writer.print("// Material wrapper generated by shader translator tool\n");
+        writer.print("using System;\n");
+        writer.print("using System.Reflection;\n");
+        writer.print("using UnityEngine;\n\n");
+        writer.print("using " + args[1] + ".MaterialWrapper;\n\n");
+        writer.print("namespace " + args[1] + "\n{\n");
+        writer.print("    namespace Configuration\n    {\n");
+        writer.print("        public class " + shaderName + "Loader : " + shaderName + "\n        {\n");
+        for(String line : loaderContent)
+        {
+            writer.print("            " + line);
+        }
+        writer.print("        }\n");
+        writer.print("    }\n");
+        writer.print("}\n");
+        writer.close();
+
         System.out.println(" --> Complete");
     }
-    
+
 }

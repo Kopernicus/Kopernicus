@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\0.90.0_outerplanets_1.6\GameData\Kopernicus\Plugins</OutputPath>
+    <OutputPath>..\..\..\0.90.0_outerplanets_1.6\GameData\Kopernicus\Plugins</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\..\0.90.0_outerplanets_1.6\GameData\Kopernicus\Plugins</OutputPath>
+    <OutputPath>..\..\..\0.90.0_outerplanets_1.6\GameData\Kopernicus\Plugins</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -33,15 +33,15 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\0.90.0\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\0.90.0\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\0.90.0\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\0.90.0\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\0.90.0\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\0.90.0\KSP_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -97,7 +97,18 @@
     <Compile Include="KopernicusStarComponent.cs" />
     <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
     <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSMainShaderLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSOceanSurfaceQuadFallbackLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSOceanSurfaceQuadLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSProjectionAerialQuadRelativeLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSProjectionFallbackLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSProjectionSurfaceQuadLoader.cs" />
+    <Compile Include="Logger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Configuration\PQSModLoader\" />
+  </ItemGroup>
 </Project>

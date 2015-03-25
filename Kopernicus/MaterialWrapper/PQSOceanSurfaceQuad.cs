@@ -20,99 +20,99 @@ namespace Kopernicus
                 }
 
                 // Main Color, default = (1,1,1,1)
-                private const string colorKey = "_Color";
+                public const string colorKey = "_Color";
                 public int colorID { get; private set; }
 
                 // Color From Space, default = (1,1,1,1)
-                private const string colorFromSpaceKey = "_ColorFromSpace";
+                public const string colorFromSpaceKey = "_ColorFromSpace";
                 public int colorFromSpaceID { get; private set; }
 
                 // Specular Color, default = (1,1,1,1)
-                private const string specColorKey = "_SpecColor";
+                public const string specColorKey = "_SpecColor";
                 public int specColorID { get; private set; }
 
                 // Shininess, default = 0.078125
-                private const string shininessKey = "_Shininess";
+                public const string shininessKey = "_Shininess";
                 public int shininessID { get; private set; }
 
                 // Gloss, default = 0.078125
-                private const string glossKey = "_Gloss";
+                public const string glossKey = "_Gloss";
                 public int glossID { get; private set; }
 
                 // Tex Tiling, default = 1
-                private const string tilingKey = "_tiling";
+                public const string tilingKey = "_tiling";
                 public int tilingID { get; private set; }
 
                 // Tex0, default = "white" {}
-                private const string waterTexKey = "_WaterTex";
+                public const string waterTexKey = "_WaterTex";
                 public int waterTexID { get; private set; }
 
                 // Tex1, default = "white" {}
-                private const string waterTex1Key = "_WaterTex1";
+                public const string waterTex1Key = "_WaterTex1";
                 public int waterTex1ID { get; private set; }
 
                 // Normal Tiling, default = 1
-                private const string bTilingKey = "_bTiling";
+                public const string bTilingKey = "_bTiling";
                 public int bTilingID { get; private set; }
 
                 // Normalmap0, default = "bump" {}
-                private const string bumpMapKey = "_BumpMap";
+                public const string bumpMapKey = "_BumpMap";
                 public int bumpMapID { get; private set; }
 
                 // Water Movement, default = 1
-                private const string displacementKey = "_displacement";
+                public const string displacementKey = "_displacement";
                 public int displacementID { get; private set; }
 
                 // Water Freq, default = 1
-                private const string dispFreqKey = "_dispFreq";
+                public const string dispFreqKey = "_dispFreq";
                 public int dispFreqID { get; private set; }
 
                 // Mix, default = 1
-                private const string mixKey = "_Mix";
+                public const string mixKey = "_Mix";
                 public int mixID { get; private set; }
 
                 // Opacity, default = 1
-                private const string oceanOpacityKey = "_oceanOpacity";
+                public const string oceanOpacityKey = "_oceanOpacity";
                 public int oceanOpacityID { get; private set; }
 
                 // Falloff Power, default = 1
-                private const string falloffPowerKey = "_falloffPower";
+                public const string falloffPowerKey = "_falloffPower";
                 public int falloffPowerID { get; private set; }
 
                 // Falloff Exp, default = 2
-                private const string falloffExpKey = "_falloffExp";
+                public const string falloffExpKey = "_falloffExp";
                 public int falloffExpID { get; private set; }
 
                 // AP Fog Color, default = (0,0,1,1)
-                private const string fogColorKey = "_fogColor";
+                public const string fogColorKey = "_fogColor";
                 public int fogColorID { get; private set; }
 
                 // AP Height Fall Off, default = 1
-                private const string heightFallOffKey = "_heightFallOff";
+                public const string heightFallOffKey = "_heightFallOff";
                 public int heightFallOffID { get; private set; }
 
                 // AP Global Density, default = 1
-                private const string globalDensityKey = "_globalDensity";
+                public const string globalDensityKey = "_globalDensity";
                 public int globalDensityID { get; private set; }
 
                 // AP Atmosphere Depth, default = 1
-                private const string atmosphereDepthKey = "_atmosphereDepth";
+                public const string atmosphereDepthKey = "_atmosphereDepth";
                 public int atmosphereDepthID { get; private set; }
 
                 // FogColorRamp, default = "white" {}
-                private const string fogColorRampKey = "_fogColorRamp";
+                public const string fogColorRampKey = "_fogColorRamp";
                 public int fogColorRampID { get; private set; }
 
                 // FadeStart, default = 1
-                private const string fadeStartKey = "_fadeStart";
+                public const string fadeStartKey = "_fadeStart";
                 public int fadeStartID { get; private set; }
 
                 // FadeEnd, default = 1
-                private const string fadeEndKey = "_fadeEnd";
+                public const string fadeEndKey = "_fadeEnd";
                 public int fadeEndID { get; private set; }
 
                 // PlanetOpacity, default = 1
-                private const string planetOpacityKey = "_PlanetOpacity";
+                public const string planetOpacityKey = "_PlanetOpacity";
                 public int planetOpacityID { get; private set; }
 
                 // Singleton instance
@@ -200,11 +200,35 @@ namespace Kopernicus
                 set { SetTexture (Properties.Instance.waterTexID, value); }
             }
 
+            public Vector2 waterTexScale
+            {
+                get { return GetTextureScale (Properties.waterTexKey); }
+                set { SetTextureScale (Properties.waterTexKey, value); }
+            }
+
+            public Vector2 waterTexOffset
+            {
+                get { return GetTextureOffset (Properties.waterTexKey); }
+                set { SetTextureOffset (Properties.waterTexKey, value); }
+            }
+
             // Tex1, default = "white" {}
             public Texture2D waterTex1
             {
                 get { return GetTexture (Properties.Instance.waterTex1ID) as Texture2D; }
                 set { SetTexture (Properties.Instance.waterTex1ID, value); }
+            }
+
+            public Vector2 waterTex1Scale
+            {
+                get { return GetTextureScale (Properties.waterTex1Key); }
+                set { SetTextureScale (Properties.waterTex1Key, value); }
+            }
+
+            public Vector2 waterTex1Offset
+            {
+                get { return GetTextureOffset (Properties.waterTex1Key); }
+                set { SetTextureOffset (Properties.waterTex1Key, value); }
             }
 
             // Normal Tiling, default = 1
@@ -219,6 +243,18 @@ namespace Kopernicus
             {
                 get { return GetTexture (Properties.Instance.bumpMapID) as Texture2D; }
                 set { SetTexture (Properties.Instance.bumpMapID, value); }
+            }
+
+            public Vector2 bumpMapScale
+            {
+                get { return GetTextureScale (Properties.bumpMapKey); }
+                set { SetTextureScale (Properties.bumpMapKey, value); }
+            }
+
+            public Vector2 bumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.bumpMapKey); }
+                set { SetTextureOffset (Properties.bumpMapKey, value); }
             }
 
             // Water Movement, default = 1
@@ -296,6 +332,18 @@ namespace Kopernicus
             {
                 get { return GetTexture (Properties.Instance.fogColorRampID) as Texture2D; }
                 set { SetTexture (Properties.Instance.fogColorRampID, value); }
+            }
+
+            public Vector2 fogColorRampScale
+            {
+                get { return GetTextureScale (Properties.fogColorRampKey); }
+                set { SetTextureScale (Properties.fogColorRampKey, value); }
+            }
+
+            public Vector2 fogColorRampOffset
+            {
+                get { return GetTextureOffset (Properties.fogColorRampKey); }
+                set { SetTextureOffset (Properties.fogColorRampKey, value); }
             }
 
             // FadeStart, default = 1

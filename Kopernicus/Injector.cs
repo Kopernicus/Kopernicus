@@ -50,7 +50,8 @@ namespace Kopernicus
 		public void Awake()
 		{
 			// We're ALIVE
-			Debug.Log("[Kopernicus]: Injector.Awake(): Begin");
+			Logger.Default.SetAsActive ();
+			Logger.Default.Log("[Kopernicus]: Injector.Awake(): Begin");
 
 			// Yo garbage collector - we have work to do man
 			DontDestroyOnLoad(this);
@@ -59,7 +60,7 @@ namespace Kopernicus
 			if (PSystemManager.Instance == null) 
 			{
 				// Log the error
-				Debug.LogError("[Kopernicus]: Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
+				Logger.Default.Log("[Kopernicus]: Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
 				return;
 			}
 
@@ -68,7 +69,6 @@ namespace Kopernicus
 
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
 			PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
-			//PSystemManager.Instance.systemPrefab = KopernicusSystemSource.GenerateSystem ();
 
 			// SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
 			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController>(true)[0];
@@ -79,15 +79,20 @@ namespace Kopernicus
 
 			// Done executing the awake function
 			TimeSpan duration = (DateTime.Now - start);
-			Debug.Log ("[Kopernicus]: Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
+			Logger.Default.Log("[Kopernicus]: Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
+			Logger.Default.Flush ();
 		}
 
 		// Post spawn fixups (ewwwww........)
 		public void PostSpawnFixups ()
 		{
 			// For some reason the game doesn't find nouveau Kerbin
-			Debug.Log("[Kopernicus]: OnPSystemReady() => Fixing space center celestial body");
+			Logger.Default.Log("[Kopernicus]: OnPSystemReady() => Fixing space center celestial body");
 			SpaceCenter.Instance.cb = Planetarium.fetch.Home;
+
+			// Find all textures
+			/*foreach(Texture t in Resources.FindObjectsOfTypeAll<Texture>())
+				Debug.Log("Found Texture => " + t.name);*/
 
 			// Fixups complete, time to surrender to fate
 			Destroy (this);
@@ -96,7 +101,8 @@ namespace Kopernicus
 		// Log the destruction of the injector
 		public void OnDestroy()
 		{
-			Debug.Log ("[Kopernicus]: Injection Complete");
+			Logger.Default.Log("[Kopernicus]: Injection Complete");
+			Logger.Default.Flush ();
 		}
 	}
 } //namespace
