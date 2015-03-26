@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD (AP) ";
+                public const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD (AP) ";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -251,7 +251,13 @@ namespace Kopernicus
                     fogColorRampID = Shader.PropertyToID(fogColorRampKey);
                     planetOpacityID = Shader.PropertyToID(planetOpacityKey);
                 }
-            }
+			}
+
+			// Is some random material this material
+			public static bool UsesSameShader(Material m)
+			{
+				return m.shader.name == Properties.shaderName;
+			}
 
             // Saturation, default = 1
             public float saturation

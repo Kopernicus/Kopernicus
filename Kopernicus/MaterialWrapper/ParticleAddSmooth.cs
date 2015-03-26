@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Particles/Additive (Soft)";
+                public const string shaderName = "Particles/Additive (Soft)";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -46,7 +46,13 @@ namespace Kopernicus
                     mainTexID = Shader.PropertyToID(mainTexKey);
                     invFadeID = Shader.PropertyToID(invFadeKey);
                 }
-            }
+			}
+
+			// Is some random material this material
+			public static bool UsesSameShader(Material m)
+			{
+				return m.shader.name == Properties.shaderName;
+			}
 
             // Particle Texture, default = "white" {}
             public Texture2D mainTex

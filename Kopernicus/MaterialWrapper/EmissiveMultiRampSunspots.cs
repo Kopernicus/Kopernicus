@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Emissive Multi Ramp Sunspots";
+                public const string shaderName = "Emissive Multi Ramp Sunspots";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -81,7 +81,13 @@ namespace Kopernicus
                     rimPowerID = Shader.PropertyToID(rimPowerKey);
                     rimBlendID = Shader.PropertyToID(rimBlendKey);
                 }
-            }
+			}
+
+			// Is some random material this material
+			public static bool UsesSameShader(Material m)
+			{
+				return m.shader.name == Properties.shaderName;
+			}
 
             // Noise Map (RGBA), default = "white" {}
             public Texture2D noiseMap

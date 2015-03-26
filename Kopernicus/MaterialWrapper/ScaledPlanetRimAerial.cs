@@ -13,7 +13,7 @@ namespace Kopernicus
             protected new class Properties : ScaledPlanetSimple.Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Terrain/Scaled Planet (RimAerial)";
+                private new const string shaderName = "Terrain/Scaled Planet (RimAerial)";
                 public static new Shader shader
                 {
                     get { return Shader.Find (shaderName); }

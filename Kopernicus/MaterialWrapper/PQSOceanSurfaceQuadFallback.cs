@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Terrain/PQS/Ocean Surface Quad (Fallback)";
+                public const string shaderName = "Terrain/PQS/Ocean Surface Quad (Fallback)";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -91,7 +91,13 @@ namespace Kopernicus
                     fadeEndID = Shader.PropertyToID(fadeEndKey);
                     planetOpacityID = Shader.PropertyToID(planetOpacityKey);
                 }
-            }
+			}
+
+			// Is some random material this material
+			public static bool UsesSameShader(Material m)
+			{
+				return m.shader.name == Properties.shaderName;
+			}
 
             // Color From Space, default = (1,1,1,1)
             public Color colorFromSpace
