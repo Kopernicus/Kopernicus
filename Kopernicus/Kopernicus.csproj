@@ -15,7 +15,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\..\0.90.0_outerplanets_1.6\GameData\Kopernicus\Plugins</OutputPath>
+    <OutputPath>..\..\..\0.90.0\GameData\Kopernicus\Plugins</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\..\..\0.90.0_outerplanets_1.6\GameData\Kopernicus\Plugins</OutputPath>
+    <OutputPath>..\..\..\0.90.0\GameData\Kopernicus\Plugins</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -55,7 +55,6 @@
     <Compile Include="Injector.cs" />
     <Compile Include="MaterialWrapper\PQSMainOptimised.cs" />
     <Compile Include="MaterialWrapper\AtmosphereFromGround.cs" />
-    <Compile Include="MaterialWrapper\PQSMainShader.cs" />
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuadFallback.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionFallback.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
@@ -98,13 +97,14 @@
     <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
     <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedLoader.cs" />
-    <Compile Include="Configuration\MaterialLoader\PQSMainShaderLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSOceanSurfaceQuadFallbackLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSOceanSurfaceQuadLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSProjectionAerialQuadRelativeLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSProjectionFallbackLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSProjectionSurfaceQuadLoader.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="MaterialWrapper\PQSMainShader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSMainShaderLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

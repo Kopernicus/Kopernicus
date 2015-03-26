@@ -96,7 +96,7 @@ namespace Kopernicus
 
 			// Orbit rendering bounds
 			[ParserTarget("cameraSmaRatioBounds", optional = true)]
-			public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] {0f, 1f});
+			public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] {0.3f, 25f});
 
 			void IParserEventSubscriber.Apply(ConfigNode node)
 			{
@@ -105,7 +105,7 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
-				Logger.Active.Log("Reference Body = " + referenceBody);
+
 			}
 
 			// Populate the PSystemBody with the results of the orbit loader
