@@ -68,6 +68,11 @@ namespace Kopernicus
 				}
 			}
 
+			// Should we strip the PQS off
+			[PreApply]
+			[ParserTarget("removePQS", optional = true)]
+			private NumericParser<bool> removePQS = new NumericParser<bool> (false);
+
 			// Should we strip the atmosphere off
 			[ParserTarget("removeAtmosphere", optional = true)]
 			private NumericParser<bool> removeAtmosphere = new NumericParser<bool>(false);
@@ -76,10 +81,9 @@ namespace Kopernicus
 			[ParserTarget("removeOcean", optional = true)]
 			private NumericParser<bool> removeOcean = new NumericParser<bool>(false);
 
-
-			// Collection of PQS mods to remove 
-			// something about a collection (probably strings)
-			// a collection of mods
+			// Collection of PQS mods to remove
+			[ParserTarget("removePQSMods", optional = true)]
+			private StringCollectionParser removePQSMods;
 
 			// Apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
@@ -96,12 +100,18 @@ namespace Kopernicus
 				body.scaledVersion.transform.parent = Utility.Deactivator;
 				body.scaledVersion.name = originalBody.scaledVersion.name;
 				
-				// Clone the PQS version (if it has one)
-				if (body.pqsVersion != null) 
+				// Clone the PQS version (if it has one) and we want the PQS
+				if (body.pqsVersion != null && removePQS.value != true) 
 				{
 					body.pqsVersion = UnityEngine.Object.Instantiate (originalBody.pqsVersion) as PQS;
 					body.pqsVersion.transform.parent = Utility.Deactivator;
 					body.pqsVersion.name = originalBody.pqsVersion.name;
+				} 
+				else 
+				{
+					// Make sure we have no ties to the PQS, as we wanted to remove it or it didn't exist
+					body.pqsVersion = null;
+					body.celestialBody.ocean = false;
 				}
 
 				// Store the initial radius (so scaled version can be computed)
@@ -127,39 +137,64 @@ namespace Kopernicus
 					body.celestialBody.atmosphere = false;
 				}
 
-				// Should we remove the ocean?
-				if (body.celestialBody.ocean && removeOcean.value) 
+				// If we have a PQS
+				if (body.pqsVersion != null) 
 				{
-					// Find atmosphere the ocean PQS
-					PQS ocean = body.pqsVersion.GetComponentsInChildren<PQS>(true).Where(pqs => pqs != body.pqsVersion).First();
-					PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).First();
+					Logger.Active.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
 
-					// Destroy the ocean PQS (this could be bad - destroying the secondary fades...)
-					cbt.planetFade.secondaryRenderers.Remove(ocean.gameObject);
-					cbt.secondaryFades = null;
-					ocean.transform.parent = null;
-					UnityEngine.Object.Destroy(ocean);
-					
-					// No more ocean :(
-					body.celestialBody.ocean = false;
-					body.pqsVersion.mapOcean = false;
-				}
-
-				// Selectively remove PQS Mods
-				if (originalBody.pqsVersion != null) 
-				{
-					// Dump the PQS of the body
+					// ----- DEBUG -----
 					Utility.Log ("Surface Shader = " + originalBody.pqsVersion.surfaceMaterial.shader.name);
 					Utility.Log ("Fallback Shader = " + originalBody.pqsVersion.fallbackMaterial.shader.name);
+					Material wrapper = null;
 
-					if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/PQS Main - Optimised") {
-						MaterialWrapper.PQSMainOptimised m = new Kopernicus.MaterialWrapper.PQSMainOptimised (originalBody.pqsVersion.surfaceMaterial);
-						Utility.DumpObjectProperties (m, " ---- Surface Material ---- ");
+					if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/PQS Main - Optimised") 
+						wrapper = new Kopernicus.MaterialWrapper.PQSMainOptimised (originalBody.pqsVersion.surfaceMaterial);
+					else if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/Sphere Projection SURFACE QUAD (AP) ") 
+						wrapper = new Kopernicus.MaterialWrapper.PQSProjectionAerialQuadRelative (originalBody.pqsVersion.surfaceMaterial);
+					else if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/Sphere Projection SURFACE QUAD") 
+						wrapper = new Kopernicus.MaterialWrapper.PQSProjectionSurfaceQuad (originalBody.pqsVersion.surfaceMaterial);
+					else if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/PQS Main Shader") 
+						wrapper = new Kopernicus.MaterialWrapper.PQSMainShader (originalBody.pqsVersion.surfaceMaterial);
+
+					Utility.DumpObjectProperties (wrapper, " ---- Surface Material ---- ");
+					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, "  ");
+					// -----------------
+
+					// Should we remove the ocean?
+					if (body.celestialBody.ocean && removeOcean.value) 
+					{
+						// Find atmosphere the ocean PQS
+						PQS ocean = body.pqsVersion.GetComponentsInChildren<PQS> (true).Where (pqs => pqs != body.pqsVersion).First ();
+						PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform> (true).First ();
+
+						// Destroy the ocean PQS (this could be bad - destroying the secondary fades...)
+						cbt.planetFade.secondaryRenderers.Remove (ocean.gameObject);
+						cbt.secondaryFades = null;
+						ocean.transform.parent = null;
+						UnityEngine.Object.Destroy (ocean);
+					
+						// No more ocean :(
+						body.celestialBody.ocean = false;
+						body.pqsVersion.mapOcean = false;
 					}
 
-					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, "  ");
+					// Selectively remove PQS Mods
+					if (removePQSMods != null && removePQSMods.value.LongCount() > 0)
+					{
+						// Get a list of all the PQS mods (immediate children, don't fuck the ocean)
+						List<PQSMod> mods = body.pqsVersion.transform.GetComponentsInChildren<PQSMod>(true).Where(mod => mod.transform.parent == body.pqsVersion.transform).ToList();
+						foreach (string mod in removePQSMods.value) 
+						{
+							// Get the mods matching the string
+							string modName = "PQSMod_" + mod;
+							foreach (PQSMod m in mods.Where(m => m.GetType().ToString().EndsWith(modName))) 
+							{
+								Logger.Active.Log ("Removed Mod: " + m.name + " (" + m.GetType () + ")");
+								UnityEngine.Object.Destroy (m);
+							}
+						}
+					}
 				}
-				
 				// Figure out what kind of body we are
 				if (body.scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0)
 					type = BodyType.Star;
@@ -167,8 +202,6 @@ namespace Kopernicus
 					type = BodyType.Atmospheric;
 				else
 					type = BodyType.Vacuum;
-
-				Logger.Active.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\" - " + type );
 			}
 
 			// Private exception to throw in the case the template doesn't load

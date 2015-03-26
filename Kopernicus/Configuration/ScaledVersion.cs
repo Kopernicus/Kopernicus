@@ -93,7 +93,7 @@ namespace Kopernicus
 				}
 
 				// Are we a planet or moon?
-				if (type.value != BodyType.Star) 
+				if (type.value != BodyType.Star)
 				{
 					// If we are not a star, we need a scaled space fader and a sphere collider
 					if (scaledVersion.GetComponent<ScaledSpaceFader> () == null) 
@@ -153,8 +153,6 @@ namespace Kopernicus
 				// Otherwise we are a star
 				else 
 				{
-					Logger.Active.Log("[Kopernicus]: Configuration.ScaledVersion: Incomplete implemention of modification of star scaled version");
-
 					// Add the SunShaderController behavior
 					if(scaledVersion.GetComponent<SunShaderController>() == null)
 						scaledVersion.AddComponent<SunShaderController>();

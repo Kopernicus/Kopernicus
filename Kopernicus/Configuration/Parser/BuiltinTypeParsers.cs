@@ -29,6 +29,8 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 using UnityEngine;
 
@@ -86,6 +88,30 @@ namespace Kopernicus
 				value = new List<T>(i);
 			}
 			public NumericCollectionParser(List<T> i) : this()
+			{
+				value = i;
+			}
+		}
+
+		/** Simple parser for string arrays */
+		[RequireConfigType(ConfigType.Value)]
+		public class StringCollectionParser : IParsable
+		{
+			public IList<string> value;
+			public void SetFromString (string s)
+			{
+				// Need a new list
+				value = new List<string> (Regex.Replace (s, "\\s+", "").Split (','));
+			}
+			public StringCollectionParser()
+			{
+				value = new List<string> ();
+			}
+			public StringCollectionParser(string[] i)
+			{
+				value = new List<string>(i);
+			}
+			public StringCollectionParser(IList<string> i)
 			{
 				value = i;
 			}
@@ -256,14 +282,24 @@ namespace Kopernicus
 			public Texture2D value;
 			public void SetFromString (string s)
 			{
-				// Throw exception if this texture doesn't exist
-				if (!GameDatabase.Instance.ExistsTexture (s)) 
+				// Check if we are attempting to load a builtin texture
+				if (s.StartsWith ("BUILTIN/")) 
 				{
-					throw new Exception("Texture \"" + s + "\" not found");
+					string textureName = Regex.Replace (s, "BUILTIN/", "");
+					value = Resources.FindObjectsOfTypeAll<Texture2D> ().Where (tex => tex.name == textureName).First ();
+					return;
 				}
 
-				// Get the texture URL
-				value = GameDatabase.Instance.GetTexture(s, false);
+				// Otherwise search the game database for one loaded from GameData/
+				else if (GameDatabase.Instance.ExistsTexture (s)) 
+				{
+					// Get the texture URL
+					value = GameDatabase.Instance.GetTexture(s, false);
+					return;
+				}
+
+				// Texture was not found
+				throw new Exception("Texture \"" + s + "\" not found");
 			}
 			public Texture2DParser ()
 			{
