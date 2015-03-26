@@ -125,30 +125,47 @@ namespace Kopernicus
 			private ScienceValues scienceValues;
 
 			// Biomes of this body
+			[PreApply]
 			[ParserTargetCollection("Biomes", optional = true, nameSignificance = NameSignificance.None)]
 			private List<Biome> biomes = new List<Biome>();
 
-			// Biome definition texture
+			// DEPRECATED -- Biome definition texture (from GameDatabase)
 			[ParserTarget("biomeMap", optional = true)]
-			private Texture2DParser biomeMap;
+			private Texture2DParser biomeMapDeprecated
+			{
+				set 
+				{
+					if (value.value != null) 
+					{
+						celestialBody.BiomeMap = ScriptableObject.CreateInstance<CBAttributeMapSO> ();
+						celestialBody.BiomeMap.exactSearch = false;
+						celestialBody.BiomeMap.nonExactThreshold = 0.05f;
+						celestialBody.BiomeMap.CreateMap (MapSO.MapDepth.RGB, value.value);
+						celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
+					}
+				}
+			}
+
+			// Biome definition via MapSO parser
+			[ParserTarget("biomeMap", optional = true)]
+			private MapSOParser_RGB<CBAttributeMapSO> biomeMap
+			{
+				set 
+				{
+					if (value.value != null) 
+					{
+						celestialBody.BiomeMap = value.value;
+						celestialBody.BiomeMap.exactSearch = false;
+						celestialBody.BiomeMap.nonExactThreshold = 0.05f;
+						celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
+					}
+				}
+			}
 
 			void IParserEventSubscriber.Apply (ConfigNode node) { }
 
 			void IParserEventSubscriber.PostApply (ConfigNode node)
 			{
-				// If biomes have been provided in the config, strip any existing biomes
-				if (biomes.Count > 0) 
-				{
-					// We require a map attributes object
-					celestialBody.BiomeMap = ScriptableObject.CreateInstance<CBAttributeMapSO>();
-					celestialBody.BiomeMap.exactSearch = false;
-					celestialBody.BiomeMap.nonExactThreshold = 0.05f; // blame this if things go wrong
-
-					// Migrate the biome attributes to the biome map
-					celestialBody.BiomeMap.CreateMap(MapSO.MapDepth.RGB, biomeMap.value);
-					celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
-				}
-
 				// Debug the fields (TODO - remove)
 				Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
 				if (celestialBody.BiomeMap != null) 

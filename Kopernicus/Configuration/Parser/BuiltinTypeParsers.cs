@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -299,13 +300,75 @@ namespace Kopernicus
 				}
 
 				// Texture was not found
-				throw new Exception("Texture \"" + s + "\" not found");
+				value = null;
 			}
 			public Texture2DParser ()
 			{
 				
 			}
 			public Texture2DParser (Texture2D value)
+			{
+				this.value = value;
+			}
+		}
+
+		/** Parser for a MapSO */
+		public class MapSOParser_GreyScale<T> : IParsable where T : MapSO
+		{
+			public T value;
+			public void SetFromString (string s)
+			{
+				// Attempt to load a texture specified by the path
+				string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
+				if (File.Exists (path)) 
+				{
+					// Load the texture
+					Texture2D map = new Texture2D (2, 2);
+					if (map.LoadImage (File.ReadAllBytes (path))) 
+					{
+						// Create a new map script object
+						value = ScriptableObject.CreateInstance<T> ();
+						value.CreateMap (MapSO.MapDepth.Greyscale, map);
+						UnityEngine.Object.Destroy (map);
+					}
+				}
+			}
+			public MapSOParser_GreyScale()
+			{
+				this.value = null;
+			}
+			public MapSOParser_GreyScale(T value)
+			{
+				this.value = value;
+			}
+		}
+
+		/** Parser for a MapSO */
+		public class MapSOParser_RGB<T> : IParsable where T : MapSO
+		{
+			public T value;
+			public void SetFromString (string s)
+			{
+				// Attempt to load a texture specified by the path
+				string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
+				if (File.Exists (path)) 
+				{
+					// Load the texture
+					Texture2D map = new Texture2D (2, 2);
+					if (map.LoadImage (File.ReadAllBytes (path))) 
+					{
+						// Create a new map script object
+						value = ScriptableObject.CreateInstance<T> ();
+						value.CreateMap (MapSO.MapDepth.RGB, map);
+						UnityEngine.Object.Destroy (map);
+					}
+				}
+			}
+			public MapSOParser_RGB()
+			{
+				this.value = null;
+			}
+			public MapSOParser_RGB(T value)
 			{
 				this.value = value;
 			}
