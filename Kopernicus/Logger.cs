@@ -69,7 +69,10 @@ namespace Kopernicus
 		// Write text to the log
 		public void LogException(Exception e)
 		{
-			loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: Exception Was Recorded: " + e.StackTrace);
+			loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: Exception Was Recorded: " + e.Message + "\n" + e.StackTrace);
+
+			if(e.InnerException != null)
+				loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: Inner Exception Was Recorded: " + e.InnerException.Message + "\n" + e.InnerException.StackTrace);
 		}
 
 		// Set logger as the active logger

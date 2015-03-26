@@ -43,6 +43,15 @@ namespace Kopernicus
 		[RequireConfigType(ConfigType.Node)]
 		public class PQSLoader : IParserEventSubscriber
 		{
+			// PQS Material Type Enum
+			private enum PQSMaterialType
+			{
+				Vacuum,
+				AtmosphericBasic,
+				AtmosphericMain,
+				AtmosphericOptimized
+			};
+
 			// PQS we are creating
 			public PQS pqsVersion { get; private set; }
 
@@ -59,8 +68,60 @@ namespace Kopernicus
 				set { collider.physicsMaterial = value.material; }
 			}
 
+			// PQS level of detail settings
+			[ParserTarget("minLevel", optional = true)]
+			private NumericParser<int> minLevel 
+			{
+				set { pqsVersion.minLevel = value.value; }
+			}
+
+			[ParserTarget("maxLevel", optional = true)]
+			private NumericParser<int> maxLevel 
+			{
+				set { pqsVersion.maxLevel = value.value; }
+			}
+
+			[ParserTarget("minDetailDistance", optional = true)]
+			private NumericParser<double> minDetailDistance 
+			{
+				set { pqsVersion.minDetailDistance = value.value; }
+			}
+
+			[ParserTarget("maxQuadLengthsPerFrame", optional = true)]
+			private NumericParser<float> maxQuadLengthsPerFrame 
+			{
+				set { pqsVersion.maxQuadLenghtsPerFrame = value.value; }
+			}
+
+			[PreApply]
+			[ParserTarget("materialType", optional = true)]
+			private EnumParser<PQSMaterialType> materialType
+			{
+				set 
+				{
+					if (value.value == PQSMaterialType.AtmosphericOptimized)
+						pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader ();
+					else if (value.value == PQSMaterialType.AtmosphericMain)
+						pqsVersion.surfaceMaterial = new PQSMainShaderLoader ();
+					else if (value.value == PQSMaterialType.AtmosphericBasic)
+						pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader ();
+					else if (value.value == PQSMaterialType.Vacuum)
+						pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader ();
+
+					surfaceMaterial = pqsVersion.surfaceMaterial;
+				}
+			}
+
+			// Surface Material of the PQS
+			[ParserTarget("Material", optional = true, allowMerge = true)]
+			private Material surfaceMaterial;
+
+			// Fallback Material of the PQS (its always the same material)
+			[ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
+			private PQSProjectionFallbackLoader fallbackMaterial;
+				
 			// PQS Mods
-			[ParserTargetCollection("Mods", optional = true, typePrefix = "Kopernicus.Configuration.")]
+			[ParserTargetCollection("Mods", optional = true, typePrefix = "Kopernicus.Configuration.ModLoader.")]
 			private List<object> mods = new List<object> (); 
 
 			/**
@@ -110,6 +171,11 @@ namespace Kopernicus
 				
 				// Create physics material editor
 				physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
+
+				// Create the fallback material (always the same shader)
+				fallbackMaterial = new PQSProjectionFallbackLoader ();
+				pqsVersion.fallbackMaterial = fallbackMaterial; 
+				fallbackMaterial.name = Guid.NewGuid ().ToString ();
 			}
 
 			/**
@@ -129,6 +195,23 @@ namespace Kopernicus
 
 				// Create physics material editor
 				physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
+
+				// Clone the surface material of the PQS
+				if (PQSMainOptimisedLoader.UsesSameShader (pqsVersion.surfaceMaterial))
+					pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader (pqsVersion.surfaceMaterial);
+				else if (PQSMainShaderLoader.UsesSameShader (pqsVersion.surfaceMaterial))
+					pqsVersion.surfaceMaterial = new PQSMainShaderLoader (pqsVersion.surfaceMaterial);
+				else if (PQSProjectionAerialQuadRelativeLoader.UsesSameShader (pqsVersion.surfaceMaterial))
+					pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader (pqsVersion.surfaceMaterial);
+				else if (PQSProjectionSurfaceQuadLoader.UsesSameShader (pqsVersion.surfaceMaterial))
+					pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader (pqsVersion.surfaceMaterial);
+				surfaceMaterial = pqsVersion.surfaceMaterial;
+				surfaceMaterial.name = Guid.NewGuid ().ToString ();
+
+				// Clone the fallback material of the PQS
+				fallbackMaterial = new PQSProjectionFallbackLoader (pqsVersion.fallbackMaterial);
+				pqsVersion.fallbackMaterial = fallbackMaterial; 
+				fallbackMaterial.name = Guid.NewGuid ().ToString ();
 			}
 
 
