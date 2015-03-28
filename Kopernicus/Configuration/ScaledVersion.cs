@@ -74,7 +74,7 @@ namespace Kopernicus
 			{
 				set { component.lightColor = value.value; }
 			}
-
+            
 			// Coronas for a star's scaled version
 			[ParserTargetCollection("Coronas", optional = true, nameSignificance = NameSignificance.None)]
 			private List<Corona> coronas = new List<Corona>();
@@ -196,18 +196,13 @@ namespace Kopernicus
 					// Apply custom coronas
 					if (coronas.Count > 0) 
 					{
-						// Nuke existing ones
-						foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
-						{
-							corona.transform.parent = null;
-							GameObject.Destroy (corona.gameObject);
-						}
+						// Edit the Coronas (I hate the foreach edit protection)
+                        for (int i = 0; i < coronas.Count; i++)
+                        {
+                            scaledVersion.GetComponentsInChildren<SunCoronas>(true)[i] = coronas[i].coronaComponent;
+                            scaledVersion.GetComponentsInChildren<SunCoronas>(true)[i].renderer.material = coronas[i].coronaComponent.renderer.material;
 
-						// Apply new ones
-						foreach (Corona corona in coronas) 
-						{
-							corona.corona.transform.parent = scaledVersion.transform;
-						}
+                        }
 					}
 
 					// debug

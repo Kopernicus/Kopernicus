@@ -42,7 +42,7 @@ namespace Kopernicus
 		public class Corona
 		{
 			// The generated corona
-			private SunCoronas coronaComponent;
+			public SunCoronas coronaComponent;
 			public GameObject corona { get; private set; }
 
 			// Material definition for the Corona
@@ -99,6 +99,7 @@ namespace Kopernicus
 				material = new ParticleAddSmoothLoader (corona.renderer.material);
 				material.name = Guid.NewGuid().ToString();
 				corona.renderer.sharedMaterial = material;
+                coronaComponent.renderer.material = material;
 			}
 		}
 	}
