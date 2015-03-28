@@ -55,31 +55,41 @@ namespace Kopernicus
 
         void Update()
         {
-            // Get the current position of the active vessel
-			Vector3 position = Vector3.zero;
-			if (PlanetariumCamera.fetch.enabled == true) 
+			// TODO - it might be better to select the star based on the configuration of the celestial body heirachy.  Something is horrifically broken
+			// with the space center camera.  Like random time warping, or refusing to believe the current sun is the sun...
+
+			// If the game scene is the space center, we need to make sure the star is our home star
+			CelestialBody selectedStar = null;
+			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) 
 			{
-				position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
+				selectedStar = stars.Where (body => body.flightGlobalsIndex == 0).First ();
+			}
+
+            // Get the current position of the active vessel
+			else if (PlanetariumCamera.fetch.enabled == true) 
+			{
+				Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
+				selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
 			} 
 			else if (FlightGlobals.ActiveVessel != null) 
 			{
-				position = FlightGlobals.ActiveVessel.GetTransform ().position;
+				Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
+				selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
 			}
 
 			// Get the closest star
-			CelestialBody closestStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
-			if (closestStar != Sun.Instance.sun) 
+			if (selectedStar != Sun.Instance.sun && selectedStar != null) 
 			{
-				SetSun (closestStar);
+				StarLightSwitcher.SetSun (selectedStar);
 			}
         }
 
 		// Set the active sun object
-        public void SetSun(CelestialBody CB)
+        public static void SetSun(CelestialBody CB)
         {
             // Set star as active star
             Sun.Instance.sun = CB;
-            Planetarium.fetch.Sun = CB;
+			Planetarium.fetch.Sun = CB;
             Debug.Log("[Kopernicus]: StarLightSwitcher: Active star = " + CB.name);
 
 			// Get the star component

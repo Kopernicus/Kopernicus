@@ -90,14 +90,15 @@ namespace Kopernicus
 			Logger.Default.Log("Injector.PostSpawnFixups() => Fixing space center celestial body");
 			SpaceCenter.Instance.cb = Planetarium.fetch.Home;
 
+			// Fix the flight globals index of each body
+			int counter = 0;
+			foreach (CelestialBody body in FlightGlobals.Bodies) 
+				body.flightGlobalsIndex = counter++;
+
 			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
 			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
 			double maximumDistance = rootBody.children.Max (b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
 			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
-
-			// Find all textures
-			/*foreach(Texture t in Resources.FindObjectsOfTypeAll<Texture>())
-				Debug.Log("Found Texture => " + t.name);*/
 
 			// Fixups complete, time to surrender to fate
 			Destroy (this);

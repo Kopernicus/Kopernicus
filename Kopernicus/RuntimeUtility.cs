@@ -125,6 +125,10 @@ namespace Kopernicus
 		{
 			bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
             
+			if (Input.GetKeyDown (KeyCode.Space) && isModDown) {
+				Logger.Default.Log ("Timescale = " + Planetarium.fetch.timeScale);
+			}
+
 			// Print out the PQS state
 			if (Input.GetKeyDown(KeyCode.P) && isModDown)
 			{
@@ -212,14 +216,6 @@ namespace Kopernicus
 			
 			// Log
 			Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
-
-			// Log the reference ids
-			foreach (CelestialBody body in PSystemManager.Instance.localBodies) 
-			{
-				Logger.Default.Log("Body \"" + body.name + "\" = " + PSystemManager.Instance.localBodies.IndexOf(body) + ", SOI = " + body.sphereOfInfluence);
-			}
-
-			// Flush logger
 			Logger.Default.Flush ();
 		}
 	}
