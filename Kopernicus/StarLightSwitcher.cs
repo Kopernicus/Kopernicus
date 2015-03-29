@@ -39,7 +39,7 @@ using UnityEngine;
 namespace Kopernicus
 {
 	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
-	public class HerpyDerpy : MonoBehaviour
+	public class SunDebugger : MonoBehaviour
 	{
 		void Awake()
 		{
@@ -56,11 +56,17 @@ namespace Kopernicus
 			Utility.DumpObjectFields (sunLight.GetComponent<Sun> (), "Sun Fields: ");
 
 			Utility.GameObjectWalk (scaledSunLight, "scaledSunLight: ");
+
+			Logger.Default.Log ("Searching for SkySphereControllers");
+			foreach (SkySphereControl c in FindObjectsOfType<SkySphereControl> ()) {
+				Logger.Default.Log ("Found Controller: " + c.name);
+			}
+
 			Logger.Default.Flush ();
 		}
 	}
 
-	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	//[KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class StarLightSwitcher : MonoBehaviour
     {
 		// List of celestial bodies that are stars
@@ -85,7 +91,7 @@ namespace Kopernicus
 			}
 
 			// If we are in the tracking station or game, 
-			else if(HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.EDITOR)
+			else if(HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT)
 			{
 	            // Get the current position of the active vessel
 				if (PlanetariumCamera.fetch.enabled == true) 
