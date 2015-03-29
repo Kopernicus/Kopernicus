@@ -94,9 +94,13 @@ namespace Kopernicus
 			[ParserTarget("PQS", optional = true, allowMerge = true)]
 			private PQSLoader pqs;
 
-            // Wrapper around KSP's Orbit class for editing/loading
+            // Wrapper around Ring class for editing/loading
             [ParserTarget("Rings", optional = true, allowMerge = true)]
             private RingLoader ring;
+
+            // Wrapper around Ring class for editing/loading
+            [ParserTarget("Particle", optional = true, allowMerge = true)]
+            private ParticleLoader particle;
 
 			// Sun
 			[ParserTarget("SolarPowerCurve", optional = true, allowMerge = false)]
@@ -137,6 +141,9 @@ namespace Kopernicus
 
                     // Create our RingLoader
                     ring = new RingLoader(generatedBody.scaledVersion.gameObject);
+
+                    // Create Particles
+                    particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Otherwise we have to generate all the things for this body
@@ -169,6 +176,9 @@ namespace Kopernicus
 
                     // Create our RingLoader
                     ring = new RingLoader(generatedBody.scaledVersion.gameObject);
+
+                    // Create Particles
+                    particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Create property editor/loader objects
