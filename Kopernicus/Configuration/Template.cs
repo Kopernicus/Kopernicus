@@ -143,6 +143,7 @@ namespace Kopernicus
 					Logger.Active.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
 
 					// ----- DEBUG -----
+					#if DEBUG
 					Utility.Log ("Surface Shader = " + originalBody.pqsVersion.surfaceMaterial.shader.name);
 					Utility.Log ("Fallback Shader = " + originalBody.pqsVersion.fallbackMaterial.shader.name);
 					Material wrapper = null;
@@ -158,7 +159,8 @@ namespace Kopernicus
 
 					Utility.DumpObjectProperties (wrapper, " ---- Surface Material ---- ");
 					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, "  ");
-					// -----------------
+					#endif
+					// -----------------*
 
 					// Should we remove the ocean?
 					if (body.celestialBody.ocean && removeOcean.value) 
@@ -189,7 +191,7 @@ namespace Kopernicus
 							string modName = "PQSMod_" + mod;
 							foreach (PQSMod m in mods.Where(m => m.GetType().ToString().EndsWith(modName))) 
 							{
-								Logger.Active.Log ("Removed Mod: " + m.name + " (" + m.GetType () + ")");
+								Logger.Active.Log ("Removed PQSMod: " + m.name + " (" + m.GetType () + ")");
 								UnityEngine.Object.Destroy (m);
 							}
 						}

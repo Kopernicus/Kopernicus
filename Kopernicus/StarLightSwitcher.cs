@@ -38,7 +38,35 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
+	public class SunDebugger : MonoBehaviour
+	{
+		void Awake()
+		{
+			if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
+				return;
+
+			GameObject sunLight = GameObject.Find("SunLight");
+			GameObject scaledSunLight = GameObject.Find("Scaledspace SunLight");
+
+			Logger.Default.Log ("Debugging Sun stuff");
+			Utility.GameObjectWalk (sunLight, "sunLight: ");
+
+			Utility.DumpObjectProperties (sunLight.GetComponent<Sun> (), "Sun: ");
+			Utility.DumpObjectFields (sunLight.GetComponent<Sun> (), "Sun Fields: ");
+
+			Utility.GameObjectWalk (scaledSunLight, "scaledSunLight: ");
+
+			Logger.Default.Log ("Searching for SkySphereControllers");
+			foreach (SkySphereControl c in FindObjectsOfType<SkySphereControl> ()) {
+				Logger.Default.Log ("Found Controller: " + c.name);
+			}
+
+			Logger.Default.Flush ();
+		}
+	}
+
+	//[KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class StarLightSwitcher : MonoBehaviour
     {
 		// List of celestial bodies that are stars
@@ -55,31 +83,42 @@ namespace Kopernicus
 
         void Update()
         {
-            // Get the current position of the active vessel
-			Vector3 position = Vector3.zero;
-			if (PlanetariumCamera.fetch.enabled == true) 
+			// If the game scene is the space center, we need to make sure the star is our home star
+			CelestialBody selectedStar = null;
+			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) 
 			{
-				position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
-			} 
-			else if (FlightGlobals.ActiveVessel != null) 
-			{
-				position = FlightGlobals.ActiveVessel.GetTransform ().position;
+				selectedStar = stars.Where (body => body.flightGlobalsIndex == 0).First ();
 			}
 
-			// Get the closest star
-			CelestialBody closestStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
-			if (closestStar != Sun.Instance.sun) 
+			// If we are in the tracking station or game, 
+			else if(HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT)
 			{
-				SetSun (closestStar);
+	            // Get the current position of the active vessel
+				if (PlanetariumCamera.fetch.enabled == true) 
+				{
+					Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
+					selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
+				} 
+				else if (FlightGlobals.ActiveVessel != null) 
+				{
+					Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
+					selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
+				}
+			}
+
+			// If the star has been changed, update everything
+			if (selectedStar != Sun.Instance.sun && selectedStar != null) 
+			{
+				StarLightSwitcher.SetSun (selectedStar);
 			}
         }
 
 		// Set the active sun object
-        public void SetSun(CelestialBody CB)
+        public static void SetSun(CelestialBody CB)
         {
             // Set star as active star
             Sun.Instance.sun = CB;
-            Planetarium.fetch.Sun = CB;
+			Planetarium.fetch.Sun = CB;
             Debug.Log("[Kopernicus]: StarLightSwitcher: Active star = " + CB.name);
 
 			// Get the star component

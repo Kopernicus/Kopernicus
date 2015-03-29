@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Terrain/Scaled Planet (Simple)";
+                public const string shaderName = "Terrain/Scaled Planet (Simple)";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -66,7 +66,13 @@ namespace Kopernicus
                     opacityID = Shader.PropertyToID(opacityKey);
                     resourceMapID = Shader.PropertyToID(resourceMapKey);
                 }
-            }
+			}
+
+			// Is some random material this material
+			public static bool UsesSameShader(Material m)
+			{
+				return m.shader.name == Properties.shaderName;
+			}
 
             // Specular Color, default = (0.5,0.5,0.5,1)
             public Color specColor

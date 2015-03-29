@@ -71,8 +71,11 @@ namespace Kopernicus
 			PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
 
 			// SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
-			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController>(true)[0];
+			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController> (true).First ();
 			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
+
+			// Clear space center instance so it will accept nouveau Kerbin
+			SpaceCenter.Instance = null;
 
 			// Add a handler so that we can do post spawn fixups.  
 			PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
@@ -86,18 +89,18 @@ namespace Kopernicus
 		// Post spawn fixups (ewwwww........)
 		public void PostSpawnFixups ()
 		{
-			// For some reason the game doesn't find nouveau Kerbin
-			Logger.Default.Log("Injector.PostSpawnFixups() => Fixing space center celestial body");
-			SpaceCenter.Instance.cb = Planetarium.fetch.Home;
+			// Fix the flight globals index of each body
+			int counter = 0;
+			foreach (CelestialBody body in FlightGlobals.Bodies) 
+				body.flightGlobalsIndex = counter++;
 
 			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
 			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
 			double maximumDistance = rootBody.children.Max (b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
 			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
-			// Find all textures
-			/*foreach(Texture t in Resources.FindObjectsOfTypeAll<Texture>())
-				Debug.Log("Found Texture => " + t.name);*/
+			// Select the closest star to home
+			StarLightSwitcher.SetSun (FlightGlobals.Bodies.Where (body => body.flightGlobalsIndex == 0).First());
 
 			// Fixups complete, time to surrender to fate
 			Destroy (this);
@@ -106,7 +109,7 @@ namespace Kopernicus
 		// Log the destruction of the injector
 		public void OnDestroy()
 		{
-			Logger.Default.Log("Injection Complete");
+			Logger.Default.Log("Injector.OnDestroy(): Complete");
 			Logger.Default.Flush ();
 		}
 	}

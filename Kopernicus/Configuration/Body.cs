@@ -205,10 +205,17 @@ namespace Kopernicus
 					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 					orbit.Apply(generatedBody);
 				}
-				
+
 				// If a PQS version was definied
 				if (pqs != null) 
 				{
+					// ----------- DEBUG -------------
+					#if DEBUG
+					Utility.DumpObjectProperties (pqs.pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
+					Utility.GameObjectWalk (pqs.pqsVersion.gameObject, "  ");
+					#endif
+					// -------------------------------
+
 					// Assign the generated PQS to our new world
 					generatedBody.pqsVersion = pqs.pqsVersion;
 
@@ -327,15 +334,6 @@ namespace Kopernicus
 						mesh.vertices = vertices;
 						mesh.RecalculateNormals();
 						mesh.RecalculateBounds ();
-					}
-
-					// Otherwise log an error
-					else
-					{
-						Logger.Active.Log("PQS BODY HAS NO PQS MODS");
-						Logger.Active.Log("-------- PQS ----------");
-						Utility.GameObjectWalk(body.pqsVersion.gameObject);
-						Logger.Active.Log("-----------------------");
 					}
 
 					// Cleanup

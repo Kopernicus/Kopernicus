@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "AtmosphereFromGround";
+                public const string shaderName = "AtmosphereFromGround";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -136,7 +136,13 @@ namespace Kopernicus
                     gID = Shader.PropertyToID(gKey);
                     g2ID = Shader.PropertyToID(g2Key);
                 }
-            }
+			}
+
+			// Is some random material this material
+			public static bool UsesSameShader(Material m)
+			{
+				return m.shader.name == Properties.shaderName;
+			}
 
             // Offset Transform, default = (0,0,0,1)
             public Vector4 offsetTransform
