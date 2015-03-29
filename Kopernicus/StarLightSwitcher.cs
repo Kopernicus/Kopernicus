@@ -38,7 +38,7 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
+	/*[KSPAddon(KSPAddon.Startup.EveryScene, false)]
 	public class SunDebugger : MonoBehaviour
 	{
 		void Awake()
@@ -57,16 +57,11 @@ namespace Kopernicus
 
 			Utility.GameObjectWalk (scaledSunLight, "scaledSunLight: ");
 
-			Logger.Default.Log ("Searching for SkySphereControllers");
-			foreach (SkySphereControl c in FindObjectsOfType<SkySphereControl> ()) {
-				Logger.Default.Log ("Found Controller: " + c.name);
-			}
-
 			Logger.Default.Flush ();
 		}
-	}
+	}*/
 
-	//[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class StarLightSwitcher : MonoBehaviour
     {
 		// List of celestial bodies that are stars
@@ -137,5 +132,23 @@ namespace Kopernicus
                 }
             }
         }
+
+		// Debug a star's coronas
+		public static void DebugSunScaledSpace(GameObject scaledVersion)
+		{
+			// Debug the scaled space size of the star
+			Utility.PrintTransform (scaledVersion.transform, " " + scaledVersion.name + " Transform ");
+			Utility.DumpObjectProperties (scaledVersion.renderer.material);
+
+			// Get the sun corona objects in scaled space
+			foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
+			{
+				Logger.Active.Log ("---- Sun Corona ----");
+				Utility.PrintTransform (corona.transform);
+				Utility.DumpObjectProperties (corona);
+				Utility.DumpObjectProperties (corona.renderer.material);
+				Logger.Active.Log ("--------------------");
+			}
+		}
     }
 }

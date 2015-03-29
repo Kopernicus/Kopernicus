@@ -206,14 +206,20 @@ namespace Kopernicus
 						// Apply new ones
 						foreach (Corona corona in coronas) 
 						{
+							// Backup local transform parameters 
+							Vector3 position = corona.corona.transform.localPosition;
+							Vector3 scale = corona.corona.transform.localScale;
+							Quaternion rotation = corona.corona.transform.rotation;
+
+							// Parent the new corona
 							corona.corona.transform.parent = scaledVersion.transform;
+
+							// Restore the local transform settings
+							corona.corona.transform.localPosition = position;
+							corona.corona.transform.localScale = scale;
+							corona.corona.transform.localRotation = rotation;
 						}
 					}
-
-					// debug
-					Utility.DumpObjectProperties(scaledVersion.renderer.sharedMaterial, " Star Material ");
-					foreach(SunCoronas c in scaledVersion.GetComponentsInChildren<SunCoronas>(true))
-						Utility.DumpObjectFields(c, " Solar Corona ");
 				}
 			}
 

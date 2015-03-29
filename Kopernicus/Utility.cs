@@ -209,6 +209,15 @@ namespace Kopernicus
 			Logger.Active.Log ("---------------------------------");
 		}
 
+		public static void PrintTransform(Transform t, string title = "")
+		{
+			Logger.Active.Log ("------" + title + "------");
+			Logger.Active.Log ("Position: " + t.localPosition);
+			Logger.Active.Log ("Rotation: " + t.localRotation);
+			Logger.Active.Log ("Scale: " + t.localScale);
+			Logger.Active.Log ("------------------");
+		}
+
 		// Print out the tree of components 
 		public static void GameObjectWalk (GameObject o, String prefix = "")
 		{
