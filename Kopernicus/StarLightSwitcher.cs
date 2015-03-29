@@ -38,6 +38,28 @@ using UnityEngine;
 
 namespace Kopernicus
 {
+	[KSPAddon(KSPAddon.Startup.EveryScene, false)]
+	public class HerpyDerpy : MonoBehaviour
+	{
+		void Awake()
+		{
+			if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
+				return;
+
+			GameObject sunLight = GameObject.Find("SunLight");
+			GameObject scaledSunLight = GameObject.Find("Scaledspace SunLight");
+
+			Logger.Default.Log ("Debugging Sun stuff");
+			Utility.GameObjectWalk (sunLight, "sunLight: ");
+
+			Utility.DumpObjectProperties (sunLight.GetComponent<Sun> (), "Sun: ");
+			Utility.DumpObjectFields (sunLight.GetComponent<Sun> (), "Sun Fields: ");
+
+			Utility.GameObjectWalk (scaledSunLight, "scaledSunLight: ");
+			Logger.Default.Flush ();
+		}
+	}
+
 	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class StarLightSwitcher : MonoBehaviour
     {

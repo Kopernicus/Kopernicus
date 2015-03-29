@@ -99,6 +99,9 @@ namespace Kopernicus
 			double maximumDistance = rootBody.children.Max (b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
 			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
+			// Select the closest star to home
+			StarLightSwitcher.SetSun (FlightGlobals.Bodies.Where (body => body.flightGlobalsIndex == 0).First());
+
 			// Fixups complete, time to surrender to fate
 			Destroy (this);
 		}
