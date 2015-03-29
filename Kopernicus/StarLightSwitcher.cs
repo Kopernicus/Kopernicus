@@ -55,9 +55,6 @@ namespace Kopernicus
 
         void Update()
         {
-			// TODO - it might be better to select the star based on the configuration of the celestial body heirachy.  Something is horrifically broken
-			// with the space center camera.  Like random time warping, or refusing to believe the current sun is the sun...
-
 			// If the game scene is the space center, we need to make sure the star is our home star
 			CelestialBody selectedStar = null;
 			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) 
@@ -65,19 +62,23 @@ namespace Kopernicus
 				selectedStar = stars.Where (body => body.flightGlobalsIndex == 0).First ();
 			}
 
-            // Get the current position of the active vessel
-			else if (PlanetariumCamera.fetch.enabled == true) 
+			// If we are in the tracking station or game, 
+			else if(HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.EDITOR)
 			{
-				Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
-				selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
-			} 
-			else if (FlightGlobals.ActiveVessel != null) 
-			{
-				Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
-				selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
+	            // Get the current position of the active vessel
+				if (PlanetariumCamera.fetch.enabled == true) 
+				{
+					Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
+					selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
+				} 
+				else if (FlightGlobals.ActiveVessel != null) 
+				{
+					Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
+					selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star)).First ();
+				}
 			}
 
-			// Get the closest star
+			// If the star has been changed, update everything
 			if (selectedStar != Sun.Instance.sun && selectedStar != null) 
 			{
 				StarLightSwitcher.SetSun (selectedStar);
