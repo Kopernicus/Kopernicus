@@ -235,30 +235,6 @@ namespace Kopernicus
 				vertexSimplexNoiseColor.modEnabled = true;
 				vertexSimplexNoiseColor.order = 200;
 
-				PQSMod_HeightColorMap heightColorMap = mod.AddComponent<PQSMod_HeightColorMap>();
-				heightColorMap.sphere = pqsVersion;
-				List<PQSMod_HeightColorMap.LandClass> landClasses = new List<PQSMod_HeightColorMap.LandClass>();
-
-				PQSMod_HeightColorMap.LandClass landClass = new PQSMod_HeightColorMap.LandClass("AbyPl", 0.0, 0.5, new Color(0.0f, 0.0f, 0.0f, 1.0f), Color.white, double.NaN);
-				landClass.lerpToNext = true;
-				landClasses.Add(landClass);
-
-				landClass = new PQSMod_HeightColorMap.LandClass("Beach", 0.5, 0.550000011920929, new Color(0.164179087f, 0.164179087f, 0.164179087f, 1.0f), Color.white, double.NaN);
-				landClass.lerpToNext = true;
-				landClasses.Add(landClass);
-
-				landClass = new PQSMod_HeightColorMap.LandClass("Beach", 0.550000011920929, 1.0, new Color(0.373134315f, 0.373134315f, 0.373134315f, 1.0f), Color.white, double.NaN);
-				landClass.lerpToNext = false;
-				landClasses.Add(landClass);
-
-				// Generate an array from the land classes list
-				heightColorMap.landClasses = landClasses.ToArray();
-				heightColorMap.blend = 0.7f;
-				heightColorMap.lcCount = 3;
-				heightColorMap.requirements = PQS.ModiferRequirements.MeshColorChannel;
-				heightColorMap.modEnabled = true;
-				heightColorMap.order = 201;
-
 				// Create the alititude alpha mods
 				mod = new GameObject("_Material_ModProjection");
 				mod.transform.parent = controllerRoot.transform;

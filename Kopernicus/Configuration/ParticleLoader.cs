@@ -29,7 +29,6 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;

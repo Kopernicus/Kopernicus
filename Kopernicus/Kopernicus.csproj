@@ -110,6 +110,7 @@
     <Compile Include="Configuration\ModLoader\VertexColorMap.cs" />
     <Compile Include="Configuration\ModLoader\ModLoader.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\HeightColorMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

@@ -89,7 +89,7 @@ namespace Kopernicus
                 public VertexSimplexHeight()
 				{
 					// Create the base mod
-                    GameObject modObject = new GameObject("VertexColorMapBlend");
+                    GameObject modObject = new GameObject("VertexSimplexHeight");
 					modObject.transform.parent = Utility.Deactivator;
 					_mod = modObject.AddComponent<PQSMod_VertexSimplexHeight> ();
                     _mod.requirements = PQS.ModiferRequirements.MeshCustomNormals;
