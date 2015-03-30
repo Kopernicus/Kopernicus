@@ -45,8 +45,8 @@ namespace Kopernicus
             // Set-up our custom ring
             public Ring ring;
 
-            //
-            GameObject ScaledPlanet;
+            // Our Scaled Planet
+            public GameObject ScaledPlanet { get; set; }
             
             // Inner Radius of our ring
             [ParserTarget("innerRadius", optional = true, allowMerge = false)]
@@ -98,11 +98,10 @@ namespace Kopernicus
             }
 
 
-            // Initialize the RingLoader and add the -ringed- planet
-            public RingLoader(GameObject ScaledPlanet)
+            // Initialize the RingLoader
+            public RingLoader()
             {
                 ring = new Ring();
-                this.ScaledPlanet = ScaledPlanet;
             }
 
             // Apply event
@@ -113,13 +112,13 @@ namespace Kopernicus
             // Post-Apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                AddRing(ScaledPlanet, ring);
+                
             }
 
             // Rings
             public static void AddRing(GameObject ScaledPlanet, Ring ring)
             {
-                
+                Logger.Active.Log("Adding Ring to " + ScaledPlanet.name);
                 Vector3 StartVec = new Vector3(1, 0, 0);
                 int RingSteps = 128;
                 var vertices = new List<Vector3>();

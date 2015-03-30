@@ -95,10 +95,10 @@ namespace Kopernicus
 			private PQSLoader pqs;
 
             // Wrapper around Ring class for editing/loading
-            [ParserTarget("Rings", optional = true, allowMerge = true)]
-            private RingLoader ring;
+            [ParserTargetCollection("Rings", optional = true, nameSignificance = NameSignificance.None)]
+            private List<RingLoader> rings = new List<RingLoader>();
 
-            // Wrapper around Ring class for editing/loading
+            // Wrapper around Particle class for editing/loading
             [ParserTarget("Particle", optional = true, allowMerge = true)]
             private ParticleLoader particle;
 
@@ -138,12 +138,6 @@ namespace Kopernicus
 
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
-
-                    // Create our RingLoader
-                    ring = new RingLoader(generatedBody.scaledVersion.gameObject);
-
-                    // Create Particles
-                    particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Otherwise we have to generate all the things for this body
@@ -173,12 +167,6 @@ namespace Kopernicus
 
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
-
-                    // Create our RingLoader
-                    ring = new RingLoader(generatedBody.scaledVersion.gameObject);
-
-                    // Create Particles
-                    particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Create property editor/loader objects
@@ -186,6 +174,10 @@ namespace Kopernicus
 
 				// Atmospheric settings
 				atmosphere = new Atmosphere(generatedBody.celestialBody, generatedBody.scaledVersion);
+
+                // Particles
+                particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
+
 			}
 
 			// Parser Post Apply Event
@@ -224,7 +216,13 @@ namespace Kopernicus
 						p.radius = generatedBody.celestialBody.Radius;
 				}
 
-				// If this body is a star
+                // Create our RingLoaders
+                foreach (RingLoader ring in rings)
+                {
+                    RingLoader.AddRing(generatedBody.scaledVersion.gameObject, ring.ring);
+                }
+
+                // If this body is a star
 				if (scaledVersion.type.value == BodyType.Star) 
 				{
 					// Get the Kopernicus star component from the scaled version
