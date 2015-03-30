@@ -329,7 +329,7 @@ namespace Kopernicus
 						// Create a new map script object
 						value = ScriptableObject.CreateInstance<T> ();
 						value.CreateMap (MapSO.MapDepth.Greyscale, map);
-						UnityEngine.Object.Destroy (map);
+						UnityEngine.Object.DestroyImmediate (map);
 					}
 				}
 			}
@@ -360,7 +360,7 @@ namespace Kopernicus
 						// Create a new map script object
 						value = ScriptableObject.CreateInstance<T> ();
 						value.CreateMap (MapSO.MapDepth.RGB, map);
-						UnityEngine.Object.Destroy (map);
+						UnityEngine.Object.DestroyImmediate (map);
 					}
 				}
 			}

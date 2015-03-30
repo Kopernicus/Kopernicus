@@ -105,6 +105,9 @@
     <Compile Include="Logger.cs" />
     <Compile Include="MaterialWrapper\PQSMainShader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainShaderLoader.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorMap.cs" />
+    <Compile Include="Configuration\ModLoader\ModLoader.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

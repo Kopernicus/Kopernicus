@@ -121,8 +121,8 @@ namespace Kopernicus
 			private PQSProjectionFallbackLoader fallbackMaterial;
 				
 			// PQS Mods
-			[ParserTargetCollection("Mods", optional = true, typePrefix = "Kopernicus.Configuration.ModLoader.")]
-			private List<object> mods = new List<object> (); 
+			[ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
+			private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> (); 
 
 			/**
 			 * Constructor for new PQS
@@ -134,19 +134,20 @@ namespace Kopernicus
 				controllerRoot.transform.parent = Utility.Deactivator;
 				this.pqsVersion = controllerRoot.AddComponent<PQS> ();
 
+				// I am at this time unable to determine some of the magic parameters which cause the PQS to work...
+				PSystemBody Laythe = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
+				Utility.CopyObjectFields(Laythe.pqsVersion, pqsVersion);
+				pqsVersion.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
+
 				// These parameters magically make the PQS work for some reason.  Need to decipher...
-				pqsVersion.maxFrameTime = 0.075f;
+				/*pqsVersion.maxFrameTime = 0.075f;
 				pqsVersion.subdivisionThreshold = 1;
 				pqsVersion.collapseSeaLevelValue = 2;
 				pqsVersion.collapseAltitudeValue = 16;
 				pqsVersion.collapseAltitudeMax = 10000000;
 				pqsVersion.visRadSeaLevelValue = 5;
 				pqsVersion.visRadAltitudeValue = 1.79999995231628;
-				pqsVersion.visRadAltitudeMax = 10000;
-			
-			    PSystemBody Laythe = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
-				//Utility.CopyObjectFields(Laythe.pqsVersion, pqsVersion);
-				pqsVersion.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
+				pqsVersion.visRadAltitudeMax = 10000;*/
 
 				// Create the fallback material (always the same shader)
 				fallbackMaterial = new PQSProjectionFallbackLoader ();
@@ -198,7 +199,7 @@ namespace Kopernicus
 				collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
 				collider.sphere = pqsVersion;
 				collider.maxLevelOffset = 0;
-				/*collider.physicsMaterial = new PhysicMaterial();
+				collider.physicsMaterial = new PhysicMaterial();
 				collider.physicsMaterial.name = "Ground";
 				collider.physicsMaterial.dynamicFriction = 0.6f;
 				collider.physicsMaterial.staticFriction = 0.8f;
@@ -207,8 +208,7 @@ namespace Kopernicus
 				collider.physicsMaterial.dynamicFriction2 = 0.0f;
 				collider.physicsMaterial.staticFriction2 = 0.0f;
 				collider.physicsMaterial.frictionCombine = PhysicMaterialCombine.Maximum;
-				collider.physicsMaterial.bounceCombine = PhysicMaterialCombine.Average;*/
-				collider.physicsMaterial = Laythe.pqsVersion.gameObject.GetComponentsInChildren<PQSMod_QuadMeshColliders> (true).First ().physicsMaterial;
+				collider.physicsMaterial.bounceCombine = PhysicMaterialCombine.Average;
 				collider.requirements = PQS.ModiferRequirements.Default;
 				collider.modEnabled = true;
 				collider.order = 100;
@@ -216,8 +216,11 @@ namespace Kopernicus
 				// Create physics material editor
 				physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
 
+
+				// ------- HACKY HACK TEST ----------
+
 				// Create the color PQS mods
-				/*mod = new GameObject("_Color");
+				mod = new GameObject("_Color");
 				mod.transform.parent = controllerRoot.transform;
 				PQSMod_VertexSimplexNoiseColor vertexSimplexNoiseColor = mod.AddComponent<PQSMod_VertexSimplexNoiseColor>();
 				vertexSimplexNoiseColor.sphere = pqsVersion;
@@ -281,30 +284,14 @@ namespace Kopernicus
 				aerialPerspectiveMaterial.heightDensAtViewer = 0;
 				aerialPerspectiveMaterial.requirements = PQS.ModiferRequirements.Default;
 				aerialPerspectiveMaterial.modEnabled = true;
-				aerialPerspectiveMaterial.order = 100;*/
+				aerialPerspectiveMaterial.order = 100;
 
 				// Create the height noise module
 				mod = new GameObject("_HeightNoise");
 				mod.transform.parent = controllerRoot.transform;
-				PQSMod_VertexHeightMap vertexHeightMap = mod.gameObject.AddComponent<PQSMod_VertexHeightMap>();
-				vertexHeightMap.sphere = pqsVersion;
-				//vertexHeightMap.heightMapDeformity = 29457.0;
-				vertexHeightMap.heightMapDeformity = 10000.0;
-				vertexHeightMap.heightMapOffset = -1000.0;
-				vertexHeightMap.scaleDeformityByRadius = false;
-				vertexHeightMap.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
-				vertexHeightMap.modEnabled = true;
-				vertexHeightMap.order = 20;
-
-				// Load the heightmap for this planet
-				Texture2D map = new Texture2D(4, 4, TextureFormat.Alpha8, false);
-				map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/KopernicusExamples/FullCustomPlanet/PluginData/Height.png"));
-				vertexHeightMap.heightMap = ScriptableObject.CreateInstance<MapSO>();
-				vertexHeightMap.heightMap.CreateMap(MapSO.MapDepth.Greyscale, map);
-				UnityEngine.Object.DestroyImmediate(map);
 
 				// Create the simplex height module
-				/*PQSMod_VertexSimplexHeight vertexSimplexHeight = mod.AddComponent<PQSMod_VertexSimplexHeight>();
+				PQSMod_VertexSimplexHeight vertexSimplexHeight = mod.AddComponent<PQSMod_VertexSimplexHeight>();
 				vertexSimplexHeight.sphere = pqsVersion;
 				vertexSimplexHeight.seed = 670000;
 				vertexSimplexHeight.deformity = 1700.0;
@@ -337,10 +324,10 @@ namespace Kopernicus
 				vertexHeightNoise.mode = LibNoise.Unity.QualityMode.Low;
 				vertexHeightNoise.requirements = PQS.ModiferRequirements.MeshColorChannel;
 				vertexHeightNoise.modEnabled = true;
-				vertexHeightNoise.order = 22;*/
+				vertexHeightNoise.order = 22;
 
 				// Create the simplex height absolute
-				/*mod = new GameObject("_FineDetail");
+				mod = new GameObject("_FineDetail");
 				mod.transform.parent = controllerRoot.gameObject.transform;
 				PQSMod_VertexSimplexHeightAbsolute vertexSimplexHeightAbsolute = mod.AddComponent<PQSMod_VertexSimplexHeightAbsolute>();
 				vertexSimplexHeightAbsolute.sphere = pqsVersion;
@@ -351,22 +338,7 @@ namespace Kopernicus
 				vertexSimplexHeightAbsolute.frequency = 18.0;
 				vertexSimplexHeightAbsolute.requirements = PQS.ModiferRequirements.Default;
 				vertexSimplexHeightAbsolute.modEnabled = true;
-				vertexSimplexHeightAbsolute.order = 30;*/
-
-				// Surface color map
-				mod = new GameObject("_LandClass");
-				mod.transform.parent = pqsVersion.gameObject.transform;
-				PQSMod_VertexColorMap colorMap = mod.AddComponent<PQSMod_VertexColorMap>();
-				colorMap.sphere = pqsVersion;
-				colorMap.order = 500;
-				colorMap.modEnabled = true;
-
-				// Decompress and load the color
-				map = new Texture2D(4, 4, TextureFormat.RGB24, false);
-				map.LoadImage(System.IO.File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/KopernicusExamples/FullCustomPlanet/Textures/Color.png"));
-				colorMap.vertexColorMap = ScriptableObject.CreateInstance<MapSO>();
-				colorMap.vertexColorMap.CreateMap(MapSO.MapDepth.RGB, map);
-				UnityEngine.Object.DestroyImmediate(map);
+				vertexSimplexHeightAbsolute.order = 30;
 			}
 
 			/**
@@ -413,7 +385,16 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
+				// Add all created mods to the PQS
+				foreach (ModLoader.ModLoader loader in mods) 
+				{
+					loader.mod.transform.parent = pqsVersion.transform;
+					loader.mod.sphere = pqsVersion;
+					Logger.Active.Log ("Added PQS Mod: " + loader.mod.GetType ());
+				}
 
+				// Make sure all the PQSMods exist in Localspace
+				pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
 			}
 		}
 	}
