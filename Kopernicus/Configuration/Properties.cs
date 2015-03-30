@@ -33,6 +33,9 @@ using System.Linq;
 
 using UnityEngine;
 
+// Disable the "private fields `` is assigned but its value is never used warning"
+#pragma warning disable 0414
+
 namespace Kopernicus
 {
 	namespace Configuration
@@ -193,3 +196,4 @@ namespace Kopernicus
 	}
 }
 
+#pragma warning restore 0414

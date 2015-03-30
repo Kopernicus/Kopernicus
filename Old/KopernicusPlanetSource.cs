@@ -62,7 +62,7 @@ namespace Kopernicus
 
 			//Utility.DumpObject (Laythe.celestialBody, " Laythe Celestial Body ");
 			//Utility.DumpObject (Laythe.pqsVersion, " Laythe PQS ");
-			Transform laytheOcean = Utility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
+			//Transform laytheOcean = Utility.FindInChildren (Laythe.pqsVersion.transform, "LaytheOcean");
 			//Utility.DumpObject (laytheOcean.GetComponent<PQS> (), " Laythe Ocean PQS ");
 
 			// AddBody makes the GameObject and stuff. It also attaches it to the system and parent.

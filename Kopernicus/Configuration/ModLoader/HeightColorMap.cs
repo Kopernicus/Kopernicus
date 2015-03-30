@@ -124,7 +124,6 @@ namespace Kopernicus
 					GameObject modObject = new GameObject("HeightColorMap");
 					modObject.transform.parent = Utility.Deactivator;
 					_mod = modObject.AddComponent<PQSMod_HeightColorMap> ();
-					_mod.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 					base.mod = _mod;
 				}
 			}

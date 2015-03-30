@@ -219,22 +219,6 @@ namespace Kopernicus
 
 				// ------- HACKY HACK TEST ----------
 
-				// Create the color PQS mods
-				mod = new GameObject("_Color");
-				mod.transform.parent = controllerRoot.transform;
-				PQSMod_VertexSimplexNoiseColor vertexSimplexNoiseColor = mod.AddComponent<PQSMod_VertexSimplexNoiseColor>();
-				vertexSimplexNoiseColor.sphere = pqsVersion;
-				vertexSimplexNoiseColor.seed = 45;
-				vertexSimplexNoiseColor.blend = 1.0f;
-				vertexSimplexNoiseColor.colorStart = new Color(0.768656731f, 0.6996614f, 0.653089464f, 1);
-				vertexSimplexNoiseColor.colorEnd = new Color(0.0f, 0.0f, 0.0f, 1.0f);
-				vertexSimplexNoiseColor.octaves = 12.0;
-				vertexSimplexNoiseColor.persistence = 0.5;
-				vertexSimplexNoiseColor.frequency = 2.0;
-				vertexSimplexNoiseColor.requirements = PQS.ModiferRequirements.MeshColorChannel;
-				vertexSimplexNoiseColor.modEnabled = true;
-				vertexSimplexNoiseColor.order = 200;
-
 				// Create the alititude alpha mods
 				mod = new GameObject("_Material_ModProjection");
 				mod.transform.parent = controllerRoot.transform;
