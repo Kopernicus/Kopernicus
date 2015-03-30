@@ -132,15 +132,15 @@ namespace Kopernicus
             public ParticleLoader(GameObject scaledPlanet)
             {
                 this.body = scaledPlanet;
-                MainEmitter = (ParticleEmitter)body.AddComponent("MeshParticleEmitter");
-                ParticleRender = body.AddComponent<ParticleRenderer>();
-                ParticleAnim = body.AddComponent<ParticleAnimator>();
-                ParticleRender.material = new Material(Shader.Find("Particles/Alpha Blended"));
             }
 
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
+                MainEmitter = (ParticleEmitter)body.AddComponent("MeshParticleEmitter");
+                ParticleRender = body.AddComponent<ParticleRenderer>();
+                ParticleAnim = body.AddComponent<ParticleAnimator>();
+                ParticleRender.material = new Material(Shader.Find("Particles/Alpha Blended"));
             }
 
             // Post-Apply event
