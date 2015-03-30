@@ -51,6 +51,12 @@ namespace Kopernicus
 			Debug.Log ("[Kopernicus]: StarLightSwitcher Started");
 			DontDestroyOnLoad (this);
 			stars = PSystemManager.Instance.localBodies.Where (body => body.scaledBody.GetComponentsInChildren<KopernicusStarComponent> (true).Length > 0).ToList ();
+
+			// Disable queued update (why is this required, what does this do?)
+			// Pulled from star systems.
+			foreach (CelestialBody star in PSystemManager.Instance.localBodies)
+				if (star.orbitDriver != null)
+					star.orbitDriver.QueuedUpdate = false;
 		}
 
         void Update()
