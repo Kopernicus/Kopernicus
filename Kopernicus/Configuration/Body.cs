@@ -254,8 +254,11 @@ namespace Kopernicus
 					Directory.CreateDirectory (CacheDirectory);
 					if (File.Exists (CacheFile)) 
 					{
-						Logger.Active.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
-						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = Utility.DeserializeMesh (CacheFile);
+                        if (!File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
+                        {
+                            Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
+                            generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = Utility.DeserializeMesh(CacheFile);
+                        }
 					} 
 
 					// Otherwise we have to generate the mesh
@@ -264,7 +267,8 @@ namespace Kopernicus
 						Logger.Active.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
 						Mesh scaledVersionMesh = ComputeScaledSpaceMesh(generatedBody);
 						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = scaledVersionMesh;
-						Utility.SerializeMesh (scaledVersionMesh, CacheFile);
+                        if (!File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
+						    Utility.SerializeMesh (scaledVersionMesh, CacheFile);
 					}
 
 					// Apply mesh to the body
