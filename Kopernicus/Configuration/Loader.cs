@@ -131,6 +131,10 @@ namespace Kopernicus
 
 				// Stage 5 - sort by distance from parent (discover how this effects local bodies)
            		RecursivelySortBodies (system.rootBody);
+
+                // Sets the SOI of the root-body to infinite
+                system.rootBody.celestialBody.sphereOfInfluence = Double.PositiveInfinity;
+
 				return system;
 			}
 

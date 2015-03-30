@@ -290,18 +290,6 @@ namespace Kopernicus
 				mod = new GameObject("_HeightNoise");
 				mod.transform.parent = controllerRoot.transform;
 
-				// Create the simplex height module
-				PQSMod_VertexSimplexHeight vertexSimplexHeight = mod.AddComponent<PQSMod_VertexSimplexHeight>();
-				vertexSimplexHeight.sphere = pqsVersion;
-				vertexSimplexHeight.seed = 670000;
-				vertexSimplexHeight.deformity = 1700.0;
-				vertexSimplexHeight.octaves = 12.0;
-				vertexSimplexHeight.persistence = 0.5;
-				vertexSimplexHeight.frequency = 4.0;
-				vertexSimplexHeight.requirements = PQS.ModiferRequirements.MeshCustomNormals;
-				vertexSimplexHeight.modEnabled = true;
-				vertexSimplexHeight.order = 21;
-
 				// SERIOUSLY RECOMMENDED FOR NO OCEAN WORLDS
 				// Create the flatten ocean module
 				PQSMod_FlattenOcean flattenOcean = mod.AddComponent<PQSMod_FlattenOcean>();
@@ -386,12 +374,12 @@ namespace Kopernicus
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
 				// Add all created mods to the PQS
-				foreach (ModLoader.ModLoader loader in mods) 
-				{
-					loader.mod.transform.parent = pqsVersion.transform;
-					loader.mod.sphere = pqsVersion;
-					Logger.Active.Log ("Added PQS Mod: " + loader.mod.GetType ());
-				}
+                foreach (ModLoader.ModLoader loader in mods)
+                {
+                    loader.mod.transform.parent = pqsVersion.transform;
+                    loader.mod.sphere = pqsVersion;
+                    Logger.Active.Log("Added PQS Mod: " + loader.mod.GetType());
+                }
 
 				// Make sure all the PQSMods exist in Localspace
 				pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);

@@ -94,9 +94,13 @@ namespace Kopernicus
 			[ParserTarget("PQS", optional = true, allowMerge = true)]
 			private PQSLoader pqs;
 
-            // Wrapper around KSP's Orbit class for editing/loading
-            [ParserTarget("Rings", optional = true, allowMerge = true)]
-            private RingLoader ring;
+            // Wrapper around Ring class for editing/loading
+            [ParserTargetCollection("Rings", optional = true, nameSignificance = NameSignificance.None)]
+            private List<RingLoader> rings = new List<RingLoader>();
+
+            // Wrapper around Particle class for editing/loading
+            [ParserTarget("Particle", optional = true, allowMerge = true)]
+            private ParticleLoader particle;
 
 			// Sun
 			[ParserTarget("SolarPowerCurve", optional = true, allowMerge = false)]
@@ -134,9 +138,6 @@ namespace Kopernicus
 
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
-
-                    // Create our RingLoader
-                    ring = new RingLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Otherwise we have to generate all the things for this body
@@ -166,9 +167,6 @@ namespace Kopernicus
 
 					// Create the scaled version editor/loader
 					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
-
-                    // Create our RingLoader
-                    ring = new RingLoader(generatedBody.scaledVersion.gameObject);
 				}
 
 				// Create property editor/loader objects
@@ -176,6 +174,10 @@ namespace Kopernicus
 
 				// Atmospheric settings
 				atmosphere = new Atmosphere(generatedBody.celestialBody, generatedBody.scaledVersion);
+
+                // Particles
+                particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
+
 			}
 
 			// Parser Post Apply Event
@@ -214,7 +216,13 @@ namespace Kopernicus
 						p.radius = generatedBody.celestialBody.Radius;
 				}
 
-				// If this body is a star
+                // Create our RingLoaders
+                foreach (RingLoader ring in rings)
+                {
+                    RingLoader.AddRing(generatedBody.scaledVersion.gameObject, ring.ring);
+                }
+
+                // If this body is a star
 				if (scaledVersion.type.value == BodyType.Star) 
 				{
 					// Get the Kopernicus star component from the scaled version
@@ -246,8 +254,11 @@ namespace Kopernicus
 					Directory.CreateDirectory (CacheDirectory);
 					if (File.Exists (CacheFile)) 
 					{
-						Logger.Active.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
-						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = Utility.DeserializeMesh (CacheFile);
+                        if (!File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
+                        {
+                            Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
+                            generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = Utility.DeserializeMesh(CacheFile);
+                        }
 					} 
 
 					// Otherwise we have to generate the mesh
@@ -256,7 +267,8 @@ namespace Kopernicus
 						Logger.Active.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
 						Mesh scaledVersionMesh = ComputeScaledSpaceMesh(generatedBody);
 						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = scaledVersionMesh;
-						Utility.SerializeMesh (scaledVersionMesh, CacheFile);
+                        if (!File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
+						    Utility.SerializeMesh (scaledVersionMesh, CacheFile);
 					}
 
 					// Apply mesh to the body
