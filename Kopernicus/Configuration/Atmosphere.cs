@@ -136,7 +136,7 @@ namespace Kopernicus
 			}
 			
 			// atmosphere cutoff altitude
-			[ParserTarget("maxAltitude", optional = true)]
+			[ParserTarget("altitude", optional = true)]
 			private NumericParser<float> maxAltitude 
 			{
 				set { celestialBody.maxAtmosphereAltitude = value.value; }
@@ -179,6 +179,10 @@ namespace Kopernicus
 					MeshFilter meshFilter             = scaledAtmosphere.AddComponent<MeshFilter>();
 					meshFilter.sharedMesh             = Utility.ReferenceGeosphere ();
 					scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+
+					// Setup known defaults
+					celestialBody.staticPressureASL = 1.0f;
+					celestialBody.atmosphereMultiplier = 1.4285f;
 				}
 			}
 
