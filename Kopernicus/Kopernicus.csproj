@@ -46,7 +46,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ModLoader\AltitudeAlpha.cs" />
+    <Compile Include="Configuration\ModLoader\FlattenOcean.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoise.cs" />
+    <Compile Include="Configuration\ModLoader\AerialPerspectiveMaterial.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexHeightAbsolute.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexHeight.cs" />
     <Compile Include="Configuration\ParticleLoader.cs" />
     <Compile Include="Configuration\RingLoader.cs" />
