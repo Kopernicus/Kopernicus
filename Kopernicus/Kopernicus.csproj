@@ -51,6 +51,10 @@
     <Compile Include="Configuration\ModLoader\HeightColorMapNoise.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap2.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorNoise.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorNoiseRGB.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolid.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolidBlend.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightMapStep.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeight.cs" />
