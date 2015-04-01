@@ -178,6 +178,13 @@ namespace Kopernicus
 						Logger.Active.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
 					}
 				}
+
+				// TODO - tentative fix, needs to be able to be configured (if it can be?)
+				if (celestialBody.progressTree == null) 
+				{
+					celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree (celestialBody);
+					Logger.Active.Log ("Added Progress Tree");
+				}
 			}
 
 			// Properties requires a celestial body referece, as this class is designed to edit the body

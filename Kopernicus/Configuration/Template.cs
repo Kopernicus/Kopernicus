@@ -85,6 +85,10 @@ namespace Kopernicus
 			[ParserTarget("removePQSMods", optional = true)]
 			private StringCollectionParser removePQSMods;
 
+			// Collection of PQS mods to remove
+			[ParserTarget("removeProgressTree", optional = true)]
+			private NumericParser<bool> removeProgressTree = new NumericParser<bool> (true);
+
 			// Apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{
@@ -197,6 +201,13 @@ namespace Kopernicus
 						}
 					}
 				}
+
+				// Should we remove the progress tree
+				if (removeProgressTree.value) 
+				{
+					body.celestialBody.progressTree = null;
+				}
+
 				// Figure out what kind of body we are
 				if (body.scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0)
 					type = BodyType.Star;
