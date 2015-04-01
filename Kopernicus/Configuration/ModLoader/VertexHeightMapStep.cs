@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.IO;
 using UnityEngine;
 
 namespace Kopernicus
@@ -43,9 +44,12 @@ namespace Kopernicus
 
 				// The map texture for the planet
 				[ParserTarget("map", optional = false)]
-				private MapSOParser_GreyScale<MapSO> heightMap
+				private string heightMap
 				{
-					set { _mod.heightMap = value.value.CompileToTexture(); }
+                    set { 
+                        _mod.heightMap = new Texture2D(2, 2);
+                        _mod.heightMap.LoadImage(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + value));
+                    }
 				}
 
 				// Height map offset
