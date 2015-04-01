@@ -160,6 +160,11 @@ namespace Kopernicus
 					set { _mod.simplexSeed = value.value; }
 				}
 
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
+
+                }
+
 				void IParserEventSubscriber.PostApply(ConfigNode node)
 				{
 

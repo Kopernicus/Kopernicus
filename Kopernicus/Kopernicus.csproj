@@ -55,6 +55,8 @@
     <Compile Include="Configuration\ModLoader\HeightColorMap2.cs" />
     <Compile Include="Configuration\ModLoader\BillboardObject.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
+    <Compile Include="Configuration\ModLoader\VertexRidgedAltitudeCurve.cs" />
+    <Compile Include="Configuration\ModLoader\VertexDefineCoastLine.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightMapStep.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve2.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve.cs" />
