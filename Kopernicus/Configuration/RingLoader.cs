@@ -1,5 +1,4 @@
-﻿using System;
-/** 
+﻿/** 
  * Kopernicus Planetary System Modifier
  * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
@@ -29,11 +28,10 @@
  * https://kerbalspaceprogram.com
  */
 
-using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
+using Kopernicus.Configuration.Resources;
 
 namespace Kopernicus
 {
@@ -206,17 +204,23 @@ namespace Kopernicus
                 //MeshRenderer PlanetRenderer = (MeshRenderer)ScaledPlanet.GetComponentsInChildren<MeshRenderer>()[0]; 
                 MeshRenderer RingRender = (MeshRenderer)RingObject.AddComponent<MeshRenderer>();
                 RingRender.material = ScaledPlanet.renderer.material;
+                
                 if (ring.unlit)
                 {
-                    RingRender.material.shader = Shader.Find("Unlit/Transparent");
+                    Material material = new Material(Shaders.UnlitNew);
+                    RingRender.material = material;
                 }
                 else
                 {
-                    RingRender.material.shader = Shader.Find("Transparent/Diffuse");
+                    Material material = new Material(Shaders.DiffuseNew);
+                    RingRender.material = material;
                 }
 
                 RingRender.material.mainTexture = ring.texture;
                 RingRender.material.color = ring.color;
+
+                ScaledPlanet.renderer.material.renderQueue = 1;
+                RingRender.material.renderQueue = 2;
 
                 RingObject.AddComponent<ReScaler>();
 

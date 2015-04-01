@@ -57,10 +57,17 @@
     <Compile Include="Configuration\ModLoader\VertexHeightNoise.cs" />
     <Compile Include="Configuration\ModLoader\AerialPerspectiveMaterial.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightOffset.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightOblate.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexHeightAbsolute.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexHeight.cs" />
     <Compile Include="Configuration\ParticleLoader.cs" />
+    <Compile Include="Configuration\Resources\Shaders.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Shaders.resx</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
@@ -124,6 +131,17 @@
     <Compile Include="Configuration\ModLoader\HeightColorMap.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\Resources\Shaders.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Shaders.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DiffuseNew.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\UnlitNew.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
 </Project>
