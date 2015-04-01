@@ -103,7 +103,7 @@ namespace Kopernicus
 			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
 			// Select the closest star to home
-			StarLightSwitcher.SetSun (FlightGlobals.Bodies.Where (body => body.flightGlobalsIndex == 0).First());
+			StarLightSwitcher.HomeStar ().SetAsActive ();
 
 			// Fixups complete, time to surrender to fate
 			Destroy (this);

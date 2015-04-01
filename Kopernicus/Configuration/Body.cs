@@ -226,7 +226,7 @@ namespace Kopernicus
 				if (scaledVersion.type.value == BodyType.Star) 
 				{
 					// Get the Kopernicus star component from the scaled version
-					KopernicusStarComponent component = generatedBody.scaledVersion.GetComponent<KopernicusStarComponent> ();
+					StarComponent component = generatedBody.scaledVersion.GetComponent<StarComponent> ();
 
 					// If we have defined a custom power curve, load it
 					if (solarPowerCurve != null) 

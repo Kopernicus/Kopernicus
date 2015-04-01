@@ -113,7 +113,6 @@
     <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
     <Compile Include="Configuration\Corona.cs" />
     <Compile Include="Configuration\Parser\Gradient.cs" />
-    <Compile Include="KopernicusStarComponent.cs" />
     <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
     <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedLoader.cs" />

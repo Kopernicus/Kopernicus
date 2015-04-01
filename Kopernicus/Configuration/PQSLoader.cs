@@ -271,6 +271,9 @@ namespace Kopernicus
 
 				// Make sure all the PQSMods exist in Localspace
 				pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
+
+				// Dump the surface material
+				Utility.DumpObjectProperties (pqsVersion.surfaceMaterial, "Surface Material");
 			}
 		}
 	}
