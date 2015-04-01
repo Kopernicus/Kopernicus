@@ -27,7 +27,6 @@
  */
 
 using System;
-using System.IO;
 using UnityEngine;
 
 namespace Kopernicus
@@ -37,49 +36,25 @@ namespace Kopernicus
 		namespace ModLoader
 		{
 			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightMapStep : ModLoader, IParserEventSubscriber
+			public class VertexDefineCoastLine : ModLoader, IParserEventSubscriber
 			{
 				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightMapStep _mod;
+				private PQSMod_VertexDefineCoastLine _mod;
 
-				// The map texture for the planet
-				[ParserTarget("map", optional = false)]
-				private string heightMap
+				// depthOffset
+				[ParserTarget("depthOffset", optional = false)]
+				private NumericParser<double> depthOffset
 				{
-                    set { 
-                        _mod.heightMap = new Texture2D(2, 2);
-                        _mod.heightMap.LoadImage(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + value));
-                    }
+					set { _mod.depthOffset = value.value; }
 				}
 
-				// Height map offset
-				[ParserTarget("offset", optional = true)]
-				private NumericParser<double> heightMapOffset 
+				// oceanRadiusOffset
+				[ParserTarget("oceanRadiusOffset", optional = true)]
+				private NumericParser<double> oceanRadiusOffset
 				{
-					set { _mod.heightMapOffset = value.value; }
+					set { _mod.oceanRadiusOffset = value.value; }
 				}
-
-				// Height map offset
-				[ParserTarget("deformity", optional = true)]
-				private NumericParser<double> heightMapDeformity
-				{
-					set { _mod.heightMapDeformity = value.value; }
-				}
-
-				// Height map offset
-				[ParserTarget("scaleDeformityByRadius", optional = true)]
-				private NumericParser<bool> scaleDeformityByRadius
-				{
-					set { _mod.scaleDeformityByRadius = value.value; }
-				}
-
-				[ParserTarget("coastHeight", optional = true)]
-				private NumericParser<double> coastHeight
-				{
-					set { _mod.coastHeight = value.value; }
-                }
-
-
+                
 				void IParserEventSubscriber.Apply(ConfigNode node)
 				{
 
@@ -90,13 +65,12 @@ namespace Kopernicus
 
 				}
 
-                public VertexHeightMapStep()
+                public VertexDefineCoastLine()
 				{
 					// Create the base mod
-					GameObject modObject = new GameObject ("VertexHeightMapStep");
+                    GameObject modObject = new GameObject("VertexDefineCoastLine");
 					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexHeightMapStep> ();
-					_mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
+                    _mod = modObject.AddComponent<PQSMod_VertexDefineCoastLine>();
 					base.mod = _mod;
 				}
 			}
