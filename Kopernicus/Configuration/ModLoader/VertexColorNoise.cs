@@ -27,7 +27,6 @@
  */
 
 using System;
-using System.IO;
 using UnityEngine;
 
 namespace Kopernicus
@@ -37,48 +36,66 @@ namespace Kopernicus
 		namespace ModLoader
 		{
 			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightMapStep : ModLoader, IParserEventSubscriber
+			public class VertexColorNoise : ModLoader, IParserEventSubscriber
 			{
 				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightMapStep _mod;
+				private PQSMod_VertexColorNoise _mod;
 
-				// The map texture for the planet
-				[ParserTarget("map", optional = false)]
-				private string heightMap
+				// Amount of color that will be applied
+				[ParserTarget("blend")]
+				private NumericParser<float> blend
 				{
-                    set { 
-                        _mod.heightMap = new Texture2D(2, 2);
-                        _mod.heightMap.LoadImage(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + value));
-                    }
+					set { _mod.blend = value.value; }
 				}
 
-				// Height map offset
-				[ParserTarget("offset", optional = true)]
-				private NumericParser<double> heightMapOffset 
+				// The frequency of the noise
+				[ParserTarget("frequency")]
+				private NumericParser<float> frequency
 				{
-					set { _mod.heightMapOffset = value.value; }
+					set { _mod.frequency = value.value; }
 				}
 
-				// Height map offset
-				[ParserTarget("deformity", optional = true)]
-				private NumericParser<double> heightMapDeformity
+				// Lacunarity of the noise
+				[ParserTarget("lacunarity")]
+				private NumericParser<float> lacunarity
 				{
-					set { _mod.heightMapDeformity = value.value; }
+					set { _mod.lacunarity = value.value; }
 				}
 
-				// Height map offset
-				[ParserTarget("scaleDeformityByRadius", optional = true)]
-				private NumericParser<bool> scaleDeformityByRadius
+				// Noise quality
+				[ParserTarget("mode")]
+				private EnumParser<LibNoise.Unity.QualityMode> mode
 				{
-					set { _mod.scaleDeformityByRadius = value.value; }
+					set { _mod.mode = value.value; }
 				}
 
-				[ParserTarget("coastHeight", optional = true)]
-				private NumericParser<double> coastHeight
+				// Noise algorithm
+				[ParserTarget("noiseType")]
+				private EnumParser<PQSMod_VertexColorNoise.NoiseType> noiseType
 				{
-					set { _mod.coastHeight = value.value; }
-                }
+					set { _mod.noiseType = value.value; }
+				}
 
+				// Octaves of the noise
+				[ParserTarget("octaves")]
+				private NumericParser<int> octaves
+				{
+					set { _mod.octaves = value.value; }
+				}
+
+				// Persistance of the noise
+				[ParserTarget("persistance")]
+				private NumericParser<float> persistance
+				{
+					set { _mod.persistance = value.value; }
+				}
+
+				// The seed of the noise
+				[ParserTarget("seed")]
+				private NumericParser<int> seed
+				{
+					set { _mod.seed = value.value; }
+				}
 
 				void IParserEventSubscriber.Apply(ConfigNode node)
 				{
@@ -90,13 +107,12 @@ namespace Kopernicus
 
 				}
 
-                public VertexHeightMapStep()
+				public VertexColorNoise()
 				{
 					// Create the base mod
-					GameObject modObject = new GameObject ("VertexHeightMapStep");
+					GameObject modObject = new GameObject("VertexColorNoise");
 					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexHeightMapStep> ();
-					_mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
+					_mod = modObject.AddComponent<PQSMod_VertexColorNoise>();
 					base.mod = _mod;
 				}
 			}

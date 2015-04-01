@@ -47,16 +47,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ModLoader\AltitudeAlpha.cs" />
+    <Compile Include="Configuration\ModLoader\GnomonicTest.cs" />
+    <Compile Include="Configuration\ModLoader\CreateSphereCollider.cs" />
+    <Compile Include="Configuration\ModLoader\BlockActivation.cs" />
     <Compile Include="Configuration\ModLoader\FlattenOcean.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMapNoise.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap2.cs" />
+    <Compile Include="Configuration\ModLoader\BillboardObject.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorNoise.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorNoiseRGB.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolid.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolidBlend.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightMapStep.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve2.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeight.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoise.cs" />
     <Compile Include="Configuration\ModLoader\AerialPerspectiveMaterial.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\VertexNoise.cs" />
     <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightOffset.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightOblate.cs" />
