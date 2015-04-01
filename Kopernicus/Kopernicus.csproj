@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ModLoader\AltitudeAlpha.cs" />
+    <Compile Include="Configuration\ModLoader\FlattenArea.cs" />
     <Compile Include="Configuration\ModLoader\FlattenOcean.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMapNoise.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap2.cs" />
