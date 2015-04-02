@@ -92,7 +92,10 @@ namespace Kopernicus
 			// Fix the flight globals index of each body
 			int counter = 0;
 			foreach (CelestialBody body in FlightGlobals.Bodies) 
+			{
 				body.flightGlobalsIndex = counter++;
+				Logger.Active.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
+			}
 
 			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
 			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
@@ -100,7 +103,7 @@ namespace Kopernicus
 			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
 			// Select the closest star to home
-			StarLightSwitcher.SetSun (FlightGlobals.Bodies.Where (body => body.flightGlobalsIndex == 0).First());
+			StarLightSwitcher.HomeStar ().SetAsActive ();
 
 			// Fixups complete, time to surrender to fate
 			Destroy (this);

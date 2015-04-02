@@ -33,6 +33,9 @@ using System.Linq;
 
 using UnityEngine;
 
+// Disable the "private fields `` is assigned but its value is never used warning"
+#pragma warning disable 0414
+
 namespace Kopernicus
 {
 	namespace Configuration
@@ -175,6 +178,13 @@ namespace Kopernicus
 						Logger.Active.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
 					}
 				}
+
+				// TODO - tentative fix, needs to be able to be configured (if it can be?)
+				if (celestialBody.progressTree == null) 
+				{
+					celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree (celestialBody);
+					Logger.Active.Log ("Added Progress Tree");
+				}
 			}
 
 			// Properties requires a celestial body referece, as this class is designed to edit the body
@@ -193,3 +203,4 @@ namespace Kopernicus
 	}
 }
 
+#pragma warning restore 0414

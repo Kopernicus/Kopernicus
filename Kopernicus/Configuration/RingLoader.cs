@@ -1,5 +1,4 @@
-﻿using System;
-/** 
+﻿/** 
  * Kopernicus Planetary System Modifier
  * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
@@ -29,11 +28,10 @@
  * https://kerbalspaceprogram.com
  */
 
-using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
+using Kopernicus.Configuration.Resources;
 
 namespace Kopernicus
 {
@@ -45,8 +43,8 @@ namespace Kopernicus
             // Set-up our custom ring
             public Ring ring;
 
-            //
-            GameObject ScaledPlanet;
+            // Our Scaled Planet
+            public GameObject ScaledPlanet { get; set; }
             
             // Inner Radius of our ring
             [ParserTarget("innerRadius", optional = true, allowMerge = false)]
@@ -98,11 +96,10 @@ namespace Kopernicus
             }
 
 
-            // Initialize the RingLoader and add the -ringed- planet
-            public RingLoader(GameObject ScaledPlanet)
+            // Initialize the RingLoader
+            public RingLoader()
             {
                 ring = new Ring();
-                this.ScaledPlanet = ScaledPlanet;
             }
 
             // Apply event
@@ -113,13 +110,13 @@ namespace Kopernicus
             // Post-Apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                AddRing(ScaledPlanet, ring);
+                
             }
 
             // Rings
             public static void AddRing(GameObject ScaledPlanet, Ring ring)
             {
-                
+                Logger.Active.Log("Adding Ring to " + ScaledPlanet.name);
                 Vector3 StartVec = new Vector3(1, 0, 0);
                 int RingSteps = 128;
                 var vertices = new List<Vector3>();
@@ -207,17 +204,23 @@ namespace Kopernicus
                 //MeshRenderer PlanetRenderer = (MeshRenderer)ScaledPlanet.GetComponentsInChildren<MeshRenderer>()[0]; 
                 MeshRenderer RingRender = (MeshRenderer)RingObject.AddComponent<MeshRenderer>();
                 RingRender.material = ScaledPlanet.renderer.material;
+                
                 if (ring.unlit)
                 {
-                    RingRender.material.shader = Shader.Find("Unlit/Transparent");
+                    Material material = new Material(Shaders.UnlitNew);
+                    RingRender.material = material;
                 }
                 else
                 {
-                    RingRender.material.shader = Shader.Find("Transparent/Diffuse");
+                    Material material = new Material(Shaders.DiffuseNew);
+                    RingRender.material = material;
                 }
 
                 RingRender.material.mainTexture = ring.texture;
                 RingRender.material.color = ring.color;
+
+                ScaledPlanet.renderer.material.renderQueue = 1;
+                RingRender.material.renderQueue = 2;
 
                 RingObject.AddComponent<ReScaler>();
 
