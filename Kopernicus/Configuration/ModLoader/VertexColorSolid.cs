@@ -26,18 +26,55 @@
  * https://kerbalspaceprogram.com
  */
 
+using System;
 using UnityEngine;
 
 namespace Kopernicus
 {
-	// Class to manage the properties of custom stars
-	public class KopernicusStarComponent : MonoBehaviour
+	namespace Configuration
 	{
-		// Color that the star emits
-		public Color      lightColor;
+		namespace ModLoader
+		{
+			[RequireConfigType(ConfigType.Node)]
+			public class VertexColorSolid : ModLoader, IParserEventSubscriber
+			{
+				// Actual PQS mod we are loading
+				private PQSMod_VertexColorSolid _mod;
 
-		// Solar power curve of the star
-		public FloatCurve powerCurve;
+				// Amount of color that will be applied
+				[ParserTarget("blend")]
+				private NumericParser<float> blend
+				{
+					set { _mod.blend = value.value; }
+				}
+
+				// The color used
+				[ParserTarget("color")]
+				private ColorParser color
+				{
+					set { _mod.color = value.value; }
+				}
+
+				void IParserEventSubscriber.Apply(ConfigNode node)
+				{
+
+				}
+
+				void IParserEventSubscriber.PostApply(ConfigNode node)
+				{
+
+				}
+
+				public VertexColorSolid()
+				{
+					// Create the base mod
+					GameObject modObject = new GameObject("VertexColorSolid");
+					modObject.transform.parent = Utility.Deactivator;
+					_mod = modObject.AddComponent<PQSMod_VertexColorSolid>();
+					base.mod = _mod;
+				}
+			}
+		}
 	}
 }
 

@@ -266,7 +266,7 @@ namespace Kopernicus
                 {
                     loader.mod.transform.parent = pqsVersion.transform;
                     loader.mod.sphere = pqsVersion;
-                    Logger.Active.Log("Added PQS Mod: " + loader.mod.GetType());
+                    Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
                 }
 
 				// Make sure all the PQSMods exist in Localspace

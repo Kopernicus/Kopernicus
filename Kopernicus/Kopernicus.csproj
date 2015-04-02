@@ -58,6 +58,10 @@
     <Compile Include="Configuration\ModLoader\VertexRidgedAltitudeCurve.cs" />
     <Compile Include="Configuration\ModLoader\VertexDefineCoastLine.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightMapStep.cs" />
+	<Compile Include="Configuration\ModLoader\VertexColorNoise.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorNoiseRGB.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolid.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolidBlend.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve2.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeight.cs" />
@@ -122,7 +126,6 @@
     <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
     <Compile Include="Configuration\Corona.cs" />
     <Compile Include="Configuration\Parser\Gradient.cs" />
-    <Compile Include="KopernicusStarComponent.cs" />
     <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
     <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedLoader.cs" />
