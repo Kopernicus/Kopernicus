@@ -39,7 +39,7 @@ namespace Kopernicus
 			public class VoronoiCraters : ModLoader, IParserEventSubscriber
 			{
 				// Actual PQS mod we are loading
-				private PQSMod_VoronoiCraters _mod = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun").pqsVersion.GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0];
+				private PQSMod_VoronoiCraters _mod = PQSMod_VoronoiCraters.Instantiate(Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun").pqsVersion.GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0]) as PQSMod_VoronoiCraters;
 
                 // colorOpacity
                 [ParserTarget("colorOpacity", optional = true)]
