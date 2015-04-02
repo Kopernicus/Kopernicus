@@ -146,26 +146,6 @@ namespace Kopernicus
 				{
 					Logger.Active.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
 
-					// ----- DEBUG -----
-					#if DEBUG
-					Utility.Log ("Surface Shader = " + originalBody.pqsVersion.surfaceMaterial.shader.name);
-					Utility.Log ("Fallback Shader = " + originalBody.pqsVersion.fallbackMaterial.shader.name);
-					Material wrapper = null;
-
-					if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/PQS Main - Optimised") 
-						wrapper = new Kopernicus.MaterialWrapper.PQSMainOptimised (originalBody.pqsVersion.surfaceMaterial);
-					else if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/Sphere Projection SURFACE QUAD (AP) ") 
-						wrapper = new Kopernicus.MaterialWrapper.PQSProjectionAerialQuadRelative (originalBody.pqsVersion.surfaceMaterial);
-					else if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/Sphere Projection SURFACE QUAD") 
-						wrapper = new Kopernicus.MaterialWrapper.PQSProjectionSurfaceQuad (originalBody.pqsVersion.surfaceMaterial);
-					else if (originalBody.pqsVersion.surfaceMaterial.shader.name == "Terrain/PQS/PQS Main Shader") 
-						wrapper = new Kopernicus.MaterialWrapper.PQSMainShader (originalBody.pqsVersion.surfaceMaterial);
-
-					Utility.DumpObjectProperties (wrapper, " ---- Surface Material ---- ");
-					Utility.GameObjectWalk (originalBody.pqsVersion.gameObject, "  ");
-					#endif
-					// -----------------*
-
 					// Should we remove the ocean?
 					if (body.celestialBody.ocean && removeOcean.value) 
 					{
