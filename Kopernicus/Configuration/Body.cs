@@ -253,28 +253,34 @@ namespace Kopernicus
 					string CacheDirectory = KSPUtil.ApplicationRootPath + ScaledSpaceCacheDirectory;
 					string CacheFile = CacheDirectory + "/" + generatedBody.name + ".bin";
 					Directory.CreateDirectory (CacheDirectory);
-					if (File.Exists (CacheFile)) 
-					{
-                        if (!File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
-                        {
-                            Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
-                            generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = Utility.DeserializeMesh(CacheFile);
-                        }
-					} 
+                    if (File.Exists(CacheFile) && !File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
+                    {
+                        Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
+                        Mesh scaledMesh = Utility.DeserializeMesh(CacheFile);
+                        Utility.RecalculateTangents(scaledMesh);
+                        generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
 
-					// Otherwise we have to generate the mesh
-					else 
-					{
-						Logger.Active.Log ("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
-						Mesh scaledVersionMesh = ComputeScaledSpaceMesh(generatedBody);
-						generatedBody.scaledVersion.GetComponent<MeshFilter> ().sharedMesh = scaledVersionMesh;
+                    }
+
+                    // Otherwise we have to generate the mesh
+                    else
+                    {
+                        Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
+                        Mesh scaledVersionMesh = ComputeScaledSpaceMesh(generatedBody);
+                        Utility.RecalculateTangents(scaledVersionMesh);
+                        generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledVersionMesh;
                         if (!File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
-						    Utility.SerializeMesh (scaledVersionMesh, CacheFile);
-					}
+                            Utility.SerializeMesh(scaledVersionMesh, CacheFile);
+                    }
 
 					// Apply mesh to the body
 					SphereCollider collider = generatedBody.scaledVersion.GetComponent<SphereCollider>();
 					if (collider != null) collider.radius = rScaled;
+
+                    if (generatedBody.pqsVersion != null)
+                    {
+                        generatedBody.scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(generatedBody.pqsVersion.radiusMin / rJool);
+                    }
 				}
 
 				// Post gen celestial body
@@ -288,7 +294,7 @@ namespace Kopernicus
 				const double rScaledJool = 1000.0f;
 			    double rMetersToScaledUnits = (float) (rScaledJool / body.celestialBody.Radius);
 
-				// Generate a duplicate of the Jool mesh
+                // Generate a duplicate of the Jool mesh
 				Mesh mesh = Utility.DuplicateMesh (Utility.ReferenceGeosphere());
 
 				// If this body has a PQS, we can create a more detailed object
@@ -301,8 +307,8 @@ namespace Kopernicus
 					PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 				
 					// Find and enable the PQS mods that modify height
-					IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(mod => (mod.GetType().ToString().Contains("VertexHeight") || 
-					                                                                                          mod.GetType().ToString().Contains("VertexSimplexHeight")));
+                    IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true);
+
 					foreach(PQSMod mod in mods)
 						mod.OnSetup();
 
