@@ -449,8 +449,14 @@ namespace Kopernicus
 			// We don't use this
 			void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
+			// Default constructor
+			public AnimationCurveParser ()
+			{
+				this.curve = null;
+			}
+
 			// Construct this fine object
-			public AnimationCurveParser (AnimationCurve curve = null)
+			public AnimationCurveParser (AnimationCurve curve)
 			{
 				this.curve = curve;
 			}
@@ -515,8 +521,14 @@ namespace Kopernicus
 			void IParserEventSubscriber.Apply(ConfigNode node) { }
 			void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
+			// Default constructor
+			public PhysicsMaterialParser ()
+			{
+				this.material = null;
+			}
+
 			// Initializing constructor
-			public PhysicsMaterialParser (PhysicMaterial material = null)
+			public PhysicsMaterialParser (PhysicMaterial material)
 			{
 				this.material = material;
 			}
