@@ -279,7 +279,7 @@ namespace Kopernicus
 
                     if (generatedBody.pqsVersion != null)
                     {
-                        generatedBody.scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(generatedBody.pqsVersion.radiusMin / rJool);
+                        generatedBody.scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(generatedBody.pqsVersion.radius / rJool);
                     }
 				}
 
