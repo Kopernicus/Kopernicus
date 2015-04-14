@@ -70,8 +70,12 @@
     <Compile Include="Configuration\ModLoader\VertexHeightNoise.cs" />
     <Compile Include="Configuration\ModLoader\AerialPerspectiveMaterial.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightNoiseHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve3.cs" />
     <Compile Include="Configuration\ModLoader\VertexNoise.cs" />
     <Compile Include="Configuration\ModLoader\VoronoiCraters.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexHeightFlatten.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexMultiChromatic.cs" />
     <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightOffset.cs" />
     <Compile Include="Configuration\ModLoader\VertexHeightOblate.cs" />
