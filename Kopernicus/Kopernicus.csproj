@@ -46,6 +46,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ModLoader\MapDecal.cs" />
+    <Compile Include="Configuration\ModLoader\FlattenAreaTangential.cs" />
+    <Compile Include="Configuration\ModLoader\FlattenArea.cs" />
     <Compile Include="Configuration\ModLoader\AltitudeAlpha.cs" />
     <Compile Include="Configuration\ModLoader\GnomonicTest.cs" />
     <Compile Include="Configuration\ModLoader\CreateSphereCollider.cs" />
