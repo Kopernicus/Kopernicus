@@ -416,12 +416,11 @@ namespace Kopernicus
 				// List of keyframes
 				SortedList<int, Keyframe> keyframes = new SortedList<int, Keyframe>();
 
+                int key = 0;
+
 				// Iterate through all the values in the node (all are keyframes)
 				foreach(ConfigNode.Value frame in node.values)
 				{
-					// Convert the "name" (left side) into an int for sorting
-					int key = int.Parse(frame.name);
-
 					// Get an array of the frame data
 					List<float> value = new List<float> ();
 					foreach (string e in frame.value.Split(' ')) 
@@ -438,6 +437,7 @@ namespace Kopernicus
 
 					// Add the keyframe to the list
 					keyframes.Add(key, keyframe);
+                    key++;
 				}
 
 				// Create the final animation curve
