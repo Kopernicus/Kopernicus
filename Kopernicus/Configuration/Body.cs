@@ -234,13 +234,27 @@ namespace Kopernicus
 					{
 						component.powerCurve = solarPowerCurve.curve;
 					}
-				}
+                }
 
-				// We need to generate new scaled space meshes if 
+                #region DebugMode
+                // Prepare our Debug mode properties
+                bool exportBin = true;
+                bool inEveryCase = false;
+                
+                if (node.HasNode("Debug"))
+                {
+                    ConfigNode debug = node.GetNode("Debug");
+                    inEveryCase = true;
+                    if (debug.HasValue("exportBin")) exportBin = Boolean.Parse(debug.GetValue("exportBin"));
+                }
+                #endregion
+
+                // We need to generate new scaled space meshes if 
 				//   a) we are using a template and we've change either the radius or type of body
 				//   b) we aren't using a template
+                //   c) debug mode is active
 				if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
-				    || template == null)
+				    || template == null || inEveryCase)
 				{
 					const double rJool = 6000000.0;
 					const float  rScaled = 1000.0f;
@@ -249,28 +263,28 @@ namespace Kopernicus
 					float scale = (float)(generatedBody.celestialBody.Radius / rJool);
 					generatedBody.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
+                    Mesh scaledMesh;
 					// Attempt to load a cached version of the scale space
 					string CacheDirectory = KSPUtil.ApplicationRootPath + ScaledSpaceCacheDirectory;
 					string CacheFile = CacheDirectory + "/" + generatedBody.name + ".bin";
 					Directory.CreateDirectory (CacheDirectory);
-                    if (File.Exists(CacheFile) && !File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
+                    if (File.Exists(CacheFile) && exportBin)
                     {
                         Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
-                        Mesh scaledMesh = Utility.DeserializeMesh(CacheFile);
+                        scaledMesh = Utility.DeserializeMesh(CacheFile);
                         Utility.RecalculateTangents(scaledMesh);
                         generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
-
                     }
 
                     // Otherwise we have to generate the mesh
                     else
                     {
                         Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
-                        Mesh scaledVersionMesh = ComputeScaledSpaceMesh(generatedBody);
-                        Utility.RecalculateTangents(scaledVersionMesh);
-                        generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledVersionMesh;
-                        if (!File.Exists(ScaledSpaceCacheDirectory + "/DEBUG"))
-                            Utility.SerializeMesh(scaledVersionMesh, CacheFile);
+                        scaledMesh = ComputeScaledSpaceMesh(generatedBody);
+                        Utility.RecalculateTangents(scaledMesh);
+                        generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+                        if (exportBin)
+                            Utility.SerializeMesh(scaledMesh, CacheFile);
                     }
 
 					// Apply mesh to the body
@@ -311,8 +325,8 @@ namespace Kopernicus
 
 					foreach(PQSMod mod in mods)
 						mod.OnSetup();
-
-					// If we were able to find PQS mods
+                    
+                    // If we were able to find PQS mods
 					if(mods.Count() > 0)
 					{
 						// Generate the PQS modifications
