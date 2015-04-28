@@ -152,8 +152,8 @@ namespace Kopernicus
                 set { celestialBody.atmosphereTemperatureLapseRate = value.value; }
             }
 
-            // atmosphereTemperatureLapseRate
-            [ParserTarget("temperatureLapseRate", optional = true)]
+            // TemperatureSeaLevel
+            [ParserTarget("temperatureSeaLevel", optional = true)]
             private NumericParser<double> atmosphereTemperatureSeaLevel
             {
                 set { celestialBody.atmosphereTemperatureSeaLevel = value.value; }
