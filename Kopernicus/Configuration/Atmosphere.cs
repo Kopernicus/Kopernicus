@@ -59,23 +59,33 @@ namespace Kopernicus
 			{
 				set { celestialBody.atmosphereContainsOxygen = value.value; }
 			}
-			
-			// Temperature curve (see below)
-			[ParserTarget("temperatureCurve", optional = true)]
-			private FloatCurveParser temperatureCurve 
-			{
-                set
-                {
-                    celestialBody.atmosphereTemperatureCurve = value.curve;
-                    celestialBody.atmosphereUseTemperatureCurve = true;
-                }
-			}
+
+            // albedo
+            [ParserTarget("albedo", optional = true)]
+            private NumericParser<double> albedo
+            {
+                set { celestialBody.albedo = value.value; }
+            }
 
             // Density at sea level
             [ParserTarget("staticDensityASL", optional = true)]
             private NumericParser<double> atmDensityASL
             {
                 set { celestialBody.atmDensityASL = value.value; }
+            }
+
+            // atmosphereAdiabaticIndex
+            [ParserTarget("adiabaticIndex", optional = true)]
+            private NumericParser<double> atmosphereAdiabaticIndex
+            {
+                set { celestialBody.atmosphereAdiabaticIndex = value.value; }
+            }
+
+            // atmosphere cutoff altitude
+            [ParserTarget("altitude", optional = true)]
+            private NumericParser<double> maxAltitude
+            {
+                set { celestialBody.atmosphereDepth = value.value; }
             }
 
             // atmosphereGasMassLapseRate
@@ -92,12 +102,41 @@ namespace Kopernicus
                 set { celestialBody.atmosphereMolarMass = value.value; }
             }
 
+            // Pressure curve (pressure = pressure multipler * pressureCurve[altitude])
+            [ParserTarget("pressureCurve", optional = true)]
+            private FloatCurveParser pressureCurve
+            {
+                set
+                {
+                    celestialBody.atmospherePressureCurve = value.curve;
+                    celestialBody.atmosphereUsePressureCurve = true;
+                }
+            }
+
             // atmospherePressureCurveIsNormalized
             [ParserTarget("pressureCurveIsNormalized", optional = true)]
             private NumericParser<bool> atmospherePressureCurveIsNormalized
             {
                 set { celestialBody.atmospherePressureCurveIsNormalized = value.value; }
             }
+
+            // Static pressure at sea level (all worlds are set to 1.0f?)
+            [ParserTarget("staticPressureASL", optional = true)]
+            private NumericParser<float> staticPressureASL
+            {
+                set { celestialBody.atmospherePressureSeaLevel = value.value; }
+            }
+
+			// Temperature curve (see below)
+			[ParserTarget("temperatureCurve", optional = true)]
+			private FloatCurveParser temperatureCurve 
+			{
+                set
+                {
+                    celestialBody.atmosphereTemperatureCurve = value.curve;
+                    celestialBody.atmosphereUseTemperatureCurve = true;
+                }
+			}
 
             // atmosphereTemperatureCurveIsNormalized
             [ParserTarget("temperatureCurveIsNormalized", optional = true)]
@@ -113,6 +152,13 @@ namespace Kopernicus
                 set { celestialBody.atmosphereTemperatureLapseRate = value.value; }
             }
 
+            // atmosphereTemperatureLapseRate
+            [ParserTarget("temperatureLapseRate", optional = true)]
+            private NumericParser<double> atmosphereTemperatureSeaLevel
+            {
+                set { celestialBody.atmosphereTemperatureSeaLevel = value.value; }
+            }
+
             // atmosphereTemperatureSunMultCurve
             [ParserTarget("temperatureSunMultCurve", optional = true)]
             private FloatCurveParser atmosphereTemperatureSunMultCurve
@@ -120,31 +166,6 @@ namespace Kopernicus
                 set { celestialBody.atmosphereTemperatureSunMultCurve = value.curve; }
             }
 
-			// Static pressure at sea level (all worlds are set to 1.0f?)
-			[ParserTarget("staticPressureASL", optional = true)]
-			private NumericParser<float> staticPressureASL 
-			{
-				set { celestialBody.atmospherePressureSeaLevel = value.value; }
-			}
-
-			// Pressure curve (pressure = pressure multipler * pressureCurve[altitude])
-			[ParserTarget("pressureCurve", optional = true)]
-			private FloatCurveParser pressureCurve 
-			{
-                set
-                {
-                    celestialBody.atmospherePressureCurve = value.curve;
-                    celestialBody.atmosphereUsePressureCurve = true;
-                }
-			}
-			
-			// atmosphere cutoff altitude
-			[ParserTarget("altitude", optional = true)]
-			private NumericParser<float> maxAltitude 
-			{
-				set { celestialBody.atmosphereDepth = value.value; }
-			}
-			
 			// ambient atmosphere color
 			[ParserTarget("ambientColor", optional = true)]
 			private ColorParser ambientColor 
