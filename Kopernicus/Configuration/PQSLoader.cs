@@ -261,9 +261,22 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
+                List<PQSMod> cpMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).ToList();
 				// Add all created mods to the PQS
                 foreach (ModLoader.ModLoader loader in mods)
                 {
+                    List<PQSMod> currentMods = cpMods.Where(m => m.GetType() == loader.mod.GetType()).ToList();
+                    if (currentMods.Count < 0)
+                    {
+                        for (int i = 0; i < currentMods.Count; i++)
+                        {
+                            PQSMod delMod = pqsVersion.GetComponentsInChildren(currentMods[i].GetType())[i] as PQSMod;
+                            delMod.transform.parent = null;
+                            delMod.sphere = null;
+                            PQSMod.Destroy(delMod);
+                            cpMods.Remove(currentMods[i]);
+                        }
+                    }
                     loader.mod.transform.parent = pqsVersion.transform;
                     loader.mod.sphere = pqsVersion;
                     Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());

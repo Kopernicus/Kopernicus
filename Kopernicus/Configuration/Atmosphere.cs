@@ -62,84 +62,87 @@ namespace Kopernicus
 			
 			// Temperature curve (see below)
 			[ParserTarget("temperatureCurve", optional = true)]
-			private AnimationCurveParser temperatureCurve 
+			private FloatCurveParser temperatureCurve 
 			{
-				set { celestialBody.temperatureCurve = value.curve; }
+                set
+                {
+                    celestialBody.atmosphereTemperatureCurve = value.curve;
+                    celestialBody.atmosphereUseTemperatureCurve = true;
+                }
 			}
-			
-			// Temperature multipler - I'm going to go out on a limb and suggest that this probably
-			// functions similarly to the new atmosphere model.  Essentially
-			// (temperature = temperatureMultipler * temperatureCurve[altitude]) 
-			[ParserTarget("temperatureMultiplier", optional = true)]
-			private NumericParser<float> temperatureMultiplier 
-			{
-				set { celestialBody.atmoshpereTemperatureMultiplier = value.value; }
-			}
-			
+
+            // Density at sea level
+            [ParserTarget("staticDensityASL", optional = true)]
+            private NumericParser<double> atmDensityASL
+            {
+                set { celestialBody.atmDensityASL = value.value; }
+            }
+
+            // atmosphereGasMassLapseRate
+            [ParserTarget("gasMassLapseRate", optional = true)]
+            private NumericParser<double> atmosphereGasMassLapseRate
+            {
+                set { celestialBody.atmosphereGasMassLapseRate = value.value; }
+            }
+
+            // atmosphereMolarMass
+            [ParserTarget("atmosphereMolarMass", optional = true)]
+            private NumericParser<double> atmosphereMolarMass
+            {
+                set { celestialBody.atmosphereMolarMass = value.value; }
+            }
+
+            // atmospherePressureCurveIsNormalized
+            [ParserTarget("pressureCurveIsNormalized", optional = true)]
+            private NumericParser<bool> atmospherePressureCurveIsNormalized
+            {
+                set { celestialBody.atmospherePressureCurveIsNormalized = value.value; }
+            }
+
+            // atmosphereTemperatureCurveIsNormalized
+            [ParserTarget("temperatureCurveIsNormalized", optional = true)]
+            private NumericParser<bool> atmosphereTemperatureCurveIsNormalized
+            {
+                set { celestialBody.atmosphereTemperatureCurveIsNormalized = value.value; }
+            }
+
+            // atmosphereTemperatureLapseRate
+            [ParserTarget("temperatureLapseRate", optional = true)]
+            private NumericParser<double> atmosphereTemperatureLapseRate
+            {
+                set { celestialBody.atmosphereTemperatureLapseRate = value.value; }
+            }
+
+            // atmosphereTemperatureSunMultCurve
+            [ParserTarget("temperatureSunMultCurve", optional = true)]
+            private FloatCurveParser atmosphereTemperatureSunMultCurve
+            {
+                set { celestialBody.atmosphereTemperatureSunMultCurve = value.curve; }
+            }
+
 			// Static pressure at sea level (all worlds are set to 1.0f?)
 			[ParserTarget("staticPressureASL", optional = true)]
 			private NumericParser<float> staticPressureASL 
 			{
-				set { celestialBody.staticPressureASL = value.value; }
-			}
-			
-			// ditto (all worlds set to 1.4285f).  Could be a *really* ancient atmosphere model
-			[ParserTarget("altitudeMultiplier", optional = true)]
-			private NumericParser<float> altitudeMultiplier 
-			{
-				set { celestialBody.altitudeMultiplier = value.value; }
+				set { celestialBody.atmospherePressureSeaLevel = value.value; }
 			}
 
 			// Pressure curve (pressure = pressure multipler * pressureCurve[altitude])
 			[ParserTarget("pressureCurve", optional = true)]
-			private AnimationCurveParser pressureCurve 
+			private FloatCurveParser pressureCurve 
 			{
-				set { celestialBody.pressureCurve = value.curve; }
-			}
-
-			// Pressure multipler (pressure = pressure multipler * pressureCurve[altitude])
-			[ParserTarget("pressureMultiplier", optional = true)]
-			private NumericParser<float> pressureMultiplier 
-			{
-				set { celestialBody.pressureMultiplier = value.value; }
-			}
-			
-			// Use legacy atmosphere - the fact that every stock world uses legacy may suggest that
-			// the new atmosphere model may not work....
-			[ParserTarget("enableLegacyAtmosphere", optional = true)]
-			private NumericParser<bool> enableLegacyAtmosphere 
-			{
-				set { celestialBody.useLegacyAtmosphere = value.value; }
-			}
-			
-			// pressure (in atm) = multipler * e ^ -(altitude / (scaleHeight * 1000))
-			[ParserTarget("multiplier", optional = true)]
-			private NumericParser<float> multiplier 
-			{
-				set { celestialBody.atmosphereMultiplier = value.value; }
-			}
-			
-			// pressure (in atm) = atmosphereMultipler * e ^ -(altitude / (atmosphereScaleHeight * 1000))
-			[ParserTarget("scaleHeight", optional = true)]
-			private NumericParser<float> scaleHeight 
-			{
-				set { celestialBody.atmosphereScaleHeight = value.value; }
-			}
-
-			// I honestly think this may actually offset the altitude.  all stock worlds
-			// have it set to 0f, but the sun has it set to 700f (but doesn't use an
-			// atmosphere)
-			[ParserTarget("altitudeOffset", optional = true)]
-			private NumericParser<float> altitudeOffset 
-			{
-				set { celestialBody.altitudeOffset = value.value; }
+                set
+                {
+                    celestialBody.atmospherePressureCurve = value.curve;
+                    celestialBody.atmosphereUsePressureCurve = true;
+                }
 			}
 			
 			// atmosphere cutoff altitude
 			[ParserTarget("altitude", optional = true)]
 			private NumericParser<float> maxAltitude 
 			{
-				set { celestialBody.maxAtmosphereAltitude = value.value; }
+				set { celestialBody.atmosphereDepth = value.value; }
 			}
 			
 			// ambient atmosphere color
@@ -181,8 +184,8 @@ namespace Kopernicus
 					scaledAtmosphere.AddComponent<AtmosphereFromGround>();
 
 					// Setup known defaults
-					celestialBody.staticPressureASL = 1.0f;
-					celestialBody.atmosphereMultiplier = 1.4285f;
+					celestialBody.atmospherePressureSeaLevel = 1.0f;
+					// celestialBody.atmosphereMultiplier = 1.4285f;
 				}
 			}
 
