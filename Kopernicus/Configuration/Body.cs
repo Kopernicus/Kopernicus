@@ -46,7 +46,7 @@ namespace Kopernicus
 		public class Body : IParserEventSubscriber
 		{
 			// Path of the plugin (will eventually not matter much)
-			private const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
+			public const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
 
 			// Body we are trying to edit
 			public PSystemBody generatedBody { get; private set; }
@@ -118,8 +118,11 @@ namespace Kopernicus
 					generatedBody.name = name;
 					generatedBody.celestialBody.bodyName = name;
 					generatedBody.scaledVersion.name = name;
-					if (generatedBody.pqsVersion != null) 
-					{
+					if (generatedBody.pqsVersion != null)
+                    {
+                        generatedBody.pqsVersion.name = name;
+                        generatedBody.pqsVersion.gameObject.name = name;
+                        generatedBody.pqsVersion.transform.name = name;
 						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
 					}
