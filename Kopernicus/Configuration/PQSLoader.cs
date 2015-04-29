@@ -266,11 +266,11 @@ namespace Kopernicus
                 foreach (ModLoader.ModLoader loader in mods)
                 {
                     List<PQSMod> currentMods = cpMods.Where(m => m.GetType() == loader.mod.GetType()).ToList();
-                    if (currentMods.Count < 0)
+                    if (currentMods.Count > 0)
                     {
                         for (int i = 0; i < currentMods.Count; i++)
                         {
-                            PQSMod delMod = pqsVersion.GetComponentsInChildren(currentMods[i].GetType())[i] as PQSMod;
+                            PQSMod delMod = pqsVersion.GetComponentsInChildren(currentMods[i].GetType(), true)[i] as PQSMod;
                             delMod.transform.parent = null;
                             delMod.sphere = null;
                             PQSMod.Destroy(delMod);

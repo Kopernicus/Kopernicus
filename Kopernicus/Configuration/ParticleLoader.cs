@@ -46,7 +46,7 @@ namespace Kopernicus
             ParticleEmitter MainEmitter;
             ParticleAnimator ParticleAnim;
             ParticleRenderer ParticleRender;
-            GameObject target;
+            string target;
             GameObject body;
             float speedScale;
 
@@ -54,7 +54,7 @@ namespace Kopernicus
             [ParserTarget("target", optional = true, allowMerge = false)]
             public string targetLoader
             {
-                set { target = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value).scaledVersion.transform.gameObject; }
+                set { target = value; }
             }
 
             // minEmission of particles
@@ -157,7 +157,7 @@ namespace Kopernicus
             
             public void Update()
             {
-                Vector3 Speedvec = target.transform.position;
+                Vector3 Speedvec = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target).position;
                 Speedvec -= body.transform.position;
 
                 Speedvec *= speedScale;
