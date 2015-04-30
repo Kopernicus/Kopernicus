@@ -306,8 +306,16 @@ namespace Kopernicus
 
 			// Generate the scaled space mesh using PQS (all results use scale of 1)
 			public static Mesh ComputeScaledSpaceMesh (PSystemBody body)
-			{
-				// We need to get the body for Jool (to steal it's mesh)
+            {
+                #region blacklist
+                // Blacklist for mods
+                List<Type> blacklist = new List<Type>();
+                blacklist.Add(typeof(PQSMod_MapDecalTangent));
+                blacklist.Add(typeof(PQSMod_OceanFX));
+                blacklist.Add(typeof(PQSMod_FlattenArea));
+                #endregion
+
+                // We need to get the body for Jool (to steal it's mesh)
 				const double rScaledJool = 1000.0f;
 			    double rMetersToScaledUnits = (float) (rScaledJool / body.celestialBody.Radius);
 
@@ -324,7 +332,7 @@ namespace Kopernicus
 					PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 				
 					// Find and enable the PQS mods that modify height
-                    IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true);
+                    IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()));
 
 					foreach(PQSMod mod in mods)
 						mod.OnSetup();

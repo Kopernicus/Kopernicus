@@ -138,7 +138,7 @@ namespace Kopernicus
             }
 
             // Print out the PQS state
-            if (Input.GetKeyDown(KeyCode.P) && isModDown)
+            if (Input.GetKeyDown(KeyCode.P) && isModDown && !Input.GetKey(KeyCode.E))
             {
                 // Log the state of the PQS
                 Utility.DumpObjectFields(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
