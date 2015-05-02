@@ -46,6 +46,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ModLoader\OceanFX.cs" />
+    <Compile Include="Configuration\ModLoader\RemoveQuadMap.cs" />
+    <Compile Include="Configuration\ModLoader\UVPlanetRelativePosition.cs" />
     <Compile Include="Configuration\ModLoader\MapDecal.cs" />
     <Compile Include="Configuration\ModLoader\FlattenAreaTangential.cs" />
     <Compile Include="Configuration\ModLoader\FlattenArea.cs" />
@@ -82,6 +85,7 @@
     <Compile Include="Configuration\ModLoader\VertexSimplexHeightAbsolute.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexHeight.cs" />
     <Compile Include="Configuration\ParticleLoader.cs" />
+    <Compile Include="Configuration\OceanPQS.cs" />
     <Compile Include="Configuration\Resources\Shaders.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

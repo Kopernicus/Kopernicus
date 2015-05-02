@@ -94,6 +94,10 @@ namespace Kopernicus
 			[ParserTarget("PQS", optional = true, allowMerge = true)]
 			private PQSLoader pqs;
 
+            // Wrapper arounc the settings for the Ocean
+            [ParserTarget("Ocean", optional = true, allowMerge = true)]
+            private OceanPQS ocean;
+
             // Wrapper around Ring class for editing/loading
             [ParserTargetCollection("Rings", optional = true, nameSignificance = NameSignificance.None)]
             private List<RingLoader> rings = new List<RingLoader>();
@@ -117,6 +121,8 @@ namespace Kopernicus
 					// Patch the game object names in the template
 					generatedBody.name = name;
 					generatedBody.celestialBody.bodyName = name;
+                    generatedBody.celestialBody.transform.name = name;
+                    generatedBody.celestialBody.bodyTransform.name = name;
 					generatedBody.scaledVersion.name = name;
 					if (generatedBody.pqsVersion != null)
                     {
@@ -137,6 +143,20 @@ namespace Kopernicus
 					if (generatedBody.pqsVersion != null)
 					{
 						pqs = new PQSLoader(generatedBody.pqsVersion);
+
+                        // If this body has an ocean PQS, create editor/loader
+                        if (generatedBody.celestialBody.ocean == true)
+                        {
+                            foreach (PQS PQSocean in generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
+                            {
+                                if (PQSocean.name == name + "Ocean")
+                                {
+                                    ocean = new OceanPQS(PQSocean);
+                                    Logger.Active.Log(PQSocean.surfaceMaterial.shader.name);
+                                    break;
+                                }
+                            }
+                        }
 					}
 
 					// Create the scaled version editor/loader
@@ -181,7 +201,6 @@ namespace Kopernicus
 
                 // Particles
                 particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
-
 			}
 
 			// Parser Post Apply Event
@@ -205,15 +224,60 @@ namespace Kopernicus
 				// If a PQS version was definied
 				if (pqs != null) 
 				{
-					// ----------- DEBUG -------------
-					#if DEBUG
-					Utility.DumpObjectProperties (pqs.pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
-					Utility.GameObjectWalk (pqs.pqsVersion.gameObject, "  ");
-					#endif
-					// -------------------------------
-
 					// Assign the generated PQS to our new world
 					generatedBody.pqsVersion = pqs.pqsVersion;
+                    generatedBody.pqsVersion.name = name;
+                    generatedBody.pqsVersion.transform.name = name;
+                    generatedBody.pqsVersion.gameObject.name = name;
+
+                    // If an ocean was defined
+                    if (ocean != null)
+                    {
+                        if (generatedBody.celestialBody.ocean == false)
+                        {
+                            Logger.Active.Log("NO OCEAN FOUND");
+                            ocean.oceanRoot.transform.parent = generatedBody.pqsVersion.transform;
+
+                            // Add the ocean PQS to the secondary renders of the CelestialBody Transform
+                            PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).Where(mod => mod.transform.parent == generatedBody.pqsVersion.transform).FirstOrDefault();
+                            transform.planetFade.secondaryRenderers.Add(ocean.oceanPQS.gameObject);
+
+                            // Set up the ocean PQS
+                            ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
+                            ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
+
+                            // Names!
+                            ocean.oceanPQS.name = generatedBody.pqsVersion.name + "Ocean";
+                            ocean.oceanPQS.gameObject.name = generatedBody.pqsVersion.name + "Ocean";
+                            ocean.oceanPQS.transform.name = generatedBody.pqsVersion.name + "Ocean";
+
+                            // Ajust map settings of the parent PQS
+                            generatedBody.pqsVersion.mapOcean = ocean.mapOcean;
+                            generatedBody.celestialBody.ocean = ocean.mapOcean;
+                            if (ocean.mapOceanColor != null) generatedBody.pqsVersion.mapOceanColor = ocean.mapOceanColor;
+                            if (ocean.mapOceanHeight != Double.NaN) generatedBody.pqsVersion.mapOceanHeight = ocean.mapOceanHeight;
+                        }
+                        else
+                        {
+                            Logger.Active.Log("OCEAN FOUND");
+                            // Ajust map settings of the parent PQS
+                            generatedBody.pqsVersion.mapOcean = ocean.mapOcean;
+                            generatedBody.celestialBody.ocean = ocean.mapOcean;
+                            if (ocean.mapOceanColor != null) generatedBody.pqsVersion.mapOceanColor = ocean.mapOceanColor;
+                            if (ocean.mapOceanHeight != Double.NaN) generatedBody.pqsVersion.mapOceanHeight = ocean.mapOceanHeight;
+
+                            // Set up the ocean PQS
+                            ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
+                            ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
+                        }
+                    }
+
+                    // ----------- DEBUG -------------
+                    #if DEBUG
+                    Utility.DumpObjectProperties(pqs.pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
+                    Utility.GameObjectWalk(pqs.pqsVersion.gameObject, "  ");
+                    #endif
+                    // -------------------------------
 
 					// Adjust the radius of the PQSs appropriately
 					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
@@ -313,6 +377,7 @@ namespace Kopernicus
                 blacklist.Add(typeof(PQSMod_MapDecalTangent));
                 blacklist.Add(typeof(PQSMod_OceanFX));
                 blacklist.Add(typeof(PQSMod_FlattenArea));
+                blacklist.Add(typeof(PQSMod_MapDecal));
                 #endregion
 
                 // We need to get the body for Jool (to steal it's mesh)
