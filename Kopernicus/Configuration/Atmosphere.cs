@@ -180,6 +180,10 @@ namespace Kopernicus
 				set { scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true) [0].waveLength = value.value; }
 			}
 
+            // AtmosphereFromGround
+            [ParserTarget("AtmosphereFromGround", optional = true, allowMerge = true)]
+            private AtmosphereFromGroundParser atmoFG;
+
 			// Parser apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{ 
@@ -208,6 +212,9 @@ namespace Kopernicus
 					celestialBody.atmospherePressureSeaLevel = 1.0f;
 					// celestialBody.atmosphereMultiplier = 1.4285f;
 				}
+
+                // Manipulate AFG
+                atmoFG = new AtmosphereFromGroundParser(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]);
 			}
 
 			// Parser post apply event
@@ -220,5 +227,196 @@ namespace Kopernicus
 				this.celestialBody = celestialBody;
 			}
 		}
+
+        [RequireConfigType(ConfigType.Node)]
+        public class AtmosphereFromGroundParser : IParserEventSubscriber
+        {
+            // AtmosphereFromGround we're modifying
+            public AtmosphereFromGround afg;
+
+            // cameraHeight
+            [ParserTarget("cameraHeight", optional = true)]
+            private NumericParser<float> cameraHeight
+            {
+                set { afg.cameraHeight = value.value; }
+            }
+
+            // cameraHeight2
+            [ParserTarget("cameraHeight2", optional = true)]
+            private NumericParser<float> cameraHeight2
+            {
+                set { afg.cameraHeight2 = value.value; }
+            }
+
+            // cameraPos
+            [ParserTarget("cameraPos", optional = true)]
+            private Vector3Parser cameraPos
+            {
+                set { afg.cameraPos = value.value; }
+            }
+
+            // DEBUG_alwaysUpdateAll
+            [ParserTarget("DEBUG_alwaysUpdateAll", optional = true)]
+            private NumericParser<bool> DEBUG_alwaysUpdateAll
+            {
+                set { afg.DEBUG_alwaysUpdateAll = value.value; }
+            }
+
+            // doScale
+            [ParserTarget("doScale", optional = true)]
+            private NumericParser<bool> doScale
+            {
+                set { afg.doScale = value.value; }
+            }
+
+            // ESun
+            [ParserTarget("ESun", optional = true)]
+            private NumericParser<float> ESun
+            {
+                set { afg.ESun = value.value; }
+            }
+
+            // g
+            [ParserTarget("g", optional = true)]
+            private NumericParser<float> g
+            {
+                set { afg.g = value.value; }
+            }
+
+            // g2
+            [ParserTarget("g2", optional = true)]
+            private NumericParser<float> g2
+            {
+                set { afg.g2 = value.value; }
+            }
+
+            // innerRadius
+            [ParserTarget("innerRadius", optional = true)]
+            private NumericParser<float> innerRadius
+            {
+                set { afg.innerRadius = value.value; }
+            }
+
+            // innerRadius2
+            [ParserTarget("innerRadius2", optional = true)]
+            private NumericParser<float> innerRadius2
+            {
+                set { afg.innerRadius2 = value.value; }
+            }
+
+            // invWaveLength
+            [ParserTarget("invWaveLength", optional = true)]
+            private ColorParser invWaveLength
+            {
+                set { afg.invWaveLength = value.value; }
+            }
+
+            // Km
+            [ParserTarget("Km", optional = true)]
+            private NumericParser<float> Km
+            {
+                set { afg.Km = value.value; }
+            }
+
+            // Km4PI 
+            [ParserTarget("Km4PI", optional = true)]
+            private NumericParser<float> Km4PI 
+            {
+                set { afg.Km4PI = value.value; }
+            }
+
+            // KmESun
+            [ParserTarget("KmESun", optional = true)]
+            private NumericParser<float> KmESun
+            {
+                set { afg.KmESun = value.value; }
+            }
+
+            // Kr
+            [ParserTarget("Kr", optional = true)]
+            private NumericParser<float> Kr
+            {
+                set { afg.Kr = value.value; }
+            }
+
+            // Kr4PI 
+            [ParserTarget("Kr4PI", optional = true)]
+            private NumericParser<float> Kr4PI
+            {
+                set { afg.Kr4PI = value.value; }
+            }
+
+            // KrESun
+            [ParserTarget("KrESun", optional = true)]
+            private NumericParser<float> KrESun
+            {
+                set { afg.KrESun = value.value; }
+            }
+
+            // outerRadius
+            [ParserTarget("outerRadius", optional = true)]
+            private NumericParser<float> outerRadius
+            {
+                set { afg.outerRadius = value.value; }
+            }
+
+            // outerRadius
+            [ParserTarget("outerRadius2", optional = true)]
+            private NumericParser<float> outerRadius2
+            {
+                set { afg.outerRadius2 = value.value; }
+            }
+
+            // samples
+            [ParserTarget("samples", optional = true)]
+            private NumericParser<float> samples
+            {
+                set { afg.samples = value.value; }
+            }
+
+            // scale
+            [ParserTarget("scale", optional = true)]
+            private NumericParser<float> scale
+            {
+                set { afg.scale = value.value; }
+            }
+
+            // scaleDepth
+            [ParserTarget("scaleDepth", optional = true)]
+            private NumericParser<float> scaleDepth
+            {
+                set { afg.scaleDepth = value.value; }
+            }
+
+            // scaleOverScaleDepth
+            [ParserTarget("scaleOverScaleDepth", optional = true)]
+            private NumericParser<float> scaleOverScaleDepth
+            {
+                set { afg.scaleOverScaleDepth = value.value; }
+            }
+
+            // sunLightDirection
+            [ParserTarget("sunLightDirection", optional = true)]
+            private Vector3Parser sunLightDirection
+            {
+                set { afg.sunLightDirection = value.value; }
+            }
+
+            // Parser apply event
+            void IParserEventSubscriber.Apply(ConfigNode node) { }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                MethodInfo setMaterial = afg.GetType().GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
+                setMaterial.Invoke(afg, new object[] { true });
+            }
+
+            public AtmosphereFromGroundParser(AtmosphereFromGround afg)
+            {
+                this.afg = afg;
+            }
+
+        }
 	}
 }
