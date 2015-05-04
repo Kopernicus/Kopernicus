@@ -140,6 +140,9 @@ namespace Kopernicus
                 ParticleRender = body.AddComponent<ParticleRenderer>();
                 ParticleAnim = body.AddComponent<ParticleAnimator>();
                 ParticleRender.material = new Material(Shader.Find("Particles/Alpha Blended"));
+
+                MainEmitter.useWorldSpace = false;
+                ParticleAnim.doesAnimateColor = true;
             }
 
             // Post-Apply event

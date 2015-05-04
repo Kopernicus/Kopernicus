@@ -180,10 +180,6 @@ namespace Kopernicus
 				set { scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true) [0].waveLength = value.value; }
 			}
 
-            // AtmosphereFromGround
-            [ParserTarget("AtmosphereFromGround", optional = true, allowMerge = true)]
-            private AtmosphereFromGroundParser atmoFG;
-
 			// Parser apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{ 
@@ -212,13 +208,18 @@ namespace Kopernicus
 					celestialBody.atmospherePressureSeaLevel = 1.0f;
 					// celestialBody.atmosphereMultiplier = 1.4285f;
 				}
-
-                // Manipulate AFG
-                atmoFG = new AtmosphereFromGroundParser(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]);
 			}
 
 			// Parser post apply event
-			void IParserEventSubscriber.PostApply (ConfigNode node) { } 
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                // Manipulate AFG
+                Logger.Active.Log(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true).Length);
+                if (node.HasNode("AtmosphereFromGround"))
+                {
+                    AtmosphereFromGroundParser atmoFG = new AtmosphereFromGroundParser(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]);
+                }
+            }
 
 			// Store the scaled version and celestial body we are modifying internally
 			public Atmosphere (CelestialBody celestialBody, GameObject scaledVersion)
@@ -408,15 +409,17 @@ namespace Kopernicus
             // Parser post apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                MethodInfo setMaterial = afg.GetType().GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
-                setMaterial.Invoke(afg, new object[] { true });
+                if (afg != null)
+                {
+                    MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
+                    afgSetMaterial.Invoke(afg, new object[] { true });
+                }
             }
 
             public AtmosphereFromGroundParser(AtmosphereFromGround afg)
             {
                 this.afg = afg;
             }
-
         }
 	}
 }

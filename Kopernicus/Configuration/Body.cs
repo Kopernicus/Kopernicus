@@ -152,7 +152,6 @@ namespace Kopernicus
                                 if (PQSocean.name == name + "Ocean")
                                 {
                                     ocean = new OceanPQS(PQSocean);
-                                    Logger.Active.Log(PQSocean.surfaceMaterial.shader.name);
                                     break;
                                 }
                             }
@@ -235,7 +234,6 @@ namespace Kopernicus
                     {
                         if (generatedBody.celestialBody.ocean == false)
                         {
-                            Logger.Active.Log("NO OCEAN FOUND");
                             ocean.oceanRoot.transform.parent = generatedBody.pqsVersion.transform;
 
                             // Add the ocean PQS to the secondary renders of the CelestialBody Transform
@@ -259,7 +257,6 @@ namespace Kopernicus
                         }
                         else
                         {
-                            Logger.Active.Log("OCEAN FOUND");
                             // Ajust map settings of the parent PQS
                             generatedBody.pqsVersion.mapOcean = ocean.mapOcean;
                             generatedBody.celestialBody.ocean = ocean.mapOcean;
