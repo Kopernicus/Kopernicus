@@ -31,6 +31,7 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 using UnityEngine;
 
@@ -705,6 +706,60 @@ namespace Kopernicus
             return map;
         }
 
+        public static MapSO FindMapSO(string url)
+        {
+            MapSO retVal = null;
+            bool modFound = false;
+            string trim = url.Replace("BUILTIN/", "");
+            string mBody = Regex.Replace(trim, @"/.*", "");
+            trim = Regex.Replace(trim, mBody + "/", "");
+            string mTypeName = Regex.Replace(trim, @"/.*", "");
+            string mName = Regex.Replace(trim, mTypeName + "/", "");
+            PSystemBody body = FindBody(PSystemManager.Instance.systemPrefab.rootBody, mBody);
+            if (body != null && body.pqsVersion != null)
+            {
+                Type mType = null;
+                try
+                {
+                    mType = Type.GetType(mTypeName);
+                }
+                catch (Exception e)
+                {
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but type not found. VertexHeight type for reference = " + typeof(PQSMod_VertexHeightMap).FullName + ". Exception: " + e);
+                }
+                if (mType != null)
+                {
+                    PQSMod[] mods = body.pqsVersion.GetComponentsInChildren(mType, true) as PQSMod[];
+                    foreach (PQSMod m in mods)
+                    {
+                        if(m.name != mName)
+                            continue;
+                        modFound = true;
+                        foreach (FieldInfo fi in m.GetType().GetFields())
+                        {
+                            if (fi.GetType().Equals(typeof(MapSO)))
+                            {
+                                retVal = fi.GetValue(m) as MapSO;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+            else
+                Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but body not found.");
+
+            if (retVal == null)
+            {
+                if (modFound)
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but mods of correct name and type lack MapSO.");
+                else
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but could not find PQSMod of that type of the given name");
+            }
+            return retVal;
+        }
+
         /// <summary>
         /// Will remove all mods of given types (or all, if types null)
         /// </summary>
@@ -810,7 +865,6 @@ namespace Kopernicus
                     }
                     else
                     {
-                        cbt.gameObject.active = true;
                         cbt.enabled = true;
                         cbt.modEnabled = true;
                         cbt.sphere = body.pqsVersion;

@@ -324,15 +324,25 @@ namespace Kopernicus
                 }
                 else
                 {
-                    // Load the texture
-                    Texture2D map = Utility.LoadTexture(s, false, false, false);
-                    if (map != null)
+                    T obj = null;
+                    if (s.StartsWith("BUILTIN/"))
                     {
-                        // Create a new map script object
-                        value = ScriptableObject.CreateInstance<T>();
-                        value.CreateMap(MapSO.MapDepth.Greyscale, map);
-                        UnityEngine.Object.DestroyImmediate(map);
-                        Templates.instance.mapsGray[s] = value;
+                        obj = Utility.FindMapSO(s) as T;
+                    }
+                    if (obj != null)
+                        value = obj;
+                    else
+                    {
+                        // Load the texture
+                        Texture2D map = Utility.LoadTexture(s, false, false, false);
+                        if (map != null)
+                        {
+                            // Create a new map script object
+                            value = ScriptableObject.CreateInstance<T>();
+                            value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                            UnityEngine.Object.DestroyImmediate(map);
+                            Templates.instance.mapsGray[s] = value;
+                        }
                     }
                 }
 			}
@@ -358,15 +368,25 @@ namespace Kopernicus
                 }
                 else
                 {
-                    // Load the texture
-                    Texture2D map = Utility.LoadTexture(s, false, false, false);
-                    if (map != null)
+                    T obj = null;
+                    if (s.StartsWith("BUILTIN/"))
                     {
-                        // Create a new map script object
-                        value = ScriptableObject.CreateInstance<T>();
-                        value.CreateMap(MapSO.MapDepth.RGB, map);
-                        UnityEngine.Object.DestroyImmediate(map);
-                        Templates.instance.mapsRGB[s] = value;
+                        obj = Utility.FindMapSO(s) as T;
+                    }
+                    if (obj != null)
+                        value = obj;
+                    else
+                    {
+                        // Load the texture
+                        Texture2D map = Utility.LoadTexture(s, false, false, false);
+                        if (map != null)
+                        {
+                            // Create a new map script object
+                            value = ScriptableObject.CreateInstance<T>();
+                            value.CreateMap(MapSO.MapDepth.RGB, map);
+                            UnityEngine.Object.DestroyImmediate(map);
+                            Templates.instance.mapsRGB[s] = value;
+                        }
                     }
                 }
             }

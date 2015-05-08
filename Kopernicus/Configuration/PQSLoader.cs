@@ -268,7 +268,7 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
-                List<PQSMod> cpMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).ToList();
+                /*List<PQSMod> cpMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).ToList();
 				// Add all created mods to the PQS
                 foreach (ModLoader.ModLoader loader in mods)
                 {
@@ -287,8 +287,8 @@ namespace Kopernicus
                     loader.mod.transform.parent = pqsVersion.transform;
                     loader.mod.sphere = pqsVersion;
                     Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
-                }
-				/*// Add all created mods to the PQS
+                }*/
+				// Add all created mods to the PQS
                 List<Type> typesToRemove = null;
                 if (!removeAll)
                 {
@@ -304,7 +304,7 @@ namespace Kopernicus
                     loader.mod.transform.parent = pqsVersion.transform;
                     loader.mod.sphere = pqsVersion;
                     Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
-                }*/
+                }
 
 				// Make sure all the PQSMods exist in Localspace
 				pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
