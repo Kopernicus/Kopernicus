@@ -30,6 +30,7 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
@@ -250,6 +251,27 @@ namespace Kopernicus
             {
                 PSystemBodyWalk(c, prefix + "    ");
             }
+        }
+
+        // slightly different:
+        static public void DumpUpwards(Transform t, string prefix)
+        {
+            Logger.Default.Log(prefix + "Transform " + t.name);
+            foreach (Component c in t.GetComponents<Component>())
+                Logger.Default.Log(prefix + " has component " + c.name + " of type " + c.GetType().FullName);
+            if (t.parent != null)
+                DumpUpwards(t.parent, prefix + "  ");
+
+        }
+        static public void DumpDownwards(Transform t, string prefix)
+        {
+            Logger.Default.Log(prefix + "Transform " + t.name);
+            foreach (Component c in t.GetComponents<Component>())
+                Logger.Default.Log(prefix + " has component " + c.name + " of type " + c.GetType().FullName);
+            if (t.childCount > 0)
+                for (int i = 0; i < t.childCount; ++i)
+                    DumpDownwards(t.GetChild(i), prefix + "  ");
+
         }
 
         public static void CopyMesh(Mesh source, Mesh dest)
@@ -521,6 +543,284 @@ namespace Kopernicus
             }
             result.Apply();
             return result;
+        }
+
+        // Convert latitude-longitude-altitude with body radius to a vector.
+        public static Vector3 LLAtoECEF(double lat, double lon, double alt, double radius)
+        {
+            const double degreesToRadians = Math.PI / 180.0;
+            lat = (lat - 90) * degreesToRadians;
+            lon *= degreesToRadians;
+            double x, y, z;
+            double n = radius; // for now, it's still a sphere, so just the radius
+            x = (n + alt) * -1.0 * Math.Sin(lat) * Math.Cos(lon);
+            y = (n + alt) * Math.Cos(lat); // for now, it's still a sphere, so no eccentricity
+            z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
+            return new Vector3((float)x, (float)y, (float)z);
+        }
+
+        public static Texture2D LoadTexture(string path, bool compress, bool upload, bool unreadable)
+        {
+            Texture2D map = null;
+            path = KSPUtil.ApplicationRootPath + "GameData/" + path;
+            if (System.IO.File.Exists(path))
+            {
+                bool uncaught = true;
+                try
+                {
+                    if (path.ToLower().EndsWith(".dds"))
+                    {
+                        // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
+                        // Also borrowed the extra bits from Sarbian.
+                        byte[] buffer = System.IO.File.ReadAllBytes(path);
+                        System.IO.BinaryReader binaryReader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
+                        uint num = binaryReader.ReadUInt32();
+                        if (num == DDSHeaders.DDSValues.uintMagic)
+                        {
+
+                            DDSHeaders.DDSHeader dDSHeader = new DDSHeaders.DDSHeader(binaryReader);
+
+                            if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
+                            {
+                                new DDSHeaders.DDSHeaderDX10(binaryReader);
+                            }
+
+                            bool alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
+                            bool fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
+                            bool rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
+                            bool alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
+                            bool luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
+                            bool rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
+                            //bool bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
+                            bool rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
+                            bool argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
+                            bool rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
+
+                            bool mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
+                            bool isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
+                            if (fourcc)
+                            {
+                                if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
+                                {
+                                    Debug.Log("[Kopernicus]: DXT2 not supported" + path);
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT4)
+                                {
+                                    Debug.Log("[Kopernicus]: DXT4 not supported: " + path);
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
+                                {
+                                    Debug.Log("[Kopernicus]: DX10 dds not supported: " + path);
+                                }
+                                else
+                                    fourcc = false;
+                            }
+                            if(!fourcc)
+                            {
+                                TextureFormat textureFormat = TextureFormat.ARGB32;
+                                bool ok = true;
+                                if (rgb && (rgb888 /*|| bgr888*/))
+                                {
+                                    // RGB or RGBA format
+                                    textureFormat = alphapixel
+                                    ? TextureFormat.RGBA32
+                                    : TextureFormat.RGB24;
+                                }
+                                else if (rgb && rgb565)
+                                {
+                                    // Nvidia texconv B5G6R5_UNORM
+                                    textureFormat = TextureFormat.RGB565;
+                                }
+                                else if (rgb && alphapixel && argb4444)
+                                {
+                                    // Nvidia texconv B4G4R4A4_UNORM
+                                    textureFormat = TextureFormat.ARGB4444;
+                                }
+                                else if (rgb && alphapixel && rbga4444)
+                                {
+                                    textureFormat = TextureFormat.RGBA4444;
+                                }
+                                else if (!rgb && alpha != luminance)
+                                {
+                                    // A8 format or Luminance 8
+                                    textureFormat = TextureFormat.Alpha8;
+                                }
+                                else
+                                {
+                                    ok = false;
+                                    Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
+                                }
+                                if (ok)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+
+                            }
+                            if (map != null)
+                                if (upload)
+                                    map.Apply(false, unreadable);
+                        }
+                        else
+                            Debug.Log("[Kopernicus]: Bad DDS header.");
+                    }
+                    else
+                    {
+                        map = new Texture2D(2, 2);
+                        map.LoadImage(System.IO.File.ReadAllBytes(path));
+                        if (compress)
+                            map.Compress(true);
+                        if (upload)
+                            map.Apply(false, unreadable);
+                    }
+                }
+                catch (Exception e)
+                {
+                    uncaught = false;
+                    Debug.Log("[Kopernicus]: failed to load " + path + " with exception " + e.Message);
+                }
+                if (map == null && uncaught)
+                {
+                    Debug.Log("[Kopernicus]: failed to load " + path);
+                }
+            }
+            else
+                Debug.Log("[Kopernicus]: texture does not exist! " + path);
+
+            return map;
+        }
+
+        /// <summary>
+        /// Will remove all mods of given types (or all, if types null)
+        /// </summary>
+        /// <param name="types">If null, will remove all mods except blacklisted mods</param>
+        /// <param name="p">PQS to remove from</param>
+        /// <param name="blacklist">list of mod types to not remove (optional)</param>
+        public static void RemoveModsOfType(List<Type> types, PQS p, List<Type> blacklist = null)
+        {
+            Logger.Active.Log("Removing mods from pqs " + p.name);
+            List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
+            bool addTypes = types == null;
+            if(addTypes)
+                types = new List<Type>();
+            if (blacklist == null)
+            {
+                Logger.Active.Log("Creating blacklist");
+                blacklist = new List<Type>();
+                if(!types.Contains(typeof(PQSMod_CelestialBodyTransform)))
+                    blacklist.Add(typeof(PQSMod_CelestialBodyTransform));
+                if(!types.Contains(typeof(PQSMod_MaterialSetDirection)))
+                    blacklist.Add(typeof(PQSMod_MaterialSetDirection));
+                if(!types.Contains(typeof(PQSMod_UVPlanetRelativePosition)))
+                    blacklist.Add(typeof(PQSMod_UVPlanetRelativePosition));
+                if(!types.Contains(typeof(PQSMod_QuadMeshColliders)))
+                    blacklist.Add(typeof(PQSMod_QuadMeshColliders));
+                Logger.Active.Log("Blacklist count = " + blacklist.Count);
+            }
+
+            if (addTypes)
+            {
+                Logger.Active.Log("Adding all found PQSMods in pqs " + p.name);
+                foreach(PQSMod m in cpMods)
+                {
+                    Type mType = m.GetType();
+                    if (!types.Contains(mType) && !blacklist.Contains(mType))
+                    {
+                        Logger.Active.Log("Adding to removelist: " + mType);
+                        types.Add(mType);
+                    }
+                }
+            }
+            foreach (Type mType in types)
+            {
+                /*List<PQSMod> currentMods = cpMods.Where(m => m.GetType() == mType).ToList();
+                while (currentMods.Count > 0)
+                {
+                    PQSMod delMod = currentMods[0]; //p.GetComponentsInChildren(mType, true)[0] as PQSMod;
+                    if (delMod.GetType() != typeof(PQSCity) || delMod.name != "KSC")
+                    {
+                        delMod.transform.parent = null;
+                        delMod.sphere = null;
+                        PQSMod.Destroy(delMod);
+                        cpMods.Remove(currentMods[0]);
+                    }
+                    currentMods.RemoveAt(0);
+                }*/
+                List<GameObject> toCheck = new List<GameObject>();
+                PQSMod delMod = p.GetComponentsInChildren(mType, true).FirstOrDefault() as PQSMod;
+                if (delMod != null)
+                {
+                    toCheck.Add(delMod.gameObject);
+                    delMod.sphere = null;
+                    PQSMod.DestroyImmediate(delMod);
+                }
+                int oCount = toCheck.Count;
+                int nCount = oCount;
+                do
+                {
+                    oCount = nCount;
+                    List<GameObject> toDestroy = new List<GameObject>();
+                    foreach (GameObject go in toCheck)
+                    {
+                        if (go.transform.childCount == 0)
+                        {
+                            Component[] comps = go.GetComponents<Component>();
+                            if (comps.Length == 0 || (comps.Length == 1 && comps[0].GetType() == typeof(Transform)))
+                                toDestroy.Add(go);
+                        }
+                    }
+                    foreach (GameObject go in toDestroy)
+                    {
+                        toCheck.Remove(go);
+                        GameObject.DestroyImmediate(go);
+                    }
+                    nCount = toCheck.Count;
+                } while (nCount != oCount && nCount > 0);
+            }
+        }
+
+        static public void CBTCheck(PSystemBody body)
+        {
+            if (body.pqsVersion != null)
+            {
+                if (body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>().Length > 0)
+                    Logger.Default.Log("Body " + body.name + " has CBT.");
+                else
+                {
+                    PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren(typeof(PQSMod_CelestialBodyTransform), true).FirstOrDefault() as PQSMod_CelestialBodyTransform;
+                    if (cbt == null)
+                    {
+                        Logger.Default.Log("Body " + body.name + " *** LACKS CBT ***");
+                        DumpDownwards(body.pqsVersion.transform, "*");
+                    }
+                    else
+                    {
+                        cbt.gameObject.active = true;
+                        cbt.enabled = true;
+                        cbt.modEnabled = true;
+                        cbt.sphere = body.pqsVersion;
+                        Logger.Default.Log("Body " + body.name + " lacks active CBT, activated.");
+                    }
+                }
+            }
+            if (body.children != null)
+                foreach (PSystemBody b in body.children)
+                    CBTCheck(b);
         }
 
         /** 

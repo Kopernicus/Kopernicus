@@ -84,6 +84,12 @@ namespace Kopernicus
 				set { orbit.meanAnomalyAtEpoch = value.value; }
 			}
 
+            [ParserTarget("meanAnomalyAtEpochD", optional = true, allowMerge = false)]
+			public NumericParser<double> meanAnomalyAtEpochD
+			{
+				set { orbit.meanAnomalyAtEpoch = value.value * Math.PI / 180d; }
+			}
+
 			[ParserTarget("epoch", optional = true, allowMerge = false)]
 			public NumericParser<double> epoch
 			{

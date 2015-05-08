@@ -61,6 +61,17 @@ namespace Kopernicus
 			[PreApply]
 			[ParserTarget("name", optional = false)]
 			public string name { get; private set; }
+
+			[ParserTarget("cbNameLater", optional = true)]
+            private string cbNameLater
+            {
+                set
+                {
+                    cbNameLater = value;
+                    if (!NameChanges.CBNames.ContainsKey(name))
+                        NameChanges.CBNames[name] = new CBNameChanger(name, value);
+                }
+            }
 			
 			// Flight globals index of this body - for computing reference id
 			[ParserTarget("flightGlobalsIndex", optional = true)]
@@ -205,6 +216,8 @@ namespace Kopernicus
 			// Parser Post Apply Event
 			public void PostApply (ConfigNode node)
 			{
+                // Update any interrelated body properties
+                properties.PostApplyUpdate();
 				// If an orbit is defined, we orbit something
 				if (orbit != null) 
 				{

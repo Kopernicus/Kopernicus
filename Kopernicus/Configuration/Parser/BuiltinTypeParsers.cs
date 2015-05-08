@@ -318,20 +318,23 @@ namespace Kopernicus
 			public T value;
 			public void SetFromString (string s)
 			{
-				// Attempt to load a texture specified by the path
-				string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
-				if (File.Exists (path)) 
-				{
-					// Load the texture
-					Texture2D map = new Texture2D (2, 2);
-					if (map.LoadImage (File.ReadAllBytes (path))) 
-					{
-						// Create a new map script object
-						value = ScriptableObject.CreateInstance<T> ();
-						value.CreateMap (MapSO.MapDepth.Greyscale, map);
-						UnityEngine.Object.DestroyImmediate (map);
-					}
-				}
+                if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
+                {
+                    value = (T)Templates.instance.mapsGray[s];
+                }
+                else
+                {
+                    // Load the texture
+                    Texture2D map = Utility.LoadTexture(s, false, false, false);
+                    if (map != null)
+                    {
+                        // Create a new map script object
+                        value = ScriptableObject.CreateInstance<T>();
+                        value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                        UnityEngine.Object.DestroyImmediate(map);
+                        Templates.instance.mapsGray[s] = value;
+                    }
+                }
 			}
 			public MapSOParser_GreyScale()
 			{
@@ -347,23 +350,26 @@ namespace Kopernicus
 		public class MapSOParser_RGB<T> : IParsable where T : MapSO
 		{
 			public T value;
-			public void SetFromString (string s)
-			{
-				// Attempt to load a texture specified by the path
-				string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
-				if (File.Exists (path)) 
-				{
-					// Load the texture
-					Texture2D map = new Texture2D (2, 2);
-					if (map.LoadImage (File.ReadAllBytes (path))) 
-					{
-						// Create a new map script object
-						value = ScriptableObject.CreateInstance<T> ();
-						value.CreateMap (MapSO.MapDepth.RGB, map);
-						UnityEngine.Object.DestroyImmediate (map);
-					}
-				}
-			}
+            public void SetFromString(string s)
+            {
+                if (Templates.instance.mapsRGB != null && Templates.instance.mapsRGB.ContainsKey(s))
+                {
+                    value = (T)Templates.instance.mapsRGB[s];
+                }
+                else
+                {
+                    // Load the texture
+                    Texture2D map = Utility.LoadTexture(s, false, false, false);
+                    if (map != null)
+                    {
+                        // Create a new map script object
+                        value = ScriptableObject.CreateInstance<T>();
+                        value.CreateMap(MapSO.MapDepth.RGB, map);
+                        UnityEngine.Object.DestroyImmediate(map);
+                        Templates.instance.mapsRGB[s] = value;
+                    }
+                }
+            }
 			public MapSOParser_RGB()
 			{
 				this.value = null;

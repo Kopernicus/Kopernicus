@@ -60,13 +60,6 @@ namespace Kopernicus
 				set { celestialBody.atmosphereContainsOxygen = value.value; }
 			}
 
-            // albedo
-            [ParserTarget("albedo", optional = true)]
-            private NumericParser<double> albedo
-            {
-                set { celestialBody.albedo = value.value; }
-            }
-
             // Density at sea level
             [ParserTarget("staticDensityASL", optional = true)]
             private NumericParser<double> atmDensityASL
@@ -214,7 +207,6 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 // Manipulate AFG
-                Logger.Active.Log(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true).Length);
                 if (node.HasNode("AtmosphereFromGround"))
                 {
                     AtmosphereFromGroundParser atmoFG = new AtmosphereFromGroundParser(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]);
