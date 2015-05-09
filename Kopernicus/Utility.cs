@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.IO;
 
 using UnityEngine;
 
@@ -292,6 +293,128 @@ namespace Kopernicus
                 for (int i = 0; i < t.childCount; ++i)
                     DumpDownwards(t.GetChild(i), prefix + "  ");
 
+        }
+
+        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, bool exportBin)
+        {
+            const double rJool = 6000000.0;
+            const float rScaled = 1000.0f;
+
+            // Compute scale between Jool and this body
+            float scale = (float)(body.Radius / rJool);
+            scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
+
+            Mesh scaledMesh;
+            // Attempt to load a cached version of the scale space
+            string CacheDirectory = KSPUtil.ApplicationRootPath + path;
+            string CacheFile = CacheDirectory + "/" + body.name + ".bin";
+            Directory.CreateDirectory(CacheDirectory);
+            if (File.Exists(CacheFile) && exportBin)
+            {
+                Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
+                scaledMesh = Utility.DeserializeMesh(CacheFile);
+                Utility.RecalculateTangents(scaledMesh);
+                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+            }
+
+            // Otherwise we have to generate the mesh
+            else
+            {
+                Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
+                scaledMesh = ComputeScaledSpaceMesh(body, pqs);
+                Utility.RecalculateTangents(scaledMesh);
+                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+                if (exportBin)
+                    Utility.SerializeMesh(scaledMesh, CacheFile);
+            }
+
+            // Apply mesh to the body
+            SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
+            if (collider != null) collider.radius = rScaled;
+
+            if (pqs != null)
+            {
+                scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(pqs.radius / rJool);
+            }
+        }
+
+        // Generate the scaled space mesh using PQS (all results use scale of 1)
+        public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
+        {
+            #region blacklist
+            // Blacklist for mods
+            List<Type> blacklist = new List<Type>();
+            blacklist.Add(typeof(PQSMod_MapDecalTangent));
+            blacklist.Add(typeof(PQSMod_OceanFX));
+            blacklist.Add(typeof(PQSMod_FlattenArea));
+            blacklist.Add(typeof(PQSMod_MapDecal));
+            #endregion
+
+            // We need to get the body for Jool (to steal it's mesh)
+            const double rScaledJool = 1000.0f;
+            double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
+
+            // Generate a duplicate of the Jool mesh
+            Mesh mesh = Utility.DuplicateMesh(Utility.ReferenceGeosphere());
+
+            // If this body has a PQS, we can create a more detailed object
+            if (pqs != null)
+            {
+                // In order to generate the scaled space we have to enable the mods.  Since this is
+                // a prefab they don't get disabled as kill game performance.  To resolve this we 
+                // clone the PQS, use it, and then delete it when done
+                GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
+                PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
+
+                // Find and enable the PQS mods that modify height
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()) && m.sphere == pqs);
+
+                foreach (PQSMod mod in mods)
+                    mod.OnSetup();
+
+                // If we were able to find PQS mods
+                if (mods.Count() > 0)
+                {
+                    // Generate the PQS modifications
+                    Vector3[] vertices = mesh.vertices;
+                    for (int i = 0; i < mesh.vertexCount; i++)
+                    {
+                        // Get the UV coordinate of this vertex
+                        Vector2 uv = mesh.uv[i];
+
+                        // Since this is a geosphere, normalizing the vertex gives the direction from center center
+                        Vector3 direction = vertices[i];
+                        direction.Normalize();
+
+                        // Build the vertex data object for the PQS mods
+                        PQS.VertexBuildData vertex = new PQS.VertexBuildData();
+                        vertex.directionFromCenter = direction;
+                        vertex.vertHeight = body.Radius;
+                        vertex.u = uv.x;
+                        vertex.v = uv.y;
+
+                        // Build from the PQS
+                        foreach (PQSMod mod in mods)
+                            mod.OnVertexBuildHeight(vertex);
+
+                        // Check for sea level
+                        if (body.ocean && vertex.vertHeight < body.Radius)
+                            vertex.vertHeight = body.Radius;
+
+                        // Adjust the displacement
+                        vertices[i] = direction * (float)(vertex.vertHeight * rMetersToScaledUnits);
+                    }
+                    mesh.vertices = vertices;
+                    mesh.RecalculateNormals();
+                    mesh.RecalculateBounds();
+                }
+
+                // Cleanup
+                UnityEngine.Object.Destroy(pqsVersionGameObject);
+            }
+
+            // Return the generated scaled space mesh
+            return mesh;
         }
 
         public static void CopyMesh(Mesh source, Mesh dest)

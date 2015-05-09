@@ -232,10 +232,14 @@ namespace Kopernicus
                 }
             }
         }
-        private void PatchPQS(PQS pqs, ConfigNode node)
+        private bool PatchPQS(PQS pqs, ConfigNode node)
         {
+            bool pqsChanged = false;
+            double oldR = pqs.radius;
             if (node.HasValue("radius"))
                 double.TryParse(node.GetValue("radius"), out pqs.radius);
+            if (pqs.radius != oldR)
+                pqsChanged = true;
 
             List<PQSMod> mods;
             if (node.HasNode("Mods"))
@@ -252,6 +256,7 @@ namespace Kopernicus
                         if (modNode.HasValue("name"))
                             if (m.name != modNode.GetValue("name"))
                                 continue;
+                        pqsChanged = true;
                         ParseObject(m, modNode);
                         if (mType == typeof(PQSCity) || mType == typeof(PQSMod_MapDecal) || mType == typeof(PQSMod_MapDecalTangent))
                             ModDecal(m, modNode);
@@ -285,6 +290,7 @@ namespace Kopernicus
                     // If we found the mod, remove from the list since we edited it.
                     if (delMod != null)
                     {
+                        pqsChanged = true;
                         toCheck.Add(delMod.gameObject);
                         mods.Remove(delMod);
                         delMod.sphere = null;
@@ -300,30 +306,56 @@ namespace Kopernicus
                 m.OnSetup();
                 m.OnPostSetup();
             }
-            /*try
+            try
             {
                 pqs.RebuildSphere();
             }
             catch (Exception e)
             {
                 Logger.Active.Log("Rebuild sphere for " + node.name + " failed: " + e.Message);
-            }*/
+            }
+
+            return pqsChanged;
         }
         private bool PatchBody(ConfigNode node)
         {
             if (node != null && node.HasValue("name"))
             {
                 CelestialBody body = GetBody(node.GetValue("name"));
+                bool rebuildScaled = false;
                 if (body.pqsController != null)
                 {
                     if (node.HasNode("PQS"))
-                        PatchPQS(body.pqsController, node.GetNode("PQS"));
+                        rebuildScaled |= PatchPQS(body.pqsController, node.GetNode("PQS"));
                     PQS[] pqsArr = body.pqsController.GetComponentsInChildren<PQS>(true);
                     foreach (PQS p in pqsArr)
                     {
                         if (node.HasNode("PQS" + p.name))
-                            PatchPQS(p, node.GetNode("PQS" + p.name));
+                            rebuildScaled |= PatchPQS(p, node.GetNode("PQS" + p.name));
                     }
+                }
+                if (rebuildScaled)
+                {
+                    // get prefab body
+                    PSystemBody pBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.name);
+                    GameObject scaled = pBody.scaledVersion;
+
+                    // get scaledspace if it exists
+                    GameObject ssObj = null;
+                    if (ScaledSpace.Instance != null)
+                    {
+                        foreach(Transform t in ScaledSpace.Instance.scaledSpaceTransforms)
+                            if (t.name == body.name)
+                            {
+                                ssObj = t.gameObject;
+                                break;
+                            }
+                    }
+                    if (ssObj != null && ssObj != scaled)
+                        Debug.Log("*PI* ERROR: scaled space instance has different object than prefab!");
+                    if (ssObj == null)
+                        ssObj = scaled;
+                    Utility.UpdateScaledMesh(ssObj, body.pqsController, body, "GameData/Kopernicus/Cache", true);
                 }
                 return true;
             }

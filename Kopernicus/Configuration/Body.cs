@@ -33,8 +33,6 @@ using System.Linq;
 
 using UnityEngine;
 
-using System.IO;
-
 // Disable the "private fields `` is assigned but its value is never used warning"
 #pragma warning disable 0414
 
@@ -45,8 +43,8 @@ namespace Kopernicus
 		[RequireConfigType(ConfigType.Node)]
 		public class Body : IParserEventSubscriber
 		{
-			// Path of the plugin (will eventually not matter much)
-			public const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
+            // Path of the plugin (will eventually not matter much)
+            public const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
 
 			// Body we are trying to edit
 			public PSystemBody generatedBody { get; private set; }
@@ -333,124 +331,11 @@ namespace Kopernicus
 				if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
 				    || template == null || inEveryCase)
 				{
-					const double rJool = 6000000.0;
-					const float  rScaled = 1000.0f;
-
-					// Compute scale between Jool and this body
-					float scale = (float)(generatedBody.celestialBody.Radius / rJool);
-					generatedBody.scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
-
-                    Mesh scaledMesh;
-					// Attempt to load a cached version of the scale space
-					string CacheDirectory = KSPUtil.ApplicationRootPath + ScaledSpaceCacheDirectory;
-					string CacheFile = CacheDirectory + "/" + generatedBody.name + ".bin";
-					Directory.CreateDirectory (CacheDirectory);
-                    if (File.Exists(CacheFile) && exportBin)
-                    {
-                        Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + generatedBody.name);
-                        scaledMesh = Utility.DeserializeMesh(CacheFile);
-                        Utility.RecalculateTangents(scaledMesh);
-                        generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
-                    }
-
-                    // Otherwise we have to generate the mesh
-                    else
-                    {
-                        Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + generatedBody.name);
-                        scaledMesh = ComputeScaledSpaceMesh(generatedBody);
-                        Utility.RecalculateTangents(scaledMesh);
-                        generatedBody.scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
-                        if (exportBin)
-                            Utility.SerializeMesh(scaledMesh, CacheFile);
-                    }
-
-					// Apply mesh to the body
-					SphereCollider collider = generatedBody.scaledVersion.GetComponent<SphereCollider>();
-					if (collider != null) collider.radius = rScaled;
-
-                    if (generatedBody.pqsVersion != null)
-                    {
-                        generatedBody.scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(generatedBody.pqsVersion.radius / rJool);
-                    }
+                    Utility.UpdateScaledMesh(generatedBody.scaledVersion, generatedBody.pqsVersion, generatedBody.celestialBody, ScaledSpaceCacheDirectory, exportBin);
 				}
 
 				// Post gen celestial body
 				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
-			}
-
-			// Generate the scaled space mesh using PQS (all results use scale of 1)
-			public static Mesh ComputeScaledSpaceMesh (PSystemBody body)
-            {
-                #region blacklist
-                // Blacklist for mods
-                List<Type> blacklist = new List<Type>();
-                blacklist.Add(typeof(PQSMod_MapDecalTangent));
-                blacklist.Add(typeof(PQSMod_OceanFX));
-                blacklist.Add(typeof(PQSMod_FlattenArea));
-                blacklist.Add(typeof(PQSMod_MapDecal));
-                #endregion
-
-                // We need to get the body for Jool (to steal it's mesh)
-				const double rScaledJool = 1000.0f;
-			    double rMetersToScaledUnits = (float) (rScaledJool / body.celestialBody.Radius);
-
-                // Generate a duplicate of the Jool mesh
-				Mesh mesh = Utility.DuplicateMesh (Utility.ReferenceGeosphere());
-
-				// If this body has a PQS, we can create a more detailed object
-				if (body.pqsVersion != null) 
-				{
-					// In order to generate the scaled space we have to enable the mods.  Since this is
-					// a prefab they don't get disabled as kill game performance.  To resolve this we 
-					// clone the PQS, use it, and then delete it when done
-					GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(body.pqsVersion.gameObject) as GameObject;
-					PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
-				
-					// Find and enable the PQS mods that modify height
-                    IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()));
-
-					foreach(PQSMod mod in mods)
-						mod.OnSetup();
-                    
-                    // If we were able to find PQS mods
-					if(mods.Count() > 0)
-					{
-						// Generate the PQS modifications
-						Vector3[] vertices = mesh.vertices;
-						for(int i = 0; i < mesh.vertexCount; i++)
-						{
-							// Get the UV coordinate of this vertex
-							Vector2 uv = mesh.uv[i];
-
-							// Since this is a geosphere, normalizing the vertex gives the direction from center center
-							Vector3 direction = vertices[i];
-							direction.Normalize();
-
-							// Build the vertex data object for the PQS mods
-							PQS.VertexBuildData vertex = new PQS.VertexBuildData();
-							vertex.directionFromCenter = direction;
-							vertex.vertHeight = body.celestialBody.Radius;
-							vertex.u = uv.x;
-							vertex.v = uv.y;
-							
-							// Build from the PQS
-							foreach(PQSMod mod in mods)
-								mod.OnVertexBuildHeight(vertex);
-							
-							// Adjust the displacement
-							vertices [i] = direction * (float)(vertex.vertHeight * rMetersToScaledUnits);
-						}
-						mesh.vertices = vertices;
-						mesh.RecalculateNormals();
-						mesh.RecalculateBounds ();
-					}
-
-					// Cleanup
-					UnityEngine.Object.Destroy(pqsVersionGameObject);
-				}
-
-				// Return the generated scaled space mesh
-				return mesh;
 			}
 		}
 	}

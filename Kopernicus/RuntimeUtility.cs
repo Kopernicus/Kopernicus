@@ -251,16 +251,16 @@ namespace Kopernicus
                 System.IO.Directory.CreateDirectory(path);
 
                 // Write Colormap
-                byte[] ExportColourMap = textures[0].EncodeToPNG();
-                System.IO.File.WriteAllBytes(path + bodyName + "_Color.png", ExportColourMap);
+                byte[] ExportMap = textures[0].EncodeToPNG();
+                System.IO.File.WriteAllBytes(path + bodyName + "_Color.png", ExportMap);
 
                 // Write Heightmap
-                ExportColourMap = textures[1].EncodeToPNG();
-                System.IO.File.WriteAllBytes(path + bodyName + "_Height.png", ExportColourMap);
+                ExportMap = textures[1].EncodeToPNG();
+                System.IO.File.WriteAllBytes(path + bodyName + "_Height.png", ExportMap);
 
                 // Write Normalmap
-                ExportColourMap = Normal.EncodeToPNG();
-                System.IO.File.WriteAllBytes(path + bodyName + "_Normal.png", ExportColourMap);
+                ExportMap = Normal.EncodeToPNG();
+                System.IO.File.WriteAllBytes(path + bodyName + "_Normal.png", ExportMap);
             }
             
         }
