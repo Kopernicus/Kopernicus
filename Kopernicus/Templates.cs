@@ -39,8 +39,11 @@ namespace Kopernicus
         }
         static public void GetUsedLists(List<MapSO> mapList, List<Texture> texList, PSystemBody body)
         {
+            // get the biome map
             if (body.celestialBody.BiomeMap != null)
                 mapList.Add(body.celestialBody.BiomeMap);
+
+            // get any MapSOs in PQSs
             if (body.pqsVersion != null)
             {
                 AddMapSOs(mapList, body.pqsVersion); // main PQS
@@ -54,6 +57,10 @@ namespace Kopernicus
             }
             if (body.scaledVersion != null)
                 AddTexes(texList, body.scaledVersion);
+
+            // Recurse
+            foreach (PSystemBody child in body.children)
+                GetUsedLists(mapList, texList, child);
         }
 
         private static void AddMapSOs(List<MapSO> list, PQS pqs)
@@ -84,6 +91,7 @@ namespace Kopernicus
             tex = scaledVersion.renderer.material.GetTexture("_BumpMap");
             if (tex != null && !list.Contains(tex))
                 list.Add(tex);
+            // ignore PQS Texture2Ds.
         }
     }
 }

@@ -300,14 +300,14 @@ namespace Kopernicus
                 m.OnSetup();
                 m.OnPostSetup();
             }
-            try
+            /*try
             {
                 pqs.RebuildSphere();
             }
             catch (Exception e)
             {
-                Logger.Default.Log("Rebuild sphere for " + node.name + " failed: " + e.Message);
-            }
+                Logger.Active.Log("Rebuild sphere for " + node.name + " failed: " + e.Message);
+            }*/
         }
         private bool PatchBody(ConfigNode node)
         {
@@ -371,7 +371,7 @@ namespace Kopernicus
                 }
                 catch (Exception e)
                 {
-                    Logger.Default.Log("CBUpdate for " + body.name + " failed: " + e.Message);
+                    Logger.Active.Log("CBUpdate for " + body.name + " failed: " + e.Message);
                 }
             }
         }
@@ -379,8 +379,10 @@ namespace Kopernicus
         private void UpdateMenuTex()
         {
             PSystemBody home = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
-            Texture homeMain = home.scaledVersion.renderer.material.GetTexture("_MainTex");
-            Texture homeBump = home.scaledVersion.renderer.material.GetTexture("_BumpMap");
+            Texture homeMain = home.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
+            Texture homeBump = home.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
+            Logger.Active.Log("Replaceing color map " + Templates.instance.origKerbinTex.name + " with " + homeMain.name);
+            Logger.Active.Log("Replaceing normal map " + Templates.instance.origKerbinBump.name + " with " + homeBump.name);
             Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
             foreach (Material m in mats)
             {
@@ -390,27 +392,58 @@ namespace Kopernicus
                     m.SetTexture("_BumpMap", homeBump);
             }
         }
-
         private void RemoveUnused()
         {
-            Logger.Default.Log("Removing unused MapSOs and textures");
+            Logger.Active.Log("Removing unused MapSOs and textures");
             List<MapSO> usedMaps = new List<MapSO>();
             List<Texture> usedTex = new List<Texture>();
             Templates.GetUsedLists(usedMaps, usedTex, PSystemManager.Instance.systemPrefab.rootBody);
 
             foreach (MapSO map in Templates.instance.origMapSOs)
-                if (!usedMaps.Contains(map))
+            {
+                if (map != null)
                 {
-                    MapSO.DestroyImmediate(map);
-                    Logger.Default.Log("Removed MapSO " + map.name + " with mapname " + map.MapName);
+                    string n1 = "NULL";
+                    string n2 = "NULL";
+                    try
+                    {
+                        n2 = map.MapName;
+                        n1 = map.name;
+                    }
+                    catch(Exception e)
+                    {
+                        Logger.Active.Log("Exception getting MapSO name: " + e);
+                    }
+                    Logger.Active.Log("Checking MapSO " + n1 + " of mapname " + n2);
+                    if (!usedMaps.Contains(map))
+                    {
+                        MapSO.DestroyImmediate(map);
+                        Logger.Active.Log("Removed MapSO " + n1 + " with mapname " + n2);
+                    }
                 }
+            }
 
             foreach (Texture tex in Templates.instance.origTextures)
-                if (!usedTex.Contains(tex))
+            {
+                if (tex != null)
                 {
-                    Texture.DestroyImmediate(tex);
-                    Logger.Default.Log("Removed Texture " + tex.name);
+                    string n = "NULL";
+                    try
+                    {
+                        n = tex.name;
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log("Exception getting tex name: " + e);
+                    }
+                    Logger.Active.Log("Checking Texture " + n);
+                    if (!usedTex.Contains(tex))
+                    {
+                        Texture.DestroyImmediate(tex);
+                        Logger.Active.Log("Removed Texture " + n);
+                    }
                 }
+            }
 
         }
         public void Start()
@@ -423,7 +456,11 @@ namespace Kopernicus
             {
                 if (rootConfig.HasNode(finalizeName))
                 {
-                    Logger.Default.Log("**** Finalizing things");
+                    // Get the current time
+                    DateTime start = DateTime.Now;
+                    Logger finalizeLogger = new Logger("Finalize");
+                    finalizeLogger.SetAsActive();
+                    Logger.Active.Log("**** Finalizing things");
 
                     rootConfig = rootConfig.GetNode(finalizeName);
                     bool finalizeOrbits = false;
@@ -439,11 +476,11 @@ namespace Kopernicus
                         {
                             if(node.HasValue("name"))
                             {
-                                Logger.Default.Log("Failed to patch " + bodyNodeName + " " + node.GetValue("name"));
+                                Logger.Active.Log("Failed to patch " + bodyNodeName + " " + node.GetValue("name"));
                             }
                             else
                             {
-                                Logger.Default.Log("Failed to patch " + bodyNodeName + " node with no name");
+                                Logger.Active.Log("Failed to patch " + bodyNodeName + " node with no name");
                             }
                         }
                     if (finalizeOrbits)
@@ -453,8 +490,9 @@ namespace Kopernicus
 
                     if(removeUnused)
                         RemoveUnused();
-
-                    Logger.Default.Log("Finalization pass done!");
+                    TimeSpan duration = (DateTime.Now - start);
+                    Logger.Active.Log("Finalization pass done! Completed in: " + duration.TotalMilliseconds + " ms");
+                    Logger.Active.Close();
                 }
             }
         }
