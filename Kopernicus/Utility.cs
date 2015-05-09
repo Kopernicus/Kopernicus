@@ -843,29 +843,34 @@ namespace Kopernicus
                     delMod.sphere = null;
                     PQSMod.DestroyImmediate(delMod);
                 }
-                int oCount = toCheck.Count;
-                int nCount = oCount;
-                do
-                {
-                    oCount = nCount;
-                    List<GameObject> toDestroy = new List<GameObject>();
-                    foreach (GameObject go in toCheck)
-                    {
-                        if (go.transform.childCount == 0)
-                        {
-                            Component[] comps = go.GetComponents<Component>();
-                            if (comps.Length == 0 || (comps.Length == 1 && comps[0].GetType() == typeof(Transform)))
-                                toDestroy.Add(go);
-                        }
-                    }
-                    foreach (GameObject go in toDestroy)
-                    {
-                        toCheck.Remove(go);
-                        GameObject.DestroyImmediate(go);
-                    }
-                    nCount = toCheck.Count;
-                } while (nCount != oCount && nCount > 0);
+                RemoveEmptyGO(toCheck);
             }
+        }
+
+        static public void RemoveEmptyGO(List<GameObject> toCheck)
+        {
+            int oCount = toCheck.Count;
+            int nCount = oCount;
+            do
+            {
+                oCount = nCount;
+                List<GameObject> toDestroy = new List<GameObject>();
+                foreach (GameObject go in toCheck)
+                {
+                    if (go.transform.childCount == 0)
+                    {
+                        Component[] comps = go.GetComponents<Component>();
+                        if (comps.Length == 0 || (comps.Length == 1 && comps[0].GetType() == typeof(Transform)))
+                            toDestroy.Add(go);
+                    }
+                }
+                foreach (GameObject go in toDestroy)
+                {
+                    toCheck.Remove(go);
+                    GameObject.DestroyImmediate(go);
+                }
+                nCount = toCheck.Count;
+            } while (nCount != oCount && nCount > 0);
         }
 
         static public void CBTCheck(PSystemBody body)
