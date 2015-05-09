@@ -46,7 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
+    <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
     <Compile Include="Configuration\ModLoader\OceanFX.cs" />
     <Compile Include="Configuration\ModLoader\QuadEnhanceCoast.cs" />
     <Compile Include="Configuration\ModLoader\RemoveQuadMap.cs" />
@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="NameChanger.cs" />
+    <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
     <Compile Include="RuntimeUtility.cs" />

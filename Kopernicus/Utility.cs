@@ -179,6 +179,25 @@ namespace Kopernicus
             return null;
         }
 
+        // Copy of above, but finds homeworld
+        public static PSystemBody FindHomeBody(PSystemBody body)
+        {
+            // Is this the body wer are looking for?
+            if (body.celestialBody.isHomeWorld)
+                return body;
+
+            // Otherwise search children
+            foreach (PSystemBody child in body.children)
+            {
+                PSystemBody b = FindHomeBody(child);
+                if (b != null)
+                    return b;
+            }
+
+            // Return null because we didn't find shit
+            return null;
+        }
+
         /** 
          * Get the reference Geosphere of KSP (Jool's scaled space mesh)
          * 
