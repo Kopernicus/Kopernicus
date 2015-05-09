@@ -290,8 +290,17 @@ namespace Kopernicus
             if (node != null && node.HasValue("name"))
             {
                 CelestialBody body = GetBody(node.GetValue("name"));
-                if(node.HasNode("PQS"))
-                    PatchPQS(body.pqsController, node.GetNode("PQS"));
+                if (body.pqsController != null)
+                {
+                    if (node.HasNode("PQS"))
+                        PatchPQS(body.pqsController, node.GetNode("PQS"));
+                    PQS[] pqsArr = body.pqsController.GetComponentsInChildren<PQS>(true);
+                    foreach (PQS p in pqsArr)
+                    {
+                        if (node.HasNode("PQS" + p.name))
+                            PatchPQS(p, node.GetNode("PQS" + p.name));
+                    }
+                }
                 return true;
             }
             return false;
