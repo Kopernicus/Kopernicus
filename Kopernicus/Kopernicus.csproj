@@ -106,6 +106,7 @@
     <Compile Include="MaterialWrapper\PQSProjectionFallback.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
     <Compile Include="MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
+    <Compile Include="SpaceCenterFixer.cs" />
     <Compile Include="StarLightSwitcher.cs" />
     <Compile Include="Templates.cs" />
     <Compile Include="Utility.cs" />
