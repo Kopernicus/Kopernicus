@@ -67,7 +67,8 @@ namespace Kopernicus
                     }
                 }
             }
-            else*/ if (fi.FieldType == typeof(string))
+            else*/
+            if (fi.FieldType == typeof(string))
             {
                 if (modNode.HasValue(name))
                 {
@@ -162,8 +163,30 @@ namespace Kopernicus
             {
                 if(modNode.HasNode(name))
                 {
-                    PQSLandControl.LandClass lc = new PQSLandControl.LandClass();
+                    PQSLandControl.LandClass lc = fi.GetValue(m) as PQSLandControl.LandClass;
                     ParseObject(lc, modNode.GetNode(name));
+                }
+            }
+            else if (fi.FieldType == typeof(PQSMod_CelestialBodyTransform.AltitudeFade))
+            {
+                if (modNode.HasNode(name))
+                {
+                    PQSMod_CelestialBodyTransform.AltitudeFade af = fi.GetValue(m) as PQSMod_CelestialBodyTransform.AltitudeFade;
+                    ParseObject(af, modNode.GetNode(name));
+                }
+            }
+            else if (fi.FieldType == typeof(PQSMod_CelestialBodyTransform.AltitudeFade[]))
+            {
+                if (modNode.HasNode(name))
+                {
+                    PQSMod_CelestialBodyTransform.AltitudeFade[] secFades = fi.GetValue(m) as PQSMod_CelestialBodyTransform.AltitudeFade[];
+                    ConfigNode newNodes = new ConfigNode();
+                    modNode.GetNode(name).CopyTo(newNodes);
+                    foreach (PQSMod_CelestialBodyTransform.AltitudeFade af in secFades)
+                    {
+                        ParseObject(af, newNodes.nodes[0]);
+                        newNodes.nodes.Remove(newNodes.nodes[0]);
+                    }
                 }
             }
         }
@@ -214,9 +237,10 @@ namespace Kopernicus
             if (node.HasValue("radius"))
                 double.TryParse(node.GetValue("radius"), out pqs.radius);
 
-            List<PQSMod> mods = pqs.transform.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == pqs).ToList<PQSMod>();
+            List<PQSMod> mods;
             if (node.HasNode("Mods"))
             {
+                mods = pqs.transform.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == pqs).ToList<PQSMod>();
                 foreach (ConfigNode modNode in node.GetNode("Mods").nodes)
                 {
                     PQSMod delMod = null;

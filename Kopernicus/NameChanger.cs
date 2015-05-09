@@ -219,8 +219,10 @@ namespace Kopernicus
             if (NameChanges.Instance == null)
             {
                 Debug.Log("*NameChanger* ERROR instance is null!");
+                Logger.Default.Log("Error: NameChanges instance is null!");
                 return;
             }
+            Logger.Default.Log("Running namechange pass.");
             foreach (NameChanger n in NameChanges.Names.Values)
                 n.Apply();
             foreach (CBNameChanger n in NameChanges.CBNames.Values)
