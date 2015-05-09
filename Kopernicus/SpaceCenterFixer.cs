@@ -14,6 +14,7 @@ namespace Kopernicus
         static public string pqsName = "Kerbin"; // will be changed to new homeworld in Injector.
         public void Start()
         {
+            return;
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor)
             {
                 FixCameras();
