@@ -19,6 +19,8 @@ namespace Kopernicus
 
         public Texture origKerbinTex;
         public Texture origKerbinBump;
+
+        public double epoch = double.NaN;
         
         public Templates()
         {

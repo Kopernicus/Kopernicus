@@ -67,6 +67,9 @@ namespace Kopernicus
 				// Retrieve the root config node
 				ConfigNode rootConfig = GameDatabase.Instance.GetConfigs (rootNodeName) [0].config;
 
+                if (rootConfig.HasValue("Epoch"))
+                    double.TryParse(rootConfig.GetValue("Epoch"), out Templates.instance.epoch);
+
 				// Stage 1 - Load all of the bodies
 				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName)) 
 				{

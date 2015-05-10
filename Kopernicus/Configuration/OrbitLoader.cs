@@ -93,8 +93,9 @@ namespace Kopernicus
 			[ParserTarget("epoch", optional = true, allowMerge = false)]
 			public NumericParser<double> epoch
 			{
-				set { orbit.epoch = value.value; }
+                set { orbit.epoch = value.value; hasEpoch = true; }
 			}
+            private bool hasEpoch = false;
 			
 			// Orbit renderer color
 			[ParserTarget("color", optional = true, allowMerge = false)]
@@ -117,6 +118,13 @@ namespace Kopernicus
 			// Populate the PSystemBody with the results of the orbit loader
 			public void Apply(PSystemBody body)
 			{
+                if (!double.IsNaN(Templates.instance.epoch))
+                {
+                    if (hasEpoch)
+                        orbit.epoch += Templates.instance.epoch;
+                    else
+                        orbit.epoch = Templates.instance.epoch;
+                }
 				body.orbitDriver.orbit = orbit;
 				body.orbitRenderer.orbitColor = color.value;
 				body.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
