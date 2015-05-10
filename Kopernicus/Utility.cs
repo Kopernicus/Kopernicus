@@ -331,8 +331,7 @@ namespace Kopernicus
             // Apply mesh to the body
             SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
             if (collider != null) collider.radius = rScaled;
-
-            if (pqs != null)
+            if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
             {
                 scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(pqs.radius / rJool);
             }

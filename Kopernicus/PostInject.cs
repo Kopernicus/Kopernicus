@@ -322,27 +322,43 @@ namespace Kopernicus
             if (node != null && node.HasValue("name"))
             {
                 CelestialBody body = GetBody(node.GetValue("name"));
-                bool rebuildScaled = false;
+                if (body == null)
+                {
+                    Logger.Active.Log("Could not find body " + node.GetValue("name"));
+                    return false;
+                }
+                Logger.Active.Log("Patching " + body.bodyName);
+                Logger.Active.Flush();
+                bool pqsChanged = true;
                 if (body.pqsController != null)
                 {
                     if (node.HasNode("PQS"))
-                        rebuildScaled |= PatchPQS(body.pqsController, node.GetNode("PQS"));
+                        pqsChanged |= PatchPQS(body.pqsController, node.GetNode("PQS"));
                     PQS[] pqsArr = body.pqsController.GetComponentsInChildren<PQS>(true);
                     foreach (PQS p in pqsArr)
                     {
                         if (node.HasNode("PQS" + p.name))
-                            rebuildScaled |= PatchPQS(p, node.GetNode("PQS" + p.name));
+                            pqsChanged |= PatchPQS(p, node.GetNode("PQS" + p.name));
                     }
                 }
-                if (rebuildScaled)
-                {
+                //if (pqsChanged)
+                //{
+                    Logger.Active.Log("Rebuilding scaledVersion mesh for " + body.bodyName);
+                    Logger.Active.Flush();
                     // get prefab body
-                    PSystemBody pBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.name);
-                    GameObject scaled = pBody.scaledVersion;
+                    GameObject scaled = null;
+                    if(PSystemManager.Instance != null)
+                        if(PSystemManager.Instance.systemPrefab != null)
+                            if (PSystemManager.Instance.systemPrefab.rootBody != null)
+                            {
+                                PSystemBody pBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.name);
+                                if (pBody != null)
+                                    scaled = pBody.scaledVersion;
+                            }
 
                     // get scaledspace if it exists
                     GameObject ssObj = null;
-                    if (ScaledSpace.Instance != null)
+                    if (ScaledSpace.Instance != null && ScaledSpace.Instance.scaledSpaceTransforms != null)
                     {
                         foreach(Transform t in ScaledSpace.Instance.scaledSpaceTransforms)
                             if (t.name == body.name)
@@ -352,11 +368,17 @@ namespace Kopernicus
                             }
                     }
                     if (ssObj != null && ssObj != scaled)
-                        Debug.Log("*PI* ERROR: scaled space instance has different object than prefab!");
+                        Logger.Active.Log("ERROR: scaled space instance has different object than prefab!");
                     if (ssObj == null)
                         ssObj = scaled;
-                    Utility.UpdateScaledMesh(ssObj, body.pqsController, body, "GameData/Kopernicus/Cache", true);
-                }
+                    else
+                        Logger.Active.Log("Using PSystem prefab gameobject");
+                    Logger.Active.Flush();
+                    if (ssObj != null)
+                        Utility.UpdateScaledMesh(ssObj, body.pqsController, body, "GameData/Kopernicus/Cache", true);
+                    else
+                        Logger.Active.Log("Could not find a scaledVersion to remake.");
+                //}
                 return true;
             }
             return false;
@@ -501,12 +523,15 @@ namespace Kopernicus
                         bool.TryParse(rootConfig.GetValue("finalizeOribts"), out finalizeOrbits);
                     if (rootConfig.HasValue("removeUnused"))
                         bool.TryParse(rootConfig.GetValue("removeUnused"), out removeUnused);
-
+                    Logger.Active.Flush();
                     // Update the bodies
                     foreach (ConfigNode node in rootConfig.GetNodes(bodyNodeName))
+                    {
+                        Logger.Active.Log("Found body node");
+                        Logger.Active.Flush();
                         if (!PatchBody(node))
                         {
-                            if(node.HasValue("name"))
+                            if (node.HasValue("name"))
                             {
                                 Logger.Active.Log("Failed to patch " + bodyNodeName + " " + node.GetValue("name"));
                             }
@@ -515,6 +540,7 @@ namespace Kopernicus
                                 Logger.Active.Log("Failed to patch " + bodyNodeName + " node with no name");
                             }
                         }
+                    }
                     if (finalizeOrbits)
                         FinalizeOrbits();
                     

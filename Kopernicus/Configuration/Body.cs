@@ -324,15 +324,19 @@ namespace Kopernicus
                 }
                 #endregion
 
-                // We need to generate new scaled space meshes if 
-				//   a) we are using a template and we've change either the radius or type of body
-				//   b) we aren't using a template
-                //   c) debug mode is active
-				if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
-				    || template == null || inEveryCase)
-				{
-                    Utility.UpdateScaledMesh(generatedBody.scaledVersion, generatedBody.pqsVersion, generatedBody.celestialBody, ScaledSpaceCacheDirectory, exportBin);
-				}
+                // If we're going to generate later, skip this.
+                if (!Templates.instance.finalizeBodies.Contains(name))
+                {
+                    // We need to generate new scaled space meshes if 
+                    //   a) we are using a template and we've change either the radius or type of body
+                    //   b) we aren't using a template
+                    //   c) debug mode is active
+                    if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
+                        || template == null || inEveryCase)
+                    {
+                        Utility.UpdateScaledMesh(generatedBody.scaledVersion, generatedBody.pqsVersion, generatedBody.celestialBody, ScaledSpaceCacheDirectory, exportBin);
+                    }
+                }
 
 				// Post gen celestial body
 				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");

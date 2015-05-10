@@ -70,6 +70,11 @@ namespace Kopernicus
                 if (rootConfig.HasValue("Epoch"))
                     double.TryParse(rootConfig.GetValue("Epoch"), out Templates.instance.epoch);
 
+                if (rootConfig.HasNode("Finalize"))
+                    foreach (ConfigNode n in rootConfig.GetNode("Finalize").GetNodes(bodyNodeName))
+                        if (n.HasValue("name"))
+                            Templates.instance.finalizeBodies.Add(n.GetValue("name"));
+
 				// Stage 1 - Load all of the bodies
 				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName)) 
 				{

@@ -21,6 +21,8 @@ namespace Kopernicus
         public Texture origKerbinBump;
 
         public double epoch = double.NaN;
+
+        public List<string> finalizeBodies;
         
         public Templates()
         {
@@ -38,6 +40,8 @@ namespace Kopernicus
                 origKerbinTex = kerbin.scaledVersion.renderer.material.GetTexture("_MainTex");
                 origKerbinBump = kerbin.scaledVersion.renderer.material.GetTexture("_BumpMap");
             }
+
+            finalizeBodies = new List<string>();
         }
         static public void GetUsedLists(List<MapSO> mapList, List<Texture> texList, PSystemBody body)
         {
