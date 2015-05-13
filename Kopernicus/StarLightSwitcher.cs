@@ -32,6 +32,7 @@
  * 
  */
 
+using Kopernicus.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,32 +42,36 @@ namespace Kopernicus
 	// Class to manage the properties of custom stars
 	public class StarComponent : MonoBehaviour
 	{
-		// Color that the star emits
-		public Color      lightColor;
+        // Solar power curve of the star
+        public FloatCurve powerCurve;
 
-		// Solar power curve of the star
-		public FloatCurve powerCurve;
+        // Celestial body which represents the star
+        public CelestialBody celestialBody { get; private set; }
 
-		// Celestial body which represents the star
-		public CelestialBody celestialBody {get; private set;}
+        void Start()
+        {
+            // Find the celestial body we are attached to
+            celestialBody = PSystemManager.Instance.localBodies.Where(body => body.scaledBody == gameObject).First();
+            Logger.Default.Log("StarLightSwitcher.Start() => " + celestialBody.bodyName);
+            Logger.Default.Flush();
+        }
 
-		void Start()
-		{
-			// Find the celestial body we are attached to
-			celestialBody = PSystemManager.Instance.localBodies.Where (body => body.scaledBody == gameObject).First ();
-			Logger.Default.Log ("StarLightSwitcher.Start() => " + celestialBody.bodyName);
-			Logger.Default.Flush ();
-		}
+        public void SetAsActive()
+        {
+            LightShifterComponent lsc_old = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
+            lsc_old.SetStatus(false, HighLogic.LoadedScene);
 
-		public void SetAsActive()
-		{
-			// Set star as active star
-			Sun.Instance.sun = celestialBody;
-			Planetarium.fetch.Sun = celestialBody;
-			Debug.Log ("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
+            // Set star as active star
+            Sun.Instance.sun = celestialBody;
+            Planetarium.fetch.Sun = celestialBody;
+            Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
 
-			// Set sunflare color
-			Sun.Instance.sunFlare.color = lightColor;
+            LightShifterComponent lsc_new = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
+            lsc_new.SetStatus(true, HighLogic.LoadedScene);
+
+            // Set SunFlare color
+            Sun.Instance.sunFlare.color = lsc_new.sunLensFlareColor;
+            Sun.Instance.SunlightEnabled(lsc_new.givesOffLight);
 
 			// Set custom powerCurve for solar panels
 			if (FlightGlobals.ActiveVessel != null)
@@ -74,6 +79,7 @@ namespace Kopernicus
 				foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
 				{
 					sp.OnStart (PartModule.StartState.Orbital);
+                    sp.useCurve = true;
 					sp.powerCurve = powerCurve;
 				}
 			}

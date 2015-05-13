@@ -68,12 +68,9 @@ namespace Kopernicus
 				set { scaledVersion.GetComponent<ScaledSpaceFader> ().fadeEnd = value.value; }
 			}
 
-			// Set the color that the star emits
-			[ParserTarget("solarLightColor", optional = true)]
-			private ColorParser solarLightColor 
-			{
-				set { component.lightColor = value.value; }
-			}
+            // Create the Kopernicus LightShifter
+            [ParserTarget("SolarLightColor", optional = true)]
+            private LightShifter lightShifter;
 
 			// Coronas for a star's scaled version
 			[ParserTargetCollection("Coronas", optional = true, nameSignificance = NameSignificance.None)]
@@ -193,6 +190,8 @@ namespace Kopernicus
 				// If we are a star, we need to generate the coronas 
 				if (type.value == BodyType.Star) 
 				{
+                    lightShifter.lscObj.transform.parent = owner.GetTransform();
+
 					// Apply custom coronas
 					if (coronas.Count > 0) 
 					{
