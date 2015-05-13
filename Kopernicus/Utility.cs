@@ -680,7 +680,7 @@ namespace Kopernicus
                     var yDown = source.GetPixel(bx, by + 1).grayscale * strength;
                     var xDelta = ((xLeft - xRight) + 1) * 0.5f;
                     var yDelta = ((yUp - yDown) + 1) * 0.5f;
-                    result.SetPixel(bx, by, new Color(xDelta, yDelta, 1.0f, xDelta));
+                    result.SetPixel(bx, by, new Color(yDelta, yDelta, yDelta, xDelta));
                 }
             }
             result.Apply();
