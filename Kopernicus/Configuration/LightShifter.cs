@@ -174,12 +174,8 @@ namespace Kopernicus
 
             private void SetActive(GameScenes scene)
             {
-                Debug.Log(scene.ToString());
-
                 GameObject sunLight = GameObject.Find("SunLight");
                 GameObject scaledSunLight = GameObject.Find("Scaledspace SunLight");
-
-                Debug.Log(sunLight.name + " - " + scaledSunLight.name);
 
                 if (sunlightColor != null)
                     sunLight.light.color = sunlightColor;

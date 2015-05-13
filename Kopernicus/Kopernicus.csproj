@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\Games\KSP_win1\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
@@ -41,11 +41,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\Games\KSP_win1\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>D:\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\LightShifter.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
     <Compile Include="Configuration\ModLoader\OceanFX.cs" />
     <Compile Include="Configuration\ModLoader\QuadEnhanceCoast.cs" />

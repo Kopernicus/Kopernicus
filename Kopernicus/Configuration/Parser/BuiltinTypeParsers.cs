@@ -127,10 +127,10 @@ namespace Kopernicus
 			{
                 if (s.StartsWith("RGBA("))
                 {
-                    s.Replace("RGBA(", string.Empty);
-                    s.Replace(")", string.Empty);
-                    s.Replace(" ", string.Empty);
-                    string[] colorArray = s.Split(' ');
+                    s = s.Replace("RGBA(", string.Empty);
+                    s = s.Replace(")", string.Empty);
+                    s = s.Replace(" ", string.Empty);
+                    string[] colorArray = s.Split(',');
 
                     value = new Color(int.Parse(colorArray[0]) / 255, int.Parse(colorArray[1]) / 255, int.Parse(colorArray[2]) / 255, int.Parse(colorArray[3]) / 255);
                 }
