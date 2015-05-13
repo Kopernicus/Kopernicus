@@ -125,7 +125,19 @@ namespace Kopernicus
 			public Color value;
 			public void SetFromString(string s)
 			{
-				value = ConfigNode.ParseColor(s);
+                if (s.StartsWith("RGBA("))
+                {
+                    s.Replace("RGBA(", string.Empty);
+                    s.Replace(")", string.Empty);
+                    s.Replace(" ", string.Empty);
+                    string[] colorArray = s.Split(' ');
+
+                    value = new Color(int.Parse(colorArray[0]) / 255, int.Parse(colorArray[1]) / 255, int.Parse(colorArray[2]) / 255, int.Parse(colorArray[3]) / 255);
+                }
+                else
+                {
+                    value = ConfigNode.ParseColor(s);
+                }
 			}
 			public ColorParser()
 			{
