@@ -14,89 +14,51 @@ namespace Kopernicus
         static public string pqsName = "Kerbin"; // will be changed to new homeworld in Injector.
         public void Start()
         {
-            return;
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor)
             {
                 FixCameras();
-                FixSpaceCenterMain();
             }
-        }
-        protected void FixSpaceCenterMain()
-        {
-            SpaceCenterMain[] mains = Resources.FindObjectsOfTypeAll<SpaceCenterMain>();
-            if (mains != null && mains.Length > 0)
-            {
-                foreach (SpaceCenterMain m in mains)
-                {
-                    List<string> newlist = new List<string>();
-                    foreach (string s in m.gameObjectsToDisable)
-                    {
-                        newlist.Add(s.Replace("Kerbin", pqsName));
-                    }
-                    m.gameObjectsToDisable = newlist;
-                }
-            }
-            else
-                Debug.Log("[Kopernicus]: No objects of type SpaceCenterMain found to fix");
         }
         protected void FixCameras()
         {
-            SpaceCenterCamera[] cams = Resources.FindObjectsOfTypeAll<SpaceCenterCamera>();
-            Type camType = typeof(SpaceCenterCamera);
-            if (cams != null && cams.Length > 0)
+            // Get the parental body
+            CelestialBody body = FlightGlobals.Bodies.Find(b => b.bodyName == pqsName);
+
+            // If there's no body, exit.
+            if (body == null)
             {
-                foreach (SpaceCenterCamera cam in cams)
-                {
-                    cam.pqsName = pqsName;
-                    camType.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cam, null);
-                    cam.ResetCamera();
-                }
-            }
-            else
-            {
-                Debug.Log("[Kopernicus]: no cameras of type SpaceCenterCamera");
+                Debug.Log("[Kopernicus]: Couldn't find the parental body!");
+                return;
             }
 
-
-            SpaceCenterCamera2[] cams2 = Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>();
-            Type camType2 = typeof(SpaceCenterCamera2);
-            PQSCity ksc = SpaceCenter.Instance.transform.parent.GetComponent<PQSCity>();
-            double altitudeInitial = 0d;
-            bool resetHeight = false;
-            if (ksc != null)
+            // Get the KSC object
+            PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).Where(m => m.name == "KSC").First();
+            
+            // If there's no KSC, exit.
+            if (ksc == null)
             {
-                resetHeight = true;
+                Debug.Log("[Kopernicus]: Couldn't find the KSC object!");
+                return;
+            }
+
+            // Go throug the SpaceCenterCameras and fix them
+            foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
+            {
                 if (ksc.repositionToSphere || ksc.repositionToSphereSurface)
                 {
-                    double nomHeight = ksc.sphere.GetSurfaceHeight((Vector3d)ksc.repositionRadial.normalized) - ksc.sphere.radius;
+                    double normalHeight = body.pqsController.GetSurfaceHeight((Vector3d) ksc.repositionRadial.normalized) - body.Radius;
                     if (ksc.repositionToSphereSurface)
                     {
-                        nomHeight += ksc.repositionRadiusOffset;
+                        normalHeight += ksc.repositionRadiusOffset;
                     }
-                    altitudeInitial = -nomHeight;
+                    cam.altitudeInitial = 0f - (float) normalHeight;
                 }
                 else
                 {
-                    altitudeInitial = -ksc.repositionRadiusOffset;
+                    cam.altitudeInitial = 0f - (float) ksc.repositionRadiusOffset;
                 }
-            }
-            if (cams2 != null && cams2.Length > 0)
-            {
-                Debug.Log("[Kopernicus]: Found " + cams2.Length + " cameras of type SpaceCenterCamera2. Fixing.");
-                foreach (SpaceCenterCamera2 cam in cams2)
-                {
-                    cam.pqsName = pqsName;
-                    if (resetHeight)
-                    {
-                        //cam.altitudeInitial = (float)altitudeInitial;
-                        cam.altitudeInitial = 10f;
-                    }
-                    camType2.GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cam, null);
-                }
-            }
-            else
-            {
-                Debug.Log("[Kopernicus]: no cameras of type SpaceCenterCamera2");
+                cam.ResetCamera();
+                Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
             }
         }
     }

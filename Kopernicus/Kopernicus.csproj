@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\SpaceCenterSwitcher.cs" />
     <Compile Include="Configuration\LightShifter.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
     <Compile Include="Configuration\ModLoader\OceanFX.cs" />

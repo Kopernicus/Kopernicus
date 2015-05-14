@@ -119,6 +119,10 @@ namespace Kopernicus
 			[ParserTarget("SolarPowerCurve", optional = true, allowMerge = false)]
 			private FloatCurveParser solarPowerCurve;
 
+            // Wrapper around the settings for the SpaceCenter
+            [ParserTarget("SpaceCenter", optional = true, allowMerge = true)]
+            private SpaceCenterSwitcher spaceCenter;
+
 			// Parser Apply Event
 			public void Apply (ConfigNode node)
 			{

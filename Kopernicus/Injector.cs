@@ -33,6 +33,7 @@ using System.Text;
 using System.Reflection;
 
 using UnityEngine;
+using Kopernicus.Configuration;
 
 namespace Kopernicus 
 {
@@ -71,7 +72,7 @@ namespace Kopernicus
 
             // Grab templates
             templates = new Templates();
-
+           
 
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
 			PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
@@ -81,7 +82,7 @@ namespace Kopernicus
 			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
 			// Clear space center instance so it will accept nouveau Kerbin
-			SpaceCenter.Instance = null;
+            SpaceCenter.Instance = null;
 
 			// Add a handler so that we can do post spawn fixups.  
 			PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
@@ -103,6 +104,9 @@ namespace Kopernicus
 				body.flightGlobalsIndex = counter++;
 				Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
 			}
+
+            // Move KSC around
+            SpaceCenterSwitcher.Instance.MoveKSC();
 
 			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
 			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
