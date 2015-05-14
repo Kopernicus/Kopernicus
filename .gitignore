@@ -17,3 +17,4 @@ Kopernicus/obj/*
 *.suo
 Kopernicus.userprefs
 *.bin
+Kopernicus/Kopernicus.csproj.user
