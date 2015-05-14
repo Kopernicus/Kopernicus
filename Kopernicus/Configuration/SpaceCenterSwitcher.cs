@@ -42,56 +42,69 @@ namespace Kopernicus
             public KSC ksc;
             public static SpaceCenterSwitcher Instance;
 
-            private bool[] hasChanged = new bool[] { false, false, false, false, false };
-
             // latitude
             [ParserTarget("latitude", optional = true, allowMerge = false)]
             public NumericParser<double> latitude
             {
-                set { ksc.latitude = value.value; }
+                set { ksc.latitude = value.value; hasLatitude = true; }
             }
+            private bool hasLatitude = false;
 
             // longitude
             [ParserTarget("longitude", optional = true, allowMerge = false)]
             public NumericParser<double> longitude
             {
-                set { ksc.longitude = value.value; }
+                set { ksc.longitude = value.value; hasLongitude = true; }
             }
+            private bool hasLongitude = false;
+
+            [ParserTarget("repositionRadial", optional = true, allowMerge = false)]
+            public Vector3Parser repositionRadial
+            {
+                set { ksc.repositionRadial = value.value; hasReposRadial = true; }
+            }
+            private bool hasReposRadial = false;
 
             // decalLatitude
             [ParserTarget("decalLatitude", optional = true, allowMerge = false)]
             public NumericParser<double> decalLatitude
             {
-                set { ksc.decalLatitude = value.value; }
+                set { ksc.decalLatitude = value.value; hasDecalLatitude = true; }
             }
+            private bool hasDecalLatitude = false;
 
             // decalLongitude
             [ParserTarget("decalLongitude", optional = true, allowMerge = false)]
             public NumericParser<double> decalLongitude
             {
-                set { ksc.decalLongitude = value.value; }
+                set { ksc.decalLongitude = value.value; hasDecalLongitude = true; }
             }
+            private bool hasDecalLongitude = false;
 
             // lodvisibleRangeMultipler
             [ParserTarget("lodvisibleRangeMultipler", optional = true, allowMerge = false)]
             public NumericParser<double> lodvisibleRangeMultipler
             {
-                set { ksc.lodvisibleRangeMult = value.value; }
+                set { ksc.lodvisibleRangeMult = value.value; hasLodMult = true; }
             }
+            private bool hasLodMult = false;
+
 
             // reorientFinalAngle
             [ParserTarget("reorientFinalAngle", optional = true, allowMerge = false)]
             public NumericParser<float> reorientFinalAngle
             {
-                set { ksc.reorientFinalAngle = value.value; }
+                set { ksc.reorientFinalAngle = value.value; hasReorientAngle = true; }
             }
+            private bool hasReorientAngle = false;
 
             // reorientInitialUp
             [ParserTarget("reorientInitialUp", optional = true, allowMerge = false)]
             public Vector3Parser reorientInitialUp
             {
-                set { ksc.reorientInitialUp = value.value; }
+                set { ksc.reorientInitialUp = value.value; hasInitialUp = true; }
             }
+            private bool hasInitialUp = false;
 
             // reorientToSphere
             [ParserTarget("reorientToSphere", optional = true, allowMerge = false)]
@@ -100,16 +113,18 @@ namespace Kopernicus
                 set
                 {
                     ksc.reorientToSphere = value.value;
-                    hasChanged[0] = true;
+                    hasReorientToSphere = true;
                 }
             }
+            private bool hasReorientToSphere = false;
 
             // repositionRadiusOffset
             [ParserTarget("repositionRadiusOffset", optional = true, allowMerge = false)]
             public NumericParser<double> repositionRadiusOffset
             {
-                set { ksc.repositionRadiusOffset = value.value; }
+                set { ksc.repositionRadiusOffset = value.value; hasReposRadiusOffset = true; }
             }
+            private bool hasReposRadiusOffset = false;
 
             // repositionToSphere
             [ParserTarget("repositionToSphere", optional = true, allowMerge = false)]
@@ -117,10 +132,11 @@ namespace Kopernicus
             {
                 set
                 {
-                    ksc.repositionToSphere = value.value; 
-                    hasChanged[1] = true;
+                    ksc.repositionToSphere = value.value;
+                    hasReposToSphere = false;
                 }
             }
+            private bool hasReposToSphere = false;
 
             // repositionToSphereSurface
             [ParserTarget("repositionToSphereSurface", optional = true, allowMerge = false)]
@@ -129,9 +145,10 @@ namespace Kopernicus
                 set
                 {
                     ksc.repositionToSphereSurface = value.value;
-                    hasChanged[2] = true;
+                    hasReposToSphereSurface = true;
                 }
             }
+            private bool hasReposToSphereSurface = false;
 
             // repositionToSphereSurfaceAddHeight
             [ParserTarget("repositionToSphereSurfaceAddHeight", optional = true, allowMerge = false)]
@@ -140,37 +157,42 @@ namespace Kopernicus
                 set
                 {
                     ksc.repositionToSphereSurfaceAddHeight = value.value;
-                    hasChanged[3] = true;
+                    hasAddHeight = true;
                 }
             }
+            private bool hasAddHeight = false;
 
             // position
             [ParserTarget("position", optional = true, allowMerge = false)]
             public Vector3Parser position
             {
-                set { ksc.position = value.value; }
+                set { ksc.position = value.value; hasPos = true; }
             }
+            private bool hasPos = false;
 
             // radius
             [ParserTarget("radius", optional = true, allowMerge = false)]
             public NumericParser<double> radius
             {
-                set { ksc.radius = value.value; }
+                set { ksc.radius = value.value; hasRadius = true; }
             }
+            private bool hasRadius = true;
 
             // heightMapDeformity
             [ParserTarget("heightMapDeformity", optional = true, allowMerge = false)]
             public NumericParser<double> heightMapDeformity
             {
-                set { ksc.heightMapDeformity = value.value; }
+                set { ksc.heightMapDeformity = value.value; hasDeformity = true; }
             }
+            private bool hasDeformity = false;
 
             // absoluteOffset
             [ParserTarget("absoluteOffset", optional = true, allowMerge = false)]
             public NumericParser<double> absoluteOffset
             {
-                set { ksc.absoluteOffset = value.value; }
+                set { ksc.absoluteOffset = value.value; hasAbsOffset = true; }
             }
+            private bool hasAbsOffset = false;
 
             // absolute
             [ParserTarget("absolute", optional = true, allowMerge = false)]
@@ -179,9 +201,10 @@ namespace Kopernicus
                 set
                 {
                     ksc.absolute = value.value;
-                    hasChanged[4] = true;
+                    hasAbsolute = true;
                 }
             }
+            private bool hasAbsolute = false;
 
             public SpaceCenterSwitcher()
             {
@@ -206,42 +229,46 @@ namespace Kopernicus
                 PQSCity pqsKSC = body.pqsController.transform.GetComponentsInChildren<PQSCity>(true).Where(m => m.name == "KSC").First();
 
                 // Load new data into the PQSCity
-                if (ksc.latitude != double.NaN && ksc.longitude != double.NaN)
+                if (hasLatitude && hasLongitude)
                 {
                     pqsKSC.repositionRadial = Utility.LLAtoECEF(ksc.latitude, ksc.longitude, 0, body.Radius);
                 }
+                else if (hasReposRadial)
+                {
+                    pqsKSC.repositionRadial = ksc.repositionRadial;
+                }
 
-                if (ksc.reorientInitialUp != null)
+                if (hasInitialUp)
                 {
                     pqsKSC.reorientInitialUp = ksc.reorientInitialUp;
                 }
 
-                if (hasChanged[1])
+                if (hasReposToSphere)
                 {
                     pqsKSC.repositionToSphere = ksc.repositionToSphere;
                 }
 
-                if (hasChanged[2])
+                if (hasReposToSphereSurface)
                 {
                     pqsKSC.repositionToSphereSurface = ksc.repositionToSphereSurface;
                 }
 
-                if (hasChanged[3])
+                if (hasAddHeight)
                 {
                     pqsKSC.repositionToSphereSurfaceAddHeight = ksc.repositionToSphereSurfaceAddHeight;
                 }
 
-                if (hasChanged[0])
+                if (hasReorientToSphere)
                 {
                     pqsKSC.reorientToSphere = ksc.reorientToSphere;
                 }
 
-                if (ksc.repositionRadiusOffset != double.NaN)
+                if (hasReposRadiusOffset)
                 {
                     pqsKSC.repositionRadiusOffset = ksc.repositionRadiusOffset;
                 }
 
-                if (ksc.lodvisibleRangeMult != double.NaN)
+                if (hasLodMult)
                 {
                     foreach (PQSCity.LODRange lodRange in pqsKSC.lod)
                     {
@@ -249,7 +276,7 @@ namespace Kopernicus
                     }
                 }
 
-                if (ksc.reorientFinalAngle != float.NaN)
+                if (hasReorientAngle)
                 {
                     pqsKSC.reorientFinalAngle = ksc.reorientFinalAngle;
                 }
@@ -258,29 +285,33 @@ namespace Kopernicus
                 PQSMod_MapDecalTangent pqsMap = body.pqsController.transform.GetComponentsInChildren<PQSMod_MapDecalTangent>(true).Where(m => m.name == "KSC").First();
                 
                 // Load new data into the mod
-                if (ksc.radius != double.NaN)
+                if (hasRadius)
                 {
                     pqsMap.radius = ksc.radius;
                 }
 
-                if (ksc.heightMapDeformity != double.NaN)
+                if (hasDeformity)
                 {
                     pqsMap.heightMapDeformity = ksc.heightMapDeformity;
                 }
 
-                if (ksc.absoluteOffset != double.NaN)
+                if (hasAbsOffset)
                 {
                     pqsMap.absoluteOffset = ksc.absoluteOffset;
                 }
 
-                if (hasChanged[4])
+                if (hasAbsolute)
                 {
                     pqsMap.absolute = ksc.absolute;
                 }
 
-                if (ksc.decalLatitude != double.NaN && ksc.decalLongitude != double.NaN)
+                if (hasDecalLatitude && hasDecalLongitude)
                 {
                     pqsMap.position = Utility.LLAtoECEF(ksc.decalLatitude, ksc.decalLongitude, 0, body.Radius);
+                }
+                else if (hasPos)
+                {
+                    pqsMap.position = ksc.position;
                 }
                 
                 // Reset the PQSMods
@@ -300,6 +331,7 @@ namespace Kopernicus
             public double latitude;
             public double longitude;
             public Vector3 reorientInitialUp;
+            public Vector3 repositionRadial;
             public bool repositionToSphere;
             public bool repositionToSphereSurface;
             public bool repositionToSphereSurfaceAddHeight;
