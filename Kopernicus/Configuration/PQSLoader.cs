@@ -243,15 +243,35 @@ namespace Kopernicus
 				physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
 
 				// Clone the surface material of the PQS
-				if (PQSMainOptimisedLoader.UsesSameShader (pqsVersion.surfaceMaterial))
-					pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader (pqsVersion.surfaceMaterial);
-				else if (PQSMainShaderLoader.UsesSameShader (pqsVersion.surfaceMaterial))
-					pqsVersion.surfaceMaterial = new PQSMainShaderLoader (pqsVersion.surfaceMaterial);
-				else if (PQSProjectionAerialQuadRelativeLoader.UsesSameShader (pqsVersion.surfaceMaterial))
-					pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader (pqsVersion.surfaceMaterial);
-				else if (PQSProjectionSurfaceQuadLoader.UsesSameShader (pqsVersion.surfaceMaterial))
-					pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader (pqsVersion.surfaceMaterial);
-				surfaceMaterial = pqsVersion.surfaceMaterial;
+                if (PQSMainOptimisedLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+                {
+                    pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader(pqsVersion.surfaceMaterial);
+                    if (((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
+                    {
+                        ((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+                    }
+                }
+                else if (PQSMainShaderLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+                {
+                    pqsVersion.surfaceMaterial = new PQSMainShaderLoader(pqsVersion.surfaceMaterial);
+                    if (((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
+                    {
+                        ((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+                    }
+                }
+                else if (PQSProjectionAerialQuadRelativeLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+                {
+                    pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(pqsVersion.surfaceMaterial);
+                    if (((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
+                    {
+                        ((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+                    }
+                }
+                else if (PQSProjectionSurfaceQuadLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+                {
+                    pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader(pqsVersion.surfaceMaterial);
+                }
+                surfaceMaterial = pqsVersion.surfaceMaterial;
 				surfaceMaterial.name = Guid.NewGuid ().ToString ();
 
 				// Clone the fallback material of the PQS
