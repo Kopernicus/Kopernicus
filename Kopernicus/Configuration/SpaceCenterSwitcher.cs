@@ -280,7 +280,7 @@ namespace Kopernicus
 
                 if (ksc.decalLatitude != double.NaN && ksc.decalLongitude != double.NaN)
                 {
-                    pqsMap.position = Utility.LLAtoECEF(ksc.latitude, ksc.longitude, 0, body.Radius);
+                    pqsMap.position = Utility.LLAtoECEF(ksc.decalLatitude, ksc.decalLongitude, 0, body.Radius);
                 }
                 
                 // Reset the PQSMods
