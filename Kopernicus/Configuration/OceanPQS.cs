@@ -62,6 +62,13 @@ namespace Kopernicus
             }
             private bool removeAll = false;
 
+            // radius
+            [ParserTarget("radius", optional = true)]
+            private NumericParser<double> radius
+            {
+                set { oceanPQS.radius = value.value; }
+            }
+
             // We have an ocean?
             [ParserTarget("ocean", optional = true)]
             private NumericParser<bool> ocean

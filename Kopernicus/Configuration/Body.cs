@@ -256,7 +256,6 @@ namespace Kopernicus
                             transform.planetFade.secondaryRenderers.Add(ocean.oceanPQS.gameObject);
 
                             // Set up the ocean PQS
-                            ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
                             ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
 
                             // Names!
