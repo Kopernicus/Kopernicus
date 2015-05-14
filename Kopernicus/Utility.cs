@@ -366,7 +366,7 @@ namespace Kopernicus
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
                 // Find and enable the PQS mods that modify height
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()) && m.sphere == pqs);
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()));
 
                 foreach (PQSMod mod in mods)
                     mod.OnSetup();
