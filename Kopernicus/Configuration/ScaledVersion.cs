@@ -190,7 +190,8 @@ namespace Kopernicus
 				// If we are a star, we need to generate the coronas 
 				if (type.value == BodyType.Star) 
 				{
-                    lightShifter.lscObj.transform.parent = owner.GetTransform();
+                    if (lightShifter != null)
+                        lightShifter.lscObj.transform.parent = owner.GetTransform();
 
 					// Apply custom coronas
 					if (coronas.Count > 0) 
