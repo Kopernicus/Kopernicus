@@ -58,6 +58,20 @@ namespace Kopernicus
                 set { ksc.longitude = value.value; }
             }
 
+            // decalLatitude
+            [ParserTarget("decalLatitude", optional = true, allowMerge = false)]
+            public NumericParser<double> decalLatitude
+            {
+                set { ksc.decalLatitude = value.value; }
+            }
+
+            // decalLongitude
+            [ParserTarget("decalLongitude", optional = true, allowMerge = false)]
+            public NumericParser<double> decalLongitude
+            {
+                set { ksc.decalLongitude = value.value; }
+            }
+
             // lodvisibleRangeMultipler
             [ParserTarget("lodvisibleRangeMultipler", optional = true, allowMerge = false)]
             public NumericParser<double> lodvisibleRangeMultipler
@@ -264,7 +278,7 @@ namespace Kopernicus
                     pqsMap.absolute = ksc.absolute;
                 }
 
-                if (ksc.latitude != double.NaN && ksc.longitude != double.NaN)
+                if (ksc.decalLatitude != double.NaN && ksc.decalLongitude != double.NaN)
                 {
                     pqsMap.position = Utility.LLAtoECEF(ksc.latitude, ksc.longitude, 0, body.Radius);
                 }
@@ -300,6 +314,8 @@ namespace Kopernicus
             public double heightMapDeformity;
             public double absoluteOffset;
             public bool absolute;
+            public double decalLatitude;
+            public double decalLongitude;
         }
     }
 }
