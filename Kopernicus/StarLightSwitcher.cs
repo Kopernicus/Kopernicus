@@ -58,20 +58,27 @@ namespace Kopernicus
 
         public void SetAsActive()
         {
-            LightShifterComponent lsc_old = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
-            lsc_old.SetStatus(false, HighLogic.LoadedScene);
+            LightShifterComponent lsc;
+            if (Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true) != null)
+            {
+                lsc = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
+                lsc.SetStatus(false, HighLogic.LoadedScene);
+            }
 
             // Set star as active star
             Sun.Instance.sun = celestialBody;
             Planetarium.fetch.Sun = celestialBody;
             Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
 
-            LightShifterComponent lsc_new = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
-            lsc_new.SetStatus(true, HighLogic.LoadedScene);
+            if (celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true) != null)
+            {
+                lsc = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
+                lsc.SetStatus(true, HighLogic.LoadedScene);
 
-            // Set SunFlare color
-            Sun.Instance.sunFlare.color = lsc_new.sunLensFlareColor;
-            Sun.Instance.SunlightEnabled(lsc_new.givesOffLight);
+                // Set SunFlare color
+                Sun.Instance.sunFlare.color = lsc.sunLensFlareColor;
+                Sun.Instance.SunlightEnabled(lsc.givesOffLight);
+            }
 
 			// Set custom powerCurve for solar panels
 			if (FlightGlobals.ActiveVessel != null)
