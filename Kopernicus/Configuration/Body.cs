@@ -65,7 +65,6 @@ namespace Kopernicus
             {
                 set
                 {
-                    cbNameLater = value;
                     if (!NameChanges.CBNames.ContainsKey(name))
                         NameChanges.CBNames[name] = new CBNameChanger(name, value);
                 }
