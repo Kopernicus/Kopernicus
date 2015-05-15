@@ -106,7 +106,10 @@ namespace Kopernicus
 			}
 
             // Move KSC around
-            SpaceCenterSwitcher.Instance.MoveKSC();
+            if (SpaceCenterSwitcher.Instance != null)
+            {
+                SpaceCenterSwitcher.Instance.MoveKSC();
+            }
 
 			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
 			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
