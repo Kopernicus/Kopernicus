@@ -26,6 +26,7 @@
  * https://kerbalspaceprogram.com
  */
 
+using LibNoise.Unity.Generator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,6 +104,62 @@ namespace Kopernicus
                 {
                     public PQSMod_VertexPlanet.NoiseModWrapper wrapper;
 
+                    private class RiggedParser : IParserEventSubscriber
+                    {
+                        public LibNoise.Unity.Generator.RiggedMultifractal noise;
+
+                        // frequency
+                        [ParserTarget("frequency", optional = true)]
+                        private NumericParser<double> frequency
+                        {
+                            set { noise.Frequency = value.value; }
+                        }
+
+                        // lacunarity
+                        [ParserTarget("lacunarity", optional = true)]
+                        private NumericParser<double> lacunarity
+                        {
+                            set { noise.Lacunarity = value.value; }
+                        }
+
+                        // octaveCount
+                        [ParserTarget("octaveCount", optional = true)]
+                        private NumericParser<int> octaveCount
+                        {
+                            set { noise.OctaveCount = value.value; }
+                        }
+
+                        // quality
+                        [ParserTarget("quality", optional = true)]
+                        private EnumParser<LibNoise.Unity.QualityMode> quality
+                        {
+                            set { noise.Quality = value.value; }
+                        }
+
+                        // seed
+                        [ParserTarget("seed", optional = true)]
+                        private NumericParser<int> seed
+                        {
+                            set { noise.Seed = value.value; }
+                        }
+
+                        void IParserEventSubscriber.Apply(ConfigNode node)
+                        {
+
+                        }
+
+                        void IParserEventSubscriber.PostApply(ConfigNode node)
+                        {
+                            
+                        }
+
+                        public RiggedParser()
+                        {
+                            noise = new RiggedMultifractal();
+                        }
+                        
+                    }
+
                     // deformity
                     [ParserTarget("deformity", optional = true)]
                     private NumericParser<double> deformity
@@ -138,6 +195,10 @@ namespace Kopernicus
                         set { wrapper.seed = value.value; }
                     }
 
+                    // noise
+                    [ParserTarget("Noise", optional = true)]
+                    private RiggedParser riggedNoise;
+
                     void IParserEventSubscriber.Apply(ConfigNode node)
                     {
 
@@ -145,7 +206,7 @@ namespace Kopernicus
 
                     void IParserEventSubscriber.PostApply(ConfigNode node)
                     {
-                        wrapper.Setup(wrapper.noise);
+                        wrapper.Setup(riggedNoise.noise);
                     }
 
                     public NoiseModWrapper()
