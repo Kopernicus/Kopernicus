@@ -242,6 +242,7 @@ namespace Kopernicus
                     generatedBody.pqsVersion.name = name;
                     generatedBody.pqsVersion.transform.name = name;
                     generatedBody.pqsVersion.gameObject.name = name;
+                    generatedBody.pqsVersion.radius = generatedBody.celestialBody.Radius;
 
                     // If an ocean was defined
                     if (ocean != null)
@@ -266,7 +267,7 @@ namespace Kopernicus
                             generatedBody.pqsVersion.mapOcean = ocean.mapOcean;
                             generatedBody.celestialBody.ocean = ocean.mapOcean;
                             if (ocean.mapOceanColor != null) generatedBody.pqsVersion.mapOceanColor = ocean.mapOceanColor;
-                            if (ocean.mapOceanHeight != Double.NaN) generatedBody.pqsVersion.mapOceanHeight = ocean.mapOceanHeight;
+                            generatedBody.pqsVersion.mapOceanHeight = ocean.mapOceanHeight;
                         }
                         else
                         {
@@ -274,10 +275,9 @@ namespace Kopernicus
                             generatedBody.pqsVersion.mapOcean = ocean.mapOcean;
                             generatedBody.celestialBody.ocean = ocean.mapOcean;
                             if (ocean.mapOceanColor != null) generatedBody.pqsVersion.mapOceanColor = ocean.mapOceanColor;
-                            if (ocean.mapOceanHeight != Double.NaN) generatedBody.pqsVersion.mapOceanHeight = ocean.mapOceanHeight;
+                            generatedBody.pqsVersion.mapOceanHeight = ocean.mapOceanHeight;
 
                             // Set up the ocean PQS
-                            ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
                             ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
                         }
                     }
@@ -289,9 +289,10 @@ namespace Kopernicus
                     #endif
                     // -------------------------------
 
-					// Adjust the radius of the PQSs appropriately
+                    // Don't do this, because we probably need to ajust the radius of the OceanPQS (and AFAIK is that the only child-PQS)
+					/* Adjust the radius of the PQSs appropriately
 					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
-						p.radius = generatedBody.celestialBody.Radius;
+						p.radius = generatedBody.celestialBody.Radius;*/
 				}
 
                 // Create our RingLoaders

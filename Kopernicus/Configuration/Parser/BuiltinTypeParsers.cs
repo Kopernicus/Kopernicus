@@ -132,7 +132,7 @@ namespace Kopernicus
                     s = s.Replace(" ", string.Empty);
                     string[] colorArray = s.Split(',');
 
-                    value = new Color(int.Parse(colorArray[0]) / 255, int.Parse(colorArray[1]) / 255, int.Parse(colorArray[2]) / 255, int.Parse(colorArray[3]) / 255);
+                    value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, float.Parse(colorArray[3]) / 255);
                 }
                 else
                 {
