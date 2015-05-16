@@ -58,10 +58,11 @@ namespace Kopernicus
 
         public void SetAsActive()
         {
-            LightShifterComponent lsc;
-            if (Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true) != null)
+            LightShifterComponent lsc = null;
+            LightShifterComponent[] comps = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
+            if (comps != null && comps.Length > 0)
             {
-                lsc = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
+                lsc = comps[0];
                 lsc.SetStatus(false, HighLogic.LoadedScene);
             }
 
@@ -69,10 +70,10 @@ namespace Kopernicus
             Sun.Instance.sun = celestialBody;
             Planetarium.fetch.Sun = celestialBody;
             Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
-
-            if (celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true) != null)
+            comps = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
+            if (comps != null && comps.Length > 0)
             {
-                lsc = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true)[0];
+                lsc = comps[0];
                 lsc.SetStatus(true, HighLogic.LoadedScene);
 
                 // Set SunFlare color
