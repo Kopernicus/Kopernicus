@@ -375,7 +375,12 @@ namespace Kopernicus
                         Logger.Active.Log("Using PSystem prefab gameobject");
                     Logger.Active.Flush();
                     if (ssObj != null)
-                        Utility.UpdateScaledMesh(ssObj, body.pqsController, body, "GameData/Kopernicus/Cache", true);
+                    {
+                        bool useSphere = false;
+                        if (node.HasValue("sphericalModel"))
+                            bool.TryParse(node.GetValue("sphericalModel"), out useSphere);
+                        Utility.UpdateScaledMesh(ssObj, body.pqsController, body, "GameData/Kopernicus/Cache", true, useSphere);
+                    }
                     else
                         Logger.Active.Log("Could not find a scaledVersion to remake.");
                 //}

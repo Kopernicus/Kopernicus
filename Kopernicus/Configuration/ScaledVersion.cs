@@ -76,6 +76,13 @@ namespace Kopernicus
 			[ParserTargetCollection("Coronas", optional = true, nameSignificance = NameSignificance.None)]
 			private List<Corona> coronas = new List<Corona>();
 
+            [ParserTarget("sphericalModel", optional = true)]
+            private NumericParser<bool> sphericalModel
+            {
+                set { useSphericalModel = value.value; }
+            }
+            public bool useSphericalModel = false;
+
 			// Parser apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{

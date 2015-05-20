@@ -337,7 +337,12 @@ namespace Kopernicus
                     if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
                         || template == null || inEveryCase)
                     {
-                        Utility.UpdateScaledMesh(generatedBody.scaledVersion, generatedBody.pqsVersion, generatedBody.celestialBody, ScaledSpaceCacheDirectory, exportBin);
+                        Utility.UpdateScaledMesh(generatedBody.scaledVersion,
+                                                    generatedBody.pqsVersion,
+                                                    generatedBody.celestialBody,
+                                                    ScaledSpaceCacheDirectory,
+                                                    exportBin,
+                                                    scaledVersion.useSphericalModel);
                     }
                 //}
 
