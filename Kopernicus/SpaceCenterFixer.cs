@@ -22,7 +22,11 @@ namespace Kopernicus
         protected void FixCameras()
         {
             // Get the parental body
-            CelestialBody body = FlightGlobals.Bodies.Find(b => b.bodyName == pqsName);
+            CelestialBody body = null;
+            if (Planetarium.fetch != null)
+                body = Planetarium.fetch.Home;
+            else
+                body = FlightGlobals.Bodies.Find(b => b.isHomeWorld);
 
             // If there's no body, exit.
             if (body == null)
@@ -57,7 +61,8 @@ namespace Kopernicus
                 {
                     cam.altitudeInitial = 0f - (float) ksc.repositionRadiusOffset;
                 }
-                cam.ResetCamera();
+                cam.GetType().GetMethod("OnDestroy", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cam, null);
+                cam.GetType().GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cam, null);
                 Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
             }
         }
