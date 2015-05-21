@@ -257,6 +257,10 @@ namespace Kopernicus
 
                             // Set up the ocean PQS
                             ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
+                            if (!ocean.hasRadius)
+                            {
+                                ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
+                            }
 
                             // Names!
                             ocean.oceanPQS.name = generatedBody.pqsVersion.name + "Ocean";
@@ -337,7 +341,12 @@ namespace Kopernicus
                     if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
                         || template == null || inEveryCase)
                     {
-                        Utility.UpdateScaledMesh(generatedBody.scaledVersion, generatedBody.pqsVersion, generatedBody.celestialBody, ScaledSpaceCacheDirectory, exportBin);
+                        Utility.UpdateScaledMesh(generatedBody.scaledVersion,
+                                                    generatedBody.pqsVersion,
+                                                    generatedBody.celestialBody,
+                                                    ScaledSpaceCacheDirectory,
+                                                    exportBin,
+                                                    scaledVersion.useSphericalModel);
                     }
                 //}
 

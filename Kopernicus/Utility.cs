@@ -295,7 +295,7 @@ namespace Kopernicus
 
         }
 
-        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, bool exportBin)
+        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, bool exportBin, bool useSpherical)
         {
             const double rJool = 6000000.0;
             const float rScaled = 1000.0f;
@@ -321,7 +321,7 @@ namespace Kopernicus
             else
             {
                 Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
-                scaledMesh = ComputeScaledSpaceMesh(body, pqs);
+                scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
                 Utility.RecalculateTangents(scaledMesh);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
                 if (exportBin)
