@@ -257,6 +257,10 @@ namespace Kopernicus
 
                             // Set up the ocean PQS
                             ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
+                            if (!ocean.hasRadius)
+                            {
+                                ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
+                            }
 
                             // Names!
                             ocean.oceanPQS.name = generatedBody.pqsVersion.name + "Ocean";
