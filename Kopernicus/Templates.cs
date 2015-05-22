@@ -17,8 +17,10 @@ namespace Kopernicus
         public List<MapSO> origMapSOs;
         public List<Texture> origTextures;
 
-        public Texture origKerbinTex;
+        public Texture origKerbinDiff;
         public Texture origKerbinBump;
+        public Texture origMunDiff;
+        public Texture origMunBump;
 
         public double epoch = double.NaN;
 
@@ -37,8 +39,15 @@ namespace Kopernicus
             PSystemBody kerbin = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Kerbin");
             if (kerbin.scaledVersion != null)
             {
-                origKerbinTex = kerbin.scaledVersion.renderer.material.GetTexture("_MainTex");
+                origKerbinDiff = kerbin.scaledVersion.renderer.material.GetTexture("_MainTex");
                 origKerbinBump = kerbin.scaledVersion.renderer.material.GetTexture("_BumpMap");
+            }
+
+            PSystemBody mun = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun");
+            if (mun.scaledVersion != null)
+            {
+                origMunDiff = mun.scaledVersion.renderer.material.GetTexture("_MainTex");
+                origMunBump = mun.scaledVersion.renderer.material.GetTexture("_BumpMap");
             }
 
             finalizeBodies = new List<string>();
@@ -76,12 +85,11 @@ namespace Kopernicus
             {
                 foreach (FieldInfo fi in m.GetType().GetFields())
                 {
-                    if (fi.GetType().Equals(typeof(MapSO)))
-                    {
-                        MapSO val = fi.GetValue(m) as MapSO;
+                    // this _should_ get everything derived from it.
+                    MapSO val = fi.GetValue(m) as MapSO;
+                    if(val != null)
                         if(!list.Contains(val))
                             list.Add(val);
-                    }
                 }
             }
         }
