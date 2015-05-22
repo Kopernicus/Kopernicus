@@ -103,7 +103,9 @@
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="MapViewFixer.cs" />
     <Compile Include="NameChanger.cs" />
+    <Compile Include="OnDemand\CBAttributeMapSODemand.cs" />
     <Compile Include="OnDemand\Handler.cs" />
+    <Compile Include="OnDemand\ILoadOnDemand.cs" />
     <Compile Include="OnDemand\MapSODemand.cs" />
     <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
