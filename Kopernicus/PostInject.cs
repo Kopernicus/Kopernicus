@@ -341,8 +341,8 @@ namespace Kopernicus
                             pqsChanged |= PatchPQS(p, node.GetNode("PQS" + p.name));
                     }
                 }
-                //if (pqsChanged)
-                //{
+                if (pqsChanged)
+                {
                     Logger.Active.Log("Rebuilding scaledVersion mesh for " + body.bodyName);
                     Logger.Active.Flush();
                     // get prefab body
@@ -383,7 +383,9 @@ namespace Kopernicus
                     }
                     else
                         Logger.Active.Log("Could not find a scaledVersion to remake.");
-                //}
+                }
+                if (!body.isHomeWorld)
+                    OnDemand.OnDemandStorage.DisableBody(body.bodyName);
                 return true;
             }
             return false;
