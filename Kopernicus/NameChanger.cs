@@ -244,6 +244,9 @@ namespace Kopernicus
                 n.Apply();
             foreach (CBNameChanger n in NameChanges.CBNames.Values)
                 n.Apply();
+
+            Logger.Default.Flush();
+            Logger.Default.Close();
         }
     }
 }
