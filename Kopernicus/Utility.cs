@@ -346,6 +346,7 @@ namespace Kopernicus
             blacklist.Add(typeof(PQSMod_MapDecalTangent));
             blacklist.Add(typeof(PQSMod_OceanFX));
             blacklist.Add(typeof(PQSMod_FlattenArea));
+            blacklist.Add(typeof(PQSMod_FlattenOcean));
             blacklist.Add(typeof(PQSMod_MapDecal));
             #endregion
 

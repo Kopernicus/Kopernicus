@@ -126,6 +126,10 @@ namespace Kopernicus
 			// Fallback Material of the PQS (its always the same material)
 			[ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
 			private PQSProjectionFallbackLoader fallbackMaterial;
+
+            // Should we remove Mods?
+            [ParserTarget("RemoveMods", optional = true, allowMerge = true)]
+            private StringCollectionParser killList;
 				
 			// PQS Mods
 			[ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
@@ -310,15 +314,19 @@ namespace Kopernicus
                 }*/
 				// Add all created mods to the PQS
                 List<Type> typesToRemove = null;
-                if (!removeAll)
+                if (!removeAll && killList != null)
                 {
                     typesToRemove = new List<Type>();
-                    foreach (ModLoader.ModLoader loader in mods)
+                    foreach (string mod in killList.value)
                     {
-                        typesToRemove.Add(loader.mod.GetType());
+                        typesToRemove.Add(Type.GetType(mod));
                     }
+                    Utility.RemoveModsOfType(typesToRemove, pqsVersion);
                 }
-                Utility.RemoveModsOfType(typesToRemove, pqsVersion);
+                else if (removeAll)
+                {
+                    Utility.RemoveModsOfType(null, pqsVersion);
+                }
                 foreach (ModLoader.ModLoader loader in mods)
                 {
                     loader.mod.transform.parent = pqsVersion.transform;
