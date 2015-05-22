@@ -10,6 +10,8 @@ namespace Kopernicus
     public class Templates
     {
         static public Templates instance = null;
+
+        static public bool loadFinished = false;
         
         // for loading only one each
         public Dictionary<string, MapSO> mapsGray;

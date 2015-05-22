@@ -147,6 +147,10 @@ namespace Kopernicus
 
             public void BodyUpdate()
             {
+                // wait until Kopernicus is done loading
+                if (!Templates.loadFinished)
+                    return;
+
                 List<string> bodies = new List<string>();
                 if (!HighLogic.LoadedSceneIsFlight)
                 {

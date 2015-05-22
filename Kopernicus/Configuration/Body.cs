@@ -357,6 +357,9 @@ namespace Kopernicus
 
 				// Post gen celestial body
 				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
+
+                if(!generatedBody.celestialBody.isHomeWorld)
+                    OnDemand.OnDemandStorage.DisableBody(name);
 			}
 		}
 	}

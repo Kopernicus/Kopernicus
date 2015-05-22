@@ -138,6 +138,9 @@ namespace Kopernicus
 			// Select the closest star to home
 			StarLightSwitcher.HomeStar ().SetAsActive ();
 
+            // Declare we're done.
+            Templates.loadFinished = true;
+
 			// Fixups complete, time to surrender to fate
 			Destroy (this);
 		}
