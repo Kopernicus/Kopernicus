@@ -43,7 +43,7 @@ namespace Kopernicus
                     exclude = new List<ILoadOnDemand>();
 
                 ILoadOnDemand curmap;
-                for (int i = maps.Count; i >= 0; --i)
+                for (int i = maps.Count - 1; i >= 0; --i)
                 {
                     curmap = maps[i];
                     if(exclude.Contains(curmap))
@@ -58,7 +58,7 @@ namespace Kopernicus
                     exclude = new List<ILoadOnDemand>();
 
                 ILoadOnDemand curmap;
-                for (int i = maps.Count; i >= 0; --i)
+                for (int i = maps.Count - 1; i >= 0; --i)
                 {
                     curmap = maps[i];
                     if(exclude.Contains(curmap))
@@ -85,7 +85,7 @@ namespace Kopernicus
             {
                 // FIXME if maps are shared, this may disable a map only to reenable it.
                 // but we don't use this method, so...
-                for (int i = bnames.Count; i >= 0; --i)
+                for (int i = bnames.Count - 1; i >= 0; --i)
                     DisableBody(bnames[i]);
                 foreach (KeyValuePair<string, List<ILoadOnDemand>> kvp in perBody)
                 {
@@ -98,10 +98,10 @@ namespace Kopernicus
             {
                 List<ILoadOnDemand> finalList = new List<ILoadOnDemand>();
                 List<ILoadOnDemand> curList;
-                for (int i = bnames.Count; i >= 0; --i)
+                for (int i = bnames.Count - 1; i >= 0; --i)
                 {
                     curList = perBody[bnames[i]];
-                    for (int j = curList.Count; j >= 0; --j)
+                    for (int j = curList.Count - 1; j >= 0; --j)
                         if (!finalList.Contains(curList[j]))
                             finalList.Add(curList[j]);
                 }
