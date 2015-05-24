@@ -126,7 +126,11 @@ namespace Kopernicus
 				
 			// PQS Mods
 			[ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
-			private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> (); 
+			private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> ();
+
+            // Killer-Ocean
+            [ParserTarget("HazardousOcean", optional = true, allowMerge = true)]
+            private HazardousOcean hazardousOcean;
 
 			/**
 			 * Constructor for existing Ocean
@@ -238,6 +242,12 @@ namespace Kopernicus
 
 				// Make sure all the PQSMods exist in Localspace
 				oceanPQS.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
+
+                // Apply our Killer-Ocean (if set)
+                if (hazardousOcean != null)
+                {
+                    hazardousOcean.controller.gameObject.transform.parent = oceanPQS.transform;
+                }
 
                 // == DUMP OCEAN MATERIALS == //
                 Utility.DumpObjectProperties(oceanPQS.surfaceMaterial, " OCEAN SURFACE MATERIAL ");
