@@ -36,6 +36,7 @@ namespace Kopernicus
                     return false;
                 _data = null;
                 isLoaded = false;
+                System.GC.Collect();
                 return true;
             }
 
