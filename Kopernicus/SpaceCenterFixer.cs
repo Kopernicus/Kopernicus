@@ -71,7 +71,7 @@ namespace Kopernicus
                 FieldInfo surfaceObj = null;
 
                 // get fields
-                FieldInfo[] fields = camType.GetFields();
+                FieldInfo[] fields = camType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
                 for (int i = 0; i < fields.Length; ++i)
                 {
                     FieldInfo fi = fields[i];
