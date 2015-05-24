@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using UnityEngine;
+using Kopernicus.OnDemand;
 
 namespace Kopernicus
 {
@@ -60,11 +61,11 @@ namespace Kopernicus
                 b.transform.name = b.transform.name.Replace(oldName, newName);
                 b.bodyTransform.name = b.bodyTransform.name.Replace(oldName, newName);
 
-                if (body.pqsController != null)
+                if (b.pqsController != null)
                 {
-                    body.pqsController.name = body.pqsController.name.Replace(oldName, newName);
-                    body.pqsController.transform.name = body.pqsController.transform.name.Replace(oldName, newName);
-                    body.pqsController.gameObject.name = body.pqsController.gameObject.name.Replace(oldName, newName);
+                    b.pqsController.name = b.pqsController.name.Replace(oldName, newName);
+                    b.pqsController.transform.name = b.pqsController.transform.name.Replace(oldName, newName);
+                    b.pqsController.gameObject.name = b.pqsController.gameObject.name.Replace(oldName, newName);
 
                     foreach (PQS p in b.pqsController.transform.GetComponentsInChildren<PQS>())
                     {
@@ -73,6 +74,8 @@ namespace Kopernicus
                         p.gameObject.name = p.gameObject.name.Replace(oldName, newName);
                     }
                 }
+                if (b.isHomeWorld)
+                    OnDemandStorage.homeworldBody = newName;
             }
             if (ScaledSpace.Instance != null)
             {
@@ -81,6 +84,12 @@ namespace Kopernicus
                     if(t.name == oldName)
                         t.name = t.name.Replace(oldName, newName);
                 }
+            }
+            if (OnDemandStorage.perBody.ContainsKey(oldName))
+            {
+                List<ILoadOnDemand> mapList = OnDemandStorage.perBody[oldName];
+                OnDemandStorage.perBody[newName] = mapList;
+                OnDemandStorage.perBody.Remove(oldName);
             }
         }
     }
@@ -121,6 +130,8 @@ namespace Kopernicus
                         p.gameObject.name = p.gameObject.name.Replace(oldName, newName);
                     }
                 }*/
+                if (b.isHomeWorld)
+                    OnDemandStorage.homeworldBody = newName;
             }
             /*if (ScaledSpace.Instance != null)
             {
@@ -130,6 +141,12 @@ namespace Kopernicus
                         t.name = t.name.Replace(oldName, newName);
                 }
             }*/
+            if (OnDemandStorage.perBody.ContainsKey(oldName))
+            {
+                List<ILoadOnDemand> mapList = OnDemandStorage.perBody[oldName];
+                OnDemandStorage.perBody[newName] = mapList;
+                OnDemandStorage.perBody.Remove(oldName);
+            }
         }
     }
 
@@ -227,6 +244,9 @@ namespace Kopernicus
                 n.Apply();
             foreach (CBNameChanger n in NameChanges.CBNames.Values)
                 n.Apply();
+
+            Logger.Default.Flush();
+            Logger.Default.Close();
         }
     }
 }

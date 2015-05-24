@@ -360,6 +360,9 @@ namespace Kopernicus
             // If this body has a PQS, we can create a more detailed object
             if (pqs != null)
             {
+                // first we enable all maps
+                OnDemand.OnDemandStorage.EnableBody(body.bodyName);
+
                 // In order to generate the scaled space we have to enable the mods.  Since this is
                 // a prefab they don't get disabled as kill game performance.  To resolve this we 
                 // clone the PQS, use it, and then delete it when done

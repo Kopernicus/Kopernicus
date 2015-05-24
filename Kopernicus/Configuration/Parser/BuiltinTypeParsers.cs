@@ -333,6 +333,9 @@ namespace Kopernicus
                 if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
                 {
                     value = (T)Templates.instance.mapsGray[s];
+
+                    if (OnDemand.OnDemandStorage.useOnDemand)
+                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
                 }
                 else
                 {
@@ -342,7 +345,9 @@ namespace Kopernicus
                         obj = Utility.FindMapSO(s) as T;
                     }
                     if (obj != null)
-                        value = obj;
+                    {
+                        value = obj; // can't make built-in maps On-Demand
+                    }
                     else
                     {
                         // Load the texture
@@ -350,7 +355,28 @@ namespace Kopernicus
                         if (map != null)
                         {
                             // Create a new map script object
-                            value = ScriptableObject.CreateInstance<T>();
+                            // check if OnDemand.
+                            if (OnDemand.OnDemandStorage.useOnDemand)
+                            {
+                                if (typeof(T) == typeof(CBAttributeMapSO))
+                                {
+                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
+                                    valCB.SetPath(s);
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    value = valCB as T;
+                                }
+                                else
+                                {
+                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
+                                    valMap.SetPath(s);
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    value = valMap as T;
+                                }
+                            }
+                            else
+                            {
+                                value = ScriptableObject.CreateInstance<T>();
+                            }
                             value.CreateMap(MapSO.MapDepth.Greyscale, map);
                             UnityEngine.Object.DestroyImmediate(map);
                             Templates.instance.mapsGray[s] = value;
@@ -377,6 +403,9 @@ namespace Kopernicus
                 if (Templates.instance.mapsRGB != null && Templates.instance.mapsRGB.ContainsKey(s))
                 {
                     value = (T)Templates.instance.mapsRGB[s];
+
+                    if (OnDemand.OnDemandStorage.useOnDemand)
+                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
                 }
                 else
                 {
@@ -386,7 +415,9 @@ namespace Kopernicus
                         obj = Utility.FindMapSO(s) as T;
                     }
                     if (obj != null)
-                        value = obj;
+                    {
+                        value = obj; // can't make built-in maps On-Demand
+                    }
                     else
                     {
                         // Load the texture
@@ -394,7 +425,29 @@ namespace Kopernicus
                         if (map != null)
                         {
                             // Create a new map script object
-                            value = ScriptableObject.CreateInstance<T>();
+
+                            // check if OnDemand.
+                            if (OnDemand.OnDemandStorage.useOnDemand)
+                            {
+                                if (typeof(T) == typeof(CBAttributeMapSO))
+                                {
+                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
+                                    valCB.SetPath(s);
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    value = valCB as T;
+                                }
+                                else
+                                {
+                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
+                                    valMap.SetPath(s);
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    value = valMap as T;
+                                }
+                            }
+                            else
+                            {
+                                value = ScriptableObject.CreateInstance<T>();
+                            }
                             value.CreateMap(MapSO.MapDepth.RGB, map);
                             UnityEngine.Object.DestroyImmediate(map);
                             Templates.instance.mapsRGB[s] = value;

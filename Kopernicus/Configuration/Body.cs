@@ -56,9 +56,14 @@ namespace Kopernicus
 			}
 
 			// Name of this body
-			[PreApply]
-			[ParserTarget("name", optional = false)]
-			public string name { get; private set; }
+            [PreApply]
+            [ParserTarget("name", optional = false)]
+            public string name
+            {
+                get { return _name; }
+                set { _name = value; OnDemand.OnDemandStorage.currentBody = value; }
+            }
+            private string _name;
 
 			[ParserTarget("cbNameLater", optional = true)]
             private string cbNameLater
@@ -352,6 +357,9 @@ namespace Kopernicus
 
 				// Post gen celestial body
 				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
+
+                if(!generatedBody.celestialBody.isHomeWorld)
+                    OnDemand.OnDemandStorage.DisableBody(name);
 			}
 		}
 	}

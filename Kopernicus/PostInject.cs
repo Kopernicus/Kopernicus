@@ -341,8 +341,8 @@ namespace Kopernicus
                             pqsChanged |= PatchPQS(p, node.GetNode("PQS" + p.name));
                     }
                 }
-                //if (pqsChanged)
-                //{
+                if (pqsChanged)
+                {
                     Logger.Active.Log("Rebuilding scaledVersion mesh for " + body.bodyName);
                     Logger.Active.Flush();
                     // get prefab body
@@ -383,7 +383,9 @@ namespace Kopernicus
                     }
                     else
                         Logger.Active.Log("Could not find a scaledVersion to remake.");
-                //}
+                }
+                if (!body.isHomeWorld)
+                    OnDemand.OnDemandStorage.DisableBody(body.bodyName);
                 return true;
             }
             return false;
@@ -440,14 +442,29 @@ namespace Kopernicus
             PSystemBody home = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
             Texture homeMain = home.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
             Texture homeBump = home.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
-            Logger.Active.Log("Replaceing color map " + Templates.instance.origKerbinTex.name + " with " + homeMain.name);
+            Texture munMain = homeMain;
+            Texture munBump = homeBump;
+            if (home.children != null && home.children.Count > 0)
+            {
+                PSystemBody mun = home.children[0];
+                munMain = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
+                munBump = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
+            }
+            Logger.Active.Log("Replaceing color map " + Templates.instance.origKerbinDiff.name + " with " + homeMain.name);
             Logger.Active.Log("Replaceing normal map " + Templates.instance.origKerbinBump.name + " with " + homeBump.name);
             Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
             foreach (Material m in mats)
             {
-                if (m.GetTexture("_MainTex") == Templates.instance.origKerbinTex)
+                Texture main = m.GetTexture("_MainTex");
+                if (main == Templates.instance.origKerbinDiff)
                     m.SetTexture("_MainTex", homeMain);
-                if (m.GetTexture("_BumpMap") == Templates.instance.origKerbinBump)
+                else if (main == Templates.instance.origMunDiff)
+                    m.SetTexture("_MainTex", munMain);
+
+                Texture bump = m.GetTexture("_BumpMap");
+                if (bump == Templates.instance.origKerbinBump)
+                    m.SetTexture("_BumpMap", homeBump);
+                else if (bump == Templates.instance.origMunBump)
                     m.SetTexture("_BumpMap", homeBump);
             }
         }
