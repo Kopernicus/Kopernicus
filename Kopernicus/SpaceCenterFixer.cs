@@ -61,8 +61,51 @@ namespace Kopernicus
                 {
                     cam.altitudeInitial = 0f - (float) ksc.repositionRadiusOffset;
                 }
-                cam.GetType().GetMethod("OnDestroy", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cam, null);
-                cam.GetType().GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cam, null);
+                
+                // re-implement cam.Start()
+                // fields
+                Type camType = cam.GetType();
+                FieldInfo camPQS = null;
+                FieldInfo transform1 = null;
+                FieldInfo transform2 = null;
+                FieldInfo surfaceObj = null;
+
+                // get fields
+                FieldInfo[] fields = camType.GetFields();
+                for (int i = 0; i < fields.Length; ++i)
+                {
+                    FieldInfo fi = fields[i];
+                    if (fi.FieldType == typeof(PQS))
+                        camPQS = fi;
+                    else if (fi.FieldType == typeof(Transform) && transform1 == null)
+                        transform1 = fi;
+                    else if (fi.FieldType == typeof(Transform) && transform2 == null)
+                        transform2 = fi;
+                    else if (fi.FieldType == typeof(SurfaceObject))
+                        surfaceObj = fi;
+                }
+
+                camPQS.SetValue(cam, body.pqsController);
+
+                Transform initialTransform = body.pqsController.transform.Find(cam.initialPositionTransformName);
+                transform1.SetValue(cam, initialTransform);
+
+                cam.transform.NestToParent(initialTransform);
+                Transform camTransform = transform2.GetValue(cam) as Transform;
+                camTransform.NestToParent(cam.transform);
+                
+                if (FlightCamera.fetch != null && FlightCamera.fetch.transform != null)
+                {
+                    FlightCamera.fetch.transform.NestToParent(camTransform);
+                }
+                
+                cam.ResetCamera();
+
+                SurfaceObject so = surfaceObj.GetValue(cam) as SurfaceObject;
+                so.ReturnToParent();
+                DestroyImmediate(so);
+                surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
+
                 Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
             }
         }
