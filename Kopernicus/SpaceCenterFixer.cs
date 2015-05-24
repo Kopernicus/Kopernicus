@@ -84,29 +84,54 @@ namespace Kopernicus
                     else if (fi.FieldType == typeof(SurfaceObject))
                         surfaceObj = fi;
                 }
-
-                camPQS.SetValue(cam, body.pqsController);
-
-                Transform initialTransform = body.pqsController.transform.Find(cam.initialPositionTransformName);
-                transform1.SetValue(cam, initialTransform);
-
-                cam.transform.NestToParent(initialTransform);
-                Transform camTransform = transform2.GetValue(cam) as Transform;
-                camTransform.NestToParent(cam.transform);
-                
-                if (FlightCamera.fetch != null && FlightCamera.fetch.transform != null)
+                if (camPQS != null && transform1 != null && transform2 != null && surfaceObj != null)
                 {
-                    FlightCamera.fetch.transform.NestToParent(camTransform);
+                    camPQS.SetValue(cam, body.pqsController);
+
+                    Transform initialTransform = body.pqsController.transform.Find(cam.initialPositionTransformName);
+                    if (initialTransform != null)
+                    {
+                        transform1.SetValue(cam, initialTransform);
+                        cam.transform.NestToParent(initialTransform);
+                    }
+                    else
+                    {
+                        Debug.Log("SSC2 can't find initial transform!");
+                        Transform initialTrfOrig = transform1.GetValue(cam) as Transform;
+                        if(initialTrfOrig != null)
+                            cam.transform.NestToParent(initialTrfOrig);
+                        else
+                            Debug.Log("SSC2 own initial transform null!");
+                    }
+                    Transform camTransform = transform2.GetValue(cam) as Transform;
+                    if (camTransform != null)
+                    {
+                        camTransform.NestToParent(cam.transform);
+                        if (FlightCamera.fetch != null && FlightCamera.fetch.transform != null)
+                        {
+                            FlightCamera.fetch.transform.NestToParent(camTransform);
+                        }
+                    }
+                    else
+                        Debug.Log("SSC2 cam transform null!");
+
+                    cam.ResetCamera();
+
+                    SurfaceObject so = surfaceObj.GetValue(cam) as SurfaceObject;
+                    if (so != null)
+                    {
+                        so.ReturnToParent();
+                        DestroyImmediate(so);
+                    }
+                    else
+                        Debug.Log("SSC2 surfaceObject is null!");
+
+                    surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
+
+                    Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
                 }
-                
-                cam.ResetCamera();
-
-                SurfaceObject so = surfaceObj.GetValue(cam) as SurfaceObject;
-                so.ReturnToParent();
-                DestroyImmediate(so);
-                surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
-
-                Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
+                else
+                    Debug.Log("[Kopernicus]: ERROR fixing space center camera, could not find some fields");
             }
         }
     }
