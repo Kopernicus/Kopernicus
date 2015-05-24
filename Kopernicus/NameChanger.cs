@@ -246,7 +246,6 @@ namespace Kopernicus
                 n.Apply();
 
             Logger.Default.Flush();
-            Logger.Default.Close();
         }
     }
 }
