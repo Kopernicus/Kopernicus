@@ -27,6 +27,7 @@ namespace Kopernicus
                     CreateMap(Depth, map);
                     isLoaded = true;
                     DestroyImmediate(map);
+                    Debug.Log("OD: map " + name + " enabling self.");
                 }
                 return true;
             }
@@ -36,7 +37,7 @@ namespace Kopernicus
                     return false;
                 _data = null;
                 isLoaded = false;
-                System.GC.Collect();
+                Debug.Log("OD: map " + name + " disabling self.");
                 return true;
             }
 
@@ -74,7 +75,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelbyte with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelbyte with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelByte(x, y);
@@ -83,7 +84,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelColD with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelColD with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelColor(x, y);
@@ -92,7 +93,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelColF with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelColF with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelColor(x, y);
@@ -101,7 +102,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelColI with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelColI with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelColor(x, y);
@@ -110,7 +111,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelCol32D with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelCol32D with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelColor32(x, y);
@@ -119,7 +120,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelCol32F with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelCol32F with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelColor32(x, y);
@@ -128,7 +129,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelCol32I with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelCol32I with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelColor32(x, y);
@@ -137,7 +138,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelFloatD with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelFloatD with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelFloat(x, y);
@@ -146,7 +147,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelFloatF with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelFloatF with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelFloat(x, y);
@@ -155,7 +156,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelFloatI with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelFloatI with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelFloat(x, y);
@@ -164,7 +165,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelHeightAlphaD with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelHeightAlphaD with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelHeightAlpha(x, y);
@@ -173,7 +174,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelHeightAlphaF with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelHeightAlphaF with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelHeightAlpha(x, y);
@@ -182,7 +183,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelHeightAlphaI with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelHeightAlphaI with unloaded map " + name);
                     Load();
                 }
                 return base.GetPixelHeightAlpha(x, y);
@@ -191,7 +192,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting GreyByteI with unloaded map");
+                    Debug.Log("OD: ERROR: getting GreyByteI with unloaded map " + name);
                     Load();
                 }
                 return base.GreyByte(x, y);
@@ -200,7 +201,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting GreyFloat with unloaded map");
+                    Debug.Log("OD: ERROR: getting GreyFloat with unloaded map " + name);
                     Load();
                 }
                 return base.GreyFloat(x, y);
@@ -209,7 +210,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting pixelByte with unloaded map");
+                    Debug.Log("OD: ERROR: getting pixelByte with unloaded map " + name);
                     Load();
                 }
                 return base.PixelByte(x, y);
@@ -218,7 +219,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: compiling with unloaded map");
+                    Debug.Log("OD: ERROR: compiling with unloaded map " + name);
                     Load();
                 }
                 return base.CompileToTexture();

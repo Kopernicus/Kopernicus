@@ -85,11 +85,11 @@ namespace Kopernicus
                         t.name = t.name.Replace(oldName, newName);
                 }
             }
-            if (OnDemandStorage.perBody.ContainsKey(oldName))
+            if (OnDemandStorage.bodyMapLists.ContainsKey(oldName))
             {
-                List<ILoadOnDemand> mapList = OnDemandStorage.perBody[oldName];
-                OnDemandStorage.perBody[newName] = mapList;
-                OnDemandStorage.perBody.Remove(oldName);
+                List<ILoadOnDemand> mapList = OnDemandStorage.bodyMapLists[oldName];
+                OnDemandStorage.bodyMapLists[newName] = mapList;
+                OnDemandStorage.bodyMapLists.Remove(oldName);
             }
         }
     }
@@ -141,11 +141,11 @@ namespace Kopernicus
                         t.name = t.name.Replace(oldName, newName);
                 }
             }*/
-            if (OnDemandStorage.perBody.ContainsKey(oldName))
+            if (OnDemandStorage.bodyMapLists.ContainsKey(oldName))
             {
-                List<ILoadOnDemand> mapList = OnDemandStorage.perBody[oldName];
-                OnDemandStorage.perBody[newName] = mapList;
-                OnDemandStorage.perBody.Remove(oldName);
+                List<ILoadOnDemand> mapList = OnDemandStorage.bodyMapLists[oldName];
+                OnDemandStorage.bodyMapLists[newName] = mapList;
+                OnDemandStorage.bodyMapLists.Remove(oldName);
             }
         }
     }

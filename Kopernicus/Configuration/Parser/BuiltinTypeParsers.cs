@@ -361,6 +361,7 @@ namespace Kopernicus
                                     valCB.SetPath(s);
                                     valCB.Depth = MapSO.MapDepth.Greyscale;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valCB as T;
                                 }
                                 else
@@ -369,6 +370,7 @@ namespace Kopernicus
                                     valMap.SetPath(s);
                                     valMap.Depth = MapSO.MapDepth.Greyscale;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valMap as T;
                                 }
                                 Templates.instance.mapsGray[s] = value;
@@ -436,6 +438,7 @@ namespace Kopernicus
                                     valCB.SetPath(s);
                                     valCB.Depth = MapSO.MapDepth.RGB;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valCB as T;
                                 }
                                 else
@@ -444,6 +447,7 @@ namespace Kopernicus
                                     valMap.SetPath(s);
                                     valMap.Depth = MapSO.MapDepth.RGB;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valMap as T;
                                 }
                                 Templates.instance.mapsRGB[s] = value;
