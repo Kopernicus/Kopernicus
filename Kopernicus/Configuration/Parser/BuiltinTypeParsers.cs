@@ -350,18 +350,16 @@ namespace Kopernicus
                     }
                     else
                     {
-                        // Load the texture
-                        Texture2D map = Utility.LoadTexture(s, false, false, false);
-                        if (map != null)
+                        // are we on-demand? Don't load now.
+                        if (OnDemand.OnDemandStorage.useOnDemand)
                         {
-                            // Create a new map script object
-                            // check if OnDemand.
-                            if (OnDemand.OnDemandStorage.useOnDemand)
+                            if (Utility.TextureExists(s))
                             {
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
                                     OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
                                     valCB.SetPath(s);
+                                    valCB.Depth = MapSO.MapDepth.Greyscale;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     value = valCB as T;
                                 }
@@ -369,17 +367,24 @@ namespace Kopernicus
                                 {
                                     OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
                                     valMap.SetPath(s);
+                                    valMap.Depth = MapSO.MapDepth.Greyscale;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     value = valMap as T;
                                 }
+                                Templates.instance.mapsGray[s] = value;
                             }
-                            else
+                        }
+                        else // Load the texture
+                        {
+                            Texture2D map = Utility.LoadTexture(s, false, false, false);
+                            if (map != null)
                             {
+                                // Create a new map script object
                                 value = ScriptableObject.CreateInstance<T>();
+                                value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                                UnityEngine.Object.DestroyImmediate(map);
+                                Templates.instance.mapsGray[s] = value;
                             }
-                            value.CreateMap(MapSO.MapDepth.Greyscale, map);
-                            UnityEngine.Object.DestroyImmediate(map);
-                            Templates.instance.mapsGray[s] = value;
                         }
                     }
                 }
@@ -420,19 +425,16 @@ namespace Kopernicus
                     }
                     else
                     {
-                        // Load the texture
-                        Texture2D map = Utility.LoadTexture(s, false, false, false);
-                        if (map != null)
+                        // check if OnDemand.
+                        if (OnDemand.OnDemandStorage.useOnDemand)
                         {
-                            // Create a new map script object
-
-                            // check if OnDemand.
-                            if (OnDemand.OnDemandStorage.useOnDemand)
+                            if (Utility.TextureExists(s))
                             {
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
                                     OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
                                     valCB.SetPath(s);
+                                    valCB.Depth = MapSO.MapDepth.RGB;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     value = valCB as T;
                                 }
@@ -440,17 +442,25 @@ namespace Kopernicus
                                 {
                                     OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
                                     valMap.SetPath(s);
+                                    valMap.Depth = MapSO.MapDepth.RGB;
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     value = valMap as T;
                                 }
+                                Templates.instance.mapsRGB[s] = value;
                             }
-                            else
+                        }
+                        else
+                        {
+                            // Load the texture
+                            Texture2D map = Utility.LoadTexture(s, false, false, false);
+                            if (map != null)
                             {
+                                // Create a new map script object
                                 value = ScriptableObject.CreateInstance<T>();
+                                value.CreateMap(MapSO.MapDepth.RGB, map);
+                                UnityEngine.Object.DestroyImmediate(map);
+                                Templates.instance.mapsRGB[s] = value;
                             }
-                            value.CreateMap(MapSO.MapDepth.RGB, map);
-                            UnityEngine.Object.DestroyImmediate(map);
-                            Templates.instance.mapsRGB[s] = value;
                         }
                     }
                 }

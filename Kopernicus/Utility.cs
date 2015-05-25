@@ -705,6 +705,12 @@ namespace Kopernicus
             return new Vector3((float)x, (float)y, (float)z);
         }
 
+        public static bool TextureExists(string path)
+        {
+            path = KSPUtil.ApplicationRootPath + "GameData/" + path;
+            return System.IO.File.Exists(path);
+        }
+
         public static Texture2D LoadTexture(string path, bool compress, bool upload, bool unreadable)
         {
             Texture2D map = null;

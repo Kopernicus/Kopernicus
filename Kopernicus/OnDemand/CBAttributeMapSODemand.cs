@@ -40,6 +40,17 @@ namespace Kopernicus
                 return true;
             }
 
+            new public MapSO.MapDepth Depth
+            {
+                get
+                {
+                    return (MapSO.MapDepth)_bpp;
+                }
+                set
+                {
+                    _bpp = (int)value;
+                }
+            }
             public override void CreateMap(MapSO.MapDepth depth, Texture2D tex)
             {
                 base.CreateMap(depth, tex);
