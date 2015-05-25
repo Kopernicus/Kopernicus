@@ -141,7 +141,7 @@ namespace Kopernicus
                     if (FlightGlobals.Bodies != null)
                     {
                         int bCount = FlightGlobals.Bodies.Count;
-                        Debug.Log("OD: Filling body list with " + bCount + " bodies");
+                        //Debug.Log("OD: Filling body list with " + bCount + " bodies");
 
                         for (int i = 0; i < bCount; ++i)
                             bodiesToEnable[FlightGlobals.Bodies[i].bodyName] = false;
@@ -241,7 +241,7 @@ namespace Kopernicus
                     {
                         if (shouldEnable)
                         {
-                            Debug.Log("OD: Should enable " + (map as MapSO).name);
+                            //Debug.Log("OD: Should enable " + (map as MapSO).name);
                             map.Load();
                         }
                     }

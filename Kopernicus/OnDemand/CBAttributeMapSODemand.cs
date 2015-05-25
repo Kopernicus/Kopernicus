@@ -27,7 +27,7 @@ namespace Kopernicus
                     CreateMap(Depth, map);
                     isLoaded = true;
                     DestroyImmediate(map);
-                    Debug.Log("OD: CBmap " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
+                    //Debug.Log("OD: CBmap " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
                     OnDemand.OnDemandStorage.enabledMaps[this] = true;
                     OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                 }
@@ -39,7 +39,7 @@ namespace Kopernicus
                     return false;
                 _data = null;
                 isLoaded = false;
-                Debug.Log("OD: CBmap " + name + " disabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
+                //Debug.Log("OD: CBmap " + name + " disabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
                 OnDemand.OnDemandStorage.enabledMaps[this] = false;
                 OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                 return true;
@@ -79,7 +79,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name);
+                    Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name + " of path " + mapPath);
                     Load();
                 }
                 return base.GetAtt(lat, lon);
@@ -88,7 +88,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name);
+                    Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name + " of path " + mapPath);
                     Load();
                 }
                 return base.CompileToTexture();
