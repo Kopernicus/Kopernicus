@@ -329,7 +329,8 @@ namespace Kopernicus
                 }
                 Logger.Active.Log("Patching " + body.bodyName);
                 Logger.Active.Flush();
-                bool pqsChanged = true;
+                OnDemand.OnDemandStorage.currentBody = body.bodyName;
+                bool pqsChanged = true; // always do it. FIXME: need to actually handle cache better.
                 if (body.pqsController != null)
                 {
                     if (node.HasNode("PQS"))
