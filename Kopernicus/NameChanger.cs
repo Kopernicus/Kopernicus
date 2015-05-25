@@ -146,6 +146,13 @@ namespace Kopernicus
                 List<ILoadOnDemand> mapList = OnDemandStorage.bodyMapLists[oldName];
                 OnDemandStorage.bodyMapLists[newName] = mapList;
                 OnDemandStorage.bodyMapLists.Remove(oldName);
+                foreach (KeyValuePair<ILoadOnDemand, List<string>> kvp in OnDemandStorage.mapBodies)
+                {
+                    (kvp.Key as MapSO).name = (kvp.Key as MapSO).name.Replace(oldName, newName);
+                    for (int i = kvp.Value.Count - 1; i >= 0; --i)
+                        if (kvp.Value[i] == oldName)
+                            kvp.Value[i] = newName;
+                }
             }
         }
     }
@@ -190,7 +197,7 @@ namespace Kopernicus
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class NameChangeRunner : MonoBehaviour
     {
-        public void Start()
+        public void Awake()
         {
             //Dumps
             /*PQSCity ksc = null;

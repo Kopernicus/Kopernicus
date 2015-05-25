@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using UnityEngine;
+using KSP;
+
 namespace Kopernicus
 {
     namespace OnDemand
     {
         public static class OnDemandStorage
         {
-            public static Dictionary<ILoadOnDemand, bool> enabledMaps = new Dictionary<ILoadOnDemand,bool>(); // FIXME not really needed...
+            public static Dictionary<ILoadOnDemand, bool> enabledMaps = new Dictionary<ILoadOnDemand,bool>();
+            public static Dictionary<ILoadOnDemand, float> mapTimes = new Dictionary<ILoadOnDemand, float>();
+            public static Dictionary<ILoadOnDemand, List<string>> mapBodies = new Dictionary<ILoadOnDemand, List<string>>();
             public static Dictionary<string, List<ILoadOnDemand>> bodyMapLists = new Dictionary<string,List<ILoadOnDemand>>();
+            public static List<ILoadOnDemand> mapList = new List<ILoadOnDemand>();
             public static string homeworldBody = "Kerbin";
             public static string currentBody = "";
             public static bool useOnDemand = false;
@@ -22,9 +28,21 @@ namespace Kopernicus
 
                 if(!bodyMapLists.ContainsKey(body))
                     bodyMapLists[body] = new List<ILoadOnDemand>();
-
                 bodyMapLists[body].Add(map);
+                if (mapList.Contains(map))
+                {
+                    Debug.Log("OD: ERROR: trying to add a map but is already tracked.");
+                }
+                else
+                {
+                    mapList.Add(map);
+                    enabledMaps[map] = false;
+                    mapTimes[map] = 0f;
 
+                    if (!mapBodies.ContainsKey(map))
+                        mapBodies[map] = new List<string>();
+                    mapBodies[map].Add(body);
+                }
             }
             public static void RemoveMap(string body, ILoadOnDemand map)
             {
@@ -34,7 +52,15 @@ namespace Kopernicus
                 if (bodyMapLists.ContainsKey(body))
                     bodyMapLists[body].Remove(map);
 
+                mapList.Remove(map);
                 enabledMaps.Remove(map);
+                mapTimes.Remove(map);
+
+                List<string> bodies = mapBodies[map];
+                if (bodies.Count <= 1)
+                    mapBodies.Remove(map);
+                else
+                    bodies.Remove(body);
             }
 
             public static void EnableMapList(List<ILoadOnDemand> maps, List<ILoadOnDemand> exclude = null)
@@ -46,10 +72,9 @@ namespace Kopernicus
                 for (int i = maps.Count - 1; i >= 0; --i)
                 {
                     curmap = maps[i];
-                    if(exclude.Contains(curmap))
+                    if (exclude.Contains(curmap))
                         continue;
                     curmap.Load();
-                    enabledMaps[curmap] = true;
                 }
             }
             public static void DisableMapList(List<ILoadOnDemand> maps, List<ILoadOnDemand> exclude = null)
@@ -61,10 +86,9 @@ namespace Kopernicus
                 for (int i = maps.Count - 1; i >= 0; --i)
                 {
                     curmap = maps[i];
-                    if(exclude.Contains(curmap))
+                    if (exclude.Contains(curmap))
                         continue;
                     curmap.Unload();
-                    enabledMaps[curmap] = false;
                 }
             }
 
@@ -80,47 +104,10 @@ namespace Kopernicus
                     DisableMapList(bodyMapLists[bname]);
                 }
             }
-
-            public static void EnableNot(List<string> bnames)
-            {
-                // FIXME if maps are shared, this may disable a map only to reenable it.
-                // but we don't use this method, so...
-                for (int i = bnames.Count - 1; i >= 0; --i)
-                    DisableBody(bnames[i]);
-                foreach (KeyValuePair<string, List<ILoadOnDemand>> kvp in bodyMapLists)
-                {
-                    if (bnames.Contains(kvp.Key))
-                        continue;
-                    EnableMapList(kvp.Value);
-                }
-            }
-            public static void DisableNot(List<string> bnames)
-            {
-                List<ILoadOnDemand> enableList = new List<ILoadOnDemand>();
-                List<ILoadOnDemand> curList;
-                string bodiesList = "Bodies:";
-                for (int i = bnames.Count - 1; i >= 0; --i)
-                {
-                    bodiesList += " " + bnames[i];
-                    curList = bodyMapLists[bnames[i]];
-                    for (int j = curList.Count - 1; j >= 0; --j)
-                        if (!enableList.Contains(curList[j]))
-                            enableList.Add(curList[j]);
-                }
-                foreach (KeyValuePair<string, List<ILoadOnDemand>> kvp in bodyMapLists)
-                {
-                    if (bnames.Contains(kvp.Key))
-                        continue;
-
-                    DisableMapList(kvp.Value, enableList);
-                }
-                EnableMapList(enableList);
-                UnityEngine.Debug.Log("OD: Only enabled bodies now " + bodiesList + ", which have " + enableList.Count + " maps.");
-            }
         }
 
-        [KSPAddon(KSPAddon.Startup.Instantly, false)]
-        public class OnDemandHandler
+        [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+        public class OnDemandHandler : MonoBehaviour
         {
             protected static string FindHomeworld()
             {
@@ -137,13 +124,52 @@ namespace Kopernicus
                 return "Kerbin";
             }
 
-            List<string> lastBodies;
-            int lastCount;
-
-            public void Awake()
+            protected static void RecurseFillBodies(PSystemBody body)
             {
-                lastBodies = new List<string>();
-                lastCount = 0;
+                if (body != null)
+                {
+                    bodiesToEnable[body.celestialBody.bodyName] = false;
+                    foreach (PSystemBody child in body.children)
+                        RecurseFillBodies(child);
+                }
+            }
+            protected static void FillBodyList()
+            {
+                bool fail = false;
+                try
+                {
+                    if (FlightGlobals.Bodies != null)
+                    {
+                        int bCount = FlightGlobals.Bodies.Count;
+                        Debug.Log("OD: Filling body list with " + bCount + " bodies");
+
+                        for (int i = 0; i < bCount; ++i)
+                            bodiesToEnable[FlightGlobals.Bodies[i].bodyName] = false;
+                    }
+                }
+                catch(Exception e)
+                {
+                    fail = true;
+                    Debug.Log("OD: Failed to get body list because something threw: " + e);
+                    RecurseFillBodies(PSystemManager.Instance.systemPrefab.rootBody);
+                }
+            }
+
+            static Dictionary<string, bool> bodiesToEnable = new Dictionary<string, bool>();
+            static float waitBeforeUnload = 5f;
+            static bool dontUpdate = true;
+
+            public void Start()
+            {
+                if (dontUpdate && (/*Templates.loadFinished ||*/ HighLogic.LoadedScene == GameScenes.MAINMENU))
+                    dontUpdate = false;
+
+                if (!dontUpdate)
+                {
+                    OnDemandStorage.homeworldBody = FindHomeworld();
+                    FillBodyList();
+                }
+
                 BodyUpdate();
             }
 
@@ -155,41 +181,70 @@ namespace Kopernicus
             public void BodyUpdate()
             {
                 // wait until Kopernicus is done loading
-                if (!Templates.loadFinished)
+                if (dontUpdate)
                     return;
 
-                List<string> bodies = new List<string>();
                 if (!HighLogic.LoadedSceneIsFlight)
                 {
-                    bodies.Add(OnDemandStorage.homeworldBody);
+                    bodiesToEnable[OnDemandStorage.homeworldBody] = true;
                 }
                 if (FlightGlobals.currentMainBody != null)
                 {
-                    if (!bodies.Contains(FlightGlobals.currentMainBody.bodyName))
-                        bodies.Add(FlightGlobals.currentMainBody.bodyName);
+                    bodiesToEnable[FlightGlobals.currentMainBody.bodyName] = true;
                 }
                 else if (FlightGlobals.ActiveVessel != null) // HOW!?
                 {
                     if (FlightGlobals.ActiveVessel.mainBody != null)
-                        if (!bodies.Contains(FlightGlobals.ActiveVessel.mainBody.bodyName))
-                            bodies.Add(FlightGlobals.ActiveVessel.mainBody.bodyName);
+                        bodiesToEnable[FlightGlobals.ActiveVessel.mainBody.bodyName] = true;
                 }
-                int nBodies = bodies.Count;
-                bool changed = nBodies != lastCount;
-                if (!changed)
+
+                // find if we have maps that should be loaded that aren't, or vice versa
+                // and enable/disable as required
+                ILoadOnDemand map;
+                List<string> bodyNames;
+                for (int i = OnDemandStorage.mapList.Count - 1; i >= 0; --i)
                 {
-                    for(int i = nBodies - 1; i >= 0; --i)
-                        if (!lastBodies.Contains(bodies[i]))
+                    map = OnDemandStorage.mapList[i]; // get the map itself
+
+                    bodyNames = OnDemandStorage.mapBodies[map]; // get all the bodies that use it
+                    bool shouldEnable = false;
+                    for (int j = bodyNames.Count - 1; j >= 0; --j)
+                    {
+                        if (bodiesToEnable.ContainsKey(bodyNames[j]))
+                            shouldEnable |= bodiesToEnable[bodyNames[j]];
+                        else
                         {
-                            changed = true;
-                            break;
+                            if(bodyNames[j] == "Kerbin" && OnDemandStorage.homeworldBody != "Kerbin")
+                                shouldEnable |= bodiesToEnable[OnDemandStorage.homeworldBody];
+                            Debug.Log("OD: ERROR: bodies list does not contain " + bodyNames[j] + " and homeworldBody is the same!");
                         }
-                }
-                if (changed)
-                {
-                    OnDemandStorage.DisableNot(bodies);
-                    lastBodies = bodies;
-                    lastCount = nBodies;
+                    }
+                    bool mapEnabled = OnDemandStorage.enabledMaps[map];
+
+                    // if not as desired, deal with the map.
+                    if (mapEnabled)
+                    {
+                        if (!shouldEnable)
+                        {
+                            float curTime = OnDemandStorage.mapTimes[map];
+                            //Debug.Log("OD: Should disable " + (map as MapSO).name + ", current time " + curTime);
+                            curTime += Time.deltaTime;
+                            if (curTime >= waitBeforeUnload)
+                            {
+                                map.Unload();
+                            }
+                            else
+                                OnDemandStorage.mapTimes[map] = curTime;
+                        }
+                    }
+                    else
+                    {
+                        if (shouldEnable)
+                        {
+                            Debug.Log("OD: Should enable " + (map as MapSO).name);
+                            map.Load();
+                        }
+                    }
                 }
             }
         }

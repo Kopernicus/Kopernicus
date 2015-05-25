@@ -335,7 +335,10 @@ namespace Kopernicus
                     value = (T)Templates.instance.mapsGray[s];
 
                     if (OnDemand.OnDemandStorage.useOnDemand)
+                    {
                         OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
+                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
+                    }
                 }
                 else
                 {
@@ -358,18 +361,18 @@ namespace Kopernicus
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
                                     OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     valCB.SetPath(s);
                                     valCB.Depth = MapSO.MapDepth.Greyscale;
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valCB as T;
                                 }
                                 else
                                 {
                                     OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     valMap.SetPath(s);
                                     valMap.Depth = MapSO.MapDepth.Greyscale;
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valMap as T;
                                 }
@@ -412,7 +415,10 @@ namespace Kopernicus
                     value = (T)Templates.instance.mapsRGB[s];
 
                     if (OnDemand.OnDemandStorage.useOnDemand)
+                    {
                         OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
+                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
+                    }
                 }
                 else
                 {
@@ -435,18 +441,18 @@ namespace Kopernicus
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
                                     OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     valCB.SetPath(s);
                                     valCB.Depth = MapSO.MapDepth.RGB;
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valCB as T;
                                 }
                                 else
                                 {
                                     OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     valMap.SetPath(s);
                                     valMap.Depth = MapSO.MapDepth.RGB;
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valMap as T;
                                 }

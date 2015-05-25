@@ -26,8 +26,10 @@ namespace Kopernicus
                 {
                     CreateMap(Depth, map);
                     isLoaded = true;
+                    Debug.Log("OD: map " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
+                    OnDemand.OnDemandStorage.enabledMaps[this] = true;
+                    OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                     DestroyImmediate(map);
-                    Debug.Log("OD: map " + name + " enabling self.");
                 }
                 return true;
             }
@@ -37,7 +39,9 @@ namespace Kopernicus
                     return false;
                 _data = null;
                 isLoaded = false;
-                Debug.Log("OD: map " + name + " disabling self.");
+                Debug.Log("OD: map " + name + " disabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
+                OnDemand.OnDemandStorage.enabledMaps[this] = false;
+                OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                 return true;
             }
 

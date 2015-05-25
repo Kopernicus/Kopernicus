@@ -27,7 +27,9 @@ namespace Kopernicus
                     CreateMap(Depth, map);
                     isLoaded = true;
                     DestroyImmediate(map);
-                    Debug.Log("OD: CBmap " + name + " enabling self.");
+                    Debug.Log("OD: CBmap " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
+                    OnDemand.OnDemandStorage.enabledMaps[this] = true;
+                    OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                 }
                 return true;
             }
@@ -37,7 +39,9 @@ namespace Kopernicus
                     return false;
                 _data = null;
                 isLoaded = false;
-                Debug.Log("OD: CBmap " + name + " disabling self.");
+                Debug.Log("OD: CBmap " + name + " disabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
+                OnDemand.OnDemandStorage.enabledMaps[this] = false;
+                OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                 return true;
             }
 
