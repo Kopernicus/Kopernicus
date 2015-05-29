@@ -184,6 +184,10 @@ namespace Kopernicus
                 if (dontUpdate)
                     return;
 
+                // Set all false.
+                foreach (string b in bodiesToEnable.Keys.ToList())
+                    bodiesToEnable[b] = false;
+
                 if (!HighLogic.LoadedSceneIsFlight)
                 {
                     bodiesToEnable[OnDemandStorage.homeworldBody] = true;
