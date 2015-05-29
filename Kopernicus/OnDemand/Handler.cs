@@ -136,6 +136,7 @@ namespace Kopernicus
             protected static void FillBodyList()
             {
                 bool fail = false;
+                bodiesToEnable.Clear();
                 try
                 {
                     if (FlightGlobals.Bodies != null)
@@ -220,7 +221,8 @@ namespace Kopernicus
                         {
                             if(bodyNames[j] == "Kerbin" && OnDemandStorage.homeworldBody != "Kerbin")
                                 shouldEnable |= bodiesToEnable[OnDemandStorage.homeworldBody];
-                            Debug.Log("OD: ERROR: bodies list does not contain " + bodyNames[j] + " and homeworldBody is the same!");
+                            else
+                                Debug.Log("OD: ERROR: bodies list does not contain " + bodyNames[j] + " and homeworldBody is the same!");
                         }
                     }
                     bool mapEnabled = OnDemandStorage.enabledMaps[map];
