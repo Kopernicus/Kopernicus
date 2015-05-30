@@ -59,89 +59,106 @@ namespace Kopernicus
 			{
 				set { celestialBody.atmosphereContainsOxygen = value.value; }
 			}
-			
+
+            // Density at sea level
+            [ParserTarget("staticDensityASL", optional = true)]
+            private NumericParser<double> atmDensityASL
+            {
+                set { celestialBody.atmDensityASL = value.value; }
+            }
+
+            // atmosphereAdiabaticIndex
+            [ParserTarget("adiabaticIndex", optional = true)]
+            private NumericParser<double> atmosphereAdiabaticIndex
+            {
+                set { celestialBody.atmosphereAdiabaticIndex = value.value; }
+            }
+
+            // atmosphere cutoff altitude
+            [ParserTarget("altitude", optional = true)]
+            private NumericParser<double> maxAltitude
+            {
+                set { celestialBody.atmosphereDepth = value.value; }
+            }
+
+            // atmosphereGasMassLapseRate
+            [ParserTarget("gasMassLapseRate", optional = true)]
+            private NumericParser<double> atmosphereGasMassLapseRate
+            {
+                set { celestialBody.atmosphereGasMassLapseRate = value.value; }
+            }
+
+            // atmosphereMolarMass
+            [ParserTarget("atmosphereMolarMass", optional = true)]
+            private NumericParser<double> atmosphereMolarMass
+            {
+                set { celestialBody.atmosphereMolarMass = value.value; }
+            }
+
+            // Pressure curve (pressure = pressure multipler * pressureCurve[altitude])
+            [ParserTarget("pressureCurve", optional = true)]
+            private FloatCurveParser pressureCurve
+            {
+                set
+                {
+                    celestialBody.atmospherePressureCurve = value.curve;
+                    celestialBody.atmosphereUsePressureCurve = true;
+                }
+            }
+
+            // atmospherePressureCurveIsNormalized
+            [ParserTarget("pressureCurveIsNormalized", optional = true)]
+            private NumericParser<bool> atmospherePressureCurveIsNormalized
+            {
+                set { celestialBody.atmospherePressureCurveIsNormalized = value.value; }
+            }
+
+            // Static pressure at sea level (all worlds are set to 1.0f?)
+            [ParserTarget("staticPressureASL", optional = true)]
+            private NumericParser<float> staticPressureASL
+            {
+                set { celestialBody.atmospherePressureSeaLevel = value.value; }
+            }
+
 			// Temperature curve (see below)
 			[ParserTarget("temperatureCurve", optional = true)]
-			private AnimationCurveParser temperatureCurve 
+			private FloatCurveParser temperatureCurve 
 			{
-				set { celestialBody.temperatureCurve = value.curve; }
-			}
-			
-			// Temperature multipler - I'm going to go out on a limb and suggest that this probably
-			// functions similarly to the new atmosphere model.  Essentially
-			// (temperature = temperatureMultipler * temperatureCurve[altitude]) 
-			[ParserTarget("temperatureMultiplier", optional = true)]
-			private NumericParser<float> temperatureMultiplier 
-			{
-				set { celestialBody.atmoshpereTemperatureMultiplier = value.value; }
-			}
-			
-			// Static pressure at sea level (all worlds are set to 1.0f?)
-			[ParserTarget("staticPressureASL", optional = true)]
-			private NumericParser<float> staticPressureASL 
-			{
-				set { celestialBody.staticPressureASL = value.value; }
-			}
-			
-			// ditto (all worlds set to 1.4285f).  Could be a *really* ancient atmosphere model
-			[ParserTarget("altitudeMultiplier", optional = true)]
-			private NumericParser<float> altitudeMultiplier 
-			{
-				set { celestialBody.altitudeMultiplier = value.value; }
+                set
+                {
+                    celestialBody.atmosphereTemperatureCurve = value.curve;
+                    celestialBody.atmosphereUseTemperatureCurve = true;
+                }
 			}
 
-			// Pressure curve (pressure = pressure multipler * pressureCurve[altitude])
-			[ParserTarget("pressureCurve", optional = true)]
-			private AnimationCurveParser pressureCurve 
-			{
-				set { celestialBody.pressureCurve = value.curve; }
-			}
+            // atmosphereTemperatureCurveIsNormalized
+            [ParserTarget("temperatureCurveIsNormalized", optional = true)]
+            private NumericParser<bool> atmosphereTemperatureCurveIsNormalized
+            {
+                set { celestialBody.atmosphereTemperatureCurveIsNormalized = value.value; }
+            }
 
-			// Pressure multipler (pressure = pressure multipler * pressureCurve[altitude])
-			[ParserTarget("pressureMultiplier", optional = true)]
-			private NumericParser<float> pressureMultiplier 
-			{
-				set { celestialBody.pressureMultiplier = value.value; }
-			}
-			
-			// Use legacy atmosphere - the fact that every stock world uses legacy may suggest that
-			// the new atmosphere model may not work....
-			[ParserTarget("enableLegacyAtmosphere", optional = true)]
-			private NumericParser<bool> enableLegacyAtmosphere 
-			{
-				set { celestialBody.useLegacyAtmosphere = value.value; }
-			}
-			
-			// pressure (in atm) = multipler * e ^ -(altitude / (scaleHeight * 1000))
-			[ParserTarget("multiplier", optional = true)]
-			private NumericParser<float> multiplier 
-			{
-				set { celestialBody.atmosphereMultiplier = value.value; }
-			}
-			
-			// pressure (in atm) = atmosphereMultipler * e ^ -(altitude / (atmosphereScaleHeight * 1000))
-			[ParserTarget("scaleHeight", optional = true)]
-			private NumericParser<float> scaleHeight 
-			{
-				set { celestialBody.atmosphereScaleHeight = value.value; }
-			}
+            // atmosphereTemperatureLapseRate
+            [ParserTarget("temperatureLapseRate", optional = true)]
+            private NumericParser<double> atmosphereTemperatureLapseRate
+            {
+                set { celestialBody.atmosphereTemperatureLapseRate = value.value; }
+            }
 
-			// I honestly think this may actually offset the altitude.  all stock worlds
-			// have it set to 0f, but the sun has it set to 700f (but doesn't use an
-			// atmosphere)
-			[ParserTarget("altitudeOffset", optional = true)]
-			private NumericParser<float> altitudeOffset 
-			{
-				set { celestialBody.altitudeOffset = value.value; }
-			}
-			
-			// atmosphere cutoff altitude
-			[ParserTarget("altitude", optional = true)]
-			private NumericParser<float> maxAltitude 
-			{
-				set { celestialBody.maxAtmosphereAltitude = value.value; }
-			}
-			
+            // TemperatureSeaLevel
+            [ParserTarget("temperatureSeaLevel", optional = true)]
+            private NumericParser<double> atmosphereTemperatureSeaLevel
+            {
+                set { celestialBody.atmosphereTemperatureSeaLevel = value.value; }
+            }
+
+            // atmosphereTemperatureSunMultCurve
+            [ParserTarget("temperatureSunMultCurve", optional = true)]
+            private FloatCurveParser atmosphereTemperatureSunMultCurve
+            {
+                set { celestialBody.atmosphereTemperatureSunMultCurve = value.curve; }
+            }
+
 			// ambient atmosphere color
 			[ParserTarget("ambientColor", optional = true)]
 			private ColorParser ambientColor 
@@ -181,13 +198,20 @@ namespace Kopernicus
 					scaledAtmosphere.AddComponent<AtmosphereFromGround>();
 
 					// Setup known defaults
-					celestialBody.staticPressureASL = 1.0f;
-					celestialBody.atmosphereMultiplier = 1.4285f;
+					celestialBody.atmospherePressureSeaLevel = 1.0f;
+					// celestialBody.atmosphereMultiplier = 1.4285f;
 				}
 			}
 
 			// Parser post apply event
-			void IParserEventSubscriber.PostApply (ConfigNode node) { } 
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                // Manipulate AFG
+                if (node.HasNode("AtmosphereFromGround"))
+                {
+                    AtmosphereFromGroundParser atmoFG = new AtmosphereFromGroundParser(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]);
+                }
+            }
 
 			// Store the scaled version and celestial body we are modifying internally
 			public Atmosphere (CelestialBody celestialBody, GameObject scaledVersion)
@@ -196,5 +220,198 @@ namespace Kopernicus
 				this.celestialBody = celestialBody;
 			}
 		}
+
+        [RequireConfigType(ConfigType.Node)]
+        public class AtmosphereFromGroundParser : IParserEventSubscriber
+        {
+            // AtmosphereFromGround we're modifying
+            public AtmosphereFromGround afg;
+
+            // cameraHeight
+            [ParserTarget("cameraHeight", optional = true)]
+            private NumericParser<float> cameraHeight
+            {
+                set { afg.cameraHeight = value.value; }
+            }
+
+            // cameraHeight2
+            [ParserTarget("cameraHeight2", optional = true)]
+            private NumericParser<float> cameraHeight2
+            {
+                set { afg.cameraHeight2 = value.value; }
+            }
+
+            // cameraPos
+            [ParserTarget("cameraPos", optional = true)]
+            private Vector3Parser cameraPos
+            {
+                set { afg.cameraPos = value.value; }
+            }
+
+            // DEBUG_alwaysUpdateAll
+            [ParserTarget("DEBUG_alwaysUpdateAll", optional = true)]
+            private NumericParser<bool> DEBUG_alwaysUpdateAll
+            {
+                set { afg.DEBUG_alwaysUpdateAll = value.value; }
+            }
+
+            // doScale
+            [ParserTarget("doScale", optional = true)]
+            private NumericParser<bool> doScale
+            {
+                set { afg.doScale = value.value; }
+            }
+
+            // ESun
+            [ParserTarget("ESun", optional = true)]
+            private NumericParser<float> ESun
+            {
+                set { afg.ESun = value.value; }
+            }
+
+            // g
+            [ParserTarget("g", optional = true)]
+            private NumericParser<float> g
+            {
+                set { afg.g = value.value; }
+            }
+
+            // g2
+            [ParserTarget("g2", optional = true)]
+            private NumericParser<float> g2
+            {
+                set { afg.g2 = value.value; }
+            }
+
+            // innerRadius
+            [ParserTarget("innerRadius", optional = true)]
+            private NumericParser<float> innerRadius
+            {
+                set { afg.innerRadius = value.value; }
+            }
+
+            // innerRadius2
+            [ParserTarget("innerRadius2", optional = true)]
+            private NumericParser<float> innerRadius2
+            {
+                set { afg.innerRadius2 = value.value; }
+            }
+
+            // invWaveLength
+            [ParserTarget("invWaveLength", optional = true)]
+            private ColorParser invWaveLength
+            {
+                set { afg.invWaveLength = value.value; }
+            }
+
+            // Km
+            [ParserTarget("Km", optional = true)]
+            private NumericParser<float> Km
+            {
+                set { afg.Km = value.value; }
+            }
+
+            // Km4PI 
+            [ParserTarget("Km4PI", optional = true)]
+            private NumericParser<float> Km4PI 
+            {
+                set { afg.Km4PI = value.value; }
+            }
+
+            // KmESun
+            [ParserTarget("KmESun", optional = true)]
+            private NumericParser<float> KmESun
+            {
+                set { afg.KmESun = value.value; }
+            }
+
+            // Kr
+            [ParserTarget("Kr", optional = true)]
+            private NumericParser<float> Kr
+            {
+                set { afg.Kr = value.value; }
+            }
+
+            // Kr4PI 
+            [ParserTarget("Kr4PI", optional = true)]
+            private NumericParser<float> Kr4PI
+            {
+                set { afg.Kr4PI = value.value; }
+            }
+
+            // KrESun
+            [ParserTarget("KrESun", optional = true)]
+            private NumericParser<float> KrESun
+            {
+                set { afg.KrESun = value.value; }
+            }
+
+            // outerRadius
+            [ParserTarget("outerRadius", optional = true)]
+            private NumericParser<float> outerRadius
+            {
+                set { afg.outerRadius = value.value; }
+            }
+
+            // outerRadius
+            [ParserTarget("outerRadius2", optional = true)]
+            private NumericParser<float> outerRadius2
+            {
+                set { afg.outerRadius2 = value.value; }
+            }
+
+            // samples
+            [ParserTarget("samples", optional = true)]
+            private NumericParser<float> samples
+            {
+                set { afg.samples = value.value; }
+            }
+
+            // scale
+            [ParserTarget("scale", optional = true)]
+            private NumericParser<float> scale
+            {
+                set { afg.scale = value.value; }
+            }
+
+            // scaleDepth
+            [ParserTarget("scaleDepth", optional = true)]
+            private NumericParser<float> scaleDepth
+            {
+                set { afg.scaleDepth = value.value; }
+            }
+
+            // scaleOverScaleDepth
+            [ParserTarget("scaleOverScaleDepth", optional = true)]
+            private NumericParser<float> scaleOverScaleDepth
+            {
+                set { afg.scaleOverScaleDepth = value.value; }
+            }
+
+            // sunLightDirection
+            [ParserTarget("sunLightDirection", optional = true)]
+            private Vector3Parser sunLightDirection
+            {
+                set { afg.sunLightDirection = value.value; }
+            }
+
+            // Parser apply event
+            void IParserEventSubscriber.Apply(ConfigNode node) { }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                if (afg != null)
+                {
+                    MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
+                    afgSetMaterial.Invoke(afg, new object[] { true });
+                }
+            }
+
+            public AtmosphereFromGroundParser(AtmosphereFromGround afg)
+            {
+                this.afg = afg;
+            }
+        }
 	}
 }

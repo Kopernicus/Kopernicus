@@ -33,6 +33,7 @@ using System.Text;
 using System.Reflection;
 
 using UnityEngine;
+using Kopernicus.Configuration;
 
 namespace Kopernicus 
 {
@@ -40,6 +41,8 @@ namespace Kopernicus
 	[KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
 	public class Injector : MonoBehaviour 
 	{
+        public Templates templates = null;
+        
 		/**
 		 * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
 		 * it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
@@ -67,6 +70,10 @@ namespace Kopernicus
 			// Get the current time
 			DateTime start = DateTime.Now;
 
+            // Grab templates
+            templates = new Templates();
+           
+
 			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
 			PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
 
@@ -75,7 +82,7 @@ namespace Kopernicus
 			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
 			// Clear space center instance so it will accept nouveau Kerbin
-			SpaceCenter.Instance = null;
+            SpaceCenter.Instance = null;
 
 			// Add a handler so that we can do post spawn fixups.  
 			PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
@@ -89,21 +96,50 @@ namespace Kopernicus
 		// Post spawn fixups (ewwwww........)
 		public void PostSpawnFixups ()
 		{
+            Debug.Log("[Kopernicus]: Post-Spawn");
 			// Fix the flight globals index of each body
 			int counter = 0;
 			foreach (CelestialBody body in FlightGlobals.Bodies) 
 			{
 				body.flightGlobalsIndex = counter++;
-				Logger.Active.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
+				Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
 			}
+
+            // Move KSC around
+            if (SpaceCenterSwitcher.Instance != null)
+            {
+                SpaceCenterSwitcher.Instance.MoveKSC();
+            }
 
 			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
 			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
-			double maximumDistance = rootBody.children.Max (b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
+            double maximumDistance = 1000d; // rootBody.children.Max(b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
+            if (rootBody != null)
+            {
+                maximumDistance = rootBody.celestialBody.Radius * 100d;
+                if(rootBody.children != null && rootBody.children.Count > 0)
+                {
+                    foreach (PSystemBody body in rootBody.children)
+                    {
+                        if (body.orbitDriver != null)
+                            maximumDistance = Math.Max(maximumDistance, body.orbitDriver.orbit.semiMajorAxis * (1d + body.orbitDriver.orbit.eccentricity));
+                        else
+                            Debug.Log("[Kopernicus]: Body " + body.name + " has no orbitdriver!");
+                    }
+                }
+                else
+                    Debug.Log("[Kopernicus]: Root body children null or 0");
+            }
+            else
+                Debug.Log("[Kopernicus]: Root body null!");
+            Debug.Log("Found max distance " + maximumDistance);
 			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
 			// Select the closest star to home
 			StarLightSwitcher.HomeStar ().SetAsActive ();
+
+            // Declare we're done.
+            Templates.loadFinished = true;
 
 			// Fixups complete, time to surrender to fate
 			Destroy (this);

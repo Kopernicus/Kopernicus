@@ -90,6 +90,13 @@ namespace Kopernicus
 					set { _mod.seed = value.value; }
 				}
 
+                // Quality mode for the noise
+                [ParserTarget("mode", optional = true)]
+                private EnumParser<LibNoise.Unity.QualityMode> mode
+                {
+                    set { _mod.mode = value.value; }
+                }
+
 				void IParserEventSubscriber.Apply(ConfigNode node)
 				{
 
