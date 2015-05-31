@@ -61,13 +61,6 @@ namespace Kopernicus
 			private PQSMod_UVPlanetRelativePosition uvs;
 			private PQSMod_QuadMeshColliders        collider;
 			
-            [ParserTarget("removeAllMods", optional = true)]
-            private NumericParser<bool> removeAllMods
-            {
-                set { removeAll = value.value; }
-            }
-            private bool removeAll = false;
-			
 			// Surface physics material
 			[ParserTarget("PhysicsMaterial", optional = true, allowMerge = true)]
 			private PhysicsMaterialParser physicsMaterial
@@ -126,11 +119,7 @@ namespace Kopernicus
 			// Fallback Material of the PQS (its always the same material)
 			[ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
 			private PQSProjectionFallbackLoader fallbackMaterial;
-
-            // Should we remove Mods?
-            [ParserTarget("RemoveMods", optional = true, allowMerge = true)]
-            private StringCollectionParser killList;
-				
+            				
 			// PQS Mods
 			[ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
 			private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> (); 
@@ -292,41 +281,6 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
-                /*List<PQSMod> cpMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).ToList();
-				// Add all created mods to the PQS
-                foreach (ModLoader.ModLoader loader in mods)
-                {
-                    List<PQSMod> currentMods = cpMods.Where(m => m.GetType() == loader.mod.GetType()).ToList();
-                    if (currentMods.Count > 0)
-                    {
-                        for (int i = 0; i < currentMods.Count; i++)
-                        {
-                            PQSMod delMod = pqsVersion.GetComponentsInChildren(currentMods[i].GetType(), true)[i] as PQSMod;
-                            delMod.transform.parent = null;
-                            delMod.sphere = null;
-                            PQSMod.Destroy(delMod);
-                            cpMods.Remove(currentMods[i]);
-                        }
-                    }
-                    loader.mod.transform.parent = pqsVersion.transform;
-                    loader.mod.sphere = pqsVersion;
-                    Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
-                }*/
-				// Add all created mods to the PQS
-                List<Type> typesToRemove = null;
-                if (!removeAll && killList != null)
-                {
-                    typesToRemove = new List<Type>();
-                    foreach (string mod in killList.value)
-                    {
-                        typesToRemove.Add(Type.GetType(mod));
-                    }
-                    Utility.RemoveModsOfType(typesToRemove, pqsVersion);
-                }
-                else if (removeAll)
-                {
-                    Utility.RemoveModsOfType(null, pqsVersion);
-                }
                 foreach (ModLoader.ModLoader loader in mods)
                 {
                     loader.mod.transform.parent = pqsVersion.transform;
