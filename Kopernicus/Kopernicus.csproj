@@ -58,7 +58,6 @@
     <Compile Include="Configuration\ModLoader\OceanFX.cs" />
     <Compile Include="Configuration\ModLoader\QuadEnhanceCoast.cs" />
     <Compile Include="Configuration\ModLoader\RemoveQuadMap.cs" />
-    <Compile Include="Configuration\ModLoader\UVPlanetRelativePosition.cs" />
     <Compile Include="Configuration\ModLoader\MapDecal.cs" />
     <Compile Include="Configuration\ModLoader\FlattenAreaTangential.cs" />
     <Compile Include="Configuration\ModLoader\FlattenArea.cs" />

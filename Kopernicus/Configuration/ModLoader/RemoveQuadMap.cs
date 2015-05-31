@@ -41,6 +41,23 @@ namespace Kopernicus
 				// Actual PQS mod we are loading
 				private PQSMod_RemoveQuadMap _mod;
 
+                // If we have no PQS-Mods
+                [ParserTarget("generateMap", optional = true)]
+                private NumericParser<bool> generateMap
+                {
+                    set
+                    {
+                        if (value.value)
+                        {
+                            Texture2D tex = new Texture2D(1, 1);
+                            tex.SetPixel(1, 1, Color.black);
+                            tex.Apply();
+                            _mod.map = new MapSO();
+                            _mod.map.CreateMap(MapSO.MapDepth.Greyscale, tex);
+                        }
+                    }
+                }
+
                 // The map texture for the Quad Remover (?)
 				[ParserTarget("map", optional = true)]
 				private MapSOParser_GreyScale<MapSO> map
