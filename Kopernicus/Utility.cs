@@ -74,7 +74,7 @@ namespace Kopernicus
          * @param source Object to copy fields from
          * @param destination Object to copy fields to
          **/
-        public static void CopyObjectFields<T>(T source, T destination)
+        public static void CopyObjectFields<T>(T source, T destination, bool log = true)
         {
             // Reflection based copy
             foreach (FieldInfo field in (typeof(T)).GetFields())
@@ -82,7 +82,11 @@ namespace Kopernicus
                 // Only copy non static fields
                 if (!field.IsStatic)
                 {
-                    Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
+                    if (log)
+                    {
+                        Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
+
+                    }
                     field.SetValue(destination, field.GetValue(source));
                 }
             }
