@@ -13,6 +13,7 @@ namespace Kopernicus
             bool Unload();
             bool IsLoaded();
             void SetPath(string path);
+            void SetAutoLoad(bool doAutoLoad);
         }
     }
 }
