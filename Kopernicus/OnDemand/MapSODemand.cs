@@ -44,6 +44,7 @@ namespace Kopernicus
                 Debug.Log("OD: map " + name + " disabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
                 OnDemand.OnDemandStorage.enabledMaps[this] = false;
                 OnDemand.OnDemandStorage.mapTimes[this] = 0f;
+                GC.Collect();
                 return true;
             }
 
