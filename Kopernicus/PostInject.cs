@@ -330,7 +330,7 @@ namespace Kopernicus
                 Logger.Active.Log("Patching " + body.bodyName);
                 Logger.Active.Flush();
                 OnDemand.OnDemandStorage.currentBody = body.bodyName;
-                bool pqsChanged = true; // always do it. FIXME: need to actually handle cache better.
+                bool pqsChanged = false;
                 if (body.pqsController != null)
                 {
                     if (node.HasNode("PQS"))
@@ -342,7 +342,10 @@ namespace Kopernicus
                             pqsChanged |= PatchPQS(p, node.GetNode("PQS" + p.name));
                     }
                 }
-                if (pqsChanged)
+                bool forceRebuildSS = false;
+                if (node.HasValue("createMesh"))
+                    bool.TryParse(node.GetValue("createMesh"), out forceRebuildSS);
+                if (pqsChanged || forceRebuildSS)
                 {
                     Logger.Active.Log("Rebuilding scaledVersion mesh for " + body.bodyName);
                     Logger.Active.Flush();
