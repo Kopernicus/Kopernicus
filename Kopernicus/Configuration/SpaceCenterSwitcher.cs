@@ -42,6 +42,9 @@ namespace Kopernicus
             public KSC ksc;
             public static SpaceCenterSwitcher Instance;
 
+            private Color groundColor = Color.clear;
+            private Texture2D groundTexture;
+
             // latitude
             [ParserTarget("latitude", optional = true, allowMerge = false)]
             public NumericParser<double> latitude
@@ -206,6 +209,20 @@ namespace Kopernicus
             }
             private bool hasAbsolute = false;
 
+            // groundColor
+            [ParserTarget("groundColor", optional = true, allowMerge = false)]
+            public ColorParser groundColorParser
+            {
+                set { KSCGroundFixer.color = value.value; }
+            }
+
+            // Texture
+            [ParserTarget("groundTexture", optional = true, allowMerge = false)]
+            public Texture2DParser groundTextureParser
+            {
+                set { KSCGroundFixer.mainTexture = value.value; }
+            }
+
             public SpaceCenterSwitcher()
             {
                 Instance = this;
@@ -348,6 +365,49 @@ namespace Kopernicus
             public bool absolute;
             public double decalLatitude;
             public double decalLongitude;
+        }
+
+        // This class is used to manipulate the grass color and texture of the KSC
+        [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
+        public class KSCGroundFixer : MonoBehaviour
+        {
+            // Declare public variables
+            public static Texture2D mainTexture = null;
+            public static Color color = Color.clear;
+
+            private static bool isDone = false;
+
+            // Every time this starts, it'll look for the standard-ground materials and change their settings.
+            public void Update()
+            {
+                // Are we alive?
+                if (!isDone)
+                {
+                    // Loop through all Materials and change their settings
+                    foreach (Material material in UnityEngine.Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.382f, 0.451f, 0.000f, 0.729f).ToString()))
+                    {
+                        // Patch the texture
+                        if (mainTexture != null)
+                        {
+                            material.mainTexture = mainTexture;
+                        }
+
+                        // Patch the color
+                        if (color != Color.clear)
+                        {
+                            material.color = color;
+
+                            if (material.HasProperty("_RimColor"))
+                            {
+                                material.SetColor("_RimColor", color);
+                            }
+                        }
+                    }
+
+                    // And Stop
+                    isDone = true;
+                }
+            }
         }
     }
 }
