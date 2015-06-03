@@ -396,14 +396,9 @@ namespace Kopernicus
                         if (color != Color.clear)
                         {
                             material.color = color;
-
-                            if (material.HasProperty("_RimColor"))
-                            {
-                                material.SetColor("_RimColor", color);
-                            }
                         }
                     }
-
+                   
                     // And Stop
                     isDone = true;
                 }
