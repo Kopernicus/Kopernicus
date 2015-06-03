@@ -12,6 +12,8 @@ namespace Kopernicus
         static public Templates instance = null;
 
         static public bool loadFinished = false;
+
+        public static Mesh refGeosphere = null;
         
         // for loading only one each
         public Dictionary<string, MapSO> mapsGray;
@@ -51,6 +53,15 @@ namespace Kopernicus
                 origMunDiff = mun.scaledVersion.renderer.material.GetTexture("_MainTex");
                 origMunBump = mun.scaledVersion.renderer.material.GetTexture("_BumpMap");
             }
+
+            // get reference geosphere
+            // We need to get the body for Jool (to steal it's mesh)
+            PSystemBody Jool = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Jool");
+
+            // Return it's mesh
+            refGeosphere = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+
+
 
             finalizeBodies = new List<string>();
         }

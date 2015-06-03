@@ -210,11 +210,7 @@ namespace Kopernicus
          */
         public static Mesh ReferenceGeosphere()
         {
-            // We need to get the body for Jool (to steal it's mesh)
-            PSystemBody Jool = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-
-            // Return it's mesh
-            return Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+            return Templates.refGeosphere;
         }
 
         // Print out a tree containing all the objects in the game
