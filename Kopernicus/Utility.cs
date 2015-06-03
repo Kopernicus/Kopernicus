@@ -1191,9 +1191,7 @@ namespace Kopernicus
 
         public static void Log(object s)
         {
-#if DEBUG
             Logger.Active.Log(s);
-#endif
         }
     }
 }
