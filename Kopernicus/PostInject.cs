@@ -256,7 +256,8 @@ namespace Kopernicus
                         if (modNode.HasValue("name"))
                             if (m.name != modNode.GetValue("name"))
                                 continue;
-                        pqsChanged = true;
+                        if(modNode.name != "PQSMod_CelestialBodyTransform") // not really a change
+                            pqsChanged = true;
                         ParseObject(m, modNode);
                         if (mType == typeof(PQSCity) || mType == typeof(PQSMod_MapDecal) || mType == typeof(PQSMod_MapDecalTangent))
                             ModDecal(m, modNode);
