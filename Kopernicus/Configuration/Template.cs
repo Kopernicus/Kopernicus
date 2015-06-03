@@ -176,7 +176,9 @@ namespace Kopernicus
 						foreach (string mod in removePQSMods.value) 
 						{
 							// Get the mods matching the string
-							string modName = "PQSMod_" + mod;
+                            string modName = mod;
+                            if(!mod.Contains("PQS"))
+                                modName = "PQSMod_" + mod;
                             mods.Add(Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
 						}
                         Utility.RemoveModsOfType(mods, body.pqsVersion);
