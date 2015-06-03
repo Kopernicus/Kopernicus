@@ -296,8 +296,10 @@ namespace Kopernicus
                     }
 
                     // ----------- DEBUG -------------
+                    #if DEBUG
                     Utility.DumpObjectProperties(pqs.pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
                     Utility.GameObjectWalk(pqs.pqsVersion.gameObject, "  ");
+                    #endif
                     // -------------------------------
 
                     // Don't do this, because we probably need to ajust the radius of the OceanPQS (and AFAIK is that the only child-PQS)
@@ -345,8 +347,9 @@ namespace Kopernicus
                     //   a) we are using a template and we've change either the radius or type of body
                     //   b) we aren't using a template
                     //   c) debug mode is active
-                    if (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
-                        || template == null || inEveryCase)
+                    if (scaledVersion.generateMesh &&
+                        (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
+                        || template == null || inEveryCase))
                     {
                         Utility.UpdateScaledMesh(generatedBody.scaledVersion,
                                                     generatedBody.pqsVersion,

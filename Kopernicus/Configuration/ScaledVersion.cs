@@ -83,6 +83,13 @@ namespace Kopernicus
             }
             public bool useSphericalModel = false;
 
+            [ParserTarget("deferMesh", optional = true)]
+            private NumericParser<bool> deferMesh
+            {
+                set { generateMesh = !value.value; }
+            }
+            public bool generateMesh = true;
+
 			// Parser apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{
