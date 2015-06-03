@@ -956,31 +956,21 @@ namespace Kopernicus
                     }
                 }
             }
+            List<GameObject> toCheck = new List<GameObject>();
             foreach (Type mType in types)
             {
-                /*List<PQSMod> currentMods = cpMods.Where(m => m.GetType() == mType).ToList();
-                while (currentMods.Count > 0)
+                foreach (PQSMod delMod in p.GetComponentsInChildren(mType, true) as PQSMod[])
                 {
-                    PQSMod delMod = currentMods[0]; //p.GetComponentsInChildren(mType, true)[0] as PQSMod;
-                    if (delMod.GetType() != typeof(PQSCity) || delMod.name != "KSC")
+                    if (delMod != null)
                     {
-                        delMod.transform.parent = null;
+                        if (!toCheck.Contains(delMod.gameObject))
+                            toCheck.Add(delMod.gameObject);
                         delMod.sphere = null;
-                        PQSMod.Destroy(delMod);
-                        cpMods.Remove(currentMods[0]);
+                        PQSMod.DestroyImmediate(delMod);
                     }
-                    currentMods.RemoveAt(0);
-                }*/
-                List<GameObject> toCheck = new List<GameObject>();
-                PQSMod delMod = p.GetComponentsInChildren(mType, true).FirstOrDefault() as PQSMod;
-                if (delMod != null)
-                {
-                    toCheck.Add(delMod.gameObject);
-                    delMod.sphere = null;
-                    PQSMod.DestroyImmediate(delMod);
                 }
-                RemoveEmptyGO(toCheck);
             }
+            RemoveEmptyGO(toCheck);
         }
 
         static public void RemoveEmptyGO(List<GameObject> toCheck)
