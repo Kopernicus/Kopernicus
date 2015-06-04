@@ -921,7 +921,7 @@ namespace Kopernicus
         {
             Logger.Active.Log("Removing mods from pqs " + p.name);
             List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
-            bool addTypes = types == null;
+            bool addTypes = (types == null);
             if(addTypes)
                 types = new List<Type>();
             if (blacklist == null)
@@ -955,14 +955,16 @@ namespace Kopernicus
             List<GameObject> toCheck = new List<GameObject>();
             foreach (Type mType in types)
             {
-                foreach (PQSMod delMod in p.GetComponentsInChildren(mType, true) as PQSMod[])
+                List<PQSMod> mods = cpMods.Where(m => m.GetType() == mType).ToList();
+                foreach (PQSMod delMod in mods)
                 {
                     if (delMod != null)
                     {
-                        Logger.Active.Log("Removed mod " + mType.ToString() + " " + delMod.name);
+                        Logger.Active.Log("Removed mod " + mType.ToString());
                         if (!toCheck.Contains(delMod.gameObject))
                             toCheck.Add(delMod.gameObject);
                         delMod.sphere = null;
+                        cpMods.Remove(delMod);
                         PQSMod.DestroyImmediate(delMod);
                     }
                 }
@@ -974,10 +976,10 @@ namespace Kopernicus
         {
             int oCount = toCheck.Count;
             int nCount = oCount;
+            List<GameObject> toDestroy = new List<GameObject>();
             do
             {
                 oCount = nCount;
-                List<GameObject> toDestroy = new List<GameObject>();
                 foreach (GameObject go in toCheck)
                 {
                     if (go.transform.childCount == 0)
@@ -992,6 +994,7 @@ namespace Kopernicus
                     toCheck.Remove(go);
                     GameObject.DestroyImmediate(go);
                 }
+                toDestroy.Clear();
                 nCount = toCheck.Count;
             } while (nCount != oCount && nCount > 0);
         }
