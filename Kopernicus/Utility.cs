@@ -959,6 +959,7 @@ namespace Kopernicus
                 {
                     if (delMod != null)
                     {
+                        Logger.Active.Log("Removed mod " + mType.ToString() + " " + delMod.name);
                         if (!toCheck.Contains(delMod.gameObject))
                             toCheck.Add(delMod.gameObject);
                         delMod.sphere = null;
