@@ -52,16 +52,8 @@ namespace Kopernicus
             public bool mapOcean = true;
             public Color mapOceanColor;
             public double mapOceanHeight;
-            public bool hasRadius = false;
 
             private PQSMod_UVPlanetRelativePosition uvs;
-
-            // radius
-            [ParserTarget("radius", optional = true)]
-            private NumericParser<double> radius
-            {
-                set { oceanPQS.radius = value.value; hasRadius = true; }
-            }
 
             // We have an ocean?
             [ParserTarget("ocean", optional = true)]

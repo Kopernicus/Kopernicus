@@ -262,10 +262,6 @@ namespace Kopernicus
 
                             // Set up the ocean PQS
                             ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
-                            if (!ocean.hasRadius)
-                            {
-                                ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
-                            }
 
                             // Names!
                             ocean.oceanPQS.name = generatedBody.pqsVersion.name + "Ocean";
@@ -288,10 +284,6 @@ namespace Kopernicus
 
                             // Set up the ocean PQS
                             ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
-                            if (!ocean.hasRadius)
-                            {
-                                ocean.oceanPQS.radius = generatedBody.pqsVersion.radius;
-                            }
                         }
                     }
 
@@ -303,9 +295,9 @@ namespace Kopernicus
                     // -------------------------------
 
                     // Don't do this, because we probably need to ajust the radius of the OceanPQS (and AFAIK is that the only child-PQS)
-					/* Adjust the radius of the PQSs appropriately
+					// Adjust the radius of the PQSs appropriately
 					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
-						p.radius = generatedBody.celestialBody.Radius;*/
+						p.radius = generatedBody.celestialBody.Radius;
 				}
 
                 // Create our RingLoaders
