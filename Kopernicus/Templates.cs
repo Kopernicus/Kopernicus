@@ -14,6 +14,8 @@ namespace Kopernicus
         static public bool loadFinished = false;
 
         public static Mesh refGeosphere = null;
+
+        public static bool finalizeOrbits = false;
         
         // for loading only one each
         public Dictionary<string, MapSO> mapsGray;

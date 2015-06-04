@@ -395,7 +395,7 @@ namespace Kopernicus
             }
             return false;
         }
-        private void FinalizeOrbits()
+        public static void FinalizeOrbits()
         {
             foreach (CelestialBody body in FlightGlobals.fetch.bodies)
             {
@@ -437,7 +437,7 @@ namespace Kopernicus
                 }
                 catch (Exception e)
                 {
-                    Logger.Active.Log("CBUpdate for " + body.name + " failed: " + e.Message);
+                    Debug.Log("CBUpdate for " + body.name + " failed: " + e.Message);
                 }
             }
         }
@@ -544,12 +544,16 @@ namespace Kopernicus
                     Logger.Active.Log("**** Finalizing things");
 
                     rootConfig = rootConfig.GetNode(finalizeName);
+                    
                     bool finalizeOrbits = false;
-                    bool removeUnused = false;
                     if (rootConfig.HasValue("finalizeOrbits"))
                         bool.TryParse(rootConfig.GetValue("finalizeOribts"), out finalizeOrbits);
+                    Templates.finalizeOrbits = finalizeOrbits;
+
+                    bool removeUnused = false;
                     if (rootConfig.HasValue("removeUnused"))
                         bool.TryParse(rootConfig.GetValue("removeUnused"), out removeUnused);
+
                     Logger.Active.Flush();
                     // Update the bodies
                     foreach (ConfigNode node in rootConfig.GetNodes(bodyNodeName))
