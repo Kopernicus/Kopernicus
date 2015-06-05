@@ -16,6 +16,8 @@ namespace Kopernicus
         public static Mesh refGeosphere = null;
 
         public static bool finalizeOrbits = false;
+        public static double SOIMinRadiusMult = 2.0d;
+        public static double SOIMinAltitude = 40000d;
         
         // for loading only one each
         public Dictionary<string, MapSO> mapsGray;

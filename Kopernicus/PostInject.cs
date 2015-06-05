@@ -397,19 +397,19 @@ namespace Kopernicus
         }
         public static void FinalizeOrbits()
         {
-            foreach (CelestialBody body in FlightGlobals.fetch.bodies)
+            foreach (CelestialBody body in FlightGlobals.Bodies)
             {
                 if (body.orbitDriver != null)
                 {
                     if (body.referenceBody != null)
                     {
                         body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1 / 3);
-                        body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
-                        if (body.sphereOfInfluence < body.Radius * 1.5 || body.sphereOfInfluence < body.Radius + 20000.0)
-                            body.sphereOfInfluence = Math.Max(body.Radius * 1.5, body.Radius + 20000.0); // sanity check
+                        body.sphereOfInfluence = Math.Max(
+                            body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4),
+                            Math.Max(body.Radius * Templates.SOIMinRadiusMult, body.Radius + Templates.SOIMinAltitude));
 
-                        // period should be (body.Mass + body.referenceBody.Mass) at the end, not just ref body, but KSP seems to ignore that bit so I will too.
-                        body.orbit.period = 2 * Math.PI * Math.Sqrt(Math.Pow(body.orbit.semiMajorAxis, 2) / 6.674E-11 * body.orbit.semiMajorAxis / (body.referenceBody.Mass));
+                        // this is unlike stock KSP, where only the reference body's mass is used.
+                        body.orbit.period = 2 * Math.PI * Math.Sqrt(Math.Pow(body.orbit.semiMajorAxis, 2) / 6.674E-11 * body.orbit.semiMajorAxis / (body.referenceBody.Mass + body.Mass));
 
                         if (body.orbit.eccentricity <= 1.0)
                         {
@@ -547,8 +547,13 @@ namespace Kopernicus
                     
                     bool finalizeOrbits = false;
                     if (rootConfig.HasValue("finalizeOrbits"))
-                        bool.TryParse(rootConfig.GetValue("finalizeOribts"), out finalizeOrbits);
+                        bool.TryParse(rootConfig.GetValue("finalizeOrbits"), out finalizeOrbits);
                     Templates.finalizeOrbits = finalizeOrbits;
+
+                    if (rootConfig.HasValue("SOIMinRadiusMult"))
+                        double.TryParse(rootConfig.GetValue("SOIMinRadiusMult"), out Templates.SOIMinRadiusMult);
+                    if (rootConfig.HasValue("SOIMinAltitude"))
+                        double.TryParse(rootConfig.GetValue("SOIMinAltitude"), out Templates.SOIMinAltitude);
 
                     bool removeUnused = false;
                     if (rootConfig.HasValue("removeUnused"))
