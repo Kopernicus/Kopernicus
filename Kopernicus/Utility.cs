@@ -340,16 +340,6 @@ namespace Kopernicus
         // Generate the scaled space mesh using PQS (all results use scale of 1)
         public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
         {
-            #region blacklist
-            // Blacklist for mods
-            List<Type> blacklist = new List<Type>();
-            blacklist.Add(typeof(PQSMod_MapDecalTangent));
-            blacklist.Add(typeof(PQSMod_OceanFX));
-            blacklist.Add(typeof(PQSMod_FlattenArea));
-            blacklist.Add(typeof(PQSMod_FlattenOcean));
-            blacklist.Add(typeof(PQSMod_MapDecal));
-            #endregion
-
             // We need to get the body for Jool (to steal it's mesh)
             const double rScaledJool = 1000.0f;
             double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
@@ -369,11 +359,10 @@ namespace Kopernicus
                 GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
-                // Find and enable the PQS mods that modify height
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()));
+                // Find the PQS mods and enable the PQS-sphere
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true);
 
-                foreach (PQSMod mod in mods)
-                    mod.OnSetup();
+                pqsVersion.ActivateSphere();
 
                 // If we were able to find PQS mods
                 if (mods.Count() > 0)
@@ -413,6 +402,7 @@ namespace Kopernicus
                 }
 
                 // Cleanup
+                pqsVersion.DeactivateSphere();
                 UnityEngine.Object.Destroy(pqsVersionGameObject);
             }
 
