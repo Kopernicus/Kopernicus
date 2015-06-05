@@ -128,7 +128,9 @@ namespace Kopernicus
             {
                 if (body != null)
                 {
-                    bodiesToEnable[body.celestialBody.bodyName] = false;
+                    string bn = body.celestialBody.bodyName;
+                    bodiesToEnable[bn] = false;
+                    bodiesList[bn] = body.celestialBody;
                     foreach (PSystemBody child in body.children)
                         RecurseFillBodies(child);
                 }
@@ -137,6 +139,7 @@ namespace Kopernicus
             {
                 bool fail = false;
                 bodiesToEnable.Clear();
+                bodiesList.Clear();
                 try
                 {
                     if (FlightGlobals.Bodies != null)
@@ -145,7 +148,11 @@ namespace Kopernicus
                         //Debug.Log("OD: Filling body list with " + bCount + " bodies");
 
                         for (int i = 0; i < bCount; ++i)
-                            bodiesToEnable[FlightGlobals.Bodies[i].bodyName] = false;
+                        {
+                            string bn = FlightGlobals.Bodies[i].bodyName;
+                            bodiesToEnable[bn] = false;
+                            bodiesList[bn] = FlightGlobals.Bodies[i];
+                        }
                     }
                 }
                 catch(Exception e)
@@ -157,6 +164,7 @@ namespace Kopernicus
             }
 
             static Dictionary<string, bool> bodiesToEnable = new Dictionary<string, bool>();
+            static Dictionary<string, CelestialBody> bodiesList = new Dictionary<string, CelestialBody>();
             static float waitBeforeUnload = 5f;
             static bool dontUpdate = true;
 
@@ -170,8 +178,6 @@ namespace Kopernicus
                     OnDemandStorage.homeworldBody = FindHomeworld();
                     FillBodyList();
                 }
-
-                BodyUpdate();
             }
 
             public void Update()
@@ -185,10 +191,17 @@ namespace Kopernicus
                 if (dontUpdate)
                     return;
 
-                // Set all false.
+                // Set all to current PQS state.
                 foreach (string b in bodiesToEnable.Keys.ToList())
-                    bodiesToEnable[b] = false;
+                {
+                    PQS bPQS = bodiesList[b].pqsController;
+                    if ((object)bPQS != null)
+                        bodiesToEnable[b] = bPQS.isActive;
+                    else
+                        bodiesToEnable[b] = false;
+                }
 
+                // preload (or keep loaded0 if necessary
                 if (!HighLogic.LoadedSceneIsFlight)
                 {
                     bodiesToEnable[OnDemandStorage.homeworldBody] = true;
