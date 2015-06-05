@@ -20,6 +20,7 @@ namespace Kopernicus
             public static string homeworldBody = "Kerbin";
             public static string currentBody = "";
             public static bool useOnDemand = false;
+            public static bool onDemandLoadOnMissing = true;
 
             public static void AddMap(string body, ILoadOnDemand map)
             {
