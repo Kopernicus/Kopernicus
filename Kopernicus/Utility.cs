@@ -30,6 +30,9 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.IO;
 
 using UnityEngine;
 
@@ -71,7 +74,7 @@ namespace Kopernicus
          * @param source Object to copy fields from
          * @param destination Object to copy fields to
          **/
-        public static void CopyObjectFields<T>(T source, T destination)
+        public static void CopyObjectFields<T>(T source, T destination, bool log = true)
         {
             // Reflection based copy
             foreach (FieldInfo field in (typeof(T)).GetFields())
@@ -79,7 +82,11 @@ namespace Kopernicus
                 // Only copy non static fields
                 if (!field.IsStatic)
                 {
-                    Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
+                    if (log)
+                    {
+                        Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
+
+                    }
                     field.SetValue(destination, field.GetValue(source));
                 }
             }
@@ -177,6 +184,25 @@ namespace Kopernicus
             return null;
         }
 
+        // Copy of above, but finds homeworld
+        public static PSystemBody FindHomeBody(PSystemBody body)
+        {
+            // Is this the body wer are looking for?
+            if (body.celestialBody.isHomeWorld)
+                return body;
+
+            // Otherwise search children
+            foreach (PSystemBody child in body.children)
+            {
+                PSystemBody b = FindHomeBody(child);
+                if (b != null)
+                    return b;
+            }
+
+            // Return null because we didn't find shit
+            return null;
+        }
+
         /** 
          * Get the reference Geosphere of KSP (Jool's scaled space mesh)
          * 
@@ -184,11 +210,7 @@ namespace Kopernicus
          */
         public static Mesh ReferenceGeosphere()
         {
-            // We need to get the body for Jool (to steal it's mesh)
-            PSystemBody Jool = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-
-            // Return it's mesh
-            return Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+            return Templates.refGeosphere;
         }
 
         // Print out a tree containing all the objects in the game
@@ -250,6 +272,164 @@ namespace Kopernicus
             {
                 PSystemBodyWalk(c, prefix + "    ");
             }
+        }
+
+        // slightly different:
+        static public void DumpUpwards(Transform t, string prefix, bool useKLog = true)
+        {
+            string str = prefix + "Transform " + t.name;
+            if (useKLog)
+                Logger.Default.Log(str);
+            else
+                Debug.Log(str);
+
+            foreach (Component c in t.GetComponents<Component>())
+            {
+                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
+                if (useKLog)
+                    Logger.Default.Log(str);
+                else
+                    Debug.Log(str);
+            }
+            if (t.parent != null)
+                DumpUpwards(t.parent, prefix + "  ");
+
+        }
+        static public void DumpDownwards(Transform t, string prefix, bool useKLog = true)
+        {
+            string str = prefix + "Transform " + t.name;
+            if (useKLog)
+                Logger.Default.Log(str);
+            else
+                Debug.Log(str);
+
+            foreach (Component c in t.GetComponents<Component>())
+            {
+                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
+                if (useKLog)
+                    Logger.Default.Log(str);
+                else
+                    Debug.Log(str);
+            }
+            if (t.childCount > 0)
+                for (int i = 0; i < t.childCount; ++i)
+                    DumpDownwards(t.GetChild(i), prefix + "  ");
+
+        }
+
+        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, bool exportBin, bool useSpherical)
+        {
+            const double rJool = 6000000.0;
+            const float rScaled = 1000.0f;
+
+            // Compute scale between Jool and this body
+            float scale = (float)(body.Radius / rJool);
+            scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
+
+            Mesh scaledMesh;
+            // Attempt to load a cached version of the scale space
+            string CacheDirectory = KSPUtil.ApplicationRootPath + path;
+            string CacheFile = CacheDirectory + "/" + body.name + ".bin";
+            Directory.CreateDirectory(CacheDirectory);
+            if (File.Exists(CacheFile) && exportBin)
+            {
+                Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
+                scaledMesh = Utility.DeserializeMesh(CacheFile);
+                Utility.RecalculateTangents(scaledMesh);
+                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+            }
+
+            // Otherwise we have to generate the mesh
+            else
+            {
+                Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
+                scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
+                Utility.RecalculateTangents(scaledMesh);
+                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+                if (exportBin)
+                    Utility.SerializeMesh(scaledMesh, CacheFile);
+            }
+
+            // Apply mesh to the body
+            SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
+            if (collider != null) collider.radius = rScaled;
+            if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
+            {
+                scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(pqs.radius / rJool);
+            }
+        }
+
+        // Generate the scaled space mesh using PQS (all results use scale of 1)
+        public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
+        {
+            // We need to get the body for Jool (to steal it's mesh)
+            const double rScaledJool = 1000.0f;
+            double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
+
+            // Generate a duplicate of the Jool mesh
+            Mesh mesh = Utility.DuplicateMesh(Utility.ReferenceGeosphere());
+
+            // If this body has a PQS, we can create a more detailed object
+            if (pqs != null)
+            {
+                // first we enable all maps
+                OnDemand.OnDemandStorage.EnableBody(body.bodyName);
+
+                // In order to generate the scaled space we have to enable the mods.  Since this is
+                // a prefab they don't get disabled as kill game performance.  To resolve this we 
+                // clone the PQS, use it, and then delete it when done
+                GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
+                PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
+
+                // Find the PQS mods and enable the PQS-sphere
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() != typeof(PQSMod_MapDecal));
+
+                pqsVersion.ActivateSphere();
+
+                // If we were able to find PQS mods
+                if (mods.Count() > 0)
+                {
+                    // Generate the PQS modifications
+                    Vector3[] vertices = mesh.vertices;
+                    for (int i = 0; i < mesh.vertexCount; i++)
+                    {
+                        // Get the UV coordinate of this vertex
+                        Vector2 uv = mesh.uv[i];
+
+                        // Since this is a geosphere, normalizing the vertex gives the direction from center center
+                        Vector3 direction = vertices[i];
+                        direction.Normalize();
+
+                        // Build the vertex data object for the PQS mods
+                        PQS.VertexBuildData vertex = new PQS.VertexBuildData();
+                        vertex.directionFromCenter = direction;
+                        vertex.vertHeight = body.Radius;
+                        vertex.u = uv.x;
+                        vertex.v = uv.y;
+
+                        // Build from the PQS
+                        foreach (PQSMod mod in mods)
+                            mod.OnVertexBuildHeight(vertex);
+
+                        // Check for sea level
+                        if (body.ocean && vertex.vertHeight < body.Radius)
+                            vertex.vertHeight = body.Radius;
+
+                        // Adjust the displacement
+                        vertices[i] = direction * (float)(vertex.vertHeight * rMetersToScaledUnits);
+                    }
+                    mesh.vertices = vertices;
+                    mesh.RecalculateNormals();
+                    mesh.RecalculateBounds();
+                }
+
+                // Cleanup
+                pqsVersion.DeactivateSphere();
+                UnityEngine.Object.Destroy(pqsVersionGameObject);
+            }
+
+            // Return the generated scaled space mesh
+            return mesh;
         }
 
         public static void CopyMesh(Mesh source, Mesh dest)
@@ -501,6 +681,364 @@ namespace Kopernicus
             return m;
         }
 
+        // Credit goes to Kragrathea.
+        public static Texture2D BumpToNormalMap(Texture2D source, float strength)
+        {
+            strength = Mathf.Clamp(strength, 0.0F, 10.0F);
+            var result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
+            for (int by = 0; by < result.height; by++)
+            {
+                for (var bx = 0; bx < result.width; bx++)
+                {
+                    var xLeft = source.GetPixel(bx - 1, by).grayscale * strength;
+                    var xRight = source.GetPixel(bx + 1, by).grayscale * strength;
+                    var yUp = source.GetPixel(bx, by - 1).grayscale * strength;
+                    var yDown = source.GetPixel(bx, by + 1).grayscale * strength;
+                    var xDelta = ((xLeft - xRight) + 1) * 0.5f;
+                    var yDelta = ((yUp - yDown) + 1) * 0.5f;
+                    result.SetPixel(bx, by, new Color(yDelta, yDelta, yDelta, xDelta));
+                }
+            }
+            result.Apply();
+            return result;
+        }
+
+        // Convert latitude-longitude-altitude with body radius to a vector.
+        public static Vector3 LLAtoECEF(double lat, double lon, double alt, double radius)
+        {
+            const double degreesToRadians = Math.PI / 180.0;
+            lat = (lat - 90) * degreesToRadians;
+            lon *= degreesToRadians;
+            double x, y, z;
+            double n = radius; // for now, it's still a sphere, so just the radius
+            x = (n + alt) * -1.0 * Math.Sin(lat) * Math.Cos(lon);
+            y = (n + alt) * Math.Cos(lat); // for now, it's still a sphere, so no eccentricity
+            z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
+            return new Vector3((float)x, (float)y, (float)z);
+        }
+
+        public static bool TextureExists(string path)
+        {
+            path = KSPUtil.ApplicationRootPath + "GameData/" + path;
+            return System.IO.File.Exists(path);
+        }
+
+        public static Texture2D LoadTexture(string path, bool compress, bool upload, bool unreadable)
+        {
+            Texture2D map = null;
+            path = KSPUtil.ApplicationRootPath + "GameData/" + path;
+            if (System.IO.File.Exists(path))
+            {
+                bool uncaught = true;
+                try
+                {
+                    if (path.ToLower().EndsWith(".dds"))
+                    {
+                        // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
+                        // Also borrowed the extra bits from Sarbian.
+                        byte[] buffer = System.IO.File.ReadAllBytes(path);
+                        System.IO.BinaryReader binaryReader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
+                        uint num = binaryReader.ReadUInt32();
+                        if (num == DDSHeaders.DDSValues.uintMagic)
+                        {
+
+                            DDSHeaders.DDSHeader dDSHeader = new DDSHeaders.DDSHeader(binaryReader);
+
+                            if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
+                            {
+                                new DDSHeaders.DDSHeaderDX10(binaryReader);
+                            }
+
+                            bool alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
+                            bool fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
+                            bool rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
+                            bool alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
+                            bool luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
+                            bool rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
+                            //bool bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
+                            bool rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
+                            bool argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
+                            bool rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
+
+                            bool mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
+                            bool isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
+                            if (fourcc)
+                            {
+                                if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
+                                {
+                                    Debug.Log("[Kopernicus]: DXT2 not supported" + path);
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT4)
+                                {
+                                    Debug.Log("[Kopernicus]: DXT4 not supported: " + path);
+                                }
+                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
+                                {
+                                    Debug.Log("[Kopernicus]: DX10 dds not supported: " + path);
+                                }
+                                else
+                                    fourcc = false;
+                            }
+                            if(!fourcc)
+                            {
+                                TextureFormat textureFormat = TextureFormat.ARGB32;
+                                bool ok = true;
+                                if (rgb && (rgb888 /*|| bgr888*/))
+                                {
+                                    // RGB or RGBA format
+                                    textureFormat = alphapixel
+                                    ? TextureFormat.RGBA32
+                                    : TextureFormat.RGB24;
+                                }
+                                else if (rgb && rgb565)
+                                {
+                                    // Nvidia texconv B5G6R5_UNORM
+                                    textureFormat = TextureFormat.RGB565;
+                                }
+                                else if (rgb && alphapixel && argb4444)
+                                {
+                                    // Nvidia texconv B4G4R4A4_UNORM
+                                    textureFormat = TextureFormat.ARGB4444;
+                                }
+                                else if (rgb && alphapixel && rbga4444)
+                                {
+                                    textureFormat = TextureFormat.RGBA4444;
+                                }
+                                else if (!rgb && alpha != luminance)
+                                {
+                                    // A8 format or Luminance 8
+                                    textureFormat = TextureFormat.Alpha8;
+                                }
+                                else
+                                {
+                                    ok = false;
+                                    Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
+                                }
+                                if (ok)
+                                {
+                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                }
+
+                            }
+                            if (map != null)
+                                if (upload)
+                                    map.Apply(false, unreadable);
+                        }
+                        else
+                            Debug.Log("[Kopernicus]: Bad DDS header.");
+                    }
+                    else
+                    {
+                        map = new Texture2D(2, 2);
+                        map.LoadImage(System.IO.File.ReadAllBytes(path));
+                        if (compress)
+                            map.Compress(true);
+                        if (upload)
+                            map.Apply(false, unreadable);
+                    }
+                }
+                catch (Exception e)
+                {
+                    uncaught = false;
+                    Debug.Log("[Kopernicus]: failed to load " + path + " with exception " + e.Message);
+                }
+                if (map == null && uncaught)
+                {
+                    Debug.Log("[Kopernicus]: failed to load " + path);
+                }
+            }
+            else
+                Debug.Log("[Kopernicus]: texture does not exist! " + path);
+
+            return map;
+        }
+
+        public static MapSO FindMapSO(string url)
+        {
+            MapSO retVal = null;
+            bool modFound = false;
+            string trim = url.Replace("BUILTIN/", "");
+            string mBody = Regex.Replace(trim, @"/.*", "");
+            trim = Regex.Replace(trim, mBody + "/", "");
+            string mTypeName = Regex.Replace(trim, @"/.*", "");
+            string mName = Regex.Replace(trim, mTypeName + "/", "");
+            PSystemBody body = FindBody(PSystemManager.Instance.systemPrefab.rootBody, mBody);
+            if (body != null && body.pqsVersion != null)
+            {
+                Type mType = null;
+                try
+                {
+                    mType = Type.GetType(mTypeName);
+                }
+                catch (Exception e)
+                {
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but type not found. VertexHeight type for reference = " + typeof(PQSMod_VertexHeightMap).FullName + ". Exception: " + e);
+                }
+                if (mType != null)
+                {
+                    PQSMod[] mods = body.pqsVersion.GetComponentsInChildren(mType, true) as PQSMod[];
+                    foreach (PQSMod m in mods)
+                    {
+                        if(m.name != mName)
+                            continue;
+                        modFound = true;
+                        foreach (FieldInfo fi in m.GetType().GetFields())
+                        {
+                            if (fi.GetType().Equals(typeof(MapSO)))
+                            {
+                                retVal = fi.GetValue(m) as MapSO;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+            else
+                Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but body not found.");
+
+            if (retVal == null)
+            {
+                if (modFound)
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but mods of correct name and type lack MapSO.");
+                else
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but could not find PQSMod of that type of the given name");
+            }
+            return retVal;
+        }
+
+        /// <summary>
+        /// Will remove all mods of given types (or all, if types null)
+        /// </summary>
+        /// <param name="types">If null, will remove all mods except blacklisted mods</param>
+        /// <param name="p">PQS to remove from</param>
+        /// <param name="blacklist">list of mod types to not remove (optional)</param>
+        public static void RemoveModsOfType(List<Type> types, PQS p, List<Type> blacklist = null)
+        {
+            Logger.Active.Log("Removing mods from pqs " + p.name);
+            List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
+            bool addTypes = (types == null);
+            if(addTypes)
+                types = new List<Type>();
+            if (blacklist == null)
+            {
+                Logger.Active.Log("Creating blacklist");
+                blacklist = new List<Type>();
+                if(!types.Contains(typeof(PQSMod_CelestialBodyTransform)))
+                    blacklist.Add(typeof(PQSMod_CelestialBodyTransform));
+                if(!types.Contains(typeof(PQSMod_MaterialSetDirection)))
+                    blacklist.Add(typeof(PQSMod_MaterialSetDirection));
+                if(!types.Contains(typeof(PQSMod_UVPlanetRelativePosition)))
+                    blacklist.Add(typeof(PQSMod_UVPlanetRelativePosition));
+                if(!types.Contains(typeof(PQSMod_QuadMeshColliders)))
+                    blacklist.Add(typeof(PQSMod_QuadMeshColliders));
+                Logger.Active.Log("Blacklist count = " + blacklist.Count);
+            }
+
+            if (addTypes)
+            {
+                Logger.Active.Log("Adding all found PQSMods in pqs " + p.name);
+                foreach(PQSMod m in cpMods)
+                {
+                    Type mType = m.GetType();
+                    if (!types.Contains(mType) && !blacklist.Contains(mType))
+                    {
+                        Logger.Active.Log("Adding to removelist: " + mType);
+                        types.Add(mType);
+                    }
+                }
+            }
+            List<GameObject> toCheck = new List<GameObject>();
+            foreach (Type mType in types)
+            {
+                List<PQSMod> mods = cpMods.Where(m => m.GetType() == mType).ToList();
+                foreach (PQSMod delMod in mods)
+                {
+                    if (delMod != null)
+                    {
+                        Logger.Active.Log("Removed mod " + mType.ToString());
+                        if (!toCheck.Contains(delMod.gameObject))
+                            toCheck.Add(delMod.gameObject);
+                        delMod.sphere = null;
+                        cpMods.Remove(delMod);
+                        PQSMod.DestroyImmediate(delMod);
+                    }
+                }
+            }
+            RemoveEmptyGO(toCheck);
+        }
+
+        static public void RemoveEmptyGO(List<GameObject> toCheck)
+        {
+            int oCount = toCheck.Count;
+            int nCount = oCount;
+            List<GameObject> toDestroy = new List<GameObject>();
+            do
+            {
+                oCount = nCount;
+                foreach (GameObject go in toCheck)
+                {
+                    if (go.transform.childCount == 0)
+                    {
+                        Component[] comps = go.GetComponents<Component>();
+                        if (comps.Length == 0 || (comps.Length == 1 && comps[0].GetType() == typeof(Transform)))
+                            toDestroy.Add(go);
+                    }
+                }
+                foreach (GameObject go in toDestroy)
+                {
+                    toCheck.Remove(go);
+                    GameObject.DestroyImmediate(go);
+                }
+                toDestroy.Clear();
+                nCount = toCheck.Count;
+            } while (nCount != oCount && nCount > 0);
+        }
+
+        static public void CBTCheck(PSystemBody body)
+        {
+            if (body.pqsVersion != null)
+            {
+                if (body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>().Length > 0)
+                    Logger.Default.Log("Body " + body.name + " has CBT.");
+                else
+                {
+                    PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren(typeof(PQSMod_CelestialBodyTransform), true).FirstOrDefault() as PQSMod_CelestialBodyTransform;
+                    if (cbt == null)
+                    {
+                        Logger.Default.Log("Body " + body.name + " *** LACKS CBT ***");
+                        DumpDownwards(body.pqsVersion.transform, "*");
+                    }
+                    else
+                    {
+                        cbt.enabled = true;
+                        cbt.modEnabled = true;
+                        cbt.sphere = body.pqsVersion;
+                        Logger.Default.Log("Body " + body.name + " lacks active CBT, activated.");
+                    }
+                }
+            }
+            if (body.children != null)
+                foreach (PSystemBody b in body.children)
+                    CBTCheck(b);
+        }
+
         /** 
          * Enumerable class to iterate over parents.  Defined to allow us to use Linq
          * and predicates. 
@@ -655,9 +1193,7 @@ namespace Kopernicus
 
         public static void Log(object s)
         {
-#if DEBUG
             Logger.Active.Log(s);
-#endif
         }
     }
 }

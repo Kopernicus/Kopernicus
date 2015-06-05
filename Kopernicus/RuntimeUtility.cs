@@ -31,6 +31,8 @@ using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
+using System.IO;
+using Kopernicus.Configuration;
 
 namespace Kopernicus
 {
@@ -47,6 +49,11 @@ namespace Kopernicus
 		 * Shared instance of the surface normal renderer material.  Use the property accessor
 		 **/
 		private Material sharedSurfaceNormalRendererMaterial = null;
+
+        // GUI-stuff
+        bool window = false;
+        string bodyName = "";
+        int mapWidth = 2048;
 		
 		/**
 		 * Purge the surface normal renderer list
@@ -121,90 +128,142 @@ namespace Kopernicus
 		/**
 		 * If Mod-P are pressed, dump the PQS data of the current live body
 		 **/
-		public void Update()
-		{
-			bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
+        public void Update()
+        {
+            bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
+
+            if (Input.GetKeyDown(KeyCode.Space) && isModDown)
+            {
+                Logger.Default.Log("Timescale = " + Planetarium.fetch.timeScale);
+            }
+
+            // Print out the PQS state
+            if (Input.GetKeyDown(KeyCode.P) && isModDown && !Input.GetKey(KeyCode.E))
+            {
+                // Log the state of the PQS
+                Utility.DumpObjectFields(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
+
+                // Dump the child PQSs
+                foreach (PQS p in FlightGlobals.currentMainBody.pqsController.ChildSpheres)
+                {
+                    // Dump the child PQS info
+                    Utility.DumpObjectFields(p, " " + p.ToString() + " ");
+
+                    // Dump components of this child
+                    foreach (PQSMod m in p.GetComponentsInChildren<PQSMod>())
+                    {
+                        Utility.DumpObjectFields(m, " " + m.ToString() + " ");
+                    }
+
+                    // Print out information on all of the quads in the child
+                    foreach (PQ q in p.GetComponentsInChildren<PQ>())
+                    {
+                        // Log information about the quad
+                        Logger.Default.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name + ") @ " + q.transform.position);
+                    }
+                }
+
+                // Flush logger
+                Logger.Default.Flush();
+            }
+
+            // If we want to debug the locations of PQ nodes (Mod-;)
+            if (Input.GetKeyDown(KeyCode.Semicolon) && isModDown)
+            {
+                // New list for the debugger 
+                List<GameObject> renderers = new List<GameObject>();
+
+                // Draw renderers for all PQ nodes in play on this body
+                foreach (PQ q in FlightGlobals.currentMainBody.pqsController.GetComponentsInChildren<PQ>())
+                {
+                    // Add the line renderer to this quad
+                    GameObject r = surfaceNormalRenderer;
+                    r.transform.parent = q.transform;
+
+                    // Initialize the local transform to a zero transform
+                    r.transform.localPosition = Vector3.zero;
+                    r.transform.localScale = Vector3.one;
+                    r.transform.localEulerAngles = Vector3.zero;
+
+                    // Add to the new renderers list
+                    renderers.Add(r);
+                }
+
+                // Purge the old renderers list
+                PurgeQuadSurfaceNormalRenderers();
+                quadSurfaceNormalRenderers = renderers;
+
+                // Log
+                Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + renderers.Count + " PQ surface normal renderer(s) created");
+                Logger.Default.Flush();
+            }
+
+            // If we want to clean up (Mod-/)
+            if (Input.GetKeyDown(KeyCode.Slash) && isModDown)
+            {
+                // Disable all of the renderers in the list
+                foreach (GameObject r in quadSurfaceNormalRenderers)
+                {
+                    r.transform.parent = null;
+                    r.SetActive(false);
+                }
+
+                // Log
+                Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + quadSurfaceNormalRenderers.Count + " PQ surface normal renderer(s) disabled");
+                Logger.Default.Flush();
+            }
+
+            if (isModDown && Input.GetKey(KeyCode.E) && Input.GetKeyDown(KeyCode.P))
+            {
+                window = !window;
+            }
+        }
+
+        // Draw our export GUI
+        public void OnGUI()
+        {
+            GUI.skin = HighLogic.Skin;
+            if (window)
+                GUI.Window(UnityEngine.Random.seed, new Rect(30, 30, 200, 140), WindowFunction, "Export Planet Maps");
+        }
+
+        public void WindowFunction(int level)
+        {
+            bodyName = GUI.TextField(new Rect(20, 30, 160, 20), bodyName);
+            mapWidth = int.Parse(GUI.TextField(new Rect(20, 60, 160, 20), mapWidth.ToString()));
+
+            if (GUI.Button(new Rect(20, 90, 160, 30), "Export Textures"))
+            {
+                Texture2D[] textures;
+
+                // Get the PQS-GOB of the Body
+                GameObject localSpace = LocalSpace.fetch.transform.FindChild(bodyName).gameObject;
+                PQS pqs = localSpace.GetComponentsInChildren<PQS>(true)[0];
+
+                // Create the textures
+                textures = pqs.CreateMaps(mapWidth, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor);
+
+                // Bump the heightmap to a normal map
+                Texture2D Normal = Utility.BumpToNormalMap(textures[1], 9);
+
+                // Set our Dump-path
+                string path = Body.ScaledSpaceCacheDirectory + "/PluginData/";
+                System.IO.Directory.CreateDirectory(path);
+
+                // Write Colormap
+                byte[] ExportMap = textures[0].EncodeToPNG();
+                System.IO.File.WriteAllBytes(path + bodyName + "_Color.png", ExportMap);
+
+                // Write Heightmap
+                ExportMap = textures[1].EncodeToPNG();
+                System.IO.File.WriteAllBytes(path + bodyName + "_Height.png", ExportMap);
+
+                // Write Normalmap
+                ExportMap = Normal.EncodeToPNG();
+                System.IO.File.WriteAllBytes(path + bodyName + "_Normal.png", ExportMap);
+            }
             
-			if (Input.GetKeyDown (KeyCode.Space) && isModDown) {
-				Logger.Default.Log ("Timescale = " + Planetarium.fetch.timeScale);
-			}
-
-			// Print out the PQS state
-			if (Input.GetKeyDown(KeyCode.P) && isModDown)
-			{
-				// Log the state of the PQS
-				Utility.DumpObjectFields(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
-
-				// Dump the child PQSs
-				foreach(PQS p in FlightGlobals.currentMainBody.pqsController.ChildSpheres)
-				{
-					// Dump the child PQS info
-					Utility.DumpObjectFields(p, " " + p.ToString() + " ");
-					
-					// Dump components of this child
-					foreach(PQSMod m in p.GetComponentsInChildren<PQSMod>())
-					{
-						Utility.DumpObjectFields(m, " " + m.ToString() + " ");
-					}
-					
-					// Print out information on all of the quads in the child
-					foreach(PQ q in p.GetComponentsInChildren<PQ>())
-					{
-						// Log information about the quad
-						Logger.Default.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name + ") @ " + q.transform.position);
-					}
-				}
-
-				// Flush logger
-				Logger.Default.Flush ();
-			}
-
-			// If we want to debug the locations of PQ nodes (Mod-;)
-			if (Input.GetKeyDown(KeyCode.Semicolon) && isModDown)
-			{
-				// New list for the debugger 
-				List<GameObject> renderers = new List<GameObject>();
-
-				// Draw renderers for all PQ nodes in play on this body
-				foreach(PQ q in FlightGlobals.currentMainBody.pqsController.GetComponentsInChildren<PQ>())
-				{
-					// Add the line renderer to this quad
-					GameObject r = surfaceNormalRenderer;
-					r.transform.parent = q.transform;
-					
-					// Initialize the local transform to a zero transform
-					r.transform.localPosition    = Vector3.zero;
-					r.transform.localScale       = Vector3.one;
-					r.transform.localEulerAngles = Vector3.zero; 
-					
-					// Add to the new renderers list
-					renderers.Add(r);
-				}
-				
-				// Purge the old renderers list
-				PurgeQuadSurfaceNormalRenderers();
-				quadSurfaceNormalRenderers = renderers;
-
-				// Log
-				Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + renderers.Count + " PQ surface normal renderer(s) created");
-				Logger.Default.Flush ();
-			}
-
-			// If we want to clean up (Mod-/)
-			if (Input.GetKeyDown(KeyCode.Slash) && isModDown)
-			{
-				// Disable all of the renderers in the list
-				foreach(GameObject r in quadSurfaceNormalRenderers)
-				{
-					r.transform.parent = null;
-					r.SetActive(false);
-				}
-				
-				// Log
-				Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + quadSurfaceNormalRenderers.Count + " PQ surface normal renderer(s) disabled");
-				Logger.Default.Flush ();
-			}
-		}
+        }
 		
 		/**
 		 * Awake() - flag this class as don't destroy on load
