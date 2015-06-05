@@ -275,20 +275,42 @@ namespace Kopernicus
         }
 
         // slightly different:
-        static public void DumpUpwards(Transform t, string prefix)
+        static public void DumpUpwards(Transform t, string prefix, bool useKLog = true)
         {
-            Logger.Default.Log(prefix + "Transform " + t.name);
+            string str = prefix + "Transform " + t.name;
+            if (useKLog)
+                Logger.Default.Log(str);
+            else
+                Debug.Log(str);
+
             foreach (Component c in t.GetComponents<Component>())
-                Logger.Default.Log(prefix + " has component " + c.name + " of type " + c.GetType().FullName);
+            {
+                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
+                if (useKLog)
+                    Logger.Default.Log(str);
+                else
+                    Debug.Log(str);
+            }
             if (t.parent != null)
                 DumpUpwards(t.parent, prefix + "  ");
 
         }
-        static public void DumpDownwards(Transform t, string prefix)
+        static public void DumpDownwards(Transform t, string prefix, bool useKLog = true)
         {
-            Logger.Default.Log(prefix + "Transform " + t.name);
+            string str = prefix + "Transform " + t.name;
+            if (useKLog)
+                Logger.Default.Log(str);
+            else
+                Debug.Log(str);
+
             foreach (Component c in t.GetComponents<Component>())
-                Logger.Default.Log(prefix + " has component " + c.name + " of type " + c.GetType().FullName);
+            {
+                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
+                if (useKLog)
+                    Logger.Default.Log(str);
+                else
+                    Debug.Log(str);
+            }
             if (t.childCount > 0)
                 for (int i = 0; i < t.childCount; ++i)
                     DumpDownwards(t.GetChild(i), prefix + "  ");

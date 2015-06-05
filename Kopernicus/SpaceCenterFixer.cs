@@ -111,6 +111,12 @@ namespace Kopernicus
                         {
                             FlightCamera.fetch.transform.NestToParent(camTransform);
                         }
+                        if (LocalSpace.fetch != null && LocalSpace.fetch.transform != null)
+                        {
+                            LocalSpace.fetch.transform.position = camTransform.position;
+                            Debug.Log("LS!");
+                            Utility.DumpUpwards(LocalSpace.fetch.transform, "+", false);
+                        }
                     }
                     else
                         Debug.Log("SSC2 cam transform null!");
