@@ -114,8 +114,6 @@ namespace Kopernicus
                         if (LocalSpace.fetch != null && LocalSpace.fetch.transform != null)
                         {
                             LocalSpace.fetch.transform.position = camTransform.position;
-                            Debug.Log("LS!");
-                            Utility.DumpUpwards(LocalSpace.fetch.transform, "+", false);
                         }
                     }
                     else
