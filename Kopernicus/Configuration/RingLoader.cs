@@ -257,7 +257,7 @@ namespace Kopernicus
 
             public Ring()
             {
-                steps = 120;
+                steps = 128;
             }
         }
 
