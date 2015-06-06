@@ -219,8 +219,7 @@ namespace Kopernicus
                 RingRender.material.mainTexture = ring.texture;
                 RingRender.material.color = ring.color;
 
-                ScaledPlanet.renderer.material.renderQueue = 1;
-                RingRender.material.renderQueue = 2;
+                RingRender.material.renderQueue = ScaledPlanet.renderer.material.renderQueue + 10;
 
                 RingObject.AddComponent<ReScaler>();
 

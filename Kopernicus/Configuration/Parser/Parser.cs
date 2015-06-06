@@ -221,6 +221,19 @@ namespace Kopernicus
 							{
 								// Generate the type from the name
 								Type elementType = Type.GetType (target.typePrefix + subnode.name);
+                                if (elementType == null)
+                                {
+                                    foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)
+                                    {
+                                        foreach (Type type in assembly.assembly.GetExportedTypes())
+                                        {
+                                            if (type.ToString() == target.typePrefix + subnode.name)
+                                            {
+                                                elementType = type;
+                                            }
+                                        }
+                                    }
+                                }
 
 								// Add the object to the collection
 								collection.Add (CreateObjectFromConfigNode (elementType, subnode));
@@ -285,11 +298,9 @@ namespace Kopernicus
 					}
 				}
 
-				#if DEBUG
 				Logger.Active.Log("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
-				#endif
 
-				// If there was no data found for this node
+                // If there was no data found for this node
 				if (!isNode && !isValue) 
 				{
 					if (!target.optional && !(target.allowMerge && targetValue != null)) 

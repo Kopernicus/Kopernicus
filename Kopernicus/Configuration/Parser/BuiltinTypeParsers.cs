@@ -125,7 +125,19 @@ namespace Kopernicus
 			public Color value;
 			public void SetFromString(string s)
 			{
-				value = ConfigNode.ParseColor(s);
+                if (s.StartsWith("RGBA("))
+                {
+                    s = s.Replace("RGBA(", string.Empty);
+                    s = s.Replace(")", string.Empty);
+                    s = s.Replace(" ", string.Empty);
+                    string[] colorArray = s.Split(',');
+
+                    value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, float.Parse(colorArray[3]) / 255);
+                }
+                else
+                {
+                    value = ConfigNode.ParseColor(s);
+                }
 			}
 			public ColorParser()
 			{
@@ -318,20 +330,69 @@ namespace Kopernicus
 			public T value;
 			public void SetFromString (string s)
 			{
-				// Attempt to load a texture specified by the path
-				string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
-				if (File.Exists (path)) 
-				{
-					// Load the texture
-					Texture2D map = new Texture2D (2, 2);
-					if (map.LoadImage (File.ReadAllBytes (path))) 
-					{
-						// Create a new map script object
-						value = ScriptableObject.CreateInstance<T> ();
-						value.CreateMap (MapSO.MapDepth.Greyscale, map);
-						UnityEngine.Object.DestroyImmediate (map);
-					}
-				}
+                if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
+                {
+                    value = (T)Templates.instance.mapsGray[s];
+
+                    if (OnDemand.OnDemandStorage.useOnDemand)
+                    {
+                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
+                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
+                    }
+                }
+                else
+                {
+                    T obj = null;
+                    if (s.StartsWith("BUILTIN/"))
+                    {
+                        obj = Utility.FindMapSO(s) as T;
+                    }
+                    if (obj != null)
+                    {
+                        value = obj; // can't make built-in maps On-Demand
+                    }
+                    else
+                    {
+                        // are we on-demand? Don't load now.
+                        if (OnDemand.OnDemandStorage.useOnDemand)
+                        {
+                            if (Utility.TextureExists(s))
+                            {
+                                if (typeof(T) == typeof(CBAttributeMapSO))
+                                {
+                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    valCB.SetPath(s);
+                                    valCB.Depth = MapSO.MapDepth.Greyscale;
+                                    valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    value = valCB as T;
+                                }
+                                else
+                                {
+                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    valMap.SetPath(s);
+                                    valMap.Depth = MapSO.MapDepth.Greyscale;
+                                    valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    value = valMap as T;
+                                }
+                                Templates.instance.mapsGray[s] = value;
+                            }
+                        }
+                        else // Load the texture
+                        {
+                            Texture2D map = Utility.LoadTexture(s, false, false, false);
+                            if (map != null)
+                            {
+                                // Create a new map script object
+                                value = ScriptableObject.CreateInstance<T>();
+                                value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                                UnityEngine.Object.DestroyImmediate(map);
+                                Templates.instance.mapsGray[s] = value;
+                            }
+                        }
+                    }
+                }
 			}
 			public MapSOParser_GreyScale()
 			{
@@ -347,23 +408,73 @@ namespace Kopernicus
 		public class MapSOParser_RGB<T> : IParsable where T : MapSO
 		{
 			public T value;
-			public void SetFromString (string s)
-			{
-				// Attempt to load a texture specified by the path
-				string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
-				if (File.Exists (path)) 
-				{
-					// Load the texture
-					Texture2D map = new Texture2D (2, 2);
-					if (map.LoadImage (File.ReadAllBytes (path))) 
-					{
-						// Create a new map script object
-						value = ScriptableObject.CreateInstance<T> ();
-						value.CreateMap (MapSO.MapDepth.RGB, map);
-						UnityEngine.Object.DestroyImmediate (map);
-					}
-				}
-			}
+            public void SetFromString(string s)
+            {
+                if (Templates.instance.mapsRGB != null && Templates.instance.mapsRGB.ContainsKey(s))
+                {
+                    value = (T)Templates.instance.mapsRGB[s];
+
+                    if (OnDemand.OnDemandStorage.useOnDemand)
+                    {
+                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
+                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
+                    }
+                }
+                else
+                {
+                    T obj = null;
+                    if (s.StartsWith("BUILTIN/"))
+                    {
+                        obj = Utility.FindMapSO(s) as T;
+                    }
+                    if (obj != null)
+                    {
+                        value = obj; // can't make built-in maps On-Demand
+                    }
+                    else
+                    {
+                        // check if OnDemand.
+                        if (OnDemand.OnDemandStorage.useOnDemand)
+                        {
+                            if (Utility.TextureExists(s))
+                            {
+                                if (typeof(T) == typeof(CBAttributeMapSO))
+                                {
+                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    valCB.SetPath(s);
+                                    valCB.Depth = MapSO.MapDepth.RGB;
+                                    valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    value = valCB as T;
+                                }
+                                else
+                                {
+                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    valMap.SetPath(s);
+                                    valMap.Depth = MapSO.MapDepth.RGB;
+                                    valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    value = valMap as T;
+                                }
+                                Templates.instance.mapsRGB[s] = value;
+                            }
+                        }
+                        else
+                        {
+                            // Load the texture
+                            Texture2D map = Utility.LoadTexture(s, false, false, false);
+                            if (map != null)
+                            {
+                                // Create a new map script object
+                                value = ScriptableObject.CreateInstance<T>();
+                                value.CreateMap(MapSO.MapDepth.RGB, map);
+                                UnityEngine.Object.DestroyImmediate(map);
+                                Templates.instance.mapsRGB[s] = value;
+                            }
+                        }
+                    }
+                }
+            }
 			public MapSOParser_RGB()
 			{
 				this.value = null;
@@ -416,12 +527,11 @@ namespace Kopernicus
 				// List of keyframes
 				SortedList<int, Keyframe> keyframes = new SortedList<int, Keyframe>();
 
+                int key = 0;
+
 				// Iterate through all the values in the node (all are keyframes)
 				foreach(ConfigNode.Value frame in node.values)
 				{
-					// Convert the "name" (left side) into an int for sorting
-					int key = int.Parse(frame.name);
-
 					// Get an array of the frame data
 					List<float> value = new List<float> ();
 					foreach (string e in frame.value.Split(' ')) 
@@ -438,6 +548,7 @@ namespace Kopernicus
 
 					// Add the keyframe to the list
 					keyframes.Add(key, keyframe);
+                    key++;
 				}
 
 				// Create the final animation curve
@@ -449,8 +560,14 @@ namespace Kopernicus
 			// We don't use this
 			void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
+			// Default constructor
+			public AnimationCurveParser ()
+			{
+				this.curve = null;
+			}
+
 			// Construct this fine object
-			public AnimationCurveParser (AnimationCurve curve = null)
+			public AnimationCurveParser (AnimationCurve curve)
 			{
 				this.curve = curve;
 			}
@@ -515,8 +632,14 @@ namespace Kopernicus
 			void IParserEventSubscriber.Apply(ConfigNode node) { }
 			void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
+			// Default constructor
+			public PhysicsMaterialParser ()
+			{
+				this.material = null;
+			}
+
 			// Initializing constructor
-			public PhysicsMaterialParser (PhysicMaterial material = null)
+			public PhysicsMaterialParser (PhysicMaterial material)
 			{
 				this.material = material;
 			}

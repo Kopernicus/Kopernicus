@@ -16,3 +16,5 @@ Kopernicus/bin/Release/UnityEngine.dll
 Kopernicus/obj/*
 *.suo
 Kopernicus.userprefs
+*.bin
+Kopernicus/Kopernicus.csproj.user
