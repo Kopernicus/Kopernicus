@@ -83,6 +83,13 @@ namespace Kopernicus
             }
             public bool useSphericalModel = false;
 
+            [ParserTarget("deferMesh", optional = true)]
+            private NumericParser<bool> deferMesh
+            {
+                set { generateMesh = !value.value; }
+            }
+            public bool generateMesh = true;
+
 			// Parser apply event
 			void IParserEventSubscriber.Apply (ConfigNode node)
 			{
@@ -198,7 +205,7 @@ namespace Kopernicus
 				if (type.value == BodyType.Star) 
 				{
                     if (lightShifter != null)
-                        lightShifter.lscObj.transform.parent = owner.GetTransform();
+                        lightShifter.lsc.gameObject.transform.parent = owner.GetTransform();
 
 					// Apply custom coronas
 					if (coronas.Count > 0) 

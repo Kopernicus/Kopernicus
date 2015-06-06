@@ -254,5 +254,11 @@ namespace Kopernicus
 
             Logger.Default.Flush();
         }
+
+        public void Start() // handle orbits here -- there needs to be another pass for it.
+        {
+            if (Templates.finalizeOrbits)
+                PostInject.FinalizeOrbits();
+        }
     }
 }

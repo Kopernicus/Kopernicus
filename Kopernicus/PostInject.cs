@@ -256,7 +256,8 @@ namespace Kopernicus
                         if (modNode.HasValue("name"))
                             if (m.name != modNode.GetValue("name"))
                                 continue;
-                        pqsChanged = true;
+                        if(modNode.name != "PQSMod_CelestialBodyTransform") // not really a change
+                            pqsChanged = true;
                         ParseObject(m, modNode);
                         if (mType == typeof(PQSCity) || mType == typeof(PQSMod_MapDecal) || mType == typeof(PQSMod_MapDecalTangent))
                             ModDecal(m, modNode);
@@ -330,7 +331,7 @@ namespace Kopernicus
                 Logger.Active.Log("Patching " + body.bodyName);
                 Logger.Active.Flush();
                 OnDemand.OnDemandStorage.currentBody = body.bodyName;
-                bool pqsChanged = true; // always do it. FIXME: need to actually handle cache better.
+                bool pqsChanged = false;
                 if (body.pqsController != null)
                 {
                     if (node.HasNode("PQS"))
@@ -342,7 +343,10 @@ namespace Kopernicus
                             pqsChanged |= PatchPQS(p, node.GetNode("PQS" + p.name));
                     }
                 }
-                if (pqsChanged)
+                bool forceRebuildSS = false;
+                if (node.HasValue("createMesh"))
+                    bool.TryParse(node.GetValue("createMesh"), out forceRebuildSS);
+                if (pqsChanged || forceRebuildSS)
                 {
                     Logger.Active.Log("Rebuilding scaledVersion mesh for " + body.bodyName);
                     Logger.Active.Flush();
@@ -391,21 +395,21 @@ namespace Kopernicus
             }
             return false;
         }
-        private void FinalizeOrbits()
+        public static void FinalizeOrbits()
         {
-            foreach (CelestialBody body in FlightGlobals.fetch.bodies)
+            foreach (CelestialBody body in FlightGlobals.Bodies)
             {
                 if (body.orbitDriver != null)
                 {
                     if (body.referenceBody != null)
                     {
                         body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1 / 3);
-                        body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
-                        if (body.sphereOfInfluence < body.Radius * 1.5 || body.sphereOfInfluence < body.Radius + 20000.0)
-                            body.sphereOfInfluence = Math.Max(body.Radius * 1.5, body.Radius + 20000.0); // sanity check
+                        body.sphereOfInfluence = Math.Max(
+                            body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4),
+                            Math.Max(body.Radius * Templates.SOIMinRadiusMult, body.Radius + Templates.SOIMinAltitude));
 
-                        // period should be (body.Mass + body.referenceBody.Mass) at the end, not just ref body, but KSP seems to ignore that bit so I will too.
-                        body.orbit.period = 2 * Math.PI * Math.Sqrt(Math.Pow(body.orbit.semiMajorAxis, 2) / 6.674E-11 * body.orbit.semiMajorAxis / (body.referenceBody.Mass));
+                        // this is unlike stock KSP, where only the reference body's mass is used.
+                        body.orbit.period = 2 * Math.PI * Math.Sqrt(Math.Pow(body.orbit.semiMajorAxis, 2) / 6.674E-11 * body.orbit.semiMajorAxis / (body.referenceBody.Mass + body.Mass));
 
                         if (body.orbit.eccentricity <= 1.0)
                         {
@@ -433,7 +437,7 @@ namespace Kopernicus
                 }
                 catch (Exception e)
                 {
-                    Logger.Active.Log("CBUpdate for " + body.name + " failed: " + e.Message);
+                    Debug.Log("CBUpdate for " + body.name + " failed: " + e.Message);
                 }
             }
         }
@@ -540,12 +544,21 @@ namespace Kopernicus
                     Logger.Active.Log("**** Finalizing things");
 
                     rootConfig = rootConfig.GetNode(finalizeName);
+                    
                     bool finalizeOrbits = false;
-                    bool removeUnused = false;
                     if (rootConfig.HasValue("finalizeOrbits"))
-                        bool.TryParse(rootConfig.GetValue("finalizeOribts"), out finalizeOrbits);
+                        bool.TryParse(rootConfig.GetValue("finalizeOrbits"), out finalizeOrbits);
+                    Templates.finalizeOrbits = finalizeOrbits;
+
+                    if (rootConfig.HasValue("SOIMinRadiusMult"))
+                        double.TryParse(rootConfig.GetValue("SOIMinRadiusMult"), out Templates.SOIMinRadiusMult);
+                    if (rootConfig.HasValue("SOIMinAltitude"))
+                        double.TryParse(rootConfig.GetValue("SOIMinAltitude"), out Templates.SOIMinAltitude);
+
+                    bool removeUnused = false;
                     if (rootConfig.HasValue("removeUnused"))
                         bool.TryParse(rootConfig.GetValue("removeUnused"), out removeUnused);
+
                     Logger.Active.Flush();
                     // Update the bodies
                     foreach (ConfigNode node in rootConfig.GetNodes(bodyNodeName))

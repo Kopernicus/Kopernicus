@@ -74,7 +74,7 @@ namespace Kopernicus
          * @param source Object to copy fields from
          * @param destination Object to copy fields to
          **/
-        public static void CopyObjectFields<T>(T source, T destination)
+        public static void CopyObjectFields<T>(T source, T destination, bool log = true)
         {
             // Reflection based copy
             foreach (FieldInfo field in (typeof(T)).GetFields())
@@ -82,7 +82,11 @@ namespace Kopernicus
                 // Only copy non static fields
                 if (!field.IsStatic)
                 {
-                    Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
+                    if (log)
+                    {
+                        Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
+
+                    }
                     field.SetValue(destination, field.GetValue(source));
                 }
             }
@@ -206,11 +210,7 @@ namespace Kopernicus
          */
         public static Mesh ReferenceGeosphere()
         {
-            // We need to get the body for Jool (to steal it's mesh)
-            PSystemBody Jool = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Jool");
-
-            // Return it's mesh
-            return Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+            return Templates.refGeosphere;
         }
 
         // Print out a tree containing all the objects in the game
@@ -275,20 +275,42 @@ namespace Kopernicus
         }
 
         // slightly different:
-        static public void DumpUpwards(Transform t, string prefix)
+        static public void DumpUpwards(Transform t, string prefix, bool useKLog = true)
         {
-            Logger.Default.Log(prefix + "Transform " + t.name);
+            string str = prefix + "Transform " + t.name;
+            if (useKLog)
+                Logger.Default.Log(str);
+            else
+                Debug.Log(str);
+
             foreach (Component c in t.GetComponents<Component>())
-                Logger.Default.Log(prefix + " has component " + c.name + " of type " + c.GetType().FullName);
+            {
+                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
+                if (useKLog)
+                    Logger.Default.Log(str);
+                else
+                    Debug.Log(str);
+            }
             if (t.parent != null)
                 DumpUpwards(t.parent, prefix + "  ");
 
         }
-        static public void DumpDownwards(Transform t, string prefix)
+        static public void DumpDownwards(Transform t, string prefix, bool useKLog = true)
         {
-            Logger.Default.Log(prefix + "Transform " + t.name);
+            string str = prefix + "Transform " + t.name;
+            if (useKLog)
+                Logger.Default.Log(str);
+            else
+                Debug.Log(str);
+
             foreach (Component c in t.GetComponents<Component>())
-                Logger.Default.Log(prefix + " has component " + c.name + " of type " + c.GetType().FullName);
+            {
+                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
+                if (useKLog)
+                    Logger.Default.Log(str);
+                else
+                    Debug.Log(str);
+            }
             if (t.childCount > 0)
                 for (int i = 0; i < t.childCount; ++i)
                     DumpDownwards(t.GetChild(i), prefix + "  ");
@@ -340,16 +362,6 @@ namespace Kopernicus
         // Generate the scaled space mesh using PQS (all results use scale of 1)
         public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
         {
-            #region blacklist
-            // Blacklist for mods
-            List<Type> blacklist = new List<Type>();
-            blacklist.Add(typeof(PQSMod_MapDecalTangent));
-            blacklist.Add(typeof(PQSMod_OceanFX));
-            blacklist.Add(typeof(PQSMod_FlattenArea));
-            blacklist.Add(typeof(PQSMod_FlattenOcean));
-            blacklist.Add(typeof(PQSMod_MapDecal));
-            #endregion
-
             // We need to get the body for Jool (to steal it's mesh)
             const double rScaledJool = 1000.0f;
             double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
@@ -369,11 +381,10 @@ namespace Kopernicus
                 GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
-                // Find and enable the PQS mods that modify height
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()));
+                // Find the PQS mods and enable the PQS-sphere
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() != typeof(PQSMod_MapDecal));
 
-                foreach (PQSMod mod in mods)
-                    mod.OnSetup();
+                pqsVersion.ActivateSphere();
 
                 // If we were able to find PQS mods
                 if (mods.Count() > 0)
@@ -413,6 +424,7 @@ namespace Kopernicus
                 }
 
                 // Cleanup
+                pqsVersion.DeactivateSphere();
                 UnityEngine.Object.Destroy(pqsVersionGameObject);
             }
 
@@ -921,7 +933,7 @@ namespace Kopernicus
         {
             Logger.Active.Log("Removing mods from pqs " + p.name);
             List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
-            bool addTypes = types == null;
+            bool addTypes = (types == null);
             if(addTypes)
                 types = new List<Type>();
             if (blacklist == null)
@@ -952,41 +964,34 @@ namespace Kopernicus
                     }
                 }
             }
+            List<GameObject> toCheck = new List<GameObject>();
             foreach (Type mType in types)
             {
-                /*List<PQSMod> currentMods = cpMods.Where(m => m.GetType() == mType).ToList();
-                while (currentMods.Count > 0)
+                List<PQSMod> mods = cpMods.Where(m => m.GetType() == mType).ToList();
+                foreach (PQSMod delMod in mods)
                 {
-                    PQSMod delMod = currentMods[0]; //p.GetComponentsInChildren(mType, true)[0] as PQSMod;
-                    if (delMod.GetType() != typeof(PQSCity) || delMod.name != "KSC")
+                    if (delMod != null)
                     {
-                        delMod.transform.parent = null;
+                        Logger.Active.Log("Removed mod " + mType.ToString());
+                        if (!toCheck.Contains(delMod.gameObject))
+                            toCheck.Add(delMod.gameObject);
                         delMod.sphere = null;
-                        PQSMod.Destroy(delMod);
-                        cpMods.Remove(currentMods[0]);
+                        cpMods.Remove(delMod);
+                        PQSMod.DestroyImmediate(delMod);
                     }
-                    currentMods.RemoveAt(0);
-                }*/
-                List<GameObject> toCheck = new List<GameObject>();
-                PQSMod delMod = p.GetComponentsInChildren(mType, true).FirstOrDefault() as PQSMod;
-                if (delMod != null)
-                {
-                    toCheck.Add(delMod.gameObject);
-                    delMod.sphere = null;
-                    PQSMod.DestroyImmediate(delMod);
                 }
-                RemoveEmptyGO(toCheck);
             }
+            RemoveEmptyGO(toCheck);
         }
 
         static public void RemoveEmptyGO(List<GameObject> toCheck)
         {
             int oCount = toCheck.Count;
             int nCount = oCount;
+            List<GameObject> toDestroy = new List<GameObject>();
             do
             {
                 oCount = nCount;
-                List<GameObject> toDestroy = new List<GameObject>();
                 foreach (GameObject go in toCheck)
                 {
                     if (go.transform.childCount == 0)
@@ -1001,6 +1006,7 @@ namespace Kopernicus
                     toCheck.Remove(go);
                     GameObject.DestroyImmediate(go);
                 }
+                toDestroy.Clear();
                 nCount = toCheck.Count;
             } while (nCount != oCount && nCount > 0);
         }
@@ -1187,9 +1193,7 @@ namespace Kopernicus
 
         public static void Log(object s)
         {
-#if DEBUG
             Logger.Active.Log(s);
-#endif
         }
     }
 }

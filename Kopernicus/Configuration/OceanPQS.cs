@@ -52,23 +52,8 @@ namespace Kopernicus
             public bool mapOcean = true;
             public Color mapOceanColor;
             public double mapOceanHeight;
-            public bool hasRadius = false;
 
             private PQSMod_UVPlanetRelativePosition uvs;
-
-            [ParserTarget("removeAllMods", optional = true)]
-            private NumericParser<bool> removeAllMods
-            {
-                set { removeAll = value.value; }
-            }
-            private bool removeAll = false;
-
-            // radius
-            [ParserTarget("radius", optional = true)]
-            private NumericParser<double> radius
-            {
-                set { oceanPQS.radius = value.value; hasRadius = true; }
-            }
 
             // We have an ocean?
             [ParserTarget("ocean", optional = true)]
@@ -203,36 +188,7 @@ namespace Kopernicus
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
-                /*List<PQSMod> cpMods = oceanPQS.GetComponentsInChildren<PQSMod>(true).ToList();
-				// Add all created mods to the PQS
-                foreach (ModLoader.ModLoader loader in mods)
-                {
-                    List<PQSMod> currentMods = cpMods.Where(m => m.GetType() == loader.mod.GetType()).ToList();
-                    if (currentMods.Count > 0)
-                    {
-                        for (int i = 0; i < currentMods.Count; i++)
-                        {
-                            PQSMod delMod = oceanPQS.GetComponentsInChildren(currentMods[i].GetType(), true)[i] as PQSMod;
-                            delMod.transform.parent = null;
-                            delMod.sphere = null;
-                            PQSMod.Destroy(delMod);
-                            cpMods.Remove(currentMods[i]);
-                        }
-                    }
-                    loader.mod.transform.parent = oceanPQS.transform;
-                    loader.mod.sphere = oceanPQS;
-                    Logger.Active.Log("OceanPQS.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
-                }*/
-				List<Type> typesToRemove = null;
-                if (!removeAll)
-                {
-                    typesToRemove = new List<Type>();
-                    foreach (ModLoader.ModLoader loader in mods)
-                    {
-                        typesToRemove.Add(loader.mod.GetType());
-                    }
-                }
-                Utility.RemoveModsOfType(typesToRemove, oceanPQS);
+                // Apply the mods
                 foreach (ModLoader.ModLoader loader in mods)
                 {
                     loader.mod.transform.parent = oceanPQS.transform;

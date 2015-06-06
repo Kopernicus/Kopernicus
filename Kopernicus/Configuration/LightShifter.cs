@@ -42,7 +42,6 @@ namespace Kopernicus
         public class LightShifter : IParserEventSubscriber
         {
             public LightShifterComponent lsc;
-            public GameObject lscObj;
 
             // sunlightColor
             [ParserTarget("sunlightColor", optional = true, allowMerge = false)]
@@ -123,9 +122,7 @@ namespace Kopernicus
 
             public LightShifter()
             {
-                lscObj = new GameObject("LightShifter");
-                lscObj.transform.parent = Utility.Deactivator;
-                lsc = lscObj.AddComponent<LightShifterComponent>();
+                lsc = LightShifterComponent.Instantiate(LightShifterComponent.LightSwitcherPrefab) as LightShifterComponent;
             }
 
             // Apply event
@@ -152,6 +149,37 @@ namespace Kopernicus
             public AnimationCurve sunBrightnessCurve;
             public Color sunLensFlareColor;
             public bool givesOffLight = true;
+
+            private static LightShifterComponent prefab;
+
+            public static LightShifterComponent LightSwitcherPrefab
+            {
+                get
+                {
+                    if (prefab == null)
+                    {
+                        // If the prefab is null, create it
+                        GameObject prefabGOB = new GameObject("LightShifter");
+                        prefabGOB.transform.parent = Utility.Deactivator;
+                        prefab = prefabGOB.AddComponent<LightShifterComponent>();
+
+                        // Fill it with default values
+                        prefab.sunlightColor = Color.white;
+                        prefab.sunlightIntensity = 0.45f;
+                        prefab.sunlightShadowStrength = 0.7523364f;
+                        prefab.scaledSunlightColor = Color.white;
+                        prefab.scaledSunlightIntensity = 0.45f;
+                        prefab.IVASunColor = new Color(1.0f, 0.977f, 0.896f, 1.0f);
+                        prefab.IVASunIntensity = 0.34f;
+                        prefab.sunLensFlareColor = Color.white;
+                        prefab.ambientLightColor = new Color(0.06f, 0.06f, 0.06f, 1.0f);
+                    }
+
+                    // Return the prefab
+                    return prefab;
+                }
+            }
+
             private bool isActive = false;
 
             public void SetStatus(bool status, GameScenes scene)

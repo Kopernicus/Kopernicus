@@ -85,6 +85,10 @@ namespace Kopernicus
 			[ParserTarget("removePQSMods", optional = true)]
 			private StringCollectionParser removePQSMods;
 
+            // Should we strip all Mods off
+            [ParserTarget("removeAllPQSMods", optional = true)]
+            private NumericParser<bool> removeAllMods = new NumericParser<bool>(false);
+
 			// Collection of PQS mods to remove
 			[ParserTarget("removeProgressTree", optional = true)]
 			private NumericParser<bool> removeProgressTree = new NumericParser<bool> (true);
@@ -167,19 +171,24 @@ namespace Kopernicus
 					// Selectively remove PQS Mods
 					if (removePQSMods != null && removePQSMods.value.LongCount() > 0)
 					{
-						// Get a list of all the PQS mods (immediate children, don't fuck the ocean)
-						List<PQSMod> mods = body.pqsVersion.transform.GetComponentsInChildren<PQSMod>(true).Where(mod => mod.transform.parent == body.pqsVersion.transform).ToList();
+                        // We need a List with Types to remove
+                        List<Type> mods = new List<Type>();
 						foreach (string mod in removePQSMods.value) 
 						{
 							// Get the mods matching the string
-							string modName = "PQSMod_" + mod;
-							foreach (PQSMod m in mods.Where(m => m.GetType().ToString().EndsWith(modName))) 
-							{
-								Logger.Active.Log ("Removed PQSMod: " + m.name + " (" + m.GetType () + ")");
-								UnityEngine.Object.Destroy (m);
-							}
+                            string modName = mod;
+                            if(!mod.Contains("PQS"))
+                                modName = "PQSMod_" + mod;
+                            mods.Add(Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
 						}
+                        Utility.RemoveModsOfType(mods, body.pqsVersion);
 					}
+
+                    if (removeAllMods != null && removeAllMods.value)
+                    {
+                        // Remove all mods
+                        Utility.RemoveModsOfType(null, body.pqsVersion);
+                    }
 				}
 
 				// Should we remove the progress tree
