@@ -65,6 +65,9 @@ namespace Kopernicus
             }
             private string _name;
 
+            [ParserTarget("cacheFile", optional = true)]
+            public string cacheFile { get; set; }
+
 			[ParserTarget("cbNameLater", optional = true)]
             private string cbNameLater
             {
@@ -343,10 +346,12 @@ namespace Kopernicus
                         (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
                         || template == null || inEveryCase))
                     {
+
                         Utility.UpdateScaledMesh(generatedBody.scaledVersion,
                                                     generatedBody.pqsVersion,
                                                     generatedBody.celestialBody,
                                                     ScaledSpaceCacheDirectory,
+                                                    cacheFile,
                                                     exportBin,
                                                     scaledVersion.useSphericalModel);
                     }

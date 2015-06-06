@@ -317,7 +317,7 @@ namespace Kopernicus
 
         }
 
-        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, bool exportBin, bool useSpherical)
+        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, string cacheFile, bool exportBin, bool useSpherical)
         {
             const double rJool = 6000000.0;
             const float rScaled = 1000.0f;
@@ -330,7 +330,17 @@ namespace Kopernicus
             // Attempt to load a cached version of the scale space
             string CacheDirectory = KSPUtil.ApplicationRootPath + path;
             string CacheFile = CacheDirectory + "/" + body.name + ".bin";
+
+            if (!string.IsNullOrEmpty(cacheFile))
+            {
+                CacheFile = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), cacheFile);
+                CacheDirectory = Path.GetDirectoryName(CacheFile);
+
+                Logger.Active.Log(string.Format("[Kopernicus]: {0} is using custom cache file '{1}' in '{2}'", body.name, CacheFile, CacheDirectory));
+            }
+
             Directory.CreateDirectory(CacheDirectory);
+
             if (File.Exists(CacheFile) && exportBin)
             {
                 Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
