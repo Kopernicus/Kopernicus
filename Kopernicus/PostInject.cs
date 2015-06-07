@@ -5,8 +5,25 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
+using Kopernicus.Configuration;
+using Kopernicus.Configuration.ModLoader;
+
 namespace Kopernicus
 {
+    [RequireConfigType(ConfigType.Node)]
+    public class AddModLoader : IParserEventSubscriber
+    {
+        [ParserTargetCollection("AddMods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
+        public List<ModLoader> mods = new List<ModLoader>();
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+
+        }
+
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+        }
+    }
     [KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
     public class PostInject : MonoBehaviour
     {
@@ -299,6 +316,20 @@ namespace Kopernicus
                     }
                 }
                 Utility.RemoveEmptyGO(toCheck);
+            }
+            // add some mods
+            if(node.HasNode("AddMods"))
+            {
+                AddModLoader newMods = Parser.CreateObjectFromConfigNode<AddModLoader>(node);
+                if (newMods.mods != null)
+                {
+                    foreach (ModLoader loader in newMods.mods)
+                    {
+                        loader.mod.transform.parent = pqs.transform;
+                        loader.mod.sphere = pqs;
+                        loader.mod.transform.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
+                    }
+                }
             }
             // just in case, run setup for everyone.
             mods = pqs.transform.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == pqs).ToList<PQSMod>();
