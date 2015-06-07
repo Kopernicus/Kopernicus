@@ -384,7 +384,7 @@ namespace Kopernicus
                         bool useSphere = false;
                         if (node.HasValue("sphericalModel"))
                             bool.TryParse(node.GetValue("sphericalModel"), out useSphere);
-                        Utility.UpdateScaledMesh(ssObj, body.pqsController, body, "GameData/Kopernicus/Cache", true, useSphere);
+                        Utility.UpdateScaledMesh(ssObj, body.pqsController, body, "GameData/Kopernicus/Cache", node.GetValue("cacheFile"), true, useSphere);
                     }
                     else
                         Logger.Active.Log("Could not find a scaledVersion to remake.");
