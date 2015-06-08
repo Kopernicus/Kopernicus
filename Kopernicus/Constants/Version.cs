@@ -65,7 +65,7 @@ namespace Kopernicus
                 {
                     if (i != 0) 
                         version += ".";
-                    version += i;
+                    version += number[i];
                 }
 
                 return version;
