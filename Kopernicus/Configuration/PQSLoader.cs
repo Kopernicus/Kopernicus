@@ -284,12 +284,13 @@ namespace Kopernicus
                 foreach (ModLoader.ModLoader loader in mods)
                 {
                     loader.mod.transform.parent = pqsVersion.transform;
+                    loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
                     loader.mod.sphere = pqsVersion;
                     Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
                 }
 
 				// Make sure all the PQSMods exist in Localspace
-				pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
+				// pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
 			}
 		}
 	}
