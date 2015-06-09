@@ -278,29 +278,29 @@ namespace Kopernicus
             {
                 if (node.HasNode("Mods"))
                 {
-                    Debug.Log("=== " + pqsVersion.name + " ===");
+                    int i = 0;
                     // Patch the existing mods
                     foreach (ConfigNode mod in node.GetNode("Mods").nodes)
                     {
-                        Debug.Log(1);
                         if (pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).Count() != 0)
                         {
-                            Debug.Log(2);
                             Type t = Type.GetType("Kopernicus.Configuration.ModLoader." + mod.name);
                             ConstructorInfo cInfo = t.GetConstructor(new Type[] { typeof(PQSMod) });
-                            Debug.Log(3);
-                            foreach (PQSMod pqsMod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)))
+                            try
                             {
-                                Debug.Log(4);
+                                PQSMod pqsMod = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).ToArray()[i];
                                 ModLoader.ModLoader patchedMod = cInfo.Invoke(new object[] { pqsMod }) as ModLoader.ModLoader;
+                                Parser.LoadObjectFromConfigurationNode(patchedMod, mod);
                                 patchedMod.patched = true;
-                                //node.GetNode("Mods").RemoveNode(mod);
                                 patchedMods.Add(patchedMod);
-                                Debug.Log(5);
+                            }
+                            catch
+                            {
+                                Logger.Active.Log("Couldn't find " + i + 1 + " Mods of Type " + t + "!");
                             }
                         }
+                        i++;
                     }
-                    Debug.Log("=== BREAK ===");
                 }
 			}
 
@@ -309,7 +309,6 @@ namespace Kopernicus
                 // Remove the patched mods from the main list
                 foreach (ModLoader.ModLoader remove in mods.Where(m => patchedMods.Select(p => p.mod.GetType()).Contains(m.mod.GetType())))
                 {
-                    Logger.Active.Log("Removing Mod");
                     remove.mod.transform.parent = null;
                     remove.mod.sphere = null;
                     remove.mod = null;

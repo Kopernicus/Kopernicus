@@ -59,6 +59,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_BillboardObject>();
 					base.mod = _mod;
 				}
+
+                public BillboardObject(PQSMod template)
+                {
+                    _mod = template as PQSMod_BillboardObject;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

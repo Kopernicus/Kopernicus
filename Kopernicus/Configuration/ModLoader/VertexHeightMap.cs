@@ -45,7 +45,7 @@ namespace Kopernicus
 				[ParserTarget("map", optional = true)]
 				private MapSOParser_GreyScale<MapSO> heightMap
 				{
-                    set { _mod.heightMap = value.value; Logger.Active.Log("Parsed Traget map" + a); }
+                    set { _mod.heightMap = value.value; }
 				}
 
 				// Height map offset
@@ -89,11 +89,9 @@ namespace Kopernicus
 					_mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
 					base.mod = _mod;
 				}
-                bool a = true;
+
                 public VertexHeightMap(PQSMod template)
                 {
-                    Logger.Active.Log("Patch");
-                    a = false;
                     _mod = template as PQSMod_VertexHeightMap;
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;

@@ -59,6 +59,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_GnomonicTest>();
 					base.mod = _mod;
 				}
+
+                public GnomonicTest(PQSMod template)
+                {
+                    _mod = template as PQSMod_GnomonicTest;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

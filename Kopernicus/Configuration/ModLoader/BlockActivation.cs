@@ -59,6 +59,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_BlockActivation>();
 					base.mod = _mod;
 				}
+
+                public BlockActivation(PQSMod template)
+                {
+                    _mod = template as PQSMod_BlockActivation;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}
