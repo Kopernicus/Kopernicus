@@ -74,9 +74,19 @@ namespace Kopernicus
                 set { celestialBody.atmosphereAdiabaticIndex = value.value; }
             }
 
-            // atmosphere cutoff altitude
+            // atmosphere cutoff altitude (x3, for backwards compatibility)
             [ParserTarget("altitude", optional = true)]
             private NumericParser<double> maxAltitude
+            {
+                set { celestialBody.atmosphereDepth = value.value; }
+            }
+            [ParserTarget("maxAltitude", optional = true)]
+            private NumericParser<double> maxAltitude2
+            {
+                set { celestialBody.atmosphereDepth = value.value; }
+            }
+            [ParserTarget("atmosphereDepth", optional = true)]
+            private NumericParser<double> atmosphereDepth
             {
                 set { celestialBody.atmosphereDepth = value.value; }
             }
