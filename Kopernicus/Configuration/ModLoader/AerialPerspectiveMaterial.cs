@@ -108,6 +108,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_AerialPerspectiveMaterial>();
 					base.mod = _mod;
 				}
+
+                public AerialPerspectiveMaterial(PQSMod template)
+                {
+                    _mod = template as PQSMod_AerialPerspectiveMaterial;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

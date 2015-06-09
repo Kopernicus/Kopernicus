@@ -66,6 +66,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_VertexHeightOffset>();
 					base.mod = _mod;
 				}
+
+                public VertexHeightOffset(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexHeightOffset;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

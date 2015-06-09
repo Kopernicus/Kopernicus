@@ -42,7 +42,7 @@ namespace Kopernicus
 				private PQSMod_VertexRidgedAltitudeCurve _mod;
 
 				// deformity
-				[ParserTarget("deformity", optional = false)]
+				[ParserTarget("deformity", optional = true)]
 				private NumericParser<float> deformity
 				{
 					set { _mod.deformity = value.value; }
@@ -157,6 +157,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_VertexRidgedAltitudeCurve>();
 					base.mod = _mod;
 				}
+
+                public VertexRidgedAltitudeCurve(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexRidgedAltitudeCurve;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

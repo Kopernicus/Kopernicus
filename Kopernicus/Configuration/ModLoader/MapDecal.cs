@@ -157,6 +157,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_MapDecal>();
 					base.mod = _mod;
 				}
+
+                public MapDecal(PQSMod template)
+                {
+                    _mod = template as PQSMod_MapDecal;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

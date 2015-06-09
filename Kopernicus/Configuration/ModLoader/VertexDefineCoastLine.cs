@@ -42,7 +42,7 @@ namespace Kopernicus
 				private PQSMod_VertexDefineCoastLine _mod;
 
 				// depthOffset
-				[ParserTarget("depthOffset", optional = false)]
+				[ParserTarget("depthOffset", optional = true)]
 				private NumericParser<double> depthOffset
 				{
 					set { _mod.depthOffset = value.value; }
@@ -73,6 +73,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_VertexDefineCoastLine>();
 					base.mod = _mod;
 				}
+
+                public VertexDefineCoastLine(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexDefineCoastLine;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

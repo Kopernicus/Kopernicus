@@ -122,6 +122,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_VertexNoise>();
 					base.mod = _mod;
 				}
+
+                public VertexNoise(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexNoise;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

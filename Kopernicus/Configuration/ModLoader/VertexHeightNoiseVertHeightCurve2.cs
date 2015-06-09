@@ -179,6 +179,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_VertexHeightNoiseVertHeightCurve2>();
 					base.mod = _mod;
 				}
+
+                public VertexHeightNoiseVertHeightCurve2(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexHeightNoiseVertHeightCurve2;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

@@ -115,6 +115,13 @@ namespace Kopernicus
 					_mod = modObject.AddComponent<PQSMod_VertexSimplexHeightMap>();
 					base.mod = _mod;
 				}
+
+                public VertexSimplexHeightMap(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexSimplexHeightMap;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

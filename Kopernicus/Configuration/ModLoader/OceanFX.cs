@@ -159,6 +159,13 @@ namespace Kopernicus
                     } 
 					base.mod = _mod;
 				}
+
+                public OceanFX(PQSMod template)
+                {
+                    _mod = template as PQSMod_OceanFX;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

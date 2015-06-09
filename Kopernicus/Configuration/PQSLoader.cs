@@ -273,20 +273,70 @@ namespace Kopernicus
 				fallbackMaterial.name = Guid.NewGuid ().ToString ();
 			}
 
-
+            List<ModLoader.ModLoader> patchedMods = new List<ModLoader.ModLoader>();
 			void IParserEventSubscriber.Apply(ConfigNode node)
-			{
-
+            {
+                if (node.HasNode("Mods"))
+                {
+                    Debug.Log("=== " + pqsVersion.name + " ===");
+                    // Patch the existing mods
+                    foreach (ConfigNode mod in node.GetNode("Mods").nodes)
+                    {
+                        Debug.Log(1);
+                        if (pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).Count() != 0)
+                        {
+                            Debug.Log(2);
+                            Type t = Type.GetType("Kopernicus.Configuration.ModLoader." + mod.name);
+                            ConstructorInfo cInfo = t.GetConstructor(new Type[] { typeof(PQSMod) });
+                            Debug.Log(3);
+                            foreach (PQSMod pqsMod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)))
+                            {
+                                Debug.Log(4);
+                                ModLoader.ModLoader patchedMod = cInfo.Invoke(new object[] { pqsMod }) as ModLoader.ModLoader;
+                                patchedMod.patched = true;
+                                //node.GetNode("Mods").RemoveNode(mod);
+                                patchedMods.Add(patchedMod);
+                                Debug.Log(5);
+                            }
+                        }
+                    }
+                    Debug.Log("=== BREAK ===");
+                }
 			}
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
+                // Remove the patched mods from the main list
+                foreach (ModLoader.ModLoader remove in mods.Where(m => patchedMods.Select(p => p.mod.GetType()).Contains(m.mod.GetType())))
+                {
+                    Logger.Active.Log("Removing Mod");
+                    remove.mod.transform.parent = null;
+                    remove.mod.sphere = null;
+                    remove.mod = null;
+                }
+
+                // Apply patched mods
+                foreach (ModLoader.ModLoader loader in patchedMods)
+                {
+                    if (loader.mod != null)
+                    {
+                        loader.mod.transform.parent = pqsVersion.transform;
+                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                        loader.mod.sphere = pqsVersion;
+                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + loader.mod.GetType());
+                    }
+                }
+
+                // Add new mods
                 foreach (ModLoader.ModLoader loader in mods)
                 {
-                    loader.mod.transform.parent = pqsVersion.transform;
-                    loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                    loader.mod.sphere = pqsVersion;
-                    Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
+                    if (loader.mod != null)
+                    {
+                        loader.mod.transform.parent = pqsVersion.transform;
+                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                        loader.mod.sphere = pqsVersion;
+                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
+                    }
                 }
 
 				// Make sure all the PQSMods exist in Localspace

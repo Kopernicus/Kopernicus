@@ -42,7 +42,7 @@ namespace Kopernicus
 				private PQSMod_CreateSphereCollider _mod;
 
                 // radiusOffset
-                [ParserTarget("radiusOffset", optional = false)]
+                [ParserTarget("radiusOffset", optional = true)]
                 private NumericParser<float> radiusOffset
                 {
                     set { _mod.radiusOffset = value.value; }
@@ -66,6 +66,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_CreateSphereCollider>();
 					base.mod = _mod;
 				}
+
+                public CreateSphereCollider(PQSMod template)
+                {
+                    _mod = template as PQSMod_CreateSphereCollider;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

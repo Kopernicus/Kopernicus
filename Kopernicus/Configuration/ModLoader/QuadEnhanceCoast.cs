@@ -71,6 +71,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_QuadEnhanceCoast>();
                     base.mod = _mod;
                 }
+
+                public QuadEnhanceCoast(PQSMod template)
+                {
+                    _mod = template as PQSMod_QuadEnhanceCoast;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
             }
         }
     }

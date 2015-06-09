@@ -101,6 +101,13 @@ namespace Kopernicus
 					_mod = modObject.AddComponent<PQSMod_VertexSimplexHeightFlatten>();
 					base.mod = _mod;
 				}
+
+                public VertexSimplexHeightFlatten(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexSimplexHeightFlatten;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}
