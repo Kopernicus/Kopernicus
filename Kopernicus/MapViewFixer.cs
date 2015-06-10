@@ -13,6 +13,21 @@ namespace Kopernicus
     {
         static float  max3DlineDrawDist = 20000f;
 
+        public void Awake()
+        {
+            if (HighLogic.LoadedSceneHasPlanetarium && PlanetariumCamera.fetch != null)
+            {
+                try
+                {
+                    PlanetariumCamera.fetch.SetTarget("Earth");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("[Kopernicus]: MapView fixing failed: " + e.Message);
+                }
+            }
+        }
+
         public void Start()
         {
             if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null)
