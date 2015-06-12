@@ -53,7 +53,7 @@ namespace Kopernicus
                     developmentBuild = true;
                     #endif
 
-                    return "Kopernicus " + GetVersionNumber(versionNumber) + ((developmentBuild) ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString() + "; AssemblyHash: " + AssemblyHandle() + ")";
+                    return "Kopernicus " + GetVersionNumber(versionNumber) + ((developmentBuild) ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
             }
 

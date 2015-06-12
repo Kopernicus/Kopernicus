@@ -97,7 +97,6 @@ namespace Kopernicus
 		public Logger (string LogFileName = "Kopernicus")
 		{
 			// Open the log file (overwrite existing logs)
-			Directory.CreateDirectory (Logger.LogDirectory);
 			string LogFile = Logger.LogDirectory + LogFileName + ".log";
 			loggerStream = new StreamWriter(File.Create (LogFile));
 
@@ -122,6 +121,14 @@ namespace Kopernicus
 			loggerStream.Flush ();
 			loggerStream.Close ();
 		}
+
+        // Initialize the Logger (i.e. delete old logs) 
+        public static void Initialize()
+        {
+            if (Directory.Exists(LogDirectory))
+                Directory.Delete(LogDirectory, true);
+            Directory.CreateDirectory(LogDirectory);
+        }
 	}
 }
 

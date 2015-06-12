@@ -53,6 +53,7 @@ namespace Kopernicus
 		public void Awake()
 		{
 			// We're ALIVE
+            Logger.Initialize();
 			Logger.Default.SetAsActive ();
 			Logger.Default.Log("Injector.Awake(): Begin");
 
