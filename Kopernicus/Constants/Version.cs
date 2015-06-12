@@ -43,7 +43,7 @@ namespace Kopernicus
         public class Version
         {
             // Versioning information
-            private static int[] versionNumber = new int[] { 0, 0, 7 }; 
+            private static int[] versionNumber = new int[] { 0, 0, 8 }; 
             private static bool developmentBuild = false;
             public static string version
             {
