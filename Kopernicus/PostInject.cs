@@ -31,6 +31,8 @@ namespace Kopernicus
         private const string finalizeName = "Finalize";
         private const string bodyNodeName = "Body";
 
+        public static PostInject Instance;
+
         static private CelestialBody GetBody(string bodyName)
         {
             foreach (CelestialBody b in FlightGlobals.Bodies)
@@ -473,7 +475,7 @@ namespace Kopernicus
             }
         }
 
-        private void UpdateMenuTex()
+        public void UpdateMenuTex()
         {
             PSystemBody home = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
             Texture homeMain = home.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
@@ -560,6 +562,9 @@ namespace Kopernicus
         }
         public void Start()
         {
+            // Set Instance 
+            Instance = this;
+
             // Get the data node
             ConfigNode rootConfig = GameDatabase.Instance.GetConfigs(rootNodeName)[0].config;
 
