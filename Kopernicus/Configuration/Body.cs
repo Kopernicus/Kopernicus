@@ -291,10 +291,8 @@ namespace Kopernicus
                     }
 
                     // ----------- DEBUG -------------
-                    #if DEBUG
                     Utility.DumpObjectProperties(pqs.pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
                     Utility.GameObjectWalk(pqs.pqsVersion.gameObject, "  ");
-                    #endif
                     // -------------------------------
 
                     // Don't do this, because we probably need to ajust the radius of the OceanPQS (and AFAIK is that the only child-PQS)
