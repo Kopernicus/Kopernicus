@@ -94,6 +94,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_VertexVoronoi>();
 					base.mod = _mod;
 				}
+
+                public VertexVoronoi(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexVoronoi;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

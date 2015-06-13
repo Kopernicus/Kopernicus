@@ -92,7 +92,6 @@ namespace Kopernicus
                     {
                         double distanceToPlanet = FlightGlobals.getAltitudeAtPos(vessel.GetTransform().position, vessel.mainBody);
                         double heatingRate = heatCurve.Evaluate((float) distanceToPlanet);
-                        Debug.Log(heatingRate);
                         foreach (Part part in vessel.Parts)
                         {
                             part.temperature += heatingRate;

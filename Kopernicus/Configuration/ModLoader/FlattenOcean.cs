@@ -42,7 +42,7 @@ namespace Kopernicus
 				private PQSMod_FlattenOcean _mod;
 					
 				// The ocean Radius for the planet
-				[ParserTarget("oceanRadius", optional = false)]
+				[ParserTarget("oceanRadius", optional = true)]
 				private NumericParser<double> oceanRadius
 				{
 					set { _mod.oceanRadius = value.value; }
@@ -67,6 +67,13 @@ namespace Kopernicus
                     _mod.requirements = PQS.ModiferRequirements.MeshCustomNormals;
 					base.mod = _mod;
 				}
+
+                public FlattenOcean(PQSMod template)
+                {
+                    _mod = template as PQSMod_FlattenOcean;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

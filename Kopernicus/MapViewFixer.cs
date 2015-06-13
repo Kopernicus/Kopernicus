@@ -27,5 +27,21 @@ namespace Kopernicus
                 }
             }
         }
+
+        private bool isDone = false;
+
+        // Fix the Zooming-Out bug
+        public void LateUpdate()
+        {
+            if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null && !isDone)
+            {
+                // Fix the bug via switching away from Home and back immideatly. 
+                PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) + 1) % PlanetariumCamera.fetch.targets.Count]);
+                PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) + (((PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) >= 0) ? 0 : PlanetariumCamera.fetch.targets.Count)]);
+                
+                // Terminate for the moment.
+                isDone = true;
+            }
+        }
     }
 }

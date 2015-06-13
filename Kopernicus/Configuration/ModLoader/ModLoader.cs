@@ -42,8 +42,11 @@ namespace Kopernicus
 				public PQSMod mod 
 				{
 					get;
-					protected set;
+					set;
 				}
+
+                // Is the Mod added or patched (Logging relevant)
+                public bool patched = false;
 
 				// Mod loader provides basic PQS mod loading functions
 				[ParserTarget("order", optional = true)]

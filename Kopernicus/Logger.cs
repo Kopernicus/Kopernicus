@@ -97,11 +97,21 @@ namespace Kopernicus
 		public Logger (string LogFileName = "Kopernicus")
 		{
 			// Open the log file (overwrite existing logs)
-			Directory.CreateDirectory (Logger.LogDirectory);
 			string LogFile = Logger.LogDirectory + LogFileName + ".log";
 			loggerStream = new StreamWriter(File.Create (LogFile));
 
 			// Write an opening message
+            string logVersion = "//=====  " + Constants.Version.version + "  =====//";
+
+            // Create the header this way, because I'm maybe too stupid to find the "fill" function
+            string logHeader = "";
+            for (int i = 0; i < (logVersion.Length - 4); i++)
+            {
+                logHeader += "=";
+            }
+            logHeader = "//" + logHeader + "//";
+
+            loggerStream.WriteLine(logHeader + "\n" + logVersion + "\n" + logHeader); // Don't use Log() because we don't want a date time in front of the Versioning.
 			Log ("Logger \"" + LogFileName + "\" was created");
 		}
 
@@ -111,6 +121,14 @@ namespace Kopernicus
 			loggerStream.Flush ();
 			loggerStream.Close ();
 		}
+
+        // Initialize the Logger (i.e. delete old logs) 
+        public static void Initialize()
+        {
+            if (Directory.Exists(LogDirectory))
+                Directory.Delete(LogDirectory, true);
+            Directory.CreateDirectory(LogDirectory);
+        }
 	}
 }
 

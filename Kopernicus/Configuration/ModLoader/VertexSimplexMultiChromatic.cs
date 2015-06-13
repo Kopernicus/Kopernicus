@@ -178,6 +178,13 @@ namespace Kopernicus
 					_mod = modObject.AddComponent<PQSMod_VertexSimplexMultiChromatic>();
 					base.mod = _mod;
 				}
+
+                public VertexSimplexMultiChromatic(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexSimplexMultiChromatic;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

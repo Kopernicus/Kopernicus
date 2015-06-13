@@ -127,6 +127,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_HeightColorMapNoise>();
 					base.mod = _mod;
 				}
+
+                public HeightColorMapNoise(PQSMod template)
+                {
+                    _mod = template as PQSMod_HeightColorMapNoise;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

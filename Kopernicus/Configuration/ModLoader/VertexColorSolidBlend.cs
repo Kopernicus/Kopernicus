@@ -67,6 +67,13 @@ namespace Kopernicus
 					_mod = modObject.AddComponent<PQSMod_VertexColorSolidBlend>();
 					base.mod = _mod;
 				}
+
+                public VertexColorSolidBlend(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexColorSolidBlend;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

@@ -73,6 +73,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_VertexHeightOblate>();
 					base.mod = _mod;
 				}
+
+                public VertexHeightOblate(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexHeightOblate;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

@@ -53,6 +53,7 @@ namespace Kopernicus
 		public void Awake()
 		{
 			// We're ALIVE
+            Logger.Initialize();
 			Logger.Default.SetAsActive ();
 			Logger.Default.Log("Injector.Awake(): Begin");
 
@@ -137,6 +138,9 @@ namespace Kopernicus
 
 			// Select the closest star to home
 			StarLightSwitcher.HomeStar ().SetAsActive ();
+
+            // Update Menu Textures
+            PostInject.Instance.UpdateMenuTex();
 
             // Declare we're done.
             Templates.loadFinished = true;

@@ -1,37 +1,20 @@
-Kopernicus Pre-Alpha Release 7
+Kopernicus Pre-Alpha Release 8
 ==============================
-June 5th, 2015
+June 12th, 2015
 
 Copyright (C) 2015 Bryce C Schroeder (bryce.schroeder@gmail.com)
                    Nathaniel R. Lewis (linux.robotdude@gmail.com)
 
 New in this version
 -------------------
-- Added VoronoiCrater's wrapper
-- Overhauled Debug-Mode, now activated per body via Debug { } node
-- Added FlattenArea, FlattenAreaTangential, MapDecal, VertexHeightNoiseVertHeightCurve3, VertexSimplexHeightFlatten, VertexSimplexHeightMap, VertexSimplexMultiChromatic wrappers
-- Fixed Transparency bug on rings
-- Update to KSP's 1.0 version
-- Added a Map-Exporting tool
-- Added Parsers for Oceans and AtmosphereFromGround
-- Proper selective removal of PQSMods from templates
-- Support for changing the name of a body at main menu (after things like space center have initialized) and support for changing just the name of the CB object for that body (not PQS or others)
-- Add a global epoch support for orbits, so the epoch of all orbits can be set at once
-- Allow forcing scaledversion meshes to be spherical
-- Support DDS textures on direct load (thus support all the types DDSLoader supported), so they can be used for MapSO etc.
-- Added a Finalization-pass, for partially changing existing mods / doing changes after spawn
-- Support for 32-bit colors (i.e. 0-255)
-- LightSwitcher for changing sun-light color
-- Moving the KSC around on Kerbin
-- Changing grass color / texture on KSC
-- Fixed the black body bug
-- Added VertexPlanet wrapper
-- Replace the textures for Mun and Kerbin on MainMenu
-- OnDemand loading for MapSO's
-- A lot of bugfixes
-- Hazardous Oceans
-- new Examples: MillersPlanet (Oceans), NewMinmus (Mod-removing, VertexPlanet, 32-bit colors), HotEve (Hazardous Oceans), MoveKSC (KSCSwitcher, Ground-material)
-- updated the Examples: EelooBiomes, GasPlanet, FullCustomPlanet, Nemesis
+- ScaledSpace .bin directory can be specified
+- Fixed the "Invisible-Wall" bug
+- Fixed the "Infinite-Zoom" bug
+- Improved Logger
+- Added alternative names for "atmosphereDepth"
+- Added patching of existing Mods
+- Removed Debug-Spam
+- Updated Hodor-Example with code for Mod-patching and specific Cache files
  
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 

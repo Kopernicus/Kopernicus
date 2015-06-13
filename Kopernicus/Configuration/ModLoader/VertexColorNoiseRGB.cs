@@ -136,6 +136,13 @@ namespace Kopernicus
 					_mod = modObject.AddComponent<PQSMod_VertexColorNoiseRGB>();
 					base.mod = _mod;
 				}
+
+                public VertexColorNoiseRGB(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexColorNoiseRGB;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

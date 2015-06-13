@@ -141,6 +141,13 @@ namespace Kopernicus
 					_mod = modObject.AddComponent<PQSMod_HeightColorMap2> ();
 					base.mod = _mod;
 				}
+
+                public HeightColorMap2(PQSMod template)
+                {
+                    _mod = template as PQSMod_HeightColorMap2;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

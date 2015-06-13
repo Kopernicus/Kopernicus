@@ -108,6 +108,13 @@ namespace Kopernicus
                     _mod = modObject.AddComponent<PQSMod_FlattenArea>();
 					base.mod = _mod;
 				}
+
+                public FlattenArea(PQSMod template)
+                {
+                    _mod = template as PQSMod_FlattenArea;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

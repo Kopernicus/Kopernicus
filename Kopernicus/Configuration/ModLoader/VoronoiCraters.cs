@@ -156,6 +156,13 @@ namespace Kopernicus
                     _mod.gameObject.transform.parent = Utility.Deactivator;
 					base.mod = _mod;
 				}
+
+                public VoronoiCraters(PQSMod template)
+                {
+                    _mod = template as PQSMod_VoronoiCraters;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

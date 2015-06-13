@@ -65,6 +65,9 @@ namespace Kopernicus
             }
             private string _name;
 
+            [ParserTarget("cacheFile", optional = true)]
+            public string cacheFile { get; set; }
+
 			[ParserTarget("cbNameLater", optional = true)]
             private string cbNameLater
             {
@@ -288,10 +291,8 @@ namespace Kopernicus
                     }
 
                     // ----------- DEBUG -------------
-                    #if DEBUG
                     Utility.DumpObjectProperties(pqs.pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
                     Utility.GameObjectWalk(pqs.pqsVersion.gameObject, "  ");
-                    #endif
                     // -------------------------------
 
                     // Don't do this, because we probably need to ajust the radius of the OceanPQS (and AFAIK is that the only child-PQS)
@@ -343,10 +344,12 @@ namespace Kopernicus
                         (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
                         || template == null || inEveryCase))
                     {
+
                         Utility.UpdateScaledMesh(generatedBody.scaledVersion,
                                                     generatedBody.pqsVersion,
                                                     generatedBody.celestialBody,
                                                     ScaledSpaceCacheDirectory,
+                                                    cacheFile,
                                                     exportBin,
                                                     scaledVersion.useSphericalModel);
                     }

@@ -42,7 +42,7 @@ namespace Kopernicus
 				private PQSMod_VertexColorMap _mod;
 					
 				// The map texture for the planet
-				[ParserTarget("map", optional = false)]
+				[ParserTarget("map", optional = true)]
 				private MapSOParser_RGB<MapSO> colorMap 
 				{
 					set { _mod.vertexColorMap = value.value; }
@@ -66,6 +66,13 @@ namespace Kopernicus
 					_mod = modObject.AddComponent<PQSMod_VertexColorMap> ();
 					base.mod = _mod;
 				}
+
+                public VertexColorMap(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexColorMap;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

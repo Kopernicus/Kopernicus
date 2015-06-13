@@ -116,6 +116,13 @@ namespace Kopernicus
                     _mod.requirements = PQS.ModiferRequirements.MeshColorChannel;
 					base.mod = _mod;
 				}
+
+                public VertexHeightNoise(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexHeightNoise;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}

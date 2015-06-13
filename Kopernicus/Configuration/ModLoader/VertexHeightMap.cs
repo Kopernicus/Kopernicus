@@ -42,10 +42,10 @@ namespace Kopernicus
 				private PQSMod_VertexHeightMap _mod;
 
 				// The map texture for the planet
-				[ParserTarget("map", optional = false)]
+				[ParserTarget("map", optional = true)]
 				private MapSOParser_GreyScale<MapSO> heightMap
 				{
-					set { _mod.heightMap = value.value; }
+                    set { _mod.heightMap = value.value; }
 				}
 
 				// Height map offset
@@ -72,7 +72,7 @@ namespace Kopernicus
 
 				void IParserEventSubscriber.Apply(ConfigNode node)
 				{
-
+                    
 				}
 
 				void IParserEventSubscriber.PostApply(ConfigNode node)
@@ -89,6 +89,13 @@ namespace Kopernicus
 					_mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
 					base.mod = _mod;
 				}
+
+                public VertexHeightMap(PQSMod template)
+                {
+                    _mod = template as PQSMod_VertexHeightMap;
+                    _mod.transform.parent = Utility.Deactivator;
+                    base.mod = _mod;
+                }
 			}
 		}
 	}
