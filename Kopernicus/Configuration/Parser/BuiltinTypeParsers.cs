@@ -134,6 +134,15 @@ namespace Kopernicus
 
                     value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, float.Parse(colorArray[3]) / 255);
                 }
+				else if (s.StartsWith("RGB("))
+				{
+					s = s.Replace("RGB(", string.Empty);
+					s = s.Replace(")", string.Empty);
+					s = s.Replace(" ", string.Empty);
+					string[] colorArray = s.Split(',');
+
+					value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, 1);
+				}
                 else
                 {
                     value = ConfigNode.ParseColor(s);
