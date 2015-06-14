@@ -219,7 +219,11 @@ namespace Kopernicus
                 // Manipulate AFG
                 if (node.HasNode("AtmosphereFromGround"))
                 {
-                    AtmosphereFromGroundParser atmoFG = new AtmosphereFromGroundParser(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]);
+                    AtmosphereFromGround afg = MonoBehaviour.Instantiate(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]) as AtmosphereFromGround;
+                    afg.transform.parent = Utility.Deactivator;
+                    MonoBehaviour.DontDestroyOnLoad(afg);
+                    AtmosphereFromGroundParser atmoFG = new AtmosphereFromGroundParser(afg, celestialBody);
+                    Parser.LoadObjectFromConfigurationNode(atmoFG, node.GetNode("AtmosphereFromGround"));
                 }
             }
 
@@ -236,27 +240,7 @@ namespace Kopernicus
         {
             // AtmosphereFromGround we're modifying
             public AtmosphereFromGround afg;
-
-            // cameraHeight
-            [ParserTarget("cameraHeight", optional = true)]
-            private NumericParser<float> cameraHeight
-            {
-                set { afg.cameraHeight = value.value; }
-            }
-
-            // cameraHeight2
-            [ParserTarget("cameraHeight2", optional = true)]
-            private NumericParser<float> cameraHeight2
-            {
-                set { afg.cameraHeight2 = value.value; }
-            }
-
-            // cameraPos
-            [ParserTarget("cameraPos", optional = true)]
-            private Vector3Parser cameraPos
-            {
-                set { afg.cameraPos = value.value; }
-            }
+            private CelestialBody body;
 
             // DEBUG_alwaysUpdateAll
             [ParserTarget("DEBUG_alwaysUpdateAll", optional = true)]
@@ -398,30 +382,52 @@ namespace Kopernicus
                 set { afg.scaleOverScaleDepth = value.value; }
             }
 
-            // sunLightDirection
-            [ParserTarget("sunLightDirection", optional = true)]
-            private Vector3Parser sunLightDirection
-            {
-                set { afg.sunLightDirection = value.value; }
-            }
-
             // Parser apply event
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                // Set Defaults
+                afg.planet = body;
+                afg.ESun = 30f;
+                afg.Kr = 0.00125f;
+                afg.Km = 0.00015f;
+                afg.KrESun = afg.Kr * afg.ESun;
+                afg.KmESun = afg.Km * afg.ESun;
+                afg.Kr4PI = (afg.Kr * 4f) * 3.141593f;
+                afg.Km4PI = (afg.Km * 4f) * 3.141593f;
+                afg.samples = 4f;
+                afg.g = -0.85f;
+                afg.g2 = afg.g * afg.g;
+                if (afg.waveLength == new Color(0f, 0f, 0f, 0f))
+                {
+                    afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
+                }
+                afg.outerRadius = (((float)body.Radius) * 1.025f) * ScaledSpace.InverseScaleFactor;
+                afg.outerRadius2 = afg.outerRadius * afg.outerRadius;
+                afg.innerRadius = afg.outerRadius * 0.975f;
+                afg.innerRadius2 = afg.innerRadius * afg.innerRadius;
+                afg.scale = 1f / (afg.outerRadius - afg.innerRadius);
+                afg.scaleDepth = -0.25f;
+                afg.scaleOverScaleDepth = afg.scale / afg.scaleDepth;
+                afg.invWaveLength = new Color(pow(afg.waveLength[0], 4), pow(afg.waveLength[1], 4), pow(afg.waveLength[2], 4), 0.5f);
+            }
 
             // Parser post apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                if (afg != null)
-                {
-                    MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
-                    afgSetMaterial.Invoke(afg, new object[] { true });
-                }
+                AtmosphereFixer.atmospheres.Add(afg);
             }
 
-            public AtmosphereFromGroundParser(AtmosphereFromGround afg)
+            public AtmosphereFromGroundParser(AtmosphereFromGround afg, CelestialBody body)
             {
                 this.afg = afg;
+                this.body = body;
             }
+
+            private float pow(float f, int p)
+            {
+                return (1f / Mathf.Pow(f, (float)p));
+            }
+
         }
 	}
 }
