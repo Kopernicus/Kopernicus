@@ -87,8 +87,17 @@ namespace Kopernicus
 				foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
 				{
 					sp.OnStart (PartModule.StartState.Orbital);
-                    sp.useCurve = true;
-					sp.powerCurve = powerCurve;
+                    if (powerCurve != null)
+                    {
+                        sp.useCurve = true;
+                        sp.powerCurve = powerCurve;
+                    }
+                    else
+                    {
+                        sp.useCurve = false;
+                        sp.powerCurve = null;
+                    }
+                    
 				}
 			}
 		}
@@ -129,15 +138,10 @@ namespace Kopernicus
 
         void Update()
         {
-			// If the game scene is the space center, we need to make sure the star is our home star
 			StarComponent selectedStar = null;
-			if (HighLogic.LoadedScene == GameScenes.SPACECENTER) 
-			{
-				selectedStar = HomeStar ();
-			}
-
-			// If we are in the tracking station or game, 
-			else if(HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT)
+		
+            // If we are in the tracking station, space center or game, 
+            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
 			{
 	            // Get the current position of the active vessel
 				if (PlanetariumCamera.fetch.enabled == true) 
@@ -149,13 +153,22 @@ namespace Kopernicus
 				{
 					Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
 					selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
-				}
-			}
+                }
+                else if (SpaceCenter.Instance != null && SpaceCenter.Instance.SpaceCenterTransform != null)
+                {
+                    Vector3 position = SpaceCenter.Instance.SpaceCenterTransform.position;
+                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.celestialBody)).First();
+                }
 
-			// If the star has been changed, update everything
-			if (selectedStar != null && !selectedStar.IsActiveStar()) 
-			{
-				selectedStar.SetAsActive ();
+                // If the star has been changed, update everything
+                if (selectedStar != null && !selectedStar.IsActiveStar())
+                {
+                    selectedStar.SetAsActive();
+                }
+                else if (selectedStar == null && !HomeStar().IsActiveStar())
+                {
+                    HomeStar().SetAsActive();
+                }
 			}
         }
 
