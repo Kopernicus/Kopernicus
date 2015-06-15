@@ -236,6 +236,8 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class AtmosphereFromGroundParser : IParserEventSubscriber
         {
+            private const float INVSCALEFACTOR = (1f / 6000f); // since ScaledSpace doesn't exist to query.
+
             // AtmosphereFromGround we're modifying
             public AtmosphereFromGround afg;
             private CelestialBody body;
@@ -272,7 +274,7 @@ namespace Kopernicus
             [ParserTarget("innerRadius", optional = true)]
             private NumericParser<float> innerRadius
             {
-                set { afg.innerRadius = value.value; }
+                set{ afg.innerRadius = value.value * INVSCALEFACTOR; }
             }
 
             // invWaveLength
@@ -304,7 +306,7 @@ namespace Kopernicus
             [ParserTarget("outerRadius", optional = true)]
             private NumericParser<float> outerRadius
             {
-                set { afg.outerRadius = value.value; }
+                set { afg.outerRadius = value.value * INVSCALEFACTOR; }
             }
 
             // samples
@@ -349,7 +351,7 @@ namespace Kopernicus
             [ParserTarget("outerRadiusMult", optional = true)]
             private NumericParser<float> outerRadiusMult
             {
-                set { afg.outerRadius = (((float)body.Radius) * value.value) * ScaledSpace.InverseScaleFactor; }
+                set { afg.outerRadius = (((float)body.Radius) * value.value) * INVSCALEFACTOR; }
             }
 
             // innerRadiusMult
@@ -390,7 +392,7 @@ namespace Kopernicus
                 {
                     afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
                 }
-                afg.outerRadius = (((float)body.Radius) * 1.025f) * ScaledSpace.InverseScaleFactor;
+                afg.outerRadius = (((float)body.Radius) * 1.025f) * INVSCALEFACTOR;
                 afg.innerRadius = afg.outerRadius * 0.975f;
                 afg.scaleDepth = -0.25f;
                 afg.invWaveLength = new Color((float)(1d / Math.Pow(afg.waveLength[0], 4)), (float)(1d / Math.Pow(afg.waveLength[1], 4)), (float)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);

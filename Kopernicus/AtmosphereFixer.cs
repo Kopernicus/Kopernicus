@@ -105,11 +105,17 @@ namespace Kopernicus
             invWaveLength = afg.invWaveLength;
             outerRadius = afg.outerRadius; Debug.Log(outerRadius);
             innerRadius = afg.innerRadius; Debug.Log(innerRadius);
+            string logstr = ". Storing AFG settings:\n";
+            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                logstr += fi.Name + " = " + fi.GetValue(this) + "\n";
             if(afg.planet != null)
-                Debug.Log("[Kopernicus]: Stored AFG for " + afg.planet.bodyName);
+                Debug.Log("[Kopernicus]: Stored AFG for " + afg.planet.bodyName + logstr);
         }
         private void Apply(AtmosphereFromGround afg)
         {
+            string logstr = "Applying AFG settings:\n";
+            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                logstr += fi.Name + " = " + fi.GetValue(this) + "\n";
             afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
             afg.doScale = doScale;
             afg.ESun = ESun;
@@ -130,7 +136,7 @@ namespace Kopernicus
             {
                 MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
                 afgSetMaterial.Invoke(afg, new object[] { true });
-                Debug.Log("[Kopernicus]: Patched AFG");
+                Debug.Log("[Kopernicus]: Patched AFG! " + logstr);
             }
             catch
             {
@@ -140,15 +146,29 @@ namespace Kopernicus
     }
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereFixer : MonoBehaviour
-    {   
+    {
+        double timeCounter = 0d;
         public void Start()
         {
             if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-                foreach (AtmosphereFromGround afg in Resources.FindObjectsOfTypeAll<AtmosphereFromGround>())
+                return;
+            }
+            UnityEngine.Object.Destroy(this); // don't hang around.
+        }
+        public void Update()
+        {
+            if (timeCounter < 0.5d)
+            {
+                timeCounter += Time.deltaTime;
+                return;
+            }
+            foreach (AtmosphereFromGround afg in Resources.FindObjectsOfTypeAll<AtmosphereFromGround>())
+            {
+                if (afg.planet != null)
                 {
                     Debug.Log("[Kopernicus]: Patching AFG " + afg.planet.bodyName);
-                    if(!AFGInfo.PatchAFG(afg))
+                    if (!AFGInfo.PatchAFG(afg))
                         Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Couldn't patch AtmosphereFromGround for " + afg.planet.bodyName + "!");
                 }
             }
