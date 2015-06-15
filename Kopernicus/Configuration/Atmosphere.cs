@@ -345,6 +345,20 @@ namespace Kopernicus
                 }
             }
 
+            // outerRadiusMult
+            [ParserTarget("outerRadiusMult", optional = true)]
+            private NumericParser<float> outerRadiusMult
+            {
+                set { afg.outerRadius = (((float)body.Radius) * value.value) * ScaledSpace.InverseScaleFactor; }
+            }
+
+            // innerRadiusMult
+            [ParserTarget("innerRadiusMult", optional = true)]
+            private NumericParser<float> innerRadiusMult
+            {
+                set { afg.innerRadius = afg.outerRadius * value.value; }
+            }
+
             public static void CalculatedMembers(AtmosphereFromGround atmo)
             {
                 atmo.g2 = atmo.g * atmo.g;

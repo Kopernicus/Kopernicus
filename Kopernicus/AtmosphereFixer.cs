@@ -103,6 +103,8 @@ namespace Kopernicus
             g = afg.g;
             waveLength = afg.waveLength;
             invWaveLength = afg.invWaveLength;
+            outerRadius = afg.outerRadius; Debug.Log(outerRadius);
+            innerRadius = afg.innerRadius; Debug.Log(innerRadius);
             if(afg.planet != null)
                 Debug.Log("[Kopernicus]: Stored AFG for " + afg.planet.bodyName);
         }
@@ -119,6 +121,8 @@ namespace Kopernicus
             afg.g = g;
             afg.waveLength = waveLength;
             afg.invWaveLength = invWaveLength;
+            afg.outerRadius = outerRadius;
+            afg.innerRadius = innerRadius;
 
             Configuration.AtmosphereFromGroundParser.CalculatedMembers(afg);
 
