@@ -495,8 +495,7 @@ namespace Kopernicus
                 errorPlace = "Found new moon";
                 if (Templates.instance.origKerbinDiff != null && Templates.instance.origKerbinBump != null)
                 {
-                    Logger.Active.Log("Replaceing color map " + Templates.instance.origKerbinDiff.name + " with " + homeMain.name);
-                    Logger.Active.Log("Replaceing normal map " + Templates.instance.origKerbinBump.name + " with " + homeBump.name);
+                    Logger.Active.Log("Replaceing color and normal maps on main menu.");
                     Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
                     foreach (Material m in mats)
                     {
