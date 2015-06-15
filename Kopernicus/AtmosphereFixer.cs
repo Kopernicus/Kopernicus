@@ -37,50 +37,118 @@ using System.Reflection;
 
 namespace Kopernicus
 {
+    public class AFGInfo
+    {
+        public static Dictionary<string, AFGInfo> atmospheres = new Dictionary<string, AFGInfo>();
+
+
+        bool DEBUG_alwaysUpdateAll;
+        bool doScale;
+        float outerRadius;
+        float innerRadius;
+        float ESun;
+        float Kr;
+        float Km;
+        Vector3 transformScale;
+        float scaleDepth;
+        float samples;
+        float g;
+        Color waveLength;
+        Color invWaveLength;
+
+        public static bool StoreAFG(AtmosphereFromGround afg)
+        {
+            if (afg.planet == null)
+            {
+                Debug.Log("[Kopernicus]: Trying to store AFG, but planet null!");
+                return false;
+            }
+            atmospheres[afg.planet.bodyName] = new AFGInfo(afg);
+            return true;
+        }
+
+        public static bool UpdateAFGName(string oName, string nName)
+        {
+            AFGInfo info = null;
+            if (atmospheres.TryGetValue(oName, out info))
+            {
+                atmospheres.Remove(oName);
+                atmospheres[nName] = info;
+                return true;
+            }
+            return false;
+        }
+
+        public static bool PatchAFG(AtmosphereFromGround afg)
+        {
+            AFGInfo info = null;
+            if (atmospheres.TryGetValue(afg.planet.bodyName, out info))
+            {
+                info.Apply(afg);
+                return true;
+            }
+            return false;
+        }
+
+        private AFGInfo(AtmosphereFromGround afg)
+        {
+            DEBUG_alwaysUpdateAll = afg.DEBUG_alwaysUpdateAll;
+            doScale = afg.doScale;
+            ESun = afg.ESun;
+            Kr = afg.Kr;
+            Km = afg.Km;
+            transformScale = afg.transform.localScale;
+            scaleDepth = afg.scaleDepth;
+            samples = afg.samples;
+            g = afg.g;
+            waveLength = afg.waveLength;
+            invWaveLength = afg.invWaveLength;
+            if(afg.planet != null)
+                Debug.Log("[Kopernicus]: Stored AFG for " + afg.planet.bodyName);
+        }
+        private void Apply(AtmosphereFromGround afg)
+        {
+            afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
+            afg.doScale = doScale;
+            afg.ESun = ESun;
+            afg.Kr = Kr;
+            afg.Km = Km;
+            afg.transform.localScale = transformScale;
+            afg.scaleDepth = scaleDepth;
+            afg.samples = samples;
+            afg.g = g;
+            afg.waveLength = waveLength;
+            afg.invWaveLength = invWaveLength;
+
+            Configuration.AtmosphereFromGroundParser.CalculatedMembers(afg);
+
+            try
+            {
+                MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
+                afgSetMaterial.Invoke(afg, new object[] { true });
+                Debug.Log("[Kopernicus]: Patched AFG");
+            }
+            catch
+            {
+                Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Material-resetting for AtmosphereFromGround on " + afg.planet.bodyName + " failed!");
+            }
+        }
+    }
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereFixer : MonoBehaviour
-    {
-        public static List<AtmosphereFromGround> atmospheres = new List<AtmosphereFromGround>();
-
+    {   
         public void Start()
         {
             if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-                Debug.Log("Start()");
-                foreach (AtmosphereFromGround afg in Resources.FindObjectsOfTypeAll<AtmosphereFromGround>().Where(a => a.planet != null && a.mainCamera != null && a.sunLight != null))
+                foreach (AtmosphereFromGround afg in Resources.FindObjectsOfTypeAll<AtmosphereFromGround>())
                 {
-                    Debug.Log("AFG " + afg.planet.bodyName);
-                    AtmosphereFromGround afg_clone = null;
-                    try
-                    {
-                        afg_clone = atmospheres.Find(a => a.planet.GetTransform().name == afg.planet.GetTransform().name);
-                    }
-                    catch
-                    {
-                        Debug.Log("[Kopernicus] AtmosphereFixer => Couldn't find an AtmosphereFromGround template for " + afg.planet.bodyName + "!");
-                    }
-                    if (afg_clone != null && afg != null)
-                    {
-                        Type[] types = new Type[] { typeof(float), typeof(Color) };
-                        foreach (FieldInfo inf in afg.GetType().GetFields().Where(f => types.Contains(f.FieldType)))
-                        {
-                            inf.SetValue(afg, inf.GetValue(afg_clone));
-                        }
-                        Debug.Log(afg.outerRadius);
-                        try
-                        {
-                            MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
-                            Debug.Log("1"); afgSetMaterial.Invoke(afg, new object[] { true });
-                        }
-                        catch
-                        {
-                            Debug.Log("[Kopernicus] AtmosphereFixer => Material-resetting for AtmosphereFromGround on " + afg.planet.bodyName + " failed!");
-                        }
-
-                        Debug.Log("Patched AFG");
-                    }
+                    Debug.Log("[Kopernicus]: Patching AFG " + afg.planet.bodyName);
+                    if(!AFGInfo.PatchAFG(afg))
+                        Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Couldn't patch AtmosphereFromGround for " + afg.planet.bodyName + "!");
                 }
             }
+            UnityEngine.Object.Destroy(this); // don't hang around.
         }
     }
 }
