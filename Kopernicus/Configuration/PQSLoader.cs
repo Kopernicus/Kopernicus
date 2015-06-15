@@ -279,7 +279,6 @@ namespace Kopernicus
                 if (node.HasNode("Mods"))
                 {
                     // Patch the existing mods
-                    List<ConfigNode> toRemove = new List<ConfigNode>();
                     foreach (ConfigNode mod in node.GetNode("Mods").nodes)
                     {
                         if (pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).Count() != 0)
@@ -299,15 +298,12 @@ namespace Kopernicus
                                 Parser.LoadObjectFromConfigurationNode(patchedMod, mod);
                                 patchedMod.patched = true;
                                 patchedMods.Add(patchedMod);
-                                toRemove.Add(mod);
                             }
                             catch
                             {
                                 Logger.Active.Log("Couldn't find " + 2 + 1 + " Mods of Type " + t + "!");
                             }
                         }
-                        foreach (ConfigNode n in toRemove)
-                            node.RemoveNode(n);
                     }
                 }
 			}
