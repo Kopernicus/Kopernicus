@@ -301,7 +301,7 @@ namespace Kopernicus
                             }
                             catch
                             {
-                                Logger.Active.Log("Couldn't find " + 2 + 1 + " Mods of Type " + t + "!");
+                                Logger.Active.Log("Couldn't find enough Mods of Type " + t + "!");
                             }
                         }
                     }
