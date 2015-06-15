@@ -105,17 +105,9 @@ namespace Kopernicus
             invWaveLength = afg.invWaveLength;
             outerRadius = afg.outerRadius; Debug.Log(outerRadius);
             innerRadius = afg.innerRadius; Debug.Log(innerRadius);
-            string logstr = ". Storing AFG settings:\n";
-            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-                logstr += fi.Name + " = " + fi.GetValue(this) + "\n";
-            if(afg.planet != null)
-                Debug.Log("[Kopernicus]: Stored AFG for " + afg.planet.bodyName + logstr);
         }
         private void Apply(AtmosphereFromGround afg)
         {
-            string logstr = "Applying AFG settings:\n";
-            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-                logstr += fi.Name + " = " + fi.GetValue(this) + "\n";
             afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
             afg.doScale = doScale;
             afg.ESun = ESun;
@@ -136,7 +128,6 @@ namespace Kopernicus
             {
                 MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
                 afgSetMaterial.Invoke(afg, new object[] { true });
-                Debug.Log("[Kopernicus]: Patched AFG! " + logstr);
             }
             catch
             {
