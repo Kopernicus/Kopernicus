@@ -336,8 +336,8 @@ namespace Kopernicus
 
                     if (OnDemand.OnDemandStorage.useOnDemand)
                     {
-                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
                         value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
+                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
                     }
                 }
                 else
@@ -358,23 +358,30 @@ namespace Kopernicus
                         {
                             if (Utility.TextureExists(s))
                             {
+                                string mapName = s;
+                                mapName = mapName.Substring(s.LastIndexOf('/') + 1);
+                                int lastDot = mapName.LastIndexOf('.');
+                                if (lastDot > 0)
+                                    mapName = mapName.Substring(0, lastDot);
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
                                     OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     valCB.SetPath(s);
                                     valCB.Depth = MapSO.MapDepth.Greyscale;
-                                    valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    valCB.name = mapName + " (CBG) for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valCB as T;
+                                    valCB.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                 }
                                 else
                                 {
                                     OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     valMap.SetPath(s);
                                     valMap.Depth = MapSO.MapDepth.Greyscale;
-                                    valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    valMap.name = mapName + " (G) for " + OnDemand.OnDemandStorage.currentBody;
                                     value = valMap as T;
+                                    valMap.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                 }
                                 Templates.instance.mapsGray[s] = value;
                             }
@@ -416,8 +423,8 @@ namespace Kopernicus
 
                     if (OnDemand.OnDemandStorage.useOnDemand)
                     {
-                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
                         value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
+                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
                     }
                 }
                 else
@@ -438,13 +445,19 @@ namespace Kopernicus
                         {
                             if (Utility.TextureExists(s))
                             {
+                                string mapName = s;
+                                mapName = mapName.Substring(s.LastIndexOf('/') + 1);
+                                int lastDot = mapName.LastIndexOf('.');
+                                if (lastDot > 0)
+                                    mapName = mapName.Substring(0, lastDot);
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
                                     OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
                                     valCB.SetPath(s);
                                     valCB.Depth = MapSO.MapDepth.RGB;
-                                    valCB.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    valCB.name = mapName + " (CBRGB) for " + OnDemand.OnDemandStorage.currentBody;
+                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    valCB.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
                                     value = valCB as T;
                                 }
                                 else
@@ -453,7 +466,8 @@ namespace Kopernicus
                                     OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
                                     valMap.SetPath(s);
                                     valMap.Depth = MapSO.MapDepth.RGB;
-                                    valMap.name += " for " + OnDemand.OnDemandStorage.currentBody;
+                                    valMap.name = mapName + " (RGB) for " + OnDemand.OnDemandStorage.currentBody;
+                                    valMap.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
                                     value = valMap as T;
                                 }
                                 Templates.instance.mapsRGB[s] = value;
