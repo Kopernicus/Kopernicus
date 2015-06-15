@@ -1,20 +1,17 @@
-Kopernicus Pre-Alpha Release 8
+Kopernicus Pre-Alpha Release 9
 ==============================
-June 12th, 2015
+June 15th, 2015
 
 Copyright (C) 2015 Bryce C Schroeder (bryce.schroeder@gmail.com)
                    Nathaniel R. Lewis (linux.robotdude@gmail.com)
 
 New in this version
 -------------------
-- ScaledSpace .bin directory can be specified
-- Fixed the "Invisible-Wall" bug
-- Fixed the "Infinite-Zoom" bug
-- Improved Logger
-- Added alternative names for "atmosphereDepth"
-- Added patching of existing Mods
-- Removed Debug-Spam
-- Updated Hodor-Example with code for Mod-patching and specific Cache files
+- ModPatcher now handles multiple mods correctly
+- Patching of specific mods by name of the mod
+- StarLightSwitcher now tries to activate Kerbins Home Star
+- AtmosphereFromGround works now
+- Fixed OnDemand issues
  
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
