@@ -19,6 +19,8 @@ namespace Kopernicus
             public bool IsLoaded() { return isLoaded; }
             public void SetPath(string path) { mapPath = path; }
             public void SetAutoLoad(bool doAutoLoad) { autoLoad = doAutoLoad; }
+            public string MapName() { return name; }
+            public string MapPath() { return mapPath; }
             public bool Load()
             {
                 if (isLoaded)
@@ -32,8 +34,10 @@ namespace Kopernicus
                     Debug.Log("OD: CBmap " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
                     OnDemand.OnDemandStorage.enabledMaps[this] = true;
                     OnDemand.OnDemandStorage.mapTimes[this] = 0f;
+                    return true;
                 }
-                return true;
+                Debug.Log("OD: ERROR: Failed to load CBmap " + name + " at path " + mapPath);
+                return false;
             }
             public bool Unload()
             {
@@ -82,7 +86,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name + " of path " + mapPath + ", ignore = " + autoLoad);
+                    Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -94,7 +98,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name + " of path " + mapPath + ", ignore = " + autoLoad);
+                    Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
