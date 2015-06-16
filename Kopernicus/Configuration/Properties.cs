@@ -196,6 +196,12 @@ namespace Kopernicus
 				}
 			}
 
+            [ParserTarget("useTheInName", optional = false)]
+            public NumericParser<bool> useTheInName
+            {
+                set { celestialBody.use_The_InName = value.value; }
+            }
+
 			void IParserEventSubscriber.Apply (ConfigNode node) { }
 
 			void IParserEventSubscriber.PostApply (ConfigNode node)

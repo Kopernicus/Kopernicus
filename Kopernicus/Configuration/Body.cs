@@ -152,6 +152,12 @@ namespace Kopernicus
 						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
 							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
 					}
+
+                    // If we've changed the name, reset use_The_InName
+                    if (generatedBody.name != template.body.name)
+                    {
+                        generatedBody.celestialBody.use_The_InName = false;
+                    }
 					
 					// If this body has an orbit, create editor/loader
 					if (generatedBody.orbitDriver != null) 
