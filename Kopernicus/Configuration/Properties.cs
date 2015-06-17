@@ -196,7 +196,7 @@ namespace Kopernicus
 				}
 			}
 
-            [ParserTarget("useTheInName", optional = false)]
+            [ParserTarget("useTheInName", optional = true)]
             public NumericParser<bool> useTheInName
             {
                 set { celestialBody.use_The_InName = value.value; }

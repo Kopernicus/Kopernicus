@@ -5,6 +5,7 @@ using System.Text;
 
 using KSP;
 using UnityEngine;
+using System.IO;
 
 namespace Kopernicus
 {
@@ -25,20 +26,32 @@ namespace Kopernicus
             {
                 if (isLoaded)
                     return false;
-                Texture2D map = Utility.LoadTexture(mapPath, false, false, false);
-                if (map != null)
+                if (mapPath.EndsWith(".tga"))
                 {
-                    CreateMap(Depth, map);
+                    CreateMap(Depth, mapPath);
                     isLoaded = true;
                     Debug.Log("OD: map " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
                     OnDemand.OnDemandStorage.enabledMaps[this] = true;
                     OnDemand.OnDemandStorage.mapTimes[this] = 0f;
-                    DestroyImmediate(map);
                     return true;
                 }
+                else
+                {
+                    Texture2D map = Utility.LoadTexture(mapPath, false, false, false);
+                    if (map != null)
+                    {
+                        CreateMap(Depth, map);
+                        isLoaded = true;
+                        Debug.Log("OD: map " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
+                        OnDemand.OnDemandStorage.enabledMaps[this] = true;
+                        OnDemand.OnDemandStorage.mapTimes[this] = 0f;
+                        DestroyImmediate(map);
+                        return true;
+                    }
 
-                Debug.Log("OD: ERROR: Failed to load map " + name + " at path " + mapPath);
-                return false;
+                    Debug.Log("OD: ERROR: Failed to load map " + name + " at path " + mapPath);
+                    return false;
+                }
             }
             public bool Unload()
             {
@@ -49,6 +62,7 @@ namespace Kopernicus
                 Debug.Log("OD: map " + name + " disabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
                 OnDemand.OnDemandStorage.enabledMaps[this] = false;
                 OnDemand.OnDemandStorage.mapTimes[this] = 0f;
+                this._data = null;
                 GC.Collect();
                 return true;
             }
@@ -69,6 +83,40 @@ namespace Kopernicus
             {
                 base.CreateMap(depth, tex);
                 isLoaded = true;
+            }
+
+            public void CreateMap(MapDepth depth, string path)
+            {
+                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), Path.Combine("GameData", path));
+                byte[] bytes = File.ReadAllBytes(fullPath);
+                TGAHeader tex = new TGAHeader(bytes);
+
+                this._name = Path.GetFileNameWithoutExtension(fullPath); ;
+                this._width = tex.width;
+                this._height = tex.height;
+                this._bpp = (int)depth;
+                this._rowWidth = this._width * this._bpp;
+
+                switch (depth)
+                {
+                    case MapDepth.Greyscale:
+                        GreyscaleFromRGB(tex, bytes);
+                        break;
+
+                    case MapDepth.HeightAlpha:
+                        HeightAlpha(tex, bytes);
+                        break;
+
+                    case MapDepth.RGB:
+                        RGB(tex, bytes);
+                        break;
+
+                    case MapDepth.RGBA:
+                        RGBA(tex, bytes);
+                        break;
+                }
+
+                this._isCompiled = true;
             }
 
             public void CreateMap(MapSO.MapDepth depth, string path, Texture2D tex)
@@ -285,6 +333,65 @@ namespace Kopernicus
                         return new Texture2D(_width, _height);
                 }
                 return base.CompileToTexture();
+            }
+
+            protected void GreyscaleFromRGB(TGAHeader tex, byte[] data)
+            {
+                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
+                int length = colorArray.Length;
+                this._data = new byte[length];
+                for (int i = 0; i < length; i++)
+                {
+                    this._data[i] = colorArray[i].r;
+                }
+            }
+
+            protected void HeightAlpha(TGAHeader tex, byte[] data)
+            {
+                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
+                int num = colorArray.Length * 2;
+                this._data = new byte[num];
+                int index = 0;
+                int num3 = 0;
+                while (index < colorArray.Length)
+                {
+                    this._data[num3++] = colorArray[index].r;
+                    this._data[num3++] = colorArray[index].a;
+                    index++;
+                }
+            }
+
+            protected void RGB(TGAHeader tex, byte[] data)
+            {
+                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
+                int num = colorArray.Length * 3;
+                this._data = new byte[num];
+                int index = 0;
+                int num3 = 0;
+                while (index < colorArray.Length)
+                {
+                    this._data[num3++] = colorArray[index].r;
+                    this._data[num3++] = colorArray[index].g;
+                    this._data[num3++] = colorArray[index].b;
+                    index++;
+                }
+            }
+
+            protected void RGBA(TGAHeader tex, byte[] data)
+            {
+                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
+                int num = colorArray.Length * 4;
+                this._data = new byte[num];
+                int index = 0;
+                int num3 = 0;
+                while (index < colorArray.Length)
+                {
+                    this._data[num3++] = colorArray[index].r;
+                    this._data[num3++] = colorArray[index].g;
+                    this._data[num3++] = colorArray[index].b;
+                    this._data[num3++] = colorArray[index].a;
+                    index++;
+                }
             }
         }
     }
