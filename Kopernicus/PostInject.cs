@@ -477,33 +477,47 @@ namespace Kopernicus
 
         public void UpdateMenuTex()
         {
-            PSystemBody home = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
-            Texture homeMain = home.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
-            Texture homeBump = home.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
-            Texture munMain = homeMain;
-            Texture munBump = homeBump;
-            if (home.children != null && home.children.Count > 0)
+            string errorPlace = "start";
+            try
             {
-                PSystemBody mun = home.children[0];
-                munMain = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
-                munBump = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
+                PSystemBody home = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
+                Texture homeMain = home.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
+                Texture homeBump = home.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
+                Texture munMain = homeMain;
+                Texture munBump = homeBump;
+                errorPlace = "Found new home stuff";
+                if (home.children != null && home.children.Count > 0)
+                {
+                    PSystemBody mun = home.children[0];
+                    munMain = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
+                    munBump = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
+                }
+                errorPlace = "Found new moon";
+                if (Templates.instance.origKerbinDiff != null && Templates.instance.origKerbinBump != null)
+                {
+                    Logger.Active.Log("Replaceing color and normal maps on main menu.");
+                    Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
+                    foreach (Material m in mats)
+                    {
+                        errorPlace = "replacing home";
+                        Texture main = m.GetTexture("_MainTex");
+                        if (main == Templates.instance.origKerbinDiff)
+                            m.SetTexture("_MainTex", homeMain);
+                        else if (main == Templates.instance.origMunDiff)
+                            m.SetTexture("_MainTex", munMain);
+                        errorPlace = "replacing moon";
+                        Texture bump = m.GetTexture("_BumpMap");
+                        if (bump == Templates.instance.origKerbinBump)
+                            m.SetTexture("_BumpMap", homeBump);
+                        else if (bump == Templates.instance.origMunBump)
+                            m.SetTexture("_BumpMap", homeBump);
+                    }
+                }
+                errorPlace = "done";
             }
-            Logger.Active.Log("Replaceing color map " + Templates.instance.origKerbinDiff.name + " with " + homeMain.name);
-            Logger.Active.Log("Replaceing normal map " + Templates.instance.origKerbinBump.name + " with " + homeBump.name);
-            Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
-            foreach (Material m in mats)
+            catch (Exception e)
             {
-                Texture main = m.GetTexture("_MainTex");
-                if (main == Templates.instance.origKerbinDiff)
-                    m.SetTexture("_MainTex", homeMain);
-                else if (main == Templates.instance.origMunDiff)
-                    m.SetTexture("_MainTex", munMain);
-
-                Texture bump = m.GetTexture("_BumpMap");
-                if (bump == Templates.instance.origKerbinBump)
-                    m.SetTexture("_BumpMap", homeBump);
-                else if (bump == Templates.instance.origMunBump)
-                    m.SetTexture("_BumpMap", homeBump);
+                Debug.Log("[Kopernicus]: Error during finalize! Place = " + errorPlace + ", message = " + e.Message);
             }
         }
         private void RemoveUnused()

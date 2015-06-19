@@ -91,6 +91,7 @@ namespace Kopernicus
                 OnDemandStorage.bodyMapLists[newName] = mapList;
                 OnDemandStorage.bodyMapLists.Remove(oldName);
             }
+            AFGInfo.UpdateAFGName(oldName, newName);
         }
     }
 
@@ -154,6 +155,7 @@ namespace Kopernicus
                             kvp.Value[i] = newName;
                 }
             }
+            AFGInfo.UpdateAFGName(oldName, newName);
         }
     }
 

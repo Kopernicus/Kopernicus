@@ -247,9 +247,11 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 // Manipulate AFG
-                if (node.HasNode("AtmosphereFromGround"))
+                AtmosphereFromGround afg = scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0] as AtmosphereFromGround;
+                if (node.HasNode("AtmosphereFromGround") && afg != null)
                 {
-                    AtmosphereFromGroundParser atmoFG = new AtmosphereFromGroundParser(scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0]);
+                    AtmosphereFromGroundParser atmoFG = new AtmosphereFromGroundParser(afg, celestialBody);
+                    Parser.LoadObjectFromConfigurationNode(atmoFG, node.GetNode("AtmosphereFromGround"));
                 }
             }
 
@@ -264,29 +266,11 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class AtmosphereFromGroundParser : IParserEventSubscriber
         {
+            private const float INVSCALEFACTOR = (1f / 6000f); // since ScaledSpace doesn't exist to query.
+
             // AtmosphereFromGround we're modifying
             public AtmosphereFromGround afg;
-
-            // cameraHeight
-            [ParserTarget("cameraHeight", optional = true)]
-            private NumericParser<float> cameraHeight
-            {
-                set { afg.cameraHeight = value.value; }
-            }
-
-            // cameraHeight2
-            [ParserTarget("cameraHeight2", optional = true)]
-            private NumericParser<float> cameraHeight2
-            {
-                set { afg.cameraHeight2 = value.value; }
-            }
-
-            // cameraPos
-            [ParserTarget("cameraPos", optional = true)]
-            private Vector3Parser cameraPos
-            {
-                set { afg.cameraPos = value.value; }
-            }
+            private CelestialBody body;
 
             // DEBUG_alwaysUpdateAll
             [ParserTarget("DEBUG_alwaysUpdateAll", optional = true)]
@@ -316,32 +300,22 @@ namespace Kopernicus
                 set { afg.g = value.value; }
             }
 
-            // g2
-            [ParserTarget("g2", optional = true)]
-            private NumericParser<float> g2
-            {
-                set { afg.g2 = value.value; }
-            }
-
             // innerRadius
             [ParserTarget("innerRadius", optional = true)]
             private NumericParser<float> innerRadius
             {
-                set { afg.innerRadius = value.value; }
-            }
-
-            // innerRadius2
-            [ParserTarget("innerRadius2", optional = true)]
-            private NumericParser<float> innerRadius2
-            {
-                set { afg.innerRadius2 = value.value; }
+                set{ afg.innerRadius = value.value * INVSCALEFACTOR; }
             }
 
             // invWaveLength
             [ParserTarget("invWaveLength", optional = true)]
             private ColorParser invWaveLength
             {
-                set { afg.invWaveLength = value.value; }
+                set
+                {
+                    afg.invWaveLength = value.value;
+                    afg.waveLength = new Color((float)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[0])), (float)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[1])), (float)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[2])), 0.5f);
+                }
             }
 
             // Km
@@ -351,20 +325,6 @@ namespace Kopernicus
                 set { afg.Km = value.value; }
             }
 
-            // Km4PI 
-            [ParserTarget("Km4PI", optional = true)]
-            private NumericParser<float> Km4PI 
-            {
-                set { afg.Km4PI = value.value; }
-            }
-
-            // KmESun
-            [ParserTarget("KmESun", optional = true)]
-            private NumericParser<float> KmESun
-            {
-                set { afg.KmESun = value.value; }
-            }
-
             // Kr
             [ParserTarget("Kr", optional = true)]
             private NumericParser<float> Kr
@@ -372,32 +332,11 @@ namespace Kopernicus
                 set { afg.Kr = value.value; }
             }
 
-            // Kr4PI 
-            [ParserTarget("Kr4PI", optional = true)]
-            private NumericParser<float> Kr4PI
-            {
-                set { afg.Kr4PI = value.value; }
-            }
-
-            // KrESun
-            [ParserTarget("KrESun", optional = true)]
-            private NumericParser<float> KrESun
-            {
-                set { afg.KrESun = value.value; }
-            }
-
             // outerRadius
             [ParserTarget("outerRadius", optional = true)]
             private NumericParser<float> outerRadius
             {
-                set { afg.outerRadius = value.value; }
-            }
-
-            // outerRadius
-            [ParserTarget("outerRadius2", optional = true)]
-            private NumericParser<float> outerRadius2
-            {
-                set { afg.outerRadius2 = value.value; }
+                set { afg.outerRadius = value.value * INVSCALEFACTOR; }
             }
 
             // samples
@@ -421,37 +360,89 @@ namespace Kopernicus
                 set { afg.scaleDepth = value.value; }
             }
 
-            // scaleOverScaleDepth
-            [ParserTarget("scaleOverScaleDepth", optional = true)]
-            private NumericParser<float> scaleOverScaleDepth
+            [ParserTarget("transformScale", optional = true)]
+            private Vector3Parser transformScale
             {
-                set { afg.scaleOverScaleDepth = value.value; }
+                set { afg.transform.localScale = value.value; afg.doScale = false; }
             }
 
-            // sunLightDirection
-            [ParserTarget("sunLightDirection", optional = true)]
-            private Vector3Parser sunLightDirection
+            // waveLength
+            [ParserTarget("waveLength", optional = true)]
+            private ColorParser waveLength
             {
-                set { afg.sunLightDirection = value.value; }
+                set
+                {
+                    afg.waveLength = value.value;
+                    afg.invWaveLength = new Color((float)(1d/Math.Pow(afg.waveLength[0], 4)), (float)(1d/Math.Pow(afg.waveLength[1], 4)), (float)(1d/Math.Pow(afg.waveLength[2], 4)), 0.5f);
+                }
+            }
+
+            // outerRadiusMult
+            [ParserTarget("outerRadiusMult", optional = true)]
+            private NumericParser<float> outerRadiusMult
+            {
+                set { afg.outerRadius = (((float)body.Radius) * value.value) * INVSCALEFACTOR; }
+            }
+
+            // innerRadiusMult
+            [ParserTarget("innerRadiusMult", optional = true)]
+            private NumericParser<float> innerRadiusMult
+            {
+                set { afg.innerRadius = afg.outerRadius * value.value; }
+            }
+
+            public static void CalculatedMembers(AtmosphereFromGround atmo)
+            {
+                atmo.g2 = atmo.g * atmo.g;
+                atmo.KrESun = atmo.Kr * atmo.ESun;
+                atmo.KmESun = atmo.Km * atmo.ESun;
+                atmo.Kr4PI = atmo.Kr * 4f * Mathf.PI;
+                atmo.Km4PI = atmo.Km * 4f * Mathf.PI;
+                atmo.outerRadius2 = atmo.outerRadius * atmo.outerRadius;
+                atmo.innerRadius2 = atmo.innerRadius * atmo.innerRadius;
+                atmo.scale = 1f / (atmo.outerRadius - atmo.innerRadius);
+                atmo.scaleOverScaleDepth = atmo.scale / atmo.scaleDepth;
+
+                if (atmo.doScale)
+                    atmo.transform.localScale = Vector3.one * 1.025f;
             }
 
             // Parser apply event
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                // Set Defaults
+                afg.planet = body;
+                afg.ESun = 30f;
+                afg.Kr = 0.00125f;
+                afg.Km = 0.00015f;
+                
+                afg.samples = 4f;
+                afg.g = -0.85f;
+                if (afg.waveLength == new Color(0f, 0f, 0f, 0f))
+                {
+                    afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
+                }
+                afg.outerRadius = (((float)body.Radius) * 1.025f) * INVSCALEFACTOR;
+                afg.innerRadius = afg.outerRadius * 0.975f;
+                afg.scaleDepth = -0.25f;
+                afg.invWaveLength = new Color((float)(1d / Math.Pow(afg.waveLength[0], 4)), (float)(1d / Math.Pow(afg.waveLength[1], 4)), (float)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
+
+                CalculatedMembers(afg);
+            }
 
             // Parser post apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                if (afg != null)
-                {
-                    MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
-                    afgSetMaterial.Invoke(afg, new object[] { true });
-                }
+                CalculatedMembers(afg); // with the new values.
+                AFGInfo.StoreAFG(afg);
             }
 
-            public AtmosphereFromGroundParser(AtmosphereFromGround afg)
+            public AtmosphereFromGroundParser(AtmosphereFromGround afg, CelestialBody body)
             {
                 this.afg = afg;
+                this.body = body;
             }
+
         }
 	}
 }

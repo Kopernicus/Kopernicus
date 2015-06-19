@@ -392,7 +392,7 @@ namespace Kopernicus
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
                 // Find the PQS mods and enable the PQS-sphere
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() != typeof(PQSMod_MapDecal));
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() != typeof(PQSMod_MapDecal) && m.modEnabled);
 
                 pqsVersion.ActivateSphere();
 

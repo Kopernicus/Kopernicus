@@ -30,20 +30,22 @@ namespace Kopernicus
                 if(!bodyMapLists.ContainsKey(body))
                     bodyMapLists[body] = new List<ILoadOnDemand>();
                 bodyMapLists[body].Add(map);
-                if (mapList.Contains(map))
-                {
-                    Debug.Log("OD: ERROR: trying to add a map but is already tracked.");
-                }
-                else
+                Debug.Log("OD: Adding for body " + body + " map named " + map.MapName() + " of path = " + map.MapPath());
+                if (!mapList.Contains(map))
                 {
                     mapList.Add(map);
                     enabledMaps[map] = false;
                     mapTimes[map] = 0f;
-
-                    if (!mapBodies.ContainsKey(map))
-                        mapBodies[map] = new List<string>();
-                    mapBodies[map].Add(body);
                 }
+                else
+                {
+                    Debug.Log("OD: WARNING: trying to add a map but is already tracked! Current body is " + body + " and map name is " + map.MapName() + " and path is " + map.MapPath());
+                }
+
+                if (!mapBodies.ContainsKey(map))
+                    mapBodies[map] = new List<string>();
+                if(!mapBodies[map].Contains(body))
+                    mapBodies[map].Add(body);
             }
             public static void RemoveMap(string body, ILoadOnDemand map)
             {

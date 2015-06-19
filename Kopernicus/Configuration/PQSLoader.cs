@@ -278,7 +278,6 @@ namespace Kopernicus
             {
                 if (node.HasNode("Mods"))
                 {
-                    int i = 0;
                     // Patch the existing mods
                     foreach (ConfigNode mod in node.GetNode("Mods").nodes)
                     {
@@ -288,7 +287,13 @@ namespace Kopernicus
                             ConstructorInfo cInfo = t.GetConstructor(new Type[] { typeof(PQSMod) });
                             try
                             {
-                                PQSMod pqsMod = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).ToArray()[i];
+                                PQSMod pqsMod = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(
+                                    m => m.GetType().Name.Contains(mod.name) && 
+                                         patchedMods.Where(M => M.mod.name == m.name && 
+                                         M.mod.GetType() == m.GetType()).Count() == 0 &&
+                                         ((mod.HasValue("name")) ? m.name == mod.GetValue("name") : true)
+                                    ).First();
+
                                 ModLoader.ModLoader patchedMod = cInfo.Invoke(new object[] { pqsMod }) as ModLoader.ModLoader;
                                 Parser.LoadObjectFromConfigurationNode(patchedMod, mod);
                                 patchedMod.patched = true;
@@ -296,10 +301,9 @@ namespace Kopernicus
                             }
                             catch
                             {
-                                Logger.Active.Log("Couldn't find " + i + 1 + " Mods of Type " + t + "!");
+                                Logger.Active.Log("Couldn't find enough Mods of Type " + t + "!");
                             }
                         }
-                        i++;
                     }
                 }
 			}

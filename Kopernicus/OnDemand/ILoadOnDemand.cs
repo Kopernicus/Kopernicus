@@ -14,6 +14,8 @@ namespace Kopernicus
             bool IsLoaded();
             void SetPath(string path);
             void SetAutoLoad(bool doAutoLoad);
+            string MapName();
+            string MapPath();
         }
     }
 }
