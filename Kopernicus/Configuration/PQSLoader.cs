@@ -311,7 +311,7 @@ namespace Kopernicus
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
                 // Remove the patched mods from the main list
-                foreach (ModLoader.ModLoader remove in mods.Where(m => patchedMods.Select(p => p.mod.GetType()).Contains(m.mod.GetType())))
+                foreach (ModLoader.ModLoader remove in mods.Where(m => m.mod != null && patchedMods.Select(p => p.mod.GetType()).Contains(m.mod.GetType())))
                 {
                     remove.mod.transform.parent = null;
                     remove.mod.sphere = null;
