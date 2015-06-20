@@ -115,8 +115,12 @@ namespace Kopernicus
 				// Select the land class objects and push into the mod
 				void IParserEventSubscriber.PostApply(ConfigNode node)
 				{
-					_mod.landClasses = landClasses.Select (loader => loader.landClassNoise).ToArray ();
-                    _mod.lcCount = landClasses.Count;
+                    PQSMod_HeightColorMapNoise.LandClass[] landClassesArray = landClasses.Select(loader => loader.landClassNoise).ToArray();
+                    if (landClassesArray.Count() != 0)
+                    {
+                        _mod.landClasses = landClassesArray;
+                    }
+                    _mod.lcCount = _mod.landClasses.Count();
 				}
 
                 public HeightColorMapNoise()
