@@ -35,35 +35,51 @@ namespace Kopernicus
         public class PQSMod_OnDemandHandler : PQSMod
         {
             private bool isLoaded = false;
+            private bool isAdded = false;
 
-            public override void OnSetup()
+            private void DisableMapSO(GameScenes scene)
             {
-                if (!isLoaded && !Injector.dontUpdate)
+                if (OnDemandStorage.DisableBody(base.sphere.name))
                 {
-                    OnDemandStorage.EnableBody(base.sphere.name);
+                    Debug.Log("[OD]: Disabled Body " + base.sphere.name);
+                    isLoaded = false;
+                }
+            }
+
+            private void EnableMapSO()
+            {
+                if (OnDemandStorage.EnableBody(base.sphere.name))
+                {
                     Debug.Log("[OD]: Enabled Body " + base.sphere.name);
                     isLoaded = true;
                 }
             }
 
-            public override void OnSphereActive()
+            public override void OnSetup()
             {
+                if (!isAdded)
+                {
+                    GameEvents.onGameSceneLoadRequested.Add(new EventData<GameScenes>.OnEvent(DisableMapSO));
+                    isAdded = true;
+                }
+
                 if (!isLoaded && !Injector.dontUpdate)
                 {
-                    OnDemandStorage.EnableBody(base.sphere.name);
-                    Debug.Log("[OD]: Enabled Body " + base.sphere.name);
-                    isLoaded = true;
+                    EnableMapSO();
                 }
             }
 
             public override void OnSphereInactive()
             {
-                if (isLoaded && !Injector.dontUpdate)
+                if (isLoaded && !Injector.dontUpdate && !base.sphere.isAlive)
                 {
-                    OnDemandStorage.DisableBody(base.sphere.name);
-                    Debug.Log("[OD]: Disabled Body " + base.sphere.name);
-                    isLoaded = false;
+                    DisableMapSO(HighLogic.LoadedScene);
                 }
+            }
+
+            public void OnDestroy()
+            {
+                GameEvents.onGameSceneLoadRequested.Remove(new EventData<GameScenes>.OnEvent(DisableMapSO));
             }
         }
     }

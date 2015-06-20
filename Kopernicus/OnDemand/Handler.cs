@@ -12,6 +12,7 @@ namespace Kopernicus
     {
         public static class OnDemandStorage
         {
+            public static List<string> activeBodies = new List<string>();
             public static Dictionary<ILoadOnDemand, bool> enabledMaps = new Dictionary<ILoadOnDemand,bool>();
             public static Dictionary<ILoadOnDemand, float> mapTimes = new Dictionary<ILoadOnDemand, float>();
             public static Dictionary<ILoadOnDemand, List<string>> mapBodies = new Dictionary<ILoadOnDemand, List<string>>();
@@ -29,6 +30,7 @@ namespace Kopernicus
                 PQSMod_OnDemandHandler handler = handlerObject.AddComponent<PQSMod_OnDemandHandler>();
                 handler.transform.parent = pqsVersion.transform;
                 handler.sphere = pqsVersion;
+                handler.order = 1;
             }
 
             public static void AddMap(string body, ILoadOnDemand map)
@@ -104,17 +106,26 @@ namespace Kopernicus
                 }
             }
 
-            public static void EnableBody(string bname)
+            public static bool EnableBody(string bname)
             {
-                if (bodyMapLists.ContainsKey(bname))
+                if (bodyMapLists.ContainsKey(bname) && !activeBodies.Contains(bname))
+                {
                     EnableMapList(bodyMapLists[bname]);
+                    activeBodies.Add(bname);
+                    return true;
+                }
+                return false;
+                
             }
-            public static void DisableBody(string bname)
+            public static bool DisableBody(string bname)
             {
-                if (bodyMapLists.ContainsKey(bname))
+                if (bodyMapLists.ContainsKey(bname) && activeBodies.Contains(bname))
                 {
                     DisableMapList(bodyMapLists[bname]);
+                    activeBodies.Remove(bname);
+                    return true;
                 }
+                return false;
             }
         }
 
