@@ -510,7 +510,7 @@ namespace Kopernicus
                         if (bump == Templates.instance.origKerbinBump)
                             m.SetTexture("_BumpMap", homeBump);
                         else if (bump == Templates.instance.origMunBump)
-                            m.SetTexture("_BumpMap", homeBump);
+                            m.SetTexture("_BumpMap", munBump);
                     }
                 }
                 errorPlace = "done";
