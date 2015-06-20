@@ -258,6 +258,8 @@ namespace Kopernicus
                     generatedBody.pqsVersion.gameObject.name = name;
                     generatedBody.pqsVersion.radius = generatedBody.celestialBody.Radius;
 
+                    OnDemand.OnDemandStorage.AddHandler(generatedBody.pqsVersion);
+
                     // If an ocean was defined
                     if (ocean != null)
                     {
@@ -364,9 +366,7 @@ namespace Kopernicus
 				// Post gen celestial body
 				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
 
-                if (!generatedBody.celestialBody.isHomeWorld)
-                    OnDemand.OnDemandStorage.DisableBody(name);
-                else
+                if (generatedBody.celestialBody.isHomeWorld)
                     OnDemand.OnDemandStorage.homeworldBody = name;
 			}
 		}

@@ -391,8 +391,10 @@ namespace Kopernicus
                 GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
+                Type[] blacklist = new Type[] { typeof(PQSMod_MapDecal), typeof(OnDemand.PQSMod_OnDemandHandler) };
+
                 // Find the PQS mods and enable the PQS-sphere
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() != typeof(PQSMod_MapDecal) && m.modEnabled);
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()) && m.modEnabled);
 
                 pqsVersion.ActivateSphere();
 

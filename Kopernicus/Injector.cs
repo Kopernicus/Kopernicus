@@ -42,6 +42,8 @@ namespace Kopernicus
 	public class Injector : MonoBehaviour 
 	{
         public Templates templates = null;
+
+        public static bool dontUpdate = true; // Should OnDemand update?
         
 		/**
 		 * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
@@ -144,6 +146,9 @@ namespace Kopernicus
 
             // Declare we're done.
             Templates.loadFinished = true;
+
+            // Enable OnDemand Updates
+            dontUpdate = false;
 
 			// Fixups complete, time to surrender to fate
 			Destroy (this);

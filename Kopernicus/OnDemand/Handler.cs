@@ -22,6 +22,15 @@ namespace Kopernicus
             public static bool useOnDemand = false;
             public static bool onDemandLoadOnMissing = true;
 
+            public static void AddHandler(PQS pqsVersion)
+            {
+                GameObject handlerObject = new GameObject("OnDemandHandler");
+                handlerObject.transform.parent = Utility.Deactivator;
+                PQSMod_OnDemandHandler handler = handlerObject.AddComponent<PQSMod_OnDemandHandler>();
+                handler.transform.parent = pqsVersion.transform;
+                handler.sphere = pqsVersion;
+            }
+
             public static void AddMap(string body, ILoadOnDemand map)
             {
                 if (map == null)
@@ -109,7 +118,7 @@ namespace Kopernicus
             }
         }
 
-        [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+        /*[KSPAddon(KSPAddon.Startup.EveryScene, false)]
         public class OnDemandHandler : MonoBehaviour
         {
             protected static string FindHomeworld()
@@ -173,7 +182,7 @@ namespace Kopernicus
 
             public void Start()
             {
-                if (dontUpdate && (/*Templates.loadFinished ||*/ HighLogic.LoadedScene == GameScenes.MAINMENU))
+                if (dontUpdate && (HighLogic.LoadedScene == GameScenes.MAINMENU))
                     dontUpdate = false;
 
                 if (!dontUpdate)
@@ -269,6 +278,6 @@ namespace Kopernicus
                     }
                 }
             }
-        }
+        }*/
     }
 }

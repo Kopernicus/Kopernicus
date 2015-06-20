@@ -105,6 +105,7 @@
     <Compile Include="OnDemand\Handler.cs" />
     <Compile Include="OnDemand\ILoadOnDemand.cs" />
     <Compile Include="OnDemand\MapSODemand.cs" />
+    <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />
     <Compile Include="OnDemand\TGAUtils.cs" />
     <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
