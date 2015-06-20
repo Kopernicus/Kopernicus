@@ -672,6 +672,36 @@ namespace Kopernicus
 				this.material = material;
 			}
 		}
+
+		/** Parser for mesh */
+		[RequireConfigType(ConfigType.Value)]
+		public class MeshParser : IParsable
+		{
+			public Mesh value;
+			public void SetFromString (string s)
+			{
+				// Check if we are attempting to load a builtin mesh
+				if (s.StartsWith ("BUILTIN/")) 
+				{
+					string meshName = Regex.Replace (s, "BUILTIN/", "");
+					value = UnityEngine.Resources.FindObjectsOfTypeAll<Mesh> ().Where (mesh => mesh.name == meshName).First ();
+					return;
+				}
+
+				// TODO: Load a custom mesh file here
+
+				// Mesh was not found
+				value = null;
+			}
+			public MeshParser ()
+			{
+				
+			}
+			public MeshParser (Mesh value)
+			{
+				this.value = value;
+			}
+		}
 	}
 }
 
