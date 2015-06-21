@@ -488,7 +488,7 @@ namespace Kopernicus
                 errorPlace = "Found new home stuff";
                 if (home.children != null && home.children.Count > 0)
                 {
-                    PSystemBody mun = home.children[0];
+                    PSystemBody mun = home.children.Find(b => b.name == "Mun");
                     munMain = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
                     munBump = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
                 }
