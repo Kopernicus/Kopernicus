@@ -203,6 +203,7 @@ namespace Kopernicus
                 if (hazardousOcean != null)
                 {
                     hazardousOcean.controller.gameObject.transform.parent = oceanPQS.transform;
+                    hazardousOcean.OceanPQS = oceanPQS;
                 }
 
                 // == DUMP OCEAN MATERIALS == //
