@@ -141,9 +141,6 @@ namespace Kopernicus
 			// Select the closest star to home
 			StarLightSwitcher.HomeStar ().SetAsActive ();
 
-            // Update Menu Textures
-            PostInject.Instance.UpdateMenuTex();
-
             // Declare we're done.
             Templates.loadFinished = true;
 

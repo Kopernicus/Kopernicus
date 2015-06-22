@@ -33,6 +33,8 @@ namespace Kopernicus
         public double epoch = double.NaN;
 
         public List<string> finalizeBodies;
+
+        public static string menuBody = "Kerbin";
         
         public Templates()
         {
