@@ -62,7 +62,8 @@ namespace Kopernicus
                 OnDemand.OnDemandStorage.enabledMaps[this] = false;
                 OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                 this._data = null;
-                GC.Collect();
+                if (OnDemandStorage.onDemandForceCollect)
+                    GC.Collect();
                 return true;
             }
 
@@ -134,7 +135,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -146,7 +147,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else

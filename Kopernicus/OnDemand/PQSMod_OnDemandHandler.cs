@@ -59,6 +59,30 @@ namespace Kopernicus
                 }
             }
 
+            public override void OnSphereInactive()
+            {
+                Disable();
+            }
+            public override void OnQuadPreBuild(PQ quad)
+            {
+                Enable();
+            }
+            /*public override void OnVertexBuildHeight(PQS.VertexBuildData data)
+            {
+                Enable();
+            }
+            public override void OnVertexBuild(PQS.VertexBuildData data)
+            {
+                Enable();
+            }
+            public override void OnMeshBuild()
+            {
+                Enable();
+            }
+            public override void OnQuadUpdate(PQ quad)
+            {
+                Enable();
+            }*/
             public override void OnSetup()
             {
                 base.OnSetup();
@@ -68,27 +92,20 @@ namespace Kopernicus
 
                 if (isHomeworld && !isLoaded)
                     EnableMapSO();
-            }
 
-            public override void OnSphereStarted()
-            {
-                base.OnSphereStarted();
-                if (!isAdded)
+                /*if(!isAdded)
                 {
                     GameEvents.onGameSceneLoadRequested.Add(new EventData<GameScenes>.OnEvent(DisableMapSO));
                     isAdded = true;
-                }
+                }*/
+            }
 
-                // tracking station enables all PQSs. For some reason. So we ignore it.
-                if (sphere.isActive && sphere.isAlive && !isLoaded && !Injector.dontUpdate && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
+            public void Enable()
+            {   
+                if (!isLoaded && !Injector.dontUpdate)
                 {
                     EnableMapSO();
                 }
-            }
-
-            public override void OnSphereInactive()
-            {
-                Disable();
             }
 
             public void Disable()
@@ -99,10 +116,10 @@ namespace Kopernicus
                 }
             }
 
-            public void OnDestroy()
+            /*public void OnDestroy()
             {
                 GameEvents.onGameSceneLoadRequested.Remove(new EventData<GameScenes>.OnEvent(DisableMapSO));
-            }
+            }*/
         }
     }
 }

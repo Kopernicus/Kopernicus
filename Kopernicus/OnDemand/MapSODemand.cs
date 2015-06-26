@@ -63,7 +63,8 @@ namespace Kopernicus
                 OnDemand.OnDemandStorage.enabledMaps[this] = false;
                 OnDemand.OnDemandStorage.mapTimes[this] = 0f;
                 this._data = null;
-                GC.Collect();
+                if(OnDemandStorage.onDemandForceCollect)
+                    GC.Collect();
                 return true;
             }
 
@@ -135,7 +136,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelbyte with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelbyte with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -147,7 +148,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelColD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelColD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -159,7 +160,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelColF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelColF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -171,7 +172,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelColI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelColI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -183,7 +184,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelCol32D with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelCol32D with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else return Color.black;
@@ -194,7 +195,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelCol32F with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelCol32F with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -206,7 +207,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelCol32I with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelCol32I with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -218,7 +219,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelFloatD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelFloatD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -230,7 +231,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelFloatF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelFloatF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -242,7 +243,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelFloatI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelFloatI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -254,7 +255,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -266,7 +267,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -278,7 +279,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -290,7 +291,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting GreyByteI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting GreyByteI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -302,7 +303,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting GreyFloat with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting GreyFloat with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -314,7 +315,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting pixelByte with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelByte with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else

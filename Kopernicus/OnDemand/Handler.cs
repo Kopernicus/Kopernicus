@@ -17,13 +17,15 @@ namespace Kopernicus
             public static Dictionary<ILoadOnDemand, float> mapTimes = new Dictionary<ILoadOnDemand, float>();
             public static Dictionary<ILoadOnDemand, List<string>> mapBodies = new Dictionary<ILoadOnDemand, List<string>>();
             public static Dictionary<string, List<ILoadOnDemand>> bodyMapLists = new Dictionary<string,List<ILoadOnDemand>>();
+            public static Dictionary<PQS, PQSMod_OnDemandHandler> handlers = new Dictionary<PQS, PQSMod_OnDemandHandler>();
             public static List<ILoadOnDemand> mapList = new List<ILoadOnDemand>();
             public static string homeworldBody = "Kerbin";
             public static string currentBody = "";
             public static bool useOnDemand = false;
             public static bool useOnDemandBiomes = false;
             public static bool onDemandLoadOnMissing = true;
-            public static bool logOnMissing = true;
+            public static bool onDemandLogOnMissing = true;
+            public static bool onDemandForceCollect = false;
 
             public static void AddHandler(PQS pqsVersion)
             {
@@ -33,6 +35,22 @@ namespace Kopernicus
                 handler.transform.parent = pqsVersion.transform;
                 handler.sphere = pqsVersion;
                 handler.order = 1;
+                handlers[pqsVersion] = handler;
+            }
+
+            public static void UpdateHandler(PQS pqs, PQSMod_OnDemandHandler handler)
+            {
+                // just in case
+                List<PQS> remlist = new List<PQS>();
+                foreach(KeyValuePair<PQS, PQSMod_OnDemandHandler> kvp in handlers)
+                {
+                    if(kvp.Value == handler)
+                        remlist.Add(kvp.Key);
+                }
+                foreach(PQS p in remlist)
+                    handlers.Remove(p);
+
+                handlers[pqs] = handler;
             }
 
             public static void AddMap(string body, ILoadOnDemand map)
@@ -134,75 +152,12 @@ namespace Kopernicus
         /*[KSPAddon(KSPAddon.Startup.EveryScene, false)]
         public class OnDemandHandler : MonoBehaviour
         {
-            protected static string FindHomeworld()
-            {
-                if (Planetarium.fetch != null)
-                    return Planetarium.fetch.Home.bodyName;
-
-                if (FlightGlobals.Bodies != null)
-                {
-                    for (int i = 0; i < FlightGlobals.Bodies.Count; ++i)
-                        if (FlightGlobals.Bodies[i].isHomeWorld)
-                            return FlightGlobals.Bodies[i].bodyName;
-                }
-
-                return "Kerbin";
-            }
-
-            protected static void RecurseFillBodies(PSystemBody body)
-            {
-                if (body != null)
-                {
-                    string bn = body.celestialBody.bodyName;
-                    bodiesToEnable[bn] = false;
-                    bodiesList[bn] = body.celestialBody;
-                    foreach (PSystemBody child in body.children)
-                        RecurseFillBodies(child);
-                }
-            }
-            protected static void FillBodyList()
-            {
-                bool fail = false;
-                bodiesToEnable.Clear();
-                bodiesList.Clear();
-                try
-                {
-                    if (FlightGlobals.Bodies != null)
-                    {
-                        int bCount = FlightGlobals.Bodies.Count;
-                        //Debug.Log("OD: Filling body list with " + bCount + " bodies");
-
-                        for (int i = 0; i < bCount; ++i)
-                        {
-                            string bn = FlightGlobals.Bodies[i].bodyName;
-                            bodiesToEnable[bn] = false;
-                            bodiesList[bn] = FlightGlobals.Bodies[i];
-                        }
-                    }
-                }
-                catch(Exception e)
-                {
-                    fail = true;
-                    Debug.Log("OD: Failed to get body list because something threw: " + e);
-                    RecurseFillBodies(PSystemManager.Instance.systemPrefab.rootBody);
-                }
-            }
-
-            static Dictionary<string, bool> bodiesToEnable = new Dictionary<string, bool>();
-            static Dictionary<string, CelestialBody> bodiesList = new Dictionary<string, CelestialBody>();
-            static float waitBeforeUnload = 5f;
             static bool dontUpdate = true;
 
             public void Start()
             {
                 if (dontUpdate && (HighLogic.LoadedScene == GameScenes.MAINMENU))
                     dontUpdate = false;
-
-                if (!dontUpdate)
-                {
-                    OnDemandStorage.homeworldBody = FindHomeworld();
-                    FillBodyList();
-                }
             }
 
             public void Update()
@@ -217,9 +172,8 @@ namespace Kopernicus
                     return;
 
                 // Set all to current PQS state.
-                foreach (string b in bodiesToEnable.Keys.ToList())
+                foreach (PQS p in OnDemandStorage.handlers.Keys)
                 {
-                    PQS bPQS = bodiesList[b].pqsController;
                     if ((object)bPQS != null)
                         bodiesToEnable[b] = bPQS.isActive;
                     else
