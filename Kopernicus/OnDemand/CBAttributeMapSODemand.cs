@@ -134,7 +134,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: getting attribute with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
@@ -146,7 +146,7 @@ namespace Kopernicus
             {
                 if (!isLoaded)
                 {
-                    Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
+                    if (OnDemandStorage.logOnMissing) Debug.Log("OD: ERROR: compiling with unloaded CBmap " + name + " of path " + mapPath + ", autoload = " + autoLoad);
                     if (autoLoad)
                         Load();
                     else
