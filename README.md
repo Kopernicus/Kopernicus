@@ -2,8 +2,13 @@ Kopernicus Beta Release 1
 ==============================
 June 26th, 2015
 
-Copyright (C) 2015 Bryce C Schroeder (bryce.schroeder@gmail.com)
-                   Nathaniel R. Lewis (linux.robotdude@gmail.com)
+Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+   		    - Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ 
+Maintained by: - Thomas P.
+			   - NathanKell
+ 
+Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars
 
 New in this version
 -------------------
