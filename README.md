@@ -22,7 +22,7 @@ New in this version
 - Abillity to change the Body, that is displayed in the MainMenu
 - Fixed Hodor
 
-** After almost one year of development, Kopernicus leaves Pre-Alpha and starts it's official Beta**
+**After almost one year of development, Kopernicus leaves Pre-Alpha and starts it's official Beta**
  
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
