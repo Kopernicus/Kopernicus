@@ -475,51 +475,6 @@ namespace Kopernicus
             }
         }
 
-        public void UpdateMenuTex()
-        {
-            string errorPlace = "start";
-            try
-            {
-                PSystemBody home = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
-                Texture homeMain = home.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
-                Texture homeBump = home.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
-                Texture munMain = homeMain;
-                Texture munBump = homeBump;
-                errorPlace = "Found new home stuff";
-                if (home.children != null && home.children.Count > 0)
-                {
-                    PSystemBody mun = home.children[0];
-                    munMain = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
-                    munBump = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
-                }
-                errorPlace = "Found new moon";
-                if (Templates.instance.origKerbinDiff != null && Templates.instance.origKerbinBump != null)
-                {
-                    Logger.Active.Log("Replaceing color and normal maps on main menu.");
-                    Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
-                    foreach (Material m in mats)
-                    {
-                        errorPlace = "replacing home";
-                        Texture main = m.GetTexture("_MainTex");
-                        if (main == Templates.instance.origKerbinDiff)
-                            m.SetTexture("_MainTex", homeMain);
-                        else if (main == Templates.instance.origMunDiff)
-                            m.SetTexture("_MainTex", munMain);
-                        errorPlace = "replacing moon";
-                        Texture bump = m.GetTexture("_BumpMap");
-                        if (bump == Templates.instance.origKerbinBump)
-                            m.SetTexture("_BumpMap", homeBump);
-                        else if (bump == Templates.instance.origMunBump)
-                            m.SetTexture("_BumpMap", munBump);
-                    }
-                }
-                errorPlace = "done";
-            }
-            catch (Exception e)
-            {
-                Debug.Log("[Kopernicus]: Error during finalize! Place = " + errorPlace + ", message = " + e.Message);
-            }
-        }
         private void RemoveUnused()
         {
             Logger.Active.Log("Removing unused MapSOs and textures");
@@ -578,6 +533,7 @@ namespace Kopernicus
         {
             // Set Instance 
             Instance = this;
+            DontDestroyOnLoad(this);
 
             // Get the data node
             ConfigNode rootConfig = GameDatabase.Instance.GetConfigs(rootNodeName)[0].config;
@@ -629,8 +585,6 @@ namespace Kopernicus
                     }
                     if (finalizeOrbits)
                         FinalizeOrbits();
-                    
-                    UpdateMenuTex();
 
                     if(removeUnused)
                         RemoveUnused();

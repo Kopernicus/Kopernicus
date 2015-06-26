@@ -69,7 +69,7 @@ namespace Kopernicus
 
                 if (rootConfig.HasValue("Epoch"))
                     double.TryParse(rootConfig.GetValue("Epoch"), out Templates.instance.epoch);
-                
+
                 if(rootConfig.HasValue("useOnDemand"))
                     bool.TryParse(rootConfig.GetValue("useOnDemand"), out OnDemand.OnDemandStorage.useOnDemand);
                 if (rootConfig.HasValue("onDemandLoadOnMissing"))
@@ -138,9 +138,19 @@ namespace Kopernicus
 					// Parent the generated body to the PSystem
 					body.Value.generatedBody.transform.parent = system.transform;
 				}
-                
-				// Stage 4 - elect root body
+
+                // Stage 4 - elect root body
 				system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
+
+                // Stage 4.5, get the new Menu-body / Home body
+                if (rootConfig.HasValue("mainMenuBody"))
+                {
+                    Templates.menuBody = rootConfig.GetValue("mainMenuBody");
+                }
+                else
+                {
+                    Templates.menuBody = Utility.FindHomeBody(system.rootBody).name;
+                }
 
 				// Stage 5 - sort by distance from parent (discover how this effects local bodies)
            		RecursivelySortBodies (system.rootBody);

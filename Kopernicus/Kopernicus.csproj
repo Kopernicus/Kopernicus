@@ -100,11 +100,13 @@
     <Compile Include="Constants\Version.cs" />
     <Compile Include="AtmosphereFixer.cs" />
     <Compile Include="MapViewFixer.cs" />
+    <Compile Include="MenuBodyChanger.cs" />
     <Compile Include="NameChanger.cs" />
     <Compile Include="OnDemand\CBAttributeMapSODemand.cs" />
     <Compile Include="OnDemand\Handler.cs" />
     <Compile Include="OnDemand\ILoadOnDemand.cs" />
     <Compile Include="OnDemand\MapSODemand.cs" />
+    <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />
     <Compile Include="OnDemand\TGAUtils.cs" />
     <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -28,6 +28,7 @@
  * https://kerbalspaceprogram.com
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,7 +43,10 @@ namespace Kopernicus
             public HazardousOceanController controller;
 
             // Our Hazardous Ocean
-            public PQS OceanPQS;
+            public PQS OceanPQS
+            {
+                set { controller.oceanPQS = value; }
+            }
             
             // Heating Curve of our Ocean
             [ParserTarget("HeatCurve", optional = true, allowMerge = false)]
@@ -79,18 +83,19 @@ namespace Kopernicus
         public class HazardousOceanController : MonoBehaviour
         {
             public FloatCurve heatCurve;
+            public PQS oceanPQS;
             private string bodyName = "";
 
             public void Update()
             {
                 if (FlightGlobals.Vessels != null && FlightGlobals.Bodies != null)
                 {
-                    bodyName = this.gameObject.transform.parent.name.Replace("Ocean", "");
+                    bodyName = oceanPQS.name.Replace("Ocean", "");
                     List<Vessel> vessels = FlightGlobals.Vessels.FindAll(v => v.mainBody.GetTransform().name == bodyName);
 
                     foreach (Vessel vessel in vessels)
                     {
-                        double distanceToPlanet = FlightGlobals.getAltitudeAtPos(vessel.GetTransform().position, vessel.mainBody);
+                        double distanceToPlanet = Math.Abs(Vector3d.Distance(vessel.GetTransform().position, oceanPQS.transform.position)) - oceanPQS.radius;
                         double heatingRate = heatCurve.Evaluate((float) distanceToPlanet);
                         foreach (Part part in vessel.Parts)
                         {
