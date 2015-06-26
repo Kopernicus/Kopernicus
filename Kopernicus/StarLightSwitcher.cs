@@ -1,11 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * Copyright (C) 2015 Bryce C Schroeder (bryce.schroeder@gmail.com)
- *                    Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
- * 
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, 
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
