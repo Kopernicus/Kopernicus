@@ -142,7 +142,8 @@ namespace Kopernicus
                         t.name = t.name.Replace(oldName, newName);
                 }
             }*/
-            if (OnDemandStorage.bodyMapLists.ContainsKey(oldName))
+            // Disabling this because the new handler uses PQS names
+            /*if (OnDemandStorage.bodyMapLists.ContainsKey(oldName))
             {
                 List<ILoadOnDemand> mapList = OnDemandStorage.bodyMapLists[oldName];
                 OnDemandStorage.bodyMapLists[newName] = mapList;
@@ -154,7 +155,7 @@ namespace Kopernicus
                         if (kvp.Value[i] == oldName)
                             kvp.Value[i] = newName;
                 }
-            }
+            }*/
             AFGInfo.UpdateAFGName(oldName, newName);
         }
     }
