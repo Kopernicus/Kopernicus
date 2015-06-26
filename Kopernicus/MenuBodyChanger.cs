@@ -43,9 +43,19 @@ namespace Kopernicus
         {
             // Get the MainMenu-Logic
             MainMenu main = MainMenu.FindObjectOfType<MainMenu>();
+            if (main == null)
+            {
+                Debug.LogError("[Kopernicus]: No main menu object!");
+                return;
+            }
             MainMenuEnvLogic logic = main.envLogic;
 
             // Set it to Space, because the Mun-Area won't work with sth else than Mun
+            if (logic.areas.Length < 2)
+            {
+                Debug.LogError("[Kopernicus]: Not enough bodies");
+                return;
+            }
             logic.areas[0].SetActive(false);
             logic.areas[1].SetActive(true);
 
@@ -54,15 +64,35 @@ namespace Kopernicus
 
             // Deactivate Kerbins Transform
             Transform kerbin = space.transform.Find("Kerbin");
+            if (kerbin == null)
+            {
+                Debug.LogError("[Kopernicus]: No Kerbin transform!");
+                return;
+            }
             kerbin.gameObject.SetActive(false);
 
             // Deactivate Muns Transform
             Transform mun = space.transform.Find("MunPivot");
+            if (mun == null)
+            {
+                Debug.LogError("[Kopernicus]: No MunPivot transform!");
+                return;
+            }
             mun.gameObject.SetActive(false);
 
             // Grab the main body
             CelestialBody planetCB = PSystemManager.Instance.localBodies.Find(b => b.bodyName == Templates.menuBody);
             PSystemBody planet = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Templates.menuBody);
+            if (planetCB == null || planet == null)
+            {
+                planet = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
+                planetCB = PSystemManager.Instance.localBodies.Find(b => b.isHomeWorld);
+            }
+            if (planet == null || planetCB == null)
+            {
+                Debug.LogError("[Kopernicus]: Could not find homeworld!");
+                return;
+            }
 
             // Clone the scaledVersion and attach it to the Scene
             GameObject menuPlanet = GameObject.Instantiate(planet.scaledVersion) as GameObject;
@@ -89,7 +119,6 @@ namespace Kopernicus
 
             // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
             menuPlanet.renderer.sharedMaterial = planetCB.scaledBody.renderer.sharedMaterial;
-
             // And now, create the moons
             foreach (PSystemBody moon in planet.children)
             {
