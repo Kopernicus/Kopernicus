@@ -1,17 +1,23 @@
-Kopernicus Pre-Alpha Release 9
+Kopernicus Beta Release 1
 ==============================
-June 15th, 2015
+June 26th, 2015
 
 Copyright (C) 2015 Bryce C Schroeder (bryce.schroeder@gmail.com)
                    Nathaniel R. Lewis (linux.robotdude@gmail.com)
 
 New in this version
 -------------------
-- ModPatcher now handles multiple mods correctly
-- Patching of specific mods by name of the mod
-- StarLightSwitcher now tries to activate Kerbins Home Star
-- AtmosphereFromGround works now
-- Fixed OnDemand issues
+- PQSMod-Addon System works now correct
+- Reset "useTheInName" on new worlds and parse it from the .cfg
+- Loading HighRes MapSO's via. native .tga loading
+- Fixed the error, where Mun has got Kerbins Normal-map in ScaledSpace
+- Improved the OnDemand System
+- Kopernicus now creates PQSCache-Presets for custom worlds, to fix a Debug-warning
+- ModPatcher doesn't deletes LandClasses anymore
+- Abillity to change the Body, that is displayed in the MainMenu
+- Fixed Hodor
+
+** After almost one year of development, Kopernicus leaves Pre-Alpha and starts it's official Beta**
  
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
