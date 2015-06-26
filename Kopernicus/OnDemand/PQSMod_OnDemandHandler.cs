@@ -36,13 +36,17 @@ namespace Kopernicus
         {
             private bool isLoaded = false;
             private bool isAdded = false;
+            private bool isHomeworld = false;
 
             private void DisableMapSO(GameScenes scene)
             {
-                if (OnDemandStorage.DisableBody(base.sphere.name))
+                if (!isHomeworld && isLoaded)
                 {
-                    Debug.Log("[OD]: Disabled Body " + base.sphere.name);
-                    isLoaded = false;
+                    if (OnDemandStorage.DisableBody(base.sphere.name))
+                    {
+                        Debug.Log("[OD]: Disabled Body " + base.sphere.name);
+                        isLoaded = false;
+                    }
                 }
             }
 
@@ -57,6 +61,18 @@ namespace Kopernicus
 
             public override void OnSetup()
             {
+                base.OnSetup();
+                CelestialBody cb = Part.GetComponentUpwards<CelestialBody>(this.gameObject);
+                if (cb != null && cb.isHomeWorld)
+                    isHomeworld = true;
+
+                if (isHomeworld && !isLoaded)
+                    EnableMapSO();
+            }
+
+            public override void OnSphereStarted()
+            {
+                base.OnSphereStarted();
                 if (!isAdded)
                 {
                     GameEvents.onGameSceneLoadRequested.Add(new EventData<GameScenes>.OnEvent(DisableMapSO));
@@ -64,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // tracking station enables all PQSs. For some reason. So we ignore it.
-                if (!isLoaded && !Injector.dontUpdate && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
+                if (sphere.isActive && sphere.isAlive && !isLoaded && !Injector.dontUpdate && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
                 {
                     EnableMapSO();
                 }
@@ -72,7 +88,12 @@ namespace Kopernicus
 
             public override void OnSphereInactive()
             {
-                if (isLoaded && !Injector.dontUpdate && !base.sphere.isAlive)
+                Disable();
+            }
+
+            public void Disable()
+            {
+                if (isLoaded && !Injector.dontUpdate && !base.sphere.isActive)
                 {
                     DisableMapSO(HighLogic.LoadedScene);
                 }

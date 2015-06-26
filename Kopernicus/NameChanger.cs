@@ -43,6 +43,10 @@ namespace Kopernicus
         public void Apply()
         {
             Logger.Default.Log("Applying name change of " + oldName + " => " + newName);
+
+            if (Templates.menuBody == oldName)
+                Templates.menuBody = newName;
+
             foreach (Component c in components)
                 if(c != null)
                     c.name = c.name.Replace(oldName, newName);
@@ -108,6 +112,9 @@ namespace Kopernicus
         public void Apply()
         {
             Logger.Default.Log("Applying Celestial Body name change of " + oldName + " => " + newName);
+
+            if (Templates.menuBody == oldName)
+                Templates.menuBody = newName;
             
             foreach (CelestialBody b in FlightGlobals.Bodies)
             {
