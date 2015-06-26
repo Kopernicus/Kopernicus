@@ -21,6 +21,7 @@ namespace Kopernicus
             public static string homeworldBody = "Kerbin";
             public static string currentBody = "";
             public static bool useOnDemand = false;
+            public static bool useOnDemandBiomes = false;
             public static bool onDemandLoadOnMissing = true;
             public static bool logOnMissing = true;
 

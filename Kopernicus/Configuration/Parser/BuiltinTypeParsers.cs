@@ -330,11 +330,11 @@ namespace Kopernicus
 			public T value;
 			public void SetFromString (string s)
 			{
+                bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
                 if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
                 {
                     value = (T)Templates.instance.mapsGray[s];
-
-                    if (OnDemand.OnDemandStorage.useOnDemand)
+                    if (useOnDemand)
                     {
                         value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
                         OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
@@ -354,7 +354,7 @@ namespace Kopernicus
                     else
                     {
                         // are we on-demand? Don't load now.
-                        if (OnDemand.OnDemandStorage.useOnDemand)
+                        if (useOnDemand)
                         {
                             if (Utility.TextureExists(s))
                             {
@@ -419,11 +419,12 @@ namespace Kopernicus
 			public T value;
             public void SetFromString(string s)
             {
+                bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
                 if (Templates.instance.mapsRGB != null && Templates.instance.mapsRGB.ContainsKey(s))
                 {
                     value = (T)Templates.instance.mapsRGB[s];
 
-                    if (OnDemand.OnDemandStorage.useOnDemand)
+                    if (useOnDemand)
                     {
                         value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
                         OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
@@ -443,7 +444,7 @@ namespace Kopernicus
                     else
                     {
                         // check if OnDemand.
-                        if (OnDemand.OnDemandStorage.useOnDemand)
+                        if (useOnDemand)
                         {
                             if (Utility.TextureExists(s))
                             {

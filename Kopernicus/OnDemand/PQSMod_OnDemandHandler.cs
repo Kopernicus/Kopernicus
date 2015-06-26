@@ -63,7 +63,8 @@ namespace Kopernicus
                     isAdded = true;
                 }
 
-                if (!isLoaded && !Injector.dontUpdate)
+                // tracking station enables all PQSs. For some reason. So we ignore it.
+                if (!isLoaded && !Injector.dontUpdate && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
                 {
                     EnableMapSO();
                 }
