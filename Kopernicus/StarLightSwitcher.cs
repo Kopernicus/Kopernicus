@@ -84,12 +84,12 @@ namespace Kopernicus
                 Sun.Instance.SunlightEnabled(lsc.givesOffLight);
             }
 
-			// Set custom powerCurve for solar panels
+			// Set custom powerCurve for solar panels and reset Radiators
 			if (FlightGlobals.ActiveVessel != null)
 			{
-				foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-				{
-					sp.OnStart (PartModule.StartState.Orbital);
+                foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
+                {
+                    sp.OnStart(PartModule.StartState.Orbital);
                     if (powerCurve != null)
                     {
                         sp.useCurve = true;
@@ -100,8 +100,12 @@ namespace Kopernicus
                         sp.useCurve = false;
                         sp.powerCurve = null;
                     }
-                    
-				}
+                }
+
+                foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
+                {
+                    rad.OnStart(PartModule.StartState.Orbital);
+                }
 			}
 		}
 
