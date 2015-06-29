@@ -156,8 +156,15 @@ namespace Kopernicus
 			[ParserTarget("sphereOfInfluence", optional = true)]
 			private NumericParser<double> sphereOfInfluence
 			{
-				set { celestialBody.sphereOfInfluence = value.value; }
+                set { Templates.sphereOfInfluence.Add(celestialBody.bodyTransform.name, value.value); }
 			}
+
+            // Hill Sphere
+            [ParserTarget("hillSphere", optional = true)]
+            private NumericParser<double> hillSphere
+            {
+                set { Templates.hillSphere.Add(celestialBody.bodyTransform.name, value.value); }
+            }
 
 			// Science values of this body
 			[ParserTarget("ScienceValues", optional = true, allowMerge = true)]

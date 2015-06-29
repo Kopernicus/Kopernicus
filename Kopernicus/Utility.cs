@@ -426,7 +426,10 @@ namespace Kopernicus
 
                         // Build from the PQS
                         foreach (PQSMod mod in mods)
+                        {
+                            mod.OnVertexBuild(vertex); // Why in heaven are there mods who modify height in OnVertexBuild() rather than OnVertexBuildHeight()?!?!
                             mod.OnVertexBuildHeight(vertex);
+                        }
 
                         // Check for sea level
                         if (body.ocean && vertex.vertHeight < body.Radius)

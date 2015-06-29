@@ -68,6 +68,10 @@ namespace Kopernicus
         public List<string> finalizeBodies;
 
         public static string menuBody = "Kerbin";
+
+        // SOI's
+        public static Dictionary<string, double> sphereOfInfluence;
+        public static Dictionary<string, double> hillSphere;
         
         public Templates()
         {
@@ -100,7 +104,9 @@ namespace Kopernicus
             // Return it's mesh
             refGeosphere = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 
-
+            // Initialize the Sphere-Lists
+            sphereOfInfluence = new Dictionary<string, double>();
+            hillSphere = new Dictionary<string, double>();
 
             finalizeBodies = new List<string>();
         }

@@ -105,11 +105,25 @@ namespace Kopernicus
 		public void PostSpawnFixups ()
 		{
             Debug.Log("[Kopernicus]: Post-Spawn");
-			// Fix the flight globals index of each body
+
+			// Fix the flight globals index of each body and patch it's SOI
 			int counter = 0;
 			foreach (CelestialBody body in FlightGlobals.Bodies) 
 			{
 				body.flightGlobalsIndex = counter++;
+
+                // Path the SOI
+                if (Templates.sphereOfInfluence.ContainsKey(body.bodyTransform.name))
+                {
+                    body.sphereOfInfluence = Templates.sphereOfInfluence[body.bodyTransform.name];
+                }
+
+                // Patch the Hill Sphere
+                if (Templates.hillSphere.ContainsKey(body.bodyTransform.name))
+                {
+                    body.hillSphere = Templates.hillSphere[body.bodyTransform.name];
+                }
+
 				Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
 			}
 
