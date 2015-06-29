@@ -60,7 +60,17 @@ namespace Kopernicus
 		}
 
 		// Currently active logger
-		public static Logger Active { get ; private set; }
+        private static Logger _ActiveLogger = null;
+        public static Logger Active
+        {
+            get
+            {
+                if (_ActiveLogger.loggerStream == null)
+                    return _DefaultLogger;
+                return _ActiveLogger;
+            }
+            private set { _ActiveLogger = value; }
+        }
 
 		// The complete path of this log
 		TextWriter loggerStream;
@@ -96,6 +106,7 @@ namespace Kopernicus
 		{
 			loggerStream.Flush ();
 			loggerStream.Close ();
+            loggerStream = null;
 		}
 
 		// Create a logger
