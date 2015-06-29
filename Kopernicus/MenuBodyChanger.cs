@@ -124,6 +124,22 @@ namespace Kopernicus
 
             // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
             menuPlanet.renderer.sharedMaterial = planetCB.scaledBody.renderer.sharedMaterial;
+
+            // Copy EVE 7.4 clouds
+            for (int i = 0; i < planetCB.scaledBody.transform.childCount; i++)
+            {
+                Transform cloud = planetCB.scaledBody.transform.GetChild(i);
+                if (cloud.name == "New Game Object" && cloud.gameObject.GetComponents<MeshRenderer>().Length == 1 && cloud.gameObject.GetComponents<MeshFilter>().Length == 1)
+                {
+                    GameObject newCloud = Instantiate(cloud.gameObject) as GameObject;
+                    newCloud.transform.parent = menuPlanet.transform;
+                    newCloud.layer = 0;
+                    newCloud.transform.localPosition = Vector3.zero;
+                    newCloud.transform.localRotation = Quaternion.identity;
+                    newCloud.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
+                }
+            }
+
             // And now, create the moons
             foreach (PSystemBody moon in planet.children)
             {
@@ -168,6 +184,21 @@ namespace Kopernicus
 
                 // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
                 menuMoon.renderer.sharedMaterial = moonCB.scaledBody.renderer.sharedMaterial;
+
+                // Copy EVE 7.4 clouds
+                for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
+                {
+                    Transform cloud = moonCB.scaledBody.transform.GetChild(i);
+                    if (cloud.name == "New Game Object" && cloud.gameObject.GetComponents<MeshRenderer>().Length == 1 && cloud.gameObject.GetComponents<MeshFilter>().Length == 1)
+                    {
+                        GameObject newCloud = Instantiate(cloud.gameObject) as GameObject;
+                        newCloud.transform.parent = menuMoon.transform;
+                        newCloud.layer = 0;
+                        newCloud.transform.localPosition = Vector3.zero;
+                        newCloud.transform.localRotation = Quaternion.identity;
+                        newCloud.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
+                    }
+                }
             }
         }
     }
