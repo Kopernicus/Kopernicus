@@ -77,7 +77,7 @@ namespace Kopernicus
 					[ParserTarget("altitudeEnd")]
 					private NumericParser<double> altitudeEnd
 					{
-						set { landClass2.altStart = value.value; }
+						set { landClass2.altEnd = value.value; }
 					}
 
 					// Should we blend into the next class
