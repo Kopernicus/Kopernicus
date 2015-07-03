@@ -121,7 +121,6 @@
     <Compile Include="MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
     <Compile Include="RuntimeUtility\SpaceCenterFixer.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
-    <Compile Include="RuntimeUtility\UserInterface\UIController.cs" />
     <Compile Include="Templates.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Configuration\Loader.cs" />
