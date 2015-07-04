@@ -32,6 +32,7 @@
  */
 
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
@@ -89,11 +90,18 @@ namespace Kopernicus
 				}
 
                 // oceanOpacity
-				[ParserTarget("oceanOpacity", optional = true)]
-				private NumericParser<float> oceanOpacity
-				{
-					set { _mod.oceanOpacity = value.value; }
-				}
+                [ParserTarget("oceanOpacity", optional = true)]
+                private NumericParser<float> oceanOpacity
+                {
+                    set { _mod.oceanOpacity = value.value; }
+                }
+
+                // refraction
+                [ParserTarget("refraction", optional = true)]
+                private Texture2DParser refraction
+                {
+                    set { _mod.refraction = value.value; }
+                }
 
                 // spaceAltitude
 				[ParserTarget("spaceAltitude", optional = true)]
@@ -130,13 +138,6 @@ namespace Kopernicus
 					set { _mod.txIndex = value.value; }
 				}
 
-                // waterMainLength
-				[ParserTarget("waterMainLength", optional = true)]
-				private NumericParser<float> waterMainLength
-				{
-					set { _mod.waterMainLength = value.value; }
-				}
-
 				void IParserEventSubscriber.Apply(ConfigNode node)
 				{
                     
@@ -144,7 +145,28 @@ namespace Kopernicus
 
 				void IParserEventSubscriber.PostApply(ConfigNode node)
 				{
+                    if (node.HasNode("Watermain"))
+                    {
+                        // Parse the watermain textures
+                        ConfigNode watermain = node.GetNode("Watermain");
 
+                        // Set the Watermain length
+                        _mod.waterMainLength = watermain.values.Count;
+
+                        // If the count doesn't matches, recreate the array
+                        if (_mod.watermain.Length != _mod.waterMainLength)
+                        {
+                            _mod.watermain = new Texture2D[(int)_mod.waterMainLength];
+                        }
+
+                        // Load the textures
+                        foreach (string s in watermain.GetValuesStartsWith("waterTex-"))
+                        {
+                            Texture2DParser texParser = new Texture2DParser();
+                            texParser.SetFromString(s);
+                            _mod.watermain[Int32.Parse(s.Replace("waterTex-", ""))] = texParser.value;
+                        }
+                    }
 				}
 
                 public OceanFX()

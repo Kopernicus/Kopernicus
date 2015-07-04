@@ -43,8 +43,26 @@ namespace Kopernicus
 			[RequireConfigType(ConfigType.Node)]
 			public class VertexHeightOblate : ModLoader, IParserEventSubscriber
 			{
+                // Mod-Fix, because of hell-ish buggyness
+                public class PQSMod_OblateFixed : PQSMod_VertexHeightOblate
+                {
+                    // Re-arrange the Vertex Build order
+                    public override void OnVertexBuild(PQS.VertexBuildData data)
+                    {
+                        // Do nothing
+                        // base.OnVertexBuild(data);
+                    }
+
+                    // Build the height in the correct function
+                    public override void OnVertexBuildHeight(PQS.VertexBuildData data)
+                    {
+                        // Tricky...
+                        base.OnVertexBuild(data);
+                    }
+                }
+
 				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightOblate _mod;
+                private PQSMod_OblateFixed _mod;
 
 				// The height where the terrain is oblated
 				[ParserTarget("height", optional = true)]
@@ -75,13 +93,13 @@ namespace Kopernicus
 					// Create the base mod
                     GameObject modObject = new GameObject("VertexHeightOblate");
 					modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexHeightOblate>();
+                    _mod = modObject.AddComponent<PQSMod_OblateFixed>();
 					base.mod = _mod;
 				}
 
                 public VertexHeightOblate(PQSMod template)
                 {
-                    _mod = template as PQSMod_VertexHeightOblate;
+                    _mod = template as PQSMod_OblateFixed;
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }

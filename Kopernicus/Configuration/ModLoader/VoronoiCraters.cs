@@ -44,7 +44,7 @@ namespace Kopernicus
 			public class VoronoiCraters : ModLoader, IParserEventSubscriber
 			{
 				// Actual PQS mod we are loading
-				private PQSMod_VoronoiCraters _mod = PQSMod_VoronoiCraters.Instantiate(Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun").pqsVersion.GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0]) as PQSMod_VoronoiCraters;
+				private PQSMod_VoronoiCraters _mod;
 
                 // colorOpacity
                 [ParserTarget("colorOpacity", optional = true)]
@@ -158,7 +158,11 @@ namespace Kopernicus
                 public VoronoiCraters()
 				{
 					// Create the base mod
-                    _mod.gameObject.transform.parent = Utility.Deactivator;
+                    GameObject modObject = new GameObject("VoronoiCraters");
+                    modObject.transform.parent = Utility.Deactivator;
+                    PQSMod_VoronoiCraters clone = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun").pqsVersion.GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
+                    _mod = modObject.AddComponent<PQSMod_VoronoiCraters>();
+                    Utility.CopyObjectFields<PQSMod_VoronoiCraters>(clone, _mod, false);
 					base.mod = _mod;
 				}
 
