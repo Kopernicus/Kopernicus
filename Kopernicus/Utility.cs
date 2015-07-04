@@ -398,8 +398,14 @@ namespace Kopernicus
 
                 Type[] blacklist = new Type[] { typeof(PQSMod_MapDecal), typeof(OnDemand.PQSMod_OnDemandHandler) };
 
+                // Deactivate blacklisted Mods
+                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => blacklist.Contains(m.GetType())))
+                {
+                    mod.modEnabled = false;
+                }
+
                 // Find the PQS mods and enable the PQS-sphere
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => !blacklist.Contains(m.GetType()) && m.modEnabled);
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled);
 
                 pqsVersion.ActivateSphere();
 
