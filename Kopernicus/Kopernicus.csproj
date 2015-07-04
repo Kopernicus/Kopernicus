@@ -99,6 +99,7 @@
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Constants\Version.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
+    <Compile Include="RuntimeUtility\BarycenterUtils.cs" />
     <Compile Include="RuntimeUtility\MapViewFixer.cs" />
     <Compile Include="RuntimeUtility\MenuBodyChanger.cs" />
     <Compile Include="RuntimeUtility\NameChanger.cs" />

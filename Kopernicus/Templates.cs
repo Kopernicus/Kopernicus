@@ -72,6 +72,9 @@ namespace Kopernicus
         // SOI's
         public static Dictionary<string, double> sphereOfInfluence;
         public static Dictionary<string, double> hillSphere;
+
+        // Barycenters
+        public static List<string> barycenters;
         
         public Templates()
         {
@@ -107,6 +110,9 @@ namespace Kopernicus
             // Initialize the Sphere-Lists
             sphereOfInfluence = new Dictionary<string, double>();
             hillSphere = new Dictionary<string, double>();
+
+            // Initialize the barycenter list
+            barycenters = new List<string>();
 
             finalizeBodies = new List<string>();
         }

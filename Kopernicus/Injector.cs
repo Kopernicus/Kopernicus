@@ -124,6 +124,12 @@ namespace Kopernicus
                     body.hillSphere = Templates.hillSphere[body.bodyTransform.name];
                 }
 
+                // Make the Body a barycenter
+                if (Templates.barycenters.Contains(body.GetTransform().name))
+                {
+                    body.scaledBody.SetActiveRecursively(false);
+                }
+
 				Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
 			}
 
