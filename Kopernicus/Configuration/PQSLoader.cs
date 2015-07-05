@@ -98,6 +98,19 @@ namespace Kopernicus
 				set { pqsVersion.maxQuadLenghtsPerFrame = value.value; }
 			}
 
+			// CelestialBodyTransform fades. should more or less line up with ScaledVersion's fadeStart/fadeEnd
+			[ParserTarget("pqsFadeStart", optional = true)]
+			private NumericParser<float> fadeStart
+			{
+				set { transform.planetFade.fadeStart = value.value; }
+			}
+
+			[ParserTarget("pqsFadeEnd", optional = true)]
+			private NumericParser<float> fadeEnd
+			{
+				set { transform.planetFade.fadeEnd = value.value; }
+			}
+
 			[PreApply]
 			[ParserTarget("materialType", optional = true)]
 			private EnumParser<PQSMaterialType> materialType
