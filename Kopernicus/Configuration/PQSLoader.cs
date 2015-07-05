@@ -100,13 +100,13 @@ namespace Kopernicus
 
 			// CelestialBodyTransform fades. should more or less line up with ScaledVersion's fadeStart/fadeEnd
 			[ParserTarget("pqsFadeStart", optional = true)]
-			private NumericParser<double> fadeStart
+			private NumericParser<float> fadeStart
 			{
 				set { transform.planetFade.fadeStart = value.value; }
 			}
 
 			[ParserTarget("pqsFadeEnd", optional = true)]
-			private NumericParser<double> fadeEnd
+			private NumericParser<float> fadeEnd
 			{
 				set { transform.planetFade.fadeEnd = value.value; }
 			}
