@@ -111,6 +111,12 @@ namespace Kopernicus
 				set { transform.planetFade.fadeEnd = value.value; }
 			}
 
+            [ParserTarget("deactivateAltitude", optional = true)]
+            private NumericParser<double> deactivateAltitude
+            {
+                set { transform.deactivateAltitude = value.value; }
+            }
+
 			[PreApply]
 			[ParserTarget("materialType", optional = true)]
 			private EnumParser<PQSMaterialType> materialType
