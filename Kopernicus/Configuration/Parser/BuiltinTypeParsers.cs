@@ -139,6 +139,26 @@ namespace Kopernicus
 
                     value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, float.Parse(colorArray[3]) / 255);
                 }
+                else if (s.StartsWith("XKCD."))
+                {
+                    PropertyInfo color = typeof(XKCDColors).GetProperty(s.Replace("XKCD.", ""), BindingFlags.Static | BindingFlags.Public);
+                    value = (Color)color.GetValue(null, null);
+                }
+                else if (s.StartsWith("#") || s.StartsWith("0x"))
+                {
+                    s = s.Replace("0x", "");
+                    s = s.Replace("#", "");
+                    byte a = 255;
+                    byte r = byte.Parse(s.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte g = byte.Parse(s.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    byte b = byte.Parse(s.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    
+                    if (s.Length == 8)
+                    {
+                        a = byte.Parse(s.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    }
+                    value = new Color(r / 255, g / 255, b / 255, a / 255);
+                }
                 else
                 {
                     value = ConfigNode.ParseColor(s);
