@@ -123,6 +123,20 @@ namespace Kopernicus
                 set { lsc.givesOffLight = value.value; }
             }
 
+            // sunAU
+            [ParserTarget("sunAU", optional = true, allowMerge = false)]
+            public NumericParser<double> sunAU
+            {
+                set { lsc.AU = value.value; }
+            }
+
+            // brightnessCurve
+            [ParserTarget("brightnessCurve", optional = true, allowMerge = false)]
+            public FloatCurveParser brightnessCurve
+            {
+                set { lsc.brightnessCurve = value.curve; }
+            }
+
             public LightShifter()
             {
                 lsc = LightShifterComponent.Instantiate(LightShifterComponent.LightSwitcherPrefab) as LightShifterComponent;
@@ -152,6 +166,8 @@ namespace Kopernicus
             public AnimationCurve sunBrightnessCurve;
             public Color sunLensFlareColor;
             public bool givesOffLight = true;
+            public double AU;
+            public FloatCurve brightnessCurve = null;
 
             private static LightShifterComponent prefab;
 
@@ -176,6 +192,8 @@ namespace Kopernicus
                         prefab.IVASunIntensity = 0.34f;
                         prefab.sunLensFlareColor = Color.white;
                         prefab.ambientLightColor = new Color(0.06f, 0.06f, 0.06f, 1.0f);
+                        prefab.AU = 13599840256;
+                        prefab.brightnessCurve = null;
                     }
 
                     // Return the prefab

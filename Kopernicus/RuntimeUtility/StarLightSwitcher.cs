@@ -82,6 +82,10 @@ namespace Kopernicus
                 // Set SunFlare color
                 Sun.Instance.sunFlare.color = lsc.sunLensFlareColor;
                 Sun.Instance.SunlightEnabled(lsc.givesOffLight);
+
+                // Set other stuff
+                Sun.Instance.AU = lsc.AU;
+                Sun.Instance.brightnessCurve = (lsc.brightnessCurve != null) ? lsc.brightnessCurve.Curve : Sun.Instance.brightnessCurve;
             }
 
 			// Set custom powerCurve for solar panels and reset Radiators
@@ -129,6 +133,13 @@ namespace Kopernicus
 			DontDestroyOnLoad (this);
 		}
 
+        // On Scene Change, update the current star to "fix" PSystemSetup
+        private bool forcedUpdate = false;
+        private void OnLevelWasLoaded(int level)
+        {
+            forcedUpdate = true;
+        }
+
 		void Start()
 		{
 			// find all the stars in the system
@@ -147,6 +158,14 @@ namespace Kopernicus
         {
 			StarComponent selectedStar = null;
 		
+            // If forceUpdate is enabled, update the active star
+            if (forcedUpdate && Sun.Instance)
+            {
+                stars.First(s => s.IsActiveStar()).SetAsActive();
+                // reset forced Update
+                forcedUpdate = false;
+            }
+
             // If we are in the tracking station, space center or game, 
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
 			{
