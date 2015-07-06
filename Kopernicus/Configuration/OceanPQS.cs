@@ -186,23 +186,71 @@ namespace Kopernicus
 			}
 
 
-			void IParserEventSubscriber.Apply(ConfigNode node)
-			{
+            List<ModLoader.ModLoader> patchedMods = new List<ModLoader.ModLoader>();
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                if (node.HasNode("Mods"))
+                {
+                    // Patch the existing mods
+                    foreach (ConfigNode mod in node.GetNode("Mods").nodes)
+                    {
+                        if (oceanPQS.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).Count() != 0)
+                        {
+                            Type t = Type.GetType("Kopernicus.Configuration.ModLoader." + mod.name);
+                            ConstructorInfo cInfo = t.GetConstructor(new Type[] { typeof(PQSMod) });
+                            try
+                            {
+                                PQSMod pqsMod = oceanPQS.GetComponentsInChildren<PQSMod>(true).Where(
+                                    m => m.GetType().Name.Contains(mod.name) &&
+                                         patchedMods.Where(M => M.mod.name == m.name &&
+                                         M.mod.GetType() == m.GetType()).Count() == 0 &&
+                                         ((mod.HasValue("name")) ? m.name == mod.GetValue("name") : true)
+                                    ).First();
 
-			}
+                                ModLoader.ModLoader patchedMod = cInfo.Invoke(new object[] { pqsMod }) as ModLoader.ModLoader;
+                                Parser.LoadObjectFromConfigurationNode(patchedMod, mod);
+                                patchedMod.patched = true;
+                                patchedMods.Add(patchedMod);
+                            }
+                            catch
+                            {
+                                Logger.Active.Log("Couldn't find enough Mods of Type " + t + "!");
+                            }
+                        }
+                    }
+                }
+            }
 
-			void IParserEventSubscriber.PostApply(ConfigNode node)
-			{
-                // Apply the mods
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                // Remove the patched mods from the main list
+                foreach (ModLoader.ModLoader remove in mods.Where(m => patchedMods.Select(p => p.mod.GetType()).Contains(m.mod.GetType())))
+                {
+                    remove.mod.transform.parent = null;
+                    remove.mod.sphere = null;
+                    remove.mod = null;
+                }
+
+                // Apply patched mods
+                foreach (ModLoader.ModLoader loader in patchedMods)
+                {
+                    if (loader.mod != null)
+                    {
+                        loader.mod.transform.parent = oceanPQS.transform;
+                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                        loader.mod.sphere = oceanPQS;
+                        Logger.Active.Log("OceanPQS.PostApply(ConfigNode): Patched OceanPQS Mod => " + loader.mod.GetType());
+                    }
+                }
+
+                // Apply the new mods
                 foreach (ModLoader.ModLoader loader in mods)
                 {
                     loader.mod.transform.parent = oceanPQS.transform;
                     loader.mod.sphere = oceanPQS;
-                    Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added OceanPQS Mod => " + loader.mod.GetType());
+                    loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                    Logger.Active.Log("OceanPQS.PostApply(ConfigNode): Added OceanPQS Mod => " + loader.mod.GetType());
                 }
-
-				// Make sure all the PQSMods exist in Localspace
-				oceanPQS.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
 
                 // Apply our Killer-Ocean (if set)
                 if (hazardousOcean != null)
