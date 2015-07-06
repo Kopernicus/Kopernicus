@@ -1,6 +1,6 @@
-Kopernicus Beta Release 1
+Kopernicus Beta Release 2
 ==============================
-June 26th, 2015
+July 6th, 2015
 
 Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
    		    - Nathaniel R. Lewis (linux.robotdude@gmail.com)
@@ -12,18 +12,20 @@ Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, Oven
 
 New in this version
 -------------------
-- PQSMod-Addon System works now correct
-- Reset "useTheInName" on new worlds and parse it from the .cfg
-- Loading HighRes MapSO's via. native .tga loading
-- Fixed the error, where Mun has got Kerbins Normal-map in ScaledSpace
-- Improved the OnDemand System
-- Kopernicus now creates PQSCache-Presets for custom worlds, to fix a Debug-warning
-- ModPatcher doesn't deletes LandClasses anymore
-- Abillity to change the Body, that is displayed in the MainMenu
-- Fixed Hodor
+- Persistent SOI and HillSphere settings
+- StarLightFixer patches Radiators
+- E.V.E clouds work again in MainMenu
+- Fixed altEnd value in HeightColorMap landclasses (Thanks MrHappyFace)
+- Barycenters (no example, add baryCenter = true to your Body {} node)
+- PQS-Fade / the altitude where it gets deactivated is configurable
+- Added some PQSMods
+- OceanFX-Mod has got propper configuration-options
+- Support for XKCD and Hex-Colors (See NewMinmus and Hodor)
+- Support for custom brightnessCurves and AU's for Stars
+- Added PQSMod-Patching on Oceans
+- Removed Miller's Planet example due to buggyness
+- Added an Ocean to the NewMinmus example
 
-**After almost one year of development, Kopernicus leaves Pre-Alpha and starts it's official Beta**
- 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
 About
