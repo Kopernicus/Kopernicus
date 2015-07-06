@@ -226,36 +226,40 @@ namespace Kopernicus
                 GameObject sunLight = GameObject.Find("SunLight");
                 GameObject scaledSunLight = GameObject.Find("Scaledspace SunLight");
 
-                if (sunlightColor != null)
-                    sunLight.light.color = sunlightColor;
-
-                if (sunlightIntensity != float.NaN)
-                    sunLight.light.intensity = sunlightIntensity;
-
-                if (sunlightShadowStrength != float.NaN)
-                    sunLight.light.shadowStrength = sunlightShadowStrength;
-
-                if (scaledSunlightColor != null)
-                    scaledSunLight.light.color = scaledSunlightColor;
-
-                if (scaledSunlightIntensity != float.NaN)
-                    scaledSunLight.light.intensity = scaledSunlightIntensity;
-
-                if (scene == GameScenes.FLIGHT)
+                if (sunLight && scaledSunLight)
                 {
-                    GameObject IVASun = GameObject.Find("IVASun");
+                    if (sunlightColor != null)
+                        sunLight.light.color = sunlightColor;
 
-                    if (IVASunColor != null)
-                        IVASun.light.color = IVASunColor;
+                    if (sunlightIntensity != float.NaN)
+                        sunLight.light.intensity = sunlightIntensity;
 
-                    if (IVASunIntensity != float.NaN)
-                        IVASun.light.intensity = IVASunIntensity;
+                    if (sunlightShadowStrength != float.NaN)
+                        sunLight.light.shadowStrength = sunlightShadowStrength;
+
+                    if (scaledSunlightColor != null)
+                        scaledSunLight.light.color = scaledSunlightColor;
+
+                    if (scaledSunlightIntensity != float.NaN)
+                        scaledSunLight.light.intensity = scaledSunlightIntensity;
+
+                    if (scene == GameScenes.FLIGHT)
+                    {
+                        GameObject IVASun = GameObject.Find("IVASun");
+
+                        if (IVASunColor != null)
+                            IVASun.light.color = IVASunColor;
+
+                        if (IVASunIntensity != float.NaN)
+                            IVASun.light.intensity = IVASunIntensity;
+                    }
+
+                    DynamicAmbientLight ambientLight = FindObjectOfType(typeof(DynamicAmbientLight)) as DynamicAmbientLight;
+
+                    if (ambientLightColor != null)
+                        ambientLight.vacuumAmbientColor = ambientLightColor;
+
                 }
-
-                DynamicAmbientLight ambientLight = FindObjectOfType(typeof(DynamicAmbientLight)) as DynamicAmbientLight;
-
-                if (ambientLightColor != null)
-                    ambientLight.vacuumAmbientColor = ambientLightColor;
             }
         }
     }
