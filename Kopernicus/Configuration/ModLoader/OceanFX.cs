@@ -160,11 +160,13 @@ namespace Kopernicus
                         }
 
                         // Load the textures
+                        int i = 0;
                         foreach (string s in watermain.GetValuesStartsWith("waterTex-"))
                         {
                             Texture2DParser texParser = new Texture2DParser();
                             texParser.SetFromString(s);
-                            _mod.watermain[Int32.Parse(s.Replace("waterTex-", ""))] = texParser.value;
+                            _mod.watermain[i] = texParser.value;
+                            i++;
                         }
                     }
 				}
