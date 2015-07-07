@@ -129,6 +129,50 @@ namespace Kopernicus
 					}
 				}
 
+				// Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
+				foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)
+				{
+					// Only get types implementing IParserEventSubscriber, and extending 
+					foreach (Type type in assembly.assembly.GetExportedTypes().Where(t => t.GetInterface("IParserEventSubscriber") != null).Where(t => t.BaseType == typeof(ExternalParserTargetLoader)))
+					{
+						ExternalParserTarget externalAttr = null;
+
+						var attributes = Attribute.GetCustomAttributes(type);
+						foreach (var attr in attributes.Where (a => a.GetType () == typeof(ExternalParserTarget)))
+						{
+							externalAttr = attr as ExternalParserTarget;
+						}
+
+						if (externalAttr != null)
+						{
+							if (node.name != externalAttr.parentNodeName)
+								continue;
+
+							string nodeName = externalAttr.configNodeName;
+							if (nodeName == null)
+							{
+								nodeName = type.Name;
+							}
+
+							if(node.HasNode(externalAttr.configNodeName))
+							{
+								try
+								{
+									var nodeToLoad = node.GetNode (externalAttr.configNodeName);
+									ExternalParserTargetLoader obj = Activator.CreateInstance (type) as ExternalParserTargetLoader;
+									obj.generatedBody = Body.CurrentLoadingBody.generatedBody;
+									Parser.LoadObjectFromConfigurationNode (obj, nodeToLoad);
+								}
+								catch (InvalidCastException invalidCast)
+								{
+									Logger.Active.Log ("Failed to load ExternalParserTarget " + externalAttr.configNodeName + " from node " + externalAttr.parentNodeName);
+									Logger.Active.LogException (invalidCast);
+								}
+							}
+						}
+					}
+				}
+
 				// Call PostApply
 				if (subscriber != null)
 					subscriber.PostApply (node);
