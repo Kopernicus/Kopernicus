@@ -44,6 +44,10 @@ namespace Kopernicus
 		 **/
 		public class ExternalParserTargetLoader
 		{
+			public ExternalParserTargetLoader()
+			{
+			}
+
 			// Value is set by parser before loading
 			public PSystemBody generatedBody { get; internal set; }
 		}
