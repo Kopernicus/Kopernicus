@@ -109,6 +109,13 @@ namespace Kopernicus
 			{
 				set { celestialBody.tidallyLocked = value.value; }
 			}
+			
+			// Ability to edit the solarRotationPeriod variable
+			[ParserTarget("solarRotationPeriod", optional = true)]
+			private NumericParser<bool> solarRotationPeriod
+			{
+				set { celestialBody.solarRotationPeriod = value.value; }
+			}
 
 			// Initial rotation of the world
 			[ParserTarget("initialRotation", optional = true)]
