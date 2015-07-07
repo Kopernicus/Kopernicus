@@ -132,7 +132,7 @@ namespace Kopernicus
 				// Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
 				foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)
 				{
-					// Only get types implementing IParserEventSubscriber, and extending 
+					// Only get types implementing IParserEventSubscriber, and extending ExternalParserTargetLoader
 					foreach (Type type in assembly.assembly.GetExportedTypes().Where(t => t.GetInterface("IParserEventSubscriber") != null).Where(t => t.BaseType == typeof(ExternalParserTargetLoader)))
 					{
 						ExternalParserTarget externalAttr = null;
@@ -163,10 +163,15 @@ namespace Kopernicus
 									obj.generatedBody = Body.CurrentLoadingBody.generatedBody;
 									Parser.LoadObjectFromConfigurationNode (obj, nodeToLoad);
 								}
-								catch (InvalidCastException invalidCast)
+								catch(MissingMethodException missingMethod)
+								{
+									Logger.Active.Log ("Failed to load ExternalParserTarget " + externalAttr.configNodeName + " because it does not have a parameterless constructor");
+									Logger.Active.LogException (missingMethod);
+								}
+								catch (Exception exception)
 								{
 									Logger.Active.Log ("Failed to load ExternalParserTarget " + externalAttr.configNodeName + " from node " + externalAttr.parentNodeName);
-									Logger.Active.LogException (invalidCast);
+									Logger.Active.LogException (exception);
 								}
 							}
 						}
