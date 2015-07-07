@@ -166,6 +166,13 @@ namespace Kopernicus
                 set { Templates.hillSphere.Add(celestialBody.bodyTransform.name, value.value); }
             }
 
+            // solarRotationPeriod
+            [ParserTarget("solarRotationPeriod", optional = true)]
+            private NumericParser<bool> solarRotationPeriod
+            {
+                set { celestialBody.solarRotationPeriod = value.value; }
+            }
+
 			// Science values of this body
 			[ParserTarget("ScienceValues", optional = true, allowMerge = true)]
 			private ScienceValues scienceValues;
