@@ -25,6 +25,7 @@ New in this version
 - Added PQSMod-Patching on Oceans
 - Removed Miller's Planet example due to buggyness
 - Added an Ocean to the NewMinmus example
+- [Hotfix 1] Fixed NRE in StarLightSwitcher
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
