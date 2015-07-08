@@ -158,11 +158,11 @@ namespace Kopernicus
 							{
 								try
 								{
+									Logger.Active.Log("Parsing ExternalTarget " + externalAttr.configNodeName + " in node " + externalAttr.parentNodeName + " from Assembly " + assembly.assembly.FullName);
 									var nodeToLoad = node.GetNode (externalAttr.configNodeName);
 									ExternalParserTargetLoader obj = Activator.CreateInstance (type) as ExternalParserTargetLoader;
 									obj.generatedBody = Body.CurrentLoadingBody.generatedBody;
 									Parser.LoadObjectFromConfigurationNode (obj, nodeToLoad);
-									Logger.Active.Log("Parsing ExternalTarget " + externalAttr.configNodeName + " in node " + externalAttr.parentNodeName + " from Assembly " + assembly.assembly.FullName);
 								}
 								catch(MissingMethodException missingMethod)
 								{
