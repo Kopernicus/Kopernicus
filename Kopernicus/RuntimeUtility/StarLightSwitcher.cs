@@ -85,7 +85,7 @@ namespace Kopernicus
 
                 // Set other stuff
                 Sun.Instance.AU = lsc.AU;
-                Sun.Instance.brightnessCurve = (lsc.brightnessCurve != null) ? lsc.brightnessCurve.Curve : Sun.Instance.brightnessCurve;
+                Sun.Instance.brightnessCurve = lsc.brightnessCurve.Curve;
             }
 
 			// Set custom powerCurve for solar panels and reset Radiators

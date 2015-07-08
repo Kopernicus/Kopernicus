@@ -167,7 +167,7 @@ namespace Kopernicus
             public Color sunLensFlareColor;
             public bool givesOffLight = true;
             public double AU;
-            public FloatCurve brightnessCurve = null;
+            public FloatCurve brightnessCurve;
 
             private static LightShifterComponent prefab;
 
@@ -193,7 +193,12 @@ namespace Kopernicus
                         prefab.sunLensFlareColor = Color.white;
                         prefab.ambientLightColor = new Color(0.06f, 0.06f, 0.06f, 1.0f);
                         prefab.AU = 13599840256;
-                        prefab.brightnessCurve = null;
+                        prefab.brightnessCurve = new FloatCurve(new Keyframe[] 
+                        { 
+                            new Keyframe(-0.01573471f, 0.217353f, 1.706627f, 1.706627f),
+                            new Keyframe(5.084181f, 3.997075f, -0.001802375f, -0.001802375f),
+                            new Keyframe(38.56295f, 1.82142f, 0.0001713f, 0.0001713f)
+                        });
                     }
 
                     // Return the prefab
@@ -247,16 +252,19 @@ namespace Kopernicus
                     {
                         GameObject IVASun = GameObject.Find("IVASun");
 
-                        if (IVASunColor != null)
-                            IVASun.light.color = IVASunColor;
+                        if (IVASun)
+                        {
+                            if (IVASunColor != null)
+                                IVASun.light.color = IVASunColor;
 
-                        if (IVASunIntensity != float.NaN)
-                            IVASun.light.intensity = IVASunIntensity;
+                            if (IVASunIntensity != float.NaN)
+                                IVASun.light.intensity = IVASunIntensity;
+                        }
                     }
 
                     DynamicAmbientLight ambientLight = FindObjectOfType(typeof(DynamicAmbientLight)) as DynamicAmbientLight;
 
-                    if (ambientLightColor != null)
+                    if (ambientLightColor != null && ambientLight)
                         ambientLight.vacuumAmbientColor = ambientLightColor;
 
                 }
