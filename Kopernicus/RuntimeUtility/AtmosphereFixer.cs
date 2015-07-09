@@ -158,9 +158,11 @@ namespace Kopernicus
             {
                 if (afg.planet != null)
                 {
-                    Debug.Log("[Kopernicus]: Patching AFG " + afg.planet.bodyName);
-                    if (!AFGInfo.PatchAFG(afg))
-                        Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Couldn't patch AtmosphereFromGround for " + afg.planet.bodyName + "!");
+                    //Debug.Log("[Kopernicus]: Patching AFG " + afg.planet.bodyName);
+                    //if (!AFGInfo.PatchAFG(afg))
+                    //    Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Couldn't patch AtmosphereFromGround for " + afg.planet.bodyName + "!");
+                    if (AFGInfo.PatchAFG(afg))
+                        Debug.Log("[Kopernicus]: AtmosphereFixer => Patched AtmosphereFromGround for " + afg.planet.bodyName);
                 }
             }
             UnityEngine.Object.Destroy(this); // don't hang around.
