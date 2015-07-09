@@ -173,6 +173,13 @@ namespace Kopernicus
                 set { celestialBody.solarRotationPeriod = value.value; }
             }
 
+            // navballSwitchRadiusMult
+            [ParserTarget("navballSwitchRadiusMult", optional = true)]
+            private NumericParser<double> navballSwitchRadiusMult
+            {
+                set { celestialBody.navballSwitchRadiusMult = value.value; }
+            }
+
 			// Science values of this body
 			[ParserTarget("ScienceValues", optional = true, allowMerge = true)]
 			private ScienceValues scienceValues;
