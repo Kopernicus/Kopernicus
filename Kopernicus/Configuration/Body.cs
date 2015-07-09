@@ -48,6 +48,9 @@ namespace Kopernicus
 		[RequireConfigType(ConfigType.Node)]
 		public class Body : IParserEventSubscriber
 		{
+			// The body currently loading. Used by the ExternalParserTargetLoader.
+			internal static Body CurrentLoadingBody { get; private set; }
+
             // Path of the plugin (will eventually not matter much)
             public const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
 
@@ -141,6 +144,9 @@ namespace Kopernicus
 			// Parser Apply Event
 			public void Apply (ConfigNode node)
 			{
+				// Set the current loading body to this, so that ExternalParserTargets know what to change
+				CurrentLoadingBody = this;
+
 				// If we have a template, generatedBody *is* the template body
 				if (template != null) 
 				{
