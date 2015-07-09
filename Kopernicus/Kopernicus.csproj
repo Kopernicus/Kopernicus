@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Parser\External\ExternalParserTargetLoader.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitudeDouble.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitude.cs" />
     <Compile Include="Configuration\ModLoader\MaterialQuadRelative.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Configuration\ModLoader\VertexPlanet.cs" />
     <Compile Include="Configuration\HazardousOcean.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexColorRGB.cs" />
+    <Compile Include="Configuration\Parser\External\ExternalParserTarget.cs" />
     <Compile Include="Configuration\SpaceCenterSwitcher.cs" />
     <Compile Include="Configuration\LightShifter.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />

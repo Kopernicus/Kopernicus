@@ -29,8 +29,6 @@
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- * 
- * Code based on KittiopaTech, modified by Thomas P.
  */
 
 using System;
