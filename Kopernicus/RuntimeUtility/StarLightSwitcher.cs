@@ -59,8 +59,43 @@ namespace Kopernicus
             Logger.Default.Flush();
         }
 
-        public void SetAsActive()
+        public void SetAsActive(bool forcedUpdate = false)
         {
+            // Only reset the Sun / SolarPanels if we don't force an update
+            if (!forcedUpdate)
+            {
+                // Set star as active star
+                Sun.Instance.sun = celestialBody;
+                Planetarium.fetch.Sun = celestialBody;
+                Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
+
+                // Set custom powerCurve for solar panels and reset Radiators
+                if (FlightGlobals.ActiveVessel != null)
+                {
+                    foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
+                    {
+                        sp.OnStart(PartModule.StartState.Orbital);
+                        if (powerCurve != null)
+                        {
+                            sp.useCurve = true;
+                            sp.powerCurve = powerCurve;
+                        }
+                        else
+                        {
+                            sp.useCurve = false;
+                            sp.powerCurve = null;
+                        }
+                        sp.updateFSM();
+                    }
+
+                    foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
+                    {
+                        rad.OnStart(PartModule.StartState.Orbital);
+                    }
+                }
+            }
+
+            // Reset the LightShifter
             LightShifterComponent lsc = null;
             LightShifterComponent[] comps = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
             if (comps != null && comps.Length > 0)
@@ -68,11 +103,6 @@ namespace Kopernicus
                 lsc = comps[0];
                 lsc.SetStatus(false, HighLogic.LoadedScene);
             }
-
-            // Set star as active star
-            Sun.Instance.sun = celestialBody;
-            Planetarium.fetch.Sun = celestialBody;
-            Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
             comps = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
             if (comps != null && comps.Length > 0)
             {
@@ -88,29 +118,6 @@ namespace Kopernicus
                 Sun.Instance.brightnessCurve = lsc.brightnessCurve.Curve;
             }
 
-			// Set custom powerCurve for solar panels and reset Radiators
-			if (FlightGlobals.ActiveVessel != null)
-			{
-                foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-                {
-                    sp.OnStart(PartModule.StartState.Orbital);
-                    if (powerCurve != null)
-                    {
-                        sp.useCurve = true;
-                        sp.powerCurve = powerCurve;
-                    }
-                    else
-                    {
-                        sp.useCurve = false;
-                        sp.powerCurve = null;
-                    }
-                }
-
-                foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
-                {
-                    rad.OnStart(PartModule.StartState.Orbital);
-                }
-			}
 		}
 
 		public bool IsActiveStar()
@@ -161,7 +168,7 @@ namespace Kopernicus
             // If forceUpdate is enabled, update the active star
             if (forcedUpdate && Sun.Instance)
             {
-                stars.First(s => s.IsActiveStar()).SetAsActive();
+                stars.First(s => s.IsActiveStar()).SetAsActive(forcedUpdate);
                 // reset forced Update
                 forcedUpdate = false;
             }
