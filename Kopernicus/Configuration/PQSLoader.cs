@@ -310,6 +310,19 @@ namespace Kopernicus
                 foreach (ConfigNode mod in node.GetNode ("Mods").nodes) 
                 {
                     Type loaderType = Type.GetType ("Kopernicus.Configuration.ModLoader." + mod.name);
+                    if (loaderType == null)
+                    {
+                        foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)
+                        {
+                            foreach (Type type in assembly.assembly.GetExportedTypes())
+                            {
+                                if (type.ToString() == "Kopernicus.Configuration.ModLoader." + mod.name)
+                                {
+                                    loaderType = type;
+                                }
+                            }
+                        }
+                    }
                     Type modType = Type.GetType ("PQSMod_" + mod.name + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
                     // Do any PQS Mods already exist on this PQS matching this mod?
@@ -336,9 +349,12 @@ namespace Kopernicus
                         Logger.Active.Log ("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
 
-                    loader.mod.transform.parent = pqsVersion.transform;
-                    loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                    loader.mod.sphere = pqsVersion;
+                    if (loader.mod != null)
+                    {
+                        loader.mod.transform.parent = pqsVersion.transform;
+                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                        loader.mod.sphere = pqsVersion;
+                    }
                 }
             }
         }
