@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,42 +36,42 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class FlattenOcean : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_FlattenOcean _mod;
-					
-				// The ocean Radius for the planet
-				[ParserTarget("oceanRadius", optional = true)]
-				private NumericParser<double> oceanRadius
-				{
-					set { _mod.oceanRadius = value.value; }
-				}
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class FlattenOcean : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_FlattenOcean _mod;
+                    
+                // The ocean Radius for the planet
+                [ParserTarget("oceanRadius", optional = true)]
+                private NumericParser<double> oceanRadius
+                {
+                    set { _mod.oceanRadius = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public FlattenOcean()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject ("FlattenOcean");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_FlattenOcean> ();
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject ("FlattenOcean");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_FlattenOcean> ();
                     _mod.requirements = PQS.ModiferRequirements.MeshCustomNormals;
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public FlattenOcean(PQSMod template)
                 {
@@ -74,8 +79,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

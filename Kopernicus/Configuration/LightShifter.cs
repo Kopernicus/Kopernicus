@@ -1,9 +1,14 @@
-/** 
+/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,8 +28,6 @@
  * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
- * Code based on RealSolarSystem, modified by Thomas P.
- * 
  * https://kerbalspaceprogram.com
  */
 
@@ -36,9 +39,9 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
         public class LightShifter : IParserEventSubscriber
         {
             public LightShifterComponent lsc;
@@ -120,6 +123,20 @@ namespace Kopernicus
                 set { lsc.givesOffLight = value.value; }
             }
 
+            // sunAU
+            [ParserTarget("sunAU", optional = true, allowMerge = false)]
+            public NumericParser<double> sunAU
+            {
+                set { lsc.AU = value.value; }
+            }
+
+            // brightnessCurve
+            [ParserTarget("brightnessCurve", optional = true, allowMerge = false)]
+            public FloatCurveParser brightnessCurve
+            {
+                set { lsc.brightnessCurve = value.curve; }
+            }
+
             public LightShifter()
             {
                 lsc = LightShifterComponent.Instantiate(LightShifterComponent.LightSwitcherPrefab) as LightShifterComponent;
@@ -149,6 +166,8 @@ namespace Kopernicus
             public AnimationCurve sunBrightnessCurve;
             public Color sunLensFlareColor;
             public bool givesOffLight = true;
+            public double AU;
+            public FloatCurve brightnessCurve;
 
             private static LightShifterComponent prefab;
 
@@ -173,6 +192,13 @@ namespace Kopernicus
                         prefab.IVASunIntensity = 0.34f;
                         prefab.sunLensFlareColor = Color.white;
                         prefab.ambientLightColor = new Color(0.06f, 0.06f, 0.06f, 1.0f);
+                        prefab.AU = 13599840256;
+                        prefab.brightnessCurve = new FloatCurve(new Keyframe[] 
+                        { 
+                            new Keyframe(-0.01573471f, 0.217353f, 1.706627f, 1.706627f),
+                            new Keyframe(5.084181f, 3.997075f, -0.001802375f, -0.001802375f),
+                            new Keyframe(38.56295f, 1.82142f, 0.0001713f, 0.0001713f)
+                        });
                     }
 
                     // Return the prefab
@@ -205,36 +231,43 @@ namespace Kopernicus
                 GameObject sunLight = GameObject.Find("SunLight");
                 GameObject scaledSunLight = GameObject.Find("Scaledspace SunLight");
 
-                if (sunlightColor != null)
-                    sunLight.light.color = sunlightColor;
-
-                if (sunlightIntensity != float.NaN)
-                    sunLight.light.intensity = sunlightIntensity;
-
-                if (sunlightShadowStrength != float.NaN)
-                    sunLight.light.shadowStrength = sunlightShadowStrength;
-
-                if (scaledSunlightColor != null)
-                    scaledSunLight.light.color = scaledSunlightColor;
-
-                if (scaledSunlightIntensity != float.NaN)
-                    scaledSunLight.light.intensity = scaledSunlightIntensity;
-
-                if (scene == GameScenes.FLIGHT)
+                if (sunLight && scaledSunLight)
                 {
-                    GameObject IVASun = GameObject.Find("IVASun");
+                    if (sunlightColor != null)
+                        sunLight.light.color = sunlightColor;
 
-                    if (IVASunColor != null)
-                        IVASun.light.color = IVASunColor;
+                    if (sunlightIntensity != float.NaN)
+                        sunLight.light.intensity = sunlightIntensity;
 
-                    if (IVASunIntensity != float.NaN)
-                        IVASun.light.intensity = IVASunIntensity;
+                    if (sunlightShadowStrength != float.NaN)
+                        sunLight.light.shadowStrength = sunlightShadowStrength;
+
+                    if (scaledSunlightColor != null)
+                        scaledSunLight.light.color = scaledSunlightColor;
+
+                    if (scaledSunlightIntensity != float.NaN)
+                        scaledSunLight.light.intensity = scaledSunlightIntensity;
+
+                    if (scene == GameScenes.FLIGHT)
+                    {
+                        GameObject IVASun = GameObject.Find("IVASun");
+
+                        if (IVASun)
+                        {
+                            if (IVASunColor != null)
+                                IVASun.light.color = IVASunColor;
+
+                            if (IVASunIntensity != float.NaN)
+                                IVASun.light.intensity = IVASunIntensity;
+                        }
+                    }
+
+                    DynamicAmbientLight ambientLight = FindObjectOfType(typeof(DynamicAmbientLight)) as DynamicAmbientLight;
+
+                    if (ambientLightColor != null && ambientLight)
+                        ambientLight.vacuumAmbientColor = ambientLightColor;
+
                 }
-
-                DynamicAmbientLight ambientLight = FindObjectOfType(typeof(DynamicAmbientLight)) as DynamicAmbientLight;
-
-                if (ambientLightColor != null)
-                    ambientLight.vacuumAmbientColor = ambientLightColor;
             }
         }
     }

@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,62 +36,62 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
             public class RemoveQuadMap : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_RemoveQuadMap _mod;
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_RemoveQuadMap _mod;
 
                 // The map texture for the Quad Remover (?)
-				[ParserTarget("map", optional = true)]
-				private MapSOParser_GreyScale<MapSO> map
-				{
-					set { _mod.map = value.value; }
-				}
+                [ParserTarget("map", optional = true)]
+                private MapSOParser_GreyScale<MapSO> map
+                {
+                    set { _mod.map = value.value; }
+                }
 
                 // The deformity of the map for the Quad Remover (?)
                 [ParserTarget("deformity", optional = true)]
-				private NumericParser<float> mapDeformity
-				{
-					set { _mod.mapDeformity = value.value; }
-				}
+                private NumericParser<float> mapDeformity
+                {
+                    set { _mod.mapDeformity = value.value; }
+                }
 
                 // The max. height for the Quad Remover (?)
                 [ParserTarget("maxHeight", optional = true)]
-				private NumericParser<float> maxHeight
-				{
-					set { _mod.maxHeight = value.value; }
-				}
+                private NumericParser<float> maxHeight
+                {
+                    set { _mod.maxHeight = value.value; }
+                }
 
                 // The min texture for the Quad Remover (?)
                 [ParserTarget("minHeight", optional = true)]
-				private NumericParser<float> minHeight 
-				{
-					set { _mod.minHeight = value.value; }
-				}
+                private NumericParser<float> minHeight 
+                {
+                    set { _mod.minHeight = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
                    
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public RemoveQuadMap()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("RemoveQuadMap");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_RemoveQuadMap>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public RemoveQuadMap(PQSMod template)
                 {
@@ -94,8 +99,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

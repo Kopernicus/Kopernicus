@@ -1,9 +1,14 @@
 /**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -39,11 +44,11 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration 
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class OceanPQS : IParserEventSubscriber
-		{
+    namespace Configuration 
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class OceanPQS : IParserEventSubscriber
+        {
             // PQS we're editing
             public PQS oceanPQS { get; private set; }
             public GameObject oceanRoot = new GameObject();
@@ -76,52 +81,48 @@ namespace Kopernicus
                 set { mapOceanHeight = value.value; }
             }
 
-			// PQS level of detail settings
-			[ParserTarget("minLevel", optional = true)]
-			private NumericParser<int> minLevel 
-			{
+            // PQS level of detail settings
+            [ParserTarget("minLevel", optional = true)]
+            private NumericParser<int> minLevel 
+            {
                 set { oceanPQS.minLevel = value.value; }
-			}
+            }
 
-			[ParserTarget("maxLevel", optional = true)]
-			private NumericParser<int> maxLevel 
-			{
+            [ParserTarget("maxLevel", optional = true)]
+            private NumericParser<int> maxLevel 
+            {
                 set { oceanPQS.maxLevel = value.value; }
-			}
+            }
 
-			[ParserTarget("minDetailDistance", optional = true)]
-			private NumericParser<double> minDetailDistance 
-			{
+            [ParserTarget("minDetailDistance", optional = true)]
+            private NumericParser<double> minDetailDistance 
+            {
                 set { oceanPQS.minDetailDistance = value.value; }
-			}
+            }
 
-			[ParserTarget("maxQuadLengthsPerFrame", optional = true)]
-			private NumericParser<float> maxQuadLengthsPerFrame 
-			{
+            [ParserTarget("maxQuadLengthsPerFrame", optional = true)]
+            private NumericParser<float> maxQuadLengthsPerFrame 
+            {
                 set { oceanPQS.maxQuadLenghtsPerFrame = value.value; }
-			}
+            }
 
-			// Surface Material of the PQS
-			[ParserTarget("Material", optional = true, allowMerge = true)]
+            // Surface Material of the PQS
+            [ParserTarget("Material", optional = true, allowMerge = true)]
             private Material surfaceMaterial;
 
-			// Fallback Material of the PQS (its always the same material)
-			[ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
+            // Fallback Material of the PQS (its always the same material)
+            [ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
             private PQSOceanSurfaceQuadFallbackLoader fallbackMaterial;
-				
-			// PQS Mods
-			[ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
-			private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> ();
 
             // Killer-Ocean
             [ParserTarget("HazardousOcean", optional = true, allowMerge = true)]
             private HazardousOcean hazardousOcean;
 
-			/**
-			 * Constructor for existing Ocean
-			 **/
-			public OceanPQS (PQS oceanPQS)
-			{
+            /**
+             * Constructor for existing Ocean
+             **/
+            public OceanPQS (PQS oceanPQS)
+            {
                 this.oceanPQS = oceanPQS;
                 
                 oceanPQS.surfaceMaterial = new PQSOceanSurfaceQuadLoader(oceanPQS.surfaceMaterial);
@@ -133,13 +134,13 @@ namespace Kopernicus
                 fallbackMaterial.name = Guid.NewGuid().ToString();
             }
 
-			/**
-			 * Constructor for new Ocean
-			 * 
-			 **/
-			public OceanPQS ()
-			{
-				// Generate the PQS object
+            /**
+             * Constructor for new Ocean
+             * 
+             **/
+            public OceanPQS ()
+            {
+                // Generate the PQS object
                 oceanRoot.layer = Constants.GameLayers.LocalSpace;
                 oceanPQS = oceanRoot.AddComponent<PQS>();
 
@@ -178,39 +179,70 @@ namespace Kopernicus
                 uvs.requirements = PQS.ModiferRequirements.Default;
                 uvs.modEnabled = true;
                 uvs.order = 999999;
-			}
+            }
 
 
-			void IParserEventSubscriber.Apply(ConfigNode node)
-			{
+            List<ModLoader.ModLoader> patchedMods = new List<ModLoader.ModLoader>();
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                
+            }
 
-			}
-
-			void IParserEventSubscriber.PostApply(ConfigNode node)
-			{
-                // Apply the mods
-                foreach (ModLoader.ModLoader loader in mods)
-                {
-                    loader.mod.transform.parent = oceanPQS.transform;
-                    loader.mod.sphere = oceanPQS;
-                    Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added OceanPQS Mod => " + loader.mod.GetType());
-                }
-
-				// Make sure all the PQSMods exist in Localspace
-				oceanPQS.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
-
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
                 // Apply our Killer-Ocean (if set)
                 if (hazardousOcean != null)
                 {
                     hazardousOcean.controller.gameObject.transform.parent = oceanPQS.transform;
+                    hazardousOcean.OceanPQS = oceanPQS;
                 }
 
                 // == DUMP OCEAN MATERIALS == //
                 Utility.DumpObjectProperties(oceanPQS.surfaceMaterial, " OCEAN SURFACE MATERIAL ");
                 Utility.DumpObjectProperties(oceanPQS.fallbackMaterial, " OCEAN FALLBACK MATERIAL ");
-			}
-		}
-	}
+
+                if (!node.HasNode ("Mods"))
+                    return;
+
+                List<PQSMod> patchedMods = new List<PQSMod>();
+
+                // Load mods manually because of patching
+                foreach (ConfigNode mod in node.GetNode ("Mods").nodes) 
+                {
+                    Type loaderType = Type.GetType ("Kopernicus.Configuration.ModLoader." + mod.name);
+                    Type modType = Type.GetType ("PQSMod_" + mod.name + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+
+                    // Do any PQS Mods already exist on this PQS matching this mod?
+                    IEnumerable<PQSMod> existingMods = oceanPQS.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) && 
+                                                                                                                  m.transform.parent == oceanPQS.transform);
+                    ModLoader.ModLoader loader = null;
+                    if (existingMods.Count () > 0) 
+                    {
+                        // Attempt to find a PQS mod we can edit that we have not edited before
+                        PQSMod existingMod = existingMods.Where (m => !patchedMods.Contains(m) && (mod.HasValue ("name") ? m.name == mod.GetValue ("name") : true))
+                                                         .FirstOrDefault ();
+                        if (existingMod != null) 
+                        {
+                            loader = Parser.CreateObjectFromConfigNode (loaderType, mod, new object[] { existingMod }) as ModLoader.ModLoader;
+                            patchedMods.Add (existingMod);
+
+                            Logger.Active.Log("OceanPQS.PostApply(ConfigNode): Patched OceanPQS Mod => " + modType);
+                        }
+                    }
+
+                    if (loader == null) 
+                    {
+                        loader = Parser.CreateObjectFromConfigNode (loaderType, mod) as ModLoader.ModLoader;
+                        Logger.Active.Log ("OceanPQS.PostApply(ConfigNode): Added OceanPQS Mod => " + modType);
+                    }
+
+                    loader.mod.transform.parent = oceanPQS.transform;
+                    loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                    loader.mod.sphere = oceanPQS;
+                }
+            }
+        }
+    }
 }
 
 #pragma warning restore 0414

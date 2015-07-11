@@ -91,13 +91,13 @@ namespace Kopernicus
                     mainTexID = Shader.PropertyToID(mainTexKey);
                     planetOpacityID = Shader.PropertyToID(planetOpacityKey);
                 }
-			}
+            }
 
-			// Is some random material this material
-			public static bool UsesSameShader(Material m)
-			{
-				return m.shader.name == Properties.shaderName;
-			}
+            // Is some random material this material
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shaderName;
+            }
 
             // Saturation, default = 1
             public float saturation

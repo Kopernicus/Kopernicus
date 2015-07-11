@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,69 +36,69 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexVoronoi : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexVoronoi _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexVoronoi : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexVoronoi _mod;
 
-				// Deformation of the Voronoi
-				[ParserTarget("deformation", optional = true)]
-				private NumericParser<double> deformation
-				{
-					set { _mod.deformation = value.value; }
-				}
+                // Deformation of the Voronoi
+                [ParserTarget("deformation", optional = true)]
+                private NumericParser<double> deformation
+                {
+                    set { _mod.deformation = value.value; }
+                }
 
                 // Displacement of the Voronoi
-				[ParserTarget("displacement", optional = true)]
-				private NumericParser<double> voronoiDisplacement
-				{
-					set { _mod.voronoiDisplacement = value.value; }
-				}
+                [ParserTarget("displacement", optional = true)]
+                private NumericParser<double> voronoiDisplacement
+                {
+                    set { _mod.voronoiDisplacement = value.value; }
+                }
 
                 // Enabled distance of the Voronoi
-				[ParserTarget("enableDistance", optional = true)]
-				private NumericParser<bool> voronoiEnableDistance
-				{
-					set { _mod.voronoiEnableDistance = value.value; }
-				}
+                [ParserTarget("enableDistance", optional = true)]
+                private NumericParser<bool> voronoiEnableDistance
+                {
+                    set { _mod.voronoiEnableDistance = value.value; }
+                }
 
                 // Frequency of the Voronoi
-				[ParserTarget("frequency", optional = true)]
-				private NumericParser<double> frequency
-				{
-					set { _mod.voronoiFrequency = value.value; }
-				}
+                [ParserTarget("frequency", optional = true)]
+                private NumericParser<double> frequency
+                {
+                    set { _mod.voronoiFrequency = value.value; }
+                }
 
                 // Seed of the Voronoi
-				[ParserTarget("seed", optional = true)]
-				private NumericParser<int> seed
-				{
-					set { _mod.voronoiSeed = value.value; }
-				}
+                [ParserTarget("seed", optional = true)]
+                private NumericParser<int> seed
+                {
+                    set { _mod.voronoiSeed = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public VertexVoronoi()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VertexVoronoi");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_VertexVoronoi>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public VertexVoronoi(PQSMod template)
                 {
@@ -101,8 +106,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

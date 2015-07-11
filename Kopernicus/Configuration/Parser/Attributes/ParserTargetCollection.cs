@@ -1,9 +1,14 @@
 /**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -30,21 +35,21 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/* Attribute indicating a target collection */
-		[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-		public class ParserTargetCollection : ParserTarget
-		{
-			// Node name significance - does the name mean anything
-			public NameSignificance nameSignificance = NameSignificance.None;
+    namespace Configuration
+    {
+        /* Attribute indicating a target collection */
+        [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+        public class ParserTargetCollection : ParserTarget
+        {
+            // Node name significance - does the name mean anything
+            public NameSignificance nameSignificance = NameSignificance.None;
 
-			// Namespace of any generated classes for NameSignificance.Type
-			public string typePrefix = "";
-			
-			// Constructor sets name
-			public ParserTargetCollection(string fieldName = null) : base (fieldName) { }
-		}
-	}
+            // Namespace of any generated classes for NameSignificance.Type
+            public string typePrefix = "";
+            
+            // Constructor sets name
+            public ParserTargetCollection(string fieldName = null) : base (fieldName) { }
+        }
+    }
 }
 

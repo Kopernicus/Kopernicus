@@ -1,9 +1,14 @@
 /**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -30,19 +35,19 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Configuration File Data Sources 
-		 * 
-		 * Value - parser retrieves data from a config node key/value pair
-		 * Node - parser retrieves data from a config node subnode
-		 **/
-		public enum ConfigType
-		{
-			Value,
-			Node
-		}
-	}
+    namespace Configuration
+    {
+        /**
+         * Configuration File Data Sources 
+         * 
+         * Value - parser retrieves data from a config node key/value pair
+         * Node - parser retrieves data from a config node subnode
+         **/
+        public enum ConfigType
+        {
+            Value,
+            Node
+        }
+    }
 }
 

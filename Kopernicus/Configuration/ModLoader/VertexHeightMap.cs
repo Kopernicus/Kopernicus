@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,64 +36,64 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightMap : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightMap _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexHeightMap : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexHeightMap _mod;
 
-				// The map texture for the planet
-				[ParserTarget("map", optional = true)]
-				private MapSOParser_GreyScale<MapSO> heightMap
-				{
+                // The map texture for the planet
+                [ParserTarget("map", optional = true)]
+                private MapSOParser_GreyScale<MapSO> heightMap
+                {
                     set { _mod.heightMap = value.value; }
-				}
+                }
 
-				// Height map offset
-				[ParserTarget("offset", optional = true)]
-				private NumericParser<double> heightMapOffset 
-				{
-					set { _mod.heightMapOffset = value.value; }
-				}
+                // Height map offset
+                [ParserTarget("offset", optional = true)]
+                private NumericParser<double> heightMapOffset 
+                {
+                    set { _mod.heightMapOffset = value.value; }
+                }
 
-				// Height map offset
-				[ParserTarget("deformity", optional = true)]
-				private NumericParser<double> heightMapDeformity
-				{
-					set { _mod.heightMapDeformity = value.value; }
-				}
+                // Height map offset
+                [ParserTarget("deformity", optional = true)]
+                private NumericParser<double> heightMapDeformity
+                {
+                    set { _mod.heightMapDeformity = value.value; }
+                }
 
-				// Height map offset
-				[ParserTarget("scaleDeformityByRadius", optional = true)]
-				private NumericParser<bool> scaleDeformityByRadius
-				{
-					set { _mod.scaleDeformityByRadius = value.value; }
-				}
+                // Height map offset
+                [ParserTarget("scaleDeformityByRadius", optional = true)]
+                private NumericParser<bool> scaleDeformityByRadius
+                {
+                    set { _mod.scaleDeformityByRadius = value.value; }
+                }
 
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
                     
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexHeightMap ()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject ("VertexHeightMap");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexHeightMap> ();
-					_mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
-					base.mod = _mod;
-				}
+                public VertexHeightMap ()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject ("VertexHeightMap");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexHeightMap> ();
+                    _mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
+                    base.mod = _mod;
+                }
 
                 public VertexHeightMap(PQSMod template)
                 {
@@ -96,8 +101,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

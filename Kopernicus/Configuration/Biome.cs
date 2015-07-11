@@ -1,9 +1,14 @@
-/** 
+/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -35,47 +40,47 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class Biome
-		{
-			// The map attribute object we are creating
-			public CBAttributeMapSO.MapAttribute attribute { get; private set; }
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class Biome
+        {
+            // The map attribute object we are creating
+            public CBAttributeMapSO.MapAttribute attribute { get; private set; }
 
-			// The name of this biome
-			[ParserTarget("name")]
-			private string name 
-			{
-				set { attribute.name = value; }
-			}
+            // The name of this biome
+            [ParserTarget("name")]
+            private string name 
+            {
+                set { attribute.name = value; }
+            }
 
-			// The science multiplier for this biome
-			[ParserTarget("value")]
-			private NumericParser<float> value 
-			{
-				set { attribute.value = value.value; }
-			}
+            // The science multiplier for this biome
+            [ParserTarget("value")]
+            private NumericParser<float> value 
+            {
+                set { attribute.value = value.value; }
+            }
 
-			// The color in the map for this attribute
-			[ParserTarget("color")]
-			private ColorParser color 
-			{
-				set { attribute.mapColor = value.value; }
-			}
+            // The color in the map for this attribute
+            [ParserTarget("color")]
+            private ColorParser color 
+            {
+                set { attribute.mapColor = value.value; }
+            }
 
-			// Allocate the biome descriptor
-			public Biome ()
-			{
-				attribute = new CBAttributeMapSO.MapAttribute();
-			}
-			
-			// Get reference to existing biome descriptor
-			public Biome (CBAttributeMapSO.MapAttribute attribute)
-			{
-				this.attribute = attribute;
-			}
-		}
-	}
+            // Allocate the biome descriptor
+            public Biome ()
+            {
+                attribute = new CBAttributeMapSO.MapAttribute();
+            }
+            
+            // Get reference to existing biome descriptor
+            public Biome (CBAttributeMapSO.MapAttribute attribute)
+            {
+                this.attribute = attribute;
+            }
+        }
+    }
 }
 

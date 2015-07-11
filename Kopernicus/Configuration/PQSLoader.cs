@@ -1,9 +1,14 @@
 /**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -28,6 +33,7 @@
 
 using System;
 using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,7 +44,7 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration 
+	namespace Configuration
 	{
 		[RequireConfigType(ConfigType.Node)]
 		public class PQSLoader : IParserEventSubscriber
@@ -56,11 +62,11 @@ namespace Kopernicus
 			public PQS pqsVersion { get; private set; }
 
 			// Required PQSMods
-			private PQSMod_CelestialBodyTransform   transform;
-			private PQSMod_MaterialSetDirection     lightDirection;
+			private PQSMod_CelestialBodyTransform transform;
+			private PQSMod_MaterialSetDirection lightDirection;
 			private PQSMod_UVPlanetRelativePosition uvs;
-			private PQSMod_QuadMeshColliders        collider;
-			
+			private PQSMod_QuadMeshColliders collider;
+
 			// Surface physics material
 			[ParserTarget("PhysicsMaterial", optional = true, allowMerge = true)]
 			private PhysicsMaterialParser physicsMaterial
@@ -70,43 +76,62 @@ namespace Kopernicus
 
 			// PQS level of detail settings
 			[ParserTarget("minLevel", optional = true)]
-			private NumericParser<int> minLevel 
+			private NumericParser<int> minLevel
 			{
 				set { pqsVersion.minLevel = value.value; }
 			}
 
 			[ParserTarget("maxLevel", optional = true)]
-			private NumericParser<int> maxLevel 
+			private NumericParser<int> maxLevel
 			{
 				set { pqsVersion.maxLevel = value.value; }
 			}
 
 			[ParserTarget("minDetailDistance", optional = true)]
-			private NumericParser<double> minDetailDistance 
+			private NumericParser<double> minDetailDistance
 			{
 				set { pqsVersion.minDetailDistance = value.value; }
 			}
 
 			[ParserTarget("maxQuadLengthsPerFrame", optional = true)]
-			private NumericParser<float> maxQuadLengthsPerFrame 
+			private NumericParser<float> maxQuadLengthsPerFrame
 			{
 				set { pqsVersion.maxQuadLenghtsPerFrame = value.value; }
+			}
+
+			// CelestialBodyTransform fades. should more or less line up with ScaledVersion's fadeStart/fadeEnd
+			[ParserTarget("pqsFadeStart", optional = true)]
+			private NumericParser<float> fadeStart
+			{
+				set { transform.planetFade.fadeStart = value.value; }
+			}
+
+			[ParserTarget("pqsFadeEnd", optional = true)]
+			private NumericParser<float> fadeEnd
+			{
+				set { transform.planetFade.fadeEnd = value.value; }
+			}
+
+			[ParserTarget("deactivateAltitude", optional = true)]
+			private NumericParser<double> deactivateAltitude
+			{
+				set { transform.deactivateAltitude = value.value; }
 			}
 
 			[PreApply]
 			[ParserTarget("materialType", optional = true)]
 			private EnumParser<PQSMaterialType> materialType
 			{
-				set 
+				set
 				{
 					if (value.value == PQSMaterialType.AtmosphericOptimized)
-						pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader ();
+						pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader();
 					else if (value.value == PQSMaterialType.AtmosphericMain)
-						pqsVersion.surfaceMaterial = new PQSMainShaderLoader ();
+						pqsVersion.surfaceMaterial = new PQSMainShaderLoader();
 					else if (value.value == PQSMaterialType.AtmosphericBasic)
-						pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader ();
+						pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
 					else if (value.value == PQSMaterialType.Vacuum)
-						pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader ();
+						pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader();
 
 					surfaceMaterial = pqsVersion.surfaceMaterial;
 				}
@@ -119,23 +144,19 @@ namespace Kopernicus
 			// Fallback Material of the PQS (its always the same material)
 			[ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
 			private PQSProjectionFallbackLoader fallbackMaterial;
-            				
-			// PQS Mods
-			[ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
-			private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> (); 
 
 			/**
 			 * Constructor for new PQS
 			 **/
-			public PQSLoader ()
+			public PQSLoader()
 			{
 				// Create a new PQS
-				GameObject controllerRoot = new GameObject ();
+				GameObject controllerRoot = new GameObject();
 				controllerRoot.transform.parent = Utility.Deactivator;
-				this.pqsVersion = controllerRoot.AddComponent<PQS> ();
+				this.pqsVersion = controllerRoot.AddComponent<PQS>();
 
 				// I am at this time unable to determine some of the magic parameters which cause the PQS to work...
-				PSystemBody Laythe = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
+				PSystemBody Laythe = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
 				Utility.CopyObjectFields(Laythe.pqsVersion, pqsVersion);
 				pqsVersion.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
 
@@ -150,9 +171,9 @@ namespace Kopernicus
 				pqsVersion.visRadAltitudeMax = 10000;*/
 
 				// Create the fallback material (always the same shader)
-				fallbackMaterial = new PQSProjectionFallbackLoader ();
-				pqsVersion.fallbackMaterial = fallbackMaterial; 
-				fallbackMaterial.name = Guid.NewGuid ().ToString ();
+				fallbackMaterial = new PQSProjectionFallbackLoader();
+				pqsVersion.fallbackMaterial = fallbackMaterial;
+				fallbackMaterial.name = Guid.NewGuid().ToString();
 
 				// Create the celestial body transform
 				GameObject mod = new GameObject("_CelestialBody");
@@ -214,136 +235,111 @@ namespace Kopernicus
 				collider.order = 100;
 
 				// Create physics material editor
-				physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
-            }
+				physicsMaterial = new PhysicsMaterialParser(collider.physicsMaterial);
+			}
 
 			/**
 			 * Constructor for pre-existing PQS
 			 * 
 			 * @param pqsVersion Existing PQS to augment
 			 **/
-			public PQSLoader (PQS pqsVersion)
+			public PQSLoader(PQS pqsVersion)
 			{
 				this.pqsVersion = pqsVersion;
 
 				// Get the required PQS information
-				transform = pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform> (true).Where (mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault ();
-				lightDirection = pqsVersion.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true).Where (mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault ();
-				uvs = pqsVersion.GetComponentsInChildren<PQSMod_UVPlanetRelativePosition>(true).Where (mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault ();
-				collider = pqsVersion.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true).Where (mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault ();
+				transform = pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).Where(mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault();
+				lightDirection = pqsVersion.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true).Where(mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault();
+				uvs = pqsVersion.GetComponentsInChildren<PQSMod_UVPlanetRelativePosition>(true).Where(mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault();
+				collider = pqsVersion.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true).Where(mod => mod.transform.parent == pqsVersion.transform).FirstOrDefault();
 
 				// Create physics material editor
-				physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
+				physicsMaterial = new PhysicsMaterialParser(collider.physicsMaterial);
 
 				// Clone the surface material of the PQS
-                if (PQSMainOptimisedLoader.UsesSameShader(pqsVersion.surfaceMaterial))
-                {
-                    pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader(pqsVersion.surfaceMaterial);
-                    if (((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
-                    {
-                        ((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
-                    }
-                }
-                else if (PQSMainShaderLoader.UsesSameShader(pqsVersion.surfaceMaterial))
-                {
-                    pqsVersion.surfaceMaterial = new PQSMainShaderLoader(pqsVersion.surfaceMaterial);
-                    if (((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
-                    {
-                        ((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
-                    }
-                }
-                else if (PQSProjectionAerialQuadRelativeLoader.UsesSameShader(pqsVersion.surfaceMaterial))
-                {
-                    pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(pqsVersion.surfaceMaterial);
-                    if (((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
-                    {
-                        ((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
-                    }
-                }
-                else if (PQSProjectionSurfaceQuadLoader.UsesSameShader(pqsVersion.surfaceMaterial))
-                {
-                    pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader(pqsVersion.surfaceMaterial);
-                }
-                surfaceMaterial = pqsVersion.surfaceMaterial;
-				surfaceMaterial.name = Guid.NewGuid ().ToString ();
+				if (PQSMainOptimisedLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+				{
+					pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader(pqsVersion.surfaceMaterial);
+					if (((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
+					{
+						((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+					}
+				}
+				else if (PQSMainShaderLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+				{
+					pqsVersion.surfaceMaterial = new PQSMainShaderLoader(pqsVersion.surfaceMaterial);
+					if (((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
+					{
+						((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+					}
+				}
+				else if (PQSProjectionAerialQuadRelativeLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+				{
+					pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(pqsVersion.surfaceMaterial);
+					if (((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
+					{
+						((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+					}
+				}
+				else if (PQSProjectionSurfaceQuadLoader.UsesSameShader(pqsVersion.surfaceMaterial))
+				{
+					pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader(pqsVersion.surfaceMaterial);
+				}
+				surfaceMaterial = pqsVersion.surfaceMaterial;
+				surfaceMaterial.name = Guid.NewGuid().ToString();
 
 				// Clone the fallback material of the PQS
-				fallbackMaterial = new PQSProjectionFallbackLoader (pqsVersion.fallbackMaterial);
-				pqsVersion.fallbackMaterial = fallbackMaterial; 
-				fallbackMaterial.name = Guid.NewGuid ().ToString ();
+				fallbackMaterial = new PQSProjectionFallbackLoader(pqsVersion.fallbackMaterial);
+				pqsVersion.fallbackMaterial = fallbackMaterial;
+				fallbackMaterial.name = Guid.NewGuid().ToString();
 			}
 
-            List<ModLoader.ModLoader> patchedMods = new List<ModLoader.ModLoader>();
 			void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-                if (node.HasNode("Mods"))
-                {
-                    // Patch the existing mods
-                    foreach (ConfigNode mod in node.GetNode("Mods").nodes)
-                    {
-                        if (pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).Count() != 0)
-                        {
-                            Type t = Type.GetType("Kopernicus.Configuration.ModLoader." + mod.name);
-                            ConstructorInfo cInfo = t.GetConstructor(new Type[] { typeof(PQSMod) });
-                            try
-                            {
-                                PQSMod pqsMod = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(
-                                    m => m.GetType().Name.Contains(mod.name) && 
-                                         patchedMods.Where(M => M.mod.name == m.name && 
-                                         M.mod.GetType() == m.GetType()).Count() == 0 &&
-                                         ((mod.HasValue("name")) ? m.name == mod.GetValue("name") : true)
-                                    ).First();
+			{
 
-                                ModLoader.ModLoader patchedMod = cInfo.Invoke(new object[] { pqsMod }) as ModLoader.ModLoader;
-                                Parser.LoadObjectFromConfigurationNode(patchedMod, mod);
-                                patchedMod.patched = true;
-                                patchedMods.Add(patchedMod);
-                            }
-                            catch
-                            {
-                                Logger.Active.Log("Couldn't find enough Mods of Type " + t + "!");
-                            }
-                        }
-                    }
-                }
 			}
 
 			void IParserEventSubscriber.PostApply(ConfigNode node)
 			{
-                // Remove the patched mods from the main list
-                foreach (ModLoader.ModLoader remove in mods.Where(m => m.mod != null && patchedMods.Select(p => p.mod.GetType()).Contains(m.mod.GetType())))
-                {
-                    remove.mod.transform.parent = null;
-                    remove.mod.sphere = null;
-                    remove.mod = null;
-                }
+				if (!node.HasNode("Mods"))
+					return;
 
-                // Apply patched mods
-                foreach (ModLoader.ModLoader loader in patchedMods)
-                {
-                    if (loader.mod != null)
-                    {
-                        loader.mod.transform.parent = pqsVersion.transform;
-                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                        loader.mod.sphere = pqsVersion;
-                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + loader.mod.GetType());
-                    }
-                }
+				List<PQSMod> patchedMods = new List<PQSMod>();
 
-                // Add new mods
-                foreach (ModLoader.ModLoader loader in mods)
-                {
-                    if (loader.mod != null)
-                    {
-                        loader.mod.transform.parent = pqsVersion.transform;
-                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                        loader.mod.sphere = pqsVersion;
-                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
-                    }
-                }
+				// Load mods manually because of patching
+				foreach (ConfigNode mod in node.GetNode("Mods").nodes)
+				{
+					Type loaderType = Type.GetType("Kopernicus.Configuration.ModLoader." + mod.name);
+					Type modType = Type.GetType("PQSMod_" + mod.name + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
-				// Make sure all the PQSMods exist in Localspace
-				// pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
+					// Do any PQS Mods already exist on this PQS matching this mod?
+					IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) &&
+																													m.transform.parent == pqsVersion.transform);
+					ModLoader.ModLoader loader = null;
+					if (existingMods.Count() > 0)
+					{
+						// Attempt to find a PQS mod we can edit that we have not edited before
+						PQSMod existingMod = existingMods.Where(m => !patchedMods.Contains(m) && (mod.HasValue("name") ? m.name == mod.GetValue("name") : true))
+														 .FirstOrDefault();
+						if (existingMod != null)
+						{
+							loader = Parser.CreateObjectFromConfigNode(loaderType, mod, new object[] { existingMod }) as ModLoader.ModLoader;
+							patchedMods.Add(existingMod);
+
+							Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
+						}
+					}
+
+					if (loader == null)
+					{
+						loader = Parser.CreateObjectFromConfigNode(loaderType, mod) as ModLoader.ModLoader;
+						Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
+					}
+
+					loader.mod.transform.parent = pqsVersion.transform;
+					loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+					loader.mod.sphere = pqsVersion;
+				}
 			}
 		}
 	}

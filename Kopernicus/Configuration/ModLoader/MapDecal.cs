@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,64 +36,64 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class MapDecal : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_MapDecal _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class MapDecal : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_MapDecal _mod;
 
                 // absolute
                 [ParserTarget("absolute", optional = true)]
                 private NumericParser<bool> absolute
-				{
-					set { _mod.absolute = value.value; }
-				}
+                {
+                    set { _mod.absolute = value.value; }
+                }
 
                 // absoluteOffset
                 [ParserTarget("absoluteOffset", optional = true)]
                 private NumericParser<float> absoluteOffset
-				{
-					set { _mod.absoluteOffset = value.value; }
-				}
+                {
+                    set { _mod.absoluteOffset = value.value; }
+                }
 
                 // angle
                 [ParserTarget("angle", optional = true)]
                 private NumericParser<float> angle
-				{
-					set { _mod.angle = value.value; }
-				}
+                {
+                    set { _mod.angle = value.value; }
+                }
 
                 // colorMap
                 [ParserTarget("colorMap", optional = true)]
                 private MapSOParser_RGB<MapSO> colorMap
-				{
-					set { _mod.colorMap = value.value; }
-				}
+                {
+                    set { _mod.colorMap = value.value; }
+                }
 
                 // cullBlack
                 [ParserTarget("cullBlack", optional = true)]
                 private NumericParser<bool> cullBlack
-				{
-					set { _mod.cullBlack = value.value; }
-				}
+                {
+                    set { _mod.cullBlack = value.value; }
+                }
 
                 // DEBUG_HighlightInclusion
                 [ParserTarget("DEBUG_HighlightInclusion", optional = true)]
                 private NumericParser<bool> DEBUG_HighlightInclusion
-				{
-					set { _mod.DEBUG_HighlightInclusion = value.value; }
-				}
+                {
+                    set { _mod.DEBUG_HighlightInclusion = value.value; }
+                }
 
                 // heightMap
                 [ParserTarget("heightMap", optional = true)]
                 private MapSOParser_GreyScale<MapSO> heightMap
-				{
-					set { _mod.heightMap = value.value; }
-				}
+                {
+                    set { _mod.heightMap = value.value; }
+                }
 
                 // heightMapDeformity
                 [ParserTarget("heightMapDeformity", optional = true)]
@@ -139,24 +144,24 @@ namespace Kopernicus
                     set { _mod.useAlphaHeightSmoothing = value.value; }
                 }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public MapDecal()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("MapDecal");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_MapDecal>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public MapDecal(PQSMod template)
                 {
@@ -164,8 +169,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

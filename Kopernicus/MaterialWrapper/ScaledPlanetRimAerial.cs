@@ -88,7 +88,7 @@ namespace Kopernicus
 
             public ScaledPlanetRimAerial() : base()
             {
-				base.shader = Properties.shader;
+                base.shader = Properties.shader;
             }
 
             public ScaledPlanetRimAerial(string contents) : base(contents)
@@ -96,10 +96,10 @@ namespace Kopernicus
                 base.shader = Properties.shader;
             }
 
-			public ScaledPlanetRimAerial(Material material) : base(material)
+            public ScaledPlanetRimAerial(Material material) : base(material)
             {
-				// Copy the shader
-				base.shader = Properties.shader;
+                // Copy the shader
+                base.shader = Properties.shader;
             }
 
         }

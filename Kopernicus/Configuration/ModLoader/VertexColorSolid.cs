@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,48 +36,48 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexColorSolid : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexColorSolid _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexColorSolid : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexColorSolid _mod;
 
-				// Amount of color that will be applied
-				[ParserTarget("blend")]
-				private NumericParser<float> blend
-				{
-					set { _mod.blend = value.value; }
-				}
+                // Amount of color that will be applied
+                [ParserTarget("blend")]
+                private NumericParser<float> blend
+                {
+                    set { _mod.blend = value.value; }
+                }
 
-				// The color used
-				[ParserTarget("color")]
-				private ColorParser color
-				{
-					set { _mod.color = value.value; }
-				}
+                // The color used
+                [ParserTarget("color")]
+                private ColorParser color
+                {
+                    set { _mod.color = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexColorSolid()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject("VertexColorSolid");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexColorSolid>();
-					base.mod = _mod;
-				}
+                public VertexColorSolid()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject("VertexColorSolid");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexColorSolid>();
+                    base.mod = _mod;
+                }
 
                 public VertexColorSolid(PQSMod template)
                 {
@@ -80,8 +85,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

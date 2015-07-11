@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,76 +36,76 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexSimplexHeightFlatten : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexSimplexHeightFlatten _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexSimplexHeightFlatten : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexSimplexHeightFlatten _mod;
 
-				// Cutoff height
-				[ParserTarget("cutoff")]
-				private NumericParser<double> cutoff
-				{
-					set { _mod.cutoff = value.value; }
-				}
+                // Cutoff height
+                [ParserTarget("cutoff")]
+                private NumericParser<double> cutoff
+                {
+                    set { _mod.cutoff = value.value; }
+                }
 
-				// The deformity of the simplex terrain
-				[ParserTarget("deformity")]
-				private NumericParser<double> deformity
-				{
-					set { _mod.deformity = value.value; }
-				}
+                // The deformity of the simplex terrain
+                [ParserTarget("deformity")]
+                private NumericParser<double> deformity
+                {
+                    set { _mod.deformity = value.value; }
+                }
 
-				// The frequency of the simplex terrain
-				[ParserTarget("frequency")]
-				private NumericParser<double> frequency
-				{
-					set { _mod.frequency = value.value; }
-				}
+                // The frequency of the simplex terrain
+                [ParserTarget("frequency")]
+                private NumericParser<double> frequency
+                {
+                    set { _mod.frequency = value.value; }
+                }
 
-				// Octaves of the simplex height
-				[ParserTarget("octaves")]
-				private NumericParser<double> octaves
-				{
-					set { _mod.octaves = value.value; }
-				}
+                // Octaves of the simplex height
+                [ParserTarget("octaves")]
+                private NumericParser<double> octaves
+                {
+                    set { _mod.octaves = value.value; }
+                }
 
-				// Persistence of the simplex height
-				[ParserTarget("persistence")]
-				private NumericParser<double> persistence
-				{
-					set { _mod.persistence = value.value; }
-				}
+                // Persistence of the simplex height
+                [ParserTarget("persistence")]
+                private NumericParser<double> persistence
+                {
+                    set { _mod.persistence = value.value; }
+                }
 
-				// The seed of the simplex height
-				[ParserTarget("seed")]
-				private NumericParser<int> seed
-				{
-					set { _mod.seed = value.value; }
-				}
+                // The seed of the simplex height
+                [ParserTarget("seed")]
+                private NumericParser<int> seed
+                {
+                    set { _mod.seed = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexSimplexHeightFlatten()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject("VertexSimplexHeightFlatten");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexSimplexHeightFlatten>();
-					base.mod = _mod;
-				}
+                public VertexSimplexHeightFlatten()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject("VertexSimplexHeightFlatten");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexSimplexHeightFlatten>();
+                    base.mod = _mod;
+                }
 
                 public VertexSimplexHeightFlatten(PQSMod template)
                 {
@@ -108,8 +113,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

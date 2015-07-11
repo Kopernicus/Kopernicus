@@ -1,8 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿/**
+ * Kopernicus Planetary System Modifier
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * 
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
+ * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ * 
+ * This library is intended to be used as a plugin for Kerbal Space Program
+ * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * itself is governed by the terms of its EULA, not the license above.
+ * 
+ * https://kerbalspaceprogram.com
+ */
 
+using System.Collections.Generic;
 using UnityEngine;
 using Kopernicus.OnDemand;
 
@@ -43,6 +72,10 @@ namespace Kopernicus
         public void Apply()
         {
             Logger.Default.Log("Applying name change of " + oldName + " => " + newName);
+
+            if (Templates.menuBody == oldName)
+                Templates.menuBody = newName;
+
             foreach (Component c in components)
                 if(c != null)
                     c.name = c.name.Replace(oldName, newName);
@@ -108,6 +141,9 @@ namespace Kopernicus
         public void Apply()
         {
             Logger.Default.Log("Applying Celestial Body name change of " + oldName + " => " + newName);
+
+            if (Templates.menuBody == oldName)
+                Templates.menuBody = newName;
             
             foreach (CelestialBody b in FlightGlobals.Bodies)
             {
@@ -142,7 +178,8 @@ namespace Kopernicus
                         t.name = t.name.Replace(oldName, newName);
                 }
             }*/
-            if (OnDemandStorage.bodyMapLists.ContainsKey(oldName))
+            // Disabling this because the new handler uses PQS names
+            /*if (OnDemandStorage.bodyMapLists.ContainsKey(oldName))
             {
                 List<ILoadOnDemand> mapList = OnDemandStorage.bodyMapLists[oldName];
                 OnDemandStorage.bodyMapLists[newName] = mapList;
@@ -154,7 +191,7 @@ namespace Kopernicus
                         if (kvp.Value[i] == oldName)
                             kvp.Value[i] = newName;
                 }
-            }
+            }*/
             AFGInfo.UpdateAFGName(oldName, newName);
         }
     }

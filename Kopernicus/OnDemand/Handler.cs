@@ -1,4 +1,37 @@
-﻿using System;
+﻿/**
+ * Kopernicus Planetary System Modifier
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * 
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
+ * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ * 
+ * This library is intended to be used as a plugin for Kerbal Space Program
+ * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * itself is governed by the terms of its EULA, not the license above.
+ * 
+ * https://kerbalspaceprogram.com
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,15 +45,46 @@ namespace Kopernicus
     {
         public static class OnDemandStorage
         {
+            public static List<string> activeBodies = new List<string>();
             public static Dictionary<ILoadOnDemand, bool> enabledMaps = new Dictionary<ILoadOnDemand,bool>();
             public static Dictionary<ILoadOnDemand, float> mapTimes = new Dictionary<ILoadOnDemand, float>();
             public static Dictionary<ILoadOnDemand, List<string>> mapBodies = new Dictionary<ILoadOnDemand, List<string>>();
             public static Dictionary<string, List<ILoadOnDemand>> bodyMapLists = new Dictionary<string,List<ILoadOnDemand>>();
+            public static Dictionary<PQS, PQSMod_OnDemandHandler> handlers = new Dictionary<PQS, PQSMod_OnDemandHandler>();
             public static List<ILoadOnDemand> mapList = new List<ILoadOnDemand>();
             public static string homeworldBody = "Kerbin";
             public static string currentBody = "";
             public static bool useOnDemand = false;
+            public static bool useOnDemandBiomes = false;
             public static bool onDemandLoadOnMissing = true;
+            public static bool onDemandLogOnMissing = true;
+            public static bool onDemandForceCollect = false;
+
+            public static void AddHandler(PQS pqsVersion)
+            {
+                GameObject handlerObject = new GameObject("OnDemandHandler");
+                handlerObject.transform.parent = Utility.Deactivator;
+                PQSMod_OnDemandHandler handler = handlerObject.AddComponent<PQSMod_OnDemandHandler>();
+                handler.transform.parent = pqsVersion.transform;
+                handler.sphere = pqsVersion;
+                handler.order = 1;
+                handlers[pqsVersion] = handler;
+            }
+
+            public static void UpdateHandler(PQS pqs, PQSMod_OnDemandHandler handler)
+            {
+                // just in case
+                List<PQS> remlist = new List<PQS>();
+                foreach(KeyValuePair<PQS, PQSMod_OnDemandHandler> kvp in handlers)
+                {
+                    if(kvp.Value == handler)
+                        remlist.Add(kvp.Key);
+                }
+                foreach(PQS p in remlist)
+                    handlers.Remove(p);
+
+                handlers[pqs] = handler;
+            }
 
             public static void AddMap(string body, ILoadOnDemand map)
             {
@@ -95,92 +159,38 @@ namespace Kopernicus
                 }
             }
 
-            public static void EnableBody(string bname)
+            public static bool EnableBody(string bname)
             {
-                if (bodyMapLists.ContainsKey(bname))
+                if (bodyMapLists.ContainsKey(bname) && !activeBodies.Contains(bname))
+                {
                     EnableMapList(bodyMapLists[bname]);
+                    activeBodies.Add(bname);
+                    return true;
+                }
+                return false;
+                
             }
-            public static void DisableBody(string bname)
+            public static bool DisableBody(string bname)
             {
-                if (bodyMapLists.ContainsKey(bname))
+                if (bodyMapLists.ContainsKey(bname) && activeBodies.Contains(bname))
                 {
                     DisableMapList(bodyMapLists[bname]);
+                    activeBodies.Remove(bname);
+                    return true;
                 }
+                return false;
             }
         }
 
-        [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+        /*[KSPAddon(KSPAddon.Startup.EveryScene, false)]
         public class OnDemandHandler : MonoBehaviour
         {
-            protected static string FindHomeworld()
-            {
-                if (Planetarium.fetch != null)
-                    return Planetarium.fetch.Home.bodyName;
-
-                if (FlightGlobals.Bodies != null)
-                {
-                    for (int i = 0; i < FlightGlobals.Bodies.Count; ++i)
-                        if (FlightGlobals.Bodies[i].isHomeWorld)
-                            return FlightGlobals.Bodies[i].bodyName;
-                }
-
-                return "Kerbin";
-            }
-
-            protected static void RecurseFillBodies(PSystemBody body)
-            {
-                if (body != null)
-                {
-                    string bn = body.celestialBody.bodyName;
-                    bodiesToEnable[bn] = false;
-                    bodiesList[bn] = body.celestialBody;
-                    foreach (PSystemBody child in body.children)
-                        RecurseFillBodies(child);
-                }
-            }
-            protected static void FillBodyList()
-            {
-                bool fail = false;
-                bodiesToEnable.Clear();
-                bodiesList.Clear();
-                try
-                {
-                    if (FlightGlobals.Bodies != null)
-                    {
-                        int bCount = FlightGlobals.Bodies.Count;
-                        //Debug.Log("OD: Filling body list with " + bCount + " bodies");
-
-                        for (int i = 0; i < bCount; ++i)
-                        {
-                            string bn = FlightGlobals.Bodies[i].bodyName;
-                            bodiesToEnable[bn] = false;
-                            bodiesList[bn] = FlightGlobals.Bodies[i];
-                        }
-                    }
-                }
-                catch(Exception e)
-                {
-                    fail = true;
-                    Debug.Log("OD: Failed to get body list because something threw: " + e);
-                    RecurseFillBodies(PSystemManager.Instance.systemPrefab.rootBody);
-                }
-            }
-
-            static Dictionary<string, bool> bodiesToEnable = new Dictionary<string, bool>();
-            static Dictionary<string, CelestialBody> bodiesList = new Dictionary<string, CelestialBody>();
-            static float waitBeforeUnload = 5f;
             static bool dontUpdate = true;
 
             public void Start()
             {
-                if (dontUpdate && (/*Templates.loadFinished ||*/ HighLogic.LoadedScene == GameScenes.MAINMENU))
+                if (dontUpdate && (HighLogic.LoadedScene == GameScenes.MAINMENU))
                     dontUpdate = false;
-
-                if (!dontUpdate)
-                {
-                    OnDemandStorage.homeworldBody = FindHomeworld();
-                    FillBodyList();
-                }
             }
 
             public void Update()
@@ -195,9 +205,8 @@ namespace Kopernicus
                     return;
 
                 // Set all to current PQS state.
-                foreach (string b in bodiesToEnable.Keys.ToList())
+                foreach (PQS p in OnDemandStorage.handlers.Keys)
                 {
-                    PQS bPQS = bodiesList[b].pqsController;
                     if ((object)bPQS != null)
                         bodiesToEnable[b] = bPQS.isActive;
                     else
@@ -269,6 +278,6 @@ namespace Kopernicus
                     }
                 }
             }
-        }
+        }*/
     }
 }

@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,57 +36,75 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightOblate : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightOblate _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexHeightOblate : ModLoader, IParserEventSubscriber
+            {
+                // Mod-Fix, because of hell-ish buggyness
+                public class PQSMod_OblateFixed : PQSMod_VertexHeightOblate
+                {
+                    // Re-arrange the Vertex Build order
+                    public override void OnVertexBuild(PQS.VertexBuildData data)
+                    {
+                        // Do nothing
+                        // base.OnVertexBuild(data);
+                    }
 
-				// The height where the terrain is oblated
-				[ParserTarget("height", optional = true)]
-				private NumericParser<double> height
-				{
-					set { _mod.height = value.value; }
-				}
+                    // Build the height in the correct function
+                    public override void OnVertexBuildHeight(PQS.VertexBuildData data)
+                    {
+                        // Tricky...
+                        base.OnVertexBuild(data);
+                    }
+                }
 
-				// The pow of the terrain
-				[ParserTarget("pow", optional = true)]
-				private NumericParser<double> pow
-				{
-					set { _mod.pow = value.value; }
-				}
+                // Actual PQS mod we are loading
+                private PQSMod_OblateFixed _mod;
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                // The height where the terrain is oblated
+                [ParserTarget("height", optional = true)]
+                private NumericParser<double> height
+                {
+                    set { _mod.height = value.value; }
+                }
 
-				}
+                // The pow of the terrain
+                [ParserTarget("pow", optional = true)]
+                private NumericParser<double> pow
+                {
+                    set { _mod.pow = value.value; }
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
+
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
+
+                }
 
                 public VertexHeightOblate()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VertexHeightOblate");
-					modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexHeightOblate>();
-					base.mod = _mod;
-				}
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_OblateFixed>();
+                    base.mod = _mod;
+                }
 
                 public VertexHeightOblate(PQSMod template)
                 {
-                    _mod = template as PQSMod_VertexHeightOblate;
+                    _mod = template as PQSMod_OblateFixed;
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

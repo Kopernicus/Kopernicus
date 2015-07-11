@@ -66,13 +66,13 @@ namespace Kopernicus
                     opacityID = Shader.PropertyToID(opacityKey);
                     resourceMapID = Shader.PropertyToID(resourceMapKey);
                 }
-			}
+            }
 
-			// Is some random material this material
-			public static bool UsesSameShader(Material m)
-			{
-				return m.shader.name == Properties.shaderName;
-			}
+            // Is some random material this material
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shaderName;
+            }
 
             // Specular Color, default = (0.5,0.5,0.5,1)
             public Color specColor
@@ -128,7 +128,7 @@ namespace Kopernicus
             public ScaledPlanetSimple(Material material) : base(material)
             {
                 // Constructor copies properties from other material, force our shader
-				base.shader = Properties.shader;
+                base.shader = Properties.shader;
             }
 
         }

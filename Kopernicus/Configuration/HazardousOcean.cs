@@ -1,9 +1,14 @@
-﻿/** 
+﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,26 +28,30 @@
  * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
- * Code based on KittiopaTech, modified by Thomas P.
- * 
  * https://kerbalspaceprogram.com
+ * 
+ * Code based on KittiopaTech, modified by Thomas P.
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
         public class HazardousOcean : IParserEventSubscriber
         {
             // Set-up our Killer-Ocean
             public HazardousOceanController controller;
 
             // Our Hazardous Ocean
-            public PQS OceanPQS;
+            public PQS OceanPQS
+            {
+                set { controller.oceanPQS = value; }
+            }
             
             // Heating Curve of our Ocean
             [ParserTarget("HeatCurve", optional = true, allowMerge = false)]
@@ -79,18 +88,19 @@ namespace Kopernicus
         public class HazardousOceanController : MonoBehaviour
         {
             public FloatCurve heatCurve;
+            public PQS oceanPQS;
             private string bodyName = "";
 
             public void Update()
             {
                 if (FlightGlobals.Vessels != null && FlightGlobals.Bodies != null)
                 {
-                    bodyName = this.gameObject.transform.parent.name.Replace("Ocean", "");
+                    bodyName = oceanPQS.name.Replace("Ocean", "");
                     List<Vessel> vessels = FlightGlobals.Vessels.FindAll(v => v.mainBody.GetTransform().name == bodyName);
 
                     foreach (Vessel vessel in vessels)
                     {
-                        double distanceToPlanet = FlightGlobals.getAltitudeAtPos(vessel.GetTransform().position, vessel.mainBody);
+                        double distanceToPlanet = Math.Abs(Vector3d.Distance(vessel.GetTransform().position, oceanPQS.transform.position)) - oceanPQS.radius;
                         double heatingRate = heatCurve.Evaluate((float) distanceToPlanet);
                         foreach (Part part in vessel.Parts)
                         {

@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,38 +36,38 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(Kopernicus.Configuration.ConfigType.Node)]
-			public class ModLoader
-			{
-				// The mod loader must always be able to return a mod
-				public PQSMod mod 
-				{
-					get;
-					set;
-				}
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(Kopernicus.Configuration.ConfigType.Node)]
+            public class ModLoader
+            {
+                // The mod loader must always be able to return a mod
+                public PQSMod mod 
+                {
+                    get;
+                    set;
+                }
 
                 // Is the Mod added or patched (Logging relevant)
                 public bool patched = false;
 
-				// Mod loader provides basic PQS mod loading functions
-				[ParserTarget("order", optional = true)]
-				protected NumericParser<int> order
-				{
-					set { mod.order = value.value; }
-				}
+                // Mod loader provides basic PQS mod loading functions
+                [ParserTarget("order", optional = true)]
+                protected NumericParser<int> order
+                {
+                    set { mod.order = value.value; }
+                }
 
-				// Mod loader provides basic PQS mod loading functions
-				[ParserTarget("enabled", optional = true)]
-				protected NumericParser<bool> enabled
-				{
-					set { mod.modEnabled = value.value; }
-				}
-			}
-		}
-	}
+                // Mod loader provides basic PQS mod loading functions
+                [ParserTarget("enabled", optional = true)]
+                protected NumericParser<bool> enabled
+                {
+                    set { mod.modEnabled = value.value; }
+                }
+            }
+        }
+    }
 }
 

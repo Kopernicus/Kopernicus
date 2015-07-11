@@ -1,4 +1,37 @@
-﻿using System;
+﻿/**
+ * Kopernicus Planetary System Modifier
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * 
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
+ * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ * 
+ * This library is intended to be used as a plugin for Kerbal Space Program
+ * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * itself is governed by the terms of its EULA, not the license above.
+ * 
+ * https://kerbalspaceprogram.com
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -475,51 +508,6 @@ namespace Kopernicus
             }
         }
 
-        public void UpdateMenuTex()
-        {
-            string errorPlace = "start";
-            try
-            {
-                PSystemBody home = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
-                Texture homeMain = home.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
-                Texture homeBump = home.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
-                Texture munMain = homeMain;
-                Texture munBump = homeBump;
-                errorPlace = "Found new home stuff";
-                if (home.children != null && home.children.Count > 0)
-                {
-                    PSystemBody mun = home.children[0];
-                    munMain = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_MainTex");
-                    munBump = mun.scaledVersion.renderer.sharedMaterial.GetTexture("_BumpMap");
-                }
-                errorPlace = "Found new moon";
-                if (Templates.instance.origKerbinDiff != null && Templates.instance.origKerbinBump != null)
-                {
-                    Logger.Active.Log("Replaceing color and normal maps on main menu.");
-                    Material[] mats = Resources.FindObjectsOfTypeAll<Material>();
-                    foreach (Material m in mats)
-                    {
-                        errorPlace = "replacing home";
-                        Texture main = m.GetTexture("_MainTex");
-                        if (main == Templates.instance.origKerbinDiff)
-                            m.SetTexture("_MainTex", homeMain);
-                        else if (main == Templates.instance.origMunDiff)
-                            m.SetTexture("_MainTex", munMain);
-                        errorPlace = "replacing moon";
-                        Texture bump = m.GetTexture("_BumpMap");
-                        if (bump == Templates.instance.origKerbinBump)
-                            m.SetTexture("_BumpMap", homeBump);
-                        else if (bump == Templates.instance.origMunBump)
-                            m.SetTexture("_BumpMap", homeBump);
-                    }
-                }
-                errorPlace = "done";
-            }
-            catch (Exception e)
-            {
-                Debug.Log("[Kopernicus]: Error during finalize! Place = " + errorPlace + ", message = " + e.Message);
-            }
-        }
         private void RemoveUnused()
         {
             Logger.Active.Log("Removing unused MapSOs and textures");
@@ -578,6 +566,7 @@ namespace Kopernicus
         {
             // Set Instance 
             Instance = this;
+            DontDestroyOnLoad(this);
 
             // Get the data node
             ConfigNode rootConfig = GameDatabase.Instance.GetConfigs(rootNodeName)[0].config;
@@ -629,8 +618,6 @@ namespace Kopernicus
                     }
                     if (finalizeOrbits)
                         FinalizeOrbits();
-                    
-                    UpdateMenuTex();
 
                     if(removeUnused)
                         RemoveUnused();

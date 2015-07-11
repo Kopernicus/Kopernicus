@@ -1,9 +1,14 @@
-﻿/** 
+﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -36,28 +41,28 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class ParticleAddSmoothLoader : ParticleAddSmooth
-		{
-			[ParserTarget("inverseFade", optional = true)]
-			private NumericParser<float> inverseFadeSetter 
-			{
-				set {  base.invFade = value.value; }
-			}
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class ParticleAddSmoothLoader : ParticleAddSmooth
+        {
+            [ParserTarget("inverseFade", optional = true)]
+            private NumericParser<float> inverseFadeSetter 
+            {
+                set {  base.invFade = value.value; }
+            }
 
-			[ParserTarget("texture", optional = true)]
-			private Texture2DParser textureSetter 
-			{
-				set { base.mainTex = value.value; }
-			}
+            [ParserTarget("texture", optional = true)]
+            private Texture2DParser textureSetter 
+            {
+                set { base.mainTex = value.value; }
+            }
 
-			// Constructors
-			public ParticleAddSmoothLoader () : base() { }
-			public ParticleAddSmoothLoader (string contents) : base (contents) { }
-			public ParticleAddSmoothLoader (Material material) : base(material) { }
-		}
-	}
+            // Constructors
+            public ParticleAddSmoothLoader () : base() { }
+            public ParticleAddSmoothLoader (string contents) : base (contents) { }
+            public ParticleAddSmoothLoader (Material material) : base(material) { }
+        }
+    }
 }
 

@@ -1,9 +1,14 @@
 /**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -26,108 +31,104 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Reflection;
 using System.Collections.Generic;
-
 using UnityEngine;
-using System.IO;
 using Kopernicus.Configuration;
 
 namespace Kopernicus
 {
-	// Mod runtime utilitues
-	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
-	public class RuntimeUtility : MonoBehaviour
-	{
-		/**
-		 * Cache of the line renderers for PQS quads debug
-		 **/
-		private List<GameObject> quadSurfaceNormalRenderers = new List<GameObject>();
-		
-		/**
-		 * Shared instance of the surface normal renderer material.  Use the property accessor
-		 **/
-		private Material sharedSurfaceNormalRendererMaterial = null;
+    // Mod runtime utilitues
+    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
+    public class RuntimeUtility : MonoBehaviour
+    {
+        /**
+         * Cache of the line renderers for PQS quads debug
+         **/
+        private List<GameObject> quadSurfaceNormalRenderers = new List<GameObject>();
+        
+        /**
+         * Shared instance of the surface normal renderer material.  Use the property accessor
+         **/
+        private Material sharedSurfaceNormalRendererMaterial = null;
 
         // GUI-stuff
         bool window = false;
         string bodyName = "";
         int mapWidth = 2048;
-		
-		/**
-		 * Purge the surface normal renderer list
-		 **/
-		private void PurgeQuadSurfaceNormalRenderers()
-		{
-			foreach (GameObject r in quadSurfaceNormalRenderers) 
-			{
-				r.transform.parent = null;
-				Destroy(r);
-			}
-			quadSurfaceNormalRenderers.Clear ();
-		}
-		
-		/**
-		 * Get the material used for the line renderer
-		 **/
-		private Material surfaceNormalRendererMaterial
-		{
-			get
-			{
-				if(sharedSurfaceNormalRendererMaterial == null)
-				{
-					sharedSurfaceNormalRendererMaterial = new Material( Shader.Find( "Particles/Additive" ) );
-				}
-				return sharedSurfaceNormalRendererMaterial;
-			}
-		}
-		
-		/**
-		 * Get a surface normal renderer (either from cache, or create a new one)
-		 **/
-		private GameObject surfaceNormalRenderer
-		{
-			get
-			{
-				// The renderer to return
-				GameObject r = null;
-				
-				// If there are renderers in the cache, use it
-				if(quadSurfaceNormalRenderers.Count > 0)
-				{
-					r = quadSurfaceNormalRenderers[0];
-					r.SetActive(true);
-					quadSurfaceNormalRenderers.RemoveAt(0);
-					return r;
-				}
-				
-				// Otherwise allocate a new one
-				else
-				{
-					// Create a new game object to hold this renderer
-					r = new GameObject("__Debug");
-					DontDestroyOnLoad(r);
-					LineRenderer line = r.AddComponent<LineRenderer>();
-					
-					// Make it render a red to yellow triangle, 1 meter wide and 2 meters long
-					line.sharedMaterial = surfaceNormalRendererMaterial;
-					line.useWorldSpace = false;
-					line.SetColors( Color.green, Color.green );
-					line.SetWidth(50, 50);
-					line.SetVertexCount( 2 );
-					line.SetPosition( 0, Vector3.zero);
-					line.SetPosition( 1, Vector3.forward * -500.0f );
-				}
-				
-				// Return the transform
-				return r;
-			}
-		}
-		
-		/**
-		 * If Mod-P are pressed, dump the PQS data of the current live body
-		 **/
+        
+        /**
+         * Purge the surface normal renderer list
+         **/
+        private void PurgeQuadSurfaceNormalRenderers()
+        {
+            foreach (GameObject r in quadSurfaceNormalRenderers) 
+            {
+                r.transform.parent = null;
+                Destroy(r);
+            }
+            quadSurfaceNormalRenderers.Clear ();
+        }
+        
+        /**
+         * Get the material used for the line renderer
+         **/
+        private Material surfaceNormalRendererMaterial
+        {
+            get
+            {
+                if(sharedSurfaceNormalRendererMaterial == null)
+                {
+                    sharedSurfaceNormalRendererMaterial = new Material( Shader.Find( "Particles/Additive" ) );
+                }
+                return sharedSurfaceNormalRendererMaterial;
+            }
+        }
+        
+        /**
+         * Get a surface normal renderer (either from cache, or create a new one)
+         **/
+        private GameObject surfaceNormalRenderer
+        {
+            get
+            {
+                // The renderer to return
+                GameObject r = null;
+                
+                // If there are renderers in the cache, use it
+                if(quadSurfaceNormalRenderers.Count > 0)
+                {
+                    r = quadSurfaceNormalRenderers[0];
+                    r.SetActive(true);
+                    quadSurfaceNormalRenderers.RemoveAt(0);
+                    return r;
+                }
+                
+                // Otherwise allocate a new one
+                else
+                {
+                    // Create a new game object to hold this renderer
+                    r = new GameObject("__Debug");
+                    DontDestroyOnLoad(r);
+                    LineRenderer line = r.AddComponent<LineRenderer>();
+                    
+                    // Make it render a red to yellow triangle, 1 meter wide and 2 meters long
+                    line.sharedMaterial = surfaceNormalRendererMaterial;
+                    line.useWorldSpace = false;
+                    line.SetColors( Color.green, Color.green );
+                    line.SetWidth(50, 50);
+                    line.SetVertexCount( 2 );
+                    line.SetPosition( 0, Vector3.zero);
+                    line.SetPosition( 1, Vector3.forward * -500.0f );
+                }
+                
+                // Return the transform
+                return r;
+            }
+        }
+        
+        /**
+         * If Mod-P are pressed, dump the PQS data of the current live body
+         **/
         public void Update()
         {
             bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
@@ -264,19 +265,19 @@ namespace Kopernicus
             }
             
         }
-		
-		/**
-		 * Awake() - flag this class as don't destroy on load
-		 **/
-		public void Awake ()
-		{
-			// Make sure the runtime utility isn't killed
-			DontDestroyOnLoad (this);
-			
-			// Log
-			Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
-			Logger.Default.Flush ();
-		}
-	}
+        
+        /**
+         * Awake() - flag this class as don't destroy on load
+         **/
+        public void Awake ()
+        {
+            // Make sure the runtime utility isn't killed
+            DontDestroyOnLoad (this);
+            
+            // Log
+            Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
+            Logger.Default.Flush ();
+        }
+    }
 }
 

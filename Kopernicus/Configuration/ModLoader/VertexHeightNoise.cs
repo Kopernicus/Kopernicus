@@ -1,9 +1,14 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ * ====================================
+ * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
+ * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  * 
- * http://www.ferazelhosting.net/~bryce/contact.html
+ * Maintained by: - Thomas P.
+ * 				  - NathanKell
  * 
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -31,91 +36,91 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightNoise : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightNoise _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexHeightNoise : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexHeightNoise _mod;
 
-				// The deformity of the simplex terrain noise
-				[ParserTarget("deformity", optional = true)]
-				private NumericParser<float> deformity
-				{
-					set { _mod.deformity = value.value; }
-				}
+                // The deformity of the simplex terrain noise
+                [ParserTarget("deformity", optional = true)]
+                private NumericParser<float> deformity
+                {
+                    set { _mod.deformity = value.value; }
+                }
 
-				// The frequency of the simplex terrain noise
-				[ParserTarget("frequency", optional = true)]
-				private NumericParser<float> frequency
-				{
-					set { _mod.frequency = value.value; }
-				}
+                // The frequency of the simplex terrain noise
+                [ParserTarget("frequency", optional = true)]
+                private NumericParser<float> frequency
+                {
+                    set { _mod.frequency = value.value; }
+                }
 
                 // Octaves of the simplex height noise
-				[ParserTarget("octaves", optional = true)]
-				private NumericParser<int> octaves
-				{
-					set { _mod.octaves = value.value; }
-				}
+                [ParserTarget("octaves", optional = true)]
+                private NumericParser<int> octaves
+                {
+                    set { _mod.octaves = value.value; }
+                }
 
                 // Persistence of the simplex height noise
-				[ParserTarget("persistence", optional = true)]
-				private NumericParser<float> persistence
-				{
-					set { _mod.persistance = value.value; }
-				}
+                [ParserTarget("persistence", optional = true)]
+                private NumericParser<float> persistence
+                {
+                    set { _mod.persistance = value.value; }
+                }
 
                 // The seed of the simplex height noise
-				[ParserTarget("seed", optional = true)]
-				private NumericParser<int> seed
-				{
-					set { _mod.seed = value.value; }
-				}
+                [ParserTarget("seed", optional = true)]
+                private NumericParser<int> seed
+                {
+                    set { _mod.seed = value.value; }
+                }
 
                 // The type of the simplex height noise
-				[ParserTarget("noiseType", optional = true)]
-				private EnumParser<PQSMod_VertexHeightNoise.NoiseType> noiseType
-				{
-					set { _mod.noiseType = value.value; }
-				}
+                [ParserTarget("noiseType", optional = true)]
+                private EnumParser<PQSMod_VertexHeightNoise.NoiseType> noiseType
+                {
+                    set { _mod.noiseType = value.value; }
+                }
 
                 // The mode of the simplex height noise
-				[ParserTarget("mode", optional = true)]
-				private EnumParser<LibNoise.Unity.QualityMode> mode
-				{
-					set { _mod.mode = value.value; }
-				}
+                [ParserTarget("mode", optional = true)]
+                private EnumParser<LibNoise.Unity.QualityMode> mode
+                {
+                    set { _mod.mode = value.value; }
+                }
 
                 // The lacunarity of the simplex height noise
-				[ParserTarget("lacunarity", optional = true)]
-				private NumericParser<float> lacunarity
-				{
-					set { _mod.lacunarity = value.value; }
-				}
+                [ParserTarget("lacunarity", optional = true)]
+                private NumericParser<float> lacunarity
+                {
+                    set { _mod.lacunarity = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public VertexHeightNoise()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VertexHeightNoise");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_VertexHeightNoise>();
                     _mod.requirements = PQS.ModiferRequirements.MeshColorChannel;
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public VertexHeightNoise(PQSMod template)
                 {
@@ -123,8 +128,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
