@@ -35,34 +35,34 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class MaterialQuadRelative : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_MaterialQuadRelative _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class MaterialQuadRelative : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_MaterialQuadRelative _mod;
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public MaterialQuadRelative()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("MaterialQuadRelative");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_MaterialQuadRelative>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public MaterialQuadRelative(PQSMod template)
                 {
@@ -70,8 +70,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

@@ -38,104 +38,104 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class HeightColorMapNoise : ModLoader, IParserEventSubscriber
-			{
-				// Land class loader 
-				private class LandClassLoaderNoise : IParserEventSubscriber
-				{
-					// Land class object
-					public PQSMod_HeightColorMapNoise.LandClass landClassNoise;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class HeightColorMapNoise : ModLoader, IParserEventSubscriber
+            {
+                // Land class loader 
+                private class LandClassLoaderNoise : IParserEventSubscriber
+                {
+                    // Land class object
+                    public PQSMod_HeightColorMapNoise.LandClass landClassNoise;
 
-					// Name of the class
-					[ParserTarget("name")]
-					private string name 
-					{
-						set { landClassNoise.name = value; }
-					}
-						
-					// Color of the class
-					[ParserTarget("color")]
-					private ColorParser color
-					{
-						set { landClassNoise.color = value.value; }
-					}
+                    // Name of the class
+                    [ParserTarget("name")]
+                    private string name 
+                    {
+                        set { landClassNoise.name = value; }
+                    }
+                        
+                    // Color of the class
+                    [ParserTarget("color")]
+                    private ColorParser color
+                    {
+                        set { landClassNoise.color = value.value; }
+                    }
 
-					// Fractional altitude start
-					// altitude = (vertexHeight - vertexMinHeightOfPQS) / vertexHeightDeltaOfPQS
-					[ParserTarget("altitudeStart")]
-					private NumericParser<double> altitudeStart
-					{
-						set { landClassNoise.altStart = value.value; }
-					}
+                    // Fractional altitude start
+                    // altitude = (vertexHeight - vertexMinHeightOfPQS) / vertexHeightDeltaOfPQS
+                    [ParserTarget("altitudeStart")]
+                    private NumericParser<double> altitudeStart
+                    {
+                        set { landClassNoise.altStart = value.value; }
+                    }
 
-					// Fractional altitude end
-					[ParserTarget("altitudeEnd")]
-					private NumericParser<double> altitudeEnd
-					{
-						set { landClassNoise.altEnd = value.value; }
-					}
+                    // Fractional altitude end
+                    [ParserTarget("altitudeEnd")]
+                    private NumericParser<double> altitudeEnd
+                    {
+                        set { landClassNoise.altEnd = value.value; }
+                    }
 
-					// Should we blend into the next class
-					[ParserTarget("lerpToNext")]
-					private NumericParser<bool> lerpToNext
-					{
-						set { landClassNoise.lerpToNext = value.value; }
-					}
+                    // Should we blend into the next class
+                    [ParserTarget("lerpToNext")]
+                    private NumericParser<bool> lerpToNext
+                    {
+                        set { landClassNoise.lerpToNext = value.value; }
+                    }
 
-					void IParserEventSubscriber.Apply(ConfigNode node) { }
+                    void IParserEventSubscriber.Apply(ConfigNode node) { }
 
-					void IParserEventSubscriber.PostApply(ConfigNode node) { }
+                    void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
-					public LandClassLoaderNoise ()
-					{
-						// Initialize the land class
-						landClassNoise = new PQSMod_HeightColorMapNoise.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
-					}
-				}
+                    public LandClassLoaderNoise ()
+                    {
+                        // Initialize the land class
+                        landClassNoise = new PQSMod_HeightColorMapNoise.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
+                    }
+                }
 
-				// Actual PQS mod we are loading
-				private PQSMod_HeightColorMapNoise _mod;
+                // Actual PQS mod we are loading
+                private PQSMod_HeightColorMapNoise _mod;
 
-				// The deformity of the simplex terrain
-				[ParserTarget("blend", optional = true)]
-				private NumericParser<float> blend
-				{
-					set { _mod.blend = value.value; }
-				}
+                // The deformity of the simplex terrain
+                [ParserTarget("blend", optional = true)]
+                private NumericParser<float> blend
+                {
+                    set { _mod.blend = value.value; }
+                }
 
-				// The land classes
-				[ParserTargetCollection("LandClasses", optional = true, nameSignificance = NameSignificance.None)]
-				private List<LandClassLoaderNoise> landClasses = new List<LandClassLoaderNoise> ();
+                // The land classes
+                [ParserTargetCollection("LandClasses", optional = true, nameSignificance = NameSignificance.None)]
+                private List<LandClassLoaderNoise> landClasses = new List<LandClassLoaderNoise> ();
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				// Select the land class objects and push into the mod
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                // Select the land class objects and push into the mod
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
                     PQSMod_HeightColorMapNoise.LandClass[] landClassesArray = landClasses.Select(loader => loader.landClassNoise).ToArray();
                     if (landClassesArray.Count() != 0)
                     {
                         _mod.landClasses = landClassesArray;
                     }
                     _mod.lcCount = _mod.landClasses.Count();
-				}
+                }
 
                 public HeightColorMapNoise()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("HeightColorMapNoise");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_HeightColorMapNoise>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public HeightColorMapNoise(PQSMod template)
                 {
@@ -143,8 +143,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

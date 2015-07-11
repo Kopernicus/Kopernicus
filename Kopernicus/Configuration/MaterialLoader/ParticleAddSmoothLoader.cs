@@ -41,28 +41,28 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class ParticleAddSmoothLoader : ParticleAddSmooth
-		{
-			[ParserTarget("inverseFade", optional = true)]
-			private NumericParser<float> inverseFadeSetter 
-			{
-				set {  base.invFade = value.value; }
-			}
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class ParticleAddSmoothLoader : ParticleAddSmooth
+        {
+            [ParserTarget("inverseFade", optional = true)]
+            private NumericParser<float> inverseFadeSetter 
+            {
+                set {  base.invFade = value.value; }
+            }
 
-			[ParserTarget("texture", optional = true)]
-			private Texture2DParser textureSetter 
-			{
-				set { base.mainTex = value.value; }
-			}
+            [ParserTarget("texture", optional = true)]
+            private Texture2DParser textureSetter 
+            {
+                set { base.mainTex = value.value; }
+            }
 
-			// Constructors
-			public ParticleAddSmoothLoader () : base() { }
-			public ParticleAddSmoothLoader (string contents) : base (contents) { }
-			public ParticleAddSmoothLoader (Material material) : base(material) { }
-		}
-	}
+            // Constructors
+            public ParticleAddSmoothLoader () : base() { }
+            public ParticleAddSmoothLoader (string contents) : base (contents) { }
+            public ParticleAddSmoothLoader (Material material) : base(material) { }
+        }
+    }
 }
 

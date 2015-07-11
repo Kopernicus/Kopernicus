@@ -37,57 +37,57 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
             public class OceanFX : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
+            {
+                // Actual PQS mod we are loading
                 private PQSMod_OceanFX _mod;
 
                 // angle
-				[ParserTarget("angle", optional = true)]
-				private NumericParser<float> angle
-				{
-					set { _mod.angle = value.value; }
-				}
+                [ParserTarget("angle", optional = true)]
+                private NumericParser<float> angle
+                {
+                    set { _mod.angle = value.value; }
+                }
 
                 // The deformity of the map for the Quad Remover (?)
-				[ParserTarget("blendA", optional = true)]
-				private NumericParser<float> blendA
-				{
-					set { _mod.blendA = value.value; }
-				}
+                [ParserTarget("blendA", optional = true)]
+                private NumericParser<float> blendA
+                {
+                    set { _mod.blendA = value.value; }
+                }
 
                 // blendB
-				[ParserTarget("blendB", optional = true)]
-				private NumericParser<float> blendB
-				{
-					set { _mod.blendB = value.value; }
-				}
+                [ParserTarget("blendB", optional = true)]
+                private NumericParser<float> blendB
+                {
+                    set { _mod.blendB = value.value; }
+                }
 
                 // bump
-				[ParserTarget("bump", optional = true)]
-				private Texture2DParser bump
-				{
-					set { _mod.bump = value.value; }
-				}
+                [ParserTarget("bump", optional = true)]
+                private Texture2DParser bump
+                {
+                    set { _mod.bump = value.value; }
+                }
 
                 // framesPerSecond
-				[ParserTarget("framesPerSecond", optional = true)]
-				private NumericParser<float> framesPerSecond
-				{
-					set { _mod.framesPerSecond = value.value; }
-				}
+                [ParserTarget("framesPerSecond", optional = true)]
+                private NumericParser<float> framesPerSecond
+                {
+                    set { _mod.framesPerSecond = value.value; }
+                }
 
                 // fresnel (???)
-				[ParserTarget("fresnel", optional = true)]
-				private Texture2DParser fresnel
-				{
-					set { _mod.fresnel = value.value; }
-				}
+                [ParserTarget("fresnel", optional = true)]
+                private Texture2DParser fresnel
+                {
+                    set { _mod.fresnel = value.value; }
+                }
 
                 // oceanOpacity
                 [ParserTarget("oceanOpacity", optional = true)]
@@ -104,47 +104,47 @@ namespace Kopernicus
                 }
 
                 // spaceAltitude
-				[ParserTarget("spaceAltitude", optional = true)]
-				private NumericParser<double> spaceAltitude
-				{
-					set { _mod.spaceAltitude = value.value; }
-				}
+                [ParserTarget("spaceAltitude", optional = true)]
+                private NumericParser<double> spaceAltitude
+                {
+                    set { _mod.spaceAltitude = value.value; }
+                }
 
                 // spaceSurfaceBlend
-				[ParserTarget("spaceSurfaceBlend", optional = true)]
-				private NumericParser<float> spaceSurfaceBlend
-				{
-					set { _mod.spaceSurfaceBlend = value.value; }
-				}
+                [ParserTarget("spaceSurfaceBlend", optional = true)]
+                private NumericParser<float> spaceSurfaceBlend
+                {
+                    set { _mod.spaceSurfaceBlend = value.value; }
+                }
 
                 // specColor
-				[ParserTarget("specColor", optional = true)]
-				private ColorParser specColor
-				{
-					set { _mod.specColor = value.value; }
-				}
+                [ParserTarget("specColor", optional = true)]
+                private ColorParser specColor
+                {
+                    set { _mod.specColor = value.value; }
+                }
 
                 // texBlend
-				[ParserTarget("texBlend", optional = true)]
-				private NumericParser<float> texBlend
-				{
-					set { _mod.texBlend = value.value; }
-				}
+                [ParserTarget("texBlend", optional = true)]
+                private NumericParser<float> texBlend
+                {
+                    set { _mod.texBlend = value.value; }
+                }
 
                 // txIndex
-				[ParserTarget("txIndex", optional = true)]
-				private NumericParser<int> txIndex
-				{
-					set { _mod.txIndex = value.value; }
-				}
+                [ParserTarget("txIndex", optional = true)]
+                private NumericParser<int> txIndex
+                {
+                    set { _mod.txIndex = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
                     
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
                     if (node.HasNode("Watermain"))
                     {
                         // Parse the watermain textures
@@ -169,11 +169,11 @@ namespace Kopernicus
                             i++;
                         }
                     }
-				}
+                }
 
                 public OceanFX()
-				{
-					// Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
+                {
+                    // Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
                     PSystemBody Body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
                     foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
                     {
@@ -186,8 +186,8 @@ namespace Kopernicus
                             _mod.transform.name = "OceanFX";
                         }
                     } 
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public OceanFX(PQSMod template)
                 {
@@ -195,8 +195,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

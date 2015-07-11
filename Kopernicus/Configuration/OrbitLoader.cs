@@ -40,89 +40,89 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		// See: http://en.wikipedia.org/wiki/Argument_of_periapsis#mediaviewer/File:Orbit1.svg
-		[RequireConfigType(ConfigType.Node)]
-		public class OrbitLoader : IParserEventSubscriber
-		{
-			// KSP orbit objects we are editing
-			public Orbit orbit { get; private set ; }
+    namespace Configuration
+    {
+        // See: http://en.wikipedia.org/wiki/Argument_of_periapsis#mediaviewer/File:Orbit1.svg
+        [RequireConfigType(ConfigType.Node)]
+        public class OrbitLoader : IParserEventSubscriber
+        {
+            // KSP orbit objects we are editing
+            public Orbit orbit { get; private set ; }
 
-			// Reference body to orbit
-			[ParserTarget("referenceBody", optional = true, allowMerge = false)]
-			public string referenceBody = null;
+            // Reference body to orbit
+            [ParserTarget("referenceBody", optional = true, allowMerge = false)]
+            public string referenceBody = null;
 
-			[ParserTarget("inclination", optional = true, allowMerge = false)]
-			public NumericParser<double> inclination 
-			{
-				set { orbit.inclination = value.value; }
-			}
-			
-			[ParserTarget("eccentricity", optional = true, allowMerge = false)]
-			public NumericParser<double> eccentricity
-			{
-				set { orbit.eccentricity = value.value; }
-			}
+            [ParserTarget("inclination", optional = true, allowMerge = false)]
+            public NumericParser<double> inclination 
+            {
+                set { orbit.inclination = value.value; }
+            }
+            
+            [ParserTarget("eccentricity", optional = true, allowMerge = false)]
+            public NumericParser<double> eccentricity
+            {
+                set { orbit.eccentricity = value.value; }
+            }
 
-			[ParserTarget("semiMajorAxis", optional = true, allowMerge = false)]
-			public NumericParser<double> semiMajorAxis
-			{
-				set { orbit.semiMajorAxis = value.value; }
-			}
+            [ParserTarget("semiMajorAxis", optional = true, allowMerge = false)]
+            public NumericParser<double> semiMajorAxis
+            {
+                set { orbit.semiMajorAxis = value.value; }
+            }
 
-			[ParserTarget("longitudeOfAscendingNode", optional = true, allowMerge = false)]
-			public NumericParser<double> longitudeOfAscendingNode
-			{
-				set { orbit.LAN = value.value; }
-			}
+            [ParserTarget("longitudeOfAscendingNode", optional = true, allowMerge = false)]
+            public NumericParser<double> longitudeOfAscendingNode
+            {
+                set { orbit.LAN = value.value; }
+            }
 
-			[ParserTarget("argumentOfPeriapsis", optional = true, allowMerge = false)]
-			public NumericParser<double> argumentOfPeriapsis
-			{
-				set { orbit.argumentOfPeriapsis = value.value; }
-			}
+            [ParserTarget("argumentOfPeriapsis", optional = true, allowMerge = false)]
+            public NumericParser<double> argumentOfPeriapsis
+            {
+                set { orbit.argumentOfPeriapsis = value.value; }
+            }
 
-			[ParserTarget("meanAnomalyAtEpoch", optional = true, allowMerge = false)]
-			public NumericParser<double> meanAnomalyAtEpoch
-			{
-				set { orbit.meanAnomalyAtEpoch = value.value; }
-			}
+            [ParserTarget("meanAnomalyAtEpoch", optional = true, allowMerge = false)]
+            public NumericParser<double> meanAnomalyAtEpoch
+            {
+                set { orbit.meanAnomalyAtEpoch = value.value; }
+            }
 
             [ParserTarget("meanAnomalyAtEpochD", optional = true, allowMerge = false)]
-			public NumericParser<double> meanAnomalyAtEpochD
-			{
-				set { orbit.meanAnomalyAtEpoch = value.value * Math.PI / 180d; }
-			}
+            public NumericParser<double> meanAnomalyAtEpochD
+            {
+                set { orbit.meanAnomalyAtEpoch = value.value * Math.PI / 180d; }
+            }
 
-			[ParserTarget("epoch", optional = true, allowMerge = false)]
-			public NumericParser<double> epoch
-			{
+            [ParserTarget("epoch", optional = true, allowMerge = false)]
+            public NumericParser<double> epoch
+            {
                 set { orbit.epoch = value.value; hasEpoch = true; }
-			}
+            }
             private bool hasEpoch = false;
-			
-			// Orbit renderer color
-			[ParserTarget("color", optional = true, allowMerge = false)]
-			public ColorParser color = new ColorParser();
+            
+            // Orbit renderer color
+            [ParserTarget("color", optional = true, allowMerge = false)]
+            public ColorParser color = new ColorParser();
 
-			// Orbit rendering bounds
-			[ParserTarget("cameraSmaRatioBounds", optional = true)]
-			public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] {0.3f, 25f});
+            // Orbit rendering bounds
+            [ParserTarget("cameraSmaRatioBounds", optional = true)]
+            public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] {0.3f, 25f});
 
-			void IParserEventSubscriber.Apply(ConfigNode node)
-			{
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
 
-			}
+            }
 
-			void IParserEventSubscriber.PostApply(ConfigNode node)
-			{
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
 
-			}
+            }
 
-			// Populate the PSystemBody with the results of the orbit loader
-			public void Apply(PSystemBody body)
-			{
+            // Populate the PSystemBody with the results of the orbit loader
+            public void Apply(PSystemBody body)
+            {
                 if (!double.IsNaN(Templates.instance.epoch))
                 {
                     if (hasEpoch)
@@ -130,28 +130,28 @@ namespace Kopernicus
                     else
                         orbit.epoch = Templates.instance.epoch;
                 }
-				body.orbitDriver.orbit = orbit;
-				body.orbitRenderer.orbitColor = color.value;
-				body.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
-				body.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
-			}
+                body.orbitDriver.orbit = orbit;
+                body.orbitRenderer.orbitColor = color.value;
+                body.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
+                body.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
+            }
 
-			// Construct an empty orbit
-			public OrbitLoader ()
-			{
-				orbit = new Orbit();
-			}
+            // Construct an empty orbit
+            public OrbitLoader ()
+            {
+                orbit = new Orbit();
+            }
 
-			// Copy orbit provided
-			public OrbitLoader (PSystemBody body)
-			{
-				this.orbit = body.orbitDriver.orbit;
-				this.color.value = body.orbitRenderer.orbitColor;
+            // Copy orbit provided
+            public OrbitLoader (PSystemBody body)
+            {
+                this.orbit = body.orbitDriver.orbit;
+                this.color.value = body.orbitRenderer.orbitColor;
 
-				float[] bounds = new float[] {body.orbitRenderer.lowerCamVsSmaRatio, body.orbitRenderer.upperCamVsSmaRatio};
-				this.cameraSmaRatioBounds.value = new List<float>(bounds);
-			}
-		}
-	}
+                float[] bounds = new float[] {body.orbitRenderer.lowerCamVsSmaRatio, body.orbitRenderer.upperCamVsSmaRatio};
+                this.cameraSmaRatioBounds.value = new List<float>(bounds);
+            }
+        }
+    }
 }
 

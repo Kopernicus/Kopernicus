@@ -35,19 +35,19 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Interface a class can implement to get events from the parser
-		 **/
-		public interface IParserEventSubscriber
-		{
-			// Apply Event - called after [PreApply] targets have been processed, but before the rest
-			void Apply (ConfigNode node);    
-			
-			// Post Apply Event = called after all targets have been applied
-			void PostApply (ConfigNode node);
-		}
-	}
+    namespace Configuration
+    {
+        /**
+         * Interface a class can implement to get events from the parser
+         **/
+        public interface IParserEventSubscriber
+        {
+            // Apply Event - called after [PreApply] targets have been processed, but before the rest
+            void Apply (ConfigNode node);    
+            
+            // Post Apply Event = called after all targets have been applied
+            void PostApply (ConfigNode node);
+        }
+    }
 }
 

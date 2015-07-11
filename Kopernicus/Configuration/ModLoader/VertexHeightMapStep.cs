@@ -32,75 +32,75 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightMapStep : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightMapStep _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexHeightMapStep : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexHeightMapStep _mod;
 
-				// The map texture for the planet
-				[ParserTarget("map", optional = false)]
-				private string heightMap
-				{
+                // The map texture for the planet
+                [ParserTarget("map", optional = false)]
+                private string heightMap
+                {
                     set { 
                         _mod.heightMap = new Texture2D(2, 2);
                         _mod.heightMap.LoadImage(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + value));
                     }
-				}
+                }
 
-				// Height map offset
-				[ParserTarget("offset", optional = true)]
-				private NumericParser<double> heightMapOffset 
-				{
-					set { _mod.heightMapOffset = value.value; }
-				}
+                // Height map offset
+                [ParserTarget("offset", optional = true)]
+                private NumericParser<double> heightMapOffset 
+                {
+                    set { _mod.heightMapOffset = value.value; }
+                }
 
-				// Height map offset
-				[ParserTarget("deformity", optional = true)]
-				private NumericParser<double> heightMapDeformity
-				{
-					set { _mod.heightMapDeformity = value.value; }
-				}
+                // Height map offset
+                [ParserTarget("deformity", optional = true)]
+                private NumericParser<double> heightMapDeformity
+                {
+                    set { _mod.heightMapDeformity = value.value; }
+                }
 
-				// Height map offset
-				[ParserTarget("scaleDeformityByRadius", optional = true)]
-				private NumericParser<bool> scaleDeformityByRadius
-				{
-					set { _mod.scaleDeformityByRadius = value.value; }
-				}
+                // Height map offset
+                [ParserTarget("scaleDeformityByRadius", optional = true)]
+                private NumericParser<bool> scaleDeformityByRadius
+                {
+                    set { _mod.scaleDeformityByRadius = value.value; }
+                }
 
-				[ParserTarget("coastHeight", optional = true)]
-				private NumericParser<double> coastHeight
-				{
-					set { _mod.coastHeight = value.value; }
+                [ParserTarget("coastHeight", optional = true)]
+                private NumericParser<double> coastHeight
+                {
+                    set { _mod.coastHeight = value.value; }
                 }
 
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public VertexHeightMapStep()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject ("VertexHeightMapStep");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexHeightMapStep> ();
-					_mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
-					base.mod = _mod;
-				}
-			}
-		}
-	}
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject ("VertexHeightMapStep");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexHeightMapStep> ();
+                    _mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
+                    base.mod = _mod;
+                }
+            }
+        }
+    }
 }
 

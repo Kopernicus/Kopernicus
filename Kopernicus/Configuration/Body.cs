@@ -43,24 +43,24 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration 
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class Body : IParserEventSubscriber
-		{
+    namespace Configuration 
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class Body : IParserEventSubscriber
+        {
             // Path of the plugin (will eventually not matter much)
             public const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
 
-			// Body we are trying to edit
-			public PSystemBody generatedBody { get; private set; }
+            // Body we are trying to edit
+            public PSystemBody generatedBody { get; private set; }
 
-			// Reference body of the generated object
-			public string referenceBody 
-			{
-				get { return (orbit != null) ? orbit.referenceBody : null; }
-			}
+            // Reference body of the generated object
+            public string referenceBody 
+            {
+                get { return (orbit != null) ? orbit.referenceBody : null; }
+            }
 
-			// Name of this body
+            // Name of this body
             [PreApply]
             [ParserTarget("name", optional = false)]
             public string name
@@ -76,7 +76,7 @@ namespace Kopernicus
             [ParserTarget("baryCenter", optional = true)]
             private NumericParser<bool> barycenter { get; set; }
 
-			[ParserTarget("cbNameLater", optional = true)]
+            [ParserTarget("cbNameLater", optional = true)]
             private string cbNameLater
             {
                 set
@@ -85,38 +85,38 @@ namespace Kopernicus
                         NameChanges.CBNames[name] = new CBNameChanger(name, value);
                 }
             }
-			
-			// Flight globals index of this body - for computing reference id
-			[ParserTarget("flightGlobalsIndex", optional = true)]
-			public NumericParser<int> flightGlobalsIndex 
-			{
-				set { generatedBody.flightGlobalsIndex = value.value; }
-			}
+            
+            // Flight globals index of this body - for computing reference id
+            [ParserTarget("flightGlobalsIndex", optional = true)]
+            public NumericParser<int> flightGlobalsIndex 
+            {
+                set { generatedBody.flightGlobalsIndex = value.value; }
+            }
 
-			// Template property of a body - responsible for generating a PSystemBody from an existing one
-			[PreApply]
-			[ParserTarget("Template", optional = true)]
-			private Template template;
+            // Template property of a body - responsible for generating a PSystemBody from an existing one
+            [PreApply]
+            [ParserTarget("Template", optional = true)]
+            private Template template;
 
-			// Celestial body properties (description, mass, etc.)
-			[ParserTarget("Properties", optional = true, allowMerge = true)]
-			private Properties properties;
+            // Celestial body properties (description, mass, etc.)
+            [ParserTarget("Properties", optional = true, allowMerge = true)]
+            private Properties properties;
 
-			// Wrapper around KSP's Orbit class for editing/loading
-			[ParserTarget("Orbit", optional = true, allowMerge = true)]
-			private OrbitLoader orbit;
+            // Wrapper around KSP's Orbit class for editing/loading
+            [ParserTarget("Orbit", optional = true, allowMerge = true)]
+            private OrbitLoader orbit;
 
-			// Wrapper around the settings for the world's scaled version
-			[ParserTarget("ScaledVersion", optional = true, allowMerge = true)]
-			private ScaledVersion scaledVersion;
-			
-			// Wrapper around the settings for the world's atmosphere
-			[ParserTarget("Atmosphere", optional = true, allowMerge = true)]
-			private Atmosphere atmosphere;
+            // Wrapper around the settings for the world's scaled version
+            [ParserTarget("ScaledVersion", optional = true, allowMerge = true)]
+            private ScaledVersion scaledVersion;
+            
+            // Wrapper around the settings for the world's atmosphere
+            [ParserTarget("Atmosphere", optional = true, allowMerge = true)]
+            private Atmosphere atmosphere;
 
-			// Wrapper arounc the settings for the PQS
-			[ParserTarget("PQS", optional = true, allowMerge = true)]
-			private PQSLoader pqs;
+            // Wrapper arounc the settings for the PQS
+            [ParserTarget("PQS", optional = true, allowMerge = true)]
+            private PQSLoader pqs;
 
             // Wrapper arounc the settings for the Ocean
             [ParserTarget("Ocean", optional = true, allowMerge = true)]
@@ -130,53 +130,53 @@ namespace Kopernicus
             [ParserTarget("Particle", optional = true, allowMerge = true)]
             private ParticleLoader particle;
 
-			// Sun
-			[ParserTarget("SolarPowerCurve", optional = true, allowMerge = false)]
-			private FloatCurveParser solarPowerCurve;
+            // Sun
+            [ParserTarget("SolarPowerCurve", optional = true, allowMerge = false)]
+            private FloatCurveParser solarPowerCurve;
 
             // Wrapper around the settings for the SpaceCenter
             [ParserTarget("SpaceCenter", optional = true, allowMerge = true)]
             private SpaceCenterSwitcher spaceCenter;
 
-			// Parser Apply Event
-			public void Apply (ConfigNode node)
-			{
-				// If we have a template, generatedBody *is* the template body
-				if (template != null) 
-				{
-					generatedBody = template.body;
+            // Parser Apply Event
+            public void Apply (ConfigNode node)
+            {
+                // If we have a template, generatedBody *is* the template body
+                if (template != null) 
+                {
+                    generatedBody = template.body;
 
-					// Patch the game object names in the template
-					generatedBody.name = name;
-					generatedBody.celestialBody.bodyName = name;
+                    // Patch the game object names in the template
+                    generatedBody.name = name;
+                    generatedBody.celestialBody.bodyName = name;
                     generatedBody.celestialBody.transform.name = name;
                     generatedBody.celestialBody.bodyTransform.name = name;
-					generatedBody.scaledVersion.name = name;
-					if (generatedBody.pqsVersion != null)
+                    generatedBody.scaledVersion.name = name;
+                    if (generatedBody.pqsVersion != null)
                     {
                         generatedBody.pqsVersion.name = name;
                         generatedBody.pqsVersion.gameObject.name = name;
                         generatedBody.pqsVersion.transform.name = name;
-						foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
-							p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
-					}
+                        foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
+                            p.name = p.name.Replace (template.body.celestialBody.bodyName, name);
+                    }
 
                     // If we've changed the name, reset use_The_InName
                     if (generatedBody.name != template.body.name)
                     {
                         generatedBody.celestialBody.use_The_InName = false;
                     }
-					
-					// If this body has an orbit, create editor/loader
-					if (generatedBody.orbitDriver != null) 
-					{
-						orbit = new OrbitLoader(generatedBody);
-					}
+                    
+                    // If this body has an orbit, create editor/loader
+                    if (generatedBody.orbitDriver != null) 
+                    {
+                        orbit = new OrbitLoader(generatedBody);
+                    }
 
-					// If this body has a PQS, create editor/loader
-					if (generatedBody.pqsVersion != null)
-					{
-						pqs = new PQSLoader(generatedBody.pqsVersion);
+                    // If this body has a PQS, create editor/loader
+                    if (generatedBody.pqsVersion != null)
+                    {
+                        pqs = new PQSLoader(generatedBody.pqsVersion);
 
                         // If this body has an ocean PQS, create editor/loader
                         if (generatedBody.celestialBody.ocean == true)
@@ -190,77 +190,77 @@ namespace Kopernicus
                                 }
                             }
                         }
-					}
+                    }
 
-					// Create the scaled version editor/loader
-					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
-				}
+                    // Create the scaled version editor/loader
+                    scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, template.type);
+                }
 
-				// Otherwise we have to generate all the things for this body
-				else 
-				{
-					// Create the PSystemBody object
-					GameObject generatedBodyGameObject = new GameObject (name);
-					generatedBodyGameObject.transform.parent = Utility.Deactivator;
-					generatedBody = generatedBodyGameObject.AddComponent<PSystemBody> ();
-					generatedBody.flightGlobalsIndex = 0;
+                // Otherwise we have to generate all the things for this body
+                else 
+                {
+                    // Create the PSystemBody object
+                    GameObject generatedBodyGameObject = new GameObject (name);
+                    generatedBodyGameObject.transform.parent = Utility.Deactivator;
+                    generatedBody = generatedBodyGameObject.AddComponent<PSystemBody> ();
+                    generatedBody.flightGlobalsIndex = 0;
 
-					// Create the celestial body
-					GameObject generatedBodyProperties = new GameObject (name);
-					generatedBodyProperties.transform.parent = generatedBodyGameObject.transform;
-					generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody> ();
-					generatedBody.resources = generatedBodyProperties.AddComponent<PResource> ();
-					generatedBody.celestialBody.progressTree = null;
+                    // Create the celestial body
+                    GameObject generatedBodyProperties = new GameObject (name);
+                    generatedBodyProperties.transform.parent = generatedBodyGameObject.transform;
+                    generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody> ();
+                    generatedBody.resources = generatedBodyProperties.AddComponent<PResource> ();
+                    generatedBody.celestialBody.progressTree = null;
 
-					// Sensible defaults 
-					generatedBody.celestialBody.bodyName = name;
-					generatedBody.celestialBody.atmosphere = false;
-					generatedBody.celestialBody.ocean = false;
+                    // Sensible defaults 
+                    generatedBody.celestialBody.bodyName = name;
+                    generatedBody.celestialBody.atmosphere = false;
+                    generatedBody.celestialBody.ocean = false;
 
-					// Create the scaled version
-					generatedBody.scaledVersion = new GameObject(name);
-					generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
-					generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
+                    // Create the scaled version
+                    generatedBody.scaledVersion = new GameObject(name);
+                    generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
+                    generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
 
-					// Create the scaled version editor/loader
-					scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
-				}
+                    // Create the scaled version editor/loader
+                    scaledVersion = new ScaledVersion(generatedBody.scaledVersion, generatedBody.celestialBody, BodyType.Atmospheric);
+                }
 
-				// Create property editor/loader objects
-				properties = new Properties (generatedBody.celestialBody);
+                // Create property editor/loader objects
+                properties = new Properties (generatedBody.celestialBody);
 
-				// Atmospheric settings
-				atmosphere = new Atmosphere(generatedBody.celestialBody, generatedBody.scaledVersion);
+                // Atmospheric settings
+                atmosphere = new Atmosphere(generatedBody.celestialBody, generatedBody.scaledVersion);
 
                 // Particles
                 particle = new ParticleLoader(generatedBody.scaledVersion.gameObject);
-			}
+            }
 
-			// Parser Post Apply Event
-			public void PostApply (ConfigNode node)
-			{
+            // Parser Post Apply Event
+            public void PostApply (ConfigNode node)
+            {
                 // Update any interrelated body properties
                 properties.PostApplyUpdate();
-				// If an orbit is defined, we orbit something
-				if (orbit != null) 
-				{
-					// If this body needs orbit controllers, create them
-					if (generatedBody.orbitDriver == null) 
-					{
-						generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
-						generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
-					}
+                // If an orbit is defined, we orbit something
+                if (orbit != null) 
+                {
+                    // If this body needs orbit controllers, create them
+                    if (generatedBody.orbitDriver == null) 
+                    {
+                        generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver> ();
+                        generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer> ();
+                    }
 
-					// Setup orbit
-					generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-					orbit.Apply(generatedBody);
-				}
+                    // Setup orbit
+                    generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+                    orbit.Apply(generatedBody);
+                }
 
-				// If a PQS version was definied
-				if (pqs != null) 
-				{
-					// Assign the generated PQS to our new world
-					generatedBody.pqsVersion = pqs.pqsVersion;
+                // If a PQS version was definied
+                if (pqs != null) 
+                {
+                    // Assign the generated PQS to our new world
+                    generatedBody.pqsVersion = pqs.pqsVersion;
                     generatedBody.pqsVersion.name = name;
                     generatedBody.pqsVersion.transform.name = name;
                     generatedBody.pqsVersion.gameObject.name = name;
@@ -330,10 +330,10 @@ namespace Kopernicus
                     // -------------------------------
 
                     // Don't do this, because we probably need to ajust the radius of the OceanPQS (and AFAIK is that the only child-PQS)
-					// Adjust the radius of the PQSs appropriately
-					foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
-						p.radius = generatedBody.celestialBody.Radius;
-				}
+                    // Adjust the radius of the PQSs appropriately
+                    foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren(typeof (PQS), true))
+                        p.radius = generatedBody.celestialBody.Radius;
+                }
 
                 // Create our RingLoaders
                 foreach (RingLoader ring in rings)
@@ -342,16 +342,16 @@ namespace Kopernicus
                 }
 
                 // If this body is a star
-				if (scaledVersion.type.value == BodyType.Star) 
-				{
-					// Get the Kopernicus star component from the scaled version
-					StarComponent component = generatedBody.scaledVersion.GetComponent<StarComponent> ();
+                if (scaledVersion.type.value == BodyType.Star) 
+                {
+                    // Get the Kopernicus star component from the scaled version
+                    StarComponent component = generatedBody.scaledVersion.GetComponent<StarComponent> ();
 
-					// If we have defined a custom power curve, load it
-					if (solarPowerCurve != null) 
-					{
-						component.powerCurve = solarPowerCurve.curve;
-					}
+                    // If we have defined a custom power curve, load it
+                    if (solarPowerCurve != null) 
+                    {
+                        component.powerCurve = solarPowerCurve.curve;
+                    }
                 }
                 
                 // If we're a barycenter
@@ -412,14 +412,14 @@ namespace Kopernicus
                     }
                 //}
 
-				// Post gen celestial body
-				Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
+                // Post gen celestial body
+                Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
 
                 if (generatedBody.celestialBody.isHomeWorld)
                     OnDemand.OnDemandStorage.homeworldBody = name;
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
 #pragma warning restore 0414

@@ -35,19 +35,19 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Configuration File Data Sources 
-		 * 
-		 * Value - parser retrieves data from a config node key/value pair
-		 * Node - parser retrieves data from a config node subnode
-		 **/
-		public enum ConfigType
-		{
-			Value,
-			Node
-		}
-	}
+    namespace Configuration
+    {
+        /**
+         * Configuration File Data Sources 
+         * 
+         * Value - parser retrieves data from a config node key/value pair
+         * Node - parser retrieves data from a config node subnode
+         **/
+        public enum ConfigType
+        {
+            Value,
+            Node
+        }
+    }
 }
 

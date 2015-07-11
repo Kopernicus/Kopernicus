@@ -36,83 +36,83 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class FlattenArea : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_FlattenArea _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class FlattenArea : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_FlattenArea _mod;
 
                 // DEBUG_showColors
                 [ParserTarget("DEBUG_showColors", optional = true)]
                 private NumericParser<bool> DEBUG_showColors
-				{
-					set { _mod.DEBUG_showColors = value.value; }
-				}
+                {
+                    set { _mod.DEBUG_showColors = value.value; }
+                }
 
                 // flattenTo
                 [ParserTarget("flattenTo", optional = true)]
                 private NumericParser<double> flattenTo
-				{
-					set { _mod.flattenTo = value.value; }
-				}
+                {
+                    set { _mod.flattenTo = value.value; }
+                }
 
                 // innerRadius
                 [ParserTarget("innerRadius", optional = true)]
                 private NumericParser<double> innerRadius
-				{
-					set { _mod.innerRadius = value.value; }
-				}
+                {
+                    set { _mod.innerRadius = value.value; }
+                }
 
                 // outerRadius
                 [ParserTarget("outerRadius", optional = true)]
                 private NumericParser<double> outerRadius
-				{
-					set { _mod.outerRadius = value.value; }
-				}
+                {
+                    set { _mod.outerRadius = value.value; }
+                }
 
                 // position
                 [ParserTarget("position", optional = true)]
                 private Vector3Parser position
-				{
-					set { _mod.position = value.value; }
-				}
+                {
+                    set { _mod.position = value.value; }
+                }
 
                 // smoothEnd
                 [ParserTarget("smoothEnd", optional = true)]
                 private NumericParser<double> smoothEnd
-				{
-					set { _mod.smoothEnd = value.value; }
-				}
+                {
+                    set { _mod.smoothEnd = value.value; }
+                }
 
                 // smoothStart
                 [ParserTarget("smoothStart", optional = true)]
                 private NumericParser<double> smoothStart
-				{
-					set { _mod.smoothStart = value.value; }
-				}
+                {
+                    set { _mod.smoothStart = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public FlattenArea()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("FlattenArea");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_FlattenArea>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public FlattenArea(PQSMod template)
                 {
@@ -120,8 +120,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

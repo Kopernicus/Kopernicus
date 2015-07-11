@@ -36,38 +36,38 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(Kopernicus.Configuration.ConfigType.Node)]
-			public class ModLoader
-			{
-				// The mod loader must always be able to return a mod
-				public PQSMod mod 
-				{
-					get;
-					set;
-				}
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(Kopernicus.Configuration.ConfigType.Node)]
+            public class ModLoader
+            {
+                // The mod loader must always be able to return a mod
+                public PQSMod mod 
+                {
+                    get;
+                    set;
+                }
 
                 // Is the Mod added or patched (Logging relevant)
                 public bool patched = false;
 
-				// Mod loader provides basic PQS mod loading functions
-				[ParserTarget("order", optional = true)]
-				protected NumericParser<int> order
-				{
-					set { mod.order = value.value; }
-				}
+                // Mod loader provides basic PQS mod loading functions
+                [ParserTarget("order", optional = true)]
+                protected NumericParser<int> order
+                {
+                    set { mod.order = value.value; }
+                }
 
-				// Mod loader provides basic PQS mod loading functions
-				[ParserTarget("enabled", optional = true)]
-				protected NumericParser<bool> enabled
-				{
-					set { mod.modEnabled = value.value; }
-				}
-			}
-		}
-	}
+                // Mod loader provides basic PQS mod loading functions
+                [ParserTarget("enabled", optional = true)]
+                protected NumericParser<bool> enabled
+                {
+                    set { mod.modEnabled = value.value; }
+                }
+            }
+        }
+    }
 }
 

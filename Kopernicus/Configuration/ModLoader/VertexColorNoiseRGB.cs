@@ -36,111 +36,111 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexColorNoiseRGB : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexColorNoiseRGB _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexColorNoiseRGB : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexColorNoiseRGB _mod;
 
-				// Amount of color that will be applied
-				[ParserTarget("blend")]
-				private NumericParser<float> blend
-				{
-					set { _mod.blend = value.value; }
-				}
+                // Amount of color that will be applied
+                [ParserTarget("blend")]
+                private NumericParser<float> blend
+                {
+                    set { _mod.blend = value.value; }
+                }
 
-				// Amount of red
-				[ParserTarget("rBlend")]
-				private NumericParser<float> rBlend
-				{
-					set { _mod.rBlend = value.value; }
-				}
+                // Amount of red
+                [ParserTarget("rBlend")]
+                private NumericParser<float> rBlend
+                {
+                    set { _mod.rBlend = value.value; }
+                }
 
-				// Amount of green
-				[ParserTarget("gBlend")]
-				private NumericParser<float> gBlend
-				{
-					set { _mod.gBlend = value.value; }
-				}
+                // Amount of green
+                [ParserTarget("gBlend")]
+                private NumericParser<float> gBlend
+                {
+                    set { _mod.gBlend = value.value; }
+                }
 
-				// Amount of blue
-				[ParserTarget("bBlend")]
-				private NumericParser<float> bBlend
-				{
-					set { _mod.bBlend = value.value; }
-				}
+                // Amount of blue
+                [ParserTarget("bBlend")]
+                private NumericParser<float> bBlend
+                {
+                    set { _mod.bBlend = value.value; }
+                }
 
-				// The frequency of the noise
-				[ParserTarget("frequency")]
-				private NumericParser<float> frequency
-				{
-					set { _mod.frequency = value.value; }
-				}
+                // The frequency of the noise
+                [ParserTarget("frequency")]
+                private NumericParser<float> frequency
+                {
+                    set { _mod.frequency = value.value; }
+                }
 
-				// Lacunarity of the noise
-				[ParserTarget("lacunarity")]
-				private NumericParser<float> lacunarity
-				{
-					set { _mod.lacunarity = value.value; }
-				}
+                // Lacunarity of the noise
+                [ParserTarget("lacunarity")]
+                private NumericParser<float> lacunarity
+                {
+                    set { _mod.lacunarity = value.value; }
+                }
 
-				// Noise quality
-				[ParserTarget("mode")]
-				private EnumParser<LibNoise.Unity.QualityMode> mode
-				{
-					set { _mod.mode = value.value; }
-				}
+                // Noise quality
+                [ParserTarget("mode")]
+                private EnumParser<LibNoise.Unity.QualityMode> mode
+                {
+                    set { _mod.mode = value.value; }
+                }
 
-				// Noise algorithm
-				[ParserTarget("noiseType")]
-				private EnumParser<PQSMod_VertexColorNoiseRGB.NoiseType> noiseType
-				{
-					set { _mod.noiseType = value.value; }
-				}
+                // Noise algorithm
+                [ParserTarget("noiseType")]
+                private EnumParser<PQSMod_VertexColorNoiseRGB.NoiseType> noiseType
+                {
+                    set { _mod.noiseType = value.value; }
+                }
 
-				// Octaves of the noise
-				[ParserTarget("octaves")]
-				private NumericParser<int> octaves
-				{
-					set { _mod.octaves = value.value; }
-				}
+                // Octaves of the noise
+                [ParserTarget("octaves")]
+                private NumericParser<int> octaves
+                {
+                    set { _mod.octaves = value.value; }
+                }
 
-				// Persistance of the noise
-				[ParserTarget("persistance")]
-				private NumericParser<float> persistance
-				{
-					set { _mod.persistance = value.value; }
-				}
+                // Persistance of the noise
+                [ParserTarget("persistance")]
+                private NumericParser<float> persistance
+                {
+                    set { _mod.persistance = value.value; }
+                }
 
-				// The seed of the noise
-				[ParserTarget("seed")]
-				private NumericParser<int> seed
-				{
-					set { _mod.seed = value.value; }
-				}
+                // The seed of the noise
+                [ParserTarget("seed")]
+                private NumericParser<int> seed
+                {
+                    set { _mod.seed = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexColorNoiseRGB()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject("VertexColorNoiseRGB");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexColorNoiseRGB>();
-					base.mod = _mod;
-				}
+                public VertexColorNoiseRGB()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject("VertexColorNoiseRGB");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexColorNoiseRGB>();
+                    base.mod = _mod;
+                }
 
                 public VertexColorNoiseRGB(PQSMod template)
                 {
@@ -148,8 +148,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

@@ -36,15 +36,15 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class CreateSphereCollider : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_CreateSphereCollider _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class CreateSphereCollider : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_CreateSphereCollider _mod;
 
                 // radiusOffset
                 [ParserTarget("radiusOffset", optional = true)]
@@ -53,24 +53,24 @@ namespace Kopernicus
                     set { _mod.radiusOffset = value.value; }
                 }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
                    
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public CreateSphereCollider()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("CreateSphereCollider");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_CreateSphereCollider>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public CreateSphereCollider(PQSMod template)
                 {
@@ -78,8 +78,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

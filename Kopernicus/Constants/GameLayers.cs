@@ -41,16 +41,16 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	// Constants found in planet creation (if things break in the future, check these first)
-	namespace Constants
-	{
-		public class GameLayers
-		{
-			// Layer for the scaled verion
-			public const int ScaledSpaceAtmosphere = 9;
-			public const int ScaledSpace = 10;
-			public const int LocalSpace = 15;
-		}
-	}
+    // Constants found in planet creation (if things break in the future, check these first)
+    namespace Constants
+    {
+        public class GameLayers
+        {
+            // Layer for the scaled verion
+            public const int ScaledSpaceAtmosphere = 9;
+            public const int ScaledSpace = 10;
+            public const int LocalSpace = 15;
+        }
+    }
 }
 

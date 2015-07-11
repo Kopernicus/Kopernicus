@@ -40,37 +40,37 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Class to manage and load configurations for Kopernicus
-		 **/
-		public class Loader
-		{
-			// Name of the config node group which manages Kopernicus
-			private const string rootNodeName = "Kopernicus";
+    namespace Configuration
+    {
+        /**
+         * Class to manage and load configurations for Kopernicus
+         **/
+        public class Loader
+        {
+            // Name of the config node group which manages Kopernicus
+            private const string rootNodeName = "Kopernicus";
 
-			// Name of the config type which holds the body definition
-			private const string bodyNodeName = "Body";
+            // Name of the config type which holds the body definition
+            private const string bodyNodeName = "Body";
 
-			// Setup the loader
-			// To get the system, do "PSystemManager.Instance.systemPrefab = (new Loader()).Generate();"
-			public Loader ()
-			{
+            // Setup the loader
+            // To get the system, do "PSystemManager.Instance.systemPrefab = (new Loader()).Generate();"
+            public Loader ()
+            {
 
-			}
+            }
 
-			/**
-			 * Generates the system prefab from the configuration 
-			 * @return System prefab object
-			 **/
-			public PSystem Generate ()
-			{
-				// Dictionary of bodies generated
-				Dictionary<string, Body> bodies = new Dictionary<string, Body> ();
+            /**
+             * Generates the system prefab from the configuration 
+             * @return System prefab object
+             **/
+            public PSystem Generate ()
+            {
+                // Dictionary of bodies generated
+                Dictionary<string, Body> bodies = new Dictionary<string, Body> ();
 
-				// Retrieve the root config node
-				ConfigNode rootConfig = GameDatabase.Instance.GetConfigs (rootNodeName) [0].config;
+                // Retrieve the root config node
+                ConfigNode rootConfig = GameDatabase.Instance.GetConfigs (rootNodeName) [0].config;
 
                 if (rootConfig.HasValue("Epoch"))
                     double.TryParse(rootConfig.GetValue("Epoch"), out Templates.instance.epoch);
@@ -89,67 +89,67 @@ namespace Kopernicus
                         if (n.HasValue("name"))
                             Templates.instance.finalizeBodies.Add(n.GetValue("name"));
 
-				// Stage 1 - Load all of the bodies
-				foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName)) 
-				{
-					// Create a logger for this body
-					Logger bodyLogger = new Logger (bodyNode.GetValue ("name") + ".Body");
-					bodyLogger.SetAsActive ();
+                // Stage 1 - Load all of the bodies
+                foreach (ConfigNode bodyNode in rootConfig.GetNodes(bodyNodeName)) 
+                {
+                    // Create a logger for this body
+                    Logger bodyLogger = new Logger (bodyNode.GetValue ("name") + ".Body");
+                    bodyLogger.SetAsActive ();
 
-					// Attempt to create the body
-					try
-					{
-						Body body = Parser.CreateObjectFromConfigNode<Body> (bodyNode);
-						bodies.Add (body.name, body);
-						Logger.Default.Log ("[Kopernicus]: Configuration.Loader: Loaded Body: " + body.name);
-					} 
-					catch (Exception e) 
-					{
-						bodyLogger.LogException (e);
-						Logger.Default.Log ("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue ("name"));
-					}
+                    // Attempt to create the body
+                    try
+                    {
+                        Body body = Parser.CreateObjectFromConfigNode<Body> (bodyNode);
+                        bodies.Add (body.name, body);
+                        Logger.Default.Log ("[Kopernicus]: Configuration.Loader: Loaded Body: " + body.name);
+                    } 
+                    catch (Exception e) 
+                    {
+                        bodyLogger.LogException (e);
+                        Logger.Default.Log ("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue ("name"));
+                    }
 
-					// Restore default logger
-					bodyLogger.Flush ();
-					Logger.Default.SetAsActive ();
-				}
+                    // Restore default logger
+                    bodyLogger.Flush ();
+                    Logger.Default.SetAsActive ();
+                }
 
-				// Stage 2 - create a new planetary system object
-				GameObject gameObject = new GameObject ("Kopernicus");
-				gameObject.transform.parent = Utility.Deactivator;
-				PSystem system = gameObject.AddComponent<PSystem> ();
-				
-				// Set the planetary system defaults (pulled from PSystemManager.Instance.systemPrefab)
-				system.systemName          = "Kopernicus";
-				system.systemTimeScale     = 1.0; 
-				system.systemScale         = 1.0;
-				system.mainToolbarSelected = 2;   // initial value in stock systemPrefab. Unknown significance.
+                // Stage 2 - create a new planetary system object
+                GameObject gameObject = new GameObject ("Kopernicus");
+                gameObject.transform.parent = Utility.Deactivator;
+                PSystem system = gameObject.AddComponent<PSystem> ();
+                
+                // Set the planetary system defaults (pulled from PSystemManager.Instance.systemPrefab)
+                system.systemName          = "Kopernicus";
+                system.systemTimeScale     = 1.0; 
+                system.systemScale         = 1.0;
+                system.mainToolbarSelected = 2;   // initial value in stock systemPrefab. Unknown significance.
 
-				// Stage 3 - Glue all the orbits together in the defined pattern
-				foreach (KeyValuePair<string, Body> body in bodies) 
-				{
-					// If this body is in orbit around another body
-					if(body.Value.referenceBody != null)
-					{
-						// Get the Body object for the reference body
-						Body parent = null;
-						if(!bodies.TryGetValue(body.Value.referenceBody, out parent))
-						{
-							throw new Exception("\"" + body.Value.referenceBody + "\" not found.");
-						}
+                // Stage 3 - Glue all the orbits together in the defined pattern
+                foreach (KeyValuePair<string, Body> body in bodies) 
+                {
+                    // If this body is in orbit around another body
+                    if(body.Value.referenceBody != null)
+                    {
+                        // Get the Body object for the reference body
+                        Body parent = null;
+                        if(!bodies.TryGetValue(body.Value.referenceBody, out parent))
+                        {
+                            throw new Exception("\"" + body.Value.referenceBody + "\" not found.");
+                        }
 
-						// Setup the orbit of the body
-						parent.generatedBody.children.Add(body.Value.generatedBody);
-						body.Value.generatedBody.orbitDriver.referenceBody = parent.generatedBody.celestialBody;
-						body.Value.generatedBody.orbitDriver.orbit.referenceBody = parent.generatedBody.celestialBody;
-					}
+                        // Setup the orbit of the body
+                        parent.generatedBody.children.Add(body.Value.generatedBody);
+                        body.Value.generatedBody.orbitDriver.referenceBody = parent.generatedBody.celestialBody;
+                        body.Value.generatedBody.orbitDriver.orbit.referenceBody = parent.generatedBody.celestialBody;
+                    }
 
-					// Parent the generated body to the PSystem
-					body.Value.generatedBody.transform.parent = system.transform;
-				}
+                    // Parent the generated body to the PSystem
+                    body.Value.generatedBody.transform.parent = system.transform;
+                }
 
                 // Stage 4 - elect root body
-				system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
+                system.rootBody = bodies.First(p => p.Value.referenceBody == null).Value.generatedBody;
 
                 // Stage 4.5, get the new Menu-body / Home body
                 if (rootConfig.HasValue("mainMenuBody"))
@@ -161,25 +161,25 @@ namespace Kopernicus
                     Templates.menuBody = Utility.FindHomeBody(system.rootBody).name;
                 }
 
-				// Stage 5 - sort by distance from parent (discover how this effects local bodies)
-           		RecursivelySortBodies (system.rootBody);
+                // Stage 5 - sort by distance from parent (discover how this effects local bodies)
+                RecursivelySortBodies (system.rootBody);
 
                 // Sets the SOI of the root-body to infinite
                 system.rootBody.celestialBody.sphereOfInfluence = Double.PositiveInfinity;
 
-				return system;
-			}
+                return system;
+            }
 
-			// Sort bodies by distance from parent body
-			private void RecursivelySortBodies (PSystemBody body)
-			{
+            // Sort bodies by distance from parent body
+            private void RecursivelySortBodies (PSystemBody body)
+            {
                 body.children = body.children.OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList();
                 foreach (PSystemBody child in body.children) 
-				{
-					RecursivelySortBodies (child);
-				}
-			}
-		}
-	}
+                {
+                    RecursivelySortBodies (child);
+                }
+            }
+        }
+    }
 }
 

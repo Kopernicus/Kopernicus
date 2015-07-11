@@ -81,13 +81,13 @@ namespace Kopernicus
                     rimPowerID = Shader.PropertyToID(rimPowerKey);
                     rimBlendID = Shader.PropertyToID(rimBlendKey);
                 }
-			}
+            }
 
-			// Is some random material this material
-			public static bool UsesSameShader(Material m)
-			{
-				return m.shader.name == Properties.shaderName;
-			}
+            // Is some random material this material
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shaderName;
+            }
 
             // Noise Map (RGBA), default = "white" {}
             public Texture2D noiseMap
@@ -164,7 +164,7 @@ namespace Kopernicus
             public EmissiveMultiRampSunspots(Material material) : base(material)
             {
                 // Make sure we are using the right shader
-				base.shader = Properties.shader;
+                base.shader = Properties.shader;
             }
 
         }

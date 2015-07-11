@@ -42,9 +42,9 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
         public class ParticleLoader : IParserEventSubscriber
         {
             // Set-up our parental objects

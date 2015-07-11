@@ -36,81 +36,81 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexSimplexColorRGB : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexSimplexColorRGB _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexSimplexColorRGB : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexSimplexColorRGB _mod;
 
-				// blendColor
-				[ParserTarget("blendColor", optional = true)]
-				private ColorParser blendColor
-				{
-					set 
+                // blendColor
+                [ParserTarget("blendColor", optional = true)]
+                private ColorParser blendColor
+                {
+                    set 
                     {
                         _mod.bBlend = value.value.b;
                         _mod.rBlend = value.value.r;
                         _mod.gBlend = value.value.g;
                     }
-				}
+                }
 
                 // blend
-				[ParserTarget("blend", optional = true)]
-				private NumericParser<float> blend
-				{
-					set { _mod.blend = value.value; }
-				}
+                [ParserTarget("blend", optional = true)]
+                private NumericParser<float> blend
+                {
+                    set { _mod.blend = value.value; }
+                }
 
                 // frequency
-				[ParserTarget("frequency", optional = true)]
-				private NumericParser<double> frequency
-				{
-					set { _mod.frequency = value.value; }
-				}
+                [ParserTarget("frequency", optional = true)]
+                private NumericParser<double> frequency
+                {
+                    set { _mod.frequency = value.value; }
+                }
 
                 // octaves
-				[ParserTarget("octaves", optional = true)]
-				private NumericParser<double> octaves
-				{
-					set { _mod.octaves = value.value; }
-				}
+                [ParserTarget("octaves", optional = true)]
+                private NumericParser<double> octaves
+                {
+                    set { _mod.octaves = value.value; }
+                }
 
                 // persistence
-				[ParserTarget("persistence", optional = true)]
-				private NumericParser<double> persistence
-				{
-					set { _mod.persistence = value.value; }
-				}
+                [ParserTarget("persistence", optional = true)]
+                private NumericParser<double> persistence
+                {
+                    set { _mod.persistence = value.value; }
+                }
 
                 // seed
-				[ParserTarget("seed", optional = true)]
-				private NumericParser<int> seed
-				{
-					set { _mod.seed = value.value; }
-				}
+                [ParserTarget("seed", optional = true)]
+                private NumericParser<int> seed
+                {
+                    set { _mod.seed = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public VertexSimplexColorRGB()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VertexSimplexColorRGB");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_VertexSimplexColorRGB>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public VertexSimplexColorRGB(PQSMod template)
                 {
@@ -118,8 +118,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

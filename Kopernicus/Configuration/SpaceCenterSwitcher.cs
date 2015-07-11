@@ -39,9 +39,9 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
         public class SpaceCenterSwitcher : IParserEventSubscriber
         {
             public KSC ksc;

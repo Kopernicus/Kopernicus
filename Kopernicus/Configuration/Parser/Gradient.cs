@@ -40,85 +40,85 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class Gradient : IParserEventSubscriber
-		{
-			// Points in the gradient we are generating
-			SortedList<float, Color> points = new SortedList<float, Color>();
-			
-			// Build the gradient from data found in the node
-			void IParserEventSubscriber.Apply(ConfigNode node)
-			{
-				// List of keyframes
-				points = new SortedList<float, Color>();
-				
-				// Iterate through all the values in the node (all are keyframes)
-				foreach(ConfigNode.Value point in node.values)
-				{
-					// Convert the "name" (left side) into a float for sorting
-					float p = float.Parse(point.name);
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class Gradient : IParserEventSubscriber
+        {
+            // Points in the gradient we are generating
+            SortedList<float, Color> points = new SortedList<float, Color>();
+            
+            // Build the gradient from data found in the node
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                // List of keyframes
+                points = new SortedList<float, Color>();
+                
+                // Iterate through all the values in the node (all are keyframes)
+                foreach(ConfigNode.Value point in node.values)
+                {
+                    // Convert the "name" (left side) into a float for sorting
+                    float p = float.Parse(point.name);
 
-					// Get the color at this point
-					ColorParser cp = new ColorParser();
-					cp.SetFromString(point.value);
-					
-					// Add the keyframe to the list
-					points.Add(p, cp.value);
-				}
-			}
-			
-			// We don't use this
-			void IParserEventSubscriber.PostApply(ConfigNode node) { }
+                    // Get the color at this point
+                    ColorParser cp = new ColorParser();
+                    cp.SetFromString(point.value);
+                    
+                    // Add the keyframe to the list
+                    points.Add(p, cp.value);
+                }
+            }
+            
+            // We don't use this
+            void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
-			// Add a point to the gradient
-			public void Add(float p, Color c)
-			{
-				points.Add(p, c);
-			}
+            // Add a point to the gradient
+            public void Add(float p, Color c)
+            {
+                points.Add(p, c);
+            }
 
-			// Get a color from the gradient
-			public Color ColorAt (float p)
-			{
-				// Gradient points
-				Color a = Color.black;
-				Color b = Color.black;
-				float ap = float.NaN;
-				float bp = float.NaN;
+            // Get a color from the gradient
+            public Color ColorAt (float p)
+            {
+                // Gradient points
+                Color a = Color.black;
+                Color b = Color.black;
+                float ap = float.NaN;
+                float bp = float.NaN;
 
-				// Find the points along the gradient
-				IEnumerator<KeyValuePair<float, Color>> enumerator = points.GetEnumerator ();
-				while (enumerator.MoveNext()) 
-				{
-					KeyValuePair<float, Color> point = enumerator.Current;
-					if(point.Key >= p)
-					{
-						bp = point.Key;
-						b = point.Value;
+                // Find the points along the gradient
+                IEnumerator<KeyValuePair<float, Color>> enumerator = points.GetEnumerator ();
+                while (enumerator.MoveNext()) 
+                {
+                    KeyValuePair<float, Color> point = enumerator.Current;
+                    if(point.Key >= p)
+                    {
+                        bp = point.Key;
+                        b = point.Value;
 
-						// If we never found a leading color
-						if(float.IsNaN(ap))
-							return b;
+                        // If we never found a leading color
+                        if(float.IsNaN(ap))
+                            return b;
 
-						// break out
-						break;
-					}
+                        // break out
+                        break;
+                    }
 
-					// Otherwise cache these colors
-					ap = point.Key;
-					a = point.Value;
-				}
+                    // Otherwise cache these colors
+                    ap = point.Key;
+                    a = point.Value;
+                }
 
-				// If we never found a tail color
-				if(float.IsNaN(bp))
-					return a;
+                // If we never found a tail color
+                if(float.IsNaN(bp))
+                    return a;
 
-				// Calculate the color
-				float k = (p - ap) / (bp - ap);
-				return Color.Lerp(a, b, k);
-			}
-		}
-	}
+                // Calculate the color
+                float k = (p - ap) / (bp - ap);
+                return Color.Lerp(a, b, k);
+            }
+        }
+    }
 }
 

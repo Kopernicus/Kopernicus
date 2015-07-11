@@ -41,51 +41,51 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class ScaledPlanetSimpleLoader : ScaledPlanetSimple
-		{
-			// Wrapper functions for loading from config (until ParserTarget redo)
-			[ParserTarget("color", optional = true)]
-			private ColorParser colorSetter 
-			{
-				set { base.color = value.value; }
-			}
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class ScaledPlanetSimpleLoader : ScaledPlanetSimple
+        {
+            // Wrapper functions for loading from config (until ParserTarget redo)
+            [ParserTarget("color", optional = true)]
+            private ColorParser colorSetter 
+            {
+                set { base.color = value.value; }
+            }
 
-			[ParserTarget("specular", optional = true)]
-			private ColorParser specularSetter 
-			{
-				set { base.specColor = value.value; }
-			}
+            [ParserTarget("specular", optional = true)]
+            private ColorParser specularSetter 
+            {
+                set { base.specColor = value.value; }
+            }
 
-			[ParserTarget("shininess", optional = true)]
-			private NumericParser<float> shininessSetter 
-			{
-				set {  base.shininess = value.value; }
-			}
-			
-			[ParserTarget("texture", optional = true)]
-			private Texture2DParser textureSetter 
-			{
-				set { base.mainTexture = value.value; }
-			}
-			
-			[ParserTarget("normals", optional = true)]
-			private Texture2DParser normalsSetter 
-			{
-				set { base.bumpMap = value.value; }
-			}
-			
-			[ParserTarget("resources", optional = true)]
-			private Texture2DParser resourcesSetter 
-			{
-				set { base.resourceMap = value.value; }
-			}
-			
-			public ScaledPlanetSimpleLoader () : base() { }
-			public ScaledPlanetSimpleLoader (string contents) : base (contents) { }
-			public ScaledPlanetSimpleLoader (Material material) : base(material) { }
-		}
-	}
+            [ParserTarget("shininess", optional = true)]
+            private NumericParser<float> shininessSetter 
+            {
+                set {  base.shininess = value.value; }
+            }
+            
+            [ParserTarget("texture", optional = true)]
+            private Texture2DParser textureSetter 
+            {
+                set { base.mainTexture = value.value; }
+            }
+            
+            [ParserTarget("normals", optional = true)]
+            private Texture2DParser normalsSetter 
+            {
+                set { base.bumpMap = value.value; }
+            }
+            
+            [ParserTarget("resources", optional = true)]
+            private Texture2DParser resourcesSetter 
+            {
+                set { base.resourceMap = value.value; }
+            }
+            
+            public ScaledPlanetSimpleLoader () : base() { }
+            public ScaledPlanetSimpleLoader (string contents) : base (contents) { }
+            public ScaledPlanetSimpleLoader (Material material) : base(material) { }
+        }
+    }
 }

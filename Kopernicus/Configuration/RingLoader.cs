@@ -40,9 +40,9 @@ using Kopernicus.Configuration.Resources;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
         public class RingLoader : IParserEventSubscriber
         {
             // Set-up our custom ring

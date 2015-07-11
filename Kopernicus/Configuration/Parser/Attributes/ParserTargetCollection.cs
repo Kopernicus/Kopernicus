@@ -35,21 +35,21 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/* Attribute indicating a target collection */
-		[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-		public class ParserTargetCollection : ParserTarget
-		{
-			// Node name significance - does the name mean anything
-			public NameSignificance nameSignificance = NameSignificance.None;
+    namespace Configuration
+    {
+        /* Attribute indicating a target collection */
+        [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+        public class ParserTargetCollection : ParserTarget
+        {
+            // Node name significance - does the name mean anything
+            public NameSignificance nameSignificance = NameSignificance.None;
 
-			// Namespace of any generated classes for NameSignificance.Type
-			public string typePrefix = "";
-			
-			// Constructor sets name
-			public ParserTargetCollection(string fieldName = null) : base (fieldName) { }
-		}
-	}
+            // Namespace of any generated classes for NameSignificance.Type
+            public string typePrefix = "";
+            
+            // Constructor sets name
+            public ParserTargetCollection(string fieldName = null) : base (fieldName) { }
+        }
+    }
 }
 

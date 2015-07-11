@@ -44,11 +44,11 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration 
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class OceanPQS : IParserEventSubscriber
-		{
+    namespace Configuration 
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class OceanPQS : IParserEventSubscriber
+        {
             // PQS we're editing
             public PQS oceanPQS { get; private set; }
             public GameObject oceanRoot = new GameObject();
@@ -81,52 +81,52 @@ namespace Kopernicus
                 set { mapOceanHeight = value.value; }
             }
 
-			// PQS level of detail settings
-			[ParserTarget("minLevel", optional = true)]
-			private NumericParser<int> minLevel 
-			{
+            // PQS level of detail settings
+            [ParserTarget("minLevel", optional = true)]
+            private NumericParser<int> minLevel 
+            {
                 set { oceanPQS.minLevel = value.value; }
-			}
+            }
 
-			[ParserTarget("maxLevel", optional = true)]
-			private NumericParser<int> maxLevel 
-			{
+            [ParserTarget("maxLevel", optional = true)]
+            private NumericParser<int> maxLevel 
+            {
                 set { oceanPQS.maxLevel = value.value; }
-			}
+            }
 
-			[ParserTarget("minDetailDistance", optional = true)]
-			private NumericParser<double> minDetailDistance 
-			{
+            [ParserTarget("minDetailDistance", optional = true)]
+            private NumericParser<double> minDetailDistance 
+            {
                 set { oceanPQS.minDetailDistance = value.value; }
-			}
+            }
 
-			[ParserTarget("maxQuadLengthsPerFrame", optional = true)]
-			private NumericParser<float> maxQuadLengthsPerFrame 
-			{
+            [ParserTarget("maxQuadLengthsPerFrame", optional = true)]
+            private NumericParser<float> maxQuadLengthsPerFrame 
+            {
                 set { oceanPQS.maxQuadLenghtsPerFrame = value.value; }
-			}
+            }
 
-			// Surface Material of the PQS
-			[ParserTarget("Material", optional = true, allowMerge = true)]
+            // Surface Material of the PQS
+            [ParserTarget("Material", optional = true, allowMerge = true)]
             private Material surfaceMaterial;
 
-			// Fallback Material of the PQS (its always the same material)
-			[ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
+            // Fallback Material of the PQS (its always the same material)
+            [ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
             private PQSOceanSurfaceQuadFallbackLoader fallbackMaterial;
-				
-			// PQS Mods
-			[ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
-			private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> ();
+                
+            // PQS Mods
+            [ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
+            private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> ();
 
             // Killer-Ocean
             [ParserTarget("HazardousOcean", optional = true, allowMerge = true)]
             private HazardousOcean hazardousOcean;
 
-			/**
-			 * Constructor for existing Ocean
-			 **/
-			public OceanPQS (PQS oceanPQS)
-			{
+            /**
+             * Constructor for existing Ocean
+             **/
+            public OceanPQS (PQS oceanPQS)
+            {
                 this.oceanPQS = oceanPQS;
                 
                 oceanPQS.surfaceMaterial = new PQSOceanSurfaceQuadLoader(oceanPQS.surfaceMaterial);
@@ -138,13 +138,13 @@ namespace Kopernicus
                 fallbackMaterial.name = Guid.NewGuid().ToString();
             }
 
-			/**
-			 * Constructor for new Ocean
-			 * 
-			 **/
-			public OceanPQS ()
-			{
-				// Generate the PQS object
+            /**
+             * Constructor for new Ocean
+             * 
+             **/
+            public OceanPQS ()
+            {
+                // Generate the PQS object
                 oceanRoot.layer = Constants.GameLayers.LocalSpace;
                 oceanPQS = oceanRoot.AddComponent<PQS>();
 
@@ -183,7 +183,7 @@ namespace Kopernicus
                 uvs.requirements = PQS.ModiferRequirements.Default;
                 uvs.modEnabled = true;
                 uvs.order = 999999;
-			}
+            }
 
 
             List<ModLoader.ModLoader> patchedMods = new List<ModLoader.ModLoader>();
@@ -262,9 +262,9 @@ namespace Kopernicus
                 // == DUMP OCEAN MATERIALS == //
                 Utility.DumpObjectProperties(oceanPQS.surfaceMaterial, " OCEAN SURFACE MATERIAL ");
                 Utility.DumpObjectProperties(oceanPQS.fallbackMaterial, " OCEAN FALLBACK MATERIAL ");
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
 #pragma warning restore 0414

@@ -156,13 +156,13 @@ namespace Kopernicus
                     fadeEndID = Shader.PropertyToID(fadeEndKey);
                     planetOpacityID = Shader.PropertyToID(planetOpacityKey);
                 }
-			}
+            }
 
-			// Is some random material this material
-			public static bool UsesSameShader(Material m)
-			{
-				return m.shader.name == Properties.shaderName;
-			}
+            // Is some random material this material
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shaderName;
+            }
 
             // Color From Space, default = (1,1,1,1)
             public Color colorFromSpace

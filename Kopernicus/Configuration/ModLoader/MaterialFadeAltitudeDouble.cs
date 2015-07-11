@@ -36,29 +36,29 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class MaterialFadeAltitudeDouble : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_MaterialFadeAltitudeDouble _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class MaterialFadeAltitudeDouble : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_MaterialFadeAltitudeDouble _mod;
 
                 // inFadeEnd
                 [ParserTarget("inFadeEnd", optional = true)]
                 private NumericParser<float> inFadeEnd
-				{
-					set { _mod.inFadeEnd = value.value; }
-				}
+                {
+                    set { _mod.inFadeEnd = value.value; }
+                }
 
                 // inFadeStart
                 [ParserTarget("inFadeStart", optional = true)]
                 private NumericParser<float> inFadeStart
-				{
-					set { _mod.inFadeStart = value.value; }
-				}
+                {
+                    set { _mod.inFadeStart = value.value; }
+                }
 
                 // outFadeEnd
                 [ParserTarget("outFadeEnd", optional = true)]
@@ -77,9 +77,9 @@ namespace Kopernicus
                 // valueEnd
                 [ParserTarget("valueEnd", optional = true)]
                 private NumericParser<float> valueEnd
-				{
-					set { _mod.valueEnd = value.value; }
-				}
+                {
+                    set { _mod.valueEnd = value.value; }
+                }
 
                 // valueMid
                 [ParserTarget("valueMid", optional = true)]
@@ -91,28 +91,28 @@ namespace Kopernicus
                 // valueStart
                 [ParserTarget("valueStart", optional = true)]
                 private NumericParser<float> valueStart
-				{
-					set { _mod.valueStart = value.value; }
-				}
+                {
+                    set { _mod.valueStart = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public MaterialFadeAltitudeDouble()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("MaterialFadeAltitudeDouble");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_MaterialFadeAltitudeDouble>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public MaterialFadeAltitudeDouble(PQSMod template)
                 {
@@ -120,8 +120,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

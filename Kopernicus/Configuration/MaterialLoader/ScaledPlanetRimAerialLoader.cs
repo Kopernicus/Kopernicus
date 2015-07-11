@@ -41,95 +41,95 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class ScaledPlanetRimAerialLoader : ScaledPlanetRimAerial
-		{
-			// Wrapper functions for loading from config (until ParserTarget redo)
-			[ParserTarget("color", optional = true)]
-			private ColorParser colorSetter 
-			{
-				set { base.color = value.value; }
-			}
-			
-			[ParserTarget("specular", optional = true)]
-			private ColorParser specularSetter 
-			{
-				set { base.specColor = value.value; }
-			}
-			
-			[ParserTarget("shininess", optional = true)]
-			private NumericParser<float> shininessSetter 
-			{
-				set {  base.shininess = value.value; }
-			}
-			
-			[ParserTarget("texture", optional = true)]
-			private Texture2DParser textureSetter 
-			{
-				set { base.mainTexture = value.value; }
-			}
-			
-			[ParserTarget("normals", optional = true)]
-			private Texture2DParser normalsSetter 
-			{
-				set { base.bumpMap = value.value; }
-			}
-			
-			[ParserTarget("resources", optional = true)]
-			private Texture2DParser resourcesSetter 
-			{
-				set { base.resourceMap = value.value; }
-			}
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class ScaledPlanetRimAerialLoader : ScaledPlanetRimAerial
+        {
+            // Wrapper functions for loading from config (until ParserTarget redo)
+            [ParserTarget("color", optional = true)]
+            private ColorParser colorSetter 
+            {
+                set { base.color = value.value; }
+            }
+            
+            [ParserTarget("specular", optional = true)]
+            private ColorParser specularSetter 
+            {
+                set { base.specColor = value.value; }
+            }
+            
+            [ParserTarget("shininess", optional = true)]
+            private NumericParser<float> shininessSetter 
+            {
+                set {  base.shininess = value.value; }
+            }
+            
+            [ParserTarget("texture", optional = true)]
+            private Texture2DParser textureSetter 
+            {
+                set { base.mainTexture = value.value; }
+            }
+            
+            [ParserTarget("normals", optional = true)]
+            private Texture2DParser normalsSetter 
+            {
+                set { base.bumpMap = value.value; }
+            }
+            
+            [ParserTarget("resources", optional = true)]
+            private Texture2DParser resourcesSetter 
+            {
+                set { base.resourceMap = value.value; }
+            }
 
-			[ParserTarget("rimPower", optional = true)]
-			private NumericParser<float> rimPowerSetter 
-			{
-				set { rimPower = value.value; }
-			}
-			
-			[ParserTarget("rimBlend", optional = true)]
-			private NumericParser<float> rimBlendSetter 
-			{
-				set { rimBlend = value.value; }
-			}
-			
-			[ParserTarget("rimColorRamp", optional = true)]
-			private Texture2DParser rimColorRampSetter 
-			{
-				set { rimColorRamp = value.value; }
-			}
+            [ParserTarget("rimPower", optional = true)]
+            private NumericParser<float> rimPowerSetter 
+            {
+                set { rimPower = value.value; }
+            }
+            
+            [ParserTarget("rimBlend", optional = true)]
+            private NumericParser<float> rimBlendSetter 
+            {
+                set { rimBlend = value.value; }
+            }
+            
+            [ParserTarget("rimColorRamp", optional = true)]
+            private Texture2DParser rimColorRampSetter 
+            {
+                set { rimColorRamp = value.value; }
+            }
 
-			[ParserTarget("Gradient", optional = true)]
-			private Gradient rimColorRampGradientSetter 
-			{
-				set 
-				{
-					// Generate the ramp from a gradient
-					Texture2D ramp = new Texture2D(512, 1);
-					Color[] colors = ramp.GetPixels(0);
-					for(int i = 0; i < colors.Length; i++)
-					{
-						// Compute the position in the gradient
-						float k = ((float) i) / ((float) colors.Length);
-						colors[i] = value.ColorAt(k);
-					}
-					ramp.SetPixels(colors, 0);
-					ramp.Apply(true, false);
+            [ParserTarget("Gradient", optional = true)]
+            private Gradient rimColorRampGradientSetter 
+            {
+                set 
+                {
+                    // Generate the ramp from a gradient
+                    Texture2D ramp = new Texture2D(512, 1);
+                    Color[] colors = ramp.GetPixels(0);
+                    for(int i = 0; i < colors.Length; i++)
+                    {
+                        // Compute the position in the gradient
+                        float k = ((float) i) / ((float) colors.Length);
+                        colors[i] = value.ColorAt(k);
+                    }
+                    ramp.SetPixels(colors, 0);
+                    ramp.Apply(true, false);
 
-					//byte[] data = ramp.EncodeToPNG();
-					//System.IO.File.WriteAllBytes(KSPUtil.ApplicationRootPath + "test.png", data);
+                    //byte[] data = ramp.EncodeToPNG();
+                    //System.IO.File.WriteAllBytes(KSPUtil.ApplicationRootPath + "test.png", data);
 
-					// Set the color ramp
-					rimColorRamp = ramp;
-				}
-			}
+                    // Set the color ramp
+                    rimColorRamp = ramp;
+                }
+            }
 
-			public ScaledPlanetRimAerialLoader () : base() { }
-			public ScaledPlanetRimAerialLoader (string contents) : base (contents) { }
-			public ScaledPlanetRimAerialLoader (Material material) : base(material) { }
-		}
-	}
+            public ScaledPlanetRimAerialLoader () : base() { }
+            public ScaledPlanetRimAerialLoader (string contents) : base (contents) { }
+            public ScaledPlanetRimAerialLoader (Material material) : base(material) { }
+        }
+    }
 }
 
