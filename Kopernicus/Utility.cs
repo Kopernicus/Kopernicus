@@ -910,7 +910,7 @@ namespace Kopernicus
                 Type mType = null;
                 try
                 {
-                    mType = Type.GetType(mTypeName);
+                    mType = Type.GetType(mTypeName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
                 }
                 catch (Exception e)
                 {
@@ -918,7 +918,7 @@ namespace Kopernicus
                 }
                 if (mType != null)
                 {
-                    PQSMod[] mods = body.pqsVersion.GetComponentsInChildren(mType, true) as PQSMod[];
+                    PQSMod[] mods = body.pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mType).ToArray();
                     foreach (PQSMod m in mods)
                     {
                         if(m.name != mName)
@@ -926,7 +926,7 @@ namespace Kopernicus
                         modFound = true;
                         foreach (FieldInfo fi in m.GetType().GetFields())
                         {
-                            if (fi.GetType().Equals(typeof(MapSO)))
+                            if (fi.FieldType.Equals(typeof(MapSO)))
                             {
                                 retVal = fi.GetValue(m) as MapSO;
                                 break;
