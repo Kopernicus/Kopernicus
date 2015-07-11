@@ -33,6 +33,7 @@
 
 using System;
 using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -143,10 +144,6 @@ namespace Kopernicus
             // Fallback Material of the PQS (its always the same material)
             [ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
             private PQSProjectionFallbackLoader fallbackMaterial;
-                            
-            // PQS Mods
-            [ParserTargetCollection("Mods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
-            private List<ModLoader.ModLoader> mods = new List<ModLoader.ModLoader> (); 
 
             /**
              * Constructor for new PQS
@@ -297,77 +294,52 @@ namespace Kopernicus
                 fallbackMaterial.name = Guid.NewGuid ().ToString ();
             }
 
-            List<ModLoader.ModLoader> patchedMods = new List<ModLoader.ModLoader>();
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                if (node.HasNode("Mods"))
-                {
-                    // Patch the existing mods
-                    foreach (ConfigNode mod in node.GetNode("Mods").nodes)
-                    {
-                        if (pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Name.Contains(mod.name)).Count() != 0)
-                        {
-                            Type t = Type.GetType("Kopernicus.Configuration.ModLoader." + mod.name);
-                            ConstructorInfo cInfo = t.GetConstructor(new Type[] { typeof(PQSMod) });
-                            try
-                            {
-                                PQSMod pqsMod = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(
-                                    m => m.GetType().Name.Contains(mod.name) && 
-                                         patchedMods.Where(M => M.mod.name == m.name && 
-                                         M.mod.GetType() == m.GetType()).Count() == 0 &&
-                                         ((mod.HasValue("name")) ? m.name == mod.GetValue("name") : true)
-                                    ).First();
 
-                                ModLoader.ModLoader patchedMod = cInfo.Invoke(new object[] { pqsMod }) as ModLoader.ModLoader;
-                                Parser.LoadObjectFromConfigurationNode(patchedMod, mod);
-                                patchedMod.patched = true;
-                                patchedMods.Add(patchedMod);
-                            }
-                            catch
-                            {
-                                Logger.Active.Log("Couldn't find enough Mods of Type " + t + "!");
-                            }
-                        }
-                    }
-                }
             }
 
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                // Remove the patched mods from the main list
-                foreach (ModLoader.ModLoader remove in mods.Where(m => patchedMods.Select(p => p.mod.GetType()).Contains(m.mod.GetType())))
-                {
-                    remove.mod.transform.parent = null;
-                    remove.mod.sphere = null;
-                    remove.mod = null;
-                }
+                if (!node.HasNode ("Mods"))
+                    return;
 
-                // Apply patched mods
-                foreach (ModLoader.ModLoader loader in patchedMods)
+                List<PQSMod> patchedMods = new List<PQSMod>();
+
+                // Load mods manually because of patching
+                foreach (ConfigNode mod in node.GetNode ("Mods").nodes) 
                 {
-                    if (loader.mod != null)
+                    Type loaderType = Type.GetType ("Kopernicus.Configuration.ModLoader." + mod.name);
+                    Type modType = Type.GetType ("PQSMod_" + mod.name + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+
+                    // Do any PQS Mods already exist on this PQS matching this mod?
+                    IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) && 
+                                                                                                                    m.transform.parent == pqsVersion.transform);
+                    ModLoader.ModLoader loader = null;
+                    if (existingMods.Count () > 0) 
                     {
-                        loader.mod.transform.parent = pqsVersion.transform;
-                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                        loader.mod.sphere = pqsVersion;
-                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + loader.mod.GetType());
-                    }
-                }
+                        // Attempt to find a PQS mod we can edit that we have not edited before
+                        PQSMod existingMod = existingMods.Where (m => !patchedMods.Contains(m) && (mod.HasValue ("name") ? m.name == mod.GetValue ("name") : true))
+                                                         .FirstOrDefault ();
+                        if (existingMod != null) 
+                        {
+                            loader = Parser.CreateObjectFromConfigNode (loaderType, mod, new object[] { existingMod }) as ModLoader.ModLoader;
+                            patchedMods.Add (existingMod);
 
-                // Add new mods
-                foreach (ModLoader.ModLoader loader in mods)
-                {
-                    if (loader.mod != null)
+                            Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
+                        }
+                    }
+
+                    if (loader == null) 
                     {
-                        loader.mod.transform.parent = pqsVersion.transform;
-                        loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                        loader.mod.sphere = pqsVersion;
-                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + loader.mod.GetType());
+                        loader = Parser.CreateObjectFromConfigNode (loaderType, mod) as ModLoader.ModLoader;
+                        Logger.Active.Log ("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
-                }
 
-                // Make sure all the PQSMods exist in Localspace
-                // pqsVersion.gameObject.SetLayerRecursive(Constants.GameLayers.LocalSpace);
+                    loader.mod.transform.parent = pqsVersion.transform;
+                    loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                    loader.mod.sphere = pqsVersion;
+                }
             }
         }
     }

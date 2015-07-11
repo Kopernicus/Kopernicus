@@ -65,6 +65,14 @@ namespace Kopernicus
                 return o;
             }
 
+            // Create an object form a configuration node (Runtime type identification) with constructor parameters
+            public static object CreateObjectFromConfigNode (Type type, ConfigNode node, object[] arguments)
+            {
+                object o = Activator.CreateInstance (type, arguments);
+                LoadObjectFromConfigurationNode (o, node);
+                return o;
+            }
+
             /**
              * Load data for an object's ParserTarget fields and properties from a configuration node
              * 
