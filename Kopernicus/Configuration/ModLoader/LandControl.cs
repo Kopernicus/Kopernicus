@@ -29,10 +29,6 @@
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- * 
- * Original code from Star Systems by OvenProofMars, Fastwings, medsouz
- * Modified by Thomas P., Nathaniel R. Lewis (Teknoman117) for Kopernicus
- * 
  */
 
 using System;
