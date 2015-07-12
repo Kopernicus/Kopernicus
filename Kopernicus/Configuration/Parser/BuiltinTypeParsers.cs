@@ -707,6 +707,7 @@ namespace Kopernicus
                 if (System.IO.File.Exists(path))
                 {
                     value = ObjImporter.ImportFile(path);
+                    value.name = Path.GetFileNameWithoutExtension(path);
                     return;
                 }
 

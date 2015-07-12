@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Kopernicus
@@ -83,10 +84,56 @@ namespace Kopernicus
                     }
                 }
 
-                // TODO: Adding mesh and material loader
-                private class LandClassScatterLoader
+                private class LandClassScatterLoader : IParserEventSubscriber
                 {
+                    private enum ScatterMaterialType
+                    {
+                        Diffuse,
+                        BumpedDiffuse,
+                        DiffuseDetail,
+                        DiffuseWrapped,
+                        CutoutDiffuse,
+                        AerialCutout
+                    };
+
                     public PQSLandControl.LandClassScatter scatter;
+
+                    // Stock scatter material parser
+                    [RequireConfigType(ConfigType.Value)]
+                    private class StockMaterialParser : IParsable
+                    {
+                        public Material value;
+                        public void SetFromString(string s)
+                        {
+                            string materialName = Regex.Replace(s, "BUILTIN/", "");
+                            value = UnityEngine.Resources.FindObjectsOfTypeAll<Material>().Where(material => material.name == materialName).FirstOrDefault();
+                        }
+                    }
+
+                    [PreApply]
+                    [ParserTarget("materialType", optional = true)]
+                    private EnumParser<ScatterMaterialType> materialType
+                    {
+                        set
+                        {
+                            if (value.value == ScatterMaterialType.Diffuse)
+                                customMaterial = new NormalDiffuseLoader();
+                            else if (value.value == ScatterMaterialType.BumpedDiffuse)
+                                customMaterial = new NormalBumpedLoader();
+                            else if (value.value == ScatterMaterialType.DiffuseDetail)
+                                customMaterial = new NormalDiffuseDetailLoader();
+                            else if (value.value == ScatterMaterialType.DiffuseWrapped)
+                                customMaterial = new DiffuseWrapLoader();
+                            else if (value.value == ScatterMaterialType.CutoutDiffuse)
+                                customMaterial = new AlphaTestDiffuseLoader();
+                            else if (value.value == ScatterMaterialType.AerialCutout)
+                                customMaterial = new AerialTransCutoutLoader();
+                        }
+                    }
+
+                    // Custom scatter material
+                    [ParserTarget("Material", optional = true, allowMerge = true)]
+                    private Material customMaterial;
 
                     // The mesh
                     [ParserTarget("mesh", optional = true)]
@@ -107,6 +154,13 @@ namespace Kopernicus
                     private NumericParser<double> densityFactor
                     {
                         set { scatter.densityFactor = value.value; }
+                    }
+
+                    // Stock material
+                    [ParserTarget("material", optional = true)]
+                    private StockMaterialParser material
+                    {
+                        set { scatter.material = value.value; }
                     }
 
                     // maxCache
@@ -194,6 +248,14 @@ namespace Kopernicus
                         scatter.maxCache = 512;
                         scatter.maxCacheDelta = 32;
                         scatter.maxSpeed = 1000;
+                    }
+
+                    public void Apply(ConfigNode node) { }
+
+                    public void PostApply(ConfigNode node)
+                    {
+                        // If defined, use custom material
+                        if (customMaterial != null) scatter.material = customMaterial;
                     }
                 }
 
