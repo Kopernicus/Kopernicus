@@ -174,6 +174,36 @@ namespace Kopernicus
                 set { celestialBody.atmosphereTemperatureSunMultCurve = value.curve; }
             }
 
+            // Temperature latitude bias
+            [ParserTarget("temperatureLatitudeBiasCurve", optional = true)]
+            private FloatCurveParser latitudeTemperatureBiasCurve
+            {
+                set
+                {
+                    celestialBody.latitudeTemperatureBiasCurve = value.curve;
+                }
+            }
+
+            // latitudeTemperatureSunMultCurve
+            [ParserTarget("temperatureLatitudeSunMultCurve", optional = true)]
+            private FloatCurveParser latitudeTemperatureSunMultCurve
+            {
+                set
+                {
+                    celestialBody.latitudeTemperatureSunMultCurve = value.curve;
+                }
+            }
+
+            // axialTemperatureSunMultCurve
+            [ParserTarget("temperatureAxialSunMultCurve", optional = true)]
+            private FloatCurveParser axialTemperatureSunMultCurve
+            {
+                set
+                {
+                    celestialBody.axialTemperatureSunMultCurve = value.curve;
+                }
+            }
+
             // ambient atmosphere color
             [ParserTarget("ambientColor", optional = true)]
             private ColorParser ambientColor 

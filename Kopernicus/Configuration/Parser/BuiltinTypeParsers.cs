@@ -139,6 +139,15 @@ namespace Kopernicus
 
                     value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, float.Parse(colorArray[3]) / 255);
                 }
+                else if (s.StartsWith("RGB("))
+                {
+                    s = s.Replace("RGB(", string.Empty);
+                    s = s.Replace(")", string.Empty);
+                    s = s.Replace(" ", string.Empty);
+                    string[] colorArray = s.Split(',');
+
+                    value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, 1);
+                }
                 else if (s.StartsWith("XKCD."))
                 {
                     PropertyInfo color = typeof(XKCDColors).GetProperty(s.Replace("XKCD.", ""), BindingFlags.Static | BindingFlags.Public);
@@ -678,6 +687,41 @@ namespace Kopernicus
                 this.material = material;
             }
         }
+
+        /** Parser for mesh */
+        [RequireConfigType(ConfigType.Value)]
+        public class MeshParser : IParsable
+        {
+            public Mesh value;
+            public void SetFromString (string s)
+            {
+                // Check if we are attempting to load a builtin mesh
+                if (s.StartsWith ("BUILTIN/")) 
+                {
+                    string meshName = Regex.Replace (s, "BUILTIN/", "");
+                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Mesh> ().Where (mesh => mesh.name == meshName).First ();
+                    return;
+                }
+
+                String path = KSPUtil.ApplicationRootPath + "GameData/" + s;
+                if (System.IO.File.Exists(path))
+                {
+                    value = ObjImporter.ImportFile(path);
+                    value.name = Path.GetFileNameWithoutExtension(path);
+                    return;
+                }
+
+                // Mesh was not found
+                value = null;
+            }
+            public MeshParser ()
+            {
+                
+            }
+            public MeshParser (Mesh value)
+            {
+                this.value = value;
+            }
+        }
     }
 }
-

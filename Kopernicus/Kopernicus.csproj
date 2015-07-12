@@ -46,6 +46,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\DiffuseWrapLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\NormalBumpedLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\NormalDiffuseDetailLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\NormalDiffuseLoader.cs" />
+    <Compile Include="Configuration\ModLoader\LandControl.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitudeDouble.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitude.cs" />
     <Compile Include="Configuration\ModLoader\MaterialQuadRelative.cs" />
@@ -54,6 +61,7 @@
     <Compile Include="Configuration\ModLoader\VertexPlanet.cs" />
     <Compile Include="Configuration\HazardousOcean.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexColorRGB.cs" />
+    <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\SpaceCenterSwitcher.cs" />
     <Compile Include="Configuration\LightShifter.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
@@ -104,6 +112,12 @@
     </Compile>
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Constants\Version.cs" />
+    <Compile Include="MaterialWrapper\AerialTransCutout.cs" />
+    <Compile Include="MaterialWrapper\AlphaTestDiffuse.cs" />
+    <Compile Include="MaterialWrapper\DiffuseWrap.cs" />
+    <Compile Include="MaterialWrapper\NormalBumped.cs" />
+    <Compile Include="MaterialWrapper\NormalDiffuse.cs" />
+    <Compile Include="MaterialWrapper\NormalDiffuseDetail.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
     <Compile Include="RuntimeUtility\BarycenterUtils.cs" />
     <Compile Include="RuntimeUtility\MapViewFixer.cs" />
