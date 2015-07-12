@@ -41,6 +41,9 @@ namespace Kopernicus
     // A message logging class to replace Debug.Log
     public class Logger
     {
+        // Is the logger initialized?
+        private static bool isInitialized = false;
+
         // Logger output path
         private static string LogDirectory 
         {
@@ -73,17 +76,23 @@ namespace Kopernicus
         }
 
         // The complete path of this log
-        TextWriter loggerStream;
+        TextWriter loggerStream = null;
 
         // Write text to the log
         public void Log(object o)
         {
+            if (loggerStream == null)
+                return;
+
             loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: " + o);
         }
 
         // Write text to the log
         public void LogException(Exception e)
         {
+            if (loggerStream == null)
+                return;
+
             loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: Exception Was Recorded: " + e.Message + "\n" + e.StackTrace);
 
             if(e.InnerException != null)
@@ -98,12 +107,18 @@ namespace Kopernicus
 
         public void Flush()
         {
+            if (loggerStream == null)
+                return;
+            
             loggerStream.Flush ();
         }
 
         // Close the logger
         public void Close()
         {
+            if (loggerStream == null)
+                return;
+
             loggerStream.Flush ();
             loggerStream.Close ();
             loggerStream = null;
@@ -112,23 +127,33 @@ namespace Kopernicus
         // Create a logger
         public Logger (string LogFileName = "Kopernicus")
         {
-            // Open the log file (overwrite existing logs)
-            string LogFile = Logger.LogDirectory + LogFileName + ".log";
-            loggerStream = new StreamWriter(File.Create (LogFile));
-
-            // Write an opening message
-            string logVersion = "//=====  " + Constants.Version.version + "  =====//";
-
-            // Create the header this way, because I'm maybe too stupid to find the "fill" function
-            string logHeader = "";
-            for (int i = 0; i < (logVersion.Length - 4); i++)
+            if (!isInitialized)
+                return;
+            
+            try
             {
-                logHeader += "=";
-            }
-            logHeader = "//" + logHeader + "//";
+                // Open the log file (overwrite existing logs)
+                string LogFile = Logger.LogDirectory + LogFileName + ".log";
+                loggerStream = new StreamWriter(File.Create (LogFile));
 
-            loggerStream.WriteLine(logHeader + "\n" + logVersion + "\n" + logHeader); // Don't use Log() because we don't want a date time in front of the Versioning.
-            Log ("Logger \"" + LogFileName + "\" was created");
+                // Write an opening message
+                string logVersion = "//=====  " + Constants.Version.version + "  =====//";
+
+                // Create the header this way, because I'm maybe too stupid to find the "fill" function
+                string logHeader = "";
+                for (int i = 0; i < (logVersion.Length - 4); i++)
+                {
+                    logHeader += "=";
+                }
+                logHeader = "//" + logHeader + "//";
+
+                loggerStream.WriteLine(logHeader + "\n" + logVersion + "\n" + logHeader); // Don't use Log() because we don't want a date time in front of the Versioning.
+                Log ("Logger \"" + LogFileName + "\" was created");
+            }
+            catch (Exception e) 
+            {
+                Debug.LogException (e);
+            }
         }
 
         // Cleanup the logger
@@ -141,9 +166,25 @@ namespace Kopernicus
         // Initialize the Logger (i.e. delete old logs) 
         public static void Initialize()
         {
-            if (Directory.Exists(LogDirectory))
-                Directory.Delete(LogDirectory, true);
-            Directory.CreateDirectory(LogDirectory);
+            // Attempt to clean the log directory
+            try
+            {
+                if (!Directory.Exists(LogDirectory))
+                    Directory.CreateDirectory(LogDirectory);
+
+                // Clear out the old log files
+                foreach(string file in Directory.GetFiles(LogDirectory))
+                {
+                    File.Delete(file);
+                }
+            }
+            catch (Exception e) 
+            {
+                Debug.LogException (e);
+                return;
+            }
+
+            isInitialized = true;
         }
     }
 }
