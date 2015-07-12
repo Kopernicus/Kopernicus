@@ -67,11 +67,25 @@ namespace Kopernicus
                     set { _mod.deformation = value.value; }
                 }
 
+                // CraterCurve
+                [ParserTarget("CraterCurve", optional = true)]
+                private FloatCurveParser craterCurve
+                {
+                    set { _mod.craterCurve = value.curve.Curve; }
+                }
+
                 // jitter
                 [ParserTarget("jitter", optional = true)]
                 private NumericParser<float> jitter
                 {
                     set { _mod.jitter = value.value; }
+                }
+
+                // JitterCurve
+                [ParserTarget("JitterCurve", optional = true)]
+                private FloatCurveParser jitterCurve
+                {
+                    set { _mod.jitterCurve = value.curve.Curve; }
                 }
 
                 // jitterHeight

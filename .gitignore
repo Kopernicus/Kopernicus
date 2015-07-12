@@ -18,3 +18,4 @@ Kopernicus/obj/*
 Kopernicus.userprefs
 *.bin
 Kopernicus/Kopernicus.csproj.user
+Kopernicus/Distribution/GameData/Kopernicus/Plugins/build.bat
