@@ -703,7 +703,12 @@ namespace Kopernicus
                     return;
                 }
 
-                // TODO: Load a custom mesh file here
+                String path = KSPUtil.ApplicationRootPath + "GameData/" + s;
+                if (System.IO.File.Exists(path))
+                {
+                    value = ObjImporter.ImportFile(path);
+                    return;
+                }
 
                 // Mesh was not found
                 value = null;

@@ -55,6 +55,7 @@
     <Compile Include="Configuration\ModLoader\VertexPlanet.cs" />
     <Compile Include="Configuration\HazardousOcean.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexColorRGB.cs" />
+    <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\SpaceCenterSwitcher.cs" />
     <Compile Include="Configuration\LightShifter.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />

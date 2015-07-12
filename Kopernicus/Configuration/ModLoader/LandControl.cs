@@ -88,6 +88,13 @@ namespace Kopernicus
                 {
                     public PQSLandControl.LandClassScatter scatter;
 
+                    // The mesh
+                    [ParserTarget("mesh", optional = true)]
+                    private MeshParser baseMesh
+                    {
+                        set { scatter.baseMesh = value.value; }
+                    }
+
                     // castShadows
                     [ParserTarget("castShadows", optional = true)]
                     private NumericParser<bool> castShadows
