@@ -116,6 +116,13 @@ namespace Kopernicus
             {
                 set { celestialBody.initialRotation = value.value; }
             }
+
+            // Altitude where the Game switches the reference frame
+            [ParserTarget("inverseRotThresholdAltitude", optional = true)]
+            private NumericParser<float> inverseRotThresholdAltitude
+            {
+                set { celestialBody.inverseRotThresholdAltitude = value.value; }
+            }
             
             // albedo
             [ParserTarget("albedo", optional = true)]
