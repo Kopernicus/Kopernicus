@@ -144,7 +144,8 @@ namespace Kopernicus
         private bool forcedUpdate = false;
         private void OnLevelWasLoaded(int level)
         {
-            forcedUpdate = true;
+            if (HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)
+                forcedUpdate = true;
         }
 
         void Start()
