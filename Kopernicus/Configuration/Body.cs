@@ -269,17 +269,19 @@ namespace Kopernicus
                     // Add an OnDemand Handler
                     OnDemand.OnDemandStorage.AddHandler(generatedBody.pqsVersion);
 
+                    /** Comment that out, because of bugginess
                     // Get the 3 default presets
                     List<List<PQSCache.PQSSpherePreset>> presets = new List<List<PQSCache.PQSSpherePreset>>() {
                         PQSCache.PresetList.presets.Find(p => p.name == "Low").spherePresets,
                         PQSCache.PresetList.presets.Find(p => p.name == "Default").spherePresets,
                         PQSCache.PresetList.presets.Find(p => p.name == "High").spherePresets
                     };
-
+                    
                     // Create stock SpherePresets
                     presets[0].Add(new PQSCache.PQSSpherePreset(pqs.pqsVersion.name, 4, 1, 6)); // Low
                     presets[1].Add(new PQSCache.PQSSpherePreset(pqs.pqsVersion.name, 6, 1, 8)); // Default
                     presets[2].Add(new PQSCache.PQSSpherePreset(pqs.pqsVersion.name, 8, 1, 10)); // High
+                    */
 
                     // If an ocean was defined
                     if (ocean != null)
@@ -318,10 +320,12 @@ namespace Kopernicus
                             ocean.oceanPQS.parentSphere = generatedBody.pqsVersion;
                         }
 
+                        /**
                         // Create stock SpherePresets
                         presets[0].Add(new PQSCache.PQSSpherePreset(ocean.oceanPQS.name, 4, 1, 6)); // Low
                         presets[1].Add(new PQSCache.PQSSpherePreset(ocean.oceanPQS.name, 6, 1, 7)); // Default
                         presets[2].Add(new PQSCache.PQSSpherePreset(ocean.oceanPQS.name, 8, 1, 7)); // High
+                        */ 
                     }
 
                     // ----------- DEBUG -------------
