@@ -1,6 +1,6 @@
-Kopernicus Beta Release 2
+Kopernicus Beta Release 2.3
 ==============================
-July 6th, 2015
+July 16th, 2015
 
 Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
    		    - Nathaniel R. Lewis (linux.robotdude@gmail.com)
@@ -12,21 +12,17 @@ Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, Oven
 
 New in this version
 -------------------
-- Persistent SOI and HillSphere settings
-- StarLightFixer patches Radiators
-- E.V.E clouds work again in MainMenu
-- Fixed altEnd value in HeightColorMap landclasses (Thanks MrHappyFace)
-- Barycenters (no example, add baryCenter = true to your Body {} node)
-- PQS-Fade / the altitude where it gets deactivated is configurable
-- Added some PQSMods
-- OceanFX-Mod has got propper configuration-options
-- Support for XKCD and Hex-Colors (See NewMinmus and Hodor)
-- Support for custom brightnessCurves and AU's for Stars
-- Added PQSMod-Patching on Oceans
-- Removed Miller's Planet example due to buggyness
-- Added an Ocean to the NewMinmus example
-- [Hotfix 1] Fixed NRE in StarLightSwitcher
-- [Hotfix 2] Fixed Issue with PSystemSetup-trick
+- Added navballSwitchRadiusMult-Parser
+- Added Parser for PQSLandControl and custom Ground Scatters (thanks Gravitasi!)
+- Fixed Logging-Issue
+- Removed the generation of PQSCache presets in order to fix a bug
+- Added Parsers for CraterCurve and JitterCurve to the VoronoiCraters-Parser
+- Added inverseRotThresholdAltitude-Parser
+- Fixed Lightning-bug in VAB
+- EVE clouds are now rendered through rings
+- Barycenters don't show a thumbnail in the R&D
+- Fixed a bug with builtin MapSO's, they work now correct
+- Added custom GroundScatter to the Hodor-example
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
