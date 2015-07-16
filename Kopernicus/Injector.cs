@@ -89,6 +89,9 @@ namespace Kopernicus
             RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController> (true).First ();
             archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
+            // Add the BaryCenter controller
+            archivesController.gameObject.AddComponent<BarycenterUtils.RDBaryCenter>();
+
             // Clear space center instance so it will accept nouveau Kerbin
             SpaceCenter.Instance = null;
 
@@ -127,6 +130,7 @@ namespace Kopernicus
                 // Make the Body a barycenter
                 if (Templates.barycenters.Contains(body.GetTransform().name))
                 {
+                    // Deactivate ScaledVersion
                     body.scaledBody.SetActiveRecursively(false);
                 }
 
