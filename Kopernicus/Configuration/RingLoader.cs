@@ -229,7 +229,8 @@ namespace Kopernicus
                 RingRender.material.mainTexture = ring.texture;
                 RingRender.material.color = ring.color;
 
-                RingRender.material.renderQueue = ScaledPlanet.renderer.material.renderQueue - 10;
+                RingRender.material.renderQueue = ScaledPlanet.renderer.material.renderQueue + 2;
+                ScaledPlanet.AddComponent<EVEFixer>().targetQueue = ScaledPlanet.renderer.material.renderQueue + 1;
 
                 RingObject.AddComponent<ReScaler>();
 
@@ -263,6 +264,19 @@ namespace Kopernicus
             public Ring()
             {
                 steps = 128;
+            }
+        }
+
+        // Class to fix the renderQueue of EVE 7.4 clouds
+        public class EVEFixer : MonoBehaviour
+        {
+            public int targetQueue;
+
+            public void LateUpdate()
+            {
+                foreach (Transform cloud in transform)
+                    if (cloud.name == "New Game Object" && cloud.gameObject.GetComponents<MeshRenderer>().Length == 1 && cloud.gameObject.GetComponents<MeshFilter>().Length == 1)
+                        cloud.gameObject.GetComponent<MeshRenderer>().sharedMaterial.renderQueue = targetQueue;
             }
         }
 
