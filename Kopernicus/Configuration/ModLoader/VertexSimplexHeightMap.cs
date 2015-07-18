@@ -36,90 +36,90 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexSimplexHeightMap : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexSimplexHeightMap _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexSimplexHeightMap : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexSimplexHeightMap _mod;
 
-				// The deformity of the simplex terrain
-				[ParserTarget("deformity")]
-				private NumericParser<double> deformity
-				{
-					set { _mod.deformity = value.value; }
-				}
+                // The deformity of the simplex terrain
+                [ParserTarget("deformity")]
+                private NumericParser<double> deformity
+                {
+                    set { _mod.deformity = value.value; }
+                }
 
-				// The frequency of the simplex terrain
-				[ParserTarget("frequency")]
-				private NumericParser<double> frequency
-				{
-					set { _mod.frequency = value.value; }
-				}
+                // The frequency of the simplex terrain
+                [ParserTarget("frequency")]
+                private NumericParser<double> frequency
+                {
+                    set { _mod.frequency = value.value; }
+                }
 
-				// Height end
-				[ParserTarget("heightEnd")]
-				private NumericParser<float> heightEnd
-				{
-					set { _mod.heightEnd = value.value; }
-				}
+                // Height end
+                [ParserTarget("heightEnd")]
+                private NumericParser<float> heightEnd
+                {
+                    set { _mod.heightEnd = value.value; }
+                }
 
-				// Height start
-				[ParserTarget("heightStart")]
-				private NumericParser<float> heightStart
-				{
-					set { _mod.heightStart = value.value; }
-				}
+                // Height start
+                [ParserTarget("heightStart")]
+                private NumericParser<float> heightStart
+                {
+                    set { _mod.heightStart = value.value; }
+                }
 
-				// The greyscale map texture used
-				[ParserTarget("map")]
-				private MapSOParser_GreyScale<MapSO> heightMap
-				{
-					set { _mod.heightMap = value.value; }
-				}
+                // The greyscale map texture used
+                [ParserTarget("map")]
+                private MapSOParser_GreyScale<MapSO> heightMap
+                {
+                    set { _mod.heightMap = value.value; }
+                }
 
-				// Octaves of the simplex terrain
-				[ParserTarget("octaves")]
-				private NumericParser<double> octaves
-				{
-					set { _mod.octaves = value.value; }
-				}
+                // Octaves of the simplex terrain
+                [ParserTarget("octaves")]
+                private NumericParser<double> octaves
+                {
+                    set { _mod.octaves = value.value; }
+                }
 
-				// Persistence of the simplex terrain
-				[ParserTarget("persistence")]
-				private NumericParser<double> persistence
-				{
-					set { _mod.persistence = value.value; }
-				}
+                // Persistence of the simplex terrain
+                [ParserTarget("persistence")]
+                private NumericParser<double> persistence
+                {
+                    set { _mod.persistence = value.value; }
+                }
 
-				// The seed of the simplex terrain
-				[ParserTarget("seed")]
-				private NumericParser<int> seed
-				{
-					set { _mod.seed = value.value; }
-				}
+                // The seed of the simplex terrain
+                [ParserTarget("seed")]
+                private NumericParser<int> seed
+                {
+                    set { _mod.seed = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexSimplexHeightMap()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject("VertexSimplexHeightMap");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexSimplexHeightMap>();
-					base.mod = _mod;
-				}
+                public VertexSimplexHeightMap()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject("VertexSimplexHeightMap");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexSimplexHeightMap>();
+                    base.mod = _mod;
+                }
 
                 public VertexSimplexHeightMap(PQSMod template)
                 {
@@ -127,8 +127,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

@@ -35,18 +35,18 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/* Attribute indicating the type of config node data this can load from - node or value */
-		[AttributeUsage(AttributeTargets.Class)]
-		public class RequireConfigType : Attribute
-		{
-			public ConfigType type { get; private set; }
-			public RequireConfigType (ConfigType type)
-			{
-				this.type = type;
-			}
-		}
-	}
+    namespace Configuration
+    {
+        /* Attribute indicating the type of config node data this can load from - node or value */
+        [AttributeUsage(AttributeTargets.Class)]
+        public class RequireConfigType : Attribute
+        {
+            public ConfigType type { get; private set; }
+            public RequireConfigType (ConfigType type)
+            {
+                this.type = type;
+            }
+        }
+    }
 }
 

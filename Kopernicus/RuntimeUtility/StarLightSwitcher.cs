@@ -42,9 +42,9 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	// Class to manage the properties of custom stars
-	public class StarComponent : MonoBehaviour
-	{
+    // Class to manage the properties of custom stars
+    public class StarComponent : MonoBehaviour
+    {
         // Solar power curve of the star
         public FloatCurve powerCurve;
 
@@ -118,53 +118,54 @@ namespace Kopernicus
                 Sun.Instance.brightnessCurve = lsc.brightnessCurve.Curve;
             }
 
-		}
+        }
 
-		public bool IsActiveStar()
-		{
-			return (Sun.Instance.sun == celestialBody);
-		}
-	}
+        public bool IsActiveStar()
+        {
+            return (Sun.Instance.sun == celestialBody);
+        }
+    }
 
-	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
+    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class StarLightSwitcher : MonoBehaviour
     {
-		// List of celestial bodies that are stars
-		private List<StarComponent> stars;
+        // List of celestial bodies that are stars
+        private List<StarComponent> stars;
 
-		// On awake(), preserve the star
-		void Awake()
-		{
-			Logger.Default.Log ("StarLightSwitcher.Awake(): Begin");
-			Logger.Default.Flush ();
-			DontDestroyOnLoad (this);
-		}
+        // On awake(), preserve the star
+        void Awake()
+        {
+            Logger.Default.Log ("StarLightSwitcher.Awake(): Begin");
+            Logger.Default.Flush ();
+            DontDestroyOnLoad (this);
+        }
 
         // On Scene Change, update the current star to "fix" PSystemSetup
         private bool forcedUpdate = false;
         private void OnLevelWasLoaded(int level)
         {
-            forcedUpdate = true;
+            if (HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)
+                forcedUpdate = true;
         }
 
-		void Start()
-		{
-			// find all the stars in the system
-			stars = PSystemManager.Instance.localBodies.SelectMany (body => body.scaledBody.GetComponentsInChildren<StarComponent>(true)).ToList();
+        void Start()
+        {
+            // find all the stars in the system
+            stars = PSystemManager.Instance.localBodies.SelectMany (body => body.scaledBody.GetComponentsInChildren<StarComponent>(true)).ToList();
 
-			// Disable queued update because Planetarium is overly complicated and does strange things
-			foreach (CelestialBody star in PSystemManager.Instance.localBodies)
-				if (star.orbitDriver != null)
-					star.orbitDriver.QueuedUpdate = false;
+            // Disable queued update because Planetarium is overly complicated and does strange things
+            foreach (CelestialBody star in PSystemManager.Instance.localBodies)
+                if (star.orbitDriver != null)
+                    star.orbitDriver.QueuedUpdate = false;
 
-			// Flush the log
-			Logger.Default.Flush ();
-		}
+            // Flush the log
+            Logger.Default.Flush ();
+        }
 
         void Update()
         {
-			StarComponent selectedStar = null;
-		
+            StarComponent selectedStar = null;
+        
             // If forceUpdate is enabled, update the active star
             if (forcedUpdate && Sun.Instance)
             {
@@ -175,17 +176,17 @@ namespace Kopernicus
 
             // If we are in the tracking station, space center or game, 
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
-			{
-	            // Get the current position of the active vessel
-				if (PlanetariumCamera.fetch.enabled == true) 
-				{
-					Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
-					selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
-				} 
-				else if (FlightGlobals.ActiveVessel != null) 
-				{
-					Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
-					selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
+            {
+                // Get the current position of the active vessel
+                if (PlanetariumCamera.fetch.enabled == true) 
+                {
+                    Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
+                    selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
+                } 
+                else if (FlightGlobals.ActiveVessel != null) 
+                {
+                    Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
+                    selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
                 }
                 else if (SpaceCenter.Instance != null && SpaceCenter.Instance.SpaceCenterTransform != null)
                 {
@@ -202,31 +203,31 @@ namespace Kopernicus
                 {
                     HomeStar().SetAsActive();
                 }
-			}
+            }
         }
 
-		// Select the home star
-		public static StarComponent HomeStar()
-		{
-			return PSystemManager.Instance.localBodies.Where (body => body.flightGlobalsIndex == 0).First ().scaledBody.GetComponent<StarComponent> ();
-		}
+        // Select the home star
+        public static StarComponent HomeStar()
+        {
+            return PSystemManager.Instance.localBodies.Where (body => body.flightGlobalsIndex == 0).First ().scaledBody.GetComponent<StarComponent> ();
+        }
 
-		// Debug a star's coronas
-		public static void DebugSunScaledSpace(GameObject scaledVersion)
-		{
-			// Debug the scaled space size of the star
-			Utility.PrintTransform (scaledVersion.transform, " " + scaledVersion.name + " Transform ");
-			Utility.DumpObjectProperties (scaledVersion.renderer.material);
+        // Debug a star's coronas
+        public static void DebugSunScaledSpace(GameObject scaledVersion)
+        {
+            // Debug the scaled space size of the star
+            Utility.PrintTransform (scaledVersion.transform, " " + scaledVersion.name + " Transform ");
+            Utility.DumpObjectProperties (scaledVersion.renderer.material);
 
-			// Get the sun corona objects in scaled space
-			foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
-			{
-				Logger.Active.Log ("---- Sun Corona ----");
-				Utility.PrintTransform (corona.transform);
-				Utility.DumpObjectProperties (corona);
-				Utility.DumpObjectProperties (corona.renderer.material);
-				Logger.Active.Log ("--------------------");
-			}
-		}
-	}
+            // Get the sun corona objects in scaled space
+            foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
+            {
+                Logger.Active.Log ("---- Sun Corona ----");
+                Utility.PrintTransform (corona.transform);
+                Utility.DumpObjectProperties (corona);
+                Utility.DumpObjectProperties (corona.renderer.material);
+                Logger.Active.Log ("--------------------");
+            }
+        }
+    }
 }

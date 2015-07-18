@@ -35,15 +35,15 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Exception representing a missing field
-		 **/
-		public class ParserTargetMissingException : Exception
-		{
-			public ParserTargetMissingException (string message) : base(message) { }
-		}
-	}
+    namespace Configuration
+    {
+        /**
+         * Exception representing a missing field
+         **/
+        public class ParserTargetMissingException : Exception
+        {
+            public ParserTargetMissingException (string message) : base(message) { }
+        }
+    }
 }
 

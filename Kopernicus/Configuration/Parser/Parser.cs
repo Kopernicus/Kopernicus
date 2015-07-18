@@ -65,6 +65,14 @@ namespace Kopernicus
 				return o;
 			}
 
+            // Create an object form a configuration node (Runtime type identification) with constructor parameters
+            public static object CreateObjectFromConfigNode (Type type, ConfigNode node, object[] arguments)
+            {
+                object o = Activator.CreateInstance (type, arguments);
+                LoadObjectFromConfigurationNode (o, node);
+                return o;
+            }
+
 			/**
 			 * Load data for an object's ParserTarget fields and properties from a configuration node
 			 * 
@@ -276,6 +284,7 @@ namespace Kopernicus
 							{
 								// Generate the type from the name
 								Type elementType = Type.GetType (target.typePrefix + subnode.name);
+
                                 if (elementType == null)
                                 {
                                     foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)
@@ -290,152 +299,152 @@ namespace Kopernicus
                                     }
                                 }
 
-								// Add the object to the collection
-								collection.Add (CreateObjectFromConfigNode (elementType, subnode));
-							}
-						}
-					}
-				}
+                                // Add the object to the collection
+                                collection.Add (CreateObjectFromConfigNode (elementType, subnode));
+                            }
+                        }
+                    }
+                }
 
-				// If we are dealing with a non generic collection
-				else 
-				{
-					// Check for invalid scenarios
-					if (target.nameSignificance == NameSignificance.None) 
-					{
-						throw new Exception ("Can not infer type from non generic target; can not infer type from zero name significance");
-					}
-				}
-				
-				// If the member type is a field, set the value
-				if(member.MemberType == MemberTypes.Field)
-				{
-					(member as FieldInfo).SetValue(o, targetValue);
-				}
-				
-				// If the member wasn't a field, it must be a property.  If the property is writable, set it.
-				else if((member as PropertyInfo).CanWrite)
-				{
-					(member as PropertyInfo).SetValue(o, targetValue, null);
-				}
-			}
+                // If we are dealing with a non generic collection
+                else 
+                {
+                    // Check for invalid scenarios
+                    if (target.nameSignificance == NameSignificance.None) 
+                    {
+                        throw new Exception ("Can not infer type from non generic target; can not infer type from zero name significance");
+                    }
+                }
+                
+                // If the member type is a field, set the value
+                if(member.MemberType == MemberTypes.Field)
+                {
+                    (member as FieldInfo).SetValue(o, targetValue);
+                }
+                
+                // If the member wasn't a field, it must be a property.  If the property is writable, set it.
+                else if((member as PropertyInfo).CanWrite)
+                {
+                    (member as PropertyInfo).SetValue(o, targetValue, null);
+                }
+            }
 
-			/**
-			 * Load data for ParserTarget field or property from a configuration node
-			 * 
-			 * @param member Member to load data for
-			 * @param o Instance of the object which owns member
-			 * @param node Configuration node from which to load data
-			 **/
-			private static void LoadObjectMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node)
-			{
-				// Get the parser target, only one is allowed so it will be first
-				ParserTarget target = (member.GetCustomAttributes ((typeof(ParserTarget)), true) as ParserTarget[]) [0];
-				
-				// Figure out if this field exists and if we care
-				bool isNode = node.HasNode (target.fieldName);
-				bool isValue = node.HasValue (target.fieldName);
-				
-				// Obtain the type the member is (can only be field or property)
-				Type targetType = null;
-				object targetValue = null;
-				if (member.MemberType == MemberTypes.Field) 
-				{
-					targetType = (member as FieldInfo).FieldType;
-					targetValue = (member as FieldInfo).GetValue (o);
-				} 
-				else 
-				{
-					targetType = (member as PropertyInfo).PropertyType;
-					if ((member as PropertyInfo).CanRead)
-					{
-						targetValue = (member as PropertyInfo).GetValue (o, null);
-					}
-				}
+            /**
+             * Load data for ParserTarget field or property from a configuration node
+             * 
+             * @param member Member to load data for
+             * @param o Instance of the object which owns member
+             * @param node Configuration node from which to load data
+             **/
+            private static void LoadObjectMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node)
+            {
+                // Get the parser target, only one is allowed so it will be first
+                ParserTarget target = (member.GetCustomAttributes ((typeof(ParserTarget)), true) as ParserTarget[]) [0];
+                
+                // Figure out if this field exists and if we care
+                bool isNode = node.HasNode (target.fieldName);
+                bool isValue = node.HasValue (target.fieldName);
+                
+                // Obtain the type the member is (can only be field or property)
+                Type targetType = null;
+                object targetValue = null;
+                if (member.MemberType == MemberTypes.Field) 
+                {
+                    targetType = (member as FieldInfo).FieldType;
+                    targetValue = (member as FieldInfo).GetValue (o);
+                } 
+                else 
+                {
+                    targetType = (member as PropertyInfo).PropertyType;
+                    if ((member as PropertyInfo).CanRead)
+                    {
+                        targetValue = (member as PropertyInfo).GetValue (o, null);
+                    }
+                }
 
-				Logger.Active.Log("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
+                Logger.Active.Log("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
 
                 // If there was no data found for this node
-				if (!isNode && !isValue) 
-				{
-					if (!target.optional && !(target.allowMerge && targetValue != null)) 
-					{
-						// Error - non optional field is missing
-						throw new ParserTargetMissingException ("Missing non-optional field: " + o.GetType () + "." + target.fieldName);
-					}
-					
-					// Nothing to do, so return
-					return;
-				}
+                if (!isNode && !isValue) 
+                {
+                    if (!target.optional && !(target.allowMerge && targetValue != null)) 
+                    {
+                        // Error - non optional field is missing
+                        throw new ParserTargetMissingException ("Missing non-optional field: " + o.GetType () + "." + target.fieldName);
+                    }
+                    
+                    // Nothing to do, so return
+                    return;
+                }
 
-				// Does this node have a required config source type (and if so, check if valid)
-				RequireConfigType[] attributes = member.GetCustomAttributes (typeof(RequireConfigType), true) as RequireConfigType[];
-				if (attributes.Length > 0) 
-				{
-					if((attributes[0].type == ConfigType.Node && !isNode) || (attributes[0].type == ConfigType.Value && !isValue))
-					{
-						throw new ParserTargetTypeMismatchException (target.fieldName + " requires config value of " + attributes[0].type);
-					}
-				}
-				
-				// If this object is a value (attempt no merge here)
-				if(isValue)
-				{
-					// If the target is a string, it works natively
-					if(targetType.Equals(typeof (string)))
-					{
-						targetValue = node.GetValue(target.fieldName);
-					}
-					
-					// Figure out if this object is a parsable type
-					else if((typeof (IParsable)).IsAssignableFrom(targetType))
-					{
-						// Create a new object
-						IParsable targetParsable = (IParsable) Activator.CreateInstance(targetType);
-						targetParsable.SetFromString(node.GetValue(target.fieldName));
-						targetValue = targetParsable;
-					}
+                // Does this node have a required config source type (and if so, check if valid)
+                RequireConfigType[] attributes = member.GetCustomAttributes (typeof(RequireConfigType), true) as RequireConfigType[];
+                if (attributes.Length > 0) 
+                {
+                    if((attributes[0].type == ConfigType.Node && !isNode) || (attributes[0].type == ConfigType.Value && !isValue))
+                    {
+                        throw new ParserTargetTypeMismatchException (target.fieldName + " requires config value of " + attributes[0].type);
+                    }
+                }
+                
+                // If this object is a value (attempt no merge here)
+                if(isValue)
+                {
+                    // If the target is a string, it works natively
+                    if(targetType.Equals(typeof (string)))
+                    {
+                        targetValue = node.GetValue(target.fieldName);
+                    }
+                    
+                    // Figure out if this object is a parsable type
+                    else if((typeof (IParsable)).IsAssignableFrom(targetType))
+                    {
+                        // Create a new object
+                        IParsable targetParsable = (IParsable) Activator.CreateInstance(targetType);
+                        targetParsable.SetFromString(node.GetValue(target.fieldName));
+                        targetValue = targetParsable;
+                    }
 
-					// Throw exception or print error
-					else
-					{
-						Logger.Active.Log("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
-						return;
-					}
-				}
-				
-				// If this object is a node (potentially merge)
-				else if(isNode)
-				{
-					// We need to get an instance of the object we are trying to populate
-					// If we are not allowed to merge, or the object does not exist, make a new instance
-					if(targetValue == null || !target.allowMerge)
-					{
-						targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName));
-					}
-					
-					// Otherwise we can merge this value
-					else
-					{
-						LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName));
-					}
-				}
-				
-				// If the member type is a field, set the value
-				if(member.MemberType == MemberTypes.Field)
-				{
-					(member as FieldInfo).SetValue(o, targetValue);
-				}
+                    // Throw exception or print error
+                    else
+                    {
+                        Logger.Active.Log("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
+                        return;
+                    }
+                }
+                
+                // If this object is a node (potentially merge)
+                else if(isNode)
+                {
+                    // We need to get an instance of the object we are trying to populate
+                    // If we are not allowed to merge, or the object does not exist, make a new instance
+                    if(targetValue == null || !target.allowMerge)
+                    {
+                        targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName));
+                    }
+                    
+                    // Otherwise we can merge this value
+                    else
+                    {
+                        LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName));
+                    }
+                }
+                
+                // If the member type is a field, set the value
+                if(member.MemberType == MemberTypes.Field)
+                {
+                    (member as FieldInfo).SetValue(o, targetValue);
+                }
 
-				// If the member wasn't a field, it must be a property.  If the property is writable, set it.
-				else if((member as PropertyInfo).CanWrite)
-				{
-					(member as PropertyInfo).SetValue(o, targetValue, null);
-				}
-			}
+                // If the member wasn't a field, it must be a property.  If the property is writable, set it.
+                else if((member as PropertyInfo).CanWrite)
+                {
+                    (member as PropertyInfo).SetValue(o, targetValue, null);
+                }
+            }
 
-			// End class
-		}
-	}
+            // End class
+        }
+    }
 }
 

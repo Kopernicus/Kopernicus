@@ -36,154 +36,154 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightNoiseVertHeightCurve2 : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightNoiseVertHeightCurve2 _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexHeightNoiseVertHeightCurve2 : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexHeightNoiseVertHeightCurve2 _mod;
 
                 // deformity
-				[ParserTarget("deformity", optional = true)]
-				private NumericParser<float> deformity
-				{
-					set { _mod.deformity = value.value; }
-				}
+                [ParserTarget("deformity", optional = true)]
+                private NumericParser<float> deformity
+                {
+                    set { _mod.deformity = value.value; }
+                }
 
                 // ridgedAddFrequency
-				[ParserTarget("ridgedAddFrequency", optional = true)]
-				private NumericParser<float> ridgedAddFrequency
-				{
-					set { _mod.ridgedAddFrequency = value.value; }
-				}
+                [ParserTarget("ridgedAddFrequency", optional = true)]
+                private NumericParser<float> ridgedAddFrequency
+                {
+                    set { _mod.ridgedAddFrequency = value.value; }
+                }
 
                 // ridgedAddLacunarity
-				[ParserTarget("ridgedAddLacunarity", optional = true)]
-				private NumericParser<float> ridgedAddLacunarity
-				{
-					set { _mod.ridgedAddLacunarity = value.value; }
-				}
+                [ParserTarget("ridgedAddLacunarity", optional = true)]
+                private NumericParser<float> ridgedAddLacunarity
+                {
+                    set { _mod.ridgedAddLacunarity = value.value; }
+                }
 
                 // ridgedAddOctaves
-				[ParserTarget("ridgedAddOctaves", optional = true)]
-				private NumericParser<int> ridgedAddOctaves
-				{
-					set { _mod.ridgedAddOctaves = value.value; }
-				}
+                [ParserTarget("ridgedAddOctaves", optional = true)]
+                private NumericParser<int> ridgedAddOctaves
+                {
+                    set { _mod.ridgedAddOctaves = value.value; }
+                }
 
                 // ridgedAddOctaves
-				[ParserTarget("ridgedAddSeed", optional = true)]
-				private NumericParser<int> ridgedAddSeed
-				{
-					set { _mod.ridgedAddSeed = value.value; }
-				}
+                [ParserTarget("ridgedAddSeed", optional = true)]
+                private NumericParser<int> ridgedAddSeed
+                {
+                    set { _mod.ridgedAddSeed = value.value; }
+                }
 
                 // ridgedMode
-				[ParserTarget("ridgedMode", optional = true)]
-				private EnumParser<LibNoise.Unity.QualityMode> ridgedMode
-				{
-					set { _mod.ridgedMode = value.value; }
-				}
+                [ParserTarget("ridgedMode", optional = true)]
+                private EnumParser<LibNoise.Unity.QualityMode> ridgedMode
+                {
+                    set { _mod.ridgedMode = value.value; }
+                }
 
                 // ridgedSubFrequency
-				[ParserTarget("ridgedSubFrequency", optional = true)]
-				private NumericParser<float> ridgedSubFrequency
-				{
-					set { _mod.ridgedSubFrequency = value.value; }
-				}
+                [ParserTarget("ridgedSubFrequency", optional = true)]
+                private NumericParser<float> ridgedSubFrequency
+                {
+                    set { _mod.ridgedSubFrequency = value.value; }
+                }
 
                 // ridgedSubLacunarity
-				[ParserTarget("ridgedSubLacunarity", optional = true)]
-				private NumericParser<float> ridgedSubLacunarity
-				{
-					set { _mod.ridgedSubLacunarity = value.value; }
-				}
+                [ParserTarget("ridgedSubLacunarity", optional = true)]
+                private NumericParser<float> ridgedSubLacunarity
+                {
+                    set { _mod.ridgedSubLacunarity = value.value; }
+                }
 
                 // ridgedSubOctaves
-				[ParserTarget("ridgedSubOctaves", optional = true)]
-				private NumericParser<int> ridgedSubOctaves
-				{
-					set { _mod.ridgedSubOctaves = value.value; }
-				}
+                [ParserTarget("ridgedSubOctaves", optional = true)]
+                private NumericParser<int> ridgedSubOctaves
+                {
+                    set { _mod.ridgedSubOctaves = value.value; }
+                }
 
                 // ridgedSubSeed
-				[ParserTarget("ridgedSubSeed", optional = true)]
-				private NumericParser<int> ridgedSubSeed
-				{
-					set { _mod.ridgedSubSeed = value.value; }
-				}
+                [ParserTarget("ridgedSubSeed", optional = true)]
+                private NumericParser<int> ridgedSubSeed
+                {
+                    set { _mod.ridgedSubSeed = value.value; }
+                }
 
                 // simplexCurve
-				[ParserTarget("simplexCurve", optional = true)]
-				private AnimationCurveParser simplexCurve
-				{
-					set { _mod.simplexCurve = value.curve; }
-				}
+                [ParserTarget("simplexCurve", optional = true)]
+                private AnimationCurveParser simplexCurve
+                {
+                    set { _mod.simplexCurve = value.curve; }
+                }
 
                 // simplexFrequency
-				[ParserTarget("simplexFrequency", optional = true)]
-				private NumericParser<double> simplexFrequency
-				{
-					set { _mod.simplexFrequency = value.value; }
-				}
+                [ParserTarget("simplexFrequency", optional = true)]
+                private NumericParser<double> simplexFrequency
+                {
+                    set { _mod.simplexFrequency = value.value; }
+                }
 
                 // simplexHeightEnd
-				[ParserTarget("simplexHeightEnd", optional = true)]
-				private NumericParser<double> simplexHeightEnd
-				{
-					set { _mod.simplexHeightEnd = value.value; }
-				}
+                [ParserTarget("simplexHeightEnd", optional = true)]
+                private NumericParser<double> simplexHeightEnd
+                {
+                    set { _mod.simplexHeightEnd = value.value; }
+                }
 
                 // simplexHeightStart
-				[ParserTarget("simplexHeightStart", optional = true)]
-				private NumericParser<double> simplexHeightStart
-				{
-					set { _mod.simplexHeightStart = value.value; }
-				}
+                [ParserTarget("simplexHeightStart", optional = true)]
+                private NumericParser<double> simplexHeightStart
+                {
+                    set { _mod.simplexHeightStart = value.value; }
+                }
 
                 // simplexOctaves
-				[ParserTarget("simplexOctaves", optional = true)]
-				private NumericParser<double> simplexOctaves
-				{
-					set { _mod.simplexOctaves = value.value; }
-				}
+                [ParserTarget("simplexOctaves", optional = true)]
+                private NumericParser<double> simplexOctaves
+                {
+                    set { _mod.simplexOctaves = value.value; }
+                }
 
                 // simplexPersistence
-				[ParserTarget("simplexPersistence", optional = true)]
-				private NumericParser<double> simplexPersistence
-				{
-					set { _mod.simplexPersistence = value.value; }
-				}
+                [ParserTarget("simplexPersistence", optional = true)]
+                private NumericParser<double> simplexPersistence
+                {
+                    set { _mod.simplexPersistence = value.value; }
+                }
 
                 // simplexSeed
-				[ParserTarget("simplexSeed", optional = true)]
-				private NumericParser<int> simplexSeed
-				{
-					set { _mod.simplexSeed = value.value; }
-				}
+                [ParserTarget("simplexSeed", optional = true)]
+                private NumericParser<int> simplexSeed
+                {
+                    set { _mod.simplexSeed = value.value; }
+                }
 
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public VertexHeightNoiseVertHeightCurve2()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VertexHeightNoiseVertHeightCurve2");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_VertexHeightNoiseVertHeightCurve2>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public VertexHeightNoiseVertHeightCurve2(PQSMod template)
                 {
@@ -191,8 +191,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

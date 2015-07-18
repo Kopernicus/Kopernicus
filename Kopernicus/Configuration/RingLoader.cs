@@ -40,9 +40,9 @@ using Kopernicus.Configuration.Resources;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
         public class RingLoader : IParserEventSubscriber
         {
             // Set-up our custom ring
@@ -100,6 +100,12 @@ namespace Kopernicus
                 set { ring.unlit = value.value; }
             }
 
+            [ParserTarget("steps", optional = true, allowMerge = false)]
+            public NumericParser<int> steps
+            {
+                set { ring.steps = value.value; }
+            }
+
 
             // Initialize the RingLoader
             public RingLoader()
@@ -123,13 +129,12 @@ namespace Kopernicus
             {
                 Logger.Active.Log("Adding Ring to " + ScaledPlanet.name);
                 Vector3 StartVec = new Vector3(1, 0, 0);
-                int RingSteps = 128;
                 var vertices = new List<Vector3>();
                 var Uvs = new List<Vector2>();
                 var Tris = new List<int>();
                 var Normals = new List<Vector3>();
                 
-                for (float i = 0.0f; i < 360.0f; i += (360.0f / RingSteps))
+                for (float i = 0.0f; i < 360.0f; i += (360.0f / ring.steps))
                 {
                     var eVert = Quaternion.Euler(0, i, 0) * StartVec;
 
@@ -143,8 +148,8 @@ namespace Kopernicus
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(1, 1));
                 }
-                
-                for (float i = 0.0f; i < 360.0f; i += (360.0f / RingSteps))
+
+                for (float i = 0.0f; i < 360.0f; i += (360.0f / ring.steps))
                 {
                     var eVert = Quaternion.Euler(0, i, 0) * StartVec;
 
@@ -160,8 +165,8 @@ namespace Kopernicus
                 }
                 
                 //Tri Wrapping
-                int Wrapping = (RingSteps * 2);
-                for (int i = 0; i < (RingSteps * 2); i += 2)
+                int Wrapping = (ring.steps * 2);
+                for (int i = 0; i < (ring.steps * 2); i += 2)
                 {
                     Tris.Add((i) % Wrapping);
                     Tris.Add((i + 1) % Wrapping);
@@ -171,8 +176,8 @@ namespace Kopernicus
                     Tris.Add((i + 3) % Wrapping);
                     Tris.Add((i + 2) % Wrapping);
                 }
-                
-                for (int i = 0; i < (RingSteps * 2); i += 2)
+
+                for (int i = 0; i < (ring.steps * 2); i += 2)
                 {
                     Tris.Add(Wrapping + (i + 2) % Wrapping);
                     Tris.Add(Wrapping + (i + 1) % Wrapping);
@@ -224,7 +229,8 @@ namespace Kopernicus
                 RingRender.material.mainTexture = ring.texture;
                 RingRender.material.color = ring.color;
 
-                RingRender.material.renderQueue = ScaledPlanet.renderer.material.renderQueue + 10;
+                RingRender.material.renderQueue = ScaledPlanet.renderer.material.renderQueue + 2;
+                ScaledPlanet.AddComponent<EVEFixer>().targetQueue = ScaledPlanet.renderer.material.renderQueue + 1;
 
                 RingObject.AddComponent<ReScaler>();
 
@@ -253,6 +259,25 @@ namespace Kopernicus
             public Color color { get; set; }
             public bool lockRotation { get; set; }
             public bool unlit { get; set; }
+            public int steps { get; set; }
+
+            public Ring()
+            {
+                steps = 128;
+            }
+        }
+
+        // Class to fix the renderQueue of EVE 7.4 clouds
+        public class EVEFixer : MonoBehaviour
+        {
+            public int targetQueue;
+
+            public void LateUpdate()
+            {
+                foreach (Transform cloud in transform)
+                    if (cloud.name == "New Game Object" && cloud.gameObject.GetComponents<MeshRenderer>().Length == 1 && cloud.gameObject.GetComponents<MeshFilter>().Length == 1)
+                        cloud.gameObject.GetComponent<MeshRenderer>().sharedMaterial.renderQueue = targetQueue;
+            }
         }
 
         public class AngleLocker : MonoBehaviour

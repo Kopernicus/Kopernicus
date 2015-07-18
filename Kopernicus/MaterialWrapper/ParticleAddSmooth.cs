@@ -46,13 +46,13 @@ namespace Kopernicus
                     mainTexID = Shader.PropertyToID(mainTexKey);
                     invFadeID = Shader.PropertyToID(invFadeKey);
                 }
-			}
+            }
 
-			// Is some random material this material
-			public static bool UsesSameShader(Material m)
-			{
-				return m.shader.name == Properties.shaderName;
-			}
+            // Is some random material this material
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shaderName;
+            }
 
             // Particle Texture, default = "white" {}
             public Texture2D mainTex
@@ -80,7 +80,7 @@ namespace Kopernicus
             public ParticleAddSmooth(Material material) : base(material)
             {
                 // Throw exception if this material was not the proper material
-				base.shader = Properties.shader;
+                base.shader = Properties.shader;
             }
 
         }

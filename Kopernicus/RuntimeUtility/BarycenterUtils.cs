@@ -37,14 +37,14 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-    [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class BarycenterUtils : MonoBehaviour
     {
-        bool isAdded = false;
         MapObject previousMap = null;
 
         public void Awake()
         {
+            DontDestroyOnLoad(this);
             previousMap = PlanetariumCamera.fetch.initialTarget;
             GameEvents.onPlanetariumTargetChanged.Add(new EventData<MapObject>.OnEvent(onPlanetariumTargetChanged));
         }
@@ -67,6 +67,24 @@ namespace Kopernicus
                     CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.flightGlobalsIndex == nextIndex);
                     PlanetariumCamera.fetch.SetTarget(body);
                     previousMap = Resources.FindObjectsOfTypeAll<MapObject>().First(m => m.celestialBody.flightGlobalsIndex == nextIndex);
+                }
+            }
+        }
+
+        // Helper class to deactivate the thumbnail in R&D
+        public class RDBaryCenter : MonoBehaviour
+        {
+            public void Start()
+            {
+                // Loop through all barycenters
+                foreach (string name in Templates.barycenters)
+                {
+                    // If we can find an Object, deactivate it
+                    foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(item => item.name == name))
+                    {
+                        planetItem.planet.SetActive(false);
+                        planetItem.label_planetName.anchor = SpriteText.Anchor_Pos.Middle_Center;
+                    }
                 }
             }
         }

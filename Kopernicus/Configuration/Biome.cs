@@ -40,47 +40,47 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class Biome
-		{
-			// The map attribute object we are creating
-			public CBAttributeMapSO.MapAttribute attribute { get; private set; }
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class Biome
+        {
+            // The map attribute object we are creating
+            public CBAttributeMapSO.MapAttribute attribute { get; private set; }
 
-			// The name of this biome
-			[ParserTarget("name")]
-			private string name 
-			{
-				set { attribute.name = value; }
-			}
+            // The name of this biome
+            [ParserTarget("name")]
+            private string name 
+            {
+                set { attribute.name = value; }
+            }
 
-			// The science multiplier for this biome
-			[ParserTarget("value")]
-			private NumericParser<float> value 
-			{
-				set { attribute.value = value.value; }
-			}
+            // The science multiplier for this biome
+            [ParserTarget("value")]
+            private NumericParser<float> value 
+            {
+                set { attribute.value = value.value; }
+            }
 
-			// The color in the map for this attribute
-			[ParserTarget("color")]
-			private ColorParser color 
-			{
-				set { attribute.mapColor = value.value; }
-			}
+            // The color in the map for this attribute
+            [ParserTarget("color")]
+            private ColorParser color 
+            {
+                set { attribute.mapColor = value.value; }
+            }
 
-			// Allocate the biome descriptor
-			public Biome ()
-			{
-				attribute = new CBAttributeMapSO.MapAttribute();
-			}
-			
-			// Get reference to existing biome descriptor
-			public Biome (CBAttributeMapSO.MapAttribute attribute)
-			{
-				this.attribute = attribute;
-			}
-		}
-	}
+            // Allocate the biome descriptor
+            public Biome ()
+            {
+                attribute = new CBAttributeMapSO.MapAttribute();
+            }
+            
+            // Get reference to existing biome descriptor
+            public Biome (CBAttributeMapSO.MapAttribute attribute)
+            {
+                this.attribute = attribute;
+            }
+        }
+    }
 }
 

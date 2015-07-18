@@ -35,16 +35,16 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Interface a class can implment to support conversion from a string
-		 **/
-		public interface IParsable
-		{
-			// Set value from string
-			void SetFromString (string s);
-		}
-	}
+    namespace Configuration
+    {
+        /**
+         * Interface a class can implment to support conversion from a string
+         **/
+        public interface IParsable
+        {
+            // Set value from string
+            void SetFromString (string s);
+        }
+    }
 }
 

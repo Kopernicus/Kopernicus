@@ -36,15 +36,15 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VoronoiCraters : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VoronoiCraters _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VoronoiCraters : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VoronoiCraters _mod;
 
                 // colorOpacity
                 [ParserTarget("colorOpacity", optional = true)]
@@ -67,11 +67,25 @@ namespace Kopernicus
                     set { _mod.deformation = value.value; }
                 }
 
+                // CraterCurve
+                [ParserTarget("CraterCurve", optional = true)]
+                private FloatCurveParser craterCurve
+                {
+                    set { _mod.craterCurve = value.curve.Curve; }
+                }
+
                 // jitter
                 [ParserTarget("jitter", optional = true)]
                 private NumericParser<float> jitter
                 {
                     set { _mod.jitter = value.value; }
+                }
+
+                // JitterCurve
+                [ParserTarget("JitterCurve", optional = true)]
+                private FloatCurveParser jitterCurve
+                {
+                    set { _mod.jitterCurve = value.curve.Curve; }
                 }
 
                 // jitterHeight
@@ -144,27 +158,27 @@ namespace Kopernicus
                     set { _mod.voronoiSeed = value.value; }
                 }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
                     
                         
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public VoronoiCraters()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VoronoiCraters");
                     modObject.transform.parent = Utility.Deactivator;
                     PQSMod_VoronoiCraters clone = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun").pqsVersion.GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
                     _mod = modObject.AddComponent<PQSMod_VoronoiCraters>();
                     Utility.CopyObjectFields<PQSMod_VoronoiCraters>(clone, _mod, false);
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public VoronoiCraters(PQSMod template)
                 {
@@ -172,8 +186,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

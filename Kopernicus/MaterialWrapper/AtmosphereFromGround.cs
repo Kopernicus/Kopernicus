@@ -136,13 +136,13 @@ namespace Kopernicus
                     gID = Shader.PropertyToID(gKey);
                     g2ID = Shader.PropertyToID(g2Key);
                 }
-			}
+            }
 
-			// Is some random material this material
-			public static bool UsesSameShader(Material m)
-			{
-				return m.shader.name == Properties.shaderName;
-			}
+            // Is some random material this material
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shaderName;
+            }
 
             // Offset Transform, default = (0,0,0,1)
             public Vector4 offsetTransform

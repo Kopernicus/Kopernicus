@@ -36,42 +36,42 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexColorSolidBlend : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				// Ironically, the mod has "blend" on its name, but it's the one that actually doesn't support color blending
-				private PQSMod_VertexColorSolidBlend _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexColorSolidBlend : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                // Ironically, the mod has "blend" on its name, but it's the one that actually doesn't support color blending
+                private PQSMod_VertexColorSolidBlend _mod;
 
-				// The color used
-				[ParserTarget("color")]
-				private ColorParser color
-				{
-					set { _mod.color = value.value; }
-				}
+                // The color used
+                [ParserTarget("color")]
+                private ColorParser color
+                {
+                    set { _mod.color = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexColorSolidBlend()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject("VertexColorSolidBlend");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexColorSolidBlend>();
-					base.mod = _mod;
-				}
+                public VertexColorSolidBlend()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject("VertexColorSolidBlend");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexColorSolidBlend>();
+                    base.mod = _mod;
+                }
 
                 public VertexColorSolidBlend(PQSMod template)
                 {
@@ -79,8 +79,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

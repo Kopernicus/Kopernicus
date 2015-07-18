@@ -36,83 +36,83 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexSimplexNoiseColor : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexSimplexNoiseColor _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexSimplexNoiseColor : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexSimplexNoiseColor _mod;
 
-				// The deformity of the simplex terrain
-				[ParserTarget("blend")]
-				private NumericParser<float> blend
-				{
-					set { _mod.blend = value.value; }
-				}
+                // The deformity of the simplex terrain
+                [ParserTarget("blend")]
+                private NumericParser<float> blend
+                {
+                    set { _mod.blend = value.value; }
+                }
 
-				// Color of the class
-				[ParserTarget("colorStart")]
-				private ColorParser colorStart
-				{
-					set { _mod.colorStart = value.value; }
-				}
+                // Color of the class
+                [ParserTarget("colorStart")]
+                private ColorParser colorStart
+                {
+                    set { _mod.colorStart = value.value; }
+                }
 
-				// Color of the class
-				[ParserTarget("colorEnd")]
-				private ColorParser colorEnd
-				{
-					set { _mod.colorEnd = value.value; }
-				}
+                // Color of the class
+                [ParserTarget("colorEnd")]
+                private ColorParser colorEnd
+                {
+                    set { _mod.colorEnd = value.value; }
+                }
 
-				// The frequency of the simplex terrain
-				[ParserTarget("frequency")]
-				private NumericParser<double> frequency
-				{
-					set { _mod.frequency = value.value; }
-				}
+                // The frequency of the simplex terrain
+                [ParserTarget("frequency")]
+                private NumericParser<double> frequency
+                {
+                    set { _mod.frequency = value.value; }
+                }
 
-				// Octaves of the simplex height
-				[ParserTarget("octaves")]
-				private NumericParser<double> octaves
-				{
-					set { _mod.octaves = value.value; }
-				}
+                // Octaves of the simplex height
+                [ParserTarget("octaves")]
+                private NumericParser<double> octaves
+                {
+                    set { _mod.octaves = value.value; }
+                }
 
-				// Persistence of the simplex height
-				[ParserTarget("persistence")]
-				private NumericParser<double> persistence
-				{
-					set { _mod.persistence = value.value; }
-				}
+                // Persistence of the simplex height
+                [ParserTarget("persistence")]
+                private NumericParser<double> persistence
+                {
+                    set { _mod.persistence = value.value; }
+                }
 
-				// The seed of the simplex height
-				[ParserTarget("seed")]
-				private NumericParser<int> seed
-				{
-					set { _mod.seed = value.value; }
-				}
+                // The seed of the simplex height
+                [ParserTarget("seed")]
+                private NumericParser<int> seed
+                {
+                    set { _mod.seed = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexSimplexNoiseColor()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject("VertexSimplexNoiseColor");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexSimplexNoiseColor> ();
-					base.mod = _mod;
-				}
+                public VertexSimplexNoiseColor()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject("VertexSimplexNoiseColor");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexSimplexNoiseColor> ();
+                    base.mod = _mod;
+                }
 
                 public VertexSimplexNoiseColor(PQSMod template)
                 {
@@ -120,8 +120,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

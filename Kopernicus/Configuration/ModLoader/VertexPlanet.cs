@@ -39,15 +39,15 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexPlanet : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexPlanet _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexPlanet : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexPlanet _mod;
 
                 private class SimplexWrapper : IParserEventSubscriber
                 {
@@ -317,9 +317,9 @@ namespace Kopernicus
                 // buildHeightColors
                 [ParserTarget("buildHeightColors", optional = true)]
                 private NumericParser<bool> buildHeightColors 
-				{
-					set { _mod.buildHeightColors = value.value; }
-				}
+                {
+                    set { _mod.buildHeightColors = value.value; }
+                }
 
                 // colorDeformity
                 [ParserTarget("colorDeformity", optional = true)]
@@ -451,28 +451,28 @@ namespace Kopernicus
                     set { _mod.terrainType = value.wrapper; }
                 }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
                     PQSMod_VertexPlanet.LandClass[] landClassesArray = landClasses.Select(loader => loader.landClass).ToArray();
                     if (landClassesArray.Count() != 0)
                     {
                         _mod.landClasses = landClassesArray;
                     }
-				}
+                }
 
                 public VertexPlanet()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VertexPlanet");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_VertexPlanet>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public VertexPlanet(PQSMod template)
                 {
@@ -480,8 +480,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

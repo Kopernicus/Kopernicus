@@ -36,15 +36,15 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class SmoothLatitudeRange : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_SmoothLatitudeRange _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class SmoothLatitudeRange : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_SmoothLatitudeRange _mod;
 
                 // LerpRangeParser
                 [RequireConfigType(ConfigType.Node)]
@@ -54,42 +54,42 @@ namespace Kopernicus
                     public PQSLandControl.LerpRange lerpRange;
 
                     // endEnd
-				    [ParserTarget("endEnd", optional = true)]
-				    private NumericParser<double> endEnd
-				    {
-					    set { lerpRange.endEnd = value.value; }
-				    }
+                    [ParserTarget("endEnd", optional = true)]
+                    private NumericParser<double> endEnd
+                    {
+                        set { lerpRange.endEnd = value.value; }
+                    }
 
                     // endStart
-				    [ParserTarget("endStart", optional = true)]
-				    private NumericParser<double> endStart
-				    {
-					    set { lerpRange.endStart = value.value; }
-				    }
+                    [ParserTarget("endStart", optional = true)]
+                    private NumericParser<double> endStart
+                    {
+                        set { lerpRange.endStart = value.value; }
+                    }
 
                     // startEnd
-				    [ParserTarget("startEnd", optional = true)]
-				    private NumericParser<double> startEnd
-				    {
-					    set { lerpRange.startEnd = value.value; }
-				    }
+                    [ParserTarget("startEnd", optional = true)]
+                    private NumericParser<double> startEnd
+                    {
+                        set { lerpRange.startEnd = value.value; }
+                    }
 
                     // startStart
-				    [ParserTarget("startStart", optional = true)]
-				    private NumericParser<double> startStart
-				    {
-					    set { lerpRange.startStart = value.value; }
-				    }
+                    [ParserTarget("startStart", optional = true)]
+                    private NumericParser<double> startStart
+                    {
+                        set { lerpRange.startStart = value.value; }
+                    }
 
                     void IParserEventSubscriber.Apply(ConfigNode node)
-				    {
+                    {
 
-				    }
+                    }
 
-				    void IParserEventSubscriber.PostApply(ConfigNode node)
-				    {
+                    void IParserEventSubscriber.PostApply(ConfigNode node)
+                    {
 
-				    }
+                    }
 
                     public LerpRangeParser()
                     {
@@ -98,37 +98,37 @@ namespace Kopernicus
                 }
 
                 // latitudeRange
-				[ParserTarget("LatitudeRange", optional = true)]
-				private LerpRangeParser latitudeRange
+                [ParserTarget("LatitudeRange", optional = true)]
+                private LerpRangeParser latitudeRange
                 {
                     set { _mod.latitudeRange = value.lerpRange; }
                 }
 
-				// smoothToAltitude
-				[ParserTarget("smoothToAltitude", optional = true)]
-				private NumericParser<double> smoothToAltitude
-				{
-					set { _mod.smoothToAltitude = value.value; }
-				}
+                // smoothToAltitude
+                [ParserTarget("smoothToAltitude", optional = true)]
+                private NumericParser<double> smoothToAltitude
+                {
+                    set { _mod.smoothToAltitude = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public SmoothLatitudeRange()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("SmoothLatitudeRange");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_SmoothLatitudeRange>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public SmoothLatitudeRange(PQSMod template)
                 {
@@ -136,8 +136,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

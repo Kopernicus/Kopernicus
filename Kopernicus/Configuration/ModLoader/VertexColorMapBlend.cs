@@ -36,48 +36,48 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexColorMapBlend : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexColorMapBlend _mod;
-					
-				// The map texture for the planet
-				[ParserTarget("map", optional = true)]
-				private MapSOParser_RGB<MapSO> colorMap 
-				{
-					set { _mod.vertexColorMap = value.value; }
-				}
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexColorMapBlend : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexColorMapBlend _mod;
+                    
+                // The map texture for the planet
+                [ParserTarget("map", optional = true)]
+                private MapSOParser_RGB<MapSO> colorMap 
+                {
+                    set { _mod.vertexColorMap = value.value; }
+                }
 
                 // The blend value for the texture
-				[ParserTarget("blend", optional = true)]
-				private NumericParser<float> blend
-				{
-					set { _mod.blend = value.value; }
-				}
+                [ParserTarget("blend", optional = true)]
+                private NumericParser<float> blend
+                {
+                    set { _mod.blend = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
-				public VertexColorMapBlend ()
-				{
-					// Create the base mod
-					GameObject modObject = new GameObject ("VertexColorMapBlend");
-					modObject.transform.parent = Utility.Deactivator;
-					_mod = modObject.AddComponent<PQSMod_VertexColorMapBlend> ();
-					base.mod = _mod;
-				}
+                public VertexColorMapBlend ()
+                {
+                    // Create the base mod
+                    GameObject modObject = new GameObject ("VertexColorMapBlend");
+                    modObject.transform.parent = Utility.Deactivator;
+                    _mod = modObject.AddComponent<PQSMod_VertexColorMapBlend> ();
+                    base.mod = _mod;
+                }
 
                 public VertexColorMapBlend(PQSMod template)
                 {
@@ -85,8 +85,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

@@ -43,42 +43,42 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class Properties : IParserEventSubscriber
-		{
-			// Celestial body to edit
-			public CelestialBody celestialBody { get; private set; }
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class Properties : IParserEventSubscriber
+        {
+            // Celestial body to edit
+            public CelestialBody celestialBody { get; private set; }
 
-			// Body description
-			[ParserTarget("description", optional = true)]
-			private string description 
-			{
-				set { celestialBody.bodyDescription = value; }
-			}
+            // Body description
+            [ParserTarget("description", optional = true)]
+            private string description 
+            {
+                set { celestialBody.bodyDescription = value; }
+            }
 
-			// Radius
-			[ParserTarget("radius", optional = true)]
-			private NumericParser<double> radius 
-			{
-				set { celestialBody.Radius = value.value; }
-			}
-			
-			// GeeASL
-			[ParserTarget("geeASL", optional = true)]
-			private NumericParser<double> geeASL 
-			{
+            // Radius
+            [ParserTarget("radius", optional = true)]
+            private NumericParser<double> radius 
+            {
+                set { celestialBody.Radius = value.value; }
+            }
+            
+            // GeeASL
+            [ParserTarget("geeASL", optional = true)]
+            private NumericParser<double> geeASL 
+            {
                 set { celestialBody.GeeASL = value.value; hasGASL = true; }
-			}
+            }
             private bool hasGASL = false;
-			
-			// Mass
-			[ParserTarget("mass", optional = true)]
-			private NumericParser<double> mass
-			{
+            
+            // Mass
+            [ParserTarget("mass", optional = true)]
+            private NumericParser<double> mass
+            {
                 set { celestialBody.Mass = value.value; hasMass = true; }
-			}
+            }
             private bool hasMass = false;
 
             // Grav Param
@@ -88,35 +88,42 @@ namespace Kopernicus
                 set { celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter = value.value; hasGravParam = true; }
             }
             private bool hasGravParam = false;
-			
-			// Does the body rotate?
-			[ParserTarget("rotates", optional = true)]
-			private NumericParser<bool> rotates
-			{
-				set { celestialBody.rotates = value.value; }
-			}
-			
-			// Rotation period of the world
-			[ParserTarget("rotationPeriod", optional = true)]
-			private NumericParser<double> rotationPeriod
-			{
-				set { celestialBody.rotationPeriod = value.value; }
-			}
-			
-			// Is the body tidally locked to its parent?
-			[ParserTarget("tidallyLocked", optional = true)]
-			private NumericParser<bool> tidallyLocked
-			{
-				set { celestialBody.tidallyLocked = value.value; }
-			}
+            
+            // Does the body rotate?
+            [ParserTarget("rotates", optional = true)]
+            private NumericParser<bool> rotates
+            {
+                set { celestialBody.rotates = value.value; }
+            }
+            
+            // Rotation period of the world
+            [ParserTarget("rotationPeriod", optional = true)]
+            private NumericParser<double> rotationPeriod
+            {
+                set { celestialBody.rotationPeriod = value.value; }
+            }
+            
+            // Is the body tidally locked to its parent?
+            [ParserTarget("tidallyLocked", optional = true)]
+            private NumericParser<bool> tidallyLocked
+            {
+                set { celestialBody.tidallyLocked = value.value; }
+            }
 
-			// Initial rotation of the world
-			[ParserTarget("initialRotation", optional = true)]
-			private NumericParser<double> initialRotation
-			{
-				set { celestialBody.initialRotation = value.value; }
-			}
-			
+            // Initial rotation of the world
+            [ParserTarget("initialRotation", optional = true)]
+            private NumericParser<double> initialRotation
+            {
+                set { celestialBody.initialRotation = value.value; }
+            }
+
+            // Altitude where the Game switches the reference frame
+            [ParserTarget("inverseRotThresholdAltitude", optional = true)]
+            private NumericParser<float> inverseRotThresholdAltitude
+            {
+                set { celestialBody.inverseRotThresholdAltitude = value.value; }
+            }
+            
             // albedo
             [ParserTarget("albedo", optional = true)]
             private NumericParser<double> albedo
@@ -137,27 +144,27 @@ namespace Kopernicus
             {
                 set { celestialBody.coreTemperatureOffset = value.value; }
             }
-			
-			// Is this the home world
-			[ParserTarget("isHomeWorld", optional = true)]
-			private NumericParser<bool> isHomeWorld
-			{
-				set { celestialBody.isHomeWorld = value.value; }
-			}
+            
+            // Is this the home world
+            [ParserTarget("isHomeWorld", optional = true)]
+            private NumericParser<bool> isHomeWorld
+            {
+                set { celestialBody.isHomeWorld = value.value; }
+            }
 
-			// Time warp altitude limits
-			[ParserTarget("timewarpAltitudeLimits", optional = true)]
-			private NumericCollectionParser<float> timewarpAltitudeLimits 
-			{
-				set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray (); }
-			}
+            // Time warp altitude limits
+            [ParserTarget("timewarpAltitudeLimits", optional = true)]
+            private NumericCollectionParser<float> timewarpAltitudeLimits 
+            {
+                set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray (); }
+            }
 
-			// Sphere of Influence
-			[ParserTarget("sphereOfInfluence", optional = true)]
-			private NumericParser<double> sphereOfInfluence
-			{
+            // Sphere of Influence
+            [ParserTarget("sphereOfInfluence", optional = true)]
+            private NumericParser<double> sphereOfInfluence
+            {
                 set { Templates.sphereOfInfluence.Add(celestialBody.name, value.value); }
-			}
+            }
 
             // Hill Sphere
             [ParserTarget("hillSphere", optional = true)]
@@ -173,47 +180,54 @@ namespace Kopernicus
                 set { celestialBody.solarRotationPeriod = value.value; }
             }
 
-			// Science values of this body
-			[ParserTarget("ScienceValues", optional = true, allowMerge = true)]
-			private ScienceValues scienceValues;
+            // navballSwitchRadiusMult
+            [ParserTarget("navballSwitchRadiusMult", optional = true)]
+            private NumericParser<double> navballSwitchRadiusMult
+            {
+                set { celestialBody.navballSwitchRadiusMult = value.value; }
+            }
 
-			// Biomes of this body
-			[PreApply]
-			[ParserTargetCollection("Biomes", optional = true, nameSignificance = NameSignificance.None)]
-			private List<Biome> biomes = new List<Biome>();
+            // Science values of this body
+            [ParserTarget("ScienceValues", optional = true, allowMerge = true)]
+            private ScienceValues scienceValues;
 
-			// DEPRECATED -- Biome definition texture (from GameDatabase)
-			[ParserTarget("biomeMapD", optional = true)]
-			private Texture2DParser biomeMapDeprecated
-			{
-				set 
-				{
-					if (value.value != null) 
-					{
-						celestialBody.BiomeMap = ScriptableObject.CreateInstance<CBAttributeMapSO> ();
-						celestialBody.BiomeMap.exactSearch = false;
-						celestialBody.BiomeMap.nonExactThreshold = 0.05f;
-						celestialBody.BiomeMap.CreateMap (MapSO.MapDepth.RGB, value.value);
-						celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
-					}
-				}
-			}
+            // Biomes of this body
+            [PreApply]
+            [ParserTargetCollection("Biomes", optional = true, nameSignificance = NameSignificance.None)]
+            private List<Biome> biomes = new List<Biome>();
 
-			// Biome definition via MapSO parser
-			[ParserTarget("biomeMap", optional = true)]
-			private MapSOParser_RGB<CBAttributeMapSO> biomeMap
-			{
-				set 
-				{
-					if (value.value != null) 
-					{
-						celestialBody.BiomeMap = value.value;
-						celestialBody.BiomeMap.exactSearch = false;
-						celestialBody.BiomeMap.nonExactThreshold = 0.05f;
-						celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
-					}
-				}
-			}
+            // DEPRECATED -- Biome definition texture (from GameDatabase)
+            [ParserTarget("biomeMapD", optional = true)]
+            private Texture2DParser biomeMapDeprecated
+            {
+                set 
+                {
+                    if (value.value != null) 
+                    {
+                        celestialBody.BiomeMap = ScriptableObject.CreateInstance<CBAttributeMapSO> ();
+                        celestialBody.BiomeMap.exactSearch = false;
+                        celestialBody.BiomeMap.nonExactThreshold = 0.05f;
+                        celestialBody.BiomeMap.CreateMap (MapSO.MapDepth.RGB, value.value);
+                        celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
+                    }
+                }
+            }
+
+            // Biome definition via MapSO parser
+            [ParserTarget("biomeMap", optional = true)]
+            private MapSOParser_RGB<CBAttributeMapSO> biomeMap
+            {
+                set 
+                {
+                    if (value.value != null) 
+                    {
+                        celestialBody.BiomeMap = value.value;
+                        celestialBody.BiomeMap.exactSearch = false;
+                        celestialBody.BiomeMap.nonExactThreshold = 0.05f;
+                        celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
+                    }
+                }
+            }
 
             [ParserTarget("useTheInName", optional = true)]
             public NumericParser<bool> useTheInName
@@ -221,40 +235,40 @@ namespace Kopernicus
                 set { celestialBody.use_The_InName = value.value; }
             }
 
-			void IParserEventSubscriber.Apply (ConfigNode node) { }
+            void IParserEventSubscriber.Apply (ConfigNode node) { }
 
-			void IParserEventSubscriber.PostApply (ConfigNode node)
-			{
-				// Debug the fields (TODO - remove)
-				Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
-				if (celestialBody.BiomeMap != null) 
-				{
-					foreach (CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes) 
-					{
-						Logger.Active.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
-					}
-				}
+            void IParserEventSubscriber.PostApply (ConfigNode node)
+            {
+                // Debug the fields (TODO - remove)
+                Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
+                if (celestialBody.BiomeMap != null) 
+                {
+                    foreach (CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes) 
+                    {
+                        Logger.Active.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
+                    }
+                }
 
-				// TODO - tentative fix, needs to be able to be configured (if it can be?)
-				if (celestialBody.progressTree == null) 
-				{
-					celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree (celestialBody);
-					Logger.Active.Log ("Added Progress Tree");
-				}
-			}
+                // TODO - tentative fix, needs to be able to be configured (if it can be?)
+                if (celestialBody.progressTree == null) 
+                {
+                    celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree (celestialBody);
+                    Logger.Active.Log ("Added Progress Tree");
+                }
+            }
 
-			// Properties requires a celestial body referece, as this class is designed to edit the body
-			public Properties (CelestialBody celestialBody)
-			{
-				this.celestialBody = celestialBody;
+            // Properties requires a celestial body referece, as this class is designed to edit the body
+            public Properties (CelestialBody celestialBody)
+            {
+                this.celestialBody = celestialBody;
 
-				// We require a science values object
-				if (this.celestialBody.scienceValues == null) 
-					this.celestialBody.scienceValues = new CelestialBodyScienceParams ();
-				
-				// Create the science values cache
-				scienceValues = new ScienceValues (this.celestialBody.scienceValues);
-			}
+                // We require a science values object
+                if (this.celestialBody.scienceValues == null) 
+                    this.celestialBody.scienceValues = new CelestialBodyScienceParams ();
+                
+                // Create the science values cache
+                scienceValues = new ScienceValues (this.celestialBody.scienceValues);
+            }
 
             public void PostApplyUpdate()
             {
@@ -297,8 +311,8 @@ namespace Kopernicus
                 celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter;
                 Logger.Active.Log("Via gravParam, set mass to " + celestialBody.Mass + ", surface G to " + celestialBody.GeeASL);
             }
-		}
-	}
+        }
+    }
 }
 
 #pragma warning restore 0414

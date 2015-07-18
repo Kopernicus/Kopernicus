@@ -35,19 +35,19 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Attribute indicating this parser target should be processed before calling Apply()
-		 **/
-		[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-		public class PreApply : Attribute
-		{
-			public PreApply() 
-			{ 
-			
-			}
-		}
-	}
+    namespace Configuration
+    {
+        /**
+         * Attribute indicating this parser target should be processed before calling Apply()
+         **/
+        [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+        public class PreApply : Attribute
+        {
+            public PreApply() 
+            { 
+            
+            }
+        }
+    }
 }
 

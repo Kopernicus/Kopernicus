@@ -35,14 +35,14 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Exception representing a field having the wrong storage type (i.e. string field is set to node)
-		 **/
-		public class ParserTargetTypeMismatchException : Exception
-		{
-			public ParserTargetTypeMismatchException (string message) : base(message) { }
-		}
-	}
+    namespace Configuration
+    {
+        /**
+         * Exception representing a field having the wrong storage type (i.e. string field is set to node)
+         **/
+        public class ParserTargetTypeMismatchException : Exception
+        {
+            public ParserTargetTypeMismatchException (string message) : base(message) { }
+        }
+    }
 }

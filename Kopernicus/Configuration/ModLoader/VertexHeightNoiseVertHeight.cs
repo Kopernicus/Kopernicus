@@ -36,64 +36,64 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class VertexHeightNoiseVertHeight : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
-				private PQSMod_VertexHeightNoiseVertHeight _mod;
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class VertexHeightNoiseVertHeight : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
+                private PQSMod_VertexHeightNoiseVertHeight _mod;
 
                 // Where the height starts
-				[ParserTarget("heightStart", optional = true)]
-				private NumericParser<float> heightStart
-				{
-					set { _mod.heightStart = value.value; }
-				}
+                [ParserTarget("heightStart", optional = true)]
+                private NumericParser<float> heightStart
+                {
+                    set { _mod.heightStart = value.value; }
+                }
 
                 // Where the height ends
-				[ParserTarget("heightEnd", optional = true)]
-				private NumericParser<float> heightEnd
-				{
-					set { _mod.heightEnd = value.value; }
-				}
+                [ParserTarget("heightEnd", optional = true)]
+                private NumericParser<float> heightEnd
+                {
+                    set { _mod.heightEnd = value.value; }
+                }
 
-				// The deformity of the simplex terrain
-				[ParserTarget("deformity", optional = true)]
-				private NumericParser<float> deformity
-				{
-					set { _mod.deformity = value.value; }
-				}
+                // The deformity of the simplex terrain
+                [ParserTarget("deformity", optional = true)]
+                private NumericParser<float> deformity
+                {
+                    set { _mod.deformity = value.value; }
+                }
 
-				// The frequency of the simplex terrain
-				[ParserTarget("frequency", optional = true)]
-				private NumericParser<float> frequency
-				{
-					set { _mod.frequency = value.value; }
-				}
+                // The frequency of the simplex terrain
+                [ParserTarget("frequency", optional = true)]
+                private NumericParser<float> frequency
+                {
+                    set { _mod.frequency = value.value; }
+                }
 
                 // Octaves of the simplex height
-				[ParserTarget("octaves", optional = true)]
-				private NumericParser<int> octaves
-				{
-					set { _mod.octaves = value.value; }
-				}
+                [ParserTarget("octaves", optional = true)]
+                private NumericParser<int> octaves
+                {
+                    set { _mod.octaves = value.value; }
+                }
 
                 // Persistence of the simplex height
-				[ParserTarget("persistance", optional = true)]
-				private NumericParser<float> persistance
-				{
-					set { _mod.persistance = value.value; }
-				}
+                [ParserTarget("persistance", optional = true)]
+                private NumericParser<float> persistance
+                {
+                    set { _mod.persistance = value.value; }
+                }
 
                 // The seed of the simplex height
-				[ParserTarget("seed", optional = true)]
-				private NumericParser<int> seed
-				{
-					set { _mod.seed = value.value; }
-				}
+                [ParserTarget("seed", optional = true)]
+                private NumericParser<int> seed
+                {
+                    set { _mod.seed = value.value; }
+                }
 
                 // Quality mode for the noise
                 [ParserTarget("mode", optional = true)]
@@ -102,24 +102,24 @@ namespace Kopernicus
                     set { _mod.mode = value.value; }
                 }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public VertexHeightNoiseVertHeight()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("VertexHeightNoiseVertHeight");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_VertexHeightNoiseVertHeight>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public VertexHeightNoiseVertHeight(PQSMod template)
                 {
@@ -127,8 +127,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

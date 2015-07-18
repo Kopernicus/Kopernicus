@@ -41,69 +41,69 @@ using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		[RequireConfigType(ConfigType.Node)]
-		public class EmissiveMultiRampSunspotsLoader : EmissiveMultiRampSunspots
-		{
-			[ParserTarget("noiseMap", optional = true)]
-			private Texture2DParser noiseMapSetter 
-			{
-				set { base.noiseMap = value.value; }
-			}
+    namespace Configuration
+    {
+        [RequireConfigType(ConfigType.Node)]
+        public class EmissiveMultiRampSunspotsLoader : EmissiveMultiRampSunspots
+        {
+            [ParserTarget("noiseMap", optional = true)]
+            private Texture2DParser noiseMapSetter 
+            {
+                set { base.noiseMap = value.value; }
+            }
 
-			[ParserTarget("emitColor0", optional = true)]
-			private ColorParser emitColor0Setter 
-			{
-				set { base.emitColor0 = value.value; }
-			}
+            [ParserTarget("emitColor0", optional = true)]
+            private ColorParser emitColor0Setter 
+            {
+                set { base.emitColor0 = value.value; }
+            }
 
-			[ParserTarget("emitColor1", optional = true)]
-			private ColorParser emitColor1Setter 
-			{
-				set { base.emitColor1 = value.value; }
-			}
+            [ParserTarget("emitColor1", optional = true)]
+            private ColorParser emitColor1Setter 
+            {
+                set { base.emitColor1 = value.value; }
+            }
 
-			[ParserTarget("sunspotTexture", optional = true)]
-			private Texture2DParser sunspotTextureSetter 
-			{
-				set { base.sunspotTex = value.value; }
-			}
-			
-			[ParserTarget("sunspotPower", optional = true)]
-			private NumericParser<float> sunspotPowerSetter 
-			{
-				set { base.sunspotPower = value.value; }
-			}
-			
-			[ParserTarget("sunspotColor", optional = true)]
-			private ColorParser sunspotColorSetter 
-			{
-				set { base.sunspotColor = value.value; }
-			}
+            [ParserTarget("sunspotTexture", optional = true)]
+            private Texture2DParser sunspotTextureSetter 
+            {
+                set { base.sunspotTex = value.value; }
+            }
+            
+            [ParserTarget("sunspotPower", optional = true)]
+            private NumericParser<float> sunspotPowerSetter 
+            {
+                set { base.sunspotPower = value.value; }
+            }
+            
+            [ParserTarget("sunspotColor", optional = true)]
+            private ColorParser sunspotColorSetter 
+            {
+                set { base.sunspotColor = value.value; }
+            }
 
-			[ParserTarget("rimColor", optional = true)]
-			private ColorParser rimColorSetter 
-			{
-				set { base.rimColor = value.value; }
-			}
-			
-			[ParserTarget("rimPower", optional = true)]
-			private NumericParser<float> rimPowerSetter 
-			{
-				set { base.rimPower = value.value; }
-			}
-			
-			[ParserTarget("rimBlend", optional = true)]
-			private NumericParser<float> rimBlendSetter 
-			{
-				set { base.rimBlend = value.value; }
-			}
+            [ParserTarget("rimColor", optional = true)]
+            private ColorParser rimColorSetter 
+            {
+                set { base.rimColor = value.value; }
+            }
+            
+            [ParserTarget("rimPower", optional = true)]
+            private NumericParser<float> rimPowerSetter 
+            {
+                set { base.rimPower = value.value; }
+            }
+            
+            [ParserTarget("rimBlend", optional = true)]
+            private NumericParser<float> rimBlendSetter 
+            {
+                set { base.rimBlend = value.value; }
+            }
 
-			// Constructors
-			public EmissiveMultiRampSunspotsLoader () : base() { }
-			public EmissiveMultiRampSunspotsLoader (string contents) : base (contents) { }
-			public EmissiveMultiRampSunspotsLoader (Material material) : base(material) { }
-		}
-	}
+            // Constructors
+            public EmissiveMultiRampSunspotsLoader () : base() { }
+            public EmissiveMultiRampSunspotsLoader (string contents) : base (contents) { }
+            public EmissiveMultiRampSunspotsLoader (Material material) : base(material) { }
+        }
+    }
 }

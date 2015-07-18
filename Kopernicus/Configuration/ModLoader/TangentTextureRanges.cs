@@ -36,69 +36,69 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		namespace ModLoader
-		{
-			[RequireConfigType(ConfigType.Node)]
-			public class TangentTextureRanges : ModLoader, IParserEventSubscriber
-			{
-				// Actual PQS mod we are loading
+    namespace Configuration
+    {
+        namespace ModLoader
+        {
+            [RequireConfigType(ConfigType.Node)]
+            public class TangentTextureRanges : ModLoader, IParserEventSubscriber
+            {
+                // Actual PQS mod we are loading
                 private PQSMod_TangentTextureRanges _mod;
 
-				// highEnd
-				[ParserTarget("highEnd", optional = true)]
-				private NumericParser<double> highEnd
-				{
-					set { _mod.highEnd = value.value; }
-				}
+                // highEnd
+                [ParserTarget("highEnd", optional = true)]
+                private NumericParser<double> highEnd
+                {
+                    set { _mod.highEnd = value.value; }
+                }
 
-				// highStart
-				[ParserTarget("highStart", optional = true)]
-				private NumericParser<double> highStart
-				{
-					set { _mod.highStart = value.value; }
-				}
+                // highStart
+                [ParserTarget("highStart", optional = true)]
+                private NumericParser<double> highStart
+                {
+                    set { _mod.highStart = value.value; }
+                }
 
                 // lowEnd
-				[ParserTarget("lowEnd", optional = true)]
-				private NumericParser<double> lowEnd
-				{
-					set { _mod.lowEnd = value.value; }
-				}
+                [ParserTarget("lowEnd", optional = true)]
+                private NumericParser<double> lowEnd
+                {
+                    set { _mod.lowEnd = value.value; }
+                }
 
                 // lowStart
-				[ParserTarget("lowStart", optional = true)]
-				private NumericParser<double> lowStart
-				{
-					set { _mod.lowStart = value.value; }
-				}
+                [ParserTarget("lowStart", optional = true)]
+                private NumericParser<double> lowStart
+                {
+                    set { _mod.lowStart = value.value; }
+                }
 
                 // modulo
-				[ParserTarget("modulo", optional = true)]
-				private NumericParser<double> modulo
-				{
-					set { _mod.modulo = value.value; }
-				}
+                [ParserTarget("modulo", optional = true)]
+                private NumericParser<double> modulo
+                {
+                    set { _mod.modulo = value.value; }
+                }
 
-				void IParserEventSubscriber.Apply(ConfigNode node)
-				{
+                void IParserEventSubscriber.Apply(ConfigNode node)
+                {
 
-				}
+                }
 
-				void IParserEventSubscriber.PostApply(ConfigNode node)
-				{
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
 
-				}
+                }
 
                 public TangentTextureRanges()
-				{
-					// Create the base mod
+                {
+                    // Create the base mod
                     GameObject modObject = new GameObject("TangentTextureRanges");
-					modObject.transform.parent = Utility.Deactivator;
+                    modObject.transform.parent = Utility.Deactivator;
                     _mod = modObject.AddComponent<PQSMod_TangentTextureRanges>();
-					base.mod = _mod;
-				}
+                    base.mod = _mod;
+                }
 
                 public TangentTextureRanges(PQSMod template)
                 {
@@ -106,8 +106,8 @@ namespace Kopernicus
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 }
 

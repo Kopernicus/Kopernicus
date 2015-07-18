@@ -42,75 +42,78 @@ using Kopernicus.Configuration;
 
 namespace Kopernicus 
 {
-	// Hook the PSystemSpawn (creation of the planetary system) event in the KSP initialization lifecycle
-	[KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
-	public class Injector : MonoBehaviour 
-	{
+    // Hook the PSystemSpawn (creation of the planetary system) event in the KSP initialization lifecycle
+    [KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
+    public class Injector : MonoBehaviour 
+    {
         public Templates templates = null;
 
         public static bool dontUpdate = true; // Should OnDemand update?
         
-		/**
-		 * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
-		 * it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
-		 *
-		 * TL,DR - Custom planet injection happens here
-		 * 
-		 **/
-		public void Awake()
-		{
-			// We're ALIVE
+        /**
+         * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
+         * it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
+         *
+         * TL,DR - Custom planet injection happens here
+         * 
+         **/
+        public void Awake()
+        {
+            // We're ALIVE
             Logger.Initialize();
-			Logger.Default.SetAsActive ();
-			Logger.Default.Log("Injector.Awake(): Begin");
+            Logger.Default.SetAsActive ();
+            Logger.Default.Log("Injector.Awake(): Begin");
 
-			// Yo garbage collector - we have work to do man
-			DontDestroyOnLoad(this);
+            // Yo garbage collector - we have work to do man
+            DontDestroyOnLoad(this);
 
-			// If the planetary manager does not work, well, error out
-			if (PSystemManager.Instance == null) 
-			{
-				// Log the error
-				Logger.Default.Log("Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
-				return;
-			}
+            // If the planetary manager does not work, well, error out
+            if (PSystemManager.Instance == null) 
+            {
+                // Log the error
+                Logger.Default.Log("Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
+                return;
+            }
 
-			// Get the current time
-			DateTime start = DateTime.Now;
+            // Get the current time
+            DateTime start = DateTime.Now;
 
             // Grab templates
             templates = new Templates();
            
 
-			// THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
-			PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
+            // THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
+            PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
 
-			// SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
-			RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController> (true).First ();
-			archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
+            // SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
+            RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController> (true).First ();
+            archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
-			// Clear space center instance so it will accept nouveau Kerbin
+            // Add the BaryCenter controller
+            archivesController.gameObject.AddComponent<BarycenterUtils.RDBaryCenter>();
+
+            // Clear space center instance so it will accept nouveau Kerbin
             SpaceCenter.Instance = null;
 
-			// Add a handler so that we can do post spawn fixups.  
-			PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
+            // Add a handler so that we can do post spawn fixups.  
+            PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
 
-			// Done executing the awake function
-			TimeSpan duration = (DateTime.Now - start);
-			Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
-			Logger.Default.Flush ();
-		}
+            // Done executing the awake function
+            TimeSpan duration = (DateTime.Now - start);
+            Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
+            Logger.Default.Flush ();
+        }
 
-		// Post spawn fixups (ewwwww........)
-		public void PostSpawnFixups ()
-		{
+        // Post spawn fixups (ewwwww........)
+        public void PostSpawnFixups ()
+        {
             Debug.Log("[Kopernicus]: Post-Spawn");
 
-			// Fix the flight globals index of each body and patch it's SOI
-			int counter = 0;
-			foreach (CelestialBody body in FlightGlobals.Bodies) 
-			{
-				body.flightGlobalsIndex = counter++;
+            // Fix the flight globals index of each body and patch it's SOI
+            int counter = 0;
+            foreach (CelestialBody body in FlightGlobals.Bodies) 
+            {
+                body.flightGlobalsIndex = counter++;
 
                 // Path the SOI
                 if (Templates.sphereOfInfluence.ContainsKey(body.bodyTransform.name))
@@ -127,11 +130,12 @@ namespace Kopernicus
                 // Make the Body a barycenter
                 if (Templates.barycenters.Contains(body.GetTransform().name))
                 {
+                    // Deactivate ScaledVersion
                     body.scaledBody.SetActiveRecursively(false);
                 }
 
-				Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
-			}
+                Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
+            }
 
             // Move KSC around
             if (SpaceCenterSwitcher.Instance != null)
@@ -139,8 +143,8 @@ namespace Kopernicus
                 SpaceCenterSwitcher.Instance.MoveKSC();
             }
 
-			// Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
-			PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
+            // Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
+            PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
             double maximumDistance = 1000d; // rootBody.children.Max(b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
             if (rootBody != null)
             {
@@ -161,10 +165,10 @@ namespace Kopernicus
             else
                 Debug.Log("[Kopernicus]: Root body null!");
             Debug.Log("Found max distance " + maximumDistance);
-			PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
+            PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
-			// Select the closest star to home
-			StarLightSwitcher.HomeStar ().SetAsActive ();
+            // Select the closest star to home
+            StarLightSwitcher.HomeStar ().SetAsActive ();
 
             // Declare we're done.
             Templates.loadFinished = true;
@@ -172,16 +176,16 @@ namespace Kopernicus
             // Enable OnDemand Updates
             dontUpdate = false;
 
-			// Fixups complete, time to surrender to fate
-			Destroy (this);
-		}
+            // Fixups complete, time to surrender to fate
+            Destroy (this);
+        }
 
-		// Log the destruction of the injector
-		public void OnDestroy()
-		{
-			Logger.Default.Log("Injector.OnDestroy(): Complete");
-			Logger.Default.Flush ();
-		}
-	}
+        // Log the destruction of the injector
+        public void OnDestroy()
+        {
+            Logger.Default.Log("Injector.OnDestroy(): Complete");
+            Logger.Default.Flush ();
+        }
+    }
 } //namespace
 

@@ -35,14 +35,14 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		// Enumeration for type of celestial body
-		public enum BodyType
-		{
-			Star,
-			Atmospheric,
-			Vacuum
-		}
-	}
+    namespace Configuration
+    {
+        // Enumeration for type of celestial body
+        public enum BodyType
+        {
+            Star,
+            Atmospheric,
+            Vacuum
+        }
+    }
 }

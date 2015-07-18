@@ -42,94 +42,94 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Simple parser for numerics
-		 **/
-		[RequireConfigType(ConfigType.Value)]
-		public class NumericParser<T> : IParsable
-		{
-			public T value;
-			private MethodInfo parserMethod;
-			public void SetFromString(string s)
-			{
-				value = (T) parserMethod.Invoke (null, new object[] {s});
-			}
-			public NumericParser()
-			{
-				// Get the parse method for this object
-				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
-			}
-			public NumericParser(T i) : this()
-			{
-				value = i;
-			}
-		}
+    namespace Configuration
+    {
+        /**
+         * Simple parser for numerics
+         **/
+        [RequireConfigType(ConfigType.Value)]
+        public class NumericParser<T> : IParsable
+        {
+            public T value;
+            private MethodInfo parserMethod;
+            public void SetFromString(string s)
+            {
+                value = (T) parserMethod.Invoke (null, new object[] {s});
+            }
+            public NumericParser()
+            {
+                // Get the parse method for this object
+                parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
+            }
+            public NumericParser(T i) : this()
+            {
+                value = i;
+            }
+        }
 
-		/* Simple parser for numeric collections */
-		[RequireConfigType(ConfigType.Value)]
-		public class NumericCollectionParser<T> : IParsable
-		{
-			public List<T> value;
-			private MethodInfo parserMethod;
-			public void SetFromString (string s)
-			{
-				// Need a new list
-				value = new List<T> ();
+        /* Simple parser for numeric collections */
+        [RequireConfigType(ConfigType.Value)]
+        public class NumericCollectionParser<T> : IParsable
+        {
+            public List<T> value;
+            private MethodInfo parserMethod;
+            public void SetFromString (string s)
+            {
+                // Need a new list
+                value = new List<T> ();
 
-				// Get the tokens of this string
-				foreach (string e in s.Split(' ')) 
-				{
-					value.Add((T) parserMethod.Invoke (null, new object[] {e}));
-				}
-			}
-			public NumericCollectionParser()
-			{
-				// Get the parse method for this object
-				parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
-			}
-			public NumericCollectionParser(T[] i) : this()
-			{
-				value = new List<T>(i);
-			}
-			public NumericCollectionParser(List<T> i) : this()
-			{
-				value = i;
-			}
-		}
+                // Get the tokens of this string
+                foreach (string e in s.Split(' ')) 
+                {
+                    value.Add((T) parserMethod.Invoke (null, new object[] {e}));
+                }
+            }
+            public NumericCollectionParser()
+            {
+                // Get the parse method for this object
+                parserMethod = (typeof(T)).GetMethod ("Parse", new Type[] {(typeof(string))});
+            }
+            public NumericCollectionParser(T[] i) : this()
+            {
+                value = new List<T>(i);
+            }
+            public NumericCollectionParser(List<T> i) : this()
+            {
+                value = i;
+            }
+        }
 
-		/** Simple parser for string arrays */
-		[RequireConfigType(ConfigType.Value)]
-		public class StringCollectionParser : IParsable
-		{
-			public IList<string> value;
-			public void SetFromString (string s)
-			{
-				// Need a new list
-				value = new List<string> (Regex.Replace (s, "\\s+", "").Split (','));
-			}
-			public StringCollectionParser()
-			{
-				value = new List<string> ();
-			}
-			public StringCollectionParser(string[] i)
-			{
-				value = new List<string>(i);
-			}
-			public StringCollectionParser(IList<string> i)
-			{
-				value = i;
-			}
-		}
+        /** Simple parser for string arrays */
+        [RequireConfigType(ConfigType.Value)]
+        public class StringCollectionParser : IParsable
+        {
+            public IList<string> value;
+            public void SetFromString (string s)
+            {
+                // Need a new list
+                value = new List<string> (Regex.Replace (s, "\\s+", "").Split (','));
+            }
+            public StringCollectionParser()
+            {
+                value = new List<string> ();
+            }
+            public StringCollectionParser(string[] i)
+            {
+                value = new List<string>(i);
+            }
+            public StringCollectionParser(IList<string> i)
+            {
+                value = i;
+            }
+        }
 
-		/** Parser for color */
-		[RequireConfigType(ConfigType.Value)]
-		public class ColorParser : IParsable
-		{
-			public Color value;
-			public void SetFromString(string s)
-			{
+        /** Parser for color */
+        [RequireConfigType(ConfigType.Value)]
+        public class ColorParser : IParsable
+        {
+            public Color value;
+            public void SetFromString(string s)
+            {
                 if (s.StartsWith("RGBA("))
                 {
                     s = s.Replace("RGBA(", string.Empty);
@@ -138,6 +138,15 @@ namespace Kopernicus
                     string[] colorArray = s.Split(',');
 
                     value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, float.Parse(colorArray[3]) / 255);
+                }
+                else if (s.StartsWith("RGB("))
+                {
+                    s = s.Replace("RGB(", string.Empty);
+                    s = s.Replace(")", string.Empty);
+                    s = s.Replace(" ", string.Empty);
+                    string[] colorArray = s.Split(',');
+
+                    value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, 1);
                 }
                 else if (s.StartsWith("XKCD."))
                 {
@@ -152,198 +161,198 @@ namespace Kopernicus
                 {
                     value = ConfigNode.ParseColor(s);
                 }
-			}
-			public ColorParser()
-			{
-				value = Color.white;
-			}
-			public ColorParser(Color i)
-			{
-				value = i;
-			}
-		}
-		
-		/** Parser for color32 */
-		[RequireConfigType(ConfigType.Value)]
-		public class Color32Parser : IParsable
-		{
-			public Color32 value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseColor32(s);
-			}
-			public Color32Parser()
-			{
-				
-			}
-		}
+            }
+            public ColorParser()
+            {
+                value = Color.white;
+            }
+            public ColorParser(Color i)
+            {
+                value = i;
+            }
+        }
+        
+        /** Parser for color32 */
+        [RequireConfigType(ConfigType.Value)]
+        public class Color32Parser : IParsable
+        {
+            public Color32 value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseColor32(s);
+            }
+            public Color32Parser()
+            {
+                
+            }
+        }
 
-		/** Parser for enum */
-		[RequireConfigType(ConfigType.Value)]
-		public class EnumParser<T> : IParsable where T : struct, IConvertible
-		{
-			public T value;
-			public void SetFromString(string s)
-			{
-				value = (T) (object) ConfigNode.ParseEnum(typeof (T), s);
-			}
-			public EnumParser ()
-			{
-				
-			}
-			public EnumParser (T i)
-			{
-				value = i;
-			}
-		}
-		
-		/** Parser for matrix 4x4 */
-		[RequireConfigType(ConfigType.Value)]
-		public class Matrix4x4Parser : IParsable 
-		{
-			public Matrix4x4 value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseMatrix4x4(s);
-			}
-			public Matrix4x4Parser ()
-			{
-				
-			}
-		}
-		
-		/** Parser for quaternion */
-		[RequireConfigType(ConfigType.Value)]
-		public class QuaternionParser : IParsable
-		{
-			public Quaternion value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseQuaternion(s);
-			}
-			public QuaternionParser()
-			{
-				
-			}
-		}
-		
-		/** Parser for dual quaternion */
-		[RequireConfigType(ConfigType.Value)]
-		public class QuaternionDParser : IParsable
-		{
-			public QuaternionD value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseQuaternion(s);
-			}
-			public QuaternionDParser()
-			{
-				
-			}
-		}
-		
-		/** Parser for vec2 **/
-		[RequireConfigType(ConfigType.Value)]
-		public class Vector2Parser : IParsable
-		{
-			public Vector2 value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseVector2(s);
-			}
-			public Vector2Parser()
-			{
-				
-			}
-		}
-		
-		/** Parser for vec3 **/
-		[RequireConfigType(ConfigType.Value)]
-		public class Vector3Parser : IParsable
-		{
-			public Vector3 value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseVector3(s);
-			}
-			public Vector3Parser()
-			{
-				
-			}
-		}
-		
-		/** Parser for vec3d **/
-		[RequireConfigType(ConfigType.Value)]
-		public class Vector3DParser : IParsable
-		{
-			public Vector3d value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseVector3D(s);
-			}
-			public Vector3DParser()
-			{
-				
-			}
-		}
-		
-		/** Parser for vec4 **/
-		[RequireConfigType(ConfigType.Value)]
-		public class Vector4Parser : IParsable
-		{
-			public Vector4 value;
-			public void SetFromString(string s)
-			{
-				value = ConfigNode.ParseVector4(s);
-			}
-			public Vector4Parser()
-			{
-				
-			}
-		}
-		
-		/** Parser for Texture2D **/
-		[RequireConfigType(ConfigType.Value)]
-		public class Texture2DParser : IParsable
-		{
-			public Texture2D value;
-			public void SetFromString (string s)
-			{
-				// Check if we are attempting to load a builtin texture
-				if (s.StartsWith ("BUILTIN/")) 
-				{
-					string textureName = Regex.Replace (s, "BUILTIN/", "");
-					value = UnityEngine.Resources.FindObjectsOfTypeAll<Texture2D> ().Where (tex => tex.name == textureName).First ();
-					return;
-				}
+        /** Parser for enum */
+        [RequireConfigType(ConfigType.Value)]
+        public class EnumParser<T> : IParsable where T : struct, IConvertible
+        {
+            public T value;
+            public void SetFromString(string s)
+            {
+                value = (T) (object) ConfigNode.ParseEnum(typeof (T), s);
+            }
+            public EnumParser ()
+            {
+                
+            }
+            public EnumParser (T i)
+            {
+                value = i;
+            }
+        }
+        
+        /** Parser for matrix 4x4 */
+        [RequireConfigType(ConfigType.Value)]
+        public class Matrix4x4Parser : IParsable 
+        {
+            public Matrix4x4 value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseMatrix4x4(s);
+            }
+            public Matrix4x4Parser ()
+            {
+                
+            }
+        }
+        
+        /** Parser for quaternion */
+        [RequireConfigType(ConfigType.Value)]
+        public class QuaternionParser : IParsable
+        {
+            public Quaternion value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseQuaternion(s);
+            }
+            public QuaternionParser()
+            {
+                
+            }
+        }
+        
+        /** Parser for dual quaternion */
+        [RequireConfigType(ConfigType.Value)]
+        public class QuaternionDParser : IParsable
+        {
+            public QuaternionD value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseQuaternion(s);
+            }
+            public QuaternionDParser()
+            {
+                
+            }
+        }
+        
+        /** Parser for vec2 **/
+        [RequireConfigType(ConfigType.Value)]
+        public class Vector2Parser : IParsable
+        {
+            public Vector2 value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseVector2(s);
+            }
+            public Vector2Parser()
+            {
+                
+            }
+        }
+        
+        /** Parser for vec3 **/
+        [RequireConfigType(ConfigType.Value)]
+        public class Vector3Parser : IParsable
+        {
+            public Vector3 value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseVector3(s);
+            }
+            public Vector3Parser()
+            {
+                
+            }
+        }
+        
+        /** Parser for vec3d **/
+        [RequireConfigType(ConfigType.Value)]
+        public class Vector3DParser : IParsable
+        {
+            public Vector3d value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseVector3D(s);
+            }
+            public Vector3DParser()
+            {
+                
+            }
+        }
+        
+        /** Parser for vec4 **/
+        [RequireConfigType(ConfigType.Value)]
+        public class Vector4Parser : IParsable
+        {
+            public Vector4 value;
+            public void SetFromString(string s)
+            {
+                value = ConfigNode.ParseVector4(s);
+            }
+            public Vector4Parser()
+            {
+                
+            }
+        }
+        
+        /** Parser for Texture2D **/
+        [RequireConfigType(ConfigType.Value)]
+        public class Texture2DParser : IParsable
+        {
+            public Texture2D value;
+            public void SetFromString (string s)
+            {
+                // Check if we are attempting to load a builtin texture
+                if (s.StartsWith ("BUILTIN/")) 
+                {
+                    string textureName = Regex.Replace (s, "BUILTIN/", "");
+                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Texture2D> ().Where (tex => tex.name == textureName).First ();
+                    return;
+                }
 
-				// Otherwise search the game database for one loaded from GameData/
-				else if (GameDatabase.Instance.ExistsTexture (s)) 
-				{
-					// Get the texture URL
-					value = GameDatabase.Instance.GetTexture(s, false);
-					return;
-				}
+                // Otherwise search the game database for one loaded from GameData/
+                else if (GameDatabase.Instance.ExistsTexture (s)) 
+                {
+                    // Get the texture URL
+                    value = GameDatabase.Instance.GetTexture(s, false);
+                    return;
+                }
 
-				// Texture was not found
-				value = null;
-			}
-			public Texture2DParser ()
-			{
-				
-			}
-			public Texture2DParser (Texture2D value)
-			{
-				this.value = value;
-			}
-		}
+                // Texture was not found
+                value = null;
+            }
+            public Texture2DParser ()
+            {
+                
+            }
+            public Texture2DParser (Texture2D value)
+            {
+                this.value = value;
+            }
+        }
 
-		/** Parser for a MapSO */
-		public class MapSOParser_GreyScale<T> : IParsable where T : MapSO
-		{
-			public T value;
-			public void SetFromString (string s)
-			{
+        /** Parser for a MapSO */
+        public class MapSOParser_GreyScale<T> : IParsable where T : MapSO
+        {
+            public T value;
+            public void SetFromString (string s)
+            {
                 bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
                 if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
                 {
@@ -416,21 +425,21 @@ namespace Kopernicus
                         }
                     }
                 }
-			}
-			public MapSOParser_GreyScale()
-			{
-				this.value = null;
-			}
-			public MapSOParser_GreyScale(T value)
-			{
-				this.value = value;
-			}
-		}
+            }
+            public MapSOParser_GreyScale()
+            {
+                this.value = null;
+            }
+            public MapSOParser_GreyScale(T value)
+            {
+                this.value = value;
+            }
+        }
 
-		/** Parser for a MapSO */
-		public class MapSOParser_RGB<T> : IParsable where T : MapSO
-		{
-			public T value;
+        /** Parser for a MapSO */
+        public class MapSOParser_RGB<T> : IParsable where T : MapSO
+        {
+            public T value;
             public void SetFromString(string s)
             {
                 bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
@@ -509,175 +518,210 @@ namespace Kopernicus
                     }
                 }
             }
-			public MapSOParser_RGB()
-			{
-				this.value = null;
-			}
-			public MapSOParser_RGB(T value)
-			{
-				this.value = value;
-			}
-		}
+            public MapSOParser_RGB()
+            {
+                this.value = null;
+            }
+            public MapSOParser_RGB(T value)
+            {
+                this.value = value;
+            }
+        }
 
-		/** Parser for a float curve **/
-		[RequireConfigType(ConfigType.Node)]
-		public class FloatCurveParser : IParserEventSubscriber
-		{
-			public FloatCurve curve { get; private set; }
+        /** Parser for a float curve **/
+        [RequireConfigType(ConfigType.Node)]
+        public class FloatCurveParser : IParserEventSubscriber
+        {
+            public FloatCurve curve { get; private set; }
 
-			// Build the curve from the data found in the node
-			void IParserEventSubscriber.Apply(ConfigNode node)
-			{
-				curve = new FloatCurve ();
-				curve.Load (node);
-			}
+            // Build the curve from the data found in the node
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                curve = new FloatCurve ();
+                curve.Load (node);
+            }
 
-			// We don't use this
-			void IParserEventSubscriber.PostApply(ConfigNode node) {  }
+            // We don't use this
+            void IParserEventSubscriber.PostApply(ConfigNode node) {  }
 
-			// Default constructor
-			public FloatCurveParser ()
-			{
-				this.curve = null;
-			}
+            // Default constructor
+            public FloatCurveParser ()
+            {
+                this.curve = null;
+            }
 
-			// Default constructor
-			public FloatCurveParser (FloatCurve curve)
-			{
-				this.curve = curve;
-			}
-		}
+            // Default constructor
+            public FloatCurveParser (FloatCurve curve)
+            {
+                this.curve = curve;
+            }
+        }
 
-		/** Parser for animation curve **/
-		[RequireConfigType(ConfigType.Node)]
-		public class AnimationCurveParser : IParserEventSubscriber
-		{
-			// Animation curve we are generating
-			public AnimationCurve curve { get; private set; }
+        /** Parser for animation curve **/
+        [RequireConfigType(ConfigType.Node)]
+        public class AnimationCurveParser : IParserEventSubscriber
+        {
+            // Animation curve we are generating
+            public AnimationCurve curve { get; private set; }
 
-			// Build the curve from data found in the node
-			void IParserEventSubscriber.Apply(ConfigNode node)
-			{
-				// List of keyframes
-				SortedList<int, Keyframe> keyframes = new SortedList<int, Keyframe>();
+            // Build the curve from data found in the node
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                // List of keyframes
+                SortedList<int, Keyframe> keyframes = new SortedList<int, Keyframe>();
 
                 int key = 0;
 
-				// Iterate through all the values in the node (all are keyframes)
-				foreach(ConfigNode.Value frame in node.values)
-				{
-					// Get an array of the frame data
-					List<float> value = new List<float> ();
-					foreach (string e in frame.value.Split(' ')) 
-						value.Add(float.Parse(e));
+                // Iterate through all the values in the node (all are keyframes)
+                foreach(ConfigNode.Value frame in node.values)
+                {
+                    // Get an array of the frame data
+                    List<float> value = new List<float> ();
+                    foreach (string e in frame.value.Split(' ')) 
+                        value.Add(float.Parse(e));
 
-					// Build the keyframe
-					Keyframe keyframe;
-					if(value.Count == 2)
-						keyframe = new Keyframe(value[0], value[1]);
-					else if(value.Count == 4)
-						keyframe = new Keyframe(value[0], value[1], value[2], value[3]);
-					else
-						throw new Exception("Keyframe consists of either 2 or 4 floats");
+                    // Build the keyframe
+                    Keyframe keyframe;
+                    if(value.Count == 2)
+                        keyframe = new Keyframe(value[0], value[1]);
+                    else if(value.Count == 4)
+                        keyframe = new Keyframe(value[0], value[1], value[2], value[3]);
+                    else
+                        throw new Exception("Keyframe consists of either 2 or 4 floats");
 
-					// Add the keyframe to the list
-					keyframes.Add(key, keyframe);
+                    // Add the keyframe to the list
+                    keyframes.Add(key, keyframe);
                     key++;
-				}
+                }
 
-				// Create the final animation curve
-				curve = new AnimationCurve();
-				foreach(KeyValuePair<int, Keyframe> keyframe in keyframes)
-					curve.AddKey(keyframe.Value);
-			}
+                // Create the final animation curve
+                curve = new AnimationCurve();
+                foreach(KeyValuePair<int, Keyframe> keyframe in keyframes)
+                    curve.AddKey(keyframe.Value);
+            }
 
-			// We don't use this
-			void IParserEventSubscriber.PostApply(ConfigNode node) { }
+            // We don't use this
+            void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
-			// Default constructor
-			public AnimationCurveParser ()
-			{
-				this.curve = null;
-			}
+            // Default constructor
+            public AnimationCurveParser ()
+            {
+                this.curve = null;
+            }
 
-			// Construct this fine object
-			public AnimationCurveParser (AnimationCurve curve)
-			{
-				this.curve = curve;
-			}
-		}
+            // Construct this fine object
+            public AnimationCurveParser (AnimationCurve curve)
+            {
+                this.curve = curve;
+            }
+        }
 
-		/** Parser for Physics Material **/
-		[RequireConfigType(ConfigType.Node)]
-		public class PhysicsMaterialParser : IParserEventSubscriber
-		{
-			// Physics material we are generating
-			public PhysicMaterial material { get; private set; }
+        /** Parser for Physics Material **/
+        [RequireConfigType(ConfigType.Node)]
+        public class PhysicsMaterialParser : IParserEventSubscriber
+        {
+            // Physics material we are generating
+            public PhysicMaterial material { get; private set; }
 
-			// Physics material parameters
-			[ParserTarget("bounceCombine", optional = true)]
-			private EnumParser<PhysicMaterialCombine> bounceCombine
-			{
-				set { material.bounceCombine = value.value; }
-			}
+            // Physics material parameters
+            [ParserTarget("bounceCombine", optional = true)]
+            private EnumParser<PhysicMaterialCombine> bounceCombine
+            {
+                set { material.bounceCombine = value.value; }
+            }
 
-			[ParserTarget("frictionCombine", optional = true)]
-			private EnumParser<PhysicMaterialCombine> frictionCombine
-			{
-				set { material.frictionCombine = value.value; }
-			}
-			
-			[ParserTarget("frictionDirection2", optional = true)]
-			private Vector3Parser frictionDirection2
-			{
-				set { material.frictionDirection2 = value.value; }
-			}
+            [ParserTarget("frictionCombine", optional = true)]
+            private EnumParser<PhysicMaterialCombine> frictionCombine
+            {
+                set { material.frictionCombine = value.value; }
+            }
+            
+            [ParserTarget("frictionDirection2", optional = true)]
+            private Vector3Parser frictionDirection2
+            {
+                set { material.frictionDirection2 = value.value; }
+            }
 
-			[ParserTarget("bounciness", optional = true)]
-			private NumericParser<float> bounciness
-			{
-				set { material.bounciness = value.value; }
-			}
-			
-			[ParserTarget("staticFriction", optional = true)]
-			private NumericParser<float> staticFriction
-			{
-				set { material.staticFriction = value.value; }
-			}
-			
-			[ParserTarget("staticFriction2", optional = true)]
-			private NumericParser<float> staticFriction2
-			{
-				set { material.staticFriction2 = value.value; }
-			}
-			
-			[ParserTarget("dynamicFriction", optional = true)]
-			private NumericParser<float> dynamicFriction
-			{
-				set { material.dynamicFriction = value.value; }
-			}
-			
-			[ParserTarget("dynamicFriction2", optional = true)]
-			private NumericParser<float> dynamicFriction2
-			{
-				set { material.dynamicFriction2 = value.value; }
-			}
+            [ParserTarget("bounciness", optional = true)]
+            private NumericParser<float> bounciness
+            {
+                set { material.bounciness = value.value; }
+            }
+            
+            [ParserTarget("staticFriction", optional = true)]
+            private NumericParser<float> staticFriction
+            {
+                set { material.staticFriction = value.value; }
+            }
+            
+            [ParserTarget("staticFriction2", optional = true)]
+            private NumericParser<float> staticFriction2
+            {
+                set { material.staticFriction2 = value.value; }
+            }
+            
+            [ParserTarget("dynamicFriction", optional = true)]
+            private NumericParser<float> dynamicFriction
+            {
+                set { material.dynamicFriction = value.value; }
+            }
+            
+            [ParserTarget("dynamicFriction2", optional = true)]
+            private NumericParser<float> dynamicFriction2
+            {
+                set { material.dynamicFriction2 = value.value; }
+            }
 
-			void IParserEventSubscriber.Apply(ConfigNode node) { }
-			void IParserEventSubscriber.PostApply(ConfigNode node) { }
+            void IParserEventSubscriber.Apply(ConfigNode node) { }
+            void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
-			// Default constructor
-			public PhysicsMaterialParser ()
-			{
-				this.material = null;
-			}
+            // Default constructor
+            public PhysicsMaterialParser ()
+            {
+                this.material = null;
+            }
 
-			// Initializing constructor
-			public PhysicsMaterialParser (PhysicMaterial material)
-			{
-				this.material = material;
-			}
-		}
-	}
+            // Initializing constructor
+            public PhysicsMaterialParser (PhysicMaterial material)
+            {
+                this.material = material;
+            }
+        }
+
+        /** Parser for mesh */
+        [RequireConfigType(ConfigType.Value)]
+        public class MeshParser : IParsable
+        {
+            public Mesh value;
+            public void SetFromString (string s)
+            {
+                // Check if we are attempting to load a builtin mesh
+                if (s.StartsWith ("BUILTIN/")) 
+                {
+                    string meshName = Regex.Replace (s, "BUILTIN/", "");
+                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Mesh> ().Where (mesh => mesh.name == meshName).First ();
+                    return;
+                }
+
+                String path = KSPUtil.ApplicationRootPath + "GameData/" + s;
+                if (System.IO.File.Exists(path))
+                {
+                    value = ObjImporter.ImportFile(path);
+                    value.name = Path.GetFileNameWithoutExtension(path);
+                    return;
+                }
+
+                // Mesh was not found
+                value = null;
+            }
+            public MeshParser ()
+            {
+                
+            }
+            public MeshParser (Mesh value)
+            {
+                this.value = value;
+            }
+        }
+    }
 }
-
