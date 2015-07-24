@@ -1,4 +1,4 @@
-Kopernicus Beta Release 2.3
+Kopernicus Beta Release 2.4
 ==============================
 July 16th, 2015
 
@@ -23,6 +23,11 @@ New in this version
 - Barycenters don't show a thumbnail in the R&D
 - Fixed a bug with builtin MapSO's, they work now correct
 - Added custom GroundScatter to the Hodor-example
+
+New in Beta 2.4 [Bugfix-Update]
+---------------
+- Fixed Bug with PQSLandControl-Patching
+- Fixed a bug with the Barycenters
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 

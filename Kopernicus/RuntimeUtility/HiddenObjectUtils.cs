@@ -32,15 +32,17 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
 {
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    public class BarycenterUtils : MonoBehaviour
+    public class HiddenObjectUtils : MonoBehaviour
     {
         MapObject previousMap = null;
+        public static List<string> additions = new List<string>();
 
         public void Awake()
         {
@@ -60,13 +62,13 @@ namespace Kopernicus
             // If we switched to a barycenter..
             if (map != null && previousMap != null)
             {
-                if (Templates.barycenters.Contains(map.GetName()))
+                if (Templates.barycenters.Contains(map.GetName()) || additions.Contains(map.GetName()))
                 {
                     // Don't center the barycenter
-                    int nextIndex = previousMap.celestialBody.flightGlobalsIndex < map.celestialBody.flightGlobalsIndex ? map.celestialBody.flightGlobalsIndex + 1 : map.celestialBody.flightGlobalsIndex - 1;
-                    CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.flightGlobalsIndex == nextIndex);
-                    PlanetariumCamera.fetch.SetTarget(body);
-                    previousMap = Resources.FindObjectsOfTypeAll<MapObject>().First(m => m.celestialBody.flightGlobalsIndex == nextIndex);
+                    List<MapObject> objects = PlanetariumCamera.fetch.targets;
+                    int nextIndex = objects.IndexOf(previousMap) < objects.IndexOf(map) ? (objects.IndexOf(map) + 1) % objects.Count : objects.IndexOf(map) - 1 + (objects.IndexOf(map) - 1 >= 0 ? 0 : objects.Count);
+                    PlanetariumCamera.fetch.SetTarget(objects[nextIndex]);
+                    previousMap = objects[nextIndex];
                 }
             }
         }
@@ -85,6 +87,14 @@ namespace Kopernicus
                         planetItem.planet.SetActive(false);
                         planetItem.label_planetName.anchor = SpriteText.Anchor_Pos.Middle_Center;
                     }
+                }
+
+                // Process the additions
+                foreach (string name in additions)
+                {
+                    // If we can find an Object, deactivate it
+                    foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(item => item.name == name))
+                        planetItem.Hide();
                 }
             }
         }

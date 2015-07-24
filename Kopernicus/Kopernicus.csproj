@@ -119,7 +119,7 @@
     <Compile Include="MaterialWrapper\NormalDiffuse.cs" />
     <Compile Include="MaterialWrapper\NormalDiffuseDetail.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
-    <Compile Include="RuntimeUtility\BarycenterUtils.cs" />
+    <Compile Include="RuntimeUtility\HiddenObjectUtils.cs" />
     <Compile Include="RuntimeUtility\MapViewFixer.cs" />
     <Compile Include="RuntimeUtility\MenuBodyChanger.cs" />
     <Compile Include="RuntimeUtility\NameChanger.cs" />

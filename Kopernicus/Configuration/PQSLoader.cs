@@ -323,7 +323,7 @@ namespace Kopernicus
                             }
                         }
                     }
-                    Type modType = Type.GetType ("PQSMod_" + mod.name + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+                    Type modType = Type.GetType ((mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl") + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
                     // Do any PQS Mods already exist on this PQS matching this mod?
                     IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) && 
