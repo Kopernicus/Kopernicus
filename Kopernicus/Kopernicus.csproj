@@ -195,7 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\Resources\Shaders.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Shaders.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
