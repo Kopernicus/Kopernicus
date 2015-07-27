@@ -190,7 +190,6 @@ namespace Kopernicus
                     emitter.rndVelocity = randomVelocity * TimeWarp.CurrentRate;
                     speed *= TimeWarp.CurrentRate;
                     emitter.worldVelocity = speed;
-                    Debug.Log(speed);
                 }
             }
         }
