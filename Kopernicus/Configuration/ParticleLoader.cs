@@ -48,46 +48,42 @@ namespace Kopernicus
         public class ParticleLoader : IParserEventSubscriber
         {
             // Set-up our parental objects
-            ParticleEmitter MainEmitter;
-            ParticleAnimator ParticleAnim;
-            ParticleRenderer ParticleRender;
-            string target;
+            PlanetaryParticle particle;
             GameObject body;
-            float speedScale;
 
             // Target of our particles
             [ParserTarget("target", optional = true, allowMerge = false)]
             public string targetLoader
             {
-                set { target = value; }
+                set { particle.target = value; }
             }
 
             // minEmission of particles
             [ParserTarget("minEmission", optional = true, allowMerge = false)]
             public NumericParser<float> minEmission
             {
-                set { MainEmitter.minEmission = value.value; }
+                set { particle.minEmission = value.value; }
             }
 
             // maxEmission of particles
             [ParserTarget("maxEmission", optional = true, allowMerge = false)]
             public NumericParser<float> maxEmission
             {
-                set { MainEmitter.maxEmission = value.value; }
+                set { particle.maxEmission = value.value; }
             }
 
             // minimum lifespan of particles
             [ParserTarget("lifespanMin", optional = true, allowMerge = false)]
             public NumericParser<float> lifespanMin
             {
-                set { MainEmitter.minEnergy = value.value; }
+                set { particle.minEnergy = value.value; }
             }
 
             // maximum lifespan of particles
             [ParserTarget("lifespanMax", optional = true, allowMerge = false)]
             public NumericParser<float> lifespanMax
             {
-                set { MainEmitter.maxEnergy = value.value; }
+                set { particle.maxEnergy = value.value; }
 
             }
 
@@ -95,44 +91,44 @@ namespace Kopernicus
             [ParserTarget("sizeMin", optional = true, allowMerge = false)]
             public NumericParser<float> sizeMin
             {
-                set { MainEmitter.minSize = value.value; }
+                set { particle.emitter.minSize = value.value; }
             }
 
             // maximum size of particles
             [ParserTarget("sizeMax", optional = true, allowMerge = false)]
             public NumericParser<float> sizeMax
             {
-                set { MainEmitter.maxSize = value.value; }
+                set { particle.emitter.maxSize = value.value; }
             }
 
             // speedScale of particles
             [ParserTarget("speedScale", optional = true, allowMerge = false)]
             public NumericParser<float> speedScaleLoader
             {
-                set { speedScale = value.value; }
+                set { particle.speedScale = value.value; }
             }
 
             // grow rate of particles
             [ParserTarget("rate", optional = true, allowMerge = false)]
             public NumericParser<float> rate
             {
-                set { ParticleAnim.sizeGrow = value.value; }
+                set { particle.animator.sizeGrow = value.value; }
             }
 
             // rand Velocity of particles
             [ParserTarget("randVelocity", optional = true, allowMerge = false)]
             public Vector3Parser randVelocity
             {
-                set { MainEmitter.rndVelocity = value.value; }
+                set { particle.randomVelocity = value.value; }
             }
 
             // Texture of particles
             [ParserTarget("texture", optional = true, allowMerge = false)]
             public Texture2DParser texture
             {
-                set { ParticleRender.material.mainTexture = value.value; }
+                set { particle.Renderer.material.mainTexture = value.value; }
             }
-
+            
             public ParticleLoader(GameObject scaledPlanet)
             {
                 this.body = scaledPlanet;
@@ -141,13 +137,7 @@ namespace Kopernicus
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                MainEmitter = (ParticleEmitter)body.AddComponent("MeshParticleEmitter");
-                ParticleRender = body.AddComponent<ParticleRenderer>();
-                ParticleAnim = body.AddComponent<ParticleAnimator>();
-                ParticleRender.material = new Material(Shader.Find("Particles/Alpha Blended"));
-
-                MainEmitter.useWorldSpace = false;
-                ParticleAnim.doesAnimateColor = true;
+                particle = PlanetaryParticle.CreateInstance(body);
             }
 
             // Post-Apply event
@@ -160,27 +150,48 @@ namespace Kopernicus
                     colors.Add(new Color(c.x, c.y, c.z, c.w));
 
                 }
-                ParticleAnim.colorAnimation = colors.ToArray();
+                particle.animator.colorAnimation = colors.ToArray();
             }
-            
-            public void Update()
+
+            public class PlanetaryParticle : MonoBehaviour
             {
-                Vector3 Speedvec = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target).position;
-                Speedvec -= body.transform.position;
+                public ParticleEmitter emitter;
+                public ParticleAnimator animator;
+                public ParticleRenderer Renderer;
+                public string target = "Sun";
+                public float speedScale = 0f;
+                public float minEmission, maxEmission;
+                public float minEnergy, maxEnergy;
+                public Vector3 randomVelocity;
 
-                Speedvec *= speedScale;
+                public static PlanetaryParticle CreateInstance(GameObject body)
+                {
+                    PlanetaryParticle p = body.AddComponent<PlanetaryParticle>();
+                    p.emitter = (ParticleEmitter)body.AddComponent("MeshParticleEmitter");
+                    p.animator = body.AddComponent<ParticleAnimator>();
+                    p.Renderer = body.AddComponent<ParticleRenderer>();
+                    p.Renderer.material = new Material(Shader.Find("Particles/Alpha Blended"));
+                    p.emitter.useWorldSpace = false;
+                    p.animator.doesAnimateColor = true;
+                    DontDestroyOnLoad(p);
+                    return p;
+                }
 
-                MainEmitter.minEnergy = MainEmitter.minEnergy / TimeWarp.CurrentRate;
-                MainEmitter.maxEnergy = MainEmitter.maxEnergy / TimeWarp.CurrentRate;
-
-                MainEmitter.maxEmission = MainEmitter.maxEmission * TimeWarp.CurrentRate;
-                MainEmitter.minEmission = MainEmitter.minEmission * TimeWarp.CurrentRate;
-
-                MainEmitter.rndVelocity = MainEmitter.rndVelocity * TimeWarp.CurrentRate;
-
-                Speedvec *= TimeWarp.CurrentRate;
-
-                MainEmitter.worldVelocity = Speedvec;
+                public void Update()
+                {
+                    emitter.emit = true;
+                    Vector3 speed = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target).position;
+                    speed -= transform.position;
+                    speed *= speedScale;
+                    emitter.minEnergy = minEnergy / TimeWarp.CurrentRate;
+                    emitter.maxEnergy = maxEnergy / TimeWarp.CurrentRate;
+                    emitter.maxEmission = maxEmission * TimeWarp.CurrentRate;
+                    emitter.minEmission = minEmission * TimeWarp.CurrentRate;
+                    emitter.rndVelocity = randomVelocity * TimeWarp.CurrentRate;
+                    speed *= TimeWarp.CurrentRate;
+                    emitter.worldVelocity = speed;
+                    Debug.Log(speed);
+                }
             }
         }
     }
