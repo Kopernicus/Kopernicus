@@ -72,7 +72,7 @@ namespace Kopernicus
                 LoadObjectFromConfigurationNode (o, node);
                 return o;
             }
-
+			
             /**
              * Load data for an object's ParserTarget fields and properties from a configuration node
              * 
