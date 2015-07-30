@@ -109,39 +109,27 @@ namespace Kopernicus
         {
             Debug.Log("[Kopernicus]: Post-Spawn");
 
-            // Fix the flight globals index of each body and patch it's SOI
-            int counter = 0;
+            // Do Post-Spawn Stuff (SOI, HillSphere, Barycenter)
             foreach (CelestialBody body in FlightGlobals.Bodies) 
             {
-                body.flightGlobalsIndex = counter++;
-
-                // Path the SOI
+                // Patch the SOI
                 if (Templates.sphereOfInfluence.ContainsKey(body.bodyTransform.name))
-                {
                     body.sphereOfInfluence = Templates.sphereOfInfluence[body.bodyTransform.name];
-                }
 
                 // Patch the Hill Sphere
                 if (Templates.hillSphere.ContainsKey(body.bodyTransform.name))
-                {
                     body.hillSphere = Templates.hillSphere[body.bodyTransform.name];
-                }
 
                 // Make the Body a barycenter
                 if (Templates.barycenters.Contains(body.GetTransform().name))
-                {
-                    // Deactivate ScaledVersion
                     body.scaledBody.SetActiveRecursively(false);
-                }
 
                 Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
             }
 
             // Move KSC around
             if (SpaceCenterSwitcher.Instance != null)
-            {
                 SpaceCenterSwitcher.Instance.MoveKSC();
-            }
 
             // Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
             PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
