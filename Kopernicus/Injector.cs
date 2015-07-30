@@ -90,7 +90,7 @@ namespace Kopernicus
             archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
 
             // Add the BaryCenter controller
-            archivesController.gameObject.AddComponent<BarycenterUtils.RDBaryCenter>();
+            archivesController.gameObject.AddComponent<HiddenObjectUtils.RDBaryCenter>();
 
             // Clear space center instance so it will accept nouveau Kerbin
             SpaceCenter.Instance = null;
