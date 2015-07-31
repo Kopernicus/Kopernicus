@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -568,6 +569,10 @@ namespace Kopernicus
                 // Actual PQS mod we are loading
                 private PQSLandControl _mod;
 
+                // Scatters that should be Collide-Scatters
+                [ParserTarget("collide", optional = true)]
+                private StringCollectionParser collideScatters = new StringCollectionParser(new string[0]);
+
                 // altitudeBlend
                 [ParserTarget("altitudeBlend", optional = true)]
                 private NumericParser<float> altitudeBlend
@@ -744,8 +749,10 @@ namespace Kopernicus
 
                 void IParserEventSubscriber.PostApply(ConfigNode node)
                 {
-                    _mod.scatters = scatters.Select(s => s.scatter).ToArray();
-                    _mod.landClasses = landClasses.Select(c => c.landClass).ToArray();
+                    if (scatters.Count > 0)
+                        _mod.scatters = scatters.Select(s => s.scatter).ToArray();
+                    if (landClasses.Count > 0)
+                        _mod.landClasses = landClasses.Select(c => c.landClass).ToArray();
 
                     // Assign each scatter amount with their corresponding scatter
                     foreach (PQSLandControl.LandClass landClass in _mod.landClasses)
@@ -765,6 +772,22 @@ namespace Kopernicus
                                 amount.scatter = _mod.scatters[i];
                             }
                         }
+                    }
+                }
+
+                // We need the Sphere-Transform :D
+                public void Apply()
+                {
+                    // Add Colliders to the scatters
+                    Func<PQSLandControl.LandClassScatter, bool> predicate = s => collideScatters.value[0] == "ALL" ? s != null : collideScatters.value.Contains(s.scatterName);
+                    foreach (PQSLandControl.LandClassScatter scatter in _mod.scatters.Where(predicate))
+                    {
+                        GameObject scatterParent = new GameObject("Scatter " + scatter.scatterName);
+                        scatterParent.transform.parent = _mod.sphere.transform;
+                        scatterParent.transform.localPosition = Vector3.zero;
+                        scatterParent.transform.localRotation = Quaternion.identity;
+                        scatterParent.transform.localScale = Vector3.one;
+                        scatterParent.AddComponent<ScatterCollider>();
                     }
                 }
 
@@ -796,6 +819,37 @@ namespace Kopernicus
                     _mod = template as PQSLandControl;
                     _mod.transform.parent = Utility.Deactivator;
                     base.mod = _mod;
+                }
+            }
+
+            // Component to add Colliders to the Scatter-Objects
+            public class ScatterCollider : MonoBehaviour
+            {
+                // Register us as the parental Object for the Scatter
+                public void Start()
+                {
+                    PQSLandControl landControl = transform.parent.GetComponentInChildren<PQSLandControl>();
+                    PQSLandControl.LandClassScatter scatter = landControl.scatters.Where(s => s.scatterName == name.Split(' ').Last()).First();
+                    scatter.GetType().GetField("scatterParent", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(scatter, gameObject);
+                }
+
+                private bool isDone = false;
+
+                // Add colliders to all the Scatters
+                public void Update()
+                {
+                    if (!isDone && transform.childCount > 0)
+                    {
+                        foreach (Transform t in transform)
+                        {
+                            if (t.name == "Unass") // What?!?!
+                            {
+                                MeshCollider collider = t.gameObject.AddComponent<MeshCollider>();
+                                collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
+                                isDone = true;
+                            }
+                        }
+                    }
                 }
             }
         }
