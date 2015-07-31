@@ -125,18 +125,18 @@ namespace Kopernicus
             // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
             menuPlanet.renderer.sharedMaterial = planetCB.scaledBody.renderer.sharedMaterial;
 
-            // Copy EVE 7.4 clouds
+            // Copy EVE 7.4 clouds / Rings
             for (int i = 0; i < planetCB.scaledBody.transform.childCount; i++)
             {
-                Transform cloud = planetCB.scaledBody.transform.GetChild(i);
-                if (cloud.name == "New Game Object" && cloud.gameObject.GetComponents<MeshRenderer>().Length == 1 && cloud.gameObject.GetComponents<MeshFilter>().Length == 1)
+                Transform t = planetCB.scaledBody.transform.GetChild(i);
+                if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
                 {
-                    GameObject newCloud = Instantiate(cloud.gameObject) as GameObject;
-                    newCloud.transform.parent = menuPlanet.transform;
-                    newCloud.layer = 0;
-                    newCloud.transform.localPosition = Vector3.zero;
-                    newCloud.transform.localRotation = Quaternion.identity;
-                    newCloud.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
+                    GameObject newT = Instantiate(t.gameObject) as GameObject;
+                    newT.transform.parent = menuPlanet.transform;
+                    newT.layer = 0;
+                    newT.transform.localPosition = Vector3.zero;
+                    newT.transform.localRotation = Quaternion.identity;
+                    newT.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
                 }
             }
 
@@ -185,18 +185,18 @@ namespace Kopernicus
                 // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
                 menuMoon.renderer.sharedMaterial = moonCB.scaledBody.renderer.sharedMaterial;
 
-                // Copy EVE 7.4 clouds
+                // Copy EVE 7.4 clouds / Rings
                 for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
                 {
-                    Transform cloud = moonCB.scaledBody.transform.GetChild(i);
-                    if (cloud.name == "New Game Object" && cloud.gameObject.GetComponents<MeshRenderer>().Length == 1 && cloud.gameObject.GetComponents<MeshFilter>().Length == 1)
+                    Transform t = moonCB.scaledBody.transform.GetChild(i);
+                    if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
                     {
-                        GameObject newCloud = Instantiate(cloud.gameObject) as GameObject;
-                        newCloud.transform.parent = menuMoon.transform;
-                        newCloud.layer = 0;
-                        newCloud.transform.localPosition = Vector3.zero;
-                        newCloud.transform.localRotation = Quaternion.identity;
-                        newCloud.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
+                        GameObject newT = Instantiate(t.gameObject) as GameObject;
+                        newT.transform.parent = menuMoon.transform;
+                        newT.layer = 0;
+                        newT.transform.localPosition = Vector3.zero;
+                        newT.transform.localRotation = Quaternion.identity;
+                        newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
                     }
                 }
             }
