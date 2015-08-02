@@ -184,8 +184,6 @@
     <Compile Include="Configuration\ModLoader\VertexHeightMap.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
-    <Compile Include="Configuration\Parser\External\ExternalParserTarget.cs" />
-    <Compile Include="Configuration\Parser\External\ExternalParserTargetLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\Resources\Shaders.resx">
@@ -201,7 +199,4 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Configuration\Parser\External\" />
-  </ItemGroup>
 </Project>
