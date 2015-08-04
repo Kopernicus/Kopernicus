@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -57,7 +58,7 @@ namespace Kopernicus
                     {
                         set { simplex.frequency = value.value; }
                     }
-
+                    
                     // Octaves of the simplex noise
                     [ParserTarget("octaves", optional = true)]
                     private NumericParser<double> octaves
@@ -131,6 +132,21 @@ namespace Kopernicus
                                 customMaterial = new AerialTransCutoutLoader();
                         }
                     }
+
+                    // Should we delete the Scatter?
+                    [ParserTarget("delete", optional = true)]
+                    public NumericParser<bool> delete = new NumericParser<bool>(false);
+
+                    // Should we add colliders to the scatter=
+                    [ParserTarget("collide", optional = true)]
+                    public NumericParser<bool> collide = new NumericParser<bool>(false);
+
+                    // Should we add Science to the Scatter?
+                    [ParserTarget("science", optional = true)]
+                    public NumericParser<bool> science = new NumericParser<bool>(false);
+
+                    // ConfigNode that stores the Experiment
+                    public ConfigNode experiment;
 
                     // Custom scatter material
                     [ParserTarget("Material", optional = true, allowMerge = true)]
@@ -251,7 +267,16 @@ namespace Kopernicus
                         scatter.maxSpeed = 1000;
                     }
 
-                    public void Apply(ConfigNode node) { }
+                    public LandClassScatterLoader(PQSLandControl.LandClassScatter scatter)
+                    {
+                        this.scatter = scatter;
+                    }
+
+                    public void Apply(ConfigNode node) 
+                    {
+                        if (node.HasNode("EXPERIMENT"))
+                            experiment = node.GetNode("EXPERIMENT");
+                    }
 
                     public void PostApply(ConfigNode node)
                     {
@@ -325,6 +350,10 @@ namespace Kopernicus
                 private class LandClassLoader : IParserEventSubscriber
                 {
                     public PQSLandControl.LandClass landClass;
+
+                    // Should we delete the LandClass?
+                    [ParserTarget("delete", optional = true)]
+                    public NumericParser<bool> delete = new NumericParser<bool>(false);
 
                     // alterApparentHeight
                     [ParserTarget("alterApparentHeight", optional = true)]
@@ -564,14 +593,15 @@ namespace Kopernicus
                         range.lerpRange.startStart = -1;
                         longitudeRange = range;
                     }
+
+                    public LandClassLoader(PQSLandControl.LandClass landClass)
+                    {
+                        this.landClass = landClass;
+                    }
                 }
 
                 // Actual PQS mod we are loading
                 private PQSLandControl _mod;
-
-                // Scatters that should be Collide-Scatters
-                [ParserTarget("collide", optional = true)]
-                private StringCollectionParser collideScatters = new StringCollectionParser(new string[0]);
 
                 // altitudeBlend
                 [ParserTarget("altitudeBlend", optional = true)]
@@ -735,11 +765,9 @@ namespace Kopernicus
                 }
 
                 // List of scatters
-                [ParserTargetCollection("scatters", optional = true, nameSignificance = NameSignificance.None)]
                 private List<LandClassScatterLoader> scatters = new List<LandClassScatterLoader>();
 
                 // List of landclasses
-                [ParserTargetCollection("landClasses", optional = true, nameSignificance = NameSignificance.None)]
                 private List<LandClassLoader> landClasses = new List<LandClassLoader>();
 
                 void IParserEventSubscriber.Apply(ConfigNode node)
@@ -749,6 +777,92 @@ namespace Kopernicus
 
                 void IParserEventSubscriber.PostApply(ConfigNode node)
                 {
+                    // Load the LandClasses manually, to support patching
+                    if (node.HasNode("landClasses"))
+                    {
+                        // Already patched classes
+                        List<PQSLandControl.LandClass> patchedClasses = new List<PQSLandControl.LandClass>();
+                        if (_mod.landClasses.Length > 0)
+                            _mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
+
+                        // Go through the nodes
+                        foreach (ConfigNode lcNode in node.GetNode("landClasses").nodes)
+                        {
+                            // The Loader
+                            LandClassLoader loader = null;
+
+                            // Are there existing LandClasses?
+                            if (landClasses.Count > 0)
+                            {
+                                // Attempt to find a LandClass we can edit that we have not edited before
+                                loader = landClasses.Where(m => !patchedClasses.Contains(m.landClass) && (lcNode.HasValue("name") ? m.landClass.landClassName == lcNode.GetValue("name") : false))
+                                                                 .FirstOrDefault();
+
+                                // Load the Loader (lol)
+                                if (loader != null)
+                                {
+                                    Parser.LoadObjectFromConfigurationNode(loader, lcNode);
+                                    if (loader.delete.value)
+                                        landClasses.Remove(loader);
+                                    else
+                                        patchedClasses.Add(loader.landClass);
+                                }
+                            }
+
+                            // If we can't patch a LandClass, create a new one
+                            if (loader == null)
+                            {
+                                loader = Parser.CreateObjectFromConfigNode(typeof(LandClassLoader), lcNode) as LandClassLoader; 
+                            }
+
+                            // Add the Loader to the List
+                            landClasses.Add(loader);
+                        }
+                    }
+
+                    // Load the Scatters manually, to support patching
+                    if (node.HasNode("scatters"))
+                    {
+                        // Already patched scatters
+                        List<PQSLandControl.LandClassScatter> patchedScatters = new List<PQSLandControl.LandClassScatter>();
+                        if (_mod.scatters.Length > 0)
+                            _mod.scatters.ToList().ForEach(s => scatters.Add(new LandClassScatterLoader(s)));
+
+                        // Go through the nodes
+                        foreach (ConfigNode scatterNode in node.GetNode("scatters").nodes)
+                        {
+                            // The Loader
+                            LandClassScatterLoader loader = null;
+
+                            // Are there existing Scatters?
+                            if (scatters.Count > 0)
+                            {
+                                // Attempt to find a Scatter we can edit that we have not edited before
+                                loader = scatters.Where(m => !patchedScatters.Contains(m.scatter) && (scatterNode.HasValue("name") ? m.scatter.scatterName == scatterNode.GetValue("name") : false))
+                                                                 .FirstOrDefault();
+
+                                // Load the Loader (lol)
+                                if (loader != null)
+                                {
+                                    Parser.LoadObjectFromConfigurationNode(loader, scatterNode);
+                                    if (loader.delete.value)
+                                        scatters.Remove(loader);
+                                    else 
+                                        patchedScatters.Add(loader.scatter);
+                                }
+                            }
+
+                            // If we can't patch a Scatter, create a new one
+                            if (loader == null)
+                            {
+                                loader = Parser.CreateObjectFromConfigNode(typeof(LandClassScatterLoader), scatterNode) as LandClassScatterLoader;
+                            }
+
+                            // Add the Loader to the List
+                            scatters.Add(loader);
+                        }
+                    }
+
                     if (scatters.Count > 0)
                         _mod.scatters = scatters.Select(s => s.scatter).ToArray();
                     if (landClasses.Count > 0)
@@ -776,18 +890,23 @@ namespace Kopernicus
                 }
 
                 // We need the Sphere-Transform :D
-                public void Apply()
+                public void SphereApply()
                 {
                     // Add Colliders to the scatters
-                    Func<PQSLandControl.LandClassScatter, bool> predicate = s => collideScatters.value[0] == "ALL" ? s != null : collideScatters.value.Contains(s.scatterName);
-                    foreach (PQSLandControl.LandClassScatter scatter in _mod.scatters.Where(predicate))
+                    foreach (PQSLandControl.LandClassScatter scatter in _mod.scatters)
                     {
+                        // Get the Loader
+                        LandClassScatterLoader loader = scatters.First(s => s.scatter.scatterName == scatter.scatterName);
+
+                        // Create the Scatter-Parent
                         GameObject scatterParent = new GameObject("Scatter " + scatter.scatterName);
                         scatterParent.transform.parent = _mod.sphere.transform;
                         scatterParent.transform.localPosition = Vector3.zero;
                         scatterParent.transform.localRotation = Quaternion.identity;
                         scatterParent.transform.localScale = Vector3.one;
-                        scatterParent.AddComponent<ScatterCollider>();
+
+                        // Add the ScatterExtension
+                        ScatterExtension.CreateInstance(scatterParent, loader.science.value, loader.collide.value, loader.experiment);
                     }
                 }
 
@@ -822,15 +941,38 @@ namespace Kopernicus
                 }
             }
 
-            // Component to add Colliders to the Scatter-Objects
-            public class ScatterCollider : MonoBehaviour
+            // Component to add Colliders and Science to the Scatter-Objects
+            public class ScatterExtension : MonoBehaviour
             {
+                // Experiment ID for this Scatter
+                public ConfigNode experiment;
+
+                // Should we add Science?
+                public bool science = false;
+
+                // Should we add Colliders?
+                public bool colliders = false;
+
+                // Create a new ScatterExtension
+                public static ScatterExtension CreateInstance(GameObject o, bool science, bool collide, ConfigNode exp)
+                {
+                    ScatterExtension scatter = o.AddComponent<ScatterExtension>();
+                    scatter.science = science;
+                    scatter.colliders = collide;
+                    scatter.experiment = exp;
+                    return scatter;
+                }
+
                 // Register us as the parental Object for the Scatter
                 public void Start()
                 {
                     PQSLandControl landControl = transform.parent.GetComponentInChildren<PQSLandControl>();
                     PQSLandControl.LandClassScatter scatter = landControl.scatters.Where(s => s.scatterName == name.Split(' ').Last()).First();
                     scatter.GetType().GetField("scatterParent", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(scatter, gameObject);
+
+                    // The ConfigNode is lost, so find it again!
+                    PSystemBody body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, transform.parent.name);
+                    experiment = body.pqsVersion.gameObject.GetChild(name).GetComponent<ScatterExtension>().experiment;
                 }
 
                 private bool isDone = false;
@@ -838,17 +980,122 @@ namespace Kopernicus
                 // Add colliders to all the Scatters
                 public void Update()
                 {
-                    if (!isDone && transform.childCount > 0)
+                    // If we already added Stuff, abort
+                    if (isDone)
+                        return;
+
+                    // If there's nothing to do, abort
+                    if (transform.childCount == 0)
+                        return;
+
+                    // If we should add Science, add it
+                    if (science)
+                        ScatterScience.CreateInstance(gameObject, experiment);
+
+                    foreach (Transform t in transform)
                     {
-                        foreach (Transform t in transform)
+                        // If we should add colliders, add them
+                        MeshCollider collider = t.gameObject.AddComponent<MeshCollider>();
+                        if (colliders)
                         {
-                            if (t.name == "Unass") // What?!?!
-                            {
-                                MeshCollider collider = t.gameObject.AddComponent<MeshCollider>();
-                                collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
-                                isDone = true;
-                            }
+                            collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
+                            collider.sharedMesh.Optimize();
                         }
+
+                        // Done
+                        isDone = true;
+                    }
+                }
+            }
+
+            // Component to add SCIENCE!! to the GroundScatter
+            public class ScatterScience : MonoBehaviour
+            {
+                // Contains the patched vessels (=> Kerbals)
+                public static List<Guid> vesselID = new List<Guid>();
+
+                // Contains the blocked List of Base-Events
+                public List<BaseEvent> blocked = new List<BaseEvent>();
+
+                // Which experiment should we run?
+                public ConfigNode experimentNode;
+
+                // The experiment
+                public ModuleScienceExperiment experiment;
+
+                // Create a new ScatterScience Instance
+                public static ScatterScience CreateInstance(GameObject o, ConfigNode exp)
+                {
+                    ScatterScience science = o.AddComponent<ScatterScience>();
+                    science.experimentNode = exp;
+                    return science;
+                } 
+
+                // Patch generated vessels.
+                public void Update()
+                {
+                    if (!FlightGlobals.ActiveVessel)
+                        return;
+
+                    if (!FlightGlobals.ActiveVessel.isEVA)
+                        return;
+
+                    if (FlightGlobals.ActiveVessel.evaController.part.FindModulesImplementing<ModuleScienceExperiment>()
+                        .Where(e => e.experimentID == experimentNode.GetValue("experimentID")).Count() == 0 && 
+                        !vesselID.Contains(FlightGlobals.ActiveVessel.id) &&
+                        !FlightGlobals.ActiveVessel.packed)
+                        AddScienceExperiment();
+
+                    if (experiment == null)
+                        return;
+
+                    ToggleExperiment(Physics.OverlapSphere(FlightGlobals.ship_position, 10f).Where(c => c.gameObject.transform.parent.name == name).Count() > 0);
+                }
+
+                public void AddScienceExperiment()
+                {
+                    // If the Node is null, abort
+                    if (experimentNode == null)
+                        return;
+
+                    // Create the ScienceExperiment
+                    Part kerbal = FlightGlobals.ActiveVessel.evaController.part;
+                    experiment = kerbal.AddModule(typeof(ModuleScienceExperiment).Name) as ModuleScienceExperiment;
+
+                    // I can't find a function that loads the module from the config node... :/ Doing it manually
+                    Type type = experiment.GetType();
+                    foreach (ConfigNode.Value value in experimentNode.values)
+                    {
+                        try
+                        {
+                            FieldInfo field = type.GetField(value.name);
+                            if (field.FieldType == typeof(string))
+                                field.SetValue(experiment, value.value);
+                            else if (field.FieldType.GetMethod("Parse") != null)
+                                field.SetValue(experiment, field.FieldType.GetMethod("Parse").Invoke(null, new object[] { value.value }));
+                        }
+                        catch { }
+                    }
+
+                    // Deactivate some things
+                    experiment.resettable = false;
+
+                    // Start the experiment
+                    experiment.OnStart(PartModule.StartState.None);
+                    vesselID.Add(kerbal.vessel.id);
+                }
+
+                public void ToggleExperiment(bool state)
+                {
+                    if (state && blocked.Contains(experiment.Events["DeployExperiment"]))
+                    {
+                        experiment.Events["DeployExperiment"].guiActive = true;
+                        blocked.Remove(experiment.Events["DeployExperiment"]);
+                    } 
+                    else if (!state && !blocked.Contains(experiment.Events["DeployExperiment"]))
+                    {
+                        experiment.Events["DeployExperiment"].guiActive = false;
+                        blocked.Add(experiment.Events["DeployExperiment"]);
                     }
                 }
             }

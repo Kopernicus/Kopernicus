@@ -355,7 +355,7 @@ namespace Kopernicus
                         loader.mod.gameObject.layer = Constants.GameLayers.LocalSpace;
                         loader.mod.sphere = pqsVersion;
                         if (loader.GetType() == typeof(ModLoader.LandControl))
-                            (loader as ModLoader.LandControl).Apply();
+                            (loader as ModLoader.LandControl).SphereApply();
                     }
                 }
             }
