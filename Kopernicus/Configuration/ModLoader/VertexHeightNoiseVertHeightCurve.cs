@@ -48,9 +48,9 @@ namespace Kopernicus
 
                 // curve
                 [ParserTarget("curve", optional = true)]
-                private AnimationCurveParser curve
+                private FloatCurveParser curve
                 {
-                    set { _mod.curve = value.curve; }
+                    set { _mod.curve = value.curve.Curve; }
                 }
                 
                 // Where the height starts

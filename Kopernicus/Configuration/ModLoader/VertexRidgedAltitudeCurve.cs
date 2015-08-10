@@ -97,9 +97,9 @@ namespace Kopernicus
 
                 // simplexCurve
                 [ParserTarget("simplexCurve", optional = true)]
-                private AnimationCurveParser simplexCurve
+                private FloatCurveParser simplexCurve
                 {
-                    set { _mod.simplexCurve = value.curve; }
+                    set { _mod.simplexCurve = value.curve.Curve; }
                 }
 
                 // simplexFrequency

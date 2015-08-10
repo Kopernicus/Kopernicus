@@ -557,65 +557,6 @@ namespace Kopernicus
             }
         }
 
-        /** Parser for animation curve **/
-        [RequireConfigType(ConfigType.Node)]
-        public class AnimationCurveParser : IParserEventSubscriber
-        {
-            // Animation curve we are generating
-            public AnimationCurve curve { get; private set; }
-
-            // Build the curve from data found in the node
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-                // List of keyframes
-                SortedList<int, Keyframe> keyframes = new SortedList<int, Keyframe>();
-
-                int key = 0;
-
-                // Iterate through all the values in the node (all are keyframes)
-                foreach(ConfigNode.Value frame in node.values)
-                {
-                    // Get an array of the frame data
-                    List<float> value = new List<float> ();
-                    foreach (string e in frame.value.Split(' ')) 
-                        value.Add(float.Parse(e));
-
-                    // Build the keyframe
-                    Keyframe keyframe;
-                    if(value.Count == 2)
-                        keyframe = new Keyframe(value[0], value[1]);
-                    else if(value.Count == 4)
-                        keyframe = new Keyframe(value[0], value[1], value[2], value[3]);
-                    else
-                        throw new Exception("Keyframe consists of either 2 or 4 floats");
-
-                    // Add the keyframe to the list
-                    keyframes.Add(key, keyframe);
-                    key++;
-                }
-
-                // Create the final animation curve
-                curve = new AnimationCurve();
-                foreach(KeyValuePair<int, Keyframe> keyframe in keyframes)
-                    curve.AddKey(keyframe.Value);
-            }
-
-            // We don't use this
-            void IParserEventSubscriber.PostApply(ConfigNode node) { }
-
-            // Default constructor
-            public AnimationCurveParser ()
-            {
-                this.curve = null;
-            }
-
-            // Construct this fine object
-            public AnimationCurveParser (AnimationCurve curve)
-            {
-                this.curve = curve;
-            }
-        }
-
         /** Parser for Physics Material **/
         [RequireConfigType(ConfigType.Node)]
         public class PhysicsMaterialParser : IParserEventSubscriber

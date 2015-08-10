@@ -62,9 +62,9 @@ namespace Kopernicus
 
                 // Deformity multiplier curve
                 [ParserTarget("inputHeightCurve")]
-                private AnimationCurveParser inputHeightCurve
+                private FloatCurveParser inputHeightCurve
                 {
-                    set { _mod.inputHeightCurve = value.curve; }
+                    set { _mod.inputHeightCurve = value.curve.Curve; }
                 }
 
                 // Ending height

@@ -102,13 +102,6 @@ namespace Kopernicus
                 set { lsc.ambientLightColor = value.value; }
             }
 
-            // sunBrightnessCurve
-            [ParserTarget("sunBrightnessCurve", optional = true)]
-            private AnimationCurveParser sunBrightnessCurve
-            {
-                set { lsc.sunBrightnessCurve = value.curve; }
-            }
-
             // Set the color that the star emits
             [ParserTarget("sunLensFlareColor", optional = true)]
             private ColorParser sunLensFlareColor
@@ -163,7 +156,6 @@ namespace Kopernicus
             public Color IVASunColor;
             public float IVASunIntensity;
             public Color ambientLightColor;
-            public AnimationCurve sunBrightnessCurve;
             public Color sunLensFlareColor;
             public bool givesOffLight = true;
             public double AU;
