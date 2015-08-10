@@ -3,12 +3,12 @@
  * ====================================
  * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
  * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
+ *
  * Maintained by: - Thomas P.
  * 				  - NathanKell
- * 
+ *
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,11 +23,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  *
  * Code based on KittiopaTech, modified by Thomas P.
@@ -36,7 +36,6 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using Kopernicus.Configuration.Resources;
 
 namespace Kopernicus
 {
@@ -50,7 +49,7 @@ namespace Kopernicus
 
             // Our Scaled Planet
             public GameObject ScaledPlanet { get; set; }
-            
+
             // Inner Radius of our ring
             [ParserTarget("innerRadius", optional = true, allowMerge = false)]
             public NumericParser<double> innerRadius
@@ -88,9 +87,9 @@ namespace Kopernicus
 
             // Lock rotation of our ring?
             [ParserTarget("lockRotation", optional = true, allowMerge = false)]
-            public NumericParser<bool> lockRotation 
+            public NumericParser<bool> lockRotation
             {
-                set { ring.lockRotation = value.value; } 
+                set { ring.lockRotation = value.value; }
             }
 
             // Unlit our ring?
@@ -106,7 +105,6 @@ namespace Kopernicus
                 set { ring.steps = value.value; }
             }
 
-
             // Initialize the RingLoader
             public RingLoader()
             {
@@ -115,13 +113,12 @@ namespace Kopernicus
 
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
-            { 
+            {
             }
 
             // Post-Apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                
             }
 
             // Rings
@@ -133,21 +130,6 @@ namespace Kopernicus
                 var Uvs = new List<Vector2>();
                 var Tris = new List<int>();
                 var Normals = new List<Vector3>();
-                
-                for (float i = 0.0f; i < 360.0f; i += (360.0f / ring.steps))
-                {
-                    var eVert = Quaternion.Euler(0, i, 0) * StartVec;
-
-                    //Inner Radius
-                    vertices.Add(eVert * (float)ring.innerRadius);
-                    Normals.Add(-Vector3.right);
-                    Uvs.Add(new Vector2(0, 0));
-
-                    //Outer Radius
-                    vertices.Add(eVert * (float)ring.outerRadius);
-                    Normals.Add(-Vector3.right);
-                    Uvs.Add(new Vector2(1, 1));
-                }
 
                 for (float i = 0.0f; i < 360.0f; i += (360.0f / ring.steps))
                 {
@@ -163,7 +145,22 @@ namespace Kopernicus
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(1, 1));
                 }
-                
+
+                for (float i = 0.0f; i < 360.0f; i += (360.0f / ring.steps))
+                {
+                    var eVert = Quaternion.Euler(0, i, 0) * StartVec;
+
+                    //Inner Radius
+                    vertices.Add(eVert * (float)ring.innerRadius);
+                    Normals.Add(-Vector3.right);
+                    Uvs.Add(new Vector2(0, 0));
+
+                    //Outer Radius
+                    vertices.Add(eVert * (float)ring.outerRadius);
+                    Normals.Add(-Vector3.right);
+                    Uvs.Add(new Vector2(1, 1));
+                }
+
                 //Tri Wrapping
                 int Wrapping = (ring.steps * 2);
                 for (int i = 0; i < (ring.steps * 2); i += 2)
@@ -187,7 +184,7 @@ namespace Kopernicus
                     Tris.Add(Wrapping + (i + 3) % Wrapping);
                     Tris.Add(Wrapping + (i + 1) % Wrapping);
                 }
-                
+
                 //Create GameObject
                 GameObject RingObject = new GameObject("PlanetaryRingObject");
                 RingObject.transform.parent = ScaledPlanet.transform;
@@ -196,10 +193,10 @@ namespace Kopernicus
 
                 RingObject.transform.localScale = ScaledPlanet.transform.localScale;
                 RingObject.layer = ScaledPlanet.layer;
-                
+
                 //Create MeshFilter
-                MeshFilter RingMesh = (MeshFilter)RingObject.AddComponent<MeshFilter>();
-                
+                MeshFilter RingMesh = RingObject.AddComponent<MeshFilter>();
+
                 //Set mesh
                 RingMesh.mesh = new Mesh();
                 RingMesh.mesh.vertices = vertices.ToArray();
@@ -211,18 +208,18 @@ namespace Kopernicus
                 RingMesh.sharedMesh = RingMesh.mesh;
 
                 //Set texture
-                //MeshRenderer PlanetRenderer = (MeshRenderer)ScaledPlanet.GetComponentsInChildren<MeshRenderer>()[0]; 
-                MeshRenderer RingRender = (MeshRenderer)RingObject.AddComponent<MeshRenderer>();
+                //MeshRenderer PlanetRenderer = (MeshRenderer)ScaledPlanet.GetComponentsInChildren<MeshRenderer>()[0];
+                MeshRenderer RingRender = RingObject.AddComponent<MeshRenderer>();
                 RingRender.material = ScaledPlanet.renderer.material;
-                
+
                 if (ring.unlit)
                 {
-                    Material material = new Material(Shaders.UnlitNew);
+                    Material material = new Material(Shaders.Shaders.UnlitNew);
                     RingRender.material = material;
                 }
                 else
                 {
-                    Material material = new Material(Shaders.DiffuseNew);
+                    Material material = new Material(Shaders.Shaders.DiffuseNew);
                     RingRender.material = material;
                 }
 
@@ -243,7 +240,6 @@ namespace Kopernicus
 
                 GameObject.DontDestroyOnLoad(RingObject);
             }
-
         }
 
         //=====================================//
@@ -284,15 +280,17 @@ namespace Kopernicus
         {
             public Quaternion RotationLock;
 
-            void Update()
+            private void Update()
             {
                 transform.rotation = RotationLock;
             }
-            void FixedUpdate()
+
+            private void FixedUpdate()
             {
                 transform.rotation = RotationLock;
             }
-            void LateUpdate()
+
+            private void LateUpdate()
             {
                 transform.rotation = RotationLock;
             }
@@ -300,15 +298,17 @@ namespace Kopernicus
 
         public class ReScaler : MonoBehaviour
         {
-            void Update()
+            private void Update()
             {
                 transform.localScale = transform.parent.localScale;
             }
-            void FixedUpdate()
+
+            private void FixedUpdate()
             {
                 transform.localScale = transform.parent.localScale;
             }
-            void LateUpdate()
+
+            private void LateUpdate()
             {
                 transform.localScale = transform.parent.localScale;
             }

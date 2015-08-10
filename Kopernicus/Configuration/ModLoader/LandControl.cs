@@ -156,7 +156,7 @@ namespace Kopernicus
                     [ParserTarget("mesh", optional = true)]
                     private MeshParser baseMesh
                     {
-                        set { scatter.baseMesh = value.value; }
+                        set { scatter.baseMesh = value.mesh; }
                     }
 
                     // castShadows
@@ -782,7 +782,7 @@ namespace Kopernicus
                     {
                         // Already patched classes
                         List<PQSLandControl.LandClass> patchedClasses = new List<PQSLandControl.LandClass>();
-                        if (_mod.landClasses.Length > 0)
+                        if (_mod.landClasses != null)
                             _mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
 
                         // Go through the nodes
@@ -825,7 +825,7 @@ namespace Kopernicus
                     {
                         // Already patched scatters
                         List<PQSLandControl.LandClassScatter> patchedScatters = new List<PQSLandControl.LandClassScatter>();
-                        if (_mod.scatters.Length > 0)
+                        if (_mod.scatters != null)
                             _mod.scatters.ToList().ForEach(s => scatters.Add(new LandClassScatterLoader(s)));
 
                         // Go through the nodes

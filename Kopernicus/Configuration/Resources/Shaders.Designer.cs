@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Kopernicus.Configuration.Resources {
+namespace Kopernicus.Configuration.Shaders {
     using System;
     
     
