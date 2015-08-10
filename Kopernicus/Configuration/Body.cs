@@ -461,24 +461,24 @@ namespace Kopernicus
 								nodeName = type.Name;
 							}
 
-							if(node.HasNode(externalAttr.configNodeName))
+							if(node.HasNode(nodeName))
 							{
 								try
 								{
-									Logger.Active.Log("Parsing ExternalTarget " + externalAttr.configNodeName + " in node " + externalAttr.parentNodeName + " from Assembly " + assembly.assembly.FullName);
-									var nodeToLoad = node.GetNode (externalAttr.configNodeName);
+									Logger.Active.Log("Parsing ExternalTarget " + nodeName + " in node " + externalAttr.parentNodeName + " from Assembly " + assembly.assembly.FullName);
+									var nodeToLoad = node.GetNode (nodeName);
 									ExternalParserTargetLoader obj = Activator.CreateInstance (type) as ExternalParserTargetLoader;
 									obj.generatedBody = generatedBody;
 									Parser.LoadObjectFromConfigurationNode (obj, nodeToLoad);
 								}
-								catch(MissingMethodException missingMethod)
+								catch (MissingMethodException missingMethod)
 								{
-									Logger.Active.Log ("Failed to load ExternalParserTarget " + externalAttr.configNodeName + " because it does not have a parameterless constructor");
+									Logger.Active.Log ("Failed to load ExternalParserTarget " + nodeName + " because it does not have a parameterless constructor");
 									Logger.Active.LogException (missingMethod);
 								}
 								catch (Exception exception)
 								{
-									Logger.Active.Log ("Failed to load ExternalParserTarget " + externalAttr.configNodeName + " from node " + externalAttr.parentNodeName);
+									Logger.Active.Log ("Failed to load ExternalParserTarget " + nodeName + " from node " + externalAttr.parentNodeName);
 									Logger.Active.LogException (exception);
 								}
 							}
