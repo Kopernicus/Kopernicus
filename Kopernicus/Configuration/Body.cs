@@ -203,7 +203,7 @@ namespace Kopernicus
                     GameObject generatedBodyGameObject = new GameObject (name);
                     generatedBodyGameObject.transform.parent = Utility.Deactivator;
                     generatedBody = generatedBodyGameObject.AddComponent<PSystemBody> ();
-                    generatedBody.flightGlobalsIndex = 0;
+                    generatedBody.flightGlobalsIndex = 20;
 
                     // Create the celestial body
                     GameObject generatedBodyProperties = new GameObject (name);
