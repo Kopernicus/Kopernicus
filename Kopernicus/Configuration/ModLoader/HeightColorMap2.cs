@@ -57,7 +57,11 @@ namespace Kopernicus
                     {
                         set { landClass2.name = value; }
                     }
-                        
+
+                    // Delete the landclass
+                    [ParserTarget("delete", optional = true)]
+                    public NumericParser<bool> delete = new NumericParser<bool>(false);
+
                     // Color of the class
                     [ParserTarget("color")]
                     private ColorParser color
@@ -96,6 +100,11 @@ namespace Kopernicus
                         // Initialize the land class
                         landClass2 = new PQSMod_HeightColorMap2.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
                     }
+
+                    public LandClassLoader2(PQSMod_HeightColorMap2.LandClass c)
+                    {
+                        this.landClass2 = c;
+                    }
                 }
 
                 // Actual PQS mod we are loading
@@ -123,12 +132,52 @@ namespace Kopernicus
                 }
 
                 // The land classes
-                [ParserTargetCollection("LandClasses", optional = true, nameSignificance = NameSignificance.None)]
                 private List<LandClassLoader2> landClasses = new List<LandClassLoader2> ();
 
                 void IParserEventSubscriber.Apply(ConfigNode node)
                 {
+                    // Load the LandClasses manually, to support patching
+                    if (node.HasNode("LandClasses"))
+                    {
+                        // Already patched classes
+                        List<PQSMod_HeightColorMap2.LandClass> patchedClasses = new List<PQSMod_HeightColorMap2.LandClass>();
+                        if (_mod.landClasses != null)
+                            _mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader2(c)));
 
+                        // Go through the nodes
+                        foreach (ConfigNode lcNode in node.GetNode("LandClasses").nodes)
+                        {
+                            // The Loader
+                            LandClassLoader2 loader = null;
+
+                            // Are there existing LandClasses?
+                            if (landClasses.Count > 0)
+                            {
+                                // Attempt to find a LandClass we can edit that we have not edited before
+                                loader = landClasses.Where(m => !patchedClasses.Contains(m.landClass2) && ((lcNode.HasValue("name") ? m.landClass2.name == lcNode.GetValue("name") : false) || (lcNode.HasValue("index") ? landClasses.IndexOf(m).ToString() == lcNode.GetValue("index") : false)))
+                                                                 .FirstOrDefault();
+
+                                // Load the Loader (lol)
+                                if (loader != null)
+                                {
+                                    Parser.LoadObjectFromConfigurationNode(loader, lcNode);
+                                    if (loader.delete.value)
+                                        landClasses.Remove(loader);
+                                    else
+                                        patchedClasses.Add(loader.landClass2);
+                                }
+                            }
+
+                            // If we can't patch a LandClass, create a new one
+                            if (loader == null)
+                            {
+                                loader = Parser.CreateObjectFromConfigNode(typeof(LandClassLoader2), lcNode) as LandClassLoader2;
+                            }
+
+                            // Add the Loader to the List
+                            landClasses.Add(loader);
+                        }
+                    }
                 }
 
                 // Select the land class objects and push into the mod

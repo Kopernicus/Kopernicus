@@ -640,14 +640,27 @@ namespace Kopernicus
                 // Check if we are attempting to load a builtin mesh
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    string objectName = Regex.Replace(s, "BUILTIN/", "");
-                    Object = Resources.FindObjectsOfTypeAll<GameObject>().Where(o => o.name == objectName).First();
-                    List<MeshFilter> filters = Object.GetComponentsInChildren<MeshFilter>(true).ToList();
-                    List<CombineInstance> combines = new List<CombineInstance>();
-                    filters.ForEach(f => combines.Add(new CombineInstance() { mesh = f.sharedMesh }));
-                    mesh = new Mesh();
-                    mesh.CombineMeshes(combines.ToArray());
-                    return;
+                    try
+                    {
+                        string objectName = Regex.Replace(s, "BUILTIN/", "");
+                        Object = Resources.FindObjectsOfTypeAll<GameObject>().Where(o => o.name == objectName).First();
+                        List<MeshFilter> filters = Object.GetComponentsInChildren<MeshFilter>(true).ToList();
+                        List<CombineInstance> combines = new List<CombineInstance>();
+                        filters.ForEach(f => combines.Add(new CombineInstance() { mesh = f.sharedMesh }));
+                        mesh = new Mesh();
+                        mesh.CombineMeshes(combines.ToArray());
+                    }
+                    catch { }
+
+                    // Check if we've found a mesh, otherwise try to find it directly
+                    if (mesh == null)
+                    {
+                        string meshName = Regex.Replace(s, "BUILTIN/", "");
+                        mesh = Resources.FindObjectsOfTypeAll<Mesh>().Where(mesh => mesh.name == meshName).First();
+                        Object = new GameObject(meshName);
+                        Object.AddComponent<MeshFilter>().sharedMesh = mesh;
+                        MonoBehaviour.DontDestroyOnLoad(Object);
+                    }
                 }
                 else if (s.EndsWith(".obj")) // Check which Mesh-Type we're loading
                 {

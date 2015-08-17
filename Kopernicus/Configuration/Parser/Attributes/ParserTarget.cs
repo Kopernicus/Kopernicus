@@ -47,7 +47,7 @@ namespace Kopernicus
             public string fieldName = null;
             
             // Flag indiciating whether the presence of this value is required
-            public bool optional = false;
+            public bool optional = true;
             
             // Flag indiciating whether the contents of the config tree can be merged
             // via reflection with a potentially present field.  If the field is null,
