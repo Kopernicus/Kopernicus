@@ -28,13 +28,13 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\References\1.0.4\Assembly-CSharp.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\References\1.0.4\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +53,8 @@
     <Compile Include="Configuration\ModLoader\VertexPlanet.cs" />
     <Compile Include="Configuration\HazardousOcean.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexColorRGB.cs" />
+    <Compile Include="Configuration\Parser\External\ExternalParserTarget.cs" />
+    <Compile Include="Configuration\Parser\External\ExternalParserTargetLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\SpaceCenterSwitcher.cs" />
     <Compile Include="Configuration\LightShifter.cs" />
