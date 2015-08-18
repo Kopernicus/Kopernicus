@@ -103,8 +103,8 @@ namespace Kopernicus
             g = afg.g;
             waveLength = afg.waveLength;
             invWaveLength = afg.invWaveLength;
-            outerRadius = afg.outerRadius; Debug.Log(outerRadius);
-            innerRadius = afg.innerRadius; Debug.Log(innerRadius);
+            outerRadius = afg.outerRadius;
+            innerRadius = afg.innerRadius;
         }
         private void Apply(AtmosphereFromGround afg)
         {
