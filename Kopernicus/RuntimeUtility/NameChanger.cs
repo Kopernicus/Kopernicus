@@ -93,6 +93,7 @@ namespace Kopernicus
                 b.gameObject.name = b.gameObject.name.Replace(oldName, newName);
                 b.transform.name = b.transform.name.Replace(oldName, newName);
                 b.bodyTransform.name = b.bodyTransform.name.Replace(oldName, newName);
+                PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
 
                 if (b.pqsController != null)
                 {
@@ -150,6 +151,7 @@ namespace Kopernicus
                 if (b.bodyName != oldName)
                     continue;
                 b.bodyName = b.bodyName.Replace(oldName, newName);
+                PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
                 /*b.gameObject.name = b.gameObject.name.Replace(oldName, newName);
                 b.transform.name = b.transform.name.Replace(oldName, newName);
                 b.bodyTransform.name = b.bodyTransform.name.Replace(oldName, newName);
