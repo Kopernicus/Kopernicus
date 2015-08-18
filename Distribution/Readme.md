@@ -1,6 +1,6 @@
-Kopernicus Beta Release 2.4
+Kopernicus Beta Release 3
 ==============================
-July 16th, 2015
+August 18th, 2015
 
 Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
    		    - Nathaniel R. Lewis (linux.robotdude@gmail.com)
@@ -12,22 +12,16 @@ Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, Oven
 
 New in this version
 -------------------
-- Added navballSwitchRadiusMult-Parser
-- Added Parser for PQSLandControl and custom Ground Scatters (thanks Gravitasi!)
-- Fixed Logging-Issue
-- Removed the generation of PQSCache presets in order to fix a bug
-- Added Parsers for CraterCurve and JitterCurve to the VoronoiCraters-Parser
-- Added inverseRotThresholdAltitude-Parser
-- Fixed Lightning-bug in VAB
-- EVE clouds are now rendered through rings
-- Barycenters don't show a thumbnail in the R&D
-- Fixed a bug with builtin MapSO's, they work now correct
-- Added custom GroundScatter to the Hodor-example
-
-New in Beta 2.4 [Bugfix-Update]
----------------
-- Fixed Bug with PQSLandControl-Patching
-- Fixed a bug with the Barycenters
+- Fixed PQSMod_VertexHeightOffset
+- Fixed a bug with the speed of particles
+- Moved flightGlobalsIndex patching into the prefab, this fixes the bug, where the game dies before switching to MainMenu
+- Added the ability to add MeshColliders to the groundscatter objects
+- Added the ability to get science from groundscatter while on EVA (custom experiments)
+- Added a .mu loader for meshes
+- Uniform syntax for curves (in the past, the types "AnimationCurve" and "FloatCurve" didn't used the same syntax, now everything is parsed like FloatCurve (key = 0 1 0 0))
+- Support for patching LandClasses (HeightColorMap, HeightColorMap2, HeightColorMapNoise, LandControl) and groundscatters
+- Added a new example for patching LandClasses => RecoloredVall
+- Added a way to insert custom loading code from a separate plugin
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 

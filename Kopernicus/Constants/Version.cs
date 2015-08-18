@@ -33,11 +33,6 @@
 
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
-
-using Kopernicus.MaterialWrapper;
 using System.Security.Cryptography;
 
 namespace Kopernicus
@@ -48,7 +43,7 @@ namespace Kopernicus
         public class Version
         {
             // Versioning information
-            private static int[] versionNumber = new int[] { 0, 2, 4 }; 
+            private static int[] versionNumber = new int[] { 0, 3 }; 
             private static bool developmentBuild = false;
             public static string version
             {
