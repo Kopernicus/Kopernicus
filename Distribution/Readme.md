@@ -22,6 +22,7 @@ New in this version
 - Support for patching LandClasses (HeightColorMap, HeightColorMap2, HeightColorMapNoise, LandControl) and groundscatters
 - Added a new example for patching LandClasses => RecoloredVall
 - Added a way to insert custom loading code from a separate plugin
+- Uniform Scale for Rings
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 

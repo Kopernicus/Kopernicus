@@ -136,12 +136,12 @@ namespace Kopernicus
                     var eVert = Quaternion.Euler(0, i, 0) * StartVec;
 
                     //Inner Radius
-                    vertices.Add(eVert * (float)ring.innerRadius);
+                    vertices.Add(eVert * ((float)ring.innerRadius * (1f / ScaledPlanet.transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(0, 0));
 
                     //Outer Radius
-                    vertices.Add(eVert * (float)ring.outerRadius);
+                    vertices.Add(eVert * ((float)ring.outerRadius * (1f / ScaledPlanet.transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(1, 1));
                 }
@@ -151,12 +151,12 @@ namespace Kopernicus
                     var eVert = Quaternion.Euler(0, i, 0) * StartVec;
 
                     //Inner Radius
-                    vertices.Add(eVert * (float)ring.innerRadius);
+                    vertices.Add(eVert * ((float)ring.innerRadius * (1f / ScaledPlanet.transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(0, 0));
 
                     //Outer Radius
-                    vertices.Add(eVert * (float)ring.outerRadius);
+                    vertices.Add(eVert * ((float)ring.outerRadius * (1f / ScaledPlanet.transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(1, 1));
                 }
