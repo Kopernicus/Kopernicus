@@ -167,6 +167,17 @@ namespace Kopernicus
                 // Sets the SOI of the root-body to infinite
                 system.rootBody.celestialBody.sphereOfInfluence = Double.PositiveInfinity;
 
+                // Fix doubled flightGlobals
+                List<int> numbers = new List<int>() { 0 };
+                int index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
+                foreach (PSystemBody body in system.rootBody.children)
+                {
+                    if (numbers.Contains(body.flightGlobalsIndex))
+                        body.flightGlobalsIndex = index++;
+                    numbers.Add(body.flightGlobalsIndex);
+                }
+
+                // Return the System
                 return system;
             }
 
