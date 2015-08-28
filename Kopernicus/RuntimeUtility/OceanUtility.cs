@@ -59,7 +59,6 @@ namespace Kopernicus
 
             // Get the current altitude
             double altitude = GetAltitudeFromOcean(centerOfBuoyancy);
-            Debug.Log(altitude);
 
             // Get the force
             buoyancyForce = Mathf.Max(0f, (float)-altitude);
