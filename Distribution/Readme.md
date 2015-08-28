@@ -1,4 +1,4 @@
-Kopernicus Beta Release 3.2
+Kopernicus Beta Release 3.3
 ==============================
 August 18th, 2015
 
@@ -33,6 +33,10 @@ New in Version 3.2
 - Hotfix for LandControl
 - Seperate download for the examples
 - Support for non spherical oceans
+
+New in Version 3.3
+==================
+- Fixed Thomas Stupidity
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
