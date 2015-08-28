@@ -895,6 +895,10 @@ namespace Kopernicus
                     // Add Colliders to the scatters
                     foreach (PQSLandControl.LandClassScatter scatter in _mod.scatters)
                     {
+                        // If nothing's there, abort
+                        if (!scatters.Any(s => s.scatter.scatterName == scatter.scatterName))
+                            continue;
+
                         // Get the Loader
                         LandClassScatterLoader loader = scatters.First(s => s.scatter.scatterName == scatter.scatterName);
 
