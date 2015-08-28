@@ -1,4 +1,4 @@
-Kopernicus Beta Release 3
+Kopernicus Beta Release 3.2
 ==============================
 August 18th, 2015
 
@@ -23,6 +23,16 @@ New in this version
 - Added a new example for patching LandClasses => RecoloredVall
 - Added a way to insert custom loading code from a separate plugin
 - Uniform Scale for Rings
+
+New in Version 3.1
+==================
+- Hotfix for flightGlobalsIndex
+
+New in Version 3.2
+==================
+- Hotfix for LandControl
+- Seperate download for the examples
+- Support for non spherical oceans
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
@@ -51,7 +61,7 @@ Instructions
 
 Examples
 ----------
-Selectively copy folders inside KopernicusExamples/ into a GameData/KopernicusExamples/ folder.  There are a number of examples of how to use Kopernicus.
+Selectively copy folders inside [KopernicusExamples/](https://github.com/Kopernicus/KopernicusExamples/) into a GameData/KopernicusExamples/ folder.  There are a number of examples of how to use Kopernicus.
 
 
 Information
