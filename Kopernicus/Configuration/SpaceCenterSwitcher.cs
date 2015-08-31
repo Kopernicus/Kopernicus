@@ -344,6 +344,9 @@ namespace Kopernicus
                 SpaceCenter.Instance.transform.localRotation = pqsKSC.transform.localRotation;
 
                 pqsMap.OnSetup();
+
+                // Reset the SpaceCenter
+                typeof(SpaceCenter).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(SpaceCenter.Instance, null);
             }
         }
 
