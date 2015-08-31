@@ -167,6 +167,9 @@ namespace Kopernicus
             Debug.Log("Found max distance " + maximumDistance);
             PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
+            // Update Music Logic
+            MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
+
             // Select the closest star to home
             StarLightSwitcher.HomeStar ().SetAsActive ();
 
