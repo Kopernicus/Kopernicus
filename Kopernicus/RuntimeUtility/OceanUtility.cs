@@ -45,6 +45,9 @@ namespace Kopernicus
     {
         public Part part => GetComponent<Part>();
 
+        private PQS _ocean;
+        private CelestialBody mainBody;
+
         private void FixedUpdate()
         {
             if (!FlightGlobals.ready || !part.vessel.mainBody.ocean)
@@ -119,9 +122,18 @@ namespace Kopernicus
         
         private float GetAltitudeFromOcean(Vector3 position)
         {
-            CelestialBody body = FlightGlobals.getMainBody(position);
-            PQS ocean = FlightGlobals.getMainBody(position).GetComponentsInChildren<PQS>(true).FirstOrDefault(p => p.name == body.transform.name + "Ocean");
-            return Mathf.Abs(Vector3.Distance(position, body.position)) - (float)ocean.GetSurfaceHeight(ocean.GetRelativePosition(position));
+            PQS ocean = GetOcean();
+            return Mathf.Abs(Vector3.Distance(position, mainBody.position)) - (float)ocean.GetSurfaceHeight(ocean.GetRelativePosition(position));
+        }
+
+        private PQS GetOcean()
+        {
+            if (_ocean == null || mainBody != part.vessel.mainBody)
+            {
+                mainBody = part.vessel.mainBody;
+                _ocean = mainBody.GetComponentsInChildren<PQS>(true).FirstOrDefault(p => p.name == mainBody.transform.name + "Ocean");
+            }
+            return _ocean;
         }
     }
 }
