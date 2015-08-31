@@ -44,6 +44,9 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class RingLoader : IParserEventSubscriber
         {
+            // OrbitMaterial Render Queue
+            private const int ORBIT_LINES_RENDER = 3000;
+
             // Set-up our custom ring
             public Ring ring;
 
@@ -226,8 +229,7 @@ namespace Kopernicus
                 RingRender.material.mainTexture = ring.texture;
                 RingRender.material.color = ring.color;
 
-                RingRender.material.renderQueue = ScaledPlanet.renderer.material.renderQueue + 2;
-                ScaledPlanet.AddComponent<EVEFixer>().targetQueue = ScaledPlanet.renderer.material.renderQueue + 1;
+                RingRender.material.renderQueue = ORBIT_LINES_RENDER + 1;
 
                 RingObject.AddComponent<ReScaler>();
 
