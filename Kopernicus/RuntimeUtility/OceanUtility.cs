@@ -56,6 +56,9 @@ namespace Kopernicus
             if (!part.rb)
                 return;
 
+            if (GetOcean() == null)
+                return;
+
             // Get the center of the Buoyancy
             Vector3 oldCenter = centerOfBuoyancy;
             centerOfBuoyancy = part.partTransform.position + (part.partTransform.rotation * part.CenterOfBuoyancy);
