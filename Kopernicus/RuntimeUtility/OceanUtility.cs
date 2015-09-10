@@ -43,7 +43,7 @@ namespace Kopernicus
     // Our own implementation of PartBuoyancy
     public class KopernicusBuoyancy : PartBuoyancy
     {
-        public Part part => GetComponent<Part>();
+        public Part part { get { return GetComponent<Part>(); } }
 
         private PQS _ocean;
         private CelestialBody mainBody;
@@ -54,6 +54,9 @@ namespace Kopernicus
                 return;
 
             if (!part.rb)
+                return;
+
+            if (GetOcean() == null)
                 return;
 
             // Get the center of the Buoyancy
