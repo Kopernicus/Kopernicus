@@ -471,7 +471,7 @@ namespace Kopernicus
                     {
                         // Only recalculate the SOI, if it's not forced
                         if (!Templates.hillSphere.ContainsKey(body.transform.name))
-                            body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1 / 3);
+                            body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1.0 / 3.0);
 
                         if (!Templates.sphereOfInfluence.ContainsKey(body.transform.name))
                             body.sphereOfInfluence = Math.Max(
