@@ -1,6 +1,6 @@
-Kopernicus Beta Release 3.3
+Kopernicus Beta Release 4
 ==============================
-August 18th, 2015
+September 14th, 2015
 
 Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
    		    - Nathaniel R. Lewis (linux.robotdude@gmail.com)
@@ -12,31 +12,12 @@ Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, Oven
 
 New in this version
 -------------------
-- Fixed PQSMod_VertexHeightOffset
-- Fixed a bug with the speed of particles
-- Moved flightGlobalsIndex patching into the prefab, this fixes the bug, where the game dies before switching to MainMenu
-- Added the ability to add MeshColliders to the groundscatter objects
-- Added the ability to get science from groundscatter while on EVA (custom experiments)
-- Added a .mu loader for meshes
-- Uniform syntax for curves (in the past, the types "AnimationCurve" and "FloatCurve" didn't used the same syntax, now everything is parsed like FloatCurve (key = 0 1 0 0))
-- Support for patching LandClasses (HeightColorMap, HeightColorMap2, HeightColorMapNoise, LandControl) and groundscatters
-- Added a new example for patching LandClasses => RecoloredVall
-- Added a way to insert custom loading code from a separate plugin
-- Uniform Scale for Rings
-
-New in Version 3.1
-==================
-- Hotfix for flightGlobalsIndex
-
-New in Version 3.2
-==================
-- Hotfix for LandControl
-- Seperate download for the examples
-- Support for non spherical oceans
-
-New in Version 3.3
-==================
-- Fixed Thomas Stupidity
+- finalizeOrbits only recalculates the SOI, if it is not set in Properties { }
+- Optimizations for non spherical oceans
+- Kopernicus now sets the altitude where the "space-music" starts
+- Fixed a bug with SpaceCenter and recovery distances.
+- Fixed a bug with the flightGlobalsIndex patcher, now every body's flightGlobalsIndex is fixed.
+- Other minor improvements
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 

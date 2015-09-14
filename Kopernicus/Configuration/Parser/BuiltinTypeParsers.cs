@@ -656,7 +656,7 @@ namespace Kopernicus
                     if (mesh == null)
                     {
                         string meshName = Regex.Replace(s, "BUILTIN/", "");
-                        mesh = Resources.FindObjectsOfTypeAll<Mesh>().Where(mesh => mesh.name == meshName).First();
+                        mesh = Resources.FindObjectsOfTypeAll<Mesh>().Where(m => m.name == meshName).First();
                         Object = new GameObject(meshName);
                         Object.AddComponent<MeshFilter>().sharedMesh = mesh;
                         MonoBehaviour.DontDestroyOnLoad(Object);

@@ -469,10 +469,14 @@ namespace Kopernicus
                 {
                     if (body.referenceBody != null)
                     {
-                        body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1 / 3);
-                        body.sphereOfInfluence = Math.Max(
-                            body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4),
-                            Math.Max(body.Radius * Templates.SOIMinRadiusMult, body.Radius + Templates.SOIMinAltitude));
+                        // Only recalculate the SOI, if it's not forced
+                        if (!Templates.hillSphere.ContainsKey(body.transform.name))
+                            body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1.0 / 3.0);
+
+                        if (!Templates.sphereOfInfluence.ContainsKey(body.transform.name))
+                            body.sphereOfInfluence = Math.Max(
+                                body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4),
+                                Math.Max(body.Radius * Templates.SOIMinRadiusMult, body.Radius + Templates.SOIMinAltitude));
 
                         // this is unlike stock KSP, where only the reference body's mass is used.
                         body.orbit.period = 2 * Math.PI * Math.Sqrt(Math.Pow(body.orbit.semiMajorAxis, 2) / 6.674E-11 * body.orbit.semiMajorAxis / (body.referenceBody.Mass + body.Mass));
