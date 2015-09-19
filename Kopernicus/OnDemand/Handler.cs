@@ -54,7 +54,7 @@ namespace Kopernicus
             public static List<ILoadOnDemand> mapList = new List<ILoadOnDemand>();
             public static string homeworldBody = "Kerbin";
             public static string currentBody = "";
-            public static bool useOnDemand = false;
+            public static bool useOnDemand = true;
             public static bool useOnDemandBiomes = false;
             public static bool onDemandLoadOnMissing = true;
             public static bool onDemandLogOnMissing = true;
@@ -94,7 +94,7 @@ namespace Kopernicus
                 if(!bodyMapLists.ContainsKey(body))
                     bodyMapLists[body] = new List<ILoadOnDemand>();
                 bodyMapLists[body].Add(map);
-                Debug.Log("OD: Adding for body " + body + " map named " + map.MapName() + " of path = " + map.MapPath());
+                Debug.Log("OD: Adding for body " + body + " map named " + map.name + " of path = " + map.Path);
                 if (!mapList.Contains(map))
                 {
                     mapList.Add(map);
@@ -103,7 +103,7 @@ namespace Kopernicus
                 }
                 else
                 {
-                    Debug.Log("OD: WARNING: trying to add a map but is already tracked! Current body is " + body + " and map name is " + map.MapName() + " and path is " + map.MapPath());
+                    Debug.Log("OD: WARNING: trying to add a map but is already tracked! Current body is " + body + " and map name is " + map.name + " and path is " + map.Path);
                 }
 
                 if (!mapBodies.ContainsKey(map))
@@ -181,103 +181,5 @@ namespace Kopernicus
                 return false;
             }
         }
-
-        /*[KSPAddon(KSPAddon.Startup.EveryScene, false)]
-        public class OnDemandHandler : MonoBehaviour
-        {
-            static bool dontUpdate = true;
-
-            public void Start()
-            {
-                if (dontUpdate && (HighLogic.LoadedScene == GameScenes.MAINMENU))
-                    dontUpdate = false;
-            }
-
-            public void Update()
-            {
-                BodyUpdate();
-            }
-
-            public void BodyUpdate()
-            {
-                // wait until Kopernicus is done loading
-                if (dontUpdate)
-                    return;
-
-                // Set all to current PQS state.
-                foreach (PQS p in OnDemandStorage.handlers.Keys)
-                {
-                    if ((object)bPQS != null)
-                        bodiesToEnable[b] = bPQS.isActive;
-                    else
-                        bodiesToEnable[b] = false;
-                }
-
-                // preload (or keep loaded0 if necessary
-                if (!HighLogic.LoadedSceneIsFlight)
-                {
-                    bodiesToEnable[OnDemandStorage.homeworldBody] = true;
-                }
-                if (FlightGlobals.currentMainBody != null)
-                {
-                    bodiesToEnable[FlightGlobals.currentMainBody.bodyName] = true;
-                }
-                else if (FlightGlobals.ActiveVessel != null) // HOW!?
-                {
-                    if (FlightGlobals.ActiveVessel.mainBody != null)
-                        bodiesToEnable[FlightGlobals.ActiveVessel.mainBody.bodyName] = true;
-                }
-
-                // find if we have maps that should be loaded that aren't, or vice versa
-                // and enable/disable as required
-                ILoadOnDemand map;
-                List<string> bodyNames;
-                for (int i = OnDemandStorage.mapList.Count - 1; i >= 0; --i)
-                {
-                    map = OnDemandStorage.mapList[i]; // get the map itself
-
-                    bodyNames = OnDemandStorage.mapBodies[map]; // get all the bodies that use it
-                    bool shouldEnable = false;
-                    for (int j = bodyNames.Count - 1; j >= 0; --j)
-                    {
-                        if (bodiesToEnable.ContainsKey(bodyNames[j]))
-                            shouldEnable |= bodiesToEnable[bodyNames[j]];
-                        else
-                        {
-                            if(bodyNames[j] == "Kerbin" && OnDemandStorage.homeworldBody != "Kerbin")
-                                shouldEnable |= bodiesToEnable[OnDemandStorage.homeworldBody];
-                            else
-                                Debug.Log("OD: ERROR: bodies list does not contain " + bodyNames[j] + " and homeworldBody is the same!");
-                        }
-                    }
-                    bool mapEnabled = OnDemandStorage.enabledMaps[map];
-
-                    // if not as desired, deal with the map.
-                    if (mapEnabled)
-                    {
-                        if (!shouldEnable)
-                        {
-                            float curTime = OnDemandStorage.mapTimes[map];
-                            //Debug.Log("OD: Should disable " + (map as MapSO).name + ", current time " + curTime);
-                            curTime += Time.deltaTime;
-                            if (curTime >= waitBeforeUnload)
-                            {
-                                map.Unload();
-                            }
-                            else
-                                OnDemandStorage.mapTimes[map] = curTime;
-                        }
-                    }
-                    else
-                    {
-                        if (shouldEnable)
-                        {
-                            //Debug.Log("OD: Should enable " + (map as MapSO).name);
-                            map.Load();
-                        }
-                    }
-                }
-            }
-        }*/
     }
 }
