@@ -49,7 +49,7 @@ namespace Kopernicus
                 {
                     if (OnDemandStorage.DisableBody(base.sphere.name))
                     {
-                        Debug.Log("[OD]: Disabled Body " + base.sphere.name);
+                        Debug.Log("[OD] Disabled Body " + base.sphere.name);
                         isLoaded = false;
                     }
                 }
@@ -59,7 +59,7 @@ namespace Kopernicus
             {
                 if (OnDemandStorage.EnableBody(base.sphere.name))
                 {
-                    Debug.Log("[OD]: Enabled Body " + base.sphere.name);
+                    Debug.Log("[OD] Enabled Body " + base.sphere.name);
                     isLoaded = true;
                 }
             }

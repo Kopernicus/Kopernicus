@@ -94,7 +94,7 @@ namespace Kopernicus
                 if(!bodyMapLists.ContainsKey(body))
                     bodyMapLists[body] = new List<ILoadOnDemand>();
                 bodyMapLists[body].Add(map);
-                Debug.Log("OD: Adding for body " + body + " map named " + map.name + " of path = " + map.Path);
+                Debug.Log("[OD] Adding for body " + body + " map named " + map.name + " of path = " + map.Path);
                 if (!mapList.Contains(map))
                 {
                     mapList.Add(map);
@@ -103,7 +103,7 @@ namespace Kopernicus
                 }
                 else
                 {
-                    Debug.Log("OD: WARNING: trying to add a map but is already tracked! Current body is " + body + " and map name is " + map.name + " and path is " + map.Path);
+                    Debug.Log("[OD] WARNING: trying to add a map but is already tracked! Current body is " + body + " and map name is " + map.name + " and path is " + map.Path);
                 }
 
                 if (!mapBodies.ContainsKey(map))
