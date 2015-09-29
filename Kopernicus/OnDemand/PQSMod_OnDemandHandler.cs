@@ -39,92 +39,33 @@ namespace Kopernicus
     {
         public class PQSMod_OnDemandHandler : PQSMod
         {
+            // State
             private bool isLoaded = false;
-            private bool isAdded = false;
-            private bool isHomeworld = false;
 
-            private void DisableMapSO(GameScenes scene)
-            {
-                if (!isHomeworld && isLoaded)
-                {
-                    if (OnDemandStorage.DisableBody(base.sphere.name))
-                    {
-                        Debug.Log("[OD] Disabled Body " + base.sphere.name);
-                        isLoaded = false;
-                    }
-                }
-            }
-
-            private void EnableMapSO()
-            {
-                if (OnDemandStorage.EnableBody(base.sphere.name))
-                {
-                    Debug.Log("[OD] Enabled Body " + base.sphere.name);
-                    isLoaded = true;
-                }
-            }
-
+            // Disabling
             public override void OnSphereInactive()
             {
-                Disable();
+                // Don't update, if the Injector is still running
+                if (Injector.dontUpdate || !isLoaded)
+                    return;
+                Debug.Log("SphereInactive: " + sphere.name);
+
+                // Enable the maps
+                isLoaded = !OnDemandStorage.DisableBody(sphere.name);
+                Debug.Log("[OD] Disabling Body " + base.sphere.name + ": " + isLoaded);
             }
+
+            // Enabling
             public override void OnQuadPreBuild(PQ quad)
             {
-                Enable();
+                // Don't update, if the Injector is still running
+                if (Injector.dontUpdate || isLoaded)
+                    return;
+                Debug.Log("QuadBuild: " + sphere.name);
+                // Enable the maps
+                isLoaded = OnDemandStorage.EnableBody(sphere.name);
+                Debug.Log("[OD] Enabling Body " + base.sphere.name + ": " + isLoaded);
             }
-            /*public override void OnVertexBuildHeight(PQS.VertexBuildData data)
-            {
-                Enable();
-            }
-            public override void OnVertexBuild(PQS.VertexBuildData data)
-            {
-                Enable();
-            }
-            public override void OnMeshBuild()
-            {
-                Enable();
-            }
-            public override void OnQuadUpdate(PQ quad)
-            {
-                Enable();
-            }*/
-            public override void OnSetup()
-            {
-                base.OnSetup();
-                CelestialBody cb = Part.GetComponentUpwards<CelestialBody>(this.gameObject);
-                if (cb != null && cb.isHomeWorld)
-                    isHomeworld = true;
-
-                if (isHomeworld && !isLoaded)
-                    EnableMapSO();
-
-                /*if(!isAdded)
-                {
-                    GameEvents.onGameSceneLoadRequested.Add(new EventData<GameScenes>.OnEvent(DisableMapSO));
-                    isAdded = true;
-                }*/
-            }
-
-            public void Enable()
-            {   
-                if (!isLoaded && !Injector.dontUpdate)
-                {
-                    EnableMapSO();
-                }
-            }
-
-            public void Disable()
-            {
-                if (isLoaded && !Injector.dontUpdate && !base.sphere.isActive)
-                {
-                    DisableMapSO(HighLogic.LoadedScene);
-                }
-            }
-
-            /*public void OnDestroy()
-            {
-                GameEvents.onGameSceneLoadRequested.Remove(new EventData<GameScenes>.OnEvent(DisableMapSO));
-            }*/
         }
     }
 }

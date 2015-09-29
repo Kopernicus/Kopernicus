@@ -77,9 +77,7 @@ namespace Kopernicus
                 {
                     CreateMap(Depth, map);
                     IsLoaded = true;
-                    Debug.Log("[OD] CBmap " + name + " enabling self, time was " + OnDemandStorage.mapTimes[this] + ". Path = " + Path);
-                    OnDemandStorage.enabledMaps[this] = true;
-                    OnDemandStorage.mapTimes[this] = 0f;
+                    Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
                     return true;
                 }
 
@@ -100,11 +98,9 @@ namespace Kopernicus
 
                 // Set flags
                 IsLoaded = false;
-                OnDemandStorage.enabledMaps[this] = false;
-                OnDemandStorage.mapTimes[this] = 0f;
 
                 // Log
-                Debug.Log("[OD] CBmap " + name + " disabling self, time was " + OnDemandStorage.mapTimes[this] + ". Path = " + Path);
+                Debug.Log("[OD] CBmap " + name + " disabling self. Path = " + Path);
 
                 // We're done here
                 return true;

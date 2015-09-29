@@ -421,9 +421,6 @@ namespace Kopernicus
 
                 // Post gen celestial body
                 Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
-
-                if (generatedBody.celestialBody.isHomeWorld)
-                    OnDemand.OnDemandStorage.homeworldBody = name;
             }
 
 			private void LoadExternalParserTargetsRecursive(ConfigNode node)

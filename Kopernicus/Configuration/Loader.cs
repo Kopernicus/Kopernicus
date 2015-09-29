@@ -81,9 +81,7 @@ namespace Kopernicus
                     bool.TryParse(rootConfig.GetValue("onDemandLoadOnMissing"), out OnDemand.OnDemandStorage.onDemandLoadOnMissing);
                 if (rootConfig.HasValue("onDemandLogOnMissing"))
                     bool.TryParse(rootConfig.GetValue("onDemandLogOnMissing"), out OnDemand.OnDemandStorage.onDemandLogOnMissing);
-                if (rootConfig.HasValue("onDemandForceCollect"))
-                    bool.TryParse(rootConfig.GetValue("onDemandForceCollect"), out OnDemand.OnDemandStorage.onDemandForceCollect);
-
+                
                 if (rootConfig.HasNode("Finalize"))
                     foreach (ConfigNode n in rootConfig.GetNode("Finalize").GetNodes(bodyNodeName))
                         if (n.HasValue("name"))

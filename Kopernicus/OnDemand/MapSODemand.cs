@@ -33,7 +33,6 @@
 
 using System;
 using UnityEngine;
-using System.IO;
 
 namespace Kopernicus
 {
@@ -67,15 +66,13 @@ namespace Kopernicus
 
                 // Load the Map
                 Texture2D map = Utility.LoadTexture(Path, false, false, false);
-                Debug.Log(map);
+
                 // If the map isn't null
                 if (map != null)
                 {
                     CreateMap(Depth, map);
                     IsLoaded = true;
-                    Debug.Log("[OD] Map " + name + " enabling self, time was " + OnDemandStorage.mapTimes[this] + ". Path = " + Path);
-                    OnDemandStorage.enabledMaps[this] = true;
-                    OnDemandStorage.mapTimes[this] = 0f;
+                    Debug.Log("[OD] Map " + name + " enabling self. Path = " + Path);
                     return true;
                 }
 
@@ -88,20 +85,19 @@ namespace Kopernicus
             // Unload the map
             public bool Unload()
             {
-                // We can only destroy the map, if it is loaded and initialized
-                //if (!IsLoaded || !string.IsNullOrEmpty(Path))
-                //    return false;
+                // We can only destroy the map, if it is loaded
+                Debug.Log(IsLoaded);
+                if (!IsLoaded)
+                    return false;
 
                 // Nuke the map
                 DestroyImmediate(_data);
 
                 // Set flags
                 IsLoaded = false;
-                OnDemandStorage.enabledMaps[this] = false;
-                OnDemandStorage.mapTimes[this] = 0f;
 
                 // Log
-                Debug.Log("[OD] map " + name + " disabling self, time was " + OnDemandStorage.mapTimes[this] + ". Path = " + Path);
+                Debug.Log("[OD] map " + name + " disabling self. Path = " + Path);
 
                 // We're done here
                 return true;
@@ -121,7 +117,6 @@ namespace Kopernicus
                 _data = tex;
 
                 // Variables
-                name = tex.name;
                 _width = tex.width;
                 _height = tex.height;
                 Depth = depth;

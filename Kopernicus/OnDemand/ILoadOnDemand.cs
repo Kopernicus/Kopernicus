@@ -1,7 +1,4 @@
-﻿
-
-using UnityEngine;
-/**
+﻿/**
 * Kopernicus Planetary System Modifier
 * ====================================
 * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
@@ -33,6 +30,7 @@ using UnityEngine;
 * 
 * https://kerbalspaceprogram.com
 */
+
 namespace Kopernicus
 {
     namespace OnDemand

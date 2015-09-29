@@ -390,7 +390,7 @@ namespace Kopernicus
                                     mapName = mapName.Substring(0, lastDot);
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
-                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
+                                    CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
                                     valCB.Path = s;
                                     valCB.Depth = MapSO.MapDepth.Greyscale;
                                     valCB.name = mapName + " (CBG) for " + OnDemandStorage.currentBody;
