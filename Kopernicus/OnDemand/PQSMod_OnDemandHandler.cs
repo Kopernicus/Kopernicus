@@ -48,7 +48,6 @@ namespace Kopernicus
                 // Don't update, if the Injector is still running
                 if (Injector.dontUpdate || !isLoaded)
                     return;
-                Debug.Log("SphereInactive: " + sphere.name);
 
                 // Enable the maps
                 isLoaded = !OnDemandStorage.DisableBody(sphere.name);
@@ -61,7 +60,7 @@ namespace Kopernicus
                 // Don't update, if the Injector is still running
                 if (Injector.dontUpdate || isLoaded)
                     return;
-                Debug.Log("QuadBuild: " + sphere.name);
+
                 // Enable the maps
                 isLoaded = OnDemandStorage.EnableBody(sphere.name);
                 Debug.Log("[OD] Enabling Body " + base.sphere.name + ": " + isLoaded);
