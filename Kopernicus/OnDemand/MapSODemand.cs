@@ -143,7 +143,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0;
                 }
-                return (byte)_data.GetPixel(x, y).r;
+                return (byte)(_data.GetPixel(x, y).r * Float2Byte);
             }
 
             // GetPixelColor - Double
@@ -319,7 +319,21 @@ namespace Kopernicus
                 }
 
                 Color pixel = _data.GetPixel(x, y);
-                return (pixel.r + pixel.g + pixel.b + pixel.a) / _bpp;
+                float value = 0f;
+                if (Depth == MapDepth.Greyscale)
+                    value = pixel.r;
+                else if (Depth == MapDepth.HeightAlpha)
+                    value = pixel.r + pixel.a;
+                else if (Depth == MapDepth.RGB)
+                    value = pixel.r + pixel.g + pixel.b;
+                else if (Depth == MapDepth.RGBA)
+                    value = pixel.r + pixel.g + pixel.b + pixel.a;
+
+                // Enhanced support for L8 .dds
+                if (_data.format == TextureFormat.Alpha8)
+                    value = pixel.a;
+
+                return value / (int)Depth;
             }
 
             // GetPixelHeightAlpha - Double
@@ -406,7 +420,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0f;
                 }
-                return _data.GetPixel(x, y).r;
+                return _data.GetPixel(x, y).grayscale;
             }
 
             // PixelByte
