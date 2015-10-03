@@ -50,8 +50,11 @@ namespace Kopernicus
                     return;
 
                 // Enable the maps
-                isLoaded = !OnDemandStorage.DisableBody(sphere.name);
-                Debug.Log("[OD] Disabling Body " + base.sphere.name + ": " + isLoaded);
+                if (OnDemandStorage.DisableBody(sphere.name))
+                {
+                    isLoaded = false;
+                    Debug.Log("[OD] Disabling Body " + base.sphere.name + ": " + isLoaded);
+                }
             }
 
             // Enabling
@@ -62,8 +65,11 @@ namespace Kopernicus
                     return;
 
                 // Enable the maps
-                isLoaded = OnDemandStorage.EnableBody(sphere.name);
-                Debug.Log("[OD] Enabling Body " + base.sphere.name + ": " + isLoaded);
+                if (OnDemandStorage.EnableBody(sphere.name))
+                {
+                    isLoaded = true;
+                    Debug.Log("[OD] Enabling Body " + base.sphere.name + ": " + isLoaded);
+                }
             }
         }
     }
