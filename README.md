@@ -10,6 +10,46 @@ Maintained by: - Thomas P.
  
 Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars
 
+
+
+
+
+___________________________________________________________
+Installation Instructions
+------------
+1) Place the Kopernicus folder into your <ksp directory>/GameData folder.
+2) Place Modulemanager.dll directly into your  <ksp directory>/GameData folder.
+3) Install desired planet packs. (Not included)
+4) Launch KSP and enjoy!
+___________________________________________________________
+
+
+
+Links to planet packs:
+New Horizons- http://forum.kerbalspaceprogram.com/threads/114092
+Outer Planets- http://forum.kerbalspaceprogram.com/threads/104280
+Sido's Urania System- http://forum.kerbalspaceprogram.com/threads/66882
+The Boris system- http://forum.kerbalspaceprogram.com/threads/70018
+Asclepius- http://forum.kerbalspaceprogram.com/threads/126515
+Kronkus- http://forum.kerbalspaceprogram.com/threads/132379
+Alternis Kerbol reckerjiggered- http://forum.kerbalspaceprogram.com/threads/133562
+Sentar Expansion remake- http://forum.kerbalspaceprogram.com/threads/130329
+Chani Planet pack- http://forum.kerbalspaceprogram.com/threads/129073
+Other_Worlds star/planet pack- http://forum.kerbalspaceprogram.com/threads/128695
+Trans-Keptunian- http://forum.kerbalspaceprogram.com/threads/109125
+
+Examples planet pack for modders- http://github.com/Kopernicus/KopernicusExamples/releases
+
+PLEASE NOTE: This is not a complete list.  Planet packs are maintained by their respective authors.  If you have issues with a specific planet pack, contact the author of that planet pack.  Kopernicus specific issues should be directed to the Kopernicus forum thread: http://forum.kerbalspaceprogram.com/threads/114649
+
+
+___________________________________________________________
+
+
+
+
+
+
 New in this version
 -------------------
 - finalizeOrbits only recalculates the SOI, if it is not set in Properties { }
@@ -34,24 +74,11 @@ Each celestial body in KSP has a property called “flightGlobalsIndex.”  This
 We have yet to see if removing or rearranging the other bodies causes any sort of errors in the science or contracts system.
 
 
-Instructions
-------------
-
-1) Copy the contents of the GameData/ folder to KSP’s GameData/ folder
-
-2) Launch KSP and enjoy!
-
-3) Please report any bugs you may find to either or both of the email addresses above.
-
 
 Examples
 ----------
 Selectively copy folders inside [KopernicusExamples/](https://github.com/Kopernicus/KopernicusExamples/) into a GameData/KopernicusExamples/ folder.  There are a number of examples of how to use Kopernicus.
 
-
-Information
------------
-Coming Soon
 
 Debugging Features
 ------------------
