@@ -32,11 +32,28 @@ Sido's Urania System- http://forum.kerbalspaceprogram.com/threads/66882
 The Boris system- http://forum.kerbalspaceprogram.com/threads/70018  
 Asclepius- http://forum.kerbalspaceprogram.com/threads/126515  
 Kronkus- http://forum.kerbalspaceprogram.com/threads/132379  
-Alternis Kerbol reckerjiggered- http://forum.kerbalspaceprogram.com/threads/133562  
+Alternis Kerbol Rejiggered- http://forum.kerbalspaceprogram.com/threads/133562  
 Sentar Expansion remake- http://forum.kerbalspaceprogram.com/threads/130329  
 Chani Planet pack- http://forum.kerbalspaceprogram.com/threads/129073  
 Other_Worlds star/planet pack- http://forum.kerbalspaceprogram.com/threads/128695  
 Trans-Keptunian- http://forum.kerbalspaceprogram.com/threads/109125  
+  
+More planet packs, some are less known or WIP:  
+  
+Arkas- http://forum.kerbalspaceprogram.com/threads/134547  
+Astro's Kopernicus Planets- http://forum.kerbalspaceprogram.com/threads/123454  
+Galactic Neighborhood- http://forum.kerbalspaceprogram.com/threads/128856  
+Kerbal Binary- http://forum.kerbalspaceprogram.com/threads/132733  
+Kerbal Dreams- http://forum.kerbalspaceprogram.com/threads/132304  
+Kerbal Outer Bodies Expansion- http://forum.kerbalspaceprogram.com/threads/134098  
+KerbalGalaxy 2- http://forum.kerbalspaceprogram.com/threads/125078  
+Kerbol Plus- http://forum.kerbalspaceprogram.com/threads/118643  
+Real Solar System- http://forum.kerbalspaceprogram.com/threads/55145  
+RHAT's Planet pack- http://rpmksp.comoj.com/  
+RSS Expanded- http://forum.kerbalspaceprogram.com/threads/129098  
+Saru Planet Pack- http://forum.kerbalspaceprogram.com/threads/132453  
+Sigma Mod Expansions- http://forum.kerbalspaceprogram.com/threads/112095  
+Sylandro's Planet Warehouse- http://forum.kerbalspaceprogram.com/threads/132467  
   
 Examples planet pack for modders- http://github.com/Kopernicus/KopernicusExamples/releases  
   
