@@ -119,12 +119,6 @@
     <Compile Include="RuntimeUtility\MapViewFixer.cs" />
     <Compile Include="RuntimeUtility\MenuBodyChanger.cs" />
     <Compile Include="RuntimeUtility\NameChanger.cs" />
-    <Compile Include="OnDemand\CBAttributeMapSODemand.cs" />
-    <Compile Include="OnDemand\OnDemandStorage.cs" />
-    <Compile Include="OnDemand\ILoadOnDemand.cs" />
-    <Compile Include="OnDemand\MapSODemand.cs" />
-    <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />
-    <Compile Include="OnDemand\TGAUtils.cs" />
     <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
@@ -202,6 +196,11 @@
   <ItemGroup>
     <None Include="Resources\UnlitNew.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Kopernicus.OnDemand\Kopernicus.OnDemand.csproj">
+      <Project>{659697ab-2d61-40c8-8a43-06fe6542623e}</Project>
+      <Name>Kopernicus.OnDemand</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
