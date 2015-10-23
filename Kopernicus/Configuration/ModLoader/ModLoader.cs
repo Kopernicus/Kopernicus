@@ -40,18 +40,11 @@ namespace Kopernicus
     {
         namespace ModLoader
         {
-            [RequireConfigType(Kopernicus.Configuration.ConfigType.Node)]
+            [RequireConfigType(ConfigType.Node)]
             public class ModLoader
             {
                 // The mod loader must always be able to return a mod
-                public PQSMod mod 
-                {
-                    get;
-                    set;
-                }
-
-                // Is the Mod added or patched (Logging relevant)
-                public bool patched = false;
+                public PQSMod mod { get; set; }
 
                 // Mod loader provides basic PQS mod loading functions
                 [ParserTarget("order", optional = true)]
