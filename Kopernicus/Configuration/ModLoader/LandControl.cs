@@ -1000,11 +1000,9 @@ namespace Kopernicus
                     {
                         // If we should add colliders, add them
                         MeshCollider collider = t.gameObject.AddComponent<MeshCollider>();
-                        if (colliders)
-                        {
-                            collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
-                            collider.sharedMesh.Optimize();
-                        }
+                        collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
+                        collider.sharedMesh.Optimize();
+                        collider.enabled = colliders;
 
                         // Done
                         isDone = true;
@@ -1066,20 +1064,8 @@ namespace Kopernicus
                     Part kerbal = FlightGlobals.ActiveVessel.evaController.part;
                     experiment = kerbal.AddModule(typeof(ModuleScienceExperiment).Name) as ModuleScienceExperiment;
 
-                    // I can't find a function that loads the module from the config node... :/ Doing it manually
-                    Type type = experiment.GetType();
-                    foreach (ConfigNode.Value value in experimentNode.values)
-                    {
-                        try
-                        {
-                            FieldInfo field = type.GetField(value.name);
-                            if (field.FieldType == typeof(string))
-                                field.SetValue(experiment, value.value);
-                            else if (field.FieldType.GetMethod("Parse") != null)
-                                field.SetValue(experiment, field.FieldType.GetMethod("Parse").Invoke(null, new object[] { value.value }));
-                        }
-                        catch { }
-                    }
+                    // Load the experiment
+                    ConfigNode.LoadObjectFromConfig(experiment, experimentNode);
 
                     // Deactivate some things
                     experiment.resettable = false;

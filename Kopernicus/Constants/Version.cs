@@ -44,19 +44,22 @@ namespace Kopernicus
         {
             // Versioning information
             private static int[] versionNumber = new int[] { 0, 4 }; 
-            private static bool developmentBuild = false;
+
+            // Get a string for the logging
             public static string version
             {
                 get
                 {
                     #if DEBUG
-                    developmentBuild = true;
+                    bool developmentBuild = true;
+                    #else
+                    bool developmentBuild = false;
                     #endif
-
                     return "Kopernicus " + GetVersionNumber(versionNumber) + ((developmentBuild) ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
             }
 
+            // Returns the current version number
             private static string GetVersionNumber(int[] number)
             {
                 string version = "";
@@ -71,23 +74,25 @@ namespace Kopernicus
                 return version;
             }
 
+            // Returns the SHA1 Hash of the assembly
             private static string AssemblyHandle()
             {
                 string filePath = System.Reflection.Assembly.GetCallingAssembly().Location;
                 return Convert.ToBase64String(SHA1Managed.Create().ComputeHash(File.ReadAllBytes(filePath)));
             }
 
+            // Returns the time when the assembly was built
             private static DateTime BuiltTime()
             {
                 string filePath = System.Reflection.Assembly.GetCallingAssembly().Location;
                 const int c_PeHeaderOffset = 60;
                 const int c_LinkerTimestampOffset = 8;
                 byte[] b = new byte[2048];
-                System.IO.Stream s = null;
+                Stream s = null;
 
                 try
                 {
-                    s = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                    s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
                     s.Read(b, 0, 2048);
                 }
                 finally
@@ -98,8 +103,8 @@ namespace Kopernicus
                     }
                 }
 
-                int i = System.BitConverter.ToInt32(b, c_PeHeaderOffset);
-                int secondsSince1970 = System.BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
+                int i = BitConverter.ToInt32(b, c_PeHeaderOffset);
+                int secondsSince1970 = BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
                 DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 dt = dt.AddSeconds(secondsSince1970);
                 dt = dt.ToLocalTime();
