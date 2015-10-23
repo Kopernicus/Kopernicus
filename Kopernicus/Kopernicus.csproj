@@ -120,7 +120,7 @@
     <Compile Include="RuntimeUtility\MenuBodyChanger.cs" />
     <Compile Include="RuntimeUtility\NameChanger.cs" />
     <Compile Include="OnDemand\CBAttributeMapSODemand.cs" />
-    <Compile Include="OnDemand\Handler.cs" />
+    <Compile Include="OnDemand\OnDemandStorage.cs" />
     <Compile Include="OnDemand\ILoadOnDemand.cs" />
     <Compile Include="OnDemand\MapSODemand.cs" />
     <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />

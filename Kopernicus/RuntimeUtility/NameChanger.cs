@@ -108,8 +108,6 @@ namespace Kopernicus
                         p.gameObject.name = p.gameObject.name.Replace(oldName, newName);
                     }
                 }
-                if (b.isHomeWorld)
-                    OnDemandStorage.homeworldBody = newName;
             }
             if (ScaledSpace.Instance != null)
             {
@@ -119,11 +117,11 @@ namespace Kopernicus
                         t.name = t.name.Replace(oldName, newName);
                 }
             }
-            if (OnDemandStorage.bodyMapLists.ContainsKey(oldName))
+            if (OnDemandStorage.maps.ContainsKey(oldName))
             {
-                List<ILoadOnDemand> mapList = OnDemandStorage.bodyMapLists[oldName];
-                OnDemandStorage.bodyMapLists[newName] = mapList;
-                OnDemandStorage.bodyMapLists.Remove(oldName);
+                List<ILoadOnDemand> mapList = OnDemandStorage.maps[oldName];
+                OnDemandStorage.maps[newName] = mapList;
+                OnDemandStorage.maps.Remove(oldName);
             }
             AFGInfo.UpdateAFGName(oldName, newName);
         }
@@ -169,8 +167,6 @@ namespace Kopernicus
                         p.gameObject.name = p.gameObject.name.Replace(oldName, newName);
                     }
                 }*/
-                if (b.isHomeWorld)
-                    OnDemandStorage.homeworldBody = newName;
             }
             /*if (ScaledSpace.Instance != null)
             {

@@ -39,6 +39,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 using UnityEngine;
+using Kopernicus.OnDemand;
 
 namespace Kopernicus
 {
@@ -350,29 +351,30 @@ namespace Kopernicus
         /** Parser for a MapSO */
         public class MapSOParser_GreyScale<T> : IParsable where T : MapSO
         {
+            // Value
             public T value;
+
+            // Load the MapSO
             public void SetFromString (string s)
             {
-                bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
+                // Should we use OnDemand?
+                bool useOnDemand = typeof(T) == typeof(CBAttributeMapSO) ? OnDemandStorage.useOnDemandBiomes : OnDemandStorage.useOnDemand;
+
+                // Save the maps, and reuse them
                 if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
                 {
                     value = (T)Templates.instance.mapsGray[s];
                     if (useOnDemand)
                     {
-                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
-                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
+                        value.name += ", and " + OnDemandStorage.currentBody;
+                        OnDemandStorage.AddMap(OnDemandStorage.currentBody, (ILoadOnDemand)value);
                     }
                 }
                 else
                 {
-                    T obj = null;
                     if (s.StartsWith("BUILTIN/"))
                     {
-                        obj = Utility.FindMapSO(s) as T;
-                    }
-                    if (obj != null)
-                    {
-                        value = obj; // can't make built-in maps On-Demand
+                        value = Utility.FindMapSO(s) as T; // can't make built-in maps On-Demand.....yet... >:D
                     }
                     else
                     {
@@ -388,24 +390,22 @@ namespace Kopernicus
                                     mapName = mapName.Substring(0, lastDot);
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
-                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
-                                    valCB.SetPath(s);
+                                    CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
+                                    valCB.Path = s;
                                     valCB.Depth = MapSO.MapDepth.Greyscale;
-                                    valCB.name = mapName + " (CBG) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valCB.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    valCB.name = mapName + " (CBG) for " + OnDemandStorage.currentBody;
+                                    valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valCB);
                                     value = valCB as T;
                                 }
                                 else
                                 {
-                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
-                                    valMap.SetPath(s);
+                                    MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
+                                    valMap.Path = s;
                                     valMap.Depth = MapSO.MapDepth.Greyscale;
-                                    valMap.name = mapName + " (G) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valMap.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    valMap.name = mapName + " (G) for " + OnDemandStorage.currentBody;
+                                    valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valMap);
                                     value = valMap as T;
                                 }
                                 Templates.instance.mapsGray[s] = value;
@@ -439,30 +439,31 @@ namespace Kopernicus
         /** Parser for a MapSO */
         public class MapSOParser_RGB<T> : IParsable where T : MapSO
         {
+            // Value
             public T value;
+
+            // Load the MapSO
             public void SetFromString(string s)
             {
-                bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
+                // Should we use OnDemand?
+                bool useOnDemand = typeof(T) == typeof(CBAttributeMapSO) ? OnDemandStorage.useOnDemandBiomes : OnDemandStorage.useOnDemand;
+
+                // Save the maps, and reuse them
                 if (Templates.instance.mapsRGB != null && Templates.instance.mapsRGB.ContainsKey(s))
                 {
                     value = (T)Templates.instance.mapsRGB[s];
 
                     if (useOnDemand)
                     {
-                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
-                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
+                        value.name += ", and " + OnDemandStorage.currentBody;
+                        OnDemandStorage.AddMap(OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
                     }
                 }
                 else
                 {
-                    T obj = null;
                     if (s.StartsWith("BUILTIN/"))
                     {
-                        obj = Utility.FindMapSO(s) as T;
-                    }
-                    if (obj != null)
-                    {
-                        value = obj; // can't make built-in maps On-Demand
+                        value = Utility.FindMapSO(s) as T;
                     }
                     else
                     {
@@ -478,28 +479,25 @@ namespace Kopernicus
                                     mapName = mapName.Substring(0, lastDot);
                                 if (typeof(T) == typeof(CBAttributeMapSO))
                                 {
-                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
-                                    valCB.SetPath(s);
+                                    CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
+                                    valCB.Path = s;
                                     valCB.Depth = MapSO.MapDepth.RGB;
-                                    valCB.name = mapName + " (CBRGB) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valCB.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
+                                    valCB.name = mapName + " (CBRGB) for " + OnDemandStorage.currentBody;
+                                    valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valCB);
                                     value = valCB as T;
                                 }
                                 else
                                 {
-                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
-                                    valMap.SetPath(s);
+                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
+                                    valMap.Path = s;
                                     valMap.Depth = MapSO.MapDepth.RGB;
-                                    valMap.name = mapName + " (RGB) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valMap.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
+                                    valMap.name = mapName + " (RGB) for " + OnDemandStorage.currentBody;
+                                    valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valMap);
                                     value = valMap as T;
                                 }
                                 Templates.instance.mapsRGB[s] = value;
-                                Debug.Log("OD: created map of path " + s);
                             }
                         }
                         else

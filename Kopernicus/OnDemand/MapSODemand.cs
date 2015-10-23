@@ -32,131 +32,98 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using KSP;
 using UnityEngine;
-using System.IO;
 
 namespace Kopernicus
 {
     namespace OnDemand
     {
+        // MapSO Replacement to support Texture streaming
         public class MapSODemand : MapSO, ILoadOnDemand
         {
-            protected string mapPath = "";
-            protected bool isLoaded = false;
-            protected bool autoLoad = false;
+            // BitPerPixels is always 4
+            protected new const int _bpp = 4;
 
-            public bool IsLoaded() { return isLoaded; }
-            public void SetPath(string path) { mapPath = path; }
-            public void SetAutoLoad(bool doAutoLoad) { autoLoad = doAutoLoad; }
-            public string MapName() { return name; }
-            public string MapPath() { return mapPath; }
+            // Representation of the map
+            protected new Texture2D _data { get; set; }
+
+            // States
+            public bool IsLoaded { get; set; }
+            public bool AutoLoad { get; set; }
+
+            // Path of the Texture
+            public string Path { get; set; }
+
+            // MapDepth
+            public new MapDepth Depth { get; set; }
+
+            // Load the Map
             public bool Load()
             {
-                if (isLoaded)
+                // Check if the Map is already loaded
+                if (IsLoaded)
                     return false;
-                if (mapPath.EndsWith(".tga"))
+
+                // Load the Map
+                Texture2D map = Utility.LoadTexture(Path, false, false, false);
+
+                // If the map isn't null
+                if (map != null)
                 {
-                    CreateMap(Depth, mapPath);
-                    isLoaded = true;
-                    Debug.Log("OD: map " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
-                    OnDemand.OnDemandStorage.enabledMaps[this] = true;
-                    OnDemand.OnDemandStorage.mapTimes[this] = 0f;
+                    CreateMap(Depth, map);
+                    IsLoaded = true;
+                    Debug.Log("[OD] Map " + name + " enabling self. Path = " + Path);
                     return true;
                 }
-                else
-                {
-                    Texture2D map = Utility.LoadTexture(mapPath, false, false, false);
-                    if (map != null)
-                    {
-                        CreateMap(Depth, map);
-                        isLoaded = true;
-                        Debug.Log("OD: map " + name + " enabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
-                        OnDemand.OnDemandStorage.enabledMaps[this] = true;
-                        OnDemand.OnDemandStorage.mapTimes[this] = 0f;
-                        DestroyImmediate(map);
-                        return true;
-                    }
 
-                    Debug.Log("OD: ERROR: Failed to load map " + name + " at path " + mapPath);
-                    return false;
-                }
+                // Return nothing
+                Debug.Log("[OD] ERROR: Failed to load map " + name + " at path " + Path);
+                return false;
+
             }
+
+            // Unload the map
             public bool Unload()
             {
-                if (!isLoaded || mapPath == "")
+                // We can only destroy the map, if it is loaded
+                Debug.Log(IsLoaded);
+                if (!IsLoaded)
                     return false;
-                _data = null;
-                isLoaded = false;
-                Debug.Log("OD: map " + name + " disabling self, time was " + OnDemand.OnDemandStorage.mapTimes[this] + ". Path = " + mapPath);
-                OnDemand.OnDemandStorage.enabledMaps[this] = false;
-                OnDemand.OnDemandStorage.mapTimes[this] = 0f;
-                this._data = null;
-                if(OnDemandStorage.onDemandForceCollect)
-                    GC.Collect();
+
+                // Nuke the map
+                DestroyImmediate(_data);
+
+                // Set flags
+                IsLoaded = false;
+
+                // Log
+                Debug.Log("[OD] map " + name + " disabling self. Path = " + Path);
+
+                // We're done here
                 return true;
             }
 
-            new public MapSO.MapDepth Depth
+            // Create a map from a Texture2D
+            public override void CreateMap(MapDepth depth, Texture2D tex)
             {
-                get
+                // If the Texture is null, abort
+                if (tex == null)
                 {
-                    return (MapSO.MapDepth)_bpp;
-                }
-                set
-                {
-                    _bpp = (int)value;
-                }
-            }
-
-            public override void CreateMap(MapSO.MapDepth depth, Texture2D tex)
-            {
-                base.CreateMap(depth, tex);
-                isLoaded = true;
-            }
-
-            public void CreateMap(MapDepth depth, string path)
-            {
-                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), Path.Combine("GameData", path));
-                byte[] bytes = File.ReadAllBytes(fullPath);
-                TGAHeader tex = new TGAHeader(bytes);
-
-                this._name = Path.GetFileNameWithoutExtension(fullPath); ;
-                this._width = tex.width;
-                this._height = tex.height;
-                this._bpp = (int)depth;
-                this._rowWidth = this._width * this._bpp;
-
-                switch (depth)
-                {
-                    case MapDepth.Greyscale:
-                        GreyscaleFromRGB(tex, bytes);
-                        break;
-
-                    case MapDepth.HeightAlpha:
-                        HeightAlpha(tex, bytes);
-                        break;
-
-                    case MapDepth.RGB:
-                        RGB(tex, bytes);
-                        break;
-
-                    case MapDepth.RGBA:
-                        RGBA(tex, bytes);
-                        break;
+                    Debug.Log("[OD] ERROR: Failed to load map");
+                    return;
                 }
 
-                this._isCompiled = true;
-            }
+                // Set _data
+                _data = tex;
 
-            public void CreateMap(MapSO.MapDepth depth, string path, Texture2D tex)
-            {
-                mapPath = path;
-                CreateMap(depth, tex);
+                // Variables
+                _width = tex.width;
+                _height = tex.height;
+                Depth = depth;
+                _rowWidth = _width * _bpp;
+
+                // We're compiled
+                _isCompiled = true;
             }
 
             public MapSODemand()
@@ -165,267 +132,370 @@ namespace Kopernicus
                 // register here or on PQSMod creation?
                 // for now we'll do it on creation (i.e. elsewhere)
             }
+
+            // GetPixelByte
             public override byte GetPixelByte(int x, int y)
             {
-                if (!isLoaded)
+                // If we aren't loaded....
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelbyte with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return (byte)0;
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelbyte with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return 0;
                 }
-                return base.GetPixelByte(x, y);
+                return (byte)(_data.GetPixel(x, y).r * Float2Byte);
             }
+
+            // GetPixelColor - Double
             public override Color GetPixelColor(double x, double y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelColD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return Color.black;
-                }
-                return base.GetPixelColor(x, y);
-            }
-            public override Color GetPixelColor(float x, float y)
-            {
-                if (!isLoaded)
-                {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelColF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return Color.black;
-                }
-                return base.GetPixelColor(x, y);
-            }
-            public override Color GetPixelColor(int x, int y)
-            {
-                if (!isLoaded)
-                {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelColI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return Color.black;
-                }
-                return base.GetPixelColor(x, y);
-            }
-            public override Color GetPixelColor32(double x, double y)
-            {
-                if (!isLoaded)
-                {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelCol32D with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelColD with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
                     else return Color.black;
                 }
-                return base.GetPixelColor32(x, y);
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return Color.Lerp(
+                    Color.Lerp(
+                        this.GetPixelColor(coords.xFloor, coords.yFloor), 
+                        this.GetPixelColor(coords.xCeiling, coords.yFloor), 
+                        coords.u), 
+                    Color.Lerp(
+                        this.GetPixelColor(coords.xFloor, coords.yCeiling), 
+                        this.GetPixelColor(coords.xCeiling, coords.yCeiling),
+                        coords.u),
+                    coords.v);
             }
+
+            // GetPixelColor - Float
+            public override Color GetPixelColor(float x, float y)
+            {
+                if (!IsLoaded)
+                {
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelColF with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return Color.black;
+                }
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return Color.Lerp(
+                    Color.Lerp(
+                        this.GetPixelColor(coords.xFloor, coords.yFloor),
+                        this.GetPixelColor(coords.xCeiling, coords.yFloor),
+                        coords.u),
+                    Color.Lerp(
+                        this.GetPixelColor(coords.xFloor, coords.yCeiling),
+                        this.GetPixelColor(coords.xCeiling, coords.yCeiling),
+                        coords.u),
+                    coords.v);
+            }
+
+            // GetPixelColor - Int
+            public override Color GetPixelColor(int x, int y)
+            {
+                if (!IsLoaded)
+                {
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelColI with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return Color.black;
+                }
+                return _data.GetPixel(x, y);
+            }
+
+            // GetPixelColor32 - Double
+            public override Color GetPixelColor32(double x, double y)
+            {
+                if (!IsLoaded)
+                {
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelCol32D with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return Color.black;
+                }
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return Color32.Lerp(
+                    Color32.Lerp(
+                        this.GetPixelColor32(coords.xFloor, coords.yFloor),
+                        this.GetPixelColor32(coords.xCeiling, coords.yFloor),
+                        coords.u),
+                    Color32.Lerp(
+                        this.GetPixelColor32(coords.xFloor, coords.yCeiling),
+                        this.GetPixelColor32(coords.xCeiling, coords.yCeiling),
+                        coords.u),
+                    coords.v);
+            }
+
+            // GetPixelColor32 - Float - Honestly Squad, why are they named GetPixelColor32, but return normal Colors instead of Color32?
             public override Color GetPixelColor32(float x, float y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelCol32F with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return Color.black;
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelCol32F with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return Color.black;
                 }
-                return base.GetPixelColor32(x, y);
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return Color32.Lerp(
+                    Color32.Lerp(
+                        this.GetPixelColor32(coords.xFloor, coords.yFloor),
+                        this.GetPixelColor32(coords.xCeiling, coords.yFloor),
+                        coords.u),
+                    Color32.Lerp(
+                        this.GetPixelColor32(coords.xFloor, coords.yCeiling),
+                        this.GetPixelColor32(coords.xCeiling, coords.yCeiling),
+                        coords.u),
+                    coords.v);
             }
+
+            // GetPixelColor32 - Int
             public override Color32 GetPixelColor32(int x, int y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelCol32I with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return new Color32();
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelCol32I with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new Color32();
                 }
-                return base.GetPixelColor32(x, y);
+                return _data.GetPixel(x, y);
             }
+
+            // GetPixelFloat - Double
             public override float GetPixelFloat(double x, double y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelFloatD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return 0f;
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelFloatD with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return 0f;
                 }
-                return base.GetPixelFloat(x, y);
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return Mathf.Lerp(
+                    Mathf.Lerp(
+                        GetPixelFloat(coords.xFloor, coords.yFloor), 
+                        GetPixelFloat(coords.xCeiling, coords.yFloor), 
+                        coords.u), 
+                    Mathf.Lerp(
+                        GetPixelFloat(coords.xFloor, coords.yCeiling), 
+                        GetPixelFloat(coords.xCeiling, coords.yCeiling),
+                        coords.u),
+                    coords.v);
             }
+
+            // GetPixelFloat - Float
             public override float GetPixelFloat(float x, float y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelFloatF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return 0f;
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelFloatF with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return 0f;
                 }
-                return base.GetPixelFloat(x, y);
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return Mathf.Lerp(
+                    Mathf.Lerp(
+                        GetPixelFloat(coords.xFloor, coords.yFloor),
+                        GetPixelFloat(coords.xCeiling, coords.yFloor),
+                        coords.u),
+                    Mathf.Lerp(
+                        GetPixelFloat(coords.xFloor, coords.yCeiling),
+                        GetPixelFloat(coords.xCeiling, coords.yCeiling),
+                        coords.u),
+                    coords.v);
             }
+
+            // GetPixelFloat - Integer
             public override float GetPixelFloat(int x, int y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelFloatI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return 0f;
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelFloatI with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return 0f;
                 }
-                return base.GetPixelFloat(x, y);
+
+                Color pixel = _data.GetPixel(x, y);
+                float value = 0f;
+                if (Depth == MapDepth.Greyscale)
+                    value = pixel.r;
+                else if (Depth == MapDepth.HeightAlpha)
+                    value = pixel.r + pixel.a;
+                else if (Depth == MapDepth.RGB)
+                    value = pixel.r + pixel.g + pixel.b;
+                else if (Depth == MapDepth.RGBA)
+                    value = pixel.r + pixel.g + pixel.b + pixel.a;
+
+                // Enhanced support for L8 .dds
+                if (_data.format == TextureFormat.Alpha8)
+                    value = pixel.a;
+
+                return value / (int)Depth;
             }
-            public override MapSO.HeightAlpha GetPixelHeightAlpha(double x, double y)
+
+            // GetPixelHeightAlpha - Double
+            public override HeightAlpha GetPixelHeightAlpha(double x, double y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaD with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return new MapSO.HeightAlpha(0f, 0f);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelHeightAlphaD with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new HeightAlpha(0f, 0f);
                 }
-                return base.GetPixelHeightAlpha(x, y);
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return HeightAlpha.Lerp(
+                    HeightAlpha.Lerp(
+                        GetPixelHeightAlpha(coords.xFloor, coords.yFloor), 
+                        GetPixelHeightAlpha(coords.xCeiling, coords.yFloor), 
+                        coords.u), 
+                    HeightAlpha.Lerp(
+                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling), 
+                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling),
+                        coords.u),
+                    coords.v);
             }
-            public override MapSO.HeightAlpha GetPixelHeightAlpha(float x, float y)
+
+            // GetPixelHeightAlpha - Float
+            public override HeightAlpha GetPixelHeightAlpha(float x, float y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaF with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return new MapSO.HeightAlpha(0f, 0f);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelHeightAlphaF with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new HeightAlpha(0f, 0f);
                 }
-                return base.GetPixelHeightAlpha(x, y);
+
+                BilinearCoords coords = ConstructBilinearCoords(x, y);
+                return HeightAlpha.Lerp(
+                    HeightAlpha.Lerp(
+                        GetPixelHeightAlpha(coords.xFloor, coords.yFloor),
+                        GetPixelHeightAlpha(coords.xCeiling, coords.yFloor),
+                        coords.u),
+                    HeightAlpha.Lerp(
+                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling),
+                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling),
+                        coords.u),
+                    coords.v);
             }
-            public override MapSO.HeightAlpha GetPixelHeightAlpha(int x, int y)
+
+            // GetPixelHeightAlpha - Int
+            public override HeightAlpha GetPixelHeightAlpha(int x, int y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return new MapSO.HeightAlpha(0f, 0f);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new HeightAlpha(0f, 0f);
                 }
-                return base.GetPixelHeightAlpha(x, y);
+
+                Color pixel = _data.GetPixel(x, y);
+                if (Depth == (MapDepth.HeightAlpha | MapDepth.RGBA))
+                    return new HeightAlpha(pixel.r, pixel.a);
+                else
+                    return new HeightAlpha(pixel.r, 1f);
             }
+
+            // GreyByte
             public override byte GreyByte(int x, int y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting GreyByteI with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return (byte)0;
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting GreyByteI with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return 0;
                 }
-                return base.GreyByte(x, y);
+                return (byte)(Float2Byte * _data.GetPixel(x, y).r);
             }
+
+            // GreyFloat
             public override float GreyFloat(int x, int y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting GreyFloat with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return 0f;
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting GreyFloat with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return 0f;
                 }
-                return base.GreyFloat(x, y);
+                return _data.GetPixel(x, y).grayscale;
             }
+
+            // PixelByte
             public override byte[] PixelByte(int x, int y)
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("OD: ERROR: getting pixelByte with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return new byte[_bpp];
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelByte with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new byte[_bpp];
                 }
-                return base.PixelByte(x, y);
+
+                Color c = _data.GetPixel(x, y);
+                if (Depth == MapDepth.Greyscale)
+                    return new byte[] { (byte)c.r };
+                else if (Depth == MapDepth.HeightAlpha)
+                    return new byte[] { (byte)c.r, (byte)c.a };
+                else if (Depth == MapDepth.RGB)
+                    return new byte[] { (byte)c.r, (byte)c.g, (byte)c.b };
+                else
+                    return new byte[] { (byte)c.r, (byte)c.g, (byte)c.b, (byte)c.a };
             }
+
+            // CompileToTexture
             public override Texture2D CompileToTexture()
             {
-                if (!isLoaded)
+                if (!IsLoaded)
                 {
-                    Debug.Log("OD: ERROR: compiling with unloaded map " + name + " of path " + mapPath + ", autoload = " + autoLoad);
-                    if (autoLoad)
-                        Load();
-                    else
-                        return new Texture2D(_width, _height);
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new Texture2D(_width, _height);
                 }
-                return base.CompileToTexture();
+                return _data;
             }
 
-            protected void GreyscaleFromRGB(TGAHeader tex, byte[] data)
+            // ConstructBilinearCoords from double
+            protected new BilinearCoords ConstructBilinearCoords(double x, double y)
             {
-                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
-                int length = colorArray.Length;
-                this._data = new byte[length];
-                for (int i = 0; i < length; i++)
-                {
-                    this._data[i] = colorArray[i].r;
-                }
+                // Create the struct
+                BilinearCoords coords = new BilinearCoords();
+
+                // Floor
+                x = Math.Abs(x - Math.Floor(x));
+                y = Math.Abs(y - Math.Floor(y));
+
+                // X to U
+                coords.x = x * _width;
+                coords.xFloor = (int)Math.Floor(coords.x);
+                coords.xCeiling = (int)Math.Ceiling(coords.x);
+                coords.u = (float)(coords.x - coords.xFloor);
+                if (coords.xCeiling == _width) coords.xCeiling = 0;
+
+                // Y to V
+                coords.y = y * _height;
+                coords.yFloor = (int)Math.Floor(coords.y);
+                coords.yCeiling = (int)Math.Ceiling(coords.y);
+                coords.v = (float)(coords.y - coords.yFloor);
+                if (coords.yCeiling == this._height) coords.yCeiling = 0;
+
+                // We're done
+                return coords;
             }
 
-            protected void HeightAlpha(TGAHeader tex, byte[] data)
+            // ConstructBilinearCoords from float
+            protected new BilinearCoords ConstructBilinearCoords(float x, float y)
             {
-                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
-                int num = colorArray.Length * 2;
-                this._data = new byte[num];
-                int index = 0;
-                int num3 = 0;
-                while (index < colorArray.Length)
-                {
-                    this._data[num3++] = colorArray[index].r;
-                    this._data[num3++] = colorArray[index].a;
-                    index++;
-                }
+                return ConstructBilinearCoords((double)x, (double)y);
             }
 
-            protected void RGB(TGAHeader tex, byte[] data)
+            // BilinearCoords
+            public struct BilinearCoords
             {
-                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
-                int num = colorArray.Length * 3;
-                this._data = new byte[num];
-                int index = 0;
-                int num3 = 0;
-                while (index < colorArray.Length)
-                {
-                    this._data[num3++] = colorArray[index].r;
-                    this._data[num3++] = colorArray[index].g;
-                    this._data[num3++] = colorArray[index].b;
-                    index++;
-                }
-            }
-
-            protected void RGBA(TGAHeader tex, byte[] data)
-            {
-                Color32[] colorArray = TGAUtils.ReadImage(tex, data);
-                int num = colorArray.Length * 4;
-                this._data = new byte[num];
-                int index = 0;
-                int num3 = 0;
-                while (index < colorArray.Length)
-                {
-                    this._data[num3++] = colorArray[index].r;
-                    this._data[num3++] = colorArray[index].g;
-                    this._data[num3++] = colorArray[index].b;
-                    this._data[num3++] = colorArray[index].a;
-                    index++;
-                }
+                public double x, y;
+                public int xCeiling, xFloor, yCeiling, yFloor;
+                public float u, v;
             }
         }
     }
