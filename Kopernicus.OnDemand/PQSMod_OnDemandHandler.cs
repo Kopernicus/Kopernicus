@@ -42,7 +42,7 @@ namespace Kopernicus
             public override void OnSphereInactive()
             {
                 // Don't update, if the Injector is still running
-                if (Injector.dontUpdate || !isLoaded)
+                if (!isLoaded)
                     return;
 
                 // Enable the maps
@@ -57,7 +57,7 @@ namespace Kopernicus
             public override void OnQuadPreBuild(PQ quad)
             {
                 // Don't update, if the Injector is still running
-                if (Injector.dontUpdate || isLoaded)
+                if (isLoaded)
                     return;
 
                 // Enable the maps

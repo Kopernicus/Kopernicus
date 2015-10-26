@@ -857,6 +857,7 @@ namespace Kopernicus
                                 {
                                     map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
                                     map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                    map.name = path;
                                 }
 
                             }
@@ -875,6 +876,7 @@ namespace Kopernicus
                             map.Compress(true);
                         if (upload)
                             map.Apply(false, unreadable);
+                        map.name = path;
                     }
                 }
                 catch (Exception e)

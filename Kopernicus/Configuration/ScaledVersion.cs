@@ -236,6 +236,17 @@ namespace Kopernicus
                         }
                     }
                 }
+
+                // If we use OnDemand, we need to delete the original textures and reload them
+                if (OnDemand.OnDemandStorage.useOnDemand && type.value != BodyType.Star)
+                {
+                    string texturePath = scaledVersion.renderer.material.GetTexture("_MainTex").name.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
+                    string normalsPath = scaledVersion.renderer.material.GetTexture("_BumpMap").name.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
+                    Logger.Active.Log(texturePath + " - " + normalsPath);
+                    OnDemand.ScaledSpaceDemand texture = scaledVersion.AddComponent<OnDemand.ScaledSpaceDemand>();
+                    if (Utility.TextureExists(texturePath)) texture.texture = texturePath;
+                    if (Utility.TextureExists(normalsPath)) texture.normals = normalsPath;
+                }
             }
 
             /**
@@ -260,5 +271,6 @@ namespace Kopernicus
                 }
             }
         }
+
     }
 }

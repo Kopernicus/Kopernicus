@@ -66,7 +66,7 @@ namespace Kopernicus
                     return false;
 
                 // Load the Map
-                Texture2D map = Utility.LoadTexture(Path, false, false, false);
+                Texture2D map = OnDemandStorage.LoadTexture(Path, false, false, false);
 
                 // If the map isn't null
                 if (map != null)

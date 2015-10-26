@@ -331,6 +331,13 @@ namespace Kopernicus
                     return;
                 }
 
+                // Or load the texture directly
+                else if (Utility.TextureExists(s))
+                {
+                    value = Utility.LoadTexture(s, false, false, false);
+                    return;
+                }
+
                 // Texture was not found
                 value = null;
             }

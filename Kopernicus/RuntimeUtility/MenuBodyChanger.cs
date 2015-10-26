@@ -34,7 +34,7 @@ namespace Kopernicus
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class MainMenuChanger : MonoBehaviour
     {
-        public void Start()
+        void Awake()
         {
             // On Start, Update the Planets
             UpdateMenu();
@@ -59,6 +59,7 @@ namespace Kopernicus
             }
             logic.areas[0].SetActive(false);
             logic.areas[1].SetActive(true);
+            Utility.GameObjectWalk(logic.areas[0]);
 
             // Get our active Space
             GameObject space = logic.areas[1];
