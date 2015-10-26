@@ -321,6 +321,13 @@ namespace Kopernicus
 
                 return map;
             }
+
+            // Checks if a Texture exists
+            public static bool TextureExists(string path)
+            {
+                path = KSPUtil.ApplicationRootPath + "GameData/" + path;
+                return System.IO.File.Exists(path);
+            }
         }
     }
 }
