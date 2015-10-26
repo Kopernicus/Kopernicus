@@ -634,85 +634,66 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Value)]
         public class MeshParser : IParsable
         {
-            public Mesh mesh;
-            public GameObject Object;
+            public Mesh value;
             public void SetFromString (string s)
             {
                 // Check if we are attempting to load a builtin mesh
-                if (s.StartsWith("BUILTIN/"))
+                if (s.StartsWith ("BUILTIN/")) 
                 {
-                    try
-                    {
-                        string objectName = Regex.Replace(s, "BUILTIN/", "");
-                        Object = Resources.FindObjectsOfTypeAll<GameObject>().Where(o => o.name == objectName).First();
-                        List<MeshFilter> filters = Object.GetComponentsInChildren<MeshFilter>(true).ToList();
-                        List<CombineInstance> combines = new List<CombineInstance>();
-                        filters.ForEach(f => combines.Add(new CombineInstance() { mesh = f.sharedMesh }));
-                        mesh = new Mesh();
-                        mesh.CombineMeshes(combines.ToArray());
-                    }
-                    catch { }
+                    string meshName = Regex.Replace (s, "BUILTIN/", "");
+                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Mesh> ().Where (mesh => mesh.name == meshName).First ();
+                    return;
+                }
 
-                    // Check if we've found a mesh, otherwise try to find it directly
-                    if (mesh == null)
-                    {
-                        string meshName = Regex.Replace(s, "BUILTIN/", "");
-                        mesh = Resources.FindObjectsOfTypeAll<Mesh>().Where(m => m.name == meshName).First();
-                        Object = new GameObject(meshName);
-                        Object.AddComponent<MeshFilter>().sharedMesh = mesh;
-                        MonoBehaviour.DontDestroyOnLoad(Object);
-                    }
-                }
-                else if (s.EndsWith(".obj")) // Check which Mesh-Type we're loading
+                String path = KSPUtil.ApplicationRootPath + "GameData/" + s;
+                if (System.IO.File.Exists(path))
                 {
-                    string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
-                    if (File.Exists(path))
-                    {
-                        mesh = ObjImporter.ImportFile(path);
-                        mesh.name = Path.GetFileNameWithoutExtension(path);
-                        Object = new GameObject(mesh.name);
-                        UnityEngine.Object.DontDestroyOnLoad(Object);
-                        Object.AddComponent<MeshFilter>().sharedMesh = mesh;
-                        return;
-                    }
-                }
-                else if (s.EndsWith(".mu"))
-                {
-                    // If there's a model, import it
-                    string path = Regex.Replace(s, ".mu", "");
-                    if (GameDatabase.Instance.ExistsModel(path))
-                    {
-                        Object = GameDatabase.Instance.GetModel(path);
-                        List<MeshFilter> filters = Object.GetComponentsInChildren<MeshFilter>(true).ToList();
-                        List<CombineInstance> combines = new List<CombineInstance>();
-                        filters.ForEach(f => combines.Add(new CombineInstance() { mesh = f.sharedMesh }));
-                        mesh = new Mesh();
-                        mesh.CombineMeshes(combines.ToArray());
-                        return;
-                    }
+                    value = ObjImporter.ImportFile(path);
+                    value.name = Path.GetFileNameWithoutExtension(path);
+                    return;
                 }
 
                 // Mesh was not found
-                mesh = null;
-                Object = null;
+                value = null;
             }
             public MeshParser ()
             {
                 
             }
-            public MeshParser (Mesh mesh)
+            public MeshParser (Mesh value)
             {
-                this.mesh = mesh;
-            }
-            public MeshParser(GameObject Object)
-            {
-                this.Object = Object;
-            }
-            public MeshParser(GameObject Object, Mesh mesh)
-            {
-                this.Object = Object;
-                this.mesh = mesh;
+                this.value = value;
             }
         }
+
+		[RequireConfigType(ConfigType.Value)]
+		public class MuParser : IParsable
+		{
+			public GameObject value;
+
+			public void SetFromString (string s)
+			{
+				// If there's a model, import it
+				if (GameDatabase.Instance.ExistsModel (s))
+				{
+					value = GameDatabase.Instance.GetModel (s);
+					return;
+				}
+
+				// Otherwise, set the value to null
+				value = null;
+			}
+
+			// Default constructor
+			public MuParser()
+			{
+			}
+
+			// Initializing constructor
+			public MuParser(GameObject value)
+			{
+				this.value = value;
+			}
+		}
     }
 }

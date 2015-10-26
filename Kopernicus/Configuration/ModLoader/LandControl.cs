@@ -152,7 +152,7 @@ namespace Kopernicus
                     [ParserTarget("mesh", optional = true)]
                     private MeshParser baseMesh
                     {
-                        set { scatter.baseMesh = value.mesh; }
+                        set { scatter.baseMesh = value.value; }
                     }
 
                     // castShadows
@@ -808,7 +808,7 @@ namespace Kopernicus
                             // If we can't patch a LandClass, create a new one
                             if (loader == null)
                             {
-                                loader = Parser.CreateObjectFromConfigNode(typeof(LandClassLoader), lcNode) as LandClassLoader; 
+                                loader = Parser.CreateObjectFromConfigNode<LandClassLoader>(lcNode); 
                             }
 
                             // Add the Loader to the List
@@ -851,7 +851,7 @@ namespace Kopernicus
                             // If we can't patch a Scatter, create a new one
                             if (loader == null)
                             {
-                                loader = Parser.CreateObjectFromConfigNode(typeof(LandClassScatterLoader), scatterNode) as LandClassScatterLoader;
+                                loader = Parser.CreateObjectFromConfigNode<LandClassScatterLoader>(scatterNode);
                             }
 
                             // Add the Loader to the List
