@@ -857,7 +857,6 @@ namespace Kopernicus
                                 {
                                     map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
                                     map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
-                                    map.name = path;
                                 }
 
                             }
@@ -876,7 +875,6 @@ namespace Kopernicus
                             map.Compress(true);
                         if (upload)
                             map.Apply(false, unreadable);
-                        map.name = path;
                     }
                 }
                 catch (Exception e)
@@ -888,6 +886,7 @@ namespace Kopernicus
                 {
                     Debug.Log("[Kopernicus]: failed to load " + path);
                 }
+                map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
             }
             else
                 Debug.Log("[Kopernicus]: texture does not exist! " + path);

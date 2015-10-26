@@ -82,7 +82,6 @@ namespace Kopernicus
             public bool Unload()
             {
                 // We can only destroy the map, if it is loaded
-                Debug.Log(IsLoaded);
                 if (!IsLoaded)
                     return false;
 

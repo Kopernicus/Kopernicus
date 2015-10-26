@@ -1,7 +1,4 @@
-﻿
-
-using System;
-/**
+﻿/**
 * Kopernicus Planetary System Modifier
 * ====================================
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
@@ -29,6 +26,8 @@ using System;
 * 
 * https://kerbalspaceprogram.com
 */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -286,7 +285,6 @@ namespace Kopernicus
                                     {
                                         map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
                                         map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
-                                        map.name = path;
                                     }
 
                                 }
@@ -305,7 +303,6 @@ namespace Kopernicus
                                 map.Compress(true);
                             if (upload)
                                 map.Apply(false, unreadable);
-                            map.name = path;
                         }
                     }
                     catch (Exception e)
@@ -317,17 +314,12 @@ namespace Kopernicus
                     {
                         Debug.Log("[Kopernicus]: failed to load " + path);
                     }
+                    map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
                 }
                 else
                     Debug.Log("[Kopernicus]: texture does not exist! " + path);
 
                 return map;
-            }
-
-            public static bool TextureExists(string path)
-            {
-                path = KSPUtil.ApplicationRootPath + "GameData/" + path;
-                return System.IO.File.Exists(path);
             }
         }
     }
