@@ -377,7 +377,7 @@ namespace Kopernicus
                 {
                     if (s.StartsWith("BUILTIN/"))
                     {
-                        value = Utility.FindMapSO(s) as T; // can't make built-in maps On-Demand.....yet... >:D
+                        value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T; // can't make built-in maps On-Demand.....yet... >:D
                     }
                     else
                     {
@@ -427,6 +427,7 @@ namespace Kopernicus
                             }
                         }
                     }
+                    value.name = s;
                 }
             }
             public MapSOParser_GreyScale()
@@ -466,7 +467,7 @@ namespace Kopernicus
                 {
                     if (s.StartsWith("BUILTIN/"))
                     {
-                        value = Utility.FindMapSO(s) as T;
+                        value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T;
                     }
                     else
                     {
@@ -517,6 +518,7 @@ namespace Kopernicus
                             }
                         }
                     }
+                    value.name = s;
                 }
             }
             public MapSOParser_RGB()

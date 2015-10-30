@@ -894,8 +894,17 @@ namespace Kopernicus
             return map;
         }
 
-        public static MapSO FindMapSO(string url)
+        public static MapSO FindMapSO(string url, bool cbMap)
         {
+            if (cbMap)
+            {
+                CBAttributeMapSO map = ScriptableObject.CreateInstance<CBAttributeMapSO>();
+                Configuration.Texture2DParser parser = new Configuration.Texture2DParser();
+                parser.SetFromString(url);
+                map.CreateMap(MapSO.MapDepth.RGB, parser.value);
+                map.name = url;
+                return map;
+            }
             MapSO retVal = null;
             bool modFound = false;
             string trim = url.Replace("BUILTIN/", "");
@@ -920,7 +929,7 @@ namespace Kopernicus
                     PQSMod[] mods = body.pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mType).ToArray();
                     foreach (PQSMod m in mods)
                     {
-                        if(m.name != mName)
+                        if (m.name != mName)
                             continue;
                         modFound = true;
                         foreach (FieldInfo fi in m.GetType().GetFields())
@@ -945,6 +954,7 @@ namespace Kopernicus
                 else
                     Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but could not find PQSMod of that type of the given name");
             }
+            retVal.name = url;
             return retVal;
         }
 
