@@ -33,7 +33,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
-
 using UnityEngine;
 using Kopernicus.OnDemand;
 
@@ -41,9 +40,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
-        /**
-         * Simple parser for numerics
-         **/
+        // Simple parser for numerics
         [RequireConfigType(ConfigType.Value)]
         public class NumericParser<T> : IParsable
         {
@@ -62,9 +59,19 @@ namespace Kopernicus
             {
                 value = i;
             }
+
+            // Convert
+            public static implicit operator T(NumericParser<T> parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator NumericParser<T>(T value)
+            {
+                return new NumericParser<T>(value);
+            }
         }
 
-        /* Simple parser for numeric collections */
+        // Simple parser for numeric collections 
         [RequireConfigType(ConfigType.Value)]
         public class NumericCollectionParser<T> : IParsable
         {
@@ -94,9 +101,19 @@ namespace Kopernicus
             {
                 value = i;
             }
+
+            // Convert
+            public static implicit operator T[](NumericCollectionParser<T> parser)
+            {
+                return parser.value.ToArray();
+            }
+            public static implicit operator NumericCollectionParser<T>(T[] value)
+            {
+                return new NumericCollectionParser<T>(value);
+            }
         }
 
-        /** Simple parser for string arrays */
+        // Simple parser for string arrays
         [RequireConfigType(ConfigType.Value)]
         public class StringCollectionParser : IParsable
         {
@@ -118,9 +135,19 @@ namespace Kopernicus
             {
                 value = i;
             }
+
+            // Convert
+            public static implicit operator string[](StringCollectionParser parser)
+            {
+                return parser.value.ToArray();
+            }
+            public static implicit operator StringCollectionParser(string[] value)
+            {
+                return new StringCollectionParser(value);
+            }
         }
 
-        /** Parser for color */
+        // Parser for color
         [RequireConfigType(ConfigType.Value)]
         public class ColorParser : IParsable
         {
@@ -167,24 +194,19 @@ namespace Kopernicus
             {
                 value = i;
             }
-        }
-        
-        /** Parser for color32 */
-        [RequireConfigType(ConfigType.Value)]
-        public class Color32Parser : IParsable
-        {
-            public Color32 value;
-            public void SetFromString(string s)
+
+            // Convert
+            public static implicit operator Color(ColorParser parser)
             {
-                value = ConfigNode.ParseColor32(s);
+                return parser.value;
             }
-            public Color32Parser()
+            public static implicit operator ColorParser(Color value)
             {
-                
+                return new ColorParser(value);
             }
         }
 
-        /** Parser for enum */
+        // Parser for enum
         [RequireConfigType(ConfigType.Value)]
         public class EnumParser<T> : IParsable where T : struct, IConvertible
         {
@@ -201,24 +223,19 @@ namespace Kopernicus
             {
                 value = i;
             }
-        }
-        
-        /** Parser for matrix 4x4 */
-        [RequireConfigType(ConfigType.Value)]
-        public class Matrix4x4Parser : IParsable 
-        {
-            public Matrix4x4 value;
-            public void SetFromString(string s)
+
+            // Convert
+            public static implicit operator T(EnumParser<T> parser)
             {
-                value = ConfigNode.ParseMatrix4x4(s);
+                return parser.value;
             }
-            public Matrix4x4Parser ()
+            public static implicit operator EnumParser<T>(T value)
             {
-                
+                return new EnumParser<T>(value);
             }
         }
-        
-        /** Parser for quaternion */
+
+        // Parser for quaternion
         [RequireConfigType(ConfigType.Value)]
         public class QuaternionParser : IParsable
         {
@@ -231,9 +248,23 @@ namespace Kopernicus
             {
                 
             }
+            public QuaternionParser(Quaternion value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Quaternion(QuaternionParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator QuaternionParser(Quaternion value)
+            {
+                return new QuaternionParser(value);
+            }
         }
-        
-        /** Parser for dual quaternion */
+
+        // Parser for dual quaternion
         [RequireConfigType(ConfigType.Value)]
         public class QuaternionDParser : IParsable
         {
@@ -246,9 +277,23 @@ namespace Kopernicus
             {
                 
             }
+            public QuaternionDParser(QuaternionD value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator QuaternionD(QuaternionDParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator QuaternionDParser(QuaternionD value)
+            {
+                return new QuaternionDParser(value);
+            }
         }
-        
-        /** Parser for vec2 **/
+
+        // Parser for vec2 
         [RequireConfigType(ConfigType.Value)]
         public class Vector2Parser : IParsable
         {
@@ -261,9 +306,23 @@ namespace Kopernicus
             {
                 
             }
+            public Vector2Parser(Vector2 value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector2(Vector2Parser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector2Parser(Vector2 value)
+            {
+                return new Vector2Parser(value);
+            }
         }
-        
-        /** Parser for vec3 **/
+
+        // Parser for vec3
         [RequireConfigType(ConfigType.Value)]
         public class Vector3Parser : IParsable
         {
@@ -276,9 +335,23 @@ namespace Kopernicus
             {
                 
             }
+            public Vector3Parser(Vector3 value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector3(Vector3Parser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector3Parser(Vector3 value)
+            {
+                return new Vector3Parser(value);
+            }
         }
-        
-        /** Parser for vec3d **/
+
+        // Parser for vec3d
         [RequireConfigType(ConfigType.Value)]
         public class Vector3DParser : IParsable
         {
@@ -291,9 +364,23 @@ namespace Kopernicus
             {
                 
             }
+            public Vector3DParser(Vector3d value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector3d(Vector3DParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector3DParser(Vector3d value)
+            {
+                return new Vector3DParser(value);
+            }
         }
-        
-        /** Parser for vec4 **/
+
+        // Parser for vec4
         [RequireConfigType(ConfigType.Value)]
         public class Vector4Parser : IParsable
         {
@@ -304,11 +391,25 @@ namespace Kopernicus
             }
             public Vector4Parser()
             {
-                
+
+            }
+            public Vector4Parser(Vector4 value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector4(Vector4Parser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector4Parser(Vector4 value)
+            {
+                return new Vector4Parser(value);
             }
         }
-        
-        /** Parser for Texture2D **/
+
+        // Parser for Texture2D
         [RequireConfigType(ConfigType.Value)]
         public class Texture2DParser : IParsable
         {
@@ -320,6 +421,7 @@ namespace Kopernicus
                 {
                     string textureName = Regex.Replace (s, "BUILTIN/", "");
                     value = UnityEngine.Resources.FindObjectsOfTypeAll<Texture2D> ().Where (tex => tex.name == textureName).First ();
+                    value.name = s;
                     return;
                 }
 
@@ -349,10 +451,20 @@ namespace Kopernicus
             {
                 this.value = value;
             }
+
+            // Convert
+            public static implicit operator Texture2D(Texture2DParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Texture2DParser(Texture2D value)
+            {
+                return new Texture2DParser(value);
+            }
         }
 
-        /** Parser for a MapSO */
-        public class MapSOParser_GreyScale<T> : IParsable where T : MapSO
+        // Parser for a MapSO
+        public class MapSOParser_GreyScale<T> : BaseLoader, IParsable where T : MapSO
         {
             // Value
             public T value;
@@ -369,8 +481,8 @@ namespace Kopernicus
                     value = (T)Templates.instance.mapsGray[s];
                     if (useOnDemand)
                     {
-                        value.name += ", and " + OnDemandStorage.currentBody;
-                        OnDemandStorage.AddMap(OnDemandStorage.currentBody, (ILoadOnDemand)value);
+                        value.name += ", and " + generatedBody.name;
+                        OnDemandStorage.AddMap(generatedBody.name, (ILoadOnDemand)value);
                     }
                 }
                 else
@@ -396,9 +508,9 @@ namespace Kopernicus
                                     CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
                                     valCB.Path = s;
                                     valCB.Depth = MapSO.MapDepth.Greyscale;
-                                    valCB.name = mapName + " (CBG) for " + OnDemandStorage.currentBody;
+                                    valCB.name = mapName + " (CBG) for " + generatedBody.name;
                                     valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valCB);
+                                    OnDemandStorage.AddMap(generatedBody.name, valCB);
                                     value = valCB as T;
                                 }
                                 else
@@ -406,9 +518,9 @@ namespace Kopernicus
                                     MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
                                     valMap.Path = s;
                                     valMap.Depth = MapSO.MapDepth.Greyscale;
-                                    valMap.name = mapName + " (G) for " + OnDemandStorage.currentBody;
+                                    valMap.name = mapName + " (G) for " + generatedBody.name;
                                     valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valMap);
+                                    OnDemandStorage.AddMap(generatedBody.name, valMap);
                                     value = valMap as T;
                                 }
                                 Templates.instance.mapsGray[s] = value;
@@ -438,10 +550,20 @@ namespace Kopernicus
             {
                 this.value = value;
             }
+
+            // Convert
+            public static implicit operator T(MapSOParser_GreyScale<T> parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator MapSOParser_GreyScale<T>(T value)
+            {
+                return new MapSOParser_GreyScale<T>(value);
+            }
         }
 
-        /** Parser for a MapSO */
-        public class MapSOParser_RGB<T> : IParsable where T : MapSO
+        // Parser for a MapSO
+        public class MapSOParser_RGB<T> : BaseLoader, IParsable where T : MapSO
         {
             // Value
             public T value;
@@ -459,8 +581,8 @@ namespace Kopernicus
 
                     if (useOnDemand)
                     {
-                        value.name += ", and " + OnDemandStorage.currentBody;
-                        OnDemandStorage.AddMap(OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
+                        value.name += ", and " + generatedBody.name;
+                        OnDemandStorage.AddMap(generatedBody.name, (ILoadOnDemand)value);
                     }
                 }
                 else
@@ -486,9 +608,9 @@ namespace Kopernicus
                                     CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
                                     valCB.Path = s;
                                     valCB.Depth = MapSO.MapDepth.RGB;
-                                    valCB.name = mapName + " (CBRGB) for " + OnDemandStorage.currentBody;
+                                    valCB.name = mapName + " (CBRGB) for " + generatedBody.name;
                                     valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valCB);
+                                    OnDemandStorage.AddMap(generatedBody.name, valCB);
                                     value = valCB as T;
                                 }
                                 else
@@ -496,9 +618,9 @@ namespace Kopernicus
                                     OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
                                     valMap.Path = s;
                                     valMap.Depth = MapSO.MapDepth.RGB;
-                                    valMap.name = mapName + " (RGB) for " + OnDemandStorage.currentBody;
+                                    valMap.name = mapName + " (RGB) for " + generatedBody.name;
                                     valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(OnDemandStorage.currentBody, valMap);
+                                    OnDemandStorage.AddMap(generatedBody.name, valMap);
                                     value = valMap as T;
                                 }
                                 Templates.instance.mapsRGB[s] = value;
@@ -529,9 +651,19 @@ namespace Kopernicus
             {
                 this.value = value;
             }
+
+            // Convert
+            public static implicit operator T(MapSOParser_RGB<T> parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator MapSOParser_RGB<T>(T value)
+            {
+                return new MapSOParser_RGB<T>(value);
+            }
         }
 
-        /** Parser for a float curve **/
+        // Parser for a float curve
         [RequireConfigType(ConfigType.Node)]
         public class FloatCurveParser : IParserEventSubscriber
         {
@@ -558,61 +690,79 @@ namespace Kopernicus
             {
                 this.curve = curve;
             }
+
+            // Convert
+            public static implicit operator FloatCurve(FloatCurveParser parser)
+            {
+                return parser.curve;
+            }
+            public static implicit operator FloatCurveParser(FloatCurve value)
+            {
+                return new FloatCurveParser(value);
+            }
         }
 
-        /** Parser for Physics Material **/
+        // Parser for Physics Material
         [RequireConfigType(ConfigType.Node)]
         public class PhysicsMaterialParser : IParserEventSubscriber
         {
             // Physics material we are generating
-            public PhysicMaterial material { get; private set; }
+            public PhysicMaterial material { get; set; }
 
             // Physics material parameters
             [ParserTarget("bounceCombine", optional = true)]
-            private EnumParser<PhysicMaterialCombine> bounceCombine
+            public EnumParser<PhysicMaterialCombine> bounceCombine
             {
-                set { material.bounceCombine = value.value; }
+                get { return material.bounceCombine; }
+                set { material.bounceCombine = value; }
             }
 
             [ParserTarget("frictionCombine", optional = true)]
-            private EnumParser<PhysicMaterialCombine> frictionCombine
+            public EnumParser<PhysicMaterialCombine> frictionCombine
             {
-                set { material.frictionCombine = value.value; }
+                get { return material.frictionCombine; }
+                set { material.frictionCombine = value; }
             }
             
             [ParserTarget("frictionDirection2", optional = true)]
-            private Vector3Parser frictionDirection2
+            public Vector3Parser frictionDirection2
             {
-                set { material.frictionDirection2 = value.value; }
+                get { return material.frictionDirection2; }
+                set { material.frictionDirection2 = value; }
             }
 
             [ParserTarget("bounciness", optional = true)]
-            private NumericParser<float> bounciness
+            public NumericParser<float> bounciness
             {
-                set { material.bounciness = value.value; }
-            }
+                get { return material.bounciness; }
+                set { material.bounciness = value; }
+            }           
             
             [ParserTarget("staticFriction", optional = true)]
-            private NumericParser<float> staticFriction
-            {
-                set { material.staticFriction = value.value; }
+            public NumericParser<float> staticFriction
+            { 
+                get { return material.staticFriction; }
+                set { material.staticFriction = value; }
             }
             
             [ParserTarget("staticFriction2", optional = true)]
-            private NumericParser<float> staticFriction2
+            public NumericParser<float> staticFriction2
             {
+                get { return material.staticFriction2; }
                 set { material.staticFriction2 = value.value; }
             }
             
             [ParserTarget("dynamicFriction", optional = true)]
-            private NumericParser<float> dynamicFriction
+            public NumericParser<float> dynamicFriction
             {
+                get { return material.dynamicFriction; }
                 set { material.dynamicFriction = value.value; }
             }
             
             [ParserTarget("dynamicFriction2", optional = true)]
-            private NumericParser<float> dynamicFriction2
+            public NumericParser<float> dynamicFriction2
             {
+                get { return material.dynamicFriction2; }
                 set { material.dynamicFriction2 = value.value; }
             }
 
@@ -620,19 +770,29 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
             // Default constructor
-            public PhysicsMaterialParser ()
+            public PhysicsMaterialParser()
             {
                 this.material = null;
             }
 
             // Initializing constructor
-            public PhysicsMaterialParser (PhysicMaterial material)
+            public PhysicsMaterialParser(PhysicMaterial material)
             {
                 this.material = material;
             }
+
+            // Convert
+            public static implicit operator PhysicMaterial(PhysicsMaterialParser parser)
+            {
+                return parser.material;
+            }
+            public static implicit operator PhysicsMaterialParser(PhysicMaterial material)
+            {
+                return new PhysicsMaterialParser(material);
+            }
         }
 
-        /** Parser for mesh */
+        // Parser for mesh
         [RequireConfigType(ConfigType.Value)]
         public class MeshParser : IParsable
         {
@@ -666,8 +826,19 @@ namespace Kopernicus
             {
                 this.value = value;
             }
+
+            // Convert
+            public static implicit operator Mesh(MeshParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator MeshParser(Mesh mesh)
+            {
+                return new MeshParser(mesh);
+            }
         }
 
+        // parser for .mu
 		[RequireConfigType(ConfigType.Value)]
 		public class MuParser : IParsable
 		{
