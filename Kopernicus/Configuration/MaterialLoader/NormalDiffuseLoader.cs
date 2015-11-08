@@ -13,28 +13,32 @@ namespace Kopernicus
         {
             // Main Color, default = (1,1,1,1)
             [ParserTarget("color", optional = true)]
-            private ColorParser colorSetter
+            public ColorParser colorSetter
             {
-                set { base.color = value.value; }
+                get { return color; }
+                set { color = value; }
             }
 
             // Base (RGB), default = "white" {}
             [ParserTarget("mainTex", optional = true)]
-            private Texture2DParser mainTexSetter
+            public Texture2DParser mainTexSetter
             {
-                set { base.mainTex = value.value; }
+                get { return mainTex; }
+                set { mainTex = value; }
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            private Vector2Parser mainTexScaleSetter
+            public Vector2Parser mainTexScaleSetter
             {
-                set { base.mainTexScale = value.value; }
+                get { return mainTexScale; }
+                set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            private Vector2Parser mainTexOffsetSetter
+            public Vector2Parser mainTexOffsetSetter
             {
-                set { base.mainTexOffset = value.value; }
+                get { return mainTexOffset; }
+                set { mainTexOffset = value; }
             }
 
             // Constructors

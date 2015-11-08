@@ -13,423 +13,486 @@ namespace Kopernicus
         {
             // Saturation, default = 1
             [ParserTarget("saturation", optional = true)]
-            private NumericParser<float> saturationSetter
+            public NumericParser<float> saturationSetter
             {
-                set { base.saturation = value.value; }
+                get { return saturation; }
+                set { saturation = value; }
             }
 
             // Contrast, default = 1
             [ParserTarget("contrast", optional = true)]
-            private NumericParser<float> contrastSetter
+            public NumericParser<float> contrastSetter
             {
-                set { base.contrast = value.value; }
+                get { return contrast; }
+                set { contrast = value; }
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
             [ParserTarget("tintColor", optional = true)]
-            private ColorParser tintColorSetter
+            public ColorParser tintColorSetter
             {
-                set { base.tintColor = value.value; }
+                get { return tintColor; }
+                set { tintColor = value; }
             }
 
             // Near Tiling, default = 1000
             [ParserTarget("texTiling", optional = true)]
-            private NumericParser<float> texTilingSetter
+            public NumericParser<float> texTilingSetter
             {
-                set { base.texTiling = value.value; }
+                get { return texTiling; }
+                set { texTiling = value; }
             }
 
             // Near Blend, default = 0.5
             [ParserTarget("texPower", optional = true)]
-            private NumericParser<float> texPowerSetter
+            public NumericParser<float> texPowerSetter
             {
-                set { base.texPower = value.value; }
+                get { return texPower; }
+                set { texPower = value; }
             }
 
             // Far Blend, default = 0.5
             [ParserTarget("multiPower", optional = true)]
-            private NumericParser<float> multiPowerSetter
+            public NumericParser<float> multiPowerSetter
             {
-                set { base.multiPower = value.value; }
+                get { return multiPower; }
+                set { multiPower = value; }
             }
 
             // NearFar Start, default = 2000
             [ParserTarget("groundTexStart", optional = true)]
-            private NumericParser<float> groundTexStartSetter
+            public NumericParser<float> groundTexStartSetter
             {
-                set { base.groundTexStart = value.value; }
+                get { return groundTexStart; }
+                set { groundTexStart = value; }
             }
 
             // NearFar Start, default = 10000
             [ParserTarget("groundTexEnd", optional = true)]
-            private NumericParser<float> groundTexEndSetter
+            public NumericParser<float> groundTexEndSetter
             {
-                set { base.groundTexEnd = value.value; }
+                get { return groundTexEnd; }
+                set { groundTexEnd = value; }
             }
 
             // Steep Tiling, default = 1
             [ParserTarget("steepTiling", optional = true)]
-            private NumericParser<float> steepTilingSetter
+            public NumericParser<float> steepTilingSetter
             {
-                set { base.steepTiling = value.value; }
+                get { return steepTiling; }
+                set { steepTiling = value; }
             }
 
             // Steep Blend, default = 1
             [ParserTarget("steepPower", optional = true)]
-            private NumericParser<float> steepPowerSetter
+            public NumericParser<float> steepPowerSetter
             {
-                set { base.steepPower = value.value; }
+                get { return steepPower; }
+                set { steepPower = value; }
             }
 
             // Steep Fade Start, default = 20000
             [ParserTarget("steepTexStart", optional = true)]
-            private NumericParser<float> steepTexStartSetter
+            public NumericParser<float> steepTexStartSetter
             {
-                set { base.steepTexStart = value.value; }
+                get { return steepTexStart; }
+                set { steepTexStart = value; }
             }
 
             // Steep Fade End, default = 30000
             [ParserTarget("steepTexEnd", optional = true)]
-            private NumericParser<float> steepTexEndSetter
+            public NumericParser<float> steepTexEndSetter
             {
-                set { base.steepTexEnd = value.value; }
+                get { return steepTexEnd; }
+                set { steepTexEnd = value; }
             }
 
             // Deep ground, default = "white" {}
             [ParserTarget("deepTex", optional = true)]
-            private Texture2DParser deepTexSetter
+            public Texture2DParser deepTexSetter
             {
-                set { base.deepTex = value.value; }
+                get { return deepTex; }
+                set { deepTex = value; }
             }
 
             [ParserTarget("deepTexScale", optional = true)]
-            private Vector2Parser deepTexScaleSetter
+            public Vector2Parser deepTexScaleSetter
             {
-                set { base.deepTexScale = value.value; }
+                get { return deepTexScale; }
+                set { deepTexScale = value; }
             }
 
             [ParserTarget("deepTexOffset", optional = true)]
-            private Vector2Parser deepTexOffsetSetter
+            public Vector2Parser deepTexOffsetSetter
             {
-                set { base.deepTexOffset = value.value; }
+                get { return deepTexOffset; }
+                set { deepTexOffset = value; }
             }
 
             // Deep MT, default = "white" {}
             [ParserTarget("deepMultiTex", optional = true)]
-            private Texture2DParser deepMultiTexSetter
+            public Texture2DParser deepMultiTexSetter
             {
-                set { base.deepMultiTex = value.value; }
+                get { return deepMultiTex; }
+                set { deepMultiTex = value; }
             }
 
             [ParserTarget("deepMultiTexScale", optional = true)]
-            private Vector2Parser deepMultiTexScaleSetter
+            public Vector2Parser deepMultiTexScaleSetter
             {
-                set { base.deepMultiTexScale = value.value; }
+                get { return deepMultiTexScale; }
+                set { deepMultiTexScale = value; }
             }
 
             [ParserTarget("deepMultiTexOffset", optional = true)]
-            private Vector2Parser deepMultiTexOffsetSetter
+            public Vector2Parser deepMultiTexOffsetSetter
             {
-                set { base.deepMultiTexOffset = value.value; }
+                get { return deepMultiTexOffset; }
+                set { deepMultiTexOffset = value; }
             }
 
             // Deep MT Tiling, default = 1
             [ParserTarget("deepMultiFactor", optional = true)]
-            private NumericParser<float> deepMultiFactorSetter
+            public NumericParser<float> deepMultiFactorSetter
             {
-                set { base.deepMultiFactor = value.value; }
+                get { return deepMultiFactor; }
+                set { deepMultiFactor = value; }
             }
 
             // Main Texture, default = "white" {}
             [ParserTarget("mainTex", optional = true)]
-            private Texture2DParser mainTexSetter
+            public Texture2DParser mainTexSetter
             {
-                set { base.mainTex = value.value; }
+                get { return mainTex; }
+                set { mainTex = value; }
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            private Vector2Parser mainTexScaleSetter
+            public Vector2Parser mainTexScaleSetter
             {
-                set { base.mainTexScale = value.value; }
+                get { return mainTexScale; }
+                set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            private Vector2Parser mainTexOffsetSetter
+            public Vector2Parser mainTexOffsetSetter
             {
-                set { base.mainTexOffset = value.value; }
+                get { return mainTexOffset; }
+                set { mainTexOffset = value; }
             }
 
             // Main MT, default = "white" {}
             [ParserTarget("mainMultiTex", optional = true)]
-            private Texture2DParser mainMultiTexSetter
+            public Texture2DParser mainMultiTexSetter
             {
-                set { base.mainMultiTex = value.value; }
+                get { return mainMultiTex; }
+                set { mainMultiTex = value; }
             }
 
             [ParserTarget("mainMultiTexScale", optional = true)]
-            private Vector2Parser mainMultiTexScaleSetter
+            public Vector2Parser mainMultiTexScaleSetter
             {
-                set { base.mainMultiTexScale = value.value; }
+                get { return mainMultiTexScale; }
+                set { mainMultiTexScale = value; }
             }
 
             [ParserTarget("mainMultiTexOffset", optional = true)]
-            private Vector2Parser mainMultiTexOffsetSetter
+            public Vector2Parser mainMultiTexOffsetSetter
             {
-                set { base.mainMultiTexOffset = value.value; }
+                get { return mainMultiTexOffset; }
+                set { mainMultiTexOffset = value; }
             }
 
             // Main MT Tiling, default = 1
             [ParserTarget("mainMultiFactor", optional = true)]
-            private NumericParser<float> mainMultiFactorSetter
+            public NumericParser<float> mainMultiFactorSetter
             {
-                set { base.mainMultiFactor = value.value; }
+                get { return mainMultiFactor; }
+                set { mainMultiFactor = value; }
             }
 
             // High Ground, default = "white" {}
             [ParserTarget("highTex", optional = true)]
-            private Texture2DParser highTexSetter
+            public Texture2DParser highTexSetter
             {
-                set { base.highTex = value.value; }
+                get { return highTex; }
+                set { highTex = value; }
             }
 
             [ParserTarget("highTexScale", optional = true)]
-            private Vector2Parser highTexScaleSetter
+            public Vector2Parser highTexScaleSetter
             {
-                set { base.highTexScale = value.value; }
+                get { return highTexScale; }
+                set { highTexScale = value; }
             }
 
             [ParserTarget("highTexOffset", optional = true)]
-            private Vector2Parser highTexOffsetSetter
+            public Vector2Parser highTexOffsetSetter
             {
-                set { base.highTexOffset = value.value; }
+                get { return highTexOffset; }
+                set { highTexOffset = value; }
             }
 
             // High MT, default = "white" {}
             [ParserTarget("highMultiTex", optional = true)]
-            private Texture2DParser highMultiTexSetter
+            public Texture2DParser highMultiTexSetter
             {
-                set { base.highMultiTex = value.value; }
+                get { return highMultiTex; }
+                set { highMultiTex = value; }
             }
 
             [ParserTarget("highMultiTexScale", optional = true)]
-            private Vector2Parser highMultiTexScaleSetter
+            public Vector2Parser highMultiTexScaleSetter
             {
-                set { base.highMultiTexScale = value.value; }
+                get { return highMultiTexScale; }
+                set { highMultiTexScale = value; }
             }
 
             [ParserTarget("highMultiTexOffset", optional = true)]
-            private Vector2Parser highMultiTexOffsetSetter
+            public Vector2Parser highMultiTexOffsetSetter
             {
-                set { base.highMultiTexOffset = value.value; }
+                get { return highMultiTexOffset; }
+                set { highMultiTexOffset = value; }
             }
 
             // High MT Tiling, default = 1
             [ParserTarget("highMultiFactor", optional = true)]
-            private NumericParser<float> highMultiFactorSetter
+            public NumericParser<float> highMultiFactorSetter
             {
-                set { base.highMultiFactor = value.value; }
+                get { return highMultiFactor; }
+                set { highMultiFactor = value; }
             }
 
             // Snow, default = "white" {}
             [ParserTarget("snowTex", optional = true)]
-            private Texture2DParser snowTexSetter
+            public Texture2DParser snowTexSetter
             {
-                set { base.snowTex = value.value; }
+                get { return snowTex; }
+                set { snowTex = value; }
             }
 
             [ParserTarget("snowTexScale", optional = true)]
-            private Vector2Parser snowTexScaleSetter
+            public Vector2Parser snowTexScaleSetter
             {
-                set { base.snowTexScale = value.value; }
+                get { return snowTexScale; }
+                set { snowTexScale = value; }
             }
 
             [ParserTarget("snowTexOffset", optional = true)]
-            private Vector2Parser snowTexOffsetSetter
+            public Vector2Parser snowTexOffsetSetter
             {
-                set { base.snowTexOffset = value.value; }
+                get { return snowTexOffset; }
+                set { snowTexOffset = value; }
             }
 
             // Snow MT, default = "white" {}
             [ParserTarget("snowMultiTex", optional = true)]
-            private Texture2DParser snowMultiTexSetter
+            public Texture2DParser snowMultiTexSetter
             {
-                set { base.snowMultiTex = value.value; }
+                get { return snowMultiTex; }
+                set { snowMultiTex = value; }
             }
 
             [ParserTarget("snowMultiTexScale", optional = true)]
-            private Vector2Parser snowMultiTexScaleSetter
+            public Vector2Parser snowMultiTexScaleSetter
             {
-                set { base.snowMultiTexScale = value.value; }
+                get { return snowMultiTexScale; }
+                set { snowMultiTexScale = value; }
             }
 
             [ParserTarget("snowMultiTexOffset", optional = true)]
-            private Vector2Parser snowMultiTexOffsetSetter
+            public Vector2Parser snowMultiTexOffsetSetter
             {
-                set { base.snowMultiTexOffset = value.value; }
+                get { return snowMultiTexOffset; }
+                set { snowMultiTexOffset = value; }
             }
 
             // Snow MT Tiling, default = 1
             [ParserTarget("snowMultiFactor", optional = true)]
-            private NumericParser<float> snowMultiFactorSetter
+            public NumericParser<float> snowMultiFactorSetter
             {
-                set { base.snowMultiFactor = value.value; }
+                get { return snowMultiFactor; }
+                set { snowMultiFactor = value; }
             }
 
             // Steep Texture, default = "white" {}
             [ParserTarget("steepTex", optional = true)]
-            private Texture2DParser steepTexSetter
+            public Texture2DParser steepTexSetter
             {
-                set { base.steepTex = value.value; }
+                get { return steepTex; }
+                set { steepTex = value; }
             }
 
             [ParserTarget("steepTexScale", optional = true)]
-            private Vector2Parser steepTexScaleSetter
+            public Vector2Parser steepTexScaleSetter
             {
-                set { base.steepTexScale = value.value; }
+                get { return steepTexScale; }
+                set { steepTexScale = value; }
             }
 
             [ParserTarget("steepTexOffset", optional = true)]
-            private Vector2Parser steepTexOffsetSetter
+            public Vector2Parser steepTexOffsetSetter
             {
-                set { base.steepTexOffset = value.value; }
+                get { return steepTexOffset; }
+                set { steepTexOffset = value; }
             }
 
             // Deep Start, default = 0
             [ParserTarget("deepStart", optional = true)]
-            private NumericParser<float> deepStartSetter
+            public NumericParser<float> deepStartSetter
             {
-                set { base.deepStart = value.value; }
+                get { return deepStart; }
+                set { deepStart = value; }
             }
 
             // Deep End, default = 0.3
             [ParserTarget("deepEnd", optional = true)]
-            private NumericParser<float> deepEndSetter
+            public NumericParser<float> deepEndSetter
             {
-                set { base.deepEnd = value.value; }
+                get { return deepEnd; }
+                set { deepEnd = value; }
             }
 
             // Main lower boundary start, default = 0
             [ParserTarget("mainLoStart", optional = true)]
-            private NumericParser<float> mainLoStartSetter
+            public NumericParser<float> mainLoStartSetter
             {
-                set { base.mainLoStart = value.value; }
+                get { return mainLoStart; }
+                set { mainLoStart = value; }
             }
 
             // Main lower boundary end, default = 0.5
             [ParserTarget("mainLoEnd", optional = true)]
-            private NumericParser<float> mainLoEndSetter
+            public NumericParser<float> mainLoEndSetter
             {
-                set { base.mainLoEnd = value.value; }
+                get { return mainLoEnd; }
+                set { mainLoEnd = value; }
             }
 
             // Main upper boundary start, default = 0.3
             [ParserTarget("mainHiStart", optional = true)]
-            private NumericParser<float> mainHiStartSetter
+            public NumericParser<float> mainHiStartSetter
             {
-                set { base.mainHiStart = value.value; }
+                get { return mainHiStart; }
+                set { mainHiStart = value; }
             }
 
             // Main upper boundary end, default = 0.5
             [ParserTarget("mainHiEnd", optional = true)]
-            private NumericParser<float> mainHiEndSetter
+            public NumericParser<float> mainHiEndSetter
             {
-                set { base.mainHiEnd = value.value; }
+                get { return mainHiEnd; }
+                set { mainHiEnd = value; }
             }
 
             // High lower boundary start, default = 0.6
             [ParserTarget("hiLoStart", optional = true)]
-            private NumericParser<float> hiLoStartSetter
+            public NumericParser<float> hiLoStartSetter
             {
-                set { base.hiLoStart = value.value; }
+                get { return hiLoStart; }
+                set { hiLoStart = value; }
             }
 
             // High lower boundary end, default = 0.6
             [ParserTarget("hiLoEnd", optional = true)]
-            private NumericParser<float> hiLoEndSetter
+            public NumericParser<float> hiLoEndSetter
             {
-                set { base.hiLoEnd = value.value; }
+                get { return hiLoEnd; }
+                set { hiLoEnd = value; }
             }
 
             // High upper boundary start, default = 0.6
             [ParserTarget("hiHiStart", optional = true)]
-            private NumericParser<float> hiHiStartSetter
+            public NumericParser<float> hiHiStartSetter
             {
-                set { base.hiHiStart = value.value; }
+                get { return hiHiStart; }
+                set { hiHiStart = value; }
             }
 
             // High upper boundary end, default = 0.9
             [ParserTarget("hiHiEnd", optional = true)]
-            private NumericParser<float> hiHiEndSetter
+            public NumericParser<float> hiHiEndSetter
             {
-                set { base.hiHiEnd = value.value; }
+                get { return hiHiEnd; }
+                set { hiHiEnd = value; }
             }
 
             // Snow Start, default = 0.9
             [ParserTarget("snowStart", optional = true)]
-            private NumericParser<float> snowStartSetter
+            public NumericParser<float> snowStartSetter
             {
-                set { base.snowStart = value.value; }
+                get { return snowStart; }
+                set { snowStart = value; }
             }
 
             // Snow End, default = 1
             [ParserTarget("snowEnd", optional = true)]
-            private NumericParser<float> snowEndSetter
+            public NumericParser<float> snowEndSetter
             {
-                set { base.snowEnd = value.value; }
+                get { return snowEnd; }
+                set { snowEnd = value; }
             }
 
             // AP Fog Color, default = (0,0,1,1)
             [ParserTarget("fogColor", optional = true)]
-            private ColorParser fogColorSetter
+            public ColorParser fogColorSetter
             {
-                set { base.fogColor = value.value; }
+                get { return fogColor; }
+                set { fogColor = value; }
             }
 
             // AP Height Fall Off, default = 1
             [ParserTarget("heightFallOff", optional = true)]
-            private NumericParser<float> heightFallOffSetter
+            public NumericParser<float> heightFallOffSetter
             {
-                set { base.heightFallOff = value.value; }
+                get { return heightFallOff; }
+                set { heightFallOff = value; }
             }
 
             // AP Global Density, default = 1
             [ParserTarget("globalDensity", optional = true)]
-            private NumericParser<float> globalDensitySetter
+            public NumericParser<float> globalDensitySetter
             {
-                set { base.globalDensity = value.value; }
+                get { return globalDensity; }
+                set { globalDensity = value; }
             }
 
             // AP Atmosphere Depth, default = 1
             [ParserTarget("atmosphereDepth", optional = true)]
-            private NumericParser<float> atmosphereDepthSetter
+            public NumericParser<float> atmosphereDepthSetter
             {
-                set { base.atmosphereDepth = value.value; }
+                get { return atmosphereDepth; }
+                set { atmosphereDepth = value; }
             }
 
             // FogColorRamp, default = "white" {}
             [ParserTarget("fogColorRamp", optional = true)]
-            private Texture2DParser fogColorRampSetter
+            public Texture2DParser fogColorRampSetter
             {
-                set { base.fogColorRamp = value.value; }
+                get { return fogColorRamp; }
+                set { fogColorRamp = value; }
             }
 
             [ParserTarget("fogColorRampScale", optional = true)]
-            private Vector2Parser fogColorRampScaleSetter
+            public Vector2Parser fogColorRampScaleSetter
             {
-                set { base.fogColorRampScale = value.value; }
+                get { return fogColorRampScale; }
+                set { fogColorRampScale = value; }
             }
 
             [ParserTarget("fogColorRampOffset", optional = true)]
-            private Vector2Parser fogColorRampOffsetSetter
+            public Vector2Parser fogColorRampOffsetSetter
             {
-                set { base.fogColorRampOffset = value.value; }
+                get { return fogColorRampOffset; }
+                set { fogColorRampOffset = value; }
             }
 
             // PlanetOpacity, default = 1
             [ParserTarget("planetOpacity", optional = true)]
-            private NumericParser<float> planetOpacitySetter
+            public NumericParser<float> planetOpacitySetter
             {
-                set { base.planetOpacity = value.value; }
+                get { return planetOpacity; }
+                set { planetOpacity = value; }
             }
 
             // Constructors
