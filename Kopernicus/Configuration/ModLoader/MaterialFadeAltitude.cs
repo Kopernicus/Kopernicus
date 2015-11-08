@@ -37,63 +37,38 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class MaterialFadeAltitude : ModLoader, IParserEventSubscriber
+            public class MaterialFadeAltitude : ModLoader<PQSMod_MaterialFadeAltitude>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_MaterialFadeAltitude _mod;
-
                 // fadeEnd
                 [ParserTarget("fadeEnd", optional = true)]
-                private NumericParser<float> fadeEnd
+                public NumericParser<float> fadeEnd
                 {
-                    set { _mod.fadeEnd = value.value; }
+                    get { return mod.fadeEnd; }
+                    set { mod.fadeEnd = value; }
                 }
 
                 // fadeStart
                 [ParserTarget("fadeStart", optional = true)]
-                private NumericParser<float> fadeStart
+                public NumericParser<float> fadeStart
                 {
-                    set { _mod.fadeStart = value.value; }
+                    get { return mod.fadeStart; }
+                    set { mod.fadeStart = value; }
                 }
 
                 // valueEnd
                 [ParserTarget("valueEnd", optional = true)]
-                private NumericParser<float> valueEnd
+                public NumericParser<float> valueEnd
                 {
-                    set { _mod.valueEnd = value.value; }
+                    get { return mod.valueEnd; }
+                    set { mod.valueEnd = value; }
                 }
 
                 // valueStart
                 [ParserTarget("valueStart", optional = true)]
-                private NumericParser<float> valueStart
+                public NumericParser<float> valueStart
                 {
-                    set { _mod.valueStart = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public MaterialFadeAltitude()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("MaterialFadeAltitude");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_MaterialFadeAltitude>();
-                    base.mod = _mod;
-                }
-
-                public MaterialFadeAltitude(PQSMod template)
-                {
-                    _mod = template as PQSMod_MaterialFadeAltitude;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.valueStart; }
+                    set { mod.valueStart = value; }
                 }
             }
         }

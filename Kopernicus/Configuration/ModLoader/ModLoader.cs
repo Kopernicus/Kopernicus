@@ -26,8 +26,7 @@
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System;
+ 
 using UnityEngine;
 
 namespace Kopernicus
@@ -37,23 +36,43 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class ModLoader
+            public class ModLoader<T> : BaseLoader where T : PQSMod
             {
                 // The mod loader must always be able to return a mod
-                public PQSMod mod { get; set; }
+                public T mod { get; set; }
 
                 // Mod loader provides basic PQS mod loading functions
                 [ParserTarget("order", optional = true)]
-                protected NumericParser<int> order
+                public NumericParser<int> order
                 {
-                    set { mod.order = value.value; }
+                    get { return mod.order; }
+                    set { mod.order = value; }
                 }
 
                 // Mod loader provides basic PQS mod loading functions
                 [ParserTarget("enabled", optional = true)]
-                protected NumericParser<bool> enabled
+                public NumericParser<bool> enabled
                 {
-                    set { mod.modEnabled = value.value; }
+                    get { return mod.modEnabled; }
+                    set { mod.modEnabled = value; }
+                }
+
+                // Creates the a PQSMod of type T
+                public virtual void Create()
+                {
+                    mod = new GameObject(typeof(T).Name.Replace("PQSMod_", "").Replace("PQS", "")).AddComponent<T>();
+                    mod.transform.parent = generatedBody.pqsVersion.transform;
+                    mod.sphere = generatedBody.pqsVersion;
+                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                }
+
+                // Grabs a PQSMod of type T from a parameter
+                public virtual void Create(T _mod)
+                {
+                    mod = _mod;
+                    mod.transform.parent = generatedBody.pqsVersion.transform;
+                    mod.sphere = generatedBody.pqsVersion;
+                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
                 }
             }
         }

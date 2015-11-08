@@ -37,70 +37,46 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class TangentTextureRanges : ModLoader, IParserEventSubscriber
+            public class TangentTextureRanges : ModLoader<PQSMod_TangentTextureRanges>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_TangentTextureRanges _mod;
-
                 // highEnd
                 [ParserTarget("highEnd", optional = true)]
-                private NumericParser<double> highEnd
+                public NumericParser<double> highEnd
                 {
-                    set { _mod.highEnd = value.value; }
+                    get { return mod.highEnd; }
+                    set { mod.highEnd = value; }
                 }
 
                 // highStart
                 [ParserTarget("highStart", optional = true)]
-                private NumericParser<double> highStart
+                public NumericParser<double> highStart
                 {
-                    set { _mod.highStart = value.value; }
+                    get { return mod.highStart; }
+                    set { mod.highStart = value; }
                 }
 
                 // lowEnd
                 [ParserTarget("lowEnd", optional = true)]
-                private NumericParser<double> lowEnd
+                public NumericParser<double> lowEnd
                 {
-                    set { _mod.lowEnd = value.value; }
+                    get { return mod.lowEnd; }
+                    set { mod.lowEnd = value; }
                 }
 
                 // lowStart
                 [ParserTarget("lowStart", optional = true)]
-                private NumericParser<double> lowStart
+                public NumericParser<double> lowStart
                 {
-                    set { _mod.lowStart = value.value; }
+                    get { return mod.lowStart; }
+                    set { mod.lowStart = value; }
                 }
 
                 // modulo
                 [ParserTarget("modulo", optional = true)]
-                private NumericParser<double> modulo
+                public NumericParser<double> modulo
                 {
-                    set { _mod.modulo = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public TangentTextureRanges()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("TangentTextureRanges");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_TangentTextureRanges>();
-                    base.mod = _mod;
-                }
-
-                public TangentTextureRanges(PQSMod template)
-                {
-                    _mod = template as PQSMod_TangentTextureRanges;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.modulo; }
+                    set { mod.modulo = value; }
                 }
             }
         }

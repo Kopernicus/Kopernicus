@@ -37,42 +37,14 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexColorMap : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexColorMap _mod;
-                    
+            public class VertexColorMap : ModLoader<PQSMod_VertexColorMap>
+            {                    
                 // The map texture for the planet
                 [ParserTarget("map", optional = true)]
-                private MapSOParser_RGB<MapSO> colorMap 
+                public MapSOParser_RGB<MapSO> colorMap 
                 {
-                    set { _mod.vertexColorMap = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexColorMap ()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject ("VertexColorMap");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexColorMap> ();
-                    base.mod = _mod;
-                }
-
-                public VertexColorMap(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexColorMap;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.vertexColorMap; }
+                    set { mod.vertexColorMap = value; }
                 }
             }
         }

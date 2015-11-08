@@ -26,8 +26,6 @@
  * 
  * https://kerbalspaceprogram.com
  */
-using System;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -36,37 +34,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class BillboardObject : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_BillboardObject _mod;
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public BillboardObject()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("BillboardObject");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_BillboardObject>();
-                    base.mod = _mod;
-                }
-
-                public BillboardObject(PQSMod template)
-                {
-                    _mod = template as PQSMod_BillboardObject;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
-                }
-            }
+            public class BillboardObject : ModLoader<PQSMod_BillboardObject> { }
         }
     }
 }

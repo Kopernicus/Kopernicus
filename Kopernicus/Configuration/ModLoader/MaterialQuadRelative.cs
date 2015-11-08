@@ -36,37 +36,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class MaterialQuadRelative : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_MaterialQuadRelative _mod;
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public MaterialQuadRelative()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("MaterialQuadRelative");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_MaterialQuadRelative>();
-                    base.mod = _mod;
-                }
-
-                public MaterialQuadRelative(PQSMod template)
-                {
-                    _mod = template as PQSMod_MaterialQuadRelative;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
-                }
-            }
+            public class MaterialQuadRelative : ModLoader<PQSMod_MaterialQuadRelative> { }
         }
     }
 }

@@ -37,47 +37,20 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class QuadEnhanceCoast : ModLoader, IParserEventSubscriber
+            public class QuadEnhanceCoast : ModLoader<PQSMod_QuadEnhanceCoast>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_QuadEnhanceCoast _mod;
-
                 [ParserTarget("coastLessThan", optional = true)]
-                private NumericParser<double> coastLessThan
+                public NumericParser<double> coastLessThan
                 {
-                    set { _mod.coastLessThan = value.value; }
+                    get { return mod.coastLessThan; }
+                    set { mod.coastLessThan = value; }
                 }
 
                 [ParserTarget("oceanFactor", optional = true)]
-                private NumericParser<double> oceanFactor
+                public NumericParser<double> oceanFactor
                 {
-                    set { _mod.oceanFactor = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public QuadEnhanceCoast()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("PQSMod_QuadEnhanceCoast");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_QuadEnhanceCoast>();
-                    base.mod = _mod;
-                }
-
-                public QuadEnhanceCoast(PQSMod template)
-                {
-                    _mod = template as PQSMod_QuadEnhanceCoast;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.oceanFactor; }
+                    set { mod.oceanFactor = value; }
                 }
             }
         }

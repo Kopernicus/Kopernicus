@@ -28,6 +28,7 @@
  */
 
 using System;
+using Kopernicus.Components;
 using UnityEngine;
 
 namespace Kopernicus
@@ -37,67 +38,22 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightOblate : ModLoader, IParserEventSubscriber
+            public class VertexHeightOblate : ModLoader<PQSMod_FixedOblate>
             {
-                // Mod-Fix, because of hell-ish buggyness
-                public class PQSMod_OblateFixed : PQSMod_VertexHeightOblate
-                {
-                    // Re-arrange the Vertex Build order
-                    public override void OnVertexBuild(PQS.VertexBuildData data)
-                    {
-                        // Do nothing
-                        // base.OnVertexBuild(data);
-                    }
-
-                    // Build the height in the correct function
-                    public override void OnVertexBuildHeight(PQS.VertexBuildData data)
-                    {
-                        // Tricky...
-                        base.OnVertexBuild(data);
-                    }
-                }
-
-                // Actual PQS mod we are loading
-                private PQSMod_OblateFixed _mod;
-
                 // The height where the terrain is oblated
                 [ParserTarget("height", optional = true)]
-                private NumericParser<double> height
+                public NumericParser<double> height
                 {
-                    set { _mod.height = value.value; }
+                    get { return mod.height; }
+                    set { mod.height = value; }
                 }
 
                 // The pow of the terrain
                 [ParserTarget("pow", optional = true)]
-                private NumericParser<double> pow
+                public NumericParser<double> pow
                 {
-                    set { _mod.pow = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexHeightOblate()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexHeightOblate");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_OblateFixed>();
-                    base.mod = _mod;
-                }
-
-                public VertexHeightOblate(PQSMod template)
-                {
-                    _mod = template as PQSMod_OblateFixed;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.pow; }
+                    set { mod.pow = value; }
                 }
             }
         }

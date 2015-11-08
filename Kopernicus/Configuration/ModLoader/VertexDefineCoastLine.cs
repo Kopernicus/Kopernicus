@@ -37,49 +37,22 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexDefineCoastLine : ModLoader, IParserEventSubscriber
+            public class VertexDefineCoastLine : ModLoader<PQSMod_VertexDefineCoastLine>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexDefineCoastLine _mod;
-
                 // depthOffset
                 [ParserTarget("depthOffset", optional = true)]
-                private NumericParser<double> depthOffset
+                public NumericParser<double> depthOffset
                 {
-                    set { _mod.depthOffset = value.value; }
+                    get { return mod.depthOffset; }
+                    set { mod.depthOffset = value; }
                 }
 
                 // oceanRadiusOffset
                 [ParserTarget("oceanRadiusOffset", optional = true)]
-                private NumericParser<double> oceanRadiusOffset
+                public NumericParser<double> oceanRadiusOffset
                 {
-                    set { _mod.oceanRadiusOffset = value.value; }
-                }
-                
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexDefineCoastLine()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexDefineCoastLine");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexDefineCoastLine>();
-                    base.mod = _mod;
-                }
-
-                public VertexDefineCoastLine(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexDefineCoastLine;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.oceanRadiusOffset; }
+                    set { mod.oceanRadiusOffset = value; }
                 }
             }
         }

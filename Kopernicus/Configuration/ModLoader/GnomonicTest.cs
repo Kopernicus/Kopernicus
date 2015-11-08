@@ -37,37 +37,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class GnomonicTest : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_GnomonicTest _mod;
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public GnomonicTest()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("GnomonicTest");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_GnomonicTest>();
-                    base.mod = _mod;
-                }
-
-                public GnomonicTest(PQSMod template)
-                {
-                    _mod = template as PQSMod_GnomonicTest;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
-                }
-            }
+            public class GnomonicTest : ModLoader<PQSMod_GnomonicTest> { }
         }
     }
 }

@@ -37,49 +37,22 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexColorMapBlend : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexColorMapBlend _mod;
-                    
+            public class VertexColorMapBlend : ModLoader<PQSMod_VertexColorMapBlend>
+            {                    
                 // The map texture for the planet
                 [ParserTarget("map", optional = true)]
-                private MapSOParser_RGB<MapSO> colorMap 
+                public MapSOParser_RGB<MapSO> colorMap 
                 {
-                    set { _mod.vertexColorMap = value.value; }
+                    get { return mod.vertexColorMap; }
+                    set { mod.vertexColorMap = value; }
                 }
 
                 // The blend value for the texture
                 [ParserTarget("blend", optional = true)]
-                private NumericParser<float> blend
+                public NumericParser<float> blend
                 {
-                    set { _mod.blend = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexColorMapBlend ()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject ("VertexColorMapBlend");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexColorMapBlend> ();
-                    base.mod = _mod;
-                }
-
-                public VertexColorMapBlend(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexColorMapBlend;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.blend; }
+                    set { mod.blend = value; }
                 }
             }
         }

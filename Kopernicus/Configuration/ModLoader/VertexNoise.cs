@@ -37,98 +37,78 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexNoise : ModLoader, IParserEventSubscriber
+            public class VertexNoise : ModLoader<PQSMod_VertexNoise>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexNoise _mod;
-
                 // falloff
                 [ParserTarget("falloff", optional = true)]
-                private NumericParser<float> falloff
+                public NumericParser<float> falloff
                 {
-                    set { _mod.falloff = value.value; }
+                    get { return mod.falloff; }
+                    set { mod.falloff = value; }
                 }
 
                 // mesaVsPlainsBias
                 [ParserTarget("mesaVsPlainsBias", optional = true)]
-                private NumericParser<float> mesaVsPlainsBias
+                public NumericParser<float> mesaVsPlainsBias
                 {
-                    set { _mod.mesaVsPlainsBias = value.value; }
+                    get { return mod.mesaVsPlainsBias; }
+                    set { mod.mesaVsPlainsBias = value; }
                 }
 
                 // noiseDeformity
                 [ParserTarget("noiseDeformity", optional = true)]
-                private NumericParser<float> noiseDeformity
+                public NumericParser<float> noiseDeformity
                 {
-                    set { _mod.noiseDeformity = value.value; }
+                    get { return mod.noiseDeformity; }
+                    set { mod.noiseDeformity = value; }
                 }
 
                 // noisePasses
                 [ParserTarget("noisePasses", optional = true)]
-                private NumericParser<int> noisePasses
+                public NumericParser<int> noisePasses
                 {
-                    set { _mod.noisePasses = value.value; }
+                    get { return mod.noisePasses; }
+                    set { mod.noisePasses = value; }
                 }
 
                 // plainSmoothness
                 [ParserTarget("plainSmoothness", optional = true)]
-                private NumericParser<float> plainSmoothness
+                public NumericParser<float> plainSmoothness
                 {
-                    set { _mod.plainSmoothness = value.value; }
+                    get { return mod.plainSmoothness; }
+                    set { mod.plainSmoothness = value; }
                 }
 
                 // plainsVsMountainSmoothness
                 [ParserTarget("plainsVsMountainSmoothness", optional = true)]
-                private NumericParser<float> plainsVsMountainSmoothness
+                public NumericParser<float> plainsVsMountainSmoothness
                 {
-                    set { _mod.plainsVsMountainSmoothness = value.value; }
+                    get { return mod.plainsVsMountainSmoothness; }
+                    set { mod.plainsVsMountainSmoothness = value; }
                 }
 
                 // plainsVsMountainThreshold
                 [ParserTarget("plainsVsMountainThreshold", optional = true)]
-                private NumericParser<float> plainsVsMountainThreshold
+                public NumericParser<float> plainsVsMountainThreshold
                 {
-                    set { _mod.plainsVsMountainThreshold = value.value; }
+                    get { return mod.plainsVsMountainThreshold; }
+                    set { mod.plainsVsMountainThreshold = value; }
                 }
 
                 // seed
                 [ParserTarget("seed", optional = true)]
-                private NumericParser<int> seed
+                public NumericParser<int> seed
                 {
-                    set { _mod.seed = value.value; }
+                    get { return mod.seed; }
+                    set { mod.seed = value; }
                 }
 
                 // smoothness
                 [ParserTarget("smoothness", optional = true)]
-                private NumericParser<float> smoothness
+                public NumericParser<float> smoothness
                 {
-                    set { _mod.smoothness = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexNoise()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexNoise");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexNoise>();
-                    base.mod = _mod;
-                }
-
-                public VertexNoise(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexNoise;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.smoothness; }
+                    set { mod.smoothness = value; }
                 }
             }
         }

@@ -37,49 +37,22 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexColorSolid : ModLoader, IParserEventSubscriber
+            public class VertexColorSolid : ModLoader<PQSMod_VertexColorSolid>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexColorSolid _mod;
-
                 // Amount of color that will be applied
                 [ParserTarget("blend")]
-                private NumericParser<float> blend
+                public NumericParser<float> blend
                 {
-                    set { _mod.blend = value.value; }
+                    get { return mod.blend; }
+                    set { mod.blend = value; }
                 }
 
                 // The color used
                 [ParserTarget("color")]
-                private ColorParser color
+                public ColorParser color
                 {
-                    set { _mod.color = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexColorSolid()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexColorSolid");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexColorSolid>();
-                    base.mod = _mod;
-                }
-
-                public VertexColorSolid(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexColorSolid;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.color; }
+                    set { mod.color = value; }
                 }
             }
         }

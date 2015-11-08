@@ -26,10 +26,7 @@
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System;
-using UnityEngine;
-
+ 
 namespace Kopernicus
 {
     namespace Configuration
@@ -37,43 +34,14 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class FlattenOcean : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_FlattenOcean _mod;
-                    
+            public class FlattenOcean : ModLoader<PQSMod_FlattenOcean>
+            {                    
                 // The ocean Radius for the planet
                 [ParserTarget("oceanRadius", optional = true)]
-                private NumericParser<double> oceanRadius
+                public NumericParser<double> oceanRadius
                 {
-                    set { _mod.oceanRadius = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public FlattenOcean()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject ("FlattenOcean");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_FlattenOcean> ();
-                    _mod.requirements = PQS.ModiferRequirements.MeshCustomNormals;
-                    base.mod = _mod;
-                }
-
-                public FlattenOcean(PQSMod template)
-                {
-                    _mod = template as PQSMod_FlattenOcean;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.oceanRadius; }
+                    set { mod.oceanRadius = value; }
                 }
             }
         }

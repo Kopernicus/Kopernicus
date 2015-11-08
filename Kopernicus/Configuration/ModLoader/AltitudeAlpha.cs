@@ -37,49 +37,22 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class AltitudeAlpha : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_AltitudeAlpha _mod;
-                    
+            public class AltitudeAlpha : ModLoader<PQSMod_AltitudeAlpha>
+            {                    
                 // The depth of the athmospere
                 [ParserTarget("atmosphereDepth", optional = true)]
-                private NumericParser<double> atmosphereDepth 
+                public NumericParser<double> atmosphereDepth 
                 {
-                    set { _mod.atmosphereDepth = value.value; }
+                    get { return mod.atmosphereDepth; }
+                    set { mod.atmosphereDepth = value; }
                 }
 
                 // Invert?
                 [ParserTarget("invert", optional = true)]
-                private NumericParser<bool> invert
+                public NumericParser<bool> invert
                 {
-                    set { _mod.invert = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public AltitudeAlpha()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("AltitudeAlpha");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_AltitudeAlpha>();
-                    base.mod = _mod;
-                }
-
-                public AltitudeAlpha(PQSMod template)
-                {
-                    _mod = template as PQSMod_AltitudeAlpha;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.invert; }
+                    set { mod.invert = value; }
                 }
             }
         }

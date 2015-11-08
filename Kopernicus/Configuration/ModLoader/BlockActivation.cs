@@ -26,10 +26,7 @@
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System;
-using UnityEngine;
-
+ 
 namespace Kopernicus
 {
     namespace Configuration
@@ -37,37 +34,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class BlockActivation : ModLoader, IParserEventSubscriber
-            {
-                // Actual PQS mod we are loading
-                private PQSMod_BlockActivation _mod;
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public BlockActivation()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("BlockActivation");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_BlockActivation>();
-                    base.mod = _mod;
-                }
-
-                public BlockActivation(PQSMod template)
-                {
-                    _mod = template as PQSMod_BlockActivation;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
-                }
-            }
+            public class BlockActivation : ModLoader<PQSMod_BlockActivation> { }
         }
     }
 }
