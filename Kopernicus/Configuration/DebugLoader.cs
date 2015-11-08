@@ -26,56 +26,26 @@
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-
+ 
 namespace Kopernicus
 {
     namespace Configuration
     {
+        // Loads Debugging properties for a Body
         [RequireConfigType(ConfigType.Node)]
-        public class Biome
+        public class DebugLoader
         {
-            // The map attribute object we are creating
-            public CBAttributeMapSO.MapAttribute attribute { get; private set; }
+            // If this is set to false, Kopernicus wont save a .bin file with the scaledSpace mesh 
+            [ParserTarget("exportMesh", optional = true)]
+            public NumericParser<bool> exportMesh = new NumericParser<bool>(true);
 
-            // The name of this biome
-            [ParserTarget("name")]
-            private string name 
-            {
-                set { attribute.name = value; }
-            }
+            // If this is set to true, Kopernicus will update the ScaledSpace mesh, even if the original conditions aren't matched
+            [ParserTarget("update", optional = true)]
+            public NumericParser<bool> update = new NumericParser<bool>(false);
 
-            // The science multiplier for this biome
-            [ParserTarget("value")]
-            private NumericParser<float> value 
-            {
-                set { attribute.value = value.value; }
-            }
-
-            // The color in the map for this attribute
-            [ParserTarget("color")]
-            private ColorParser color 
-            {
-                set { attribute.mapColor = value.value; }
-            }
-
-            // Allocate the biome descriptor
-            public Biome ()
-            {
-                attribute = new CBAttributeMapSO.MapAttribute();
-            }
-            
-            // Get reference to existing biome descriptor
-            public Biome (CBAttributeMapSO.MapAttribute attribute)
-            {
-                this.attribute = attribute;
-            }
+            // If this is set to true, a wireframe will appear to visualize the SOI
+            [ParserTarget("showSOI", optional = true)]
+            public NumericParser<bool> showSOI = new NumericParser<bool>(false);
         }
     }
 }

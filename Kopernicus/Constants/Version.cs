@@ -30,16 +30,17 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Reflection;
 
 namespace Kopernicus
 {
-    // Informations about the current version of Kopernicus
     namespace Constants
-    {
+    {    
+        // Informations about the current version of Kopernicus
         public class Version
         {
             // Versioning information
-            private static int[] versionNumber = new int[] { 0, 4 }; 
+            private const string versionNumber = "0.4"; 
 
             // Get a string for the logging
             public static string version
@@ -51,36 +52,21 @@ namespace Kopernicus
                     #else
                     bool developmentBuild = false;
                     #endif
-                    return "Kopernicus " + GetVersionNumber(versionNumber) + ((developmentBuild) ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
+                    return "Kopernicus " + versionNumber + ((developmentBuild) ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
-            }
-
-            // Returns the current version number
-            private static string GetVersionNumber(int[] number)
-            {
-                string version = "";
-
-                for (int i = 0; i < number.Length; i++)
-                {
-                    if (i != 0) 
-                        version += ".";
-                    version += number[i];
-                }
-
-                return version;
             }
 
             // Returns the SHA1 Hash of the assembly
             private static string AssemblyHandle()
             {
-                string filePath = System.Reflection.Assembly.GetCallingAssembly().Location;
-                return Convert.ToBase64String(SHA1Managed.Create().ComputeHash(File.ReadAllBytes(filePath)));
+                string filePath = Assembly.GetCallingAssembly().Location;
+                return Convert.ToBase64String(SHA1.Create().ComputeHash(File.ReadAllBytes(filePath)));
             }
 
             // Returns the time when the assembly was built
             private static DateTime BuiltTime()
             {
-                string filePath = System.Reflection.Assembly.GetCallingAssembly().Location;
+                string filePath = Assembly.GetCallingAssembly().Location;
                 const int c_PeHeaderOffset = 60;
                 const int c_LinkerTimestampOffset = 8;
                 byte[] b = new byte[2048];

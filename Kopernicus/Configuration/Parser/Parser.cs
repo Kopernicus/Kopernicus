@@ -167,7 +167,14 @@ namespace Kopernicus
                     targetType = (member as PropertyInfo).PropertyType;
                     if ((member as PropertyInfo).CanRead) 
                     {
-                        targetValue = (member as PropertyInfo).GetValue (o, null);
+                        try
+                        {
+                            targetValue = (member as PropertyInfo).GetValue(o, null);
+                        }
+                        catch
+                        {
+                            targetValue = null;
+                        }
                     }
                 }
 
@@ -296,14 +303,18 @@ namespace Kopernicus
                 if (member.MemberType == MemberTypes.Field) 
                 {
                     targetType = (member as FieldInfo).FieldType;
-                    targetValue = (member as FieldInfo).GetValue (o);
+                    targetValue = (member as FieldInfo).GetValue(o);
                 } 
                 else 
                 {
                     targetType = (member as PropertyInfo).PropertyType;
-                    if ((member as PropertyInfo).CanRead)
+                    try
                     {
-                        targetValue = (member as PropertyInfo).GetValue (o, null);
+                        targetValue = (member as PropertyInfo).GetValue(o, null);
+                    }
+                    catch
+                    {
+                        targetValue = null;
                     }
                 }
 
@@ -340,7 +351,7 @@ namespace Kopernicus
                     {
                         targetValue = node.GetValue(target.fieldName);
                     }
-                    
+
                     // Figure out if this object is a parsable type
                     else if((typeof (IParsable)).IsAssignableFrom(targetType))
                     {
@@ -361,6 +372,12 @@ namespace Kopernicus
                 // If this object is a node (potentially merge)
                 else if(isNode)
                 {
+                    // If the target type is a ConfigNode, this works natively
+                    if (targetType.Equals(typeof(ConfigNode)))
+                    {
+                        targetValue = node;
+                    }
+
                     // We need to get an instance of the object we are trying to populate
                     // If we are not allowed to merge, or the object does not exist, make a new instance
                     if(targetValue == null || !target.allowMerge)
@@ -385,6 +402,60 @@ namespace Kopernicus
                 else if((member as PropertyInfo).CanWrite)
                 {
                     (member as PropertyInfo).SetValue(o, targetValue, null);
+                }
+            }
+
+            // Loads ParserTargets from other assemblies in GameData/
+            public static void LoadExternalParserTargetsRecursive(ConfigNode node)
+            {
+                LoadExternalParserTargets(node);
+                foreach (var childNode in node.GetNodes())
+                {
+                    LoadExternalParserTargetsRecursive(childNode);
+                }
+            }
+
+            // Loads ParserTargets from other assemblies in GameData/
+            private static void LoadExternalParserTargets(ConfigNode node)
+            {
+                // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
+                foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)
+                {
+                    // Only get types implementing IParserEventSubscriber, and extending ExternalParserTargetLoader
+                    foreach (Type type in assembly.assembly.GetExportedTypes().Where(t => t.GetInterface("IParserEventSubscriber") != null).Where(t => t.BaseType == typeof(ExternalParserTargetLoader)))
+                    {
+                        ExternalParserTarget[] attributes = type.GetCustomAttributes(typeof(ExternalParserTarget), false) as ExternalParserTarget[];
+                        if (attributes.Length != 0)
+                        {
+                            ExternalParserTarget external = attributes[0];
+                            if (node.name != external.parentNodeName)
+                                continue;
+                            string nodeName = external.configNodeName;
+                            if (nodeName == null)
+                                nodeName = type.Name;
+                            if (node.HasNode(nodeName))
+                            {
+                                try
+                                {
+                                    Logger.Active.Log("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + assembly.assembly.FullName);
+                                    ConfigNode nodeToLoad = node.GetNode(nodeName);
+                                    ExternalParserTargetLoader obj = Activator.CreateInstance(type) as ExternalParserTargetLoader;
+                                    obj.generatedBody = BaseLoader.generatedBody;
+                                    LoadObjectFromConfigurationNode(obj, nodeToLoad);
+                                }
+                                catch (MissingMethodException missingMethod)
+                                {
+                                    Logger.Active.Log("Failed to load ExternalParserTarget " + nodeName + " because it does not have a parameterless constructor");
+                                    Logger.Active.LogException(missingMethod);
+                                }
+                                catch (Exception exception)
+                                {
+                                    Logger.Active.Log("Failed to load ExternalParserTarget " + nodeName + " from node " + external.parentNodeName);
+                                    Logger.Active.LogException(exception);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 

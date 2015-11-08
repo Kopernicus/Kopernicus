@@ -31,12 +31,48 @@ namespace Kopernicus
 {
     namespace Configuration
     {
-        // Enumeration for type of celestial body
-        public enum BodyType
+        [RequireConfigType(ConfigType.Node)]
+        public class BiomeLoader
         {
-            Star,
-            Atmospheric,
-            Vacuum
+            // The map attribute object we are creating
+            public CBAttributeMapSO.MapAttribute attribute { get; set; }
+
+            // The name of this biome
+            [ParserTarget("name")]
+            public string name 
+            {
+                get { return attribute.name; }
+                set { attribute.name = value; }
+            }
+
+            // The science multiplier for this biome
+            [ParserTarget("value")]
+            public NumericParser<float> value 
+            {
+                get { return attribute.value; }
+                set { attribute.value = value; }
+            }
+
+            // The color in the map for this attribute
+            [ParserTarget("color")]
+            public ColorParser color 
+            {
+                get { return attribute.mapColor; }
+                set { attribute.mapColor = value; }
+            }
+
+            // Allocate the biome descriptor
+            public BiomeLoader ()
+            {
+                attribute = new CBAttributeMapSO.MapAttribute();
+            }
+            
+            // Get reference to existing biome descriptor
+            public BiomeLoader (CBAttributeMapSO.MapAttribute attribute)
+            {
+                this.attribute = attribute;
+            }
         }
     }
 }
+

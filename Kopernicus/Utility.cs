@@ -204,16 +204,6 @@ namespace Kopernicus
             return null;
         }
 
-        /** 
-         * Get the reference Geosphere of KSP (Jool's scaled space mesh)
-         * 
-         * @return The reference geosphere (1000 unit radius)
-         */
-        public static Mesh ReferenceGeosphere()
-        {
-            return Templates.refGeosphere;
-        }
-
         // Print out a tree containing all the objects in the game
         public static void PerformObjectDump()
         {
@@ -378,7 +368,7 @@ namespace Kopernicus
             double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
 
             // Generate a duplicate of the Jool mesh
-            Mesh mesh = Utility.DuplicateMesh(Utility.ReferenceGeosphere());
+            Mesh mesh = Utility.DuplicateMesh(Templates.ReferenceGeosphere);
 
             // If this body has a PQS, we can create a more detailed object
             if (pqs != null)
@@ -898,11 +888,8 @@ namespace Kopernicus
         {
             if (cbMap)
             {
-                CBAttributeMapSO map = ScriptableObject.CreateInstance<CBAttributeMapSO>();
-                Configuration.Texture2DParser parser = new Configuration.Texture2DParser();
-                parser.SetFromString(url);
-                map.CreateMap(MapSO.MapDepth.RGB, parser.value);
-                map.name = url;
+                string name = url.Replace("BUILTIN/", "");
+                CBAttributeMapSO map = Resources.FindObjectsOfTypeAll<CBAttributeMapSO>().First(m => m.MapName == name);
                 return map;
             }
             MapSO retVal = null;

@@ -36,7 +36,7 @@ namespace Kopernicus
         /**
          * Attribute used to tag a property or field which can be targeted by the parser
          **/
-        [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+        [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
         public class ParserTarget : Attribute
         {
             // Storage key in config node tree.  If null, key is determined with reflection

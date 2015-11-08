@@ -28,10 +28,8 @@
  */
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
 
 namespace Kopernicus
@@ -39,7 +37,7 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class Template : IParserEventSubscriber
+        public class TemplateLoader : IParserEventSubscriber
         {
             // Cloned PSystemBody to expose to the config system
             public PSystemBody body;

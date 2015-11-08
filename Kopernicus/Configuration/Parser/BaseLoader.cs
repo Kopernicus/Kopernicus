@@ -26,17 +26,26 @@
  * 
  * https://kerbalspaceprogram.com
  */
- 
+
+using System;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
 namespace Kopernicus
 {
     namespace Configuration
     {
-        // Enumeration for type of celestial body
-        public enum BodyType
+        // Provides basic static fields or methods for IParserEventSubscribers
+        public class BaseLoader
         {
-            Star,
-            Atmospheric,
-            Vacuum
+            // Singleton of the currently edited body
+            public static PSystemBody generatedBody
+            {
+                get { return Loader.currentBody.generatedBody; }
+            }
         }
     }
 }
+

@@ -28,19 +28,15 @@
  */
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-
-using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class ScaledVersion : IParserEventSubscriber
+        public class ScaledVersionLoader : BaseLoader, IParserEventSubscriber
         {
             // Node name which represents the scaled version material
             private const string materialNodeName = "Material";
@@ -53,43 +49,37 @@ namespace Kopernicus
             // Type of object this body's scaled version is
             [PreApply]
             [ParserTarget("type", optional = true)]
-            public EnumParser<BodyType> type { get; private set; }
+            public EnumParser<BodyType> type { get; set; }
 
             // Set the altitude where the fade to scaled space starts
             [ParserTarget("fadeStart", optional = true)]
-            private NumericParser<float> fadeStart 
+            public NumericParser<float> fadeStart 
             {
-                set { scaledVersion.GetComponent<ScaledSpaceFader> ().fadeStart = value.value; }
+                get { return scaledVersion.GetComponentInChildren<ScaledSpaceFader>().fadeStart; }
+                set { scaledVersion.GetComponent<ScaledSpaceFader>().fadeStart = value; }
             }
             
             // Set the altitude where the fade to scaled space starts
             [ParserTarget("fadeEnd", optional = true)]
-            private NumericParser<float> fadeEnd
+            public NumericParser<float> fadeEnd
             {
-                set { scaledVersion.GetComponent<ScaledSpaceFader> ().fadeEnd = value.value; }
+                get { return scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd; }
+                set { scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd = value; }
             }
 
             // Create the Kopernicus LightShifter
-            [ParserTarget("SolarLightColor", optional = true)]
-            private LightShifter lightShifter;
+            [ParserTarget("Light", optional = true)]
+            public LightShifterLoader lightShifter { get; set; }
 
             // Coronas for a star's scaled version
             [ParserTargetCollection("Coronas", optional = true, nameSignificance = NameSignificance.None)]
-            private List<Corona> coronas = new List<Corona>();
+            public List<CoronaLoader> coronas = new List<CoronaLoader>();
 
             [ParserTarget("sphericalModel", optional = true)]
-            private NumericParser<bool> sphericalModel
-            {
-                set { useSphericalModel = value.value; }
-            }
-            public bool useSphericalModel = false;
+            public NumericParser<bool> sphericalModel = new NumericParser<bool>(false);
 
             [ParserTarget("deferMesh", optional = true)]
-            private NumericParser<bool> deferMesh
-            {
-                set { generateMesh = !value.value; }
-            }
-            public bool generateMesh = true;
+            public NumericParser<bool> deferMesh = new NumericParser<bool>(false);
 
             // Parser apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
@@ -215,11 +205,11 @@ namespace Kopernicus
                         foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
                         {
                             corona.transform.parent = null;
-                            GameObject.Destroy (corona.gameObject);
+                            UnityEngine.Object.Destroy(corona.gameObject);
                         }
 
                         // Apply new ones
-                        foreach (Corona corona in coronas) 
+                        foreach (CoronaLoader corona in coronas) 
                         {
                             // Backup local transform parameters 
                             Vector3 position = corona.corona.transform.localPosition;
@@ -247,25 +237,17 @@ namespace Kopernicus
                         OnDemand.ScaledSpaceDemand texture = scaledVersion.AddComponent<OnDemand.ScaledSpaceDemand>();
                         if (Utility.TextureExists(texturePath)) texture.texture = texturePath;
                         if (Utility.TextureExists(normalsPath)) texture.normals = normalsPath;
-                    }
-                    catch
-                    {
-                        return;
-                    }
+                    } catch { }
                 }
             }
 
-            /**
-             * Default constructor - takes the scaledVersion game object
-             * 
-             * @param scaledVersion Scaled representation of a planet for map view to modify
-             **/
-            public ScaledVersion (GameObject scaledVersion, CelestialBody owner, BodyType initialType)
+            // Default constructor - takes the scaledVersion game object
+            public ScaledVersionLoader()
             {
                 // Get the scaled version object
-                this.scaledVersion = scaledVersion;
-                this.owner = owner;
-                this.type = new EnumParser<BodyType>(initialType);
+                scaledVersion = generatedBody.scaledVersion;
+                owner = generatedBody.celestialBody;
+                type = new EnumParser<BodyType>(Loader.currentBody.template == null ? BodyType.Atmospheric : Loader.currentBody.template.type);
 
                 // Ensure scaled version at least has a mesh filter and mesh renderer
                 if(scaledVersion.GetComponent<MeshFilter>() == null)
@@ -276,7 +258,22 @@ namespace Kopernicus
                     scaledVersion.renderer.material = null;
                 }
             }
-        }
 
+            // Runtime Constructor, uses CelestialBody
+            public ScaledVersionLoader(CelestialBody body)
+            {
+                // Get the scaled version object
+                scaledVersion = body.scaledBody;
+                owner = body;
+
+                // Figure out what kind of body we are
+                if (scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0)
+                    type = BodyType.Star;
+                else if (owner.atmosphere)
+                    type = BodyType.Atmospheric;
+                else
+                    type = BodyType.Vacuum;
+            }
+        }
     }
 }

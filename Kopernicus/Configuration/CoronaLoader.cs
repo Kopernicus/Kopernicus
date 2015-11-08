@@ -29,10 +29,6 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-
 using UnityEngine;
 
 namespace Kopernicus
@@ -40,66 +36,83 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class Corona
+        public class CoronaLoader : BaseLoader
         {
             // The generated corona
-            private SunCoronas coronaComponent;
-            public GameObject corona { get; private set; }
+            public SunCoronas coronaComponent;
+            public GameObject corona { get; set; }
 
             // Material definition for the Corona
             [ParserTarget("scaleSpeed", optional = true, allowMerge = true)]
-            private NumericParser<float> scaleSpeed
+            public NumericParser<float> scaleSpeed
             {
-                set { coronaComponent.scaleSpeed = value.value; }
+                get { return coronaComponent.scaleSpeed; }
+                set { coronaComponent.scaleSpeed = value; }
             }
 
             [ParserTarget("scaleLimitY", optional = true, allowMerge = true)]
-            private NumericParser<float> scaleLimitY 
+            public NumericParser<float> scaleLimitY 
             {
-                set { coronaComponent.scaleLimitY = value.value; }
+                get { return coronaComponent.scaleLimitY; }
+                set { coronaComponent.scaleLimitY = value; }
             }
 
             [ParserTarget("scaleLimitX", optional = true, allowMerge = true)]
-            private NumericParser<float> scaleLimitX
+            public NumericParser<float> scaleLimitX
             {
-                set { coronaComponent.scaleLimitX = value.value; }
+                get { return coronaComponent.scaleLimitX; }
+                set { coronaComponent.scaleLimitX = value; }
             }
 
             [ParserTarget("updateInterval", optional = true, allowMerge = true)]
-            private NumericParser<float> updateInterval
+            public NumericParser<float> updateInterval
             {
-                set { coronaComponent.updateInterval = value.value; }
+                get { return coronaComponent.updateInterval; }
+                set { coronaComponent.updateInterval = value; }
             }
 
             [ParserTarget("speed", optional = true, allowMerge = true)]
-            private NumericParser<int> speed
+            public NumericParser<int> speed
             {
-                set { coronaComponent.Speed = value.value; }
+                get { return coronaComponent.Speed; }
+                set { coronaComponent.Speed = value; }
             }
 
             [ParserTarget("rotation", optional = true, allowMerge = true)]
-            private NumericParser<float> rotation
+            public NumericParser<float> rotation
             {
-                set { coronaComponent.Rotation = value.value; }
+                get { return coronaComponent.Rotation; }
+                set { coronaComponent.Rotation = value; }
             }
 
             [ParserTarget("Material", optional = true, allowMerge = true)]
-            private ParticleAddSmoothLoader material;
+            public ParticleAddSmoothLoader material
+            {
+                get { return new ParticleAddSmoothLoader(coronaComponent.renderer.sharedMaterial); }
+                set { coronaComponent.renderer.sharedMaterial = new Material(value); }
+            }
 
-            public Corona()
+            // Default constructor
+            public CoronaLoader()
             {
                 // We need to get the body for the Sun (to steal it's corona mesh)
                 PSystemBody sun = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Sun");
 
                 // Clone a default Corona
-                corona = GameObject.Instantiate (sun.scaledVersion.GetComponentsInChildren<SunCoronas> (true).First ().gameObject) as GameObject;
+                corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
                 corona.transform.parent = Utility.Deactivator;
                 coronaComponent = corona.GetComponent<SunCoronas> ();
 
                 // Setup the material loader
                 material = new ParticleAddSmoothLoader (corona.renderer.material);
                 material.name = Guid.NewGuid().ToString();
-                corona.renderer.sharedMaterial = material;
+            }
+
+            // Runtime constructor
+            public CoronaLoader(SunCoronas component)
+            {
+                coronaComponent = component;
+                corona = component.gameObject;
             }
         }
     }

@@ -25,7 +25,7 @@
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- */
+ *
 
 using System;
 using System.Collections;
@@ -43,7 +43,7 @@ namespace Kopernicus
     public class AddModLoader : IParserEventSubscriber
     {
         [ParserTargetCollection("AddMods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
-        public List<ModLoader> mods = new List<ModLoader>();
+        public List<ModLoader<PQSMod>> mods = new List<ModLoader<PQSMod>>();
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
 
@@ -96,7 +96,7 @@ namespace Kopernicus
                 curNodes.nodes.Remove(curNodes.nodes[0]);
             }
             return list;
-        }*/
+        }*//*
         private void ParseField(object m, FieldInfo fi, ConfigNode modNode)
         {
             string name = fi.Name;
@@ -115,7 +115,7 @@ namespace Kopernicus
                     }
                 }
             }
-            else*/
+            else*//*
             if (fi.FieldType == typeof(string))
             {
                 if (modNode.HasValue(name))
@@ -354,7 +354,7 @@ namespace Kopernicus
                 AddModLoader newMods = Parser.CreateObjectFromConfigNode<AddModLoader>(node);
                 if (newMods.mods != null)
                 {
-                    foreach (ModLoader loader in newMods.mods)
+                    foreach (ModLoader<PQSMod> loader in newMods.mods)
                     {
                         loader.mod.transform.parent = pqs.transform;
                         loader.mod.sphere = pqs;
@@ -392,7 +392,6 @@ namespace Kopernicus
                 }
                 Logger.Active.Log("Patching " + body.bodyName);
                 Logger.Active.Flush();
-                OnDemand.OnDemandStorage.currentBody = body.bodyName;
                 bool pqsChanged = false;
                 if (body.pqsController != null)
                 {
@@ -629,3 +628,4 @@ namespace Kopernicus
         }
     }
 }
+*/

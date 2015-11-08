@@ -351,6 +351,37 @@ namespace Kopernicus
             }
         }
 
+        // Alternative parser for Vector3
+        [RequireConfigType(ConfigType.Node)]
+        public class PositionParser : BaseLoader
+        {
+            // Latitude
+            [ParserTarget("latitude", optional = true)]
+            public NumericParser<double> latitude { get; set; }
+
+            // Longitude
+            [ParserTarget("longitude", optional = true)]
+            public NumericParser<double> longitude { get; set; }
+
+            // Altitude
+            [ParserTarget("altitude", optional = true)]
+            public NumericParser<double> altitude { get; set; }
+
+            // Default Constructor
+            public PositionParser()
+            {
+                latitude = new NumericParser<double>(0);
+                longitude = new NumericParser<double>(0);
+                altitude = new NumericParser<double>(0);
+            }
+
+            // Convert
+            public static implicit operator Vector3(PositionParser parser)
+            {
+                return Utility.LLAtoECEF(parser.latitude, parser.longitude, parser.altitude, generatedBody.celestialBody.Radius);
+            }
+        }
+
         // Parser for vec3d
         [RequireConfigType(ConfigType.Value)]
         public class Vector3DParser : IParsable
@@ -420,7 +451,7 @@ namespace Kopernicus
                 if (s.StartsWith ("BUILTIN/")) 
                 {
                     string textureName = Regex.Replace (s, "BUILTIN/", "");
-                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Texture2D> ().Where (tex => tex.name == textureName).First ();
+                    value = UnityEngine.Object.Instantiate(Resources.FindObjectsOfTypeAll<Texture>().Where(tex => tex.name == textureName).First()) as Texture2D;
                     value.name = s;
                     return;
                 }
@@ -470,77 +501,62 @@ namespace Kopernicus
             public T value;
 
             // Load the MapSO
-            public void SetFromString (string s)
+            public void SetFromString(string s)
             {
                 // Should we use OnDemand?
                 bool useOnDemand = typeof(T) == typeof(CBAttributeMapSO) ? OnDemandStorage.useOnDemandBiomes : OnDemandStorage.useOnDemand;
 
-                // Save the maps, and reuse them
-                if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
+                if (s.StartsWith("BUILTIN/"))
                 {
-                    value = (T)Templates.instance.mapsGray[s];
-                    if (useOnDemand)
-                    {
-                        value.name += ", and " + generatedBody.name;
-                        OnDemandStorage.AddMap(generatedBody.name, (ILoadOnDemand)value);
-                    }
+                    value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T; // can't make built-in maps On-Demand.....yet... >:D
                 }
                 else
                 {
-                    if (s.StartsWith("BUILTIN/"))
+                    // are we on-demand? Don't load now.
+                    if (useOnDemand)
                     {
-                        value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T; // can't make built-in maps On-Demand.....yet... >:D
-                    }
-                    else
-                    {
-                        // are we on-demand? Don't load now.
-                        if (useOnDemand)
+                        if (Utility.TextureExists(s))
                         {
-                            if (Utility.TextureExists(s))
+                            string mapName = s;
+                            mapName = mapName.Substring(s.LastIndexOf('/') + 1);
+                            int lastDot = mapName.LastIndexOf('.');
+                            if (lastDot > 0)
+                                mapName = mapName.Substring(0, lastDot);
+                            if (typeof(T) == typeof(CBAttributeMapSO))
                             {
-                                string mapName = s;
-                                mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                                int lastDot = mapName.LastIndexOf('.');
-                                if (lastDot > 0)
-                                    mapName = mapName.Substring(0, lastDot);
-                                if (typeof(T) == typeof(CBAttributeMapSO))
-                                {
-                                    CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
-                                    valCB.Path = s;
-                                    valCB.Depth = MapSO.MapDepth.Greyscale;
-                                    valCB.name = mapName + " (CBG) for " + generatedBody.name;
-                                    valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(generatedBody.name, valCB);
-                                    value = valCB as T;
-                                }
-                                else
-                                {
-                                    MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
-                                    valMap.Path = s;
-                                    valMap.Depth = MapSO.MapDepth.Greyscale;
-                                    valMap.name = mapName + " (G) for " + generatedBody.name;
-                                    valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(generatedBody.name, valMap);
-                                    value = valMap as T;
-                                }
-                                Templates.instance.mapsGray[s] = value;
+                                CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
+                                valCB.Path = s;
+                                valCB.Depth = MapSO.MapDepth.Greyscale;
+                                valCB.name = mapName + " (CBG) for " + generatedBody.name;
+                                valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valCB);
+                                value = valCB as T;
                             }
-                        }
-                        else // Load the texture
-                        {
-                            Texture2D map = Utility.LoadTexture(s, false, false, false);
-                            if (map != null)
+                            else
                             {
-                                // Create a new map script object
-                                value = ScriptableObject.CreateInstance<T>();
-                                value.CreateMap(MapSO.MapDepth.Greyscale, map);
-                                UnityEngine.Object.DestroyImmediate(map);
-                                Templates.instance.mapsGray[s] = value;
+                                MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
+                                valMap.Path = s;
+                                valMap.Depth = MapSO.MapDepth.Greyscale;
+                                valMap.name = mapName + " (G) for " + generatedBody.name;
+                                valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valMap);
+                                value = valMap as T;
                             }
                         }
                     }
-                    value.name = s;
+                    else // Load the texture
+                    {
+                        Texture2D map = Utility.LoadTexture(s, false, false, false);
+                        if (map != null)
+                        {
+                            // Create a new map script object
+                            value = ScriptableObject.CreateInstance<T>();
+                            value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                            UnityEngine.Object.DestroyImmediate(map);
+                        }
+                    }
                 }
+                value.name = s;
             }
             public MapSOParser_GreyScale()
             {
@@ -574,74 +590,58 @@ namespace Kopernicus
                 // Should we use OnDemand?
                 bool useOnDemand = typeof(T) == typeof(CBAttributeMapSO) ? OnDemandStorage.useOnDemandBiomes : OnDemandStorage.useOnDemand;
 
-                // Save the maps, and reuse them
-                if (Templates.instance.mapsRGB != null && Templates.instance.mapsRGB.ContainsKey(s))
+                if (s.StartsWith("BUILTIN/"))
                 {
-                    value = (T)Templates.instance.mapsRGB[s];
-
-                    if (useOnDemand)
-                    {
-                        value.name += ", and " + generatedBody.name;
-                        OnDemandStorage.AddMap(generatedBody.name, (ILoadOnDemand)value);
-                    }
+                    value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T;
                 }
                 else
                 {
-                    if (s.StartsWith("BUILTIN/"))
+                    // check if OnDemand.
+                    if (useOnDemand)
                     {
-                        value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T;
+                        if (Utility.TextureExists(s))
+                        {
+                            string mapName = s;
+                            mapName = mapName.Substring(s.LastIndexOf('/') + 1);
+                            int lastDot = mapName.LastIndexOf('.');
+                            if (lastDot > 0)
+                                mapName = mapName.Substring(0, lastDot);
+                            if (typeof(T) == typeof(CBAttributeMapSO))
+                            {
+                                CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
+                                valCB.Path = s;
+                                valCB.Depth = MapSO.MapDepth.RGB;
+                                valCB.name = mapName + " (CBRGB) for " + generatedBody.name;
+                                valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valCB);
+                                value = valCB as T;
+                            }
+                            else
+                            {
+                                OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
+                                valMap.Path = s;
+                                valMap.Depth = MapSO.MapDepth.RGB;
+                                valMap.name = mapName + " (RGB) for " + generatedBody.name;
+                                valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valMap);
+                                value = valMap as T;
+                            }
+                        }
                     }
                     else
                     {
-                        // check if OnDemand.
-                        if (useOnDemand)
+                        // Load the texture
+                        Texture2D map = Utility.LoadTexture(s, false, false, false);
+                        if (map != null)
                         {
-                            if (Utility.TextureExists(s))
-                            {
-                                string mapName = s;
-                                mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                                int lastDot = mapName.LastIndexOf('.');
-                                if (lastDot > 0)
-                                    mapName = mapName.Substring(0, lastDot);
-                                if (typeof(T) == typeof(CBAttributeMapSO))
-                                {
-                                    CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
-                                    valCB.Path = s;
-                                    valCB.Depth = MapSO.MapDepth.RGB;
-                                    valCB.name = mapName + " (CBRGB) for " + generatedBody.name;
-                                    valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(generatedBody.name, valCB);
-                                    value = valCB as T;
-                                }
-                                else
-                                {
-                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
-                                    valMap.Path = s;
-                                    valMap.Depth = MapSO.MapDepth.RGB;
-                                    valMap.name = mapName + " (RGB) for " + generatedBody.name;
-                                    valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
-                                    OnDemandStorage.AddMap(generatedBody.name, valMap);
-                                    value = valMap as T;
-                                }
-                                Templates.instance.mapsRGB[s] = value;
-                            }
-                        }
-                        else
-                        {
-                            // Load the texture
-                            Texture2D map = Utility.LoadTexture(s, false, false, false);
-                            if (map != null)
-                            {
-                                // Create a new map script object
-                                value = ScriptableObject.CreateInstance<T>();
-                                value.CreateMap(MapSO.MapDepth.RGB, map);
-                                UnityEngine.Object.DestroyImmediate(map);
-                                Templates.instance.mapsRGB[s] = value;
-                            }
+                            // Create a new map script object
+                            value = ScriptableObject.CreateInstance<T>();
+                            value.CreateMap(MapSO.MapDepth.RGB, map);
+                            UnityEngine.Object.DestroyImmediate(map);
                         }
                     }
-                    value.name = s;
                 }
+                value.name = s;
             }
             public MapSOParser_RGB()
             {

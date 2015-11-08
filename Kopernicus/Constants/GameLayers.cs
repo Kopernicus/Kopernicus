@@ -27,14 +27,6 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
-
-using Kopernicus.MaterialWrapper;
-
 namespace Kopernicus
 {
     // Constants found in planet creation (if things break in the future, check these first)
