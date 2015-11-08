@@ -212,9 +212,10 @@ public class ShaderProperty
         // Synthesize a comment
         p.add("// " + description + ", default = " + initializer + "\n");
         p.add("[ParserTarget(\"" + name + "\", optional = true)]\n");
-        p.add("private " + setterParserType + " " + name + "Setter\n");
+        p.add("public " + setterParserType + " " + name + "Setter\n");
         p.add("{\n");
-        p.add("    set { base." + name + " = value.value; }\n");
+		p.add("    get { return " + name + "; }\n");
+        p.add("    set { " + name + " = value; }\n");
         p.add("}\n\n");
 
         // Should we generate the scale/offset properties?
@@ -223,13 +224,15 @@ public class ShaderProperty
             p.add("[ParserTarget(\"" + name + "Scale\", optional = true)]\n");
             p.add("private Vector2Parser " + name + "ScaleSetter\n");
             p.add("{\n");
-            p.add("    set { base." + name + "Scale = value.value; }\n");
+			p.add("    get { return " + name + "Scale; }\n");
+            p.add("    set { " + name + "Scale = value; }\n");
             p.add("}\n\n");
 
             p.add("[ParserTarget(\"" + name + "Offset\", optional = true)]\n");
             p.add("private Vector2Parser " + name + "OffsetSetter\n");
             p.add("{\n");
-            p.add("    set { base." + name + "Offset = value.value; }\n");
+			p.add("    get { return " + name + "Offset; }\n")
+            p.add("    set { " + name + "Offset = value; }\n");
             p.add("}\n\n");
         }
 
