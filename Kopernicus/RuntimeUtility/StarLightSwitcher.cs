@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,17 +21,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- * 
- * Original code from Star Systems by OvenProofMars, Fastwings, medsouz
- * Modified by Thomas P., Nathaniel R. Lewis (Teknoman117) for Kopernicus
- * 
  */
-
-using Kopernicus.Configuration;
+ 
+using Kopernicus.Components;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -96,14 +88,14 @@ namespace Kopernicus
             }
 
             // Reset the LightShifter
-            LightShifterComponent lsc = null;
-            LightShifterComponent[] comps = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
+            LightShifter lsc = null;
+            LightShifter[] comps = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifter>(true);
             if (comps != null && comps.Length > 0)
             {
                 lsc = comps[0];
                 lsc.SetStatus(false, HighLogic.LoadedScene);
             }
-            comps = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
+            comps = celestialBody.GetTransform().GetComponentsInChildren<LightShifter>(true);
             if (comps != null && comps.Length > 0)
             {
                 lsc = comps[0];

@@ -118,7 +118,7 @@ namespace Kopernicus
             afg.outerRadius = outerRadius;
             afg.innerRadius = innerRadius;
 
-            Configuration.AtmosphereFromGroundParser.CalculatedMembers(afg);
+            Configuration.AtmosphereFromGroundLoader.CalculatedMembers(afg);
 
             try
             {
