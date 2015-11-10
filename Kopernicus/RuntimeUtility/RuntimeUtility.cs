@@ -103,10 +103,10 @@ namespace Kopernicus
                 return;
 
             // Replace PartBuoyancy with KopernicusBuoyancy
-            KopernicusBuoyancy buoyancy = part.gameObject.AddComponent<KopernicusBuoyancy>();
-            Utility.CopyObjectFields(part.partBuoyancy, buoyancy, false);
-            part.partBuoyancy = buoyancy;
-            Destroy(part.GetComponent<PartBuoyancy>());
+            // KopernicusBuoyancy buoyancy = part.gameObject.AddComponent<KopernicusBuoyancy>();
+            // Utility.CopyObjectFields(part.partBuoyancy, buoyancy, false);
+            // part.partBuoyancy = buoyancy;
+            // Destroy(part.GetComponent<PartBuoyancy>());
         }
 
         // Update the menu body

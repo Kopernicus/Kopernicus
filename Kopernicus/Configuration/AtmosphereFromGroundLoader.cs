@@ -196,8 +196,8 @@ namespace Kopernicus
             // Parser post apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                //CalculatedMembers(afg); // with the new values.
-                //AFGInfo.StoreAFG(afg);
+                CalculatedMembers(afg); // with the new values.
+                AFGInfo.StoreAFG(afg);
             }
 
             // Default Constructor

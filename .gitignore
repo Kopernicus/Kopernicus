@@ -7,3 +7,5 @@
 *.userprefs
 *.bin
 *.user
+*.pdb
+*.mdb

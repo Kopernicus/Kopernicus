@@ -104,6 +104,7 @@ namespace Kopernicus
         }
         private void Apply(AtmosphereFromGround afg)
         {
+            afg.UpdateAtmosphere(true);
             afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
             afg.doScale = doScale;
             afg.ESun = ESun;
@@ -119,16 +120,7 @@ namespace Kopernicus
             afg.innerRadius = innerRadius;
 
             Configuration.AtmosphereFromGroundLoader.CalculatedMembers(afg);
-
-            try
-            {
-                MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
-                afgSetMaterial.Invoke(afg, new object[] { true });
-            }
-            catch
-            {
-                Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Material-resetting for AtmosphereFromGround on " + afg.planet.bodyName + " failed!");
-            }
+            afg.SetMaterial(true);
         }
     }
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]

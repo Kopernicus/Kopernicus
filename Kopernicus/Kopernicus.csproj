@@ -115,7 +115,6 @@
     <Compile Include="Injector.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
     <Compile Include="Templates.cs" />
-    <Compile Include="Utility.cs" />
     <Compile Include="Configuration\Loader.cs" />
     <Compile Include="Configuration\Body.cs" />
     <Compile Include="Configuration\PropertiesLoader.cs" />
@@ -157,6 +156,7 @@
     <Compile Include="Configuration\ModLoader\VertexColorMap.cs" />
     <Compile Include="Configuration\ModLoader\ModLoader.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap.cs" />
+    <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kopernicus.Components\Kopernicus.Components.csproj">
