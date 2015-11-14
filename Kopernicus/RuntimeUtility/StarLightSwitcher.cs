@@ -29,6 +29,7 @@
  
 using Kopernicus.Components;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using UnityEngine;
 
@@ -43,6 +44,15 @@ namespace Kopernicus
         // Celestial body which represents the star
         public CelestialBody celestialBody { get; private set; }
 
+        // We need to patch the sun Transform of the Radiators
+        private static FieldInfo radiatorSun { get; set; }
+
+        // get the FieldInfo
+        static StarComponent()
+        {
+            radiatorSun = typeof(ModuleDeployableRadiator).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(Transform));
+        }
+
         void Start()
         {
             // Find the celestial body we are attached to
@@ -53,49 +63,40 @@ namespace Kopernicus
 
         public void SetAsActive(bool forcedUpdate = false)
         {
+            Debug.Log(celestialBody);
             // Only reset the Sun / SolarPanels if we don't force an update
             if (!forcedUpdate)
             {
                 // Set star as active star
-                Sun.Instance.sun = celestialBody;
-                Planetarium.fetch.Sun = celestialBody;
                 Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
 
                 // Set custom powerCurve for solar panels and reset Radiators
                 if (FlightGlobals.ActiveVessel != null)
                 {
+                    // SoalrPanels
                     foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-                    {
-                        sp.OnStart(PartModule.StartState.Orbital);
-                        if (powerCurve != null)
-                        {
-                            sp.useCurve = true;
-                            sp.powerCurve = powerCurve;
-                        }
-                        else
-                        {
-                            sp.useCurve = false;
-                            sp.powerCurve = null;
-                        }
-                        sp.updateFSM();
-                    }
+                        sp.sunTransform = celestialBody.transform;
 
+                    // Radiators
                     foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
-                    {
-                        rad.OnStart(PartModule.StartState.Orbital);
-                    }
+                        radiatorSun.SetValue(rad, celestialBody.transform);
+
+                    // Flight Integrator
+                    FlightIntegrator integrator = FlightGlobals.ActiveVessel.GetComponent<FlightIntegrator>();
+                    integrator.sunBody = celestialBody;
                 }
             }
 
             // Reset the LightShifter
             LightShifter lsc = null;
-            LightShifter[] comps = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifter>(true);
+            LightShifter[] comps = Sun.Instance.sun.scaledBody.GetComponentsInChildren<LightShifter>(true);
             if (comps != null && comps.Length > 0)
             {
                 lsc = comps[0];
                 lsc.SetStatus(false, HighLogic.LoadedScene);
             }
-            comps = celestialBody.GetTransform().GetComponentsInChildren<LightShifter>(true);
+            Sun.Instance.sun = celestialBody;
+            comps = celestialBody.scaledBody.GetComponentsInChildren<LightShifter>(true);
             if (comps != null && comps.Length > 0)
             {
                 lsc = comps[0];
@@ -108,6 +109,10 @@ namespace Kopernicus
                 // Set other stuff
                 Sun.Instance.AU = lsc.AU;
                 Sun.Instance.brightnessCurve = lsc.brightnessCurve.Curve;
+
+                // Physics Globals
+                PhysicsGlobals.SolarLuminosityAtHome = lsc.solarLuminosity;
+                PhysicsGlobals.SolarInsolationAtHome = lsc.solarInsolation;
             }
 
         }

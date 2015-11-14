@@ -68,7 +68,7 @@ namespace Kopernicus
             }
 
             // Create the Kopernicus LightShifter
-            [ParserTarget("Light", optional = true)]
+            [ParserTarget("Light", optional = true, allowMerge = true)]
             public LightShifterLoader lightShifter { get; set; }
 
             // Coronas for a star's scaled version
@@ -166,6 +166,7 @@ namespace Kopernicus
 
                     // Add the Kopernicus star componenet
                     component = scaledVersion.AddComponent<StarComponent> ();
+                    lightShifter = new LightShifterLoader();
 
                     // Generate a new material for the star
                     EmissiveMultiRampSunspotsLoader newMaterial = null;
@@ -196,7 +197,7 @@ namespace Kopernicus
                 if (type.value == BodyType.Star) 
                 {
                     if (lightShifter != null)
-                        lightShifter.lsc.gameObject.transform.parent = owner.GetTransform();
+                        lightShifter.lsc.transform.parent = scaledVersion.transform;
 
                     // Apply custom coronas
                     if (coronas.Count > 0) 

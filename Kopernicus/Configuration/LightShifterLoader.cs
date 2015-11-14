@@ -136,6 +136,22 @@ namespace Kopernicus
                 set { lsc.brightnessCurve = value; }
             }
 
+            // sunAU
+            [ParserTarget("luminosity", optional = true, allowMerge = false)]
+            public NumericParser<double> luminosity
+            {
+                get { return lsc.solarLuminosity; }
+                set { lsc.solarLuminosity = value; }
+            }
+
+            // sunAU
+            [ParserTarget("insolation", optional = true, allowMerge = false)]
+            public NumericParser<double> insolation
+            {
+                get { return lsc.solarInsolation; }
+                set { lsc.solarInsolation = value; }
+            }
+
             // Default constructor
             public LightShifterLoader()
             {

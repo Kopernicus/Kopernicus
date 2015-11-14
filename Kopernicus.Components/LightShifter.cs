@@ -49,6 +49,8 @@ namespace Kopernicus
             public bool givesOffLight;
             public double AU;
             public FloatCurve brightnessCurve;
+            public double solarInsolation;
+            public double solarLuminosity;
 
             // Prefab that makes every star yellow by default
             public static LightShifter prefab
@@ -77,6 +79,8 @@ namespace Kopernicus
                         new Keyframe(38.56295f, 1.82142f, 0.0001713f, 0.0001713f)
                     });
                     prefab.givesOffLight = true;
+                    prefab.solarInsolation = PhysicsGlobals.SolarInsolationAtHome;
+                    prefab.solarLuminosity = PhysicsGlobals.SolarLuminosityAtHome;
 
                     // Return the prefab
                     return prefab;

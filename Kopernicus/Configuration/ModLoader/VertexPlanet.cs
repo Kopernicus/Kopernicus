@@ -550,6 +550,9 @@ namespace Kopernicus
                         // Add the Loader to the List
                         landClasses.Add(loader);
                     }
+
+                    // Apply the landclasses
+                    mod.landClasses = landClasses.Select(l => l.landClass).ToArray();
                 }
 
                 // Create the mod
