@@ -119,11 +119,6 @@ namespace Kopernicus
                 else if (position.HasValue)
                     mapDecal.position = position.Value;
 
-                // Reset the PQSMods
-                ksc.OnSetup();
-                ksc.OnPostSetup();
-                mapDecal.OnSetup();
-
                 // Move the SpaceCenter
                 SpaceCenter.Instance.transform.localPosition = ksc.transform.localPosition;
                 SpaceCenter.Instance.transform.localRotation = ksc.transform.localRotation;
@@ -132,7 +127,7 @@ namespace Kopernicus
                 typeof(SpaceCenter).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(SpaceCenter.Instance, null);
 
                 // Add a material fixer
-                gameObject.AddComponent<MaterialFixer>();
+                DontDestroyOnLoad(gameObject.AddComponent<MaterialFixer>());
             }
 
             // Convert latitude-longitude-altitude with body radius to a vector.
@@ -152,28 +147,30 @@ namespace Kopernicus
             // MaterialFixer
             private class MaterialFixer : MonoBehaviour
             {
-                void LateUpdate()
+                void Update()
                 {
                     if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
                         return;
-                    KSC ksc = GetComponent<KSC>();
 
+                    KSC ksc = GetComponent<KSC>();
+                    Debug.Log(ksc);
                     // Loop through all Materials and change their settings
-                    foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color == new Color(0.382f, 0.451f, 0.000f, 0.729f)))
+                    foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.382f, 0.451f, 0.000f, 0.729f).ToString()))
                     {
                         // Patch the texture
                         if (ksc.mainTexture != null)
                         {
                             material.mainTexture = ksc.mainTexture;
                         }
-
+                        Debug.Log(ksc.mainTexture);
                         // Patch the color
                         if (ksc.color.HasValue)
                         {
                             material.color = ksc.color.Value;
                         }
+                        Debug.Log(ksc.color);
+                        Destroy(this);
                     }
-                    Destroy(this);
                 }
             }
         }

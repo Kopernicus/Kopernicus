@@ -48,7 +48,7 @@ namespace Kopernicus
                 get { return orbit.referenceBody.name; }
                 set
                 {
-                    if (HighLogic.LoadedScene == GameScenes.LOADING)
+                    if (HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.PSYSTEM)
                         orbit.referenceBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value).celestialBody;
                     else
                         orbit.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.name == value);
