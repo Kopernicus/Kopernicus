@@ -43,17 +43,7 @@ namespace Kopernicus
 
             // Reference body to orbit
             [ParserTarget("referenceBody", optional = true)]
-            public string referenceBody
-            {
-                get { return orbit.referenceBody.name; }
-                set
-                {
-                    if (HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.PSYSTEM)
-                        orbit.referenceBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value).celestialBody;
-                    else
-                        orbit.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.name == value);
-                }
-            }
+            public string referenceBody { get; set; }
 
             // How inclined is the orbit
             [ParserTarget("inclination", optional = true)]
@@ -180,6 +170,7 @@ namespace Kopernicus
             public OrbitLoader(CelestialBody body)
             {
                 orbit = body.orbitDriver.orbit;
+                referenceBody = body.name;
                 color = body.orbitDriver.orbitColor;
                 float[] bounds = new float[] { body.orbitDriver.lowerCamVsSmaRatio, body.orbitDriver.upperCamVsSmaRatio };
                 cameraSmaRatioBounds.value = bounds.ToList();

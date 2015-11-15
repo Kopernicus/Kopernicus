@@ -129,6 +129,7 @@ namespace Kopernicus
             try
             {
                 // Open the log file (overwrite existing logs)
+                LogFileName = LogFileName.Replace("/", "").Replace("\\", "");
                 string LogFile = Logger.LogDirectory + LogFileName + ".log";
                 loggerStream = new StreamWriter(File.Create (LogFile));
 
