@@ -226,7 +226,7 @@ namespace Kopernicus
             [ParserTarget("nonExactThreshold", optional = true)]
             public NumericParser<float> nonExactThreshold
             {
-                get { return celestialBody.BiomeMap.nonExactThreshold; }
+                get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.nonExactThreshold : 0.05f; }
                 set { celestialBody.BiomeMap.nonExactThreshold = value; }
             }
 
@@ -234,7 +234,7 @@ namespace Kopernicus
             [ParserTarget("exactSearch", optional = true)]
             public NumericParser<bool> exactSearch
             {
-                get { return celestialBody.BiomeMap.exactSearch; }
+                get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.exactSearch : false; }
                 set { celestialBody.BiomeMap.exactSearch = value; }
             }
 

@@ -55,7 +55,7 @@ namespace Kopernicus
             [ParserTarget("fadeStart", optional = true)]
             public NumericParser<float> fadeStart 
             {
-                get { return scaledVersion.GetComponentInChildren<ScaledSpaceFader>().fadeStart; }
+                get { return scaledVersion.GetComponentInChildren<ScaledSpaceFader>() ? scaledVersion.GetComponentInChildren<ScaledSpaceFader>().fadeStart : 0; }
                 set { scaledVersion.GetComponent<ScaledSpaceFader>().fadeStart = value; }
             }
             
@@ -63,7 +63,7 @@ namespace Kopernicus
             [ParserTarget("fadeEnd", optional = true)]
             public NumericParser<float> fadeEnd
             {
-                get { return scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd; }
+                get { return scaledVersion.GetComponent<ScaledSpaceFader>() ? scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd : 0; }
                 set { scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd = value; }
             }
 
@@ -238,7 +238,11 @@ namespace Kopernicus
                         OnDemand.ScaledSpaceDemand texture = scaledVersion.AddComponent<OnDemand.ScaledSpaceDemand>();
                         if (Utility.TextureExists(texturePath)) texture.texture = texturePath;
                         if (Utility.TextureExists(normalsPath)) texture.normals = normalsPath;
-                    } catch { }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Active.LogException(e);
+                    }
                 }
             }
 

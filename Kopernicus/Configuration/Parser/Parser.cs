@@ -165,16 +165,16 @@ namespace Kopernicus
                 else 
                 {
                     targetType = (member as PropertyInfo).PropertyType;
-                    if ((member as PropertyInfo).CanRead) 
+                    try
                     {
-                        try
-                        {
+                        if ((member as PropertyInfo).CanRead)
                             targetValue = (member as PropertyInfo).GetValue(o, null);
-                        }
-                        catch
-                        {
+                        else
                             targetValue = null;
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
                     }
                 }
 
@@ -310,11 +310,14 @@ namespace Kopernicus
                     targetType = (member as PropertyInfo).PropertyType;
                     try
                     {
-                        targetValue = (member as PropertyInfo).GetValue(o, null);
+                        if ((member as PropertyInfo).CanRead)
+                            targetValue = (member as PropertyInfo).GetValue(o, null);
+                        else
+                            targetValue = null;
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        targetValue = null;
+                        Debug.LogException(e);
                     }
                 }
 

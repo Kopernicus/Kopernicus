@@ -122,18 +122,6 @@ namespace Kopernicus
             [ParserTarget("materialType", optional = true)]
             public EnumParser<PQSMaterialType> materialType
             {
-                get
-                {
-                    if (PQSMainOptimised.UsesSameShader(pqsVersion.surfaceMaterial))
-                        return PQSMaterialType.AtmosphericOptimized;
-                    else if (PQSMainShader.UsesSameShader(pqsVersion.surfaceMaterial))
-                        return PQSMaterialType.AtmosphericMain;
-                    else if (PQSProjectionAerialQuadRelative.UsesSameShader(pqsVersion.surfaceMaterial))
-                        return PQSMaterialType.AtmosphericBasic;
-                    else if (PQSProjectionSurfaceQuad.UsesSameShader(pqsVersion.surfaceMaterial))
-                        return PQSMaterialType.Vacuum;
-                    return null;
-                }
                 set 
                 {
                     if (value.value == PQSMaterialType.AtmosphericOptimized)
@@ -148,7 +136,7 @@ namespace Kopernicus
             }
 
             // Surface Material of the PQS
-            [ParserTarget("Material", optional = true, allowMerge = true)]
+            //[ParserTarget("Material", optional = true, allowMerge = true)]
             public Material surfaceMaterial;
 
             // Fallback Material of the PQS (its always the same material)
@@ -197,8 +185,8 @@ namespace Kopernicus
                     {
                         pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader(pqsVersion.surfaceMaterial);
                     }
-                    surfaceMaterial = pqsVersion.surfaceMaterial;
-                    surfaceMaterial.name = Guid.NewGuid().ToString();
+                    //surfaceMaterial = pqsVersion.surfaceMaterial;
+                    //surfaceMaterial.name = Guid.NewGuid().ToString();
 
                     // Clone the fallback material of the PQS
                     fallbackMaterial = new PQSProjectionFallbackLoader(pqsVersion.fallbackMaterial);
@@ -322,8 +310,8 @@ namespace Kopernicus
                 {
                     pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader(pqsVersion.surfaceMaterial);
                 }
-                surfaceMaterial = pqsVersion.surfaceMaterial;
-                surfaceMaterial.name = Guid.NewGuid ().ToString ();
+                //surfaceMaterial = pqsVersion.surfaceMaterial;
+                //surfaceMaterial.name = Guid.NewGuid ().ToString ();
 
                 // Clone the fallback material of the PQS
                 fallbackMaterial = new PQSProjectionFallbackLoader (pqsVersion.fallbackMaterial);
@@ -385,7 +373,6 @@ namespace Kopernicus
                             Parser.LoadObjectFromConfigurationNode(loader, mod);
                             patchedMods.Add (existingMod);
                             Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
-                            Utility.DumpObjectProperties(loader);
                         }
                     }
                     else
