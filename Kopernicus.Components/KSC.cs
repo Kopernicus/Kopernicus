@@ -76,10 +76,43 @@ namespace Kopernicus
             public void Start()
             {
                 // Get the KSC-object from Kerbins PQS
-                body = FlightGlobals.Bodies.First(b => b.isHomeWorld);
-                ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
-                mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true).First(m => m.name == "KSC");
-                
+                if (FlightGlobals.Bodies != null)
+                {
+                    body = FlightGlobals.Bodies.First(b => b.isHomeWorld);
+                    ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
+                    mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true).First(m => m.name == "KSC");
+                }
+                else
+                {
+                    CelestialBody[] bodies = Resources.FindObjectsOfTypeAll<CelestialBody>();
+                    foreach (CelestialBody b in bodies)
+                    {
+                        if (!b.isHomeWorld)
+                            continue;
+
+                        if (b.pqsController == null)
+                            continue;
+
+                        ksc = b.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
+                        if (ksc != null)
+                        {
+                            body = b;
+                            mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true).First(m => m.name == "KSC");
+                            break;
+                        }
+                    }
+                }
+                if (ksc == null)
+                {
+                    Debug.LogError("[Kopernicus]: KSC: Unable to find homeworld body with PQSCity named KSC");
+                    return;
+                }
+                if (mapDecal == null)
+                {
+                    Debug.LogError("[Kopernicus]: KSC: Unable to find homeworld body with PQSMod_MapDecalTangent named KSC");
+                    return;
+                }
+
                 // Load new data into the PQSCity
                 if (latitude.HasValue && longitude.HasValue)
                     ksc.repositionRadial = LLAtoECEF(latitude.Value, longitude.Value, 0, body.Radius);
