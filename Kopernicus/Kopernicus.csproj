@@ -111,6 +111,7 @@
     <Compile Include="Configuration\ParticleLoader.cs" />
     <Compile Include="Configuration\OceanLoader.cs" />
     <Compile Include="Configuration\RingLoader.cs" />
+    <Compile Include="Constants\CompatibilityChecker.cs" />
     <Compile Include="Constants\Version.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
     <Compile Include="PostInject.cs" />

@@ -48,6 +48,21 @@ namespace Kopernicus
         // it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
         public void Awake()
         {
+            // Abort, if KSP isn't compatible
+            if (!CompatibilityChecker.IsCompatible())
+            {
+                string supported = CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision;
+                string current = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
+                Debug.LogWarning("[Kopernicus] Detected incompatible install.\nCurrent version of KSP: " + current + ".\nSupported version of KSP: " + supported + ".\nPlease wait, until Kopernicus gets updated to match your version of KSP.");
+                Debug.Log("[Kopernicus] Aborting...");
+
+                // Abort
+                AssemblyLoader.LoadedAssembly assembly = AssemblyLoader.loadedAssemblies.GetByAssembly(GetType().Assembly);
+                assembly.Unload();
+                Destroy(this);
+                return;
+            }
+
             // We're ALIVE
             Logger.Initialize();
             Logger.Default.SetAsActive();

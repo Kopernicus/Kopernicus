@@ -8,7 +8,7 @@ Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
 Maintained by: - Thomas P.
 			   - NathanKell
  
-Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars
+Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, Majiir (CompatibilityChecker)
 
 New in this version
 -------------------
