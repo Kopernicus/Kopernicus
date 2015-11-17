@@ -452,7 +452,6 @@ namespace Kopernicus
                 {
                     string textureName = Regex.Replace (s, "BUILTIN/", "");
                     value = Resources.FindObjectsOfTypeAll<Texture>().Where(tex => tex.name == textureName).First() as Texture2D;
-                    value.name = s;
                     return;
                 }
 
