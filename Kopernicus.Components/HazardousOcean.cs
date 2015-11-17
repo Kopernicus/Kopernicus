@@ -55,6 +55,7 @@ namespace Kopernicus
             void Start()
             {
                 body = Part.GetComponentUpwards<CelestialBody>(gameObject);
+                ocean = GetComponent<PQS>();
             }
 
             /// <summary>
