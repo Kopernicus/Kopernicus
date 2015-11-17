@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,15 +21,12 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System;
-using UnityEngine;
-
+ 
 namespace Kopernicus
 {
     namespace Configuration
@@ -41,84 +34,62 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class AerialPerspectiveMaterial : ModLoader, IParserEventSubscriber
+            public class AerialPerspectiveMaterial : ModLoader<PQSMod_AerialPerspectiveMaterial>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_AerialPerspectiveMaterial _mod;
-
                 // atmosphereDepth
                 [ParserTarget("atmosphereDepth", optional = true)]
-                private NumericParser<float> deformity
+                public NumericParser<float> deformity
                 {
-                    set { _mod.atmosphereDepth = value.value; }
+                    get { return mod.atmosphereDepth; }
+                    set { mod.atmosphereDepth = value; }
                 }
 
                 // The altitude of the camera
                 [ParserTarget("cameraAlt", optional = true)]
-                private NumericParser<double> cameraAlt
+                public NumericParser<double> cameraAlt
                 {
-                    set { _mod.cameraAlt = value.value; }
+                    get { return mod.cameraAlt; }
+                    set { mod.cameraAlt = value; }
                 }
 
                 // Athmospheric altitude of the camera.
                 [ParserTarget("cameraAtmosAlt", optional = true)]
-                private NumericParser<float> cameraAtmosAlt
+                public NumericParser<float> cameraAtmosAlt
                 {
-                    set { _mod.cameraAtmosAlt = value.value; }
+                    get { return mod.cameraAtmosAlt; }
+                    set { mod.cameraAtmosAlt = value; }
                 }
 
                 // DEBUG_SetEveryFrame
                 [ParserTarget("DEBUG_SetEveryFrame", optional = true)]
-                private NumericParser<bool> DEBUG_SetEveryFrame
+                public NumericParser<bool> DEBUG_SetEveryFrame
                 {
-                    set { _mod.DEBUG_SetEveryFrame = value.value; }
+                    get { return mod.DEBUG_SetEveryFrame; }
+                    set { mod.DEBUG_SetEveryFrame = value; }
                 }
 
                 // Global density of the material
                 [ParserTarget("globalDensity", optional = true)]
-                private NumericParser<float> globalDensity
+                public NumericParser<float> globalDensity
                 {
-                    set { _mod.globalDensity = value.value; }
+                    get { return mod.globalDensity; }
+                    set { mod.globalDensity = value; }
                 }
 
                 // heightDensAtViewer
                 [ParserTarget("heightDensAtViewer", optional = true)]
-                private NumericParser<float> heightDensAtViewer
+                public NumericParser<float> heightDensAtViewer
                 {
-                    set { _mod.heightDensAtViewer = value.value; }
+                    get { return mod.heightDensAtViewer; }
+                    set { mod.heightDensAtViewer = value; }
                 }
 
                 // heightFalloff
                 [ParserTarget("heightFalloff", optional = true)]
-                private NumericParser<float> heightFalloff
+                public NumericParser<float> heightFalloff
                 {
-                    set { _mod.heightFalloff = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public AerialPerspectiveMaterial()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("AerialPerspectiveMaterial");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_AerialPerspectiveMaterial>();
-                    base.mod = _mod;
-                }
-
-                public AerialPerspectiveMaterial(PQSMod template)
-                {
-                    _mod = template as PQSMod_AerialPerspectiveMaterial;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.heightFalloff; }
+                    set { mod.heightFalloff = value; }
                 }
             }
         }

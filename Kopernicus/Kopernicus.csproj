@@ -13,7 +13,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>Distribution\GameData\Kopernicus\Plugins\</OutputPath>
+    <OutputPath>..\Distribution\Development\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -22,7 +22,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\Distribution\GameData\Kopernicus\Plugins\</OutputPath>
+    <OutputPath>..\Distribution\Release\GameData\Kopernicus\Plugins\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -32,14 +32,20 @@
       <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\AtmosphereFromGroundLoader.cs" />
+    <Compile Include="Configuration\DebugLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\DiffuseWrapLoader.cs" />
@@ -52,14 +58,41 @@
     <Compile Include="Configuration\ModLoader\MaterialQuadRelative.cs" />
     <Compile Include="Configuration\ModLoader\SmoothLatitudeRange.cs" />
     <Compile Include="Configuration\ModLoader\TangentTextureRanges.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorNoise.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorNoiseRGB.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolid.cs" />
+    <Compile Include="Configuration\ModLoader\VertexColorSolidBlend.cs" />
+    <Compile Include="Configuration\ModLoader\VertexDefineCoastLine.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightMapStep.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoise.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoiseHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeight.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve2.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve3.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightOblate.cs" />
+    <Compile Include="Configuration\ModLoader\VertexHeightOffset.cs" />
+    <Compile Include="Configuration\ModLoader\VertexNoise.cs" />
     <Compile Include="Configuration\ModLoader\VertexPlanet.cs" />
-    <Compile Include="Configuration\HazardousOcean.cs" />
+    <Compile Include="Configuration\ModLoader\VertexRidgedAltitudeCurve.cs" />
     <Compile Include="Configuration\ModLoader\VertexSimplexColorRGB.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexHeight.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexHeightAbsolute.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexHeightFlatten.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexHeightMap.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexMultiChromatic.cs" />
+    <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
+    <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
+    <Compile Include="Configuration\ModLoader\VoronoiCraters.cs" />
     <Compile Include="Configuration\Parser\External\ExternalParserTarget.cs" />
     <Compile Include="Configuration\Parser\External\ExternalParserTargetLoader.cs" />
+    <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
-    <Compile Include="Configuration\SpaceCenterSwitcher.cs" />
-    <Compile Include="Configuration\LightShifter.cs" />
+    <Compile Include="Configuration\FogLoader.cs" />
+    <Compile Include="Configuration\SpaceCenterLoader.cs" />
+    <Compile Include="Configuration\LightShifterLoader.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
     <Compile Include="Configuration\ModLoader\OceanFX.cs" />
     <Compile Include="Configuration\ModLoader\QuadEnhanceCoast.cs" />
@@ -75,80 +108,27 @@
     <Compile Include="Configuration\ModLoader\HeightColorMapNoise.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap2.cs" />
     <Compile Include="Configuration\ModLoader\BillboardObject.cs" />
-    <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
-    <Compile Include="Configuration\ModLoader\VertexRidgedAltitudeCurve.cs" />
-    <Compile Include="Configuration\ModLoader\VertexDefineCoastLine.cs" />
-    <Compile Include="Configuration\ModLoader\VertexColorNoise.cs" />
-    <Compile Include="Configuration\ModLoader\VertexColorNoiseRGB.cs" />
-    <Compile Include="Configuration\ModLoader\VertexColorSolid.cs" />
-    <Compile Include="Configuration\ModLoader\VertexColorSolidBlend.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve2.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeight.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightNoise.cs" />
     <Compile Include="Configuration\ModLoader\AerialPerspectiveMaterial.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightNoiseHeightMap.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightNoiseVertHeightCurve3.cs" />
-    <Compile Include="Configuration\ModLoader\VertexNoise.cs" />
-    <Compile Include="Configuration\ModLoader\VoronoiCraters.cs" />
-    <Compile Include="Configuration\ModLoader\VertexSimplexHeightFlatten.cs" />
-    <Compile Include="Configuration\ModLoader\VertexSimplexHeightMap.cs" />
-    <Compile Include="Configuration\ModLoader\VertexSimplexMultiChromatic.cs" />
-    <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightOffset.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightOblate.cs" />
-    <Compile Include="Configuration\ModLoader\VertexSimplexHeightAbsolute.cs" />
-    <Compile Include="Configuration\ModLoader\VertexSimplexHeight.cs" />
     <Compile Include="Configuration\ParticleLoader.cs" />
-    <Compile Include="Configuration\OceanPQS.cs" />
-    <Compile Include="Configuration\Resources\Shaders.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Shaders.resx</DependentUpon>
-    </Compile>
+    <Compile Include="Configuration\OceanLoader.cs" />
     <Compile Include="Configuration\RingLoader.cs" />
+    <Compile Include="Constants\CompatibilityChecker.cs" />
     <Compile Include="Constants\Version.cs" />
-    <Compile Include="MaterialWrapper\AerialTransCutout.cs" />
-    <Compile Include="MaterialWrapper\AlphaTestDiffuse.cs" />
-    <Compile Include="MaterialWrapper\DiffuseWrap.cs" />
-    <Compile Include="MaterialWrapper\NormalBumped.cs" />
-    <Compile Include="MaterialWrapper\NormalDiffuse.cs" />
-    <Compile Include="MaterialWrapper\NormalDiffuseDetail.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
-    <Compile Include="RuntimeUtility\HiddenObjectUtils.cs" />
-    <Compile Include="RuntimeUtility\MapViewFixer.cs" />
-    <Compile Include="RuntimeUtility\MenuBodyChanger.cs" />
-    <Compile Include="RuntimeUtility\NameChanger.cs" />
-    <Compile Include="OnDemand\CBAttributeMapSODemand.cs" />
-    <Compile Include="OnDemand\Handler.cs" />
-    <Compile Include="OnDemand\ILoadOnDemand.cs" />
-    <Compile Include="OnDemand\MapSODemand.cs" />
-    <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />
-    <Compile Include="OnDemand\TGAUtils.cs" />
     <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
-    <Compile Include="RuntimeUtility\OceanUtility.cs" />
     <Compile Include="RuntimeUtility\RuntimeUtility.cs" />
     <Compile Include="Injector.cs" />
-    <Compile Include="MaterialWrapper\PQSMainOptimised.cs" />
-    <Compile Include="MaterialWrapper\AtmosphereFromGround.cs" />
-    <Compile Include="MaterialWrapper\PQSOceanSurfaceQuadFallback.cs" />
-    <Compile Include="MaterialWrapper\PQSProjectionFallback.cs" />
-    <Compile Include="MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
-    <Compile Include="MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
-    <Compile Include="RuntimeUtility\SpaceCenterFixer.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
     <Compile Include="Templates.cs" />
-    <Compile Include="Utility.cs" />
     <Compile Include="Configuration\Loader.cs" />
     <Compile Include="Configuration\Body.cs" />
-    <Compile Include="Configuration\Properties.cs" />
-    <Compile Include="Configuration\Template.cs" />
+    <Compile Include="Configuration\PropertiesLoader.cs" />
+    <Compile Include="Configuration\TemplateLoader.cs" />
     <Compile Include="Configuration\OrbitLoader.cs" />
-    <Compile Include="Configuration\ScienceValues.cs" />
+    <Compile Include="Configuration\ScienceValuesLoader.cs" />
     <Compile Include="Configuration\Parser\Parser.cs" />
-    <Compile Include="Configuration\Biome.cs" />
+    <Compile Include="Configuration\BiomeLoader.cs" />
     <Compile Include="Configuration\Parser\Attributes\ParserTarget.cs" />
     <Compile Include="Configuration\Parser\Attributes\PreApply.cs" />
     <Compile Include="Configuration\Parser\Attributes\ParserTargetCollection.cs" />
@@ -160,20 +140,16 @@
     <Compile Include="Configuration\Parser\Exceptions\ParserTargetTypeMismatchException.cs" />
     <Compile Include="Configuration\Parser\Exceptions\ParserTargetMissingException.cs" />
     <Compile Include="Configuration\Parser\BuiltinTypeParsers.cs" />
-    <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
-    <Compile Include="MaterialWrapper\ScaledPlanetRimAerial.cs" />
-    <Compile Include="Configuration\ScaledVersion.cs" />
+    <Compile Include="Configuration\ScaledVersionLoader.cs" />
     <Compile Include="Constants\GameLayers.cs" />
-    <Compile Include="MaterialWrapper\EmissiveMultiRampSunspots.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetSimpleLoader.cs" />
-    <Compile Include="Configuration\Atmosphere.cs" />
+    <Compile Include="Configuration\AtmosphereLoader.cs" />
     <Compile Include="Configuration\PQSLoader.cs" />
     <Compile Include="Configuration\Enumerations\BodyType.cs" />
     <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
-    <Compile Include="Configuration\Corona.cs" />
+    <Compile Include="Configuration\CoronaLoader.cs" />
     <Compile Include="Configuration\Parser\Gradient.cs" />
-    <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
     <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSOceanSurfaceQuadFallbackLoader.cs" />
@@ -182,26 +158,25 @@
     <Compile Include="Configuration\MaterialLoader\PQSProjectionFallbackLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSProjectionSurfaceQuadLoader.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="MaterialWrapper\PQSMainShader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainShaderLoader.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMap.cs" />
     <Compile Include="Configuration\ModLoader\ModLoader.cs" />
-    <Compile Include="Configuration\ModLoader\VertexHeightMap.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap.cs" />
-    <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
+    <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Configuration\Resources\Shaders.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Shaders.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Kopernicus.Components\Kopernicus.Components.csproj">
+      <Project>{19117d57-f9d4-4a88-9bb9-ac95549a25a8}</Project>
+      <Name>Kopernicus.Components</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kopernicus.OnDemand\Kopernicus.OnDemand.csproj">
+      <Project>{659697ab-2d61-40c8-8a43-06fe6542623e}</Project>
+      <Name>Kopernicus.OnDemand</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DiffuseNew.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\UnlitNew.txt" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>del "System.dll"
+del "System.Core.dll"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -1,13 +1,9 @@
 /**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -33,7 +29,10 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using Kopernicus.Configuration;
+using Kopernicus.Components;
+using System;
+using System.Reflection;
+using System.Linq;
 
 namespace Kopernicus
 {
@@ -41,242 +40,411 @@ namespace Kopernicus
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
-        /**
-         * Cache of the line renderers for PQS quads debug
-         **/
-        private List<GameObject> quadSurfaceNormalRenderers = new List<GameObject>();
-        
-        /**
-         * Shared instance of the surface normal renderer material.  Use the property accessor
-         **/
-        private Material sharedSurfaceNormalRendererMaterial = null;
+        // Variables
+        private MapObject previous;
 
-        // GUI-stuff
-        bool window = false;
-        string bodyName = "";
-        int mapWidth = 2048;
-        
-        /**
-         * Purge the surface normal renderer list
-         **/
-        private void PurgeQuadSurfaceNormalRenderers()
+        // Awake() - flag this class as don't destroy on load and register delegates
+        void Awake ()
         {
-            foreach (GameObject r in quadSurfaceNormalRenderers) 
+            // Don't run if Kopernicus isn't compatible
+            if (!CompatibilityChecker.IsCompatible())
             {
-                r.transform.parent = null;
-                Destroy(r);
-            }
-            quadSurfaceNormalRenderers.Clear ();
-        }
-        
-        /**
-         * Get the material used for the line renderer
-         **/
-        private Material surfaceNormalRendererMaterial
-        {
-            get
-            {
-                if(sharedSurfaceNormalRendererMaterial == null)
-                {
-                    sharedSurfaceNormalRendererMaterial = new Material( Shader.Find( "Particles/Additive" ) );
-                }
-                return sharedSurfaceNormalRendererMaterial;
-            }
-        }
-        
-        /**
-         * Get a surface normal renderer (either from cache, or create a new one)
-         **/
-        private GameObject surfaceNormalRenderer
-        {
-            get
-            {
-                // The renderer to return
-                GameObject r = null;
-                
-                // If there are renderers in the cache, use it
-                if(quadSurfaceNormalRenderers.Count > 0)
-                {
-                    r = quadSurfaceNormalRenderers[0];
-                    r.SetActive(true);
-                    quadSurfaceNormalRenderers.RemoveAt(0);
-                    return r;
-                }
-                
-                // Otherwise allocate a new one
-                else
-                {
-                    // Create a new game object to hold this renderer
-                    r = new GameObject("__Debug");
-                    DontDestroyOnLoad(r);
-                    LineRenderer line = r.AddComponent<LineRenderer>();
-                    
-                    // Make it render a red to yellow triangle, 1 meter wide and 2 meters long
-                    line.sharedMaterial = surfaceNormalRendererMaterial;
-                    line.useWorldSpace = false;
-                    line.SetColors( Color.green, Color.green );
-                    line.SetWidth(50, 50);
-                    line.SetVertexCount( 2 );
-                    line.SetPosition( 0, Vector3.zero);
-                    line.SetPosition( 1, Vector3.forward * -500.0f );
-                }
-                
-                // Return the transform
-                return r;
-            }
-        }
-        
-        /**
-         * If Mod-P are pressed, dump the PQS data of the current live body
-         **/
-        public void Update()
-        {
-            bool isModDown = GameSettings.MODIFIER_KEY.GetKey();
-
-            if (Input.GetKeyDown(KeyCode.Space) && isModDown)
-            {
-                Logger.Default.Log("Timescale = " + Planetarium.fetch.timeScale);
+                Destroy(this);
+                return;
             }
 
-            // Print out the PQS state
-            if (Input.GetKeyDown(KeyCode.P) && isModDown && !Input.GetKey(KeyCode.E))
-            {
-                // Log the state of the PQS
-                Utility.DumpObjectFields(FlightGlobals.currentMainBody.pqsController, " Live PQS ");
-
-                // Dump the child PQSs
-                foreach (PQS p in FlightGlobals.currentMainBody.pqsController.ChildSpheres)
-                {
-                    // Dump the child PQS info
-                    Utility.DumpObjectFields(p, " " + p.ToString() + " ");
-
-                    // Dump components of this child
-                    foreach (PQSMod m in p.GetComponentsInChildren<PQSMod>())
-                    {
-                        Utility.DumpObjectFields(m, " " + m.ToString() + " ");
-                    }
-
-                    // Print out information on all of the quads in the child
-                    foreach (PQ q in p.GetComponentsInChildren<PQ>())
-                    {
-                        // Log information about the quad
-                        Logger.Default.Log("Quad \"" + q.name + "\" = (" + q.meshRenderer.enabled + ",forced=" + q.isForcedInvisible + ";" + q.meshRenderer.material.name + ") @ " + q.transform.position);
-                    }
-                }
-
-                // Flush logger
-                Logger.Default.Flush();
-            }
-
-            // If we want to debug the locations of PQ nodes (Mod-;)
-            if (Input.GetKeyDown(KeyCode.Semicolon) && isModDown)
-            {
-                // New list for the debugger 
-                List<GameObject> renderers = new List<GameObject>();
-
-                // Draw renderers for all PQ nodes in play on this body
-                foreach (PQ q in FlightGlobals.currentMainBody.pqsController.GetComponentsInChildren<PQ>())
-                {
-                    // Add the line renderer to this quad
-                    GameObject r = surfaceNormalRenderer;
-                    r.transform.parent = q.transform;
-
-                    // Initialize the local transform to a zero transform
-                    r.transform.localPosition = Vector3.zero;
-                    r.transform.localScale = Vector3.one;
-                    r.transform.localEulerAngles = Vector3.zero;
-
-                    // Add to the new renderers list
-                    renderers.Add(r);
-                }
-
-                // Purge the old renderers list
-                PurgeQuadSurfaceNormalRenderers();
-                quadSurfaceNormalRenderers = renderers;
-
-                // Log
-                Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + renderers.Count + " PQ surface normal renderer(s) created");
-                Logger.Default.Flush();
-            }
-
-            // If we want to clean up (Mod-/)
-            if (Input.GetKeyDown(KeyCode.Slash) && isModDown)
-            {
-                // Disable all of the renderers in the list
-                foreach (GameObject r in quadSurfaceNormalRenderers)
-                {
-                    r.transform.parent = null;
-                    r.SetActive(false);
-                }
-
-                // Log
-                Logger.Default.Log("[Kopernicus]: RuntimeUtility.Update(): " + quadSurfaceNormalRenderers.Count + " PQ surface normal renderer(s) disabled");
-                Logger.Default.Flush();
-            }
-
-            if (isModDown && Input.GetKey(KeyCode.E) && Input.GetKeyDown(KeyCode.P))
-            {
-                window = !window;
-            }
-        }
-
-        // Draw our export GUI
-        public void OnGUI()
-        {
-            GUI.skin = HighLogic.Skin;
-            if (window)
-                GUI.Window(UnityEngine.Random.seed, new Rect(30, 30, 200, 140), WindowFunction, "Export Planet Maps");
-        }
-
-        public void WindowFunction(int level)
-        {
-            bodyName = GUI.TextField(new Rect(20, 30, 160, 20), bodyName);
-            mapWidth = int.Parse(GUI.TextField(new Rect(20, 60, 160, 20), mapWidth.ToString()));
-
-            if (GUI.Button(new Rect(20, 90, 160, 30), "Export Textures"))
-            {
-                Texture2D[] textures;
-
-                // Get the PQS-GOB of the Body
-                GameObject localSpace = LocalSpace.fetch.transform.FindChild(bodyName).gameObject;
-                PQS pqs = localSpace.GetComponentsInChildren<PQS>(true)[0];
-
-                // Create the textures
-                textures = pqs.CreateMaps(mapWidth, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor);
-
-                // Bump the heightmap to a normal map
-                Texture2D Normal = Utility.BumpToNormalMap(textures[1], 9);
-
-                // Set our Dump-path
-                string path = Body.ScaledSpaceCacheDirectory + "/PluginData/";
-                System.IO.Directory.CreateDirectory(path);
-
-                // Write Colormap
-                byte[] ExportMap = textures[0].EncodeToPNG();
-                System.IO.File.WriteAllBytes(path + bodyName + "_Color.png", ExportMap);
-
-                // Write Heightmap
-                ExportMap = textures[1].EncodeToPNG();
-                System.IO.File.WriteAllBytes(path + bodyName + "_Height.png", ExportMap);
-
-                // Write Normalmap
-                ExportMap = Normal.EncodeToPNG();
-                System.IO.File.WriteAllBytes(path + bodyName + "_Normal.png", ExportMap);
-            }
-            
-        }
-        
-        /**
-         * Awake() - flag this class as don't destroy on load
-         **/
-        public void Awake ()
-        {
             // Make sure the runtime utility isn't killed
             DontDestroyOnLoad (this);
-            
+
+            // Add handlers
+            GameEvents.onPartUnpack.Add(OnPartUnpack);
+            GameEvents.onLevelWasLoaded.Add(FixCameras);
+            GameEvents.onLevelWasLoaded.Add(delegate (GameScenes scene)
+            {
+                if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null)
+                    MapView.fetch.max3DlineDrawDist = 20000f;
+            });
+            GameEvents.onPlanetariumTargetChanged.Add(onPlanetariumTargetChanged);
+            GameEvents.onGUIRnDComplexSpawn.Add(RDFixer);
+
             // Log
             Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
             Logger.Default.Flush ();
+        }
+
+        // Execute MainMenu functions
+        void Start()
+        {
+            UpdateMenu();
+            previous = PlanetariumCamera.fetch.initialTarget;
+        }
+
+        // Stuff
+        void LateUpdate()
+        {
+            FixZooming();
+        }
+
+        // Status
+        bool isDone = false;
+
+        // Fix the Zooming-Out bug
+        void FixZooming()
+        {
+            if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null && !isDone)
+            {
+                // Fix the bug via switching away from Home and back immideatly. 
+                PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) + 1) % PlanetariumCamera.fetch.targets.Count]);
+                PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) + (((PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) >= 0) ? 0 : PlanetariumCamera.fetch.targets.Count)]);
+
+                // Terminate for the moment.
+                isDone = true;
+            }
+        }
+
+        // Fix the buoyancy
+        void OnPartUnpack(Part part)
+        {
+            // If there's nothing to do, abort
+            if (part.partBuoyancy == null)
+                return;
+
+            // Replace PartBuoyancy with KopernicusBuoyancy
+            // KopernicusBuoyancy buoyancy = part.gameObject.AddComponent<KopernicusBuoyancy>();
+            // Utility.CopyObjectFields(part.partBuoyancy, buoyancy, false);
+            // part.partBuoyancy = buoyancy;
+            // Destroy(part.GetComponent<PartBuoyancy>());
+        }
+
+        // Update the menu body
+        void UpdateMenu()
+        {
+            // Grab the main body
+            CelestialBody planetCB = PSystemManager.Instance.localBodies.Find(b => b.bodyName == Templates.menuBody);
+            PSystemBody planet = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Templates.menuBody);
+            if (planetCB == null || planet == null)
+            {
+                planet = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
+                planetCB = PSystemManager.Instance.localBodies.Find(b => b.isHomeWorld);
+            }
+            if (planet == null || planetCB == null)
+            {
+                Debug.LogError("[Kopernicus]: Could not find homeworld!");
+                return;
+            }
+
+            // Get the MainMenu-Logic
+            MainMenu main = FindObjectOfType<MainMenu>();
+            if (main == null)
+            {
+                Debug.LogError("[Kopernicus]: No main menu object!");
+                return;
+            }
+            MainMenuEnvLogic logic = main.envLogic;
+
+            // Set it to Space, because the Mun-Area won't work with sth else than Mun
+            if (logic.areas.Length < 2)
+            {
+                Debug.LogError("[Kopernicus]: Not enough bodies");
+                return;
+            }
+            logic.areas[0].SetActive(false);
+            logic.areas[1].SetActive(true);
+
+            // Get our active Space
+            GameObject space = logic.areas[1];
+
+            // Deactivate Kerbins Transform
+            Transform kerbin = space.transform.Find("Kerbin");
+            if (kerbin == null)
+            {
+                Debug.LogError("[Kopernicus]: No Kerbin transform!");
+                return;
+            }
+            kerbin.gameObject.SetActive(false);
+
+            // Deactivate Muns Transform
+            Transform mun = space.transform.Find("MunPivot");
+            if (mun == null)
+            {
+                Debug.LogError("[Kopernicus]: No MunPivot transform!");
+                return;
+            }
+            mun.gameObject.SetActive(false);
+
+            // Clone the scaledVersion and attach it to the Scene
+            GameObject menuPlanet = Instantiate(planet.scaledVersion) as GameObject;
+            menuPlanet.transform.parent = space.transform;
+
+            // Destroy stuff
+            DestroyImmediate(menuPlanet.GetComponent<ScaledSpaceFader>());
+            DestroyImmediate(menuPlanet.GetComponent<SphereCollider>());
+            DestroyImmediate(menuPlanet.GetComponentInChildren<AtmosphereFromGround>());
+            DestroyImmediate(menuPlanet.GetComponent<MaterialSetDirection>());
+
+            // That sounds funny
+            Rotato planetRotato = menuPlanet.AddComponent<Rotato>();
+            Rotato planetRefRotato = kerbin.GetComponent<Rotato>();
+            planetRotato.speed = (planetRefRotato.speed / 9284.50070356553f) * (float)planetCB.orbitDriver.orbit.orbitalSpeed; // calc.exe for the win
+
+            // Scale the body
+            menuPlanet.transform.localScale = kerbin.localScale;
+            menuPlanet.transform.localPosition = kerbin.localPosition;
+            menuPlanet.transform.position = kerbin.position;
+
+            // And set it to layer 0
+            menuPlanet.layer = 0;
+
+            // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
+            menuPlanet.renderer.sharedMaterial = planetCB.scaledBody.renderer.sharedMaterial;
+
+            // Copy EVE 7.4 clouds / Rings
+            for (int i = 0; i < planetCB.scaledBody.transform.childCount; i++)
+            {
+                Transform t = planetCB.scaledBody.transform.GetChild(i);
+                if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
+                {
+                    GameObject newT = Instantiate(t.gameObject) as GameObject;
+                    newT.transform.parent = menuPlanet.transform;
+                    newT.layer = 0;
+                    newT.transform.localPosition = Vector3.zero;
+                    newT.transform.localRotation = Quaternion.identity;
+                    newT.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
+                }
+            }
+
+            // And now, create the moons
+            foreach (PSystemBody moon in planet.children)
+            {
+                // Grab the CeletialBody of the moon
+                CelestialBody moonCB = PSystemManager.Instance.localBodies.Find(b => b.GetTransform().name == moon.name);
+
+                // Create the Rotation-Transforms
+                GameObject menuMoonPivot = new GameObject(moon.name + " Pivot");
+                menuMoonPivot.gameObject.layer = 0;
+                menuMoonPivot.transform.position = menuPlanet.transform.position;
+
+                // Still funny...
+                Rotato munRotato = menuMoonPivot.AddComponent<Rotato>();
+                Rotato refRotato = mun.GetComponent<Rotato>();
+                munRotato.speed = (refRotato.speed / 542.494239600754f) * (float)moonCB.GetOrbit().getOrbitalSpeedAtDistance(moonCB.GetOrbit().semiMajorAxis);
+
+                // Clone the scaledVersion and attach it to the pivot
+                GameObject menuMoon = Instantiate(moon.scaledVersion) as GameObject;
+                menuMoon.transform.parent = menuMoonPivot.transform;
+
+                // Move and scale the menuMoon correctly
+                menuMoon.transform.localPosition = new Vector3(-5000f * (float)(moonCB.GetOrbit().semiMajorAxis / 12000000.0), 0f, 0f);
+                menuMoon.transform.localScale *= 7f;
+
+                // Destroy stuff
+                DestroyImmediate(menuMoon.GetComponent<ScaledSpaceFader>());
+                DestroyImmediate(menuMoon.GetComponent<SphereCollider>());
+                DestroyImmediate(menuMoon.GetComponentInChildren<AtmosphereFromGround>());
+                DestroyImmediate(menuMoon.GetComponent<MaterialSetDirection>());
+
+                // More Rotato
+                Rotato moonRotato = menuMoon.AddComponent<Rotato>();
+                moonRotato.speed = -0.005f / (float)(moonCB.rotationPeriod / 400.0);
+
+                // Apply orbital stuff
+                menuMoon.transform.Rotate(0f, (float)moonCB.orbitDriver.orbit.LAN, 0f);
+                menuMoon.transform.Rotate(0f, 0f, (float)moonCB.orbitDriver.orbit.inclination);
+                menuMoon.transform.Rotate(0f, (float)moonCB.orbitDriver.orbit.argumentOfPeriapsis, 0f);
+
+                // And set the layer to 0
+                menuMoon.layer = 0;
+
+                // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
+                menuMoon.renderer.sharedMaterial = moonCB.scaledBody.renderer.sharedMaterial;
+
+                // Copy EVE 7.4 clouds / Rings
+                for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
+                {
+                    Transform t = moonCB.scaledBody.transform.GetChild(i);
+                    if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
+                    {
+                        GameObject newT = Instantiate(t.gameObject) as GameObject;
+                        newT.transform.parent = menuMoon.transform;
+                        newT.layer = 0;
+                        newT.transform.localPosition = Vector3.zero;
+                        newT.transform.localRotation = Quaternion.identity;
+                        newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
+                    }
+                }
+            }
+        }
+
+        // Barycenter-Utils
+        void onPlanetariumTargetChanged(MapObject map)
+        {
+            // If we switched to a barycenter..
+            if (map != null && previous != null)
+            {
+                if (Templates.barycenters.Contains(map.GetName()))
+                {
+                    // Don't center the barycenter
+                    List<MapObject> objects = PlanetariumCamera.fetch.targets;
+                    int nextIndex = objects.IndexOf(previous) < objects.IndexOf(map) ? (objects.IndexOf(map) + 1) % objects.Count : objects.IndexOf(map) - 1 + (objects.IndexOf(map) - 1 >= 0 ? 0 : objects.Count);
+                    PlanetariumCamera.fetch.SetTarget(objects[nextIndex]);
+                    previous = objects[nextIndex];
+                }
+            }
+        }
+
+        // Remove the thumbnail for Barycenters in the RD and patch name changes
+        void RDFixer()
+        {
+            // Loop through the Container
+            foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
+            {
+                // Barycenter
+                if (Templates.barycenters.Contains(planetItem.label_planetName.text))
+                {
+                    planetItem.planet.SetActive(false);
+                    planetItem.label_planetName.anchor = SpriteText.Anchor_Pos.Middle_Center;
+                }
+
+                // namechanges
+                if (FindObjectsOfType<NameChanger>().Where(n => n.oldName == planetItem.label_planetName.text).Count() != 0)
+                {
+                    NameChanger changer = FindObjectsOfType<NameChanger>().First(n => n.oldName == planetItem.label_planetName.text);
+                    planetItem.label_planetName.text = changer.newName;
+                }
+            }
+        }
+
+        // Fix the Space Center
+        void FixCameras(GameScenes scene)
+        {
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER && !HighLogic.LoadedSceneIsEditor)
+                return;
+
+            // Get the parental body
+            CelestialBody body = null;
+            if (Planetarium.fetch != null)
+                body = Planetarium.fetch.Home;
+            else
+                body = FlightGlobals.Bodies.Find(b => b.isHomeWorld);
+
+            // If there's no body, exit.
+            if (body == null)
+            {
+                Debug.Log("[Kopernicus]: Couldn't find the parental body!");
+                return;
+            }
+
+            // Get the KSC object
+            PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).Where(m => m.name == "KSC").First();
+
+            // If there's no KSC, exit.
+            if (ksc == null)
+            {
+                Debug.Log("[Kopernicus]: Couldn't find the KSC object!");
+                return;
+            }
+
+            // Go throug the SpaceCenterCameras and fix them
+            foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
+            {
+                if (ksc.repositionToSphere || ksc.repositionToSphereSurface)
+                {
+                    double normalHeight = body.pqsController.GetSurfaceHeight((Vector3d)ksc.repositionRadial.normalized) - body.Radius;
+                    if (ksc.repositionToSphereSurface)
+                    {
+                        normalHeight += ksc.repositionRadiusOffset;
+                    }
+                    cam.altitudeInitial = 0f - (float)normalHeight;
+                }
+                else
+                {
+                    cam.altitudeInitial = 0f - (float)ksc.repositionRadiusOffset;
+                }
+
+                // re-implement cam.Start()
+                // fields
+                Type camType = cam.GetType();
+                FieldInfo camPQS = null;
+                FieldInfo transform1 = null;
+                FieldInfo transform2 = null;
+                FieldInfo surfaceObj = null;
+
+                // get fields
+                FieldInfo[] fields = camType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                for (int i = 0; i < fields.Length; ++i)
+                {
+                    FieldInfo fi = fields[i];
+                    if (fi.FieldType == typeof(PQS))
+                        camPQS = fi;
+                    else if (fi.FieldType == typeof(Transform) && transform1 == null)
+                        transform1 = fi;
+                    else if (fi.FieldType == typeof(Transform) && transform2 == null)
+                        transform2 = fi;
+                    else if (fi.FieldType == typeof(SurfaceObject))
+                        surfaceObj = fi;
+                }
+                if (camPQS != null && transform1 != null && transform2 != null && surfaceObj != null)
+                {
+                    camPQS.SetValue(cam, body.pqsController);
+
+                    Transform initialTransform = body.pqsController.transform.Find(cam.initialPositionTransformName);
+                    if (initialTransform != null)
+                    {
+                        transform1.SetValue(cam, initialTransform);
+                        cam.transform.NestToParent(initialTransform);
+                    }
+                    else
+                    {
+                        Debug.Log("SSC2 can't find initial transform!");
+                        Transform initialTrfOrig = transform1.GetValue(cam) as Transform;
+                        if (initialTrfOrig != null)
+                            cam.transform.NestToParent(initialTrfOrig);
+                        else
+                            Debug.Log("SSC2 own initial transform null!");
+                    }
+                    Transform camTransform = transform2.GetValue(cam) as Transform;
+                    if (camTransform != null)
+                    {
+                        camTransform.NestToParent(cam.transform);
+                        if (FlightCamera.fetch != null && FlightCamera.fetch.transform != null)
+                        {
+                            FlightCamera.fetch.transform.NestToParent(camTransform);
+                        }
+                        if (LocalSpace.fetch != null && LocalSpace.fetch.transform != null)
+                        {
+                            LocalSpace.fetch.transform.position = camTransform.position;
+                        }
+                    }
+                    else
+                        Debug.Log("SSC2 cam transform null!");
+
+                    cam.ResetCamera();
+
+                    SurfaceObject so = surfaceObj.GetValue(cam) as SurfaceObject;
+                    if (so != null)
+                    {
+                        so.ReturnToParent();
+                        DestroyImmediate(so);
+                    }
+                    else
+                        Debug.Log("SSC2 surfaceObject is null!");
+
+                    surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
+
+                    Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
+                }
+                else
+                    Debug.Log("[Kopernicus]: ERROR fixing space center camera, could not find some fields");
+            }
+        }
+
+        // Remove the Handlers
+        void OnDestroy()
+        {
+            GameEvents.onPartUnpack.Remove(OnPartUnpack);
+            GameEvents.onLevelWasLoaded.Remove(FixCameras);
+            GameEvents.onPlanetariumTargetChanged.Remove(onPlanetariumTargetChanged);
+            GameEvents.onGUIRnDComplexSpawn.Remove(RDFixer);
         }
     }
 }

@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,154 +37,142 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexSimplexMultiChromatic : ModLoader, IParserEventSubscriber
+            public class VertexSimplexMultiChromatic : ModLoader<PQSMod_VertexSimplexMultiChromatic>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexSimplexMultiChromatic _mod;
-
                 // The frequency of the alpha noise
                 [ParserTarget("alphaFrequency")]
-                private NumericParser<double> alphaFrequency
+                public NumericParser<double> alphaFrequency
                 {
-                    set { _mod.alphaFrequency = value.value; }
+                    get { return mod.alphaFrequency; }
+                    set { mod.alphaFrequency = value; }
                 }
 
                 // Octaves of the alpha noise
                 [ParserTarget("alphaOctaves")]
-                private NumericParser<double> alphaOctaves
+                public NumericParser<double> alphaOctaves
                 {
-                    set { _mod.alphaOctaves = value.value; }
+                    get { return mod.alphaOctaves; }
+                    set { mod.alphaOctaves = value; }
                 }
 
                 // Persistence of the alpha noise
                 [ParserTarget("alphaPersistence")]
-                private NumericParser<double> alphaPersistence
+                public NumericParser<double> alphaPersistence
                 {
-                    set { _mod.alphaPersistence = value.value; }
+                    get { return mod.alphaPersistence; }
+                    set { mod.alphaPersistence = value; }
                 }
 
                 // The seed of the alpha noise
                 [ParserTarget("alphaSeed")]
-                private NumericParser<int> alphaSeed
+                public NumericParser<int> alphaSeed
                 {
-                    set { _mod.alphaSeed = value.value; }
+                    get { return mod.alphaSeed; }
+                    set { mod.alphaSeed = value; }
                 }
 
                 // Amount of color that will be applied
                 [ParserTarget("blend")]
-                private NumericParser<float> blend
+                public NumericParser<float> blend
                 {
-                    set { _mod.blend = value.value; }
+                    get { return mod.blend; }
+                    set { mod.blend = value; }
                 }
 
                 // The frequency of the blue noise
                 [ParserTarget("blueFrequency")]
-                private NumericParser<double> blueFrequency
+                public NumericParser<double> blueFrequency
                 {
-                    set { _mod.blueFrequency = value.value; }
+                    get { return mod.blueFrequency; }
+                    set { mod.blueFrequency = value; }
                 }
 
                 // Octaves of the blue noise
                 [ParserTarget("blueOctaves")]
-                private NumericParser<double> blueOctaves
+                public NumericParser<double> blueOctaves
                 {
-                    set { _mod.blueOctaves = value.value; }
+                    get { return mod.blueOctaves; }
+                    set { mod.blueOctaves = value; }
                 }
 
                 // Persistence of the blue noise
                 [ParserTarget("bluePersistence")]
-                private NumericParser<double> bluePersistence
+                public NumericParser<double> bluePersistence
                 {
-                    set { _mod.bluePersistence = value.value; }
+                    get { return mod.bluePersistence; }
+                    set { mod.bluePersistence = value; }
                 }
 
                 // The seed of the blue noise
                 [ParserTarget("blueSeed")]
-                private NumericParser<int> blueSeed
+                public NumericParser<int> blueSeed
                 {
-                    set { _mod.blueSeed = value.value; }
+                    get { return mod.blueSeed; }
+                    set { mod.blueSeed = value; }
                 }
 
                 // The frequency of the green noise
                 [ParserTarget("greenFrequency")]
-                private NumericParser<double> greenFrequency
+                public NumericParser<double> greenFrequency
                 {
-                    set { _mod.greenFrequency = value.value; }
+                    get { return mod.greenFrequency; }
+                    set { mod.greenFrequency = value; }
                 }
 
                 // Octaves of the green noise
                 [ParserTarget("greenOctaves")]
-                private NumericParser<double> greenOctaves
+                public NumericParser<double> greenOctaves
                 {
-                    set { _mod.greenOctaves = value.value; }
+                    get { return mod.greenOctaves; }
+                    set { mod.greenOctaves = value; }
                 }
 
                 // Persistence of the green noise
                 [ParserTarget("greenPersistence")]
-                private NumericParser<double> greenPersistence
+                public NumericParser<double> greenPersistence
                 {
-                    set { _mod.greenPersistence = value.value; }
+                    get { return mod.greenPersistence; }
+                    set { mod.greenPersistence = value; }
                 }
 
                 // The seed of the green noise
                 [ParserTarget("greenSeed")]
-                private NumericParser<int> greenSeed
+                public NumericParser<int> greenSeed
                 {
-                    set { _mod.greenSeed = value.value; }
+                    get { return mod.greenSeed; }
+                    set { mod.greenSeed = value; }
                 }
 
                 // The frequency of the red noise
                 [ParserTarget("redFrequency")]
-                private NumericParser<double> redFrequency
+                public NumericParser<double> redFrequency
                 {
-                    set { _mod.redFrequency = value.value; }
+                    get { return mod.redFrequency; }
+                    set { mod.redFrequency = value; }
                 }
 
                 // Octaves of the red noise
                 [ParserTarget("redOctaves")]
-                private NumericParser<double> redOctaves
+                public NumericParser<double> redOctaves
                 {
-                    set { _mod.redOctaves = value.value; }
+                    get { return mod.redOctaves; }
+                    set { mod.redOctaves = value; }
                 }
 
                 // Persistence of the red noise
                 [ParserTarget("redPersistence")]
-                private NumericParser<double> redPersistence
+                public NumericParser<double> redPersistence
                 {
-                    set { _mod.redPersistence = value.value; }
+                    get { return mod.redPersistence; }
+                    set { mod.redPersistence = value; }
                 }
 
                 // The seed of the red noise
                 [ParserTarget("redSeed")]
-                private NumericParser<int> redSeed
+                public NumericParser<int> redSeed
                 {
-                    set { _mod.redSeed = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexSimplexMultiChromatic()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexSimplexMultiChromatic");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexSimplexMultiChromatic>();
-                    base.mod = _mod;
-                }
-
-                public VertexSimplexMultiChromatic(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexSimplexMultiChromatic;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.redSeed; }
+                    set { mod.redSeed = value; }
                 }
             }
         }

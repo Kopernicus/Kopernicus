@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,63 +37,38 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class RemoveQuadMap : ModLoader, IParserEventSubscriber
+            public class RemoveQuadMap : ModLoader<PQSMod_RemoveQuadMap>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_RemoveQuadMap _mod;
-
                 // The map texture for the Quad Remover (?)
                 [ParserTarget("map", optional = true)]
-                private MapSOParser_GreyScale<MapSO> map
+                public MapSOParser_GreyScale<MapSO> map
                 {
-                    set { _mod.map = value.value; }
+                    get { return mod.map; }
+                    set { mod.map = value; }
                 }
 
                 // The deformity of the map for the Quad Remover (?)
                 [ParserTarget("deformity", optional = true)]
-                private NumericParser<float> mapDeformity
+                public NumericParser<float> mapDeformity
                 {
-                    set { _mod.mapDeformity = value.value; }
+                    get { return mod.mapDeformity; }
+                    set { mod.mapDeformity = value; }
                 }
 
                 // The max. height for the Quad Remover (?)
                 [ParserTarget("maxHeight", optional = true)]
-                private NumericParser<float> maxHeight
+                public NumericParser<float> maxHeight
                 {
-                    set { _mod.maxHeight = value.value; }
+                    get { return mod.maxHeight; }
+                    set { mod.maxHeight = value; }
                 }
 
                 // The min texture for the Quad Remover (?)
                 [ParserTarget("minHeight", optional = true)]
-                private NumericParser<float> minHeight 
+                public NumericParser<float> minHeight 
                 {
-                    set { _mod.minHeight = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-                   
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public RemoveQuadMap()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("RemoveQuadMap");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_RemoveQuadMap>();
-                    base.mod = _mod;
-                }
-
-                public RemoveQuadMap(PQSMod template)
-                {
-                    _mod = template as PQSMod_RemoveQuadMap;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.minHeight; }
+                    set { mod.minHeight = value; }
                 }
             }
         }

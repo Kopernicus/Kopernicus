@@ -1,14 +1,10 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
- * ------------------------------------------------------------- 
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,16 +19,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
-
-using System;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -41,87 +34,64 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class MaterialFadeAltitudeDouble : ModLoader, IParserEventSubscriber
+            public class MaterialFadeAltitudeDouble : ModLoader<PQSMod_MaterialFadeAltitudeDouble>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_MaterialFadeAltitudeDouble _mod;
-
                 // inFadeEnd
                 [ParserTarget("inFadeEnd", optional = true)]
-                private NumericParser<float> inFadeEnd
+                public NumericParser<float> inFadeEnd
                 {
-                    set { _mod.inFadeEnd = value.value; }
+                    get { return mod.inFadeEnd; }
+                    set { mod.inFadeEnd = value; }
                 }
 
                 // inFadeStart
                 [ParserTarget("inFadeStart", optional = true)]
-                private NumericParser<float> inFadeStart
+                public NumericParser<float> inFadeStart
                 {
-                    set { _mod.inFadeStart = value.value; }
+                    get { return mod.inFadeStart; }
+                    set { mod.inFadeStart = value; }
                 }
 
                 // outFadeEnd
                 [ParserTarget("outFadeEnd", optional = true)]
-                private NumericParser<float> outFadeEnd
+                public NumericParser<float> outFadeEnd
                 {
-                    set { _mod.outFadeEnd = value.value; }
+                    get { return mod.outFadeEnd; }
+                    set { mod.outFadeEnd = value; }
                 }
 
                 // outFadeStart
                 [ParserTarget("outFadeStart", optional = true)]
-                private NumericParser<float> outFadeStart
+                public NumericParser<float> outFadeStart
                 {
-                    set { _mod.outFadeStart = value.value; }
+                    get { return mod.outFadeStart; }
+                    set { mod.outFadeStart = value; }
                 }
 
                 // valueEnd
                 [ParserTarget("valueEnd", optional = true)]
-                private NumericParser<float> valueEnd
+                public NumericParser<float> valueEnd
                 {
-                    set { _mod.valueEnd = value.value; }
+                    get { return mod.valueEnd; }
+                    set { mod.valueEnd = value; }
                 }
 
                 // valueMid
                 [ParserTarget("valueMid", optional = true)]
-                private NumericParser<float> valueMid
+                public NumericParser<float> valueMid
                 {
-                    set { _mod.valueMid = value.value; }
+                    get { return mod.valueMid; }
+                    set { mod.valueMid = value; }
                 }
 
                 // valueStart
                 [ParserTarget("valueStart", optional = true)]
-                private NumericParser<float> valueStart
+                public NumericParser<float> valueStart
                 {
-                    set { _mod.valueStart = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public MaterialFadeAltitudeDouble()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("MaterialFadeAltitudeDouble");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_MaterialFadeAltitudeDouble>();
-                    base.mod = _mod;
-                }
-
-                public MaterialFadeAltitudeDouble(PQSMod template)
-                {
-                    _mod = template as PQSMod_MaterialFadeAltitudeDouble;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.valueStart; }
+                    set { mod.valueStart = value; }
                 }
             }
         }
     }
 }
-

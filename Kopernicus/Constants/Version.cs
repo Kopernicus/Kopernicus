@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -34,60 +30,51 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Reflection;
 
 namespace Kopernicus
 {
-    // Informations about the current version of Kopernicus
     namespace Constants
-    {
+    {    
+        // Informations about the current version of Kopernicus
         public class Version
         {
             // Versioning information
-            private static int[] versionNumber = new int[] { 0, 4 }; 
-            private static bool developmentBuild = false;
+            private const string versionNumber = "0.5"; 
+
+            // Get a string for the logging
             public static string version
             {
                 get
                 {
                     #if DEBUG
-                    developmentBuild = true;
+                    bool developmentBuild = true;
+                    #else
+                    bool developmentBuild = false;
                     #endif
-
-                    return "Kopernicus " + GetVersionNumber(versionNumber) + ((developmentBuild) ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
+                    return "Kopernicus " + versionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
             }
 
-            private static string GetVersionNumber(int[] number)
+            // Returns the SHA1 Hash of the assembly
+            public static string AssemblyHandle()
             {
-                string version = "";
-
-                for (int i = 0; i < number.Length; i++)
-                {
-                    if (i != 0) 
-                        version += ".";
-                    version += number[i];
-                }
-
-                return version;
+                string filePath = Assembly.GetCallingAssembly().Location;
+                return Convert.ToBase64String(SHA1.Create().ComputeHash(File.ReadAllBytes(filePath)));
             }
 
-            private static string AssemblyHandle()
+            // Returns the time when the assembly was built
+            public static DateTime BuiltTime()
             {
-                string filePath = System.Reflection.Assembly.GetCallingAssembly().Location;
-                return Convert.ToBase64String(SHA1Managed.Create().ComputeHash(File.ReadAllBytes(filePath)));
-            }
-
-            private static DateTime BuiltTime()
-            {
-                string filePath = System.Reflection.Assembly.GetCallingAssembly().Location;
+                string filePath = Assembly.GetCallingAssembly().Location;
                 const int c_PeHeaderOffset = 60;
                 const int c_LinkerTimestampOffset = 8;
                 byte[] b = new byte[2048];
-                System.IO.Stream s = null;
+                Stream s = null;
 
                 try
                 {
-                    s = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                    s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
                     s.Read(b, 0, 2048);
                 }
                 finally
@@ -98,8 +85,8 @@ namespace Kopernicus
                     }
                 }
 
-                int i = System.BitConverter.ToInt32(b, c_PeHeaderOffset);
-                int secondsSince1970 = System.BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
+                int i = BitConverter.ToInt32(b, c_PeHeaderOffset);
+                int secondsSince1970 = BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
                 DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 dt = dt.AddSeconds(secondsSince1970);
                 dt = dt.ToLocalTime();

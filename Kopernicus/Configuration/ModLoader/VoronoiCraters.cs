@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,151 +37,146 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VoronoiCraters : ModLoader, IParserEventSubscriber
+            public class VoronoiCraters : ModLoader<PQSMod_VoronoiCraters>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VoronoiCraters _mod;
-
                 // colorOpacity
                 [ParserTarget("colorOpacity", optional = true)]
-                private NumericParser<float> colorOpacity
+                public NumericParser<float> colorOpacity
                 {
-                    set { _mod.colorOpacity = value.value; }
+                    get { return mod.colorOpacity; }
+                    set { mod.colorOpacity = value; }
                 }
-
+                
                 // DebugColorMapping
                 [ParserTarget("DebugColorMapping", optional = true)]
-                private NumericParser<bool> DebugColorMapping
+                public NumericParser<bool> DebugColorMapping
                 {
-                    set { _mod.DebugColorMapping = value.value; }
+                    get { return mod.DebugColorMapping; }
+                    set { mod.DebugColorMapping = value; }
                 }
 
                 // Deformation of the Voronoi
                 [ParserTarget("deformation", optional = true)]
-                private NumericParser<double> deformation
+                public NumericParser<double> deformation
                 {
-                    set { _mod.deformation = value.value; }
+                    get { return mod.deformation; }
+                    set { mod.deformation = value; }
                 }
 
                 // CraterCurve
                 [ParserTarget("CraterCurve", optional = true)]
-                private FloatCurveParser craterCurve
+                public FloatCurveParser craterCurve
                 {
-                    set { _mod.craterCurve = value.curve.Curve; }
+                    get { return mod.craterCurve != null ? new FloatCurve(mod.craterCurve.keys) : new FloatCurve(); }
+                    set { mod.craterCurve = value.curve.Curve; }
                 }
 
                 // jitter
                 [ParserTarget("jitter", optional = true)]
-                private NumericParser<float> jitter
+                public NumericParser<float> jitter
                 {
-                    set { _mod.jitter = value.value; }
+                    get { return mod.jitter; }
+                    set { mod.jitter = value; }
                 }
 
                 // JitterCurve
                 [ParserTarget("JitterCurve", optional = true)]
-                private FloatCurveParser jitterCurve
+                public FloatCurveParser jitterCurve
                 {
-                    set { _mod.jitterCurve = value.curve.Curve; }
+                    get { return mod.jitterCurve != null ? new FloatCurve(mod.jitterCurve.keys) : new FloatCurve(); }
+                    set { mod.jitterCurve = value.curve.Curve; }
                 }
 
                 // jitterHeight
                 [ParserTarget("jitterHeight", optional = true)]
-                private NumericParser<float> jitterHeight
+                public NumericParser<float> jitterHeight
                 {
-                    set { _mod.jitterHeight = value.value; }
+                    get { return mod.jitterHeight; }
+                    set { mod.jitterHeight = value; }
                 }
 
                 // rFactor
                 [ParserTarget("rFactor", optional = true)]
-                private NumericParser<float> rFactor
+                public NumericParser<float> rFactor
                 {
-                    set { _mod.rFactor = value.value; }
+                    get { return mod.rFactor; }
+                    set { mod.rFactor = value; }
                 }
 
                 // rOffset
                 [ParserTarget("rOffset", optional = true)]
-                private NumericParser<float> rOffset
+                public NumericParser<float> rOffset
                 {
-                    set { _mod.rOffset = value.value; }
+                    get { return mod.rOffset; }
+                    set { mod.rOffset = value; }
                 }
 
                 // simplexFrequency
                 [ParserTarget("simplexFrequency", optional = true)]
-                private NumericParser<double> simplexFrequency
+                public NumericParser<double> simplexFrequency
                 {
-                    set { _mod.simplexFrequency = value.value; }
+                    get { return mod.simplexFrequency; }
+                    set { mod.simplexFrequency = value; }
                 }
 
                 // simplexOctaves
                 [ParserTarget("simplexOctaves", optional = true)]
-                private NumericParser<double> simplexOctaves
+                public NumericParser<double> simplexOctaves
                 {
-                    set { _mod.simplexOctaves = value.value; }
+                    get { return mod.simplexOctaves; }
+                    set { mod.simplexOctaves = value; }
                 }
 
                 // simplexPersistence
                 [ParserTarget("simplexPersistence", optional = true)]
-                private NumericParser<double> simplexPersistence
+                public NumericParser<double> simplexPersistence
                 {
-                    set { _mod.simplexPersistence = value.value; }
+                    get { return mod.simplexPersistence; }
+                    set { mod.simplexPersistence = value; }
                 }
 
                 // simplexSeed
                 [ParserTarget("simplexSeed", optional = true)]
-                private NumericParser<int> simplexSeed
+                public NumericParser<int> simplexSeed
                 {
-                    set { _mod.simplexSeed = value.value; }
+                    get { return mod.simplexSeed; }
+                    set { mod.simplexSeed = value; }
                 }
 
                 // voronoiDisplacement
                 [ParserTarget("voronoiDisplacement", optional = true)]
-                private NumericParser<double> voronoiDisplacement
+                public NumericParser<double> voronoiDisplacement
                 {
-                    set { _mod.voronoiDisplacement = value.value; }
+                    get { return mod.voronoiDisplacement; }
+                    set { mod.voronoiDisplacement = value; }
                 }
 
                 // voronoiFrequency
                 [ParserTarget("voronoiFrequency", optional = true)]
-                private NumericParser<double> voronoiFrequency
+                public NumericParser<double> voronoiFrequency
                 {
-                    set { _mod.voronoiFrequency = value.value; }
+                    get { return mod.voronoiFrequency; }
+                    set { mod.voronoiFrequency = value; }
                 }
 
                 // voronoiSeed
                 [ParserTarget("voronoiSeed", optional = true)]
-                private NumericParser<int> voronoiSeed
+                public NumericParser<int> voronoiSeed
                 {
-                    set { _mod.voronoiSeed = value.value; }
+                    get { return mod.voronoiSeed; }
+                    set { mod.voronoiSeed = value; }
                 }
 
-                void IParserEventSubscriber.Apply(ConfigNode node)
+                // Create the mod
+                public override void Create()
                 {
-                    
-                        
-                }
+                    base.Create();
 
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VoronoiCraters()
-                {
                     // Create the base mod
-                    GameObject modObject = new GameObject("VoronoiCraters");
-                    modObject.transform.parent = Utility.Deactivator;
                     PQSMod_VoronoiCraters clone = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun").pqsVersion.GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
-                    _mod = modObject.AddComponent<PQSMod_VoronoiCraters>();
-                    Utility.CopyObjectFields<PQSMod_VoronoiCraters>(clone, _mod, false);
-                    base.mod = _mod;
+                    Utility.CopyObjectFields(clone, base.mod, false);
                 }
-
-                public VoronoiCraters(PQSMod template)
-                {
-                    _mod = template as PQSMod_VoronoiCraters;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
-                }
+                
             }
         }
     }

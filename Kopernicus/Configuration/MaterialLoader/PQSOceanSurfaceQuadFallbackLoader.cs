@@ -13,103 +13,118 @@ namespace Kopernicus
         {
             // Main Color, default = (1,1,1,1)
             [ParserTarget("color", optional = true)]
-            private ColorParser colorSetter
+            public ColorParser colorSetter
             {
-                set { base.color = value.value; }
+                get { return color; }
+                set { color = value; }
             }
 
             // Color From Space, default = (1,1,1,1)
             [ParserTarget("colorFromSpace", optional = true)]
-            private ColorParser colorFromSpaceSetter
+            public ColorParser colorFromSpaceSetter
             {
-                set { base.colorFromSpace = value.value; }
+                get { return colorFromSpace; }
+                set { colorFromSpace = value; }
             }
 
             // Specular Color, default = (1,1,1,1)
             [ParserTarget("specColor", optional = true)]
-            private ColorParser specColorSetter
+            public ColorParser specColorSetter
             {
-                set { base.specColor = value.value; }
+                get { return specColor; }
+                set { specColor = value; }
             }
 
             // Shininess, default = 0.078125
             [ParserTarget("shininess", optional = true)]
-            private NumericParser<float> shininessSetter
+            public NumericParser<float> shininessSetter
             {
-                set { base.shininess = value.value; }
+                get { return shininess; }
+                set { shininess = value; }
             }
 
             // Gloss, default = 0.078125
             [ParserTarget("gloss", optional = true)]
-            private NumericParser<float> glossSetter
+            public NumericParser<float> glossSetter
             {
-                set { base.gloss = value.value; }
+                get { return gloss; }
+                set { gloss = value; }
             }
 
             // Tex Tiling, default = 1
             [ParserTarget("tiling", optional = true)]
-            private NumericParser<float> tilingSetter
+            public NumericParser<float> tilingSetter
             {
-                set { base.tiling = value.value; }
+                get { return tiling; }
+                set { tiling = value; }
             }
 
             // Tex0, default = "white" {}
             [ParserTarget("waterTex", optional = true)]
-            private Texture2DParser waterTexSetter
+            public Texture2DParser waterTexSetter
             {
-                set { base.waterTex = value.value; }
+                get { return waterTex; }
+                set { waterTex = value; }
             }
 
             [ParserTarget("waterTexScale", optional = true)]
-            private Vector2Parser waterTexScaleSetter
+            public Vector2Parser waterTexScaleSetter
             {
-                set { base.waterTexScale = value.value; }
+                get { return waterTexScale; }
+                set { waterTexScale = value; }
             }
 
             [ParserTarget("waterTexOffset", optional = true)]
-            private Vector2Parser waterTexOffsetSetter
+            public Vector2Parser waterTexOffsetSetter
             {
-                set { base.waterTexOffset = value.value; }
+                get { return waterTexOffset; }
+                set { waterTexOffset = value; }
             }
 
             // Tex1, default = "white" {}
             [ParserTarget("waterTex1", optional = true)]
-            private Texture2DParser waterTex1Setter
+            public Texture2DParser waterTex1Setter
             {
-                set { base.waterTex1 = value.value; }
+                get { return waterTex1; }
+                set { waterTex1 = value; }
             }
 
             [ParserTarget("waterTex1Scale", optional = true)]
-            private Vector2Parser waterTex1ScaleSetter
+            public Vector2Parser waterTex1ScaleSetter
             {
-                set { base.waterTex1Scale = value.value; }
+                get { return waterTex1Scale; }
+                set { waterTex1Scale = value; }
             }
 
             [ParserTarget("waterTex1Offset", optional = true)]
-            private Vector2Parser waterTex1OffsetSetter
+            public Vector2Parser waterTex1OffsetSetter
             {
-                set { base.waterTex1Offset = value.value; }
+                get { return waterTex1Offset; }
+                set { waterTex1Offset = value; }
             }
 
             // FadeStart, default = 1
             [ParserTarget("fadeStart", optional = true)]
-            private NumericParser<float> fadeStartSetter
+            public NumericParser<float> fadeStartSetter
             {
-                set { base.fadeStart = value.value; }
+                get { return fadeStart; }
+                set { fadeStart = value; }
             }
 
             // FadeEnd, default = 1
             [ParserTarget("fadeEnd", optional = true)]
-            private NumericParser<float> fadeEndSetter
+            public NumericParser<float> fadeEndSetter
             {
-                set { base.fadeEnd = value.value; }
+                get { return fadeEnd; }
+                set { fadeEnd = value; }
             }
 
             // PlanetOpacity, default = 1
             [ParserTarget("planetOpacity", optional = true)]
-            private NumericParser<float> planetOpacitySetter
+            public NumericParser<float> planetOpacitySetter
             {
-                set { base.planetOpacity = value.value; }
+                get { return planetOpacity; }
+                set { planetOpacity = value; }
             }
 
             // Constructors

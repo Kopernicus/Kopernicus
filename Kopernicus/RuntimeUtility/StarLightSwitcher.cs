@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,18 +21,15 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- * 
- * Original code from Star Systems by OvenProofMars, Fastwings, medsouz
- * Modified by Thomas P., Nathaniel R. Lewis (Teknoman117) for Kopernicus
- * 
  */
-
-using Kopernicus.Configuration;
+ 
+using Kopernicus.Components;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using UnityEngine;
 
@@ -51,6 +44,15 @@ namespace Kopernicus
         // Celestial body which represents the star
         public CelestialBody celestialBody { get; private set; }
 
+        // We need to patch the sun Transform of the Radiators
+        private static FieldInfo radiatorSun { get; set; }
+
+        // get the FieldInfo
+        static StarComponent()
+        {
+            radiatorSun = typeof(ModuleDeployableRadiator).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(Transform));
+        }
+
         void Start()
         {
             // Find the celestial body we are attached to
@@ -61,49 +63,40 @@ namespace Kopernicus
 
         public void SetAsActive(bool forcedUpdate = false)
         {
+            Debug.Log(celestialBody);
             // Only reset the Sun / SolarPanels if we don't force an update
             if (!forcedUpdate)
             {
                 // Set star as active star
-                Sun.Instance.sun = celestialBody;
-                Planetarium.fetch.Sun = celestialBody;
                 Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
 
                 // Set custom powerCurve for solar panels and reset Radiators
                 if (FlightGlobals.ActiveVessel != null)
                 {
+                    // SoalrPanels
                     foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-                    {
-                        sp.OnStart(PartModule.StartState.Orbital);
-                        if (powerCurve != null)
-                        {
-                            sp.useCurve = true;
-                            sp.powerCurve = powerCurve;
-                        }
-                        else
-                        {
-                            sp.useCurve = false;
-                            sp.powerCurve = null;
-                        }
-                        sp.updateFSM();
-                    }
+                        sp.sunTransform = celestialBody.transform;
 
+                    // Radiators
                     foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
-                    {
-                        rad.OnStart(PartModule.StartState.Orbital);
-                    }
+                        radiatorSun.SetValue(rad, celestialBody.transform);
+
+                    // Flight Integrator
+                    FlightIntegrator integrator = FlightGlobals.ActiveVessel.GetComponent<FlightIntegrator>();
+                    integrator.sunBody = celestialBody;
                 }
             }
 
             // Reset the LightShifter
-            LightShifterComponent lsc = null;
-            LightShifterComponent[] comps = Sun.Instance.sun.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
+            LightShifter lsc = null;
+            LightShifter[] comps = Sun.Instance.sun.scaledBody.GetComponentsInChildren<LightShifter>(true);
             if (comps != null && comps.Length > 0)
             {
                 lsc = comps[0];
                 lsc.SetStatus(false, HighLogic.LoadedScene);
             }
-            comps = celestialBody.GetTransform().GetComponentsInChildren<LightShifterComponent>(true);
+            Sun.Instance.sun = celestialBody;
+            comps = celestialBody.scaledBody.GetComponentsInChildren<LightShifter>(true);
             if (comps != null && comps.Length > 0)
             {
                 lsc = comps[0];
@@ -116,6 +109,10 @@ namespace Kopernicus
                 // Set other stuff
                 Sun.Instance.AU = lsc.AU;
                 Sun.Instance.brightnessCurve = lsc.brightnessCurve.Curve;
+
+                // Physics Globals
+                PhysicsGlobals.SolarLuminosityAtHome = lsc.solarLuminosity;
+                PhysicsGlobals.SolarInsolationAtHome = lsc.solarInsolation;
             }
 
         }
@@ -135,6 +132,13 @@ namespace Kopernicus
         // On awake(), preserve the star
         void Awake()
         {
+            // Don't run if Kopernicus is incompatible
+            if (!CompatibilityChecker.IsCompatible())
+            {
+                Destroy(this);
+                return;
+            }
+
             Logger.Default.Log ("StarLightSwitcher.Awake(): Begin");
             Logger.Default.Flush ();
             DontDestroyOnLoad (this);

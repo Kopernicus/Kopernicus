@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -44,441 +40,532 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexPlanet : ModLoader, IParserEventSubscriber
+            public class VertexPlanet : ModLoader<PQSMod_VertexPlanet>, IParserEventSubscriber
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexPlanet _mod;
-
-                private class SimplexWrapper : IParserEventSubscriber
+                // Loader for the SimplexWrapper
+                public class SimplexWrapper : IParserEventSubscriber
                 {
+                    // Loaded wrapper
                     public PQSMod_VertexPlanet.SimplexWrapper wrapper;
-                    private int seed;
 
                     // deformity
                     [ParserTarget("deformity", optional = true)]
-                    private NumericParser<double> deformity
+                    public NumericParser<double> deformity
                     {
-                        set { wrapper.deformity = value.value; }
+                        get { return wrapper.deformity; }
+                        set { wrapper.deformity = value; }
                     }
 
                     // frequency
                     [ParserTarget("frequency", optional = true)]
-                    private NumericParser<double> frequency
+                    public NumericParser<double> frequency
                     {
-                        set { wrapper.frequency = value.value; }
+                        get { return wrapper.frequency; }
+                        set { wrapper.frequency = value; }
                     }
 
                     // octaves
                     [ParserTarget("octaves", optional = true)]
-                    private NumericParser<double> octaves
+                    public NumericParser<double> octaves
                     {
-                        set { wrapper.octaves = value.value; }
+                        get { return wrapper.octaves; }
+                        set { wrapper.octaves = value; }
                     }
 
                     // persistance
                     [ParserTarget("persistance", optional = true)]
-                    private NumericParser<double> persistance
+                    public NumericParser<double> persistance
                     {
-                        set { wrapper.persistance = value.value; }
+                        get { return wrapper.persistance; }
+                        set { wrapper.persistance = value; }
                     }
 
                     // seed
                     [ParserTarget("seed", optional = true)]
-                    private NumericParser<int> seedLoader
-                    {
-                        set { seed = value.value; }
-                    }
+                    public NumericParser<int> seed = new NumericParser<int>(0);
 
-                    void IParserEventSubscriber.Apply(ConfigNode node)
-                    {
+                    // Apply Event
+                    void IParserEventSubscriber.Apply(ConfigNode node) { }
 
-                    }
-
+                    // Post Apply Event
                     void IParserEventSubscriber.PostApply(ConfigNode node)
                     {
                         wrapper.Setup(seed);
                     }
 
+                    // Default constructor
                     public SimplexWrapper()
                     {
                         wrapper = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
                     }
+
+                    // Runtime constructor
+                    public SimplexWrapper(PQSMod_VertexPlanet.SimplexWrapper simplex)
+                    {
+                        wrapper = simplex;
+                    }
                 }
 
-                private class NoiseModWrapper : IParserEventSubscriber
+                // Loader for Noise
+                public class NoiseModWrapper : IParserEventSubscriber
                 {
+                    // The loaded noise
                     public PQSMod_VertexPlanet.NoiseModWrapper wrapper;
 
-                    private class RiggedParser : IParserEventSubscriber
+                    // Parser for RiggedMultifractal (Yes, you can use any ModuleBase, but I don't want to code them all...)
+                    public class RiggedParser
                     {
-                        public LibNoise.Unity.Generator.RiggedMultifractal noise;
+                        // Noise
+                        public RiggedMultifractal noise;
 
                         // frequency
                         [ParserTarget("frequency", optional = true)]
-                        private NumericParser<double> frequency
+                        public NumericParser<double> frequency
                         {
-                            set { noise.Frequency = value.value; }
+                            get { return noise.Frequency; }
+                            set { noise.Frequency = value; }
                         }
 
                         // lacunarity
                         [ParserTarget("lacunarity", optional = true)]
-                        private NumericParser<double> lacunarity
+                        public NumericParser<double> lacunarity
                         {
-                            set { noise.Lacunarity = value.value; }
+                            get { return noise.Lacunarity; }
+                            set { noise.Lacunarity = value; }
                         }
 
                         // octaveCount
                         [ParserTarget("octaveCount", optional = true)]
-                        private NumericParser<int> octaveCount
+                        public NumericParser<int> octaveCount
                         {
-                            set { noise.OctaveCount = value.value; }
+                            get { return noise.OctaveCount; }
+                            set { noise.OctaveCount = value; }
                         }
 
                         // quality
                         [ParserTarget("quality", optional = true)]
-                        private EnumParser<LibNoise.Unity.QualityMode> quality
+                        public EnumParser<LibNoise.Unity.QualityMode> quality
                         {
-                            set { noise.Quality = value.value; }
+                            get { return noise.Quality; }
+                            set { noise.Quality = value; }
                         }
 
                         // seed
                         [ParserTarget("seed", optional = true)]
-                        private NumericParser<int> seed
+                        public NumericParser<int> seed
                         {
-                            set { noise.Seed = value.value; }
+                            get { return noise.Seed; }
+                            set { noise.Seed = value; }
                         }
 
-                        void IParserEventSubscriber.Apply(ConfigNode node)
-                        {
-
-                        }
-
-                        void IParserEventSubscriber.PostApply(ConfigNode node)
-                        {
-                            
-                        }
-
+                        // Default Constructor
                         public RiggedParser()
                         {
                             noise = new RiggedMultifractal();
+                        }
+
+                        // Runtime Constructor
+                        public RiggedParser(RiggedMultifractal rigged)
+                        {
+                            noise = rigged;
                         }
                         
                     }
 
                     // deformity
                     [ParserTarget("deformity", optional = true)]
-                    private NumericParser<double> deformity
+                    public NumericParser<double> deformity
                     {
-                        set { wrapper.deformity = value.value; }
+                        get { return wrapper.deformity; }
+                        set { wrapper.deformity = value; }
                     }
 
                     // frequency
                     [ParserTarget("frequency", optional = true)]
-                    private NumericParser<double> frequency
+                    public NumericParser<double> frequency
                     {
-                        set { wrapper.frequency = value.value; }
+                        get { return wrapper.frequency; }
+                        set { wrapper.frequency = value; }
                     }
 
                     // octaves
                     [ParserTarget("octaves", optional = true)]
-                    private NumericParser<int> octaves
+                    public NumericParser<int> octaves
                     {
-                        set { wrapper.octaves = value.value; }
+                        get { return wrapper.octaves; }
+                        set { wrapper.octaves = value; }
                     }
 
                     // persistance
                     [ParserTarget("persistance", optional = true)]
-                    private NumericParser<double> persistance
+                    public NumericParser<double> persistance
                     {
-                        set { wrapper.persistance = value.value; }
+                        get { return wrapper.persistance; }
+                        set { wrapper.persistance = value; }
                     }
 
                     // seed
                     [ParserTarget("seed", optional = true)]
-                    private NumericParser<int> seedLoader
+                    public NumericParser<int> seedLoader
                     {
-                        set { wrapper.seed = value.value; }
+                        get { return wrapper.seed; }
+                        set { wrapper.seed = value; }
                     }
 
                     // noise
                     [ParserTarget("Noise", optional = true)]
-                    private RiggedParser riggedNoise;
+                    public RiggedParser riggedNoise { get; set; }
 
+                    // Apply Event
                     void IParserEventSubscriber.Apply(ConfigNode node)
                     {
-
+                        if (wrapper.noise is RiggedMultifractal)
+                            riggedNoise = new RiggedParser((RiggedMultifractal)wrapper.noise);
                     }
 
+                    // Post Apply Event
                     void IParserEventSubscriber.PostApply(ConfigNode node)
                     {
                         wrapper.Setup(riggedNoise.noise);
                     }
 
+                    // Default constructor
                     public NoiseModWrapper()
                     {
                         wrapper = new PQSMod_VertexPlanet.NoiseModWrapper(0, 0, 0, 0);
                     }
+
+                    // Runtime Constructor
+                    public NoiseModWrapper(PQSMod_VertexPlanet.NoiseModWrapper noise)
+                    {
+                        wrapper = noise;
+                    }
                 }
 
                 // Land class loader 
-                private class LandClassWrapper : IParserEventSubscriber
+                public class LandClassLoader : IParserEventSubscriber
                 {
                     // Land class object
                     public PQSMod_VertexPlanet.LandClass landClass;
 
                     // Name of the class
                     [ParserTarget("name")]
-                    private string name
+                    public string name
                     {
+                        get { return landClass.name; }
                         set { landClass.name = value; }
                     }
 
+                    // Should we delete this
+                    [ParserTarget("delete", optional = true)]
+                    public NumericParser<bool> delete = new NumericParser<bool>(false);
+
                     // baseColor
                     [ParserTarget("baseColor")]
-                    private ColorParser baseColor
+                    public ColorParser baseColor
                     {
-                        set { landClass.baseColor = value.value; }
+                        get { return landClass.baseColor; }
+                        set { landClass.baseColor = value; }
                     }
 
                     // colorNoise
                     [ParserTarget("colorNoise")]
-                    private ColorParser colorNoise
+                    public ColorParser colorNoise
                     {
-                        set { landClass.colorNoise = value.value; }
+                        get { return landClass.colorNoise; }
+                        set { landClass.colorNoise = value; }
                     }
 
                     // colorNoiseAmount
                     [ParserTarget("colorNoiseAmount")]
-                    private NumericParser<double> colorNoiseAmount
+                    public NumericParser<double> colorNoiseAmount
                     {
-                        set { landClass.colorNoiseAmount = value.value; }
+                        get { return landClass.colorNoiseAmount; }
+                        set { landClass.colorNoiseAmount = value; }
                     }
 
                     // colorNoiseMap
                     [ParserTarget("SimplexNoiseMap")]
-                    private SimplexWrapper colorNoiseMap
-                    {
-                        set { landClass.colorNoiseMap = value.wrapper; }
-                    }
+                    public SimplexWrapper colorNoiseMap { get; set; }
 
                     // fractalEnd
                     [ParserTarget("fractalEnd")]
-                    private NumericParser<double> fractalEnd
+                    public NumericParser<double> fractalEnd
                     {
-                        set { landClass.fractalEnd = value.value; }
+                        get { return landClass.fractalEnd; }
+                        set { landClass.fractalEnd = value; }
                     }
 
                     // fractalStart
                     [ParserTarget("fractalStart")]
-                    private NumericParser<double> fractalStart
+                    public NumericParser<double> fractalStart
                     {
-                        set { landClass.fractalStart = value.value; }
+                        get { return landClass.fractalStart; }
+                        set { landClass.fractalStart = value; }
                     }
 
                     // lerpToNext
                     [ParserTarget("lerpToNext")]
-                    private NumericParser<bool> lerpToNext
+                    public NumericParser<bool> lerpToNext
                     {
-                        set { landClass.lerpToNext = value.value; }
+                        get { return landClass.lerpToNext; }
+                        set { landClass.lerpToNext = value; }
                     }
 
                     // fractalDelta
                     [ParserTarget("fractalDelta")]
-                    private NumericParser<double> fractalDelta
+                    public NumericParser<double> fractalDelta
                     {
-                        set { landClass.fractalDelta = value.value; }
+                        get { return landClass.fractalDelta; }
+                        set { landClass.fractalDelta = value; }
                     }
 
                     // endHeight
                     [ParserTarget("endHeight")]
-                    private NumericParser<double> endHeight
+                    public NumericParser<double> endHeight
                     {
-                        set { landClass.endHeight = value.value; }
+                        get { return landClass.endHeight; }
+                        set { landClass.endHeight = value; }
                     }
 
                     // startHeight
                     [ParserTarget("startHeight")]
-                    private NumericParser<double> startHeight
+                    public NumericParser<double> startHeight
                     {
-                        set { landClass.startHeight = value.value; }
+                        get { return landClass.startHeight; }
+                        set { landClass.startHeight = value; }
                     }
 
+                    // Apply Event
                     void IParserEventSubscriber.Apply(ConfigNode node) { }
 
-                    void IParserEventSubscriber.PostApply(ConfigNode node) { }
-
-                    public LandClassWrapper()
+                    // Post Apply Event
+                    void IParserEventSubscriber.PostApply(ConfigNode node)
                     {
-                        // Initialize the land class
+                        landClass.colorNoiseMap = colorNoiseMap.wrapper;
+                    }
+
+                    // Default constructor
+                    public LandClassLoader()
+                    {
                         landClass = new PQSMod_VertexPlanet.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
+                    }
+
+                    // Runtime constructor
+                    public LandClassLoader(PQSMod_VertexPlanet.LandClass land)
+                    {
+                        landClass = land;
+                        colorNoiseMap = new SimplexWrapper(landClass.colorNoiseMap);
                     }
                 }
 
                 // buildHeightColors
                 [ParserTarget("buildHeightColors", optional = true)]
-                private NumericParser<bool> buildHeightColors 
+                public NumericParser<bool> buildHeightColors 
                 {
-                    set { _mod.buildHeightColors = value.value; }
+                    get { return mod.buildHeightColors; }
+                    set { mod.buildHeightColors = value; }
                 }
 
                 // colorDeformity
                 [ParserTarget("colorDeformity", optional = true)]
-                private NumericParser<double> colorDeformity
+                public NumericParser<double> colorDeformity
                 {
-                    set { _mod.colorDeformity = value.value; }
+                    get { return mod.colorDeformity; }
+                    set { mod.colorDeformity = value; }
                 }
 
                 // continental
                 [ParserTarget("ContinentalSimplex", optional = true)]
-                private SimplexWrapper continental
-                {
-                    set { _mod.continental = value.wrapper; }
-                }
+                public SimplexWrapper continental { get; set; }
 
                 // continentalRuggedness
                 [ParserTarget("RuggednessSimplex", optional = true)]
-                private SimplexWrapper continentalRuggedness
-                {
-                    set { _mod.continentalRuggedness = value.wrapper; }
-                }
+                public SimplexWrapper continentalRuggedness { get; set; }
 
                 // continentalSharpness
                 [ParserTarget("SharpnessNoise", optional = true)]
-                private NoiseModWrapper continentalSharpness
-                {
-                    set { _mod.continentalSharpness = value.wrapper; }
-                }
+                public NoiseModWrapper continentalSharpness { get; set; }
 
                 // continentalSharpnessMap
                 [ParserTarget("SharpnessSimplexMap", optional = true)]
-                private SimplexWrapper continentalSharpnessMap
-                {
-                    set { _mod.continentalSharpnessMap = value.wrapper; }
-                }
+                public SimplexWrapper continentalSharpnessMap { get; set; }
 
                 // deformity
                 [ParserTarget("deformity", optional = true)]
-                private NumericParser<double> deformity
+                public NumericParser<double> deformity
                 {
-                    set { _mod.deformity = value.value; }
+                    get { return mod.deformity; }
+                    set { mod.deformity = value; }
                 }
 
                 // landClasses
                 [ParserTargetCollection("LandClasses", optional = true, nameSignificance = NameSignificance.None)]
-                private List<LandClassWrapper> landClasses = new List<LandClassWrapper>();
+                public List<LandClassLoader> landClasses = new List<LandClassLoader>();
 
                 // oceanDepth
                 [ParserTarget("oceanDepth", optional = true)]
-                private NumericParser<double> oceanDepth
+                public NumericParser<double> oceanDepth
                 {
-                    set { _mod.oceanDepth = value.value; }
+                    get { return mod.oceanDepth; }
+                    set { mod.oceanDepth = value; }
                 }
 
                 // oceanLevel
                 [ParserTarget("oceanLevel", optional = true)]
-                private NumericParser<double> oceanLevel
+                public NumericParser<double> oceanLevel
                 {
-                    set { _mod.oceanLevel = value.value; }
+                    get { return mod.oceanLevel; }
+                    set { mod.oceanLevel = value; }
                 }
 
                 // oceanSnap
                 [ParserTarget("oceanSnap", optional = true)]
-                private NumericParser<bool> oceanSnap
+                public NumericParser<bool> oceanSnap
                 {
-                    set { _mod.oceanSnap = value.value; }
+                    get { return mod.oceanSnap; }
+                    set { mod.oceanSnap = value; }
                 }
 
                 // oceanStep
                 [ParserTarget("oceanStep", optional = true)]
-                private NumericParser<double> oceanStep
+                public NumericParser<double> oceanStep
                 {
-                    set { _mod.oceanStep = value.value; }
+                    get { return mod.oceanStep; }
+                    set { mod.oceanStep = value; }
                 }
 
                 // seed
                 [ParserTarget("seed", optional = true)]
-                private NumericParser<int> seed
+                public NumericParser<int> seed
                 {
-                    set { _mod.seed = value.value; }
+                    get { return mod.seed; }
+                    set { mod.seed = value; }
                 }
 
                 // terrainRidgeBalance
                 [ParserTarget("terrainRidgeBalance", optional = true)]
-                private NumericParser<double> terrainRidgeBalance
+                public NumericParser<double> terrainRidgeBalance
                 {
-                    set { _mod.terrainRidgeBalance = value.value; }
+                    get { return mod.terrainRidgeBalance; }
+                    set { mod.terrainRidgeBalance = value; }
                 }
 
                 // terrainRidgesMax
                 [ParserTarget("terrainRidgesMax", optional = true)]
-                private NumericParser<double> terrainRidgesMax
+                public NumericParser<double> terrainRidgesMax
                 {
-                    set { _mod.terrainRidgesMax = value.value; }
+                    get { return mod.terrainRidgesMax; }
+                    set { mod.terrainRidgesMax = value; }
                 }
 
                 // terrainRidgesMin
                 [ParserTarget("terrainRidgesMin", optional = true)]
-                private NumericParser<double> terrainRidgesMin
+                public NumericParser<double> terrainRidgesMin
                 {
-                    set { _mod.terrainRidgesMin = value.value; }
+                    get { return mod.terrainRidgesMin; }
+                    set { mod.terrainRidgesMin = value; }
                 }
 
                 // terrainShapeEnd
                 [ParserTarget("terrainShapeEnd", optional = true)]
-                private NumericParser<double> terrainShapeEnd
+                public NumericParser<double> terrainShapeEnd
                 {
-                    set { _mod.terrainShapeEnd = value.value; }
+                    get { return mod.terrainShapeEnd; }
+                    set { mod.terrainShapeEnd = value; }
                 }
 
                 // terrainShapeStart
                 [ParserTarget("terrainShapeStart", optional = true)]
-                private NumericParser<double> terrainShapeStart
+                public NumericParser<double> terrainShapeStart
                 {
-                    set { _mod.terrainShapeStart = value.value; }
+                    get { return mod.terrainShapeStart; }
+                    set { mod.terrainShapeStart = value; }
                 }
 
                 // terrainSmoothing
                 [ParserTarget("terrainSmoothing", optional = true)]
-                private NumericParser<double> terrainSmoothing
+                public NumericParser<double> terrainSmoothing
                 {
-                    set { _mod.terrainSmoothing = value.value; }
+                    get { return mod.terrainSmoothing; }
+                    set { mod.terrainSmoothing = value; }
                 }
 
                 // terrainType
                 [ParserTarget("TerrainTypeSimplex", optional = true)]
-                private SimplexWrapper terrainType
-                {
-                    set { _mod.terrainType = value.wrapper; }
-                }
+                public SimplexWrapper terrainType { get; set; }
+                
+                // Apply Event
+                void IParserEventSubscriber.Apply(ConfigNode node) { }
 
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
+                // Post Apply Event
                 void IParserEventSubscriber.PostApply(ConfigNode node)
                 {
-                    PQSMod_VertexPlanet.LandClass[] landClassesArray = landClasses.Select(loader => loader.landClass).ToArray();
-                    if (landClassesArray.Count() != 0)
+                    // Apply Simplex and NoiseMod
+                    mod.continental = continental.wrapper;
+                    mod.continentalRuggedness = continentalRuggedness.wrapper;
+                    mod.continentalSharpness = continentalSharpness.wrapper;
+                    mod.continentalSharpnessMap = continentalSharpnessMap.wrapper;
+                    mod.terrainType = terrainType.wrapper;
+
+                    // Load the LandClasses manually, to support patching
+                    if (!node.HasNode("LandClasses"))
+                        return;
+
+                    // Already patched classes
+                    List<PQSMod_VertexPlanet.LandClass> patchedClasses = new List<PQSMod_VertexPlanet.LandClass>();
+                    if (mod.landClasses != null)
+                        mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
+
+                    // Go through the nodes
+                    foreach (ConfigNode lcNode in node.GetNode("LandClasses").nodes)
                     {
-                        _mod.landClasses = landClassesArray;
+                        // The Loader
+                        LandClassLoader loader = null;
+
+                        // Are there existing LandClasses?
+                        if (landClasses.Count > 0)
+                        {
+                            // Attempt to find a LandClass we can edit that we have not edited before
+                            loader = landClasses.Where(m => !patchedClasses.Contains(m.landClass) && ((lcNode.HasValue("name") ? m.landClass.name == lcNode.GetValue("name") : true) || (lcNode.HasValue("index") ? landClasses.IndexOf(m).ToString() == lcNode.GetValue("index") : false)))
+                                                             .FirstOrDefault();
+
+                            // Load the Loader (lol)
+                            if (loader != null)
+                            {
+                                Parser.LoadObjectFromConfigurationNode(loader, lcNode);
+                                if (loader.delete.value)
+                                    landClasses.Remove(loader);
+                                else
+                                    patchedClasses.Add(loader.landClass);
+                            }
+                        }
+
+                        // If we can't patch a LandClass, create a new one
+                        if (loader == null)
+                        {
+                            loader = Parser.CreateObjectFromConfigNode<LandClassLoader>(lcNode);
+                        }
+
+                        // Add the Loader to the List
+                        landClasses.Add(loader);
                     }
+
+                    // Apply the landclasses
+                    mod.landClasses = landClasses.Select(l => l.landClass).ToArray();
                 }
 
-                public VertexPlanet()
+                // Create the mod
+                public override void Create(PQSMod_VertexPlanet _mod)
                 {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexPlanet");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexPlanet>();
-                    base.mod = _mod;
-                }
+                    base.Create(_mod);
 
-                public VertexPlanet(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexPlanet;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    // Create base types
+                    continental = new SimplexWrapper(mod.continental);
+                    continentalRuggedness = new SimplexWrapper(mod.continentalRuggedness);
+                    continentalSharpness = new NoiseModWrapper(mod.continentalSharpness);
+                    continentalSharpnessMap = new SimplexWrapper(mod.continentalSharpnessMap);
+                    terrainType = new SimplexWrapper(mod.terrainType);
                 }
             }
         }

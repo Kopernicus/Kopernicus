@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -108,6 +104,7 @@ namespace Kopernicus
         }
         private void Apply(AtmosphereFromGround afg)
         {
+            afg.UpdateAtmosphere(true);
             afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
             afg.doScale = doScale;
             afg.ESun = ESun;
@@ -122,23 +119,22 @@ namespace Kopernicus
             afg.outerRadius = outerRadius;
             afg.innerRadius = innerRadius;
 
-            Configuration.AtmosphereFromGroundParser.CalculatedMembers(afg);
-
-            try
-            {
-                MethodInfo afgSetMaterial = typeof(AtmosphereFromGround).GetMethod("SetMaterial", BindingFlags.NonPublic | BindingFlags.Instance);
-                afgSetMaterial.Invoke(afg, new object[] { true });
-            }
-            catch
-            {
-                Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Material-resetting for AtmosphereFromGround on " + afg.planet.bodyName + " failed!");
-            }
+            Configuration.AtmosphereFromGroundLoader.CalculatedMembers(afg);
+            afg.SetMaterial(true);
         }
     }
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereFixer : MonoBehaviour
     {
         double timeCounter = 0d;
+        void Awake()
+        {
+            if (!CompatibilityChecker.IsCompatible())
+            {
+                Destroy(this);
+                return;
+            }
+        }
         public void Start()
         {
             if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)

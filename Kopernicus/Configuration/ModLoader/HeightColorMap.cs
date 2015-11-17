@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,13 +21,12 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System;
+ 
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -43,18 +38,19 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class HeightColorMap : ModLoader, IParserEventSubscriber
+            public class HeightColorMap : ModLoader<PQSMod_HeightColorMap>, IParserEventSubscriber
             {
                 // Land class loader 
-                private class LandClassLoader : IParserEventSubscriber
+                public class LandClassLoader
                 {
                     // Land class object
                     public PQSMod_HeightColorMap.LandClass landClass;
 
                     // Name of the class
                     [ParserTarget("name")]
-                    private string name 
+                    public string name 
                     {
+                        get { return landClass.name; }
                         set { landClass.name = value; }
                     }
 
@@ -64,36 +60,36 @@ namespace Kopernicus
 
                     // Color of the class
                     [ParserTarget("color")]
-                    private ColorParser color
+                    public ColorParser color
                     {
-                        set { landClass.color = value.value; }
+                        get { return landClass.color; }
+                        set { landClass.color = value; }
                     }
 
                     // Fractional altitude start
                     // altitude = (vertexHeight - vertexMinHeightOfPQS) / vertexHeightDeltaOfPQS
                     [ParserTarget("altitudeStart")]
-                    private NumericParser<double> altitudeStart
+                    public NumericParser<double> altitudeStart
                     {
-                        set { landClass.altStart = value.value; }
+                        get { return landClass.altStart; }
+                        set { landClass.altStart = value; }
                     }
 
                     // Fractional altitude end
                     [ParserTarget("altitudeEnd")]
-                    private NumericParser<double> altitudeEnd
+                    public NumericParser<double> altitudeEnd
                     {
-                        set { landClass.altEnd = value.value; }
+                        get { return landClass.altEnd; }
+                        set { landClass.altEnd = value; }
                     }
 
                     // Should we blend into the next class
                     [ParserTarget("lerpToNext")]
-                    private NumericParser<bool> lerpToNext
+                    public NumericParser<bool> lerpToNext
                     {
-                        set { landClass.lerpToNext = value.value; }
+                        get { return landClass.lerpToNext; }
+                        set { landClass.lerpToNext = value; }
                     }
-
-                    void IParserEventSubscriber.Apply(ConfigNode node) { }
-
-                    void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
                     public LandClassLoader ()
                     {
@@ -103,22 +99,20 @@ namespace Kopernicus
 
                     public LandClassLoader(PQSMod_HeightColorMap.LandClass c)
                     {
-                        this.landClass = c;
+                        landClass = c;
                     }
                 }
 
-                // Actual PQS mod we are loading
-                private PQSMod_HeightColorMap _mod;
-
                 // The deformity of the simplex terrain
                 [ParserTarget("blend", optional = true)]
-                private NumericParser<float> blend
+                public NumericParser<float> blend
                 {
-                    set { _mod.blend = value.value; }
+                    get { return mod.blend; }
+                    set { mod.blend = value.value; }
                 }
 
                 // The land classes
-                private List<LandClassLoader> landClasses = new List<LandClassLoader> ();
+                public List<LandClassLoader> landClasses = new List<LandClassLoader> ();
 
                 void IParserEventSubscriber.Apply(ConfigNode node)
                 {
@@ -127,8 +121,8 @@ namespace Kopernicus
                     {
                         // Already patched classes
                         List<PQSMod_HeightColorMap.LandClass> patchedClasses = new List<PQSMod_HeightColorMap.LandClass>();
-                        if (_mod.landClasses != null)
-                            _mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
+                        if (mod.landClasses != null)
+                            mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
 
                         // Go through the nodes
                         foreach (ConfigNode lcNode in node.GetNode("LandClasses").nodes)
@@ -157,7 +151,7 @@ namespace Kopernicus
                             // If we can't patch a LandClass, create a new one
                             if (loader == null)
                             {
-                                loader = Parser.CreateObjectFromConfigNode(typeof(LandClassLoader), lcNode) as LandClassLoader;
+                                loader = Parser.CreateObjectFromConfigNode<LandClassLoader>(lcNode);
                             }
 
                             // Add the Loader to the List
@@ -172,24 +166,9 @@ namespace Kopernicus
                     PQSMod_HeightColorMap.LandClass[] landClassesArray = landClasses.Select(loader => loader.landClass).ToArray();
                     if (landClassesArray.Count() != 0)
                     {
-                        _mod.landClasses = landClassesArray;
+                        mod.landClasses = landClassesArray;
                     }
-                }
-
-                public HeightColorMap()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("HeightColorMap");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_HeightColorMap> ();
-                    base.mod = _mod;
-                }
-
-                public HeightColorMap(PQSMod template)
-                {
-                    _mod = template as PQSMod_HeightColorMap;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    mod.lcCount = mod.landClasses.Length;
                 }
             }
         }

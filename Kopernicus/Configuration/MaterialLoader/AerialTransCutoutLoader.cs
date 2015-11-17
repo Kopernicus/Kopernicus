@@ -13,63 +13,72 @@ namespace Kopernicus
         {
             // Main Color, default = (1,1,1,1)
             [ParserTarget("color", optional = true)]
-            private ColorParser colorSetter
+            public ColorParser colorSetter
             {
-                set { base.color = value.value; }
+                get { return color; }
+                set { color = value; }
             }
 
             // Base (RGB) Trans (A), default = "white" {}
             [ParserTarget("mainTex", optional = true)]
-            private Texture2DParser mainTexSetter
+            public Texture2DParser mainTexSetter
             {
-                set { base.mainTex = value.value; }
+                get { return mainTex; }
+                set { mainTex = value; }
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            private Vector2Parser mainTexScaleSetter
+            public Vector2Parser mainTexScaleSetter
             {
-                set { base.mainTexScale = value.value; }
+                get { return mainTexScale; }
+                set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            private Vector2Parser mainTexOffsetSetter
+            public Vector2Parser mainTexOffsetSetter
             {
-                set { base.mainTexOffset = value.value; }
+                get { return mainTexOffset; }
+                set { mainTexOffset = value; }
             }
 
             // Alpha cutoff, default = 0.5
             [ParserTarget("texCutoff", optional = true)]
-            private NumericParser<float> texCutoffSetter
+            public NumericParser<float> texCutoffSetter
             {
-                set { base.texCutoff = value.value; }
+                get { return texCutoff; }
+                set { texCutoff = value; }
             }
 
             // AP Fog Color, default = (0,0,1,1)
             [ParserTarget("fogColor", optional = true)]
-            private ColorParser fogColorSetter
+            public ColorParser fogColorSetter
             {
-                set { base.fogColor = value.value; }
+                get { return fogColor; }
+                set { fogColor = value; }
             }
 
             // AP Height Fall Off, default = 1
             [ParserTarget("heightFallOff", optional = true)]
-            private NumericParser<float> heightFallOffSetter
+            public NumericParser<float> heightFallOffSetter
             {
-                set { base.heightFallOff = value.value; }
+                get { return heightFallOff; }
+                set { heightFallOff = value; }
             }
 
             // AP Global Density, default = 1
             [ParserTarget("globalDensity", optional = true)]
-            private NumericParser<float> globalDensitySetter
+            public NumericParser<float> globalDensitySetter
             {
-                set { base.globalDensity = value.value; }
+                get { return globalDensity; }
+                set { globalDensity = value; }
             }
 
             // AP Atmosphere Depth, default = 1
             [ParserTarget("atmosphereDepth", optional = true)]
-            private NumericParser<float> atmosphereDepthSetter
+            public NumericParser<float> atmosphereDepthSetter
             {
-                set { base.atmosphereDepth = value.value; }
+                get { return atmosphereDepth; }
+                set { atmosphereDepth = value; }
             }
 
             // Constructors

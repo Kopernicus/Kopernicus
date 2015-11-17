@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,19 +21,14 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- * 
- * Code based on KittiopaTech, modified by Thomas P.
  */
-
-using System;
-using System.Reflection;
+ 
 using System.Collections.Generic;
-using System.Linq;
-
+using Kopernicus.Components;
 using UnityEngine;
 
 namespace Kopernicus
@@ -45,16 +36,17 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class ParticleLoader : IParserEventSubscriber
+        public class ParticleLoader : BaseLoader, IParserEventSubscriber
         {
             // Set-up our parental objects
-            PlanetaryParticle particle;
-            GameObject body;
+            PlanetParticleEmitter particle;
+            GameObject scaledVersion;
 
             // Target of our particles
             [ParserTarget("target", optional = true, allowMerge = false)]
-            public string targetLoader
+            public string target
             {
+                get { return particle.target; }
                 set { particle.target = value; }
             }
 
@@ -62,82 +54,99 @@ namespace Kopernicus
             [ParserTarget("minEmission", optional = true, allowMerge = false)]
             public NumericParser<float> minEmission
             {
-                set { particle.minEmission = value.value; }
+                get { return particle.minEmission; }
+                set { particle.minEmission = value; }
             }
 
             // maxEmission of particles
             [ParserTarget("maxEmission", optional = true, allowMerge = false)]
             public NumericParser<float> maxEmission
             {
-                set { particle.maxEmission = value.value; }
+                get { return particle.maxEmission; }
+                set { particle.maxEmission = value; }
             }
 
             // minimum lifespan of particles
             [ParserTarget("lifespanMin", optional = true, allowMerge = false)]
             public NumericParser<float> lifespanMin
             {
-                set { particle.minEnergy = value.value; }
+                get { return particle.minEnergy; }
+                set { particle.minEnergy = value; }
             }
 
             // maximum lifespan of particles
             [ParserTarget("lifespanMax", optional = true, allowMerge = false)]
             public NumericParser<float> lifespanMax
             {
-                set { particle.maxEnergy = value.value; }
-
+                get { return particle.maxEnergy; }
+                set { particle.maxEnergy = value; }
             }
 
             // minimum size of particles
             [ParserTarget("sizeMin", optional = true, allowMerge = false)]
             public NumericParser<float> sizeMin
             {
-                set { particle.emitter.minSize = value.value; }
+                get { return particle.minSize; }
+                set { particle.minSize = value; }
             }
 
             // maximum size of particles
             [ParserTarget("sizeMax", optional = true, allowMerge = false)]
             public NumericParser<float> sizeMax
             {
-                set { particle.emitter.maxSize = value.value; }
+                get { return particle.maxSize; }
+                set { particle.maxSize = value; }
             }
 
             // speedScale of particles
             [ParserTarget("speedScale", optional = true, allowMerge = false)]
             public NumericParser<float> speedScaleLoader
             {
-                set { particle.speedScale = value.value; }
+                get { return particle.speedScale; }
+                set { particle.speedScale = value; }
             }
 
             // grow rate of particles
             [ParserTarget("rate", optional = true, allowMerge = false)]
             public NumericParser<float> rate
             {
-                set { particle.animator.sizeGrow = value.value; }
+                get { return particle.sizeGrow; }
+                set { particle.sizeGrow = value; }
             }
 
             // rand Velocity of particles
             [ParserTarget("randVelocity", optional = true, allowMerge = false)]
             public Vector3Parser randVelocity
             {
-                set { particle.randomVelocity = value.value; }
+                get { return particle.randomVelocity; }
+                set { particle.randomVelocity = value; }
             }
 
             // Texture of particles
             [ParserTarget("texture", optional = true, allowMerge = false)]
             public Texture2DParser texture
             {
-                set { particle.Renderer.material.mainTexture = value.value; }
+                get { return particle.mainTexture as Texture2D; }
+                set { particle.mainTexture = value; }
             }
-            
-            public ParticleLoader(GameObject scaledPlanet)
+
+            // Default Constructor
+            public ParticleLoader()
             {
-                this.body = scaledPlanet;
+                scaledVersion = generatedBody.scaledVersion;
+            }
+
+            // Runtime constructor
+            public ParticleLoader(CelestialBody body)
+            {
+                scaledVersion = body.scaledBody;
             }
 
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                particle = PlanetaryParticle.CreateInstance(body);
+                if (particle == null)
+                    particle = scaledVersion.AddComponent<PlanetParticleEmitter>();
             }
 
             // Post-Apply event
@@ -148,50 +157,10 @@ namespace Kopernicus
                 {
                     Vector4 c = ConfigNode.ParseVector4(color);
                     colors.Add(new Color(c.x, c.y, c.z, c.w));
-
                 }
-                particle.animator.colorAnimation = colors.ToArray();
+                particle.colorAnimation = colors.ToArray();
             }
 
-            public class PlanetaryParticle : MonoBehaviour
-            {
-                public ParticleEmitter emitter;
-                public ParticleAnimator animator;
-                public ParticleRenderer Renderer;
-                public string target = "Sun";
-                public float speedScale = 0f;
-                public float minEmission, maxEmission;
-                public float minEnergy, maxEnergy;
-                public Vector3 randomVelocity;
-
-                public static PlanetaryParticle CreateInstance(GameObject body)
-                {
-                    PlanetaryParticle p = body.AddComponent<PlanetaryParticle>();
-                    p.emitter = (ParticleEmitter)body.AddComponent("MeshParticleEmitter");
-                    p.animator = body.AddComponent<ParticleAnimator>();
-                    p.Renderer = body.AddComponent<ParticleRenderer>();
-                    p.Renderer.material = new Material(Shader.Find("Particles/Alpha Blended"));
-                    p.emitter.useWorldSpace = false;
-                    p.animator.doesAnimateColor = true;
-                    DontDestroyOnLoad(p);
-                    return p;
-                }
-
-                public void Update()
-                {
-                    emitter.emit = true;
-                    Vector3 speed = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target).position;
-                    speed -= transform.position;
-                    speed *= speedScale;
-                    emitter.minEnergy = minEnergy / TimeWarp.CurrentRate;
-                    emitter.maxEnergy = maxEnergy / TimeWarp.CurrentRate;
-                    emitter.maxEmission = maxEmission * TimeWarp.CurrentRate;
-                    emitter.minEmission = minEmission * TimeWarp.CurrentRate;
-                    emitter.rndVelocity = randomVelocity * TimeWarp.CurrentRate;
-                    speed *= TimeWarp.CurrentRate;
-                    emitter.worldVelocity = speed;
-                }
-            }
         }
     }
 }

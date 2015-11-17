@@ -1,13 +1,9 @@
 /**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -208,16 +204,6 @@ namespace Kopernicus
             return null;
         }
 
-        /** 
-         * Get the reference Geosphere of KSP (Jool's scaled space mesh)
-         * 
-         * @return The reference geosphere (1000 unit radius)
-         */
-        public static Mesh ReferenceGeosphere()
-        {
-            return Templates.refGeosphere;
-        }
-
         // Print out a tree containing all the objects in the game
         public static void PerformObjectDump()
         {
@@ -382,7 +368,7 @@ namespace Kopernicus
             double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
 
             // Generate a duplicate of the Jool mesh
-            Mesh mesh = Utility.DuplicateMesh(Utility.ReferenceGeosphere());
+            Mesh mesh = Utility.DuplicateMesh(Templates.ReferenceGeosphere);
 
             // If this body has a PQS, we can create a more detailed object
             if (pqs != null)
@@ -890,6 +876,7 @@ namespace Kopernicus
                 {
                     Debug.Log("[Kopernicus]: failed to load " + path);
                 }
+                map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
             }
             else
                 Debug.Log("[Kopernicus]: texture does not exist! " + path);
@@ -897,8 +884,14 @@ namespace Kopernicus
             return map;
         }
 
-        public static MapSO FindMapSO(string url)
+        public static MapSO FindMapSO(string url, bool cbMap)
         {
+            if (cbMap)
+            {
+                string name = url.Replace("BUILTIN/", "");
+                CBAttributeMapSO map = Resources.FindObjectsOfTypeAll<CBAttributeMapSO>().First(m => m.MapName == name);
+                return map;
+            }
             MapSO retVal = null;
             bool modFound = false;
             string trim = url.Replace("BUILTIN/", "");
@@ -923,7 +916,7 @@ namespace Kopernicus
                     PQSMod[] mods = body.pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mType).ToArray();
                     foreach (PQSMod m in mods)
                     {
-                        if(m.name != mName)
+                        if (m.name != mName)
                             continue;
                         modFound = true;
                         foreach (FieldInfo fi in m.GetType().GetFields())
@@ -948,6 +941,7 @@ namespace Kopernicus
                 else
                     Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but could not find PQSMod of that type of the given name");
             }
+            retVal.name = url;
             return retVal;
         }
 
@@ -1065,6 +1059,32 @@ namespace Kopernicus
             if (body.children != null)
                 foreach (PSystemBody b in body.children)
                     CBTCheck(b);
+        }
+
+        // Converts an unreadable texture into a readable one
+        public static Texture2D CreateReadable(Texture2D original)
+        {
+            // Checks
+            if (original == null) return null;
+            if (original.width == 0 || original.height == 0) return null;
+
+            // Create the new texture
+            Texture2D finalTexture = new Texture2D(original.width, original.height);
+
+            // isn't read or writeable ... we'll have to get tricksy
+            RenderTexture rt = RenderTexture.GetTemporary(original.width, original.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB, 1);
+            Graphics.Blit(original, rt);
+            RenderTexture.active = rt;
+
+            // Load new texture
+            finalTexture.ReadPixels(new Rect(0, 0, finalTexture.width, finalTexture.height), 0, 0);
+
+            // Kill the old one
+            RenderTexture.active = null;
+            RenderTexture.ReleaseTemporary(rt);
+
+            // Return
+            return finalTexture;
         }
 
         /** 

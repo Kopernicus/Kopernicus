@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,91 +37,70 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexColorNoise : ModLoader, IParserEventSubscriber
+            public class VertexColorNoise : ModLoader<PQSMod_VertexColorNoise>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexColorNoise _mod;
-
                 // Amount of color that will be applied
                 [ParserTarget("blend")]
-                private NumericParser<float> blend
+                public NumericParser<float> blend
                 {
-                    set { _mod.blend = value.value; }
+                    get { return mod.blend; }
+                    set { mod.blend = value; }
                 }
 
                 // The frequency of the noise
                 [ParserTarget("frequency")]
-                private NumericParser<float> frequency
+                public NumericParser<float> frequency
                 {
-                    set { _mod.frequency = value.value; }
+                    get { return mod.frequency; }
+                    set { mod.frequency = value; }
                 }
 
                 // Lacunarity of the noise
                 [ParserTarget("lacunarity")]
-                private NumericParser<float> lacunarity
+                public NumericParser<float> lacunarity
                 {
-                    set { _mod.lacunarity = value.value; }
+                    get { return mod.lacunarity; }
+                    set { mod.lacunarity = value; }
                 }
 
                 // Noise quality
                 [ParserTarget("mode")]
-                private EnumParser<LibNoise.Unity.QualityMode> mode
+                public EnumParser<LibNoise.Unity.QualityMode> mode
                 {
-                    set { _mod.mode = value.value; }
+                    get { return mod.mode; }
+                    set { mod.mode = value; }
                 }
 
                 // Noise algorithm
                 [ParserTarget("noiseType")]
-                private EnumParser<PQSMod_VertexColorNoise.NoiseType> noiseType
+                public EnumParser<PQSMod_VertexColorNoise.NoiseType> noiseType
                 {
-                    set { _mod.noiseType = value.value; }
+                    get { return mod.noiseType; }
+                    set { mod.noiseType = value; }
                 }
 
                 // Octaves of the noise
                 [ParserTarget("octaves")]
-                private NumericParser<int> octaves
+                public NumericParser<int> octaves
                 {
-                    set { _mod.octaves = value.value; }
+                    get { return mod.octaves; }
+                    set { mod.octaves = value; }
                 }
 
                 // Persistance of the noise
                 [ParserTarget("persistance")]
-                private NumericParser<float> persistance
+                public NumericParser<float> persistance
                 {
-                    set { _mod.persistance = value.value; }
+                    get { return mod.persistance; }
+                    set { mod.persistance = value; }
                 }
 
                 // The seed of the noise
                 [ParserTarget("seed")]
-                private NumericParser<int> seed
+                public NumericParser<int> seed
                 {
-                    set { _mod.seed = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexColorNoise()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexColorNoise");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexColorNoise>();
-                    base.mod = _mod;
-                }
-
-                public VertexColorNoise(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexColorNoise;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.seed; }
+                    set { mod.seed = value; }
                 }
             }
         }

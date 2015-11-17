@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,91 +37,70 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightNoiseVertHeight : ModLoader, IParserEventSubscriber
+            public class VertexHeightNoiseVertHeight : ModLoader<PQSMod_VertexHeightNoiseVertHeight>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexHeightNoiseVertHeight _mod;
-
                 // Where the height starts
                 [ParserTarget("heightStart", optional = true)]
-                private NumericParser<float> heightStart
+                public NumericParser<float> heightStart
                 {
-                    set { _mod.heightStart = value.value; }
+                    get { return mod.heightStart; }
+                    set { mod.heightStart = value; }
                 }
 
                 // Where the height ends
                 [ParserTarget("heightEnd", optional = true)]
-                private NumericParser<float> heightEnd
+                public NumericParser<float> heightEnd
                 {
-                    set { _mod.heightEnd = value.value; }
+                    get { return mod.heightEnd; }
+                    set { mod.heightEnd = value; }
                 }
 
                 // The deformity of the simplex terrain
                 [ParserTarget("deformity", optional = true)]
-                private NumericParser<float> deformity
+                public NumericParser<float> deformity
                 {
-                    set { _mod.deformity = value.value; }
+                    get { return mod.deformity; }
+                    set { mod.deformity = value; }
                 }
 
                 // The frequency of the simplex terrain
                 [ParserTarget("frequency", optional = true)]
-                private NumericParser<float> frequency
+                public NumericParser<float> frequency
                 {
-                    set { _mod.frequency = value.value; }
+                    get { return mod.frequency; }
+                    set { mod.frequency = value; }
                 }
 
                 // Octaves of the simplex height
                 [ParserTarget("octaves", optional = true)]
-                private NumericParser<int> octaves
+                public NumericParser<int> octaves
                 {
-                    set { _mod.octaves = value.value; }
+                    get { return mod.octaves; }
+                    set { mod.octaves = value; }
                 }
 
                 // Persistence of the simplex height
                 [ParserTarget("persistance", optional = true)]
-                private NumericParser<float> persistance
+                public NumericParser<float> persistance
                 {
-                    set { _mod.persistance = value.value; }
+                    get { return mod.persistance; }
+                    set { mod.persistance = value; }
                 }
 
                 // The seed of the simplex height
                 [ParserTarget("seed", optional = true)]
-                private NumericParser<int> seed
+                public NumericParser<int> seed
                 {
-                    set { _mod.seed = value.value; }
+                    get { return mod.seed; }
+                    set { mod.seed = value; }
                 }
 
                 // Quality mode for the noise
                 [ParserTarget("mode", optional = true)]
-                private EnumParser<LibNoise.Unity.QualityMode> mode
+                public EnumParser<LibNoise.Unity.QualityMode> mode
                 {
-                    set { _mod.mode = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexHeightNoiseVertHeight()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexHeightNoiseVertHeight");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexHeightNoiseVertHeight>();
-                    base.mod = _mod;
-                }
-
-                public VertexHeightNoiseVertHeight(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexHeightNoiseVertHeight;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.mode; }
+                    set { mod.mode = value; }
                 }
             }
         }

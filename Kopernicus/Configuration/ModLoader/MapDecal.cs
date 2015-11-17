@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,13 +21,12 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System;
+ 
 using UnityEngine;
 
 namespace Kopernicus
@@ -41,133 +36,125 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class MapDecal : ModLoader, IParserEventSubscriber
+            public class MapDecal : ModLoader<PQSMod_MapDecal>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_MapDecal _mod;
-
                 // absolute
                 [ParserTarget("absolute", optional = true)]
-                private NumericParser<bool> absolute
+                public NumericParser<bool> absolute
                 {
-                    set { _mod.absolute = value.value; }
+                    get { return mod.absolute; }
+                    set { mod.absolute = value; }
                 }
 
                 // absoluteOffset
                 [ParserTarget("absoluteOffset", optional = true)]
-                private NumericParser<float> absoluteOffset
+                public NumericParser<float> absoluteOffset
                 {
-                    set { _mod.absoluteOffset = value.value; }
+                    get { return mod.absoluteOffset; }
+                    set { mod.absoluteOffset = value; }
                 }
 
                 // angle
                 [ParserTarget("angle", optional = true)]
-                private NumericParser<float> angle
+                public NumericParser<float> angle
                 {
-                    set { _mod.angle = value.value; }
+                    get { return mod.angle; }
+                    set { mod.angle = value; }
                 }
 
                 // colorMap
                 [ParserTarget("colorMap", optional = true)]
-                private MapSOParser_RGB<MapSO> colorMap
+                public MapSOParser_RGB<MapSO> colorMap
                 {
-                    set { _mod.colorMap = value.value; }
+                    get { return mod.colorMap; }
+                    set { mod.colorMap = value; }
                 }
 
                 // cullBlack
                 [ParserTarget("cullBlack", optional = true)]
-                private NumericParser<bool> cullBlack
+                public NumericParser<bool> cullBlack
                 {
-                    set { _mod.cullBlack = value.value; }
+                    get { return mod.cullBlack; }
+                    set { mod.cullBlack = value; }
                 }
 
                 // DEBUG_HighlightInclusion
                 [ParserTarget("DEBUG_HighlightInclusion", optional = true)]
-                private NumericParser<bool> DEBUG_HighlightInclusion
+                public NumericParser<bool> DEBUG_HighlightInclusion
                 {
-                    set { _mod.DEBUG_HighlightInclusion = value.value; }
+                    get { return mod.DEBUG_HighlightInclusion; }
+                    set { mod.DEBUG_HighlightInclusion = value; }
                 }
 
                 // heightMap
                 [ParserTarget("heightMap", optional = true)]
-                private MapSOParser_GreyScale<MapSO> heightMap
+                public MapSOParser_GreyScale<MapSO> heightMap
                 {
-                    set { _mod.heightMap = value.value; }
+                    get { return mod.heightMap; }
+                    set { mod.heightMap = value; }
                 }
 
                 // heightMapDeformity
                 [ParserTarget("heightMapDeformity", optional = true)]
-                private NumericParser<double> heightMapDeformity
+                public NumericParser<double> heightMapDeformity
                 {
-                    set { _mod.heightMapDeformity = value.value; }
+                    get { return mod.heightMapDeformity; }
+                    set { mod.heightMapDeformity = value; }
                 }
 
                 // position
                 [ParserTarget("position", optional = true)]
-                private Vector3Parser position
+                public Vector3Parser position
                 {
-                    set { _mod.position = value.value; }
+                    get { return mod.position; }
+                    set { mod.position = value; }
+                }
+
+                // position v2
+                [ParserTarget("Position", optional = true)]
+                public PositionParser Position
+                {
+                    set { mod.position = value; }
                 }
 
                 // removeScatter
                 [ParserTarget("removeScatter", optional = true)]
-                private NumericParser<bool> removeScatter
+                public NumericParser<bool> removeScatter
                 {
-                    set { _mod.removeScatter = value.value; }
+                    get { return mod.removeScatter; }
+                    set { mod.removeScatter = value; }
                 }
 
                 // radius
                 [ParserTarget("radius", optional = true)]
-                private NumericParser<double> radius
+                public NumericParser<double> radius
                 {
-                    set { _mod.radius = value.value; }
+                    get { return mod.radius; }
+                    set { mod.radius = value; }
                 }
 
                 // smoothColor
                 [ParserTarget("smoothColor", optional = true)]
-                private NumericParser<float> smoothColor
+                public NumericParser<float> smoothColor
                 {
-                    set { _mod.smoothColor = value.value; }
+                    get { return mod.smoothColor; }
+                    set { mod.smoothColor = value; }
                 }
 
                 // smoothHeight
                 [ParserTarget("smoothHeight", optional = true)]
-                private NumericParser<float> smoothHeight
+                public NumericParser<float> smoothHeight
                 {
-                    set { _mod.smoothHeight = value.value; }
+                    get { return mod.smoothHeight; }
+                    set { mod.smoothHeight = value; }
                 }
 
                 // useAlphaHeightSmoothing
                 [ParserTarget("useAlphaHeightSmoothing", optional = true)]
-                private NumericParser<bool> useAlphaHeightSmoothing
+                public NumericParser<bool> useAlphaHeightSmoothing
                 {
-                    set { _mod.useAlphaHeightSmoothing = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public MapDecal()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("MapDecal");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_MapDecal>();
-                    base.mod = _mod;
-                }
-
-                public MapDecal(PQSMod template)
-                {
-                    _mod = template as PQSMod_MapDecal;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.useAlphaHeightSmoothing; }
+                    set { mod.useAlphaHeightSmoothing = value; }
                 }
             }
         }

@@ -13,383 +13,440 @@ namespace Kopernicus
         {
             // Saturation, default = 1
             [ParserTarget("saturation", optional = true)]
-            private NumericParser<float> saturationSetter
+            public NumericParser<float> saturationSetter
             {
-                set { base.saturation = value.value; }
+                get { return saturation; }
+                set { saturation = value; }
             }
 
             // Contrast, default = 1
             [ParserTarget("contrast", optional = true)]
-            private NumericParser<float> contrastSetter
+            public NumericParser<float> contrastSetter
             {
-                set { base.contrast = value.value; }
+                get { return contrast; }
+                set { contrast = value; }
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
             [ParserTarget("tintColor", optional = true)]
-            private ColorParser tintColorSetter
+            public ColorParser tintColorSetter
             {
-                set { base.tintColor = value.value; }
+                get { return tintColor; }
+                set { tintColor = value; }
             }
 
             // Near Blend, default = 0.5
             [ParserTarget("powerNear", optional = true)]
-            private NumericParser<float> powerNearSetter
+            public NumericParser<float> powerNearSetter
             {
-                set { base.powerNear = value.value; }
+                get { return powerNear; }
+                set { powerNear = value; }
             }
 
             // Far Blend, default = 0.5
             [ParserTarget("powerFar", optional = true)]
-            private NumericParser<float> powerFarSetter
+            public NumericParser<float> powerFarSetter
             {
-                set { base.powerFar = value.value; }
+                get { return powerFar; }
+                set { powerFar = value; }
             }
 
             // NearFar Start, default = 2000
             [ParserTarget("groundTexStart", optional = true)]
-            private NumericParser<float> groundTexStartSetter
+            public NumericParser<float> groundTexStartSetter
             {
-                set { base.groundTexStart = value.value; }
+                get { return groundTexStart; }
+                set { groundTexStart = value; }
             }
 
             // NearFar End, default = 10000
             [ParserTarget("groundTexEnd", optional = true)]
-            private NumericParser<float> groundTexEndSetter
+            public NumericParser<float> groundTexEndSetter
             {
-                set { base.groundTexEnd = value.value; }
+                get { return groundTexEnd; }
+                set { groundTexEnd = value; }
             }
 
             // Steep Blend, default = 1
             [ParserTarget("steepPower", optional = true)]
-            private NumericParser<float> steepPowerSetter
+            public NumericParser<float> steepPowerSetter
             {
-                set { base.steepPower = value.value; }
+                get { return steepPower; }
+                set { steepPower = value; }
             }
 
             // Steep Fade Start, default = 20000
             [ParserTarget("steepTexStart", optional = true)]
-            private NumericParser<float> steepTexStartSetter
+            public NumericParser<float> steepTexStartSetter
             {
-                set { base.steepTexStart = value.value; }
+                get { return steepTexStart; }
+                set { steepTexStart = value; }
             }
 
             // Steep Fade End, default = 30000
             [ParserTarget("steepTexEnd", optional = true)]
-            private NumericParser<float> steepTexEndSetter
+            public NumericParser<float> steepTexEndSetter
             {
-                set { base.steepTexEnd = value.value; }
+                get { return steepTexEnd; }
+                set { steepTexEnd = value; }
             }
 
             // Steep Texture, default = "white" {}
             [ParserTarget("steepTex", optional = true)]
-            private Texture2DParser steepTexSetter
+            public Texture2DParser steepTexSetter
             {
-                set { base.steepTex = value.value; }
+                get { return steepTex; }
+                set { steepTex = value; }
             }
 
             [ParserTarget("steepTexScale", optional = true)]
-            private Vector2Parser steepTexScaleSetter
+            public Vector2Parser steepTexScaleSetter
             {
-                set { base.steepTexScale = value.value; }
+                get { return steepTexScale; }
+                set { steepTexScale = value; }
             }
 
             [ParserTarget("steepTexOffset", optional = true)]
-            private Vector2Parser steepTexOffsetSetter
+            public Vector2Parser steepTexOffsetSetter
             {
-                set { base.steepTexOffset = value.value; }
+                get { return steepTexOffset; }
+                set { steepTexOffset = value; }
             }
 
             // Steep Bump Map, default = "bump" {}
             [ParserTarget("steepBumpMap", optional = true)]
-            private Texture2DParser steepBumpMapSetter
+            public Texture2DParser steepBumpMapSetter
             {
-                set { base.steepBumpMap = value.value; }
+                get { return steepBumpMap; }
+                set { steepBumpMap = value; }
             }
 
             [ParserTarget("steepBumpMapScale", optional = true)]
-            private Vector2Parser steepBumpMapScaleSetter
+            public Vector2Parser steepBumpMapScaleSetter
             {
-                set { base.steepBumpMapScale = value.value; }
+                get { return steepBumpMapScale; }
+                set { steepBumpMapScale = value; }
             }
 
             [ParserTarget("steepBumpMapOffset", optional = true)]
-            private Vector2Parser steepBumpMapOffsetSetter
+            public Vector2Parser steepBumpMapOffsetSetter
             {
-                set { base.steepBumpMapOffset = value.value; }
+                get { return steepBumpMapOffset; }
+                set { steepBumpMapOffset = value; }
             }
 
             // Steep Near Tiling, default = 1
             [ParserTarget("steepNearTiling", optional = true)]
-            private NumericParser<float> steepNearTilingSetter
+            public NumericParser<float> steepNearTilingSetter
             {
-                set { base.steepNearTiling = value.value; }
+                get { return steepNearTiling; }
+                set { steepNearTiling = value; }
             }
 
             // Steep Far Tiling, default = 1
             [ParserTarget("steepTiling", optional = true)]
-            private NumericParser<float> steepTilingSetter
+            public NumericParser<float> steepTilingSetter
             {
-                set { base.steepTiling = value.value; }
+                get { return steepTiling; }
+                set { steepTiling = value; }
             }
 
             // Low Texture, default = "white" {}
             [ParserTarget("lowTex", optional = true)]
-            private Texture2DParser lowTexSetter
+            public Texture2DParser lowTexSetter
             {
-                set { base.lowTex = value.value; }
+                get { return lowTex; }
+                set { lowTex = value; }
             }
 
             [ParserTarget("lowTexScale", optional = true)]
-            private Vector2Parser lowTexScaleSetter
+            public Vector2Parser lowTexScaleSetter
             {
-                set { base.lowTexScale = value.value; }
+                get { return lowTexScale; }
+                set { lowTexScale = value; }
             }
 
             [ParserTarget("lowTexOffset", optional = true)]
-            private Vector2Parser lowTexOffsetSetter
+            public Vector2Parser lowTexOffsetSetter
             {
-                set { base.lowTexOffset = value.value; }
+                get { return lowTexOffset; }
+                set { lowTexOffset = value; }
             }
 
             // Low Bump Map, default = "bump" {}
             [ParserTarget("lowBumpMap", optional = true)]
-            private Texture2DParser lowBumpMapSetter
+            public Texture2DParser lowBumpMapSetter
             {
-                set { base.lowBumpMap = value.value; }
+                get { return lowBumpMap; }
+                set { lowBumpMap = value; }
             }
 
             [ParserTarget("lowBumpMapScale", optional = true)]
-            private Vector2Parser lowBumpMapScaleSetter
+            public Vector2Parser lowBumpMapScaleSetter
             {
-                set { base.lowBumpMapScale = value.value; }
+                get { return lowBumpMapScale; }
+                set { lowBumpMapScale = value; }
             }
 
             [ParserTarget("lowBumpMapOffset", optional = true)]
-            private Vector2Parser lowBumpMapOffsetSetter
+            public Vector2Parser lowBumpMapOffsetSetter
             {
-                set { base.lowBumpMapOffset = value.value; }
+                get { return lowBumpMapOffset; }
+                set { lowBumpMapOffset = value; }
             }
 
             // Low Near Tiling, default = 1000
             [ParserTarget("lowNearTiling", optional = true)]
-            private NumericParser<float> lowNearTilingSetter
+            public NumericParser<float> lowNearTilingSetter
             {
-                set { base.lowNearTiling = value.value; }
+                get { return lowNearTiling; }
+                set { lowNearTiling = value; }
             }
 
             // Low Far Tiling, default = 10
             [ParserTarget("lowMultiFactor", optional = true)]
-            private NumericParser<float> lowMultiFactorSetter
+            public NumericParser<float> lowMultiFactorSetter
             {
-                set { base.lowMultiFactor = value.value; }
+                get { return lowMultiFactor; }
+                set { lowMultiFactor = value; }
             }
 
             // Low Bump Near Tiling, default = 1
             [ParserTarget("lowBumpNearTiling", optional = true)]
-            private NumericParser<float> lowBumpNearTilingSetter
+            public NumericParser<float> lowBumpNearTilingSetter
             {
-                set { base.lowBumpNearTiling = value.value; }
+                get { return lowBumpNearTiling; }
+                set { lowBumpNearTiling = value; }
             }
 
             // Low Bump Far Tiling, default = 1
             [ParserTarget("lowBumpFarTiling", optional = true)]
-            private NumericParser<float> lowBumpFarTilingSetter
+            public NumericParser<float> lowBumpFarTilingSetter
             {
-                set { base.lowBumpFarTiling = value.value; }
+                get { return lowBumpFarTiling; }
+                set { lowBumpFarTiling = value; }
             }
 
             // Mid Texture, default = "white" {}
             [ParserTarget("midTex", optional = true)]
-            private Texture2DParser midTexSetter
+            public Texture2DParser midTexSetter
             {
-                set { base.midTex = value.value; }
+                get { return midTex; }
+                set { midTex = value; }
             }
 
             [ParserTarget("midTexScale", optional = true)]
-            private Vector2Parser midTexScaleSetter
+            public Vector2Parser midTexScaleSetter
             {
-                set { base.midTexScale = value.value; }
+                get { return midTexScale; }
+                set { midTexScale = value; }
             }
 
             [ParserTarget("midTexOffset", optional = true)]
-            private Vector2Parser midTexOffsetSetter
+            public Vector2Parser midTexOffsetSetter
             {
-                set { base.midTexOffset = value.value; }
+                get { return midTexOffset; }
+                set { midTexOffset = value; }
             }
 
             // Mid Bump Map, default = "bump" {}
             [ParserTarget("midBumpMap", optional = true)]
-            private Texture2DParser midBumpMapSetter
+            public Texture2DParser midBumpMapSetter
             {
-                set { base.midBumpMap = value.value; }
+                get { return midBumpMap; }
+                set { midBumpMap = value; }
             }
 
             [ParserTarget("midBumpMapScale", optional = true)]
-            private Vector2Parser midBumpMapScaleSetter
+            public Vector2Parser midBumpMapScaleSetter
             {
-                set { base.midBumpMapScale = value.value; }
+                get { return midBumpMapScale; }
+                set { midBumpMapScale = value; }
             }
 
             [ParserTarget("midBumpMapOffset", optional = true)]
-            private Vector2Parser midBumpMapOffsetSetter
+            public Vector2Parser midBumpMapOffsetSetter
             {
-                set { base.midBumpMapOffset = value.value; }
+                get { return midBumpMapOffset; }
+                set { midBumpMapOffset = value; }
             }
 
             // Mid Near Tiling, default = 1000
             [ParserTarget("midNearTiling", optional = true)]
-            private NumericParser<float> midNearTilingSetter
+            public NumericParser<float> midNearTilingSetter
             {
-                set { base.midNearTiling = value.value; }
+                get { return midNearTiling; }
+                set { midNearTiling = value; }
             }
 
             // Mid Far Tiling, default = 10
             [ParserTarget("midMultiFactor", optional = true)]
-            private NumericParser<float> midMultiFactorSetter
+            public NumericParser<float> midMultiFactorSetter
             {
-                set { base.midMultiFactor = value.value; }
+                get { return midMultiFactor; }
+                set { midMultiFactor = value; }
             }
 
             // Mid Bump Near Tiling, default = 1
             [ParserTarget("midBumpNearTiling", optional = true)]
-            private NumericParser<float> midBumpNearTilingSetter
+            public NumericParser<float> midBumpNearTilingSetter
             {
-                set { base.midBumpNearTiling = value.value; }
+                get { return midBumpNearTiling; }
+                set { midBumpNearTiling = value; }
             }
 
             // Mid Bump Far Tiling, default = 1
             [ParserTarget("midBumpFarTiling", optional = true)]
-            private NumericParser<float> midBumpFarTilingSetter
+            public NumericParser<float> midBumpFarTilingSetter
             {
-                set { base.midBumpFarTiling = value.value; }
+                get { return midBumpFarTiling; }
+                set { midBumpFarTiling = value; }
             }
 
             // High Texture, default = "white" {}
             [ParserTarget("highTex", optional = true)]
-            private Texture2DParser highTexSetter
+            public Texture2DParser highTexSetter
             {
-                set { base.highTex = value.value; }
+                get { return highTex; }
+                set { highTex = value; }
             }
 
             [ParserTarget("highTexScale", optional = true)]
-            private Vector2Parser highTexScaleSetter
+            public Vector2Parser highTexScaleSetter
             {
-                set { base.highTexScale = value.value; }
+                get { return highTexScale; }
+                set { highTexScale = value; }
             }
 
             [ParserTarget("highTexOffset", optional = true)]
-            private Vector2Parser highTexOffsetSetter
+            public Vector2Parser highTexOffsetSetter
             {
-                set { base.highTexOffset = value.value; }
+                get { return highTexOffset; }
+                set { highTexOffset = value; }
             }
 
             // High Bump Map, default = "bump" {}
             [ParserTarget("highBumpMap", optional = true)]
-            private Texture2DParser highBumpMapSetter
+            public Texture2DParser highBumpMapSetter
             {
-                set { base.highBumpMap = value.value; }
+                get { return highBumpMap; }
+                set { highBumpMap = value; }
             }
 
             [ParserTarget("highBumpMapScale", optional = true)]
-            private Vector2Parser highBumpMapScaleSetter
+            public Vector2Parser highBumpMapScaleSetter
             {
-                set { base.highBumpMapScale = value.value; }
+                get { return highBumpMapScale; }
+                set { highBumpMapScale = value; }
             }
 
             [ParserTarget("highBumpMapOffset", optional = true)]
-            private Vector2Parser highBumpMapOffsetSetter
+            public Vector2Parser highBumpMapOffsetSetter
             {
-                set { base.highBumpMapOffset = value.value; }
+                get { return highBumpMapOffset; }
+                set { highBumpMapOffset = value; }
             }
 
             // High Near Tiling, default = 1000
             [ParserTarget("highNearTiling", optional = true)]
-            private NumericParser<float> highNearTilingSetter
+            public NumericParser<float> highNearTilingSetter
             {
-                set { base.highNearTiling = value.value; }
+                get { return highNearTiling; }
+                set { highNearTiling = value; }
             }
 
             // High Far Tiling, default = 10
             [ParserTarget("highMultiFactor", optional = true)]
-            private NumericParser<float> highMultiFactorSetter
+            public NumericParser<float> highMultiFactorSetter
             {
-                set { base.highMultiFactor = value.value; }
+                get { return highMultiFactor; }
+                set { highMultiFactor = value; }
             }
 
             // High Bump Near Tiling, default = 1
             [ParserTarget("highBumpNearTiling", optional = true)]
-            private NumericParser<float> highBumpNearTilingSetter
+            public NumericParser<float> highBumpNearTilingSetter
             {
-                set { base.highBumpNearTiling = value.value; }
+                get { return highBumpNearTiling; }
+                set { highBumpNearTiling = value; }
             }
 
             // High Bump Far Tiling, default = 1
             [ParserTarget("highBumpFarTiling", optional = true)]
-            private NumericParser<float> highBumpFarTilingSetter
+            public NumericParser<float> highBumpFarTilingSetter
             {
-                set { base.highBumpFarTiling = value.value; }
+                get { return highBumpFarTiling; }
+                set { highBumpFarTiling = value; }
             }
 
             // Low Transition Start, default = 0
             [ParserTarget("lowStart", optional = true)]
-            private NumericParser<float> lowStartSetter
+            public NumericParser<float> lowStartSetter
             {
-                set { base.lowStart = value.value; }
+                get { return lowStart; }
+                set { lowStart = value; }
             }
 
             // Low Transition End, default = 0.3
             [ParserTarget("lowEnd", optional = true)]
-            private NumericParser<float> lowEndSetter
+            public NumericParser<float> lowEndSetter
             {
-                set { base.lowEnd = value.value; }
+                get { return lowEnd; }
+                set { lowEnd = value; }
             }
 
             // High Transition Start, default = 0.8
             [ParserTarget("highStart", optional = true)]
-            private NumericParser<float> highStartSetter
+            public NumericParser<float> highStartSetter
             {
-                set { base.highStart = value.value; }
+                get { return highStart; }
+                set { highStart = value; }
             }
 
             // High Transition End, default = 1
             [ParserTarget("highEnd", optional = true)]
-            private NumericParser<float> highEndSetter
+            public NumericParser<float> highEndSetter
             {
-                set { base.highEnd = value.value; }
+                get { return highEnd; }
+                set { highEnd = value; }
             }
 
             // AP Global Density, default = 1
             [ParserTarget("globalDensity", optional = true)]
-            private NumericParser<float> globalDensitySetter
+            public NumericParser<float> globalDensitySetter
             {
-                set { base.globalDensity = value.value; }
+                get { return globalDensity; }
+                set { globalDensity = value; }
             }
 
             // FogColorRamp, default = "white" {}
             [ParserTarget("fogColorRamp", optional = true)]
-            private Texture2DParser fogColorRampSetter
+            public Texture2DParser fogColorRampSetter
             {
-                set { base.fogColorRamp = value.value; }
+                get { return fogColorRamp; }
+                set { fogColorRamp = value; }
             }
 
             [ParserTarget("fogColorRampScale", optional = true)]
-            private Vector2Parser fogColorRampScaleSetter
+            public Vector2Parser fogColorRampScaleSetter
             {
-                set { base.fogColorRampScale = value.value; }
+                get { return fogColorRampScale; }
+                set { fogColorRampScale = value; }
             }
 
             [ParserTarget("fogColorRampOffset", optional = true)]
-            private Vector2Parser fogColorRampOffsetSetter
+            public Vector2Parser fogColorRampOffsetSetter
             {
-                set { base.fogColorRampOffset = value.value; }
+                get { return fogColorRampOffset; }
+                set { fogColorRampOffset = value; }
             }
 
             // PlanetOpacity, default = 1
             [ParserTarget("planetOpacity", optional = true)]
-            private NumericParser<float> planetOpacitySetter
+            public NumericParser<float> planetOpacitySetter
             {
-                set { base.planetOpacity = value.value; }
+                get { return planetOpacity; }
+                set { planetOpacity = value; }
             }
 
             // Constructors

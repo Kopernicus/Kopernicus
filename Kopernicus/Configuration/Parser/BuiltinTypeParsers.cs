@@ -1,13 +1,9 @@
 /**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -37,16 +33,14 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
-
 using UnityEngine;
+using Kopernicus.OnDemand;
 
 namespace Kopernicus
 {
     namespace Configuration
     {
-        /**
-         * Simple parser for numerics
-         **/
+        // Simple parser for numerics
         [RequireConfigType(ConfigType.Value)]
         public class NumericParser<T> : IParsable
         {
@@ -65,9 +59,19 @@ namespace Kopernicus
             {
                 value = i;
             }
+
+            // Convert
+            public static implicit operator T(NumericParser<T> parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator NumericParser<T>(T value)
+            {
+                return new NumericParser<T>(value);
+            }
         }
 
-        /* Simple parser for numeric collections */
+        // Simple parser for numeric collections 
         [RequireConfigType(ConfigType.Value)]
         public class NumericCollectionParser<T> : IParsable
         {
@@ -97,9 +101,19 @@ namespace Kopernicus
             {
                 value = i;
             }
+
+            // Convert
+            public static implicit operator T[](NumericCollectionParser<T> parser)
+            {
+                return parser.value.ToArray();
+            }
+            public static implicit operator NumericCollectionParser<T>(T[] value)
+            {
+                return new NumericCollectionParser<T>(value);
+            }
         }
 
-        /** Simple parser for string arrays */
+        // Simple parser for string arrays
         [RequireConfigType(ConfigType.Value)]
         public class StringCollectionParser : IParsable
         {
@@ -121,9 +135,19 @@ namespace Kopernicus
             {
                 value = i;
             }
+
+            // Convert
+            public static implicit operator string[](StringCollectionParser parser)
+            {
+                return parser.value.ToArray();
+            }
+            public static implicit operator StringCollectionParser(string[] value)
+            {
+                return new StringCollectionParser(value);
+            }
         }
 
-        /** Parser for color */
+        // Parser for color
         [RequireConfigType(ConfigType.Value)]
         public class ColorParser : IParsable
         {
@@ -170,24 +194,19 @@ namespace Kopernicus
             {
                 value = i;
             }
-        }
-        
-        /** Parser for color32 */
-        [RequireConfigType(ConfigType.Value)]
-        public class Color32Parser : IParsable
-        {
-            public Color32 value;
-            public void SetFromString(string s)
+
+            // Convert
+            public static implicit operator Color(ColorParser parser)
             {
-                value = ConfigNode.ParseColor32(s);
+                return parser.value;
             }
-            public Color32Parser()
+            public static implicit operator ColorParser(Color value)
             {
-                
+                return new ColorParser(value);
             }
         }
 
-        /** Parser for enum */
+        // Parser for enum
         [RequireConfigType(ConfigType.Value)]
         public class EnumParser<T> : IParsable where T : struct, IConvertible
         {
@@ -204,24 +223,19 @@ namespace Kopernicus
             {
                 value = i;
             }
-        }
-        
-        /** Parser for matrix 4x4 */
-        [RequireConfigType(ConfigType.Value)]
-        public class Matrix4x4Parser : IParsable 
-        {
-            public Matrix4x4 value;
-            public void SetFromString(string s)
+
+            // Convert
+            public static implicit operator T(EnumParser<T> parser)
             {
-                value = ConfigNode.ParseMatrix4x4(s);
+                return parser.value;
             }
-            public Matrix4x4Parser ()
+            public static implicit operator EnumParser<T>(T value)
             {
-                
+                return new EnumParser<T>(value);
             }
         }
-        
-        /** Parser for quaternion */
+
+        // Parser for quaternion
         [RequireConfigType(ConfigType.Value)]
         public class QuaternionParser : IParsable
         {
@@ -234,9 +248,23 @@ namespace Kopernicus
             {
                 
             }
+            public QuaternionParser(Quaternion value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Quaternion(QuaternionParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator QuaternionParser(Quaternion value)
+            {
+                return new QuaternionParser(value);
+            }
         }
-        
-        /** Parser for dual quaternion */
+
+        // Parser for dual quaternion
         [RequireConfigType(ConfigType.Value)]
         public class QuaternionDParser : IParsable
         {
@@ -249,9 +277,23 @@ namespace Kopernicus
             {
                 
             }
+            public QuaternionDParser(QuaternionD value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator QuaternionD(QuaternionDParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator QuaternionDParser(QuaternionD value)
+            {
+                return new QuaternionDParser(value);
+            }
         }
-        
-        /** Parser for vec2 **/
+
+        // Parser for vec2 
         [RequireConfigType(ConfigType.Value)]
         public class Vector2Parser : IParsable
         {
@@ -264,9 +306,23 @@ namespace Kopernicus
             {
                 
             }
+            public Vector2Parser(Vector2 value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector2(Vector2Parser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector2Parser(Vector2 value)
+            {
+                return new Vector2Parser(value);
+            }
         }
-        
-        /** Parser for vec3 **/
+
+        // Parser for vec3
         [RequireConfigType(ConfigType.Value)]
         public class Vector3Parser : IParsable
         {
@@ -279,9 +335,54 @@ namespace Kopernicus
             {
                 
             }
+            public Vector3Parser(Vector3 value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector3(Vector3Parser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector3Parser(Vector3 value)
+            {
+                return new Vector3Parser(value);
+            }
         }
-        
-        /** Parser for vec3d **/
+
+        // Alternative parser for Vector3
+        [RequireConfigType(ConfigType.Node)]
+        public class PositionParser : BaseLoader
+        {
+            // Latitude
+            [ParserTarget("latitude", optional = true)]
+            public NumericParser<double> latitude { get; set; }
+
+            // Longitude
+            [ParserTarget("longitude", optional = true)]
+            public NumericParser<double> longitude { get; set; }
+
+            // Altitude
+            [ParserTarget("altitude", optional = true)]
+            public NumericParser<double> altitude { get; set; }
+
+            // Default Constructor
+            public PositionParser()
+            {
+                latitude = new NumericParser<double>(0);
+                longitude = new NumericParser<double>(0);
+                altitude = new NumericParser<double>(0);
+            }
+
+            // Convert
+            public static implicit operator Vector3(PositionParser parser)
+            {
+                return Utility.LLAtoECEF(parser.latitude, parser.longitude, parser.altitude, generatedBody.celestialBody.Radius);
+            }
+        }
+
+        // Parser for vec3d
         [RequireConfigType(ConfigType.Value)]
         public class Vector3DParser : IParsable
         {
@@ -294,9 +395,23 @@ namespace Kopernicus
             {
                 
             }
+            public Vector3DParser(Vector3d value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector3d(Vector3DParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector3DParser(Vector3d value)
+            {
+                return new Vector3DParser(value);
+            }
         }
-        
-        /** Parser for vec4 **/
+
+        // Parser for vec4
         [RequireConfigType(ConfigType.Value)]
         public class Vector4Parser : IParsable
         {
@@ -307,11 +422,25 @@ namespace Kopernicus
             }
             public Vector4Parser()
             {
-                
+
+            }
+            public Vector4Parser(Vector4 value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator Vector4(Vector4Parser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Vector4Parser(Vector4 value)
+            {
+                return new Vector4Parser(value);
             }
         }
-        
-        /** Parser for Texture2D **/
+
+        // Parser for Texture2D
         [RequireConfigType(ConfigType.Value)]
         public class Texture2DParser : IParsable
         {
@@ -322,7 +451,7 @@ namespace Kopernicus
                 if (s.StartsWith ("BUILTIN/")) 
                 {
                     string textureName = Regex.Replace (s, "BUILTIN/", "");
-                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Texture2D> ().Where (tex => tex.name == textureName).First ();
+                    value = Resources.FindObjectsOfTypeAll<Texture>().Where(tex => tex.name == textureName).First() as Texture2D;
                     return;
                 }
 
@@ -331,6 +460,13 @@ namespace Kopernicus
                 {
                     // Get the texture URL
                     value = GameDatabase.Instance.GetTexture(s, false);
+                    return;
+                }
+
+                // Or load the texture directly
+                else if (Utility.TextureExists(s))
+                {
+                    value = Utility.LoadTexture(s, false, false, false);
                     return;
                 }
 
@@ -345,86 +481,81 @@ namespace Kopernicus
             {
                 this.value = value;
             }
+
+            // Convert
+            public static implicit operator Texture2D(Texture2DParser parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator Texture2DParser(Texture2D value)
+            {
+                return new Texture2DParser(value);
+            }
         }
 
-        /** Parser for a MapSO */
-        public class MapSOParser_GreyScale<T> : IParsable where T : MapSO
+        // Parser for a MapSO
+        public class MapSOParser_GreyScale<T> : BaseLoader, IParsable where T : MapSO
         {
+            // Value
             public T value;
-            public void SetFromString (string s)
+
+            // Load the MapSO
+            public void SetFromString(string s)
             {
-                bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
-                if (Templates.instance.mapsGray != null && Templates.instance.mapsGray.ContainsKey(s))
+                // Should we use OnDemand?
+                bool useOnDemand = OnDemandStorage.useOnDemand;
+
+                if (s.StartsWith("BUILTIN/"))
                 {
-                    value = (T)Templates.instance.mapsGray[s];
-                    if (useOnDemand)
-                    {
-                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
-                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
-                    }
+                    value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T; // can't make built-in maps On-Demand.....yet... >:D
                 }
                 else
                 {
-                    T obj = null;
-                    if (s.StartsWith("BUILTIN/"))
+                    // are we on-demand? Don't load now.
+                    if (useOnDemand)
                     {
-                        obj = Utility.FindMapSO(s) as T;
-                    }
-                    if (obj != null)
-                    {
-                        value = obj; // can't make built-in maps On-Demand
-                    }
-                    else
-                    {
-                        // are we on-demand? Don't load now.
-                        if (useOnDemand)
+                        if (Utility.TextureExists(s))
                         {
-                            if (Utility.TextureExists(s))
+                            string mapName = s;
+                            mapName = mapName.Substring(s.LastIndexOf('/') + 1);
+                            int lastDot = mapName.LastIndexOf('.');
+                            if (lastDot > 0)
+                                mapName = mapName.Substring(0, lastDot);
+                            if (typeof(T) == typeof(CBAttributeMapSO))
                             {
-                                string mapName = s;
-                                mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                                int lastDot = mapName.LastIndexOf('.');
-                                if (lastDot > 0)
-                                    mapName = mapName.Substring(0, lastDot);
-                                if (typeof(T) == typeof(CBAttributeMapSO))
-                                {
-                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
-                                    valCB.SetPath(s);
-                                    valCB.Depth = MapSO.MapDepth.Greyscale;
-                                    valCB.name = mapName + " (CBG) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valCB.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
-                                    value = valCB as T;
-                                }
-                                else
-                                {
-                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
-                                    valMap.SetPath(s);
-                                    valMap.Depth = MapSO.MapDepth.Greyscale;
-                                    valMap.name = mapName + " (G) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valMap.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
-                                    value = valMap as T;
-                                }
-                                Templates.instance.mapsGray[s] = value;
+                                CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
+                                valCB.Path = s;
+                                valCB.Depth = MapSO.MapDepth.Greyscale;
+                                valCB.name = mapName + " (CBG) for " + generatedBody.name;
+                                valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valCB);
+                                value = valCB as T;
+                            }
+                            else
+                            {
+                                MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
+                                valMap.Path = s;
+                                valMap.Depth = MapSO.MapDepth.Greyscale;
+                                valMap.name = mapName + " (G) for " + generatedBody.name;
+                                valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valMap);
+                                value = valMap as T;
                             }
                         }
-                        else // Load the texture
+                    }
+                    else // Load the texture
+                    {
+                        Texture2D map = Utility.LoadTexture(s, false, false, false);
+                        if (map != null)
                         {
-                            Texture2D map = Utility.LoadTexture(s, false, false, false);
-                            if (map != null)
-                            {
-                                // Create a new map script object
-                                value = ScriptableObject.CreateInstance<T>();
-                                value.CreateMap(MapSO.MapDepth.Greyscale, map);
-                                UnityEngine.Object.DestroyImmediate(map);
-                                Templates.instance.mapsGray[s] = value;
-                            }
+                            // Create a new map script object
+                            value = ScriptableObject.CreateInstance<T>();
+                            value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                            UnityEngine.Object.DestroyImmediate(map);
                         }
                     }
                 }
+                value.name = s;
             }
             public MapSOParser_GreyScale()
             {
@@ -434,89 +565,82 @@ namespace Kopernicus
             {
                 this.value = value;
             }
+
+            // Convert
+            public static implicit operator T(MapSOParser_GreyScale<T> parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator MapSOParser_GreyScale<T>(T value)
+            {
+                return new MapSOParser_GreyScale<T>(value);
+            }
         }
 
-        /** Parser for a MapSO */
-        public class MapSOParser_RGB<T> : IParsable where T : MapSO
+        // Parser for a MapSO
+        public class MapSOParser_RGB<T> : BaseLoader, IParsable where T : MapSO
         {
+            // Value
             public T value;
+
+            // Load the MapSO
             public void SetFromString(string s)
             {
-                bool useOnDemand = (typeof(T) == typeof(CBAttributeMapSO)) ? OnDemand.OnDemandStorage.useOnDemandBiomes : OnDemand.OnDemandStorage.useOnDemand;
-                if (Templates.instance.mapsRGB != null && Templates.instance.mapsRGB.ContainsKey(s))
-                {
-                    value = (T)Templates.instance.mapsRGB[s];
+                // Should we use OnDemand?
+                bool useOnDemand = OnDemandStorage.useOnDemand;
 
-                    if (useOnDemand)
-                    {
-                        value.name += ", and " + OnDemand.OnDemandStorage.currentBody;
-                        OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, (OnDemand.ILoadOnDemand)value);
-                    }
+                if (s.StartsWith("BUILTIN/"))
+                {
+                    value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T;
                 }
                 else
                 {
-                    T obj = null;
-                    if (s.StartsWith("BUILTIN/"))
+                    // check if OnDemand.
+                    if (useOnDemand)
                     {
-                        obj = Utility.FindMapSO(s) as T;
-                    }
-                    if (obj != null)
-                    {
-                        value = obj; // can't make built-in maps On-Demand
+                        if (Utility.TextureExists(s))
+                        {
+                            string mapName = s;
+                            mapName = mapName.Substring(s.LastIndexOf('/') + 1);
+                            int lastDot = mapName.LastIndexOf('.');
+                            if (lastDot > 0)
+                                mapName = mapName.Substring(0, lastDot);
+                            if (typeof(T) == typeof(CBAttributeMapSO))
+                            {
+                                CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
+                                valCB.Path = s;
+                                valCB.Depth = MapSO.MapDepth.RGB;
+                                valCB.name = mapName + " (CBRGB) for " + generatedBody.name;
+                                valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valCB);
+                                value = valCB as T;
+                            }
+                            else
+                            {
+                                OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<MapSODemand>();
+                                valMap.Path = s;
+                                valMap.Depth = MapSO.MapDepth.RGB;
+                                valMap.name = mapName + " (RGB) for " + generatedBody.name;
+                                valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
+                                OnDemandStorage.AddMap(generatedBody.name, valMap);
+                                value = valMap as T;
+                            }
+                        }
                     }
                     else
                     {
-                        // check if OnDemand.
-                        if (useOnDemand)
+                        // Load the texture
+                        Texture2D map = Utility.LoadTexture(s, false, false, false);
+                        if (map != null)
                         {
-                            if (Utility.TextureExists(s))
-                            {
-                                string mapName = s;
-                                mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                                int lastDot = mapName.LastIndexOf('.');
-                                if (lastDot > 0)
-                                    mapName = mapName.Substring(0, lastDot);
-                                if (typeof(T) == typeof(CBAttributeMapSO))
-                                {
-                                    OnDemand.CBAttributeMapSODemand valCB = ScriptableObject.CreateInstance<OnDemand.CBAttributeMapSODemand>();
-                                    valCB.SetPath(s);
-                                    valCB.Depth = MapSO.MapDepth.RGB;
-                                    valCB.name = mapName + " (CBRGB) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valCB.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valCB);
-                                    value = valCB as T;
-                                }
-                                else
-                                {
-                                    OnDemand.MapSODemand valMap = ScriptableObject.CreateInstance<OnDemand.MapSODemand>();
-                                    valMap.SetPath(s);
-                                    valMap.Depth = MapSO.MapDepth.RGB;
-                                    valMap.name = mapName + " (RGB) for " + OnDemand.OnDemandStorage.currentBody;
-                                    valMap.SetAutoLoad(OnDemand.OnDemandStorage.onDemandLoadOnMissing);
-
-                                    OnDemand.OnDemandStorage.AddMap(OnDemand.OnDemandStorage.currentBody, valMap);
-                                    value = valMap as T;
-                                }
-                                Templates.instance.mapsRGB[s] = value;
-                                Debug.Log("OD: created map of path " + s);
-                            }
-                        }
-                        else
-                        {
-                            // Load the texture
-                            Texture2D map = Utility.LoadTexture(s, false, false, false);
-                            if (map != null)
-                            {
-                                // Create a new map script object
-                                value = ScriptableObject.CreateInstance<T>();
-                                value.CreateMap(MapSO.MapDepth.RGB, map);
-                                UnityEngine.Object.DestroyImmediate(map);
-                                Templates.instance.mapsRGB[s] = value;
-                            }
+                            // Create a new map script object
+                            value = ScriptableObject.CreateInstance<T>();
+                            value.CreateMap(MapSO.MapDepth.RGB, map);
+                            UnityEngine.Object.DestroyImmediate(map);
                         }
                     }
                 }
+                value.name = s;
             }
             public MapSOParser_RGB()
             {
@@ -526,9 +650,19 @@ namespace Kopernicus
             {
                 this.value = value;
             }
+
+            // Convert
+            public static implicit operator T(MapSOParser_RGB<T> parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator MapSOParser_RGB<T>(T value)
+            {
+                return new MapSOParser_RGB<T>(value);
+            }
         }
 
-        /** Parser for a float curve **/
+        // Parser for a float curve
         [RequireConfigType(ConfigType.Node)]
         public class FloatCurveParser : IParserEventSubscriber
         {
@@ -555,61 +689,79 @@ namespace Kopernicus
             {
                 this.curve = curve;
             }
+
+            // Convert
+            public static implicit operator FloatCurve(FloatCurveParser parser)
+            {
+                return parser.curve;
+            }
+            public static implicit operator FloatCurveParser(FloatCurve value)
+            {
+                return new FloatCurveParser(value);
+            }
         }
 
-        /** Parser for Physics Material **/
+        // Parser for Physics Material
         [RequireConfigType(ConfigType.Node)]
         public class PhysicsMaterialParser : IParserEventSubscriber
         {
             // Physics material we are generating
-            public PhysicMaterial material { get; private set; }
+            public PhysicMaterial material { get; set; }
 
             // Physics material parameters
             [ParserTarget("bounceCombine", optional = true)]
-            private EnumParser<PhysicMaterialCombine> bounceCombine
+            public EnumParser<PhysicMaterialCombine> bounceCombine
             {
-                set { material.bounceCombine = value.value; }
+                get { return material.bounceCombine; }
+                set { material.bounceCombine = value; }
             }
 
             [ParserTarget("frictionCombine", optional = true)]
-            private EnumParser<PhysicMaterialCombine> frictionCombine
+            public EnumParser<PhysicMaterialCombine> frictionCombine
             {
-                set { material.frictionCombine = value.value; }
+                get { return material.frictionCombine; }
+                set { material.frictionCombine = value; }
             }
             
             [ParserTarget("frictionDirection2", optional = true)]
-            private Vector3Parser frictionDirection2
+            public Vector3Parser frictionDirection2
             {
-                set { material.frictionDirection2 = value.value; }
+                get { return material.frictionDirection2; }
+                set { material.frictionDirection2 = value; }
             }
 
             [ParserTarget("bounciness", optional = true)]
-            private NumericParser<float> bounciness
+            public NumericParser<float> bounciness
             {
-                set { material.bounciness = value.value; }
-            }
+                get { return material.bounciness; }
+                set { material.bounciness = value; }
+            }           
             
             [ParserTarget("staticFriction", optional = true)]
-            private NumericParser<float> staticFriction
-            {
-                set { material.staticFriction = value.value; }
+            public NumericParser<float> staticFriction
+            { 
+                get { return material.staticFriction; }
+                set { material.staticFriction = value; }
             }
             
             [ParserTarget("staticFriction2", optional = true)]
-            private NumericParser<float> staticFriction2
+            public NumericParser<float> staticFriction2
             {
+                get { return material.staticFriction2; }
                 set { material.staticFriction2 = value.value; }
             }
             
             [ParserTarget("dynamicFriction", optional = true)]
-            private NumericParser<float> dynamicFriction
+            public NumericParser<float> dynamicFriction
             {
+                get { return material.dynamicFriction; }
                 set { material.dynamicFriction = value.value; }
             }
             
             [ParserTarget("dynamicFriction2", optional = true)]
-            private NumericParser<float> dynamicFriction2
+            public NumericParser<float> dynamicFriction2
             {
+                get { return material.dynamicFriction2; }
                 set { material.dynamicFriction2 = value.value; }
             }
 
@@ -617,101 +769,103 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
             // Default constructor
-            public PhysicsMaterialParser ()
+            public PhysicsMaterialParser()
             {
                 this.material = null;
             }
 
             // Initializing constructor
-            public PhysicsMaterialParser (PhysicMaterial material)
+            public PhysicsMaterialParser(PhysicMaterial material)
             {
                 this.material = material;
             }
+
+            // Convert
+            public static implicit operator PhysicMaterial(PhysicsMaterialParser parser)
+            {
+                return parser.material;
+            }
+            public static implicit operator PhysicsMaterialParser(PhysicMaterial material)
+            {
+                return new PhysicsMaterialParser(material);
+            }
         }
 
-        /** Parser for mesh */
+        // Parser for mesh
         [RequireConfigType(ConfigType.Value)]
         public class MeshParser : IParsable
         {
-            public Mesh mesh;
-            public GameObject Object;
+            public Mesh value;
             public void SetFromString (string s)
             {
                 // Check if we are attempting to load a builtin mesh
-                if (s.StartsWith("BUILTIN/"))
+                if (s.StartsWith ("BUILTIN/")) 
                 {
-                    try
-                    {
-                        string objectName = Regex.Replace(s, "BUILTIN/", "");
-                        Object = Resources.FindObjectsOfTypeAll<GameObject>().Where(o => o.name == objectName).First();
-                        List<MeshFilter> filters = Object.GetComponentsInChildren<MeshFilter>(true).ToList();
-                        List<CombineInstance> combines = new List<CombineInstance>();
-                        filters.ForEach(f => combines.Add(new CombineInstance() { mesh = f.sharedMesh }));
-                        mesh = new Mesh();
-                        mesh.CombineMeshes(combines.ToArray());
-                    }
-                    catch { }
+                    string meshName = Regex.Replace (s, "BUILTIN/", "");
+                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Mesh> ().Where (mesh => mesh.name == meshName).First ();
+                    return;
+                }
 
-                    // Check if we've found a mesh, otherwise try to find it directly
-                    if (mesh == null)
-                    {
-                        string meshName = Regex.Replace(s, "BUILTIN/", "");
-                        mesh = Resources.FindObjectsOfTypeAll<Mesh>().Where(m => m.name == meshName).First();
-                        Object = new GameObject(meshName);
-                        Object.AddComponent<MeshFilter>().sharedMesh = mesh;
-                        MonoBehaviour.DontDestroyOnLoad(Object);
-                    }
-                }
-                else if (s.EndsWith(".obj")) // Check which Mesh-Type we're loading
+                String path = KSPUtil.ApplicationRootPath + "GameData/" + s;
+                if (System.IO.File.Exists(path))
                 {
-                    string path = KSPUtil.ApplicationRootPath + "GameData/" + s;
-                    if (File.Exists(path))
-                    {
-                        mesh = ObjImporter.ImportFile(path);
-                        mesh.name = Path.GetFileNameWithoutExtension(path);
-                        Object = new GameObject(mesh.name);
-                        UnityEngine.Object.DontDestroyOnLoad(Object);
-                        Object.AddComponent<MeshFilter>().sharedMesh = mesh;
-                        return;
-                    }
-                }
-                else if (s.EndsWith(".mu"))
-                {
-                    // If there's a model, import it
-                    string path = Regex.Replace(s, ".mu", "");
-                    if (GameDatabase.Instance.ExistsModel(path))
-                    {
-                        Object = GameDatabase.Instance.GetModel(path);
-                        List<MeshFilter> filters = Object.GetComponentsInChildren<MeshFilter>(true).ToList();
-                        List<CombineInstance> combines = new List<CombineInstance>();
-                        filters.ForEach(f => combines.Add(new CombineInstance() { mesh = f.sharedMesh }));
-                        mesh = new Mesh();
-                        mesh.CombineMeshes(combines.ToArray());
-                        return;
-                    }
+                    value = ObjImporter.ImportFile(path);
+                    value.name = Path.GetFileNameWithoutExtension(path);
+                    return;
                 }
 
                 // Mesh was not found
-                mesh = null;
-                Object = null;
+                value = null;
             }
             public MeshParser ()
             {
                 
             }
-            public MeshParser (Mesh mesh)
+            public MeshParser (Mesh value)
             {
-                this.mesh = mesh;
+                this.value = value;
             }
-            public MeshParser(GameObject Object)
+
+            // Convert
+            public static implicit operator Mesh(MeshParser parser)
             {
-                this.Object = Object;
+                return parser.value;
             }
-            public MeshParser(GameObject Object, Mesh mesh)
+            public static implicit operator MeshParser(Mesh mesh)
             {
-                this.Object = Object;
-                this.mesh = mesh;
+                return new MeshParser(mesh);
             }
         }
+
+        // parser for .mu
+		[RequireConfigType(ConfigType.Value)]
+		public class MuParser : IParsable
+		{
+			public GameObject value;
+
+			public void SetFromString (string s)
+			{
+				// If there's a model, import it
+				if (GameDatabase.Instance.ExistsModel (s))
+				{
+					value = GameDatabase.Instance.GetModel (s);
+					return;
+				}
+
+				// Otherwise, set the value to null
+				value = null;
+			}
+
+			// Default constructor
+			public MuParser()
+			{
+			}
+
+			// Initializing constructor
+			public MuParser(GameObject value)
+			{
+				this.value = value;
+			}
+		}
     }
 }

@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,13 +21,12 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using System.Linq;
 using UnityEngine;
 
@@ -42,136 +37,155 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class OceanFX : ModLoader, IParserEventSubscriber
+            public class OceanFX : ModLoader<PQSMod_OceanFX>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_OceanFX _mod;
-
                 // angle
                 [ParserTarget("angle", optional = true)]
-                private NumericParser<float> angle
+                public NumericParser<float> angle
                 {
-                    set { _mod.angle = value.value; }
+                    get { return mod.angle; }
+                    set { mod.angle = value; }
                 }
 
                 // The deformity of the map for the Quad Remover (?)
                 [ParserTarget("blendA", optional = true)]
-                private NumericParser<float> blendA
+                public NumericParser<float> blendA
                 {
-                    set { _mod.blendA = value.value; }
+                    get { return mod.blendA; }
+                    set { mod.blendA = value; }
                 }
 
                 // blendB
                 [ParserTarget("blendB", optional = true)]
-                private NumericParser<float> blendB
+                public NumericParser<float> blendB
                 {
-                    set { _mod.blendB = value.value; }
+                    get { return mod.blendB; }
+                    set { mod.blendB = value; }
                 }
 
                 // bump
                 [ParserTarget("bump", optional = true)]
-                private Texture2DParser bump
+                public Texture2DParser bump
                 {
-                    set { _mod.bump = value.value; }
+                    get { return mod.bump; }
+                    set { mod.bump = value; }
                 }
 
                 // framesPerSecond
                 [ParserTarget("framesPerSecond", optional = true)]
-                private NumericParser<float> framesPerSecond
+                public NumericParser<float> framesPerSecond
                 {
-                    set { _mod.framesPerSecond = value.value; }
+                    get { return mod.framesPerSecond; }
+                    set { mod.framesPerSecond = value; }
                 }
 
                 // fresnel (???)
                 [ParserTarget("fresnel", optional = true)]
-                private Texture2DParser fresnel
+                public Texture2DParser fresnel
                 {
-                    set { _mod.fresnel = value.value; }
+                    get { return mod.fresnel; }
+                    set { mod.fresnel = value; }
                 }
 
                 // oceanOpacity
                 [ParserTarget("oceanOpacity", optional = true)]
-                private NumericParser<float> oceanOpacity
+                public NumericParser<float> oceanOpacity
                 {
-                    set { _mod.oceanOpacity = value.value; }
+                    get { return mod.oceanOpacity; }
+                    set { mod.oceanOpacity = value; }
                 }
 
                 // refraction
                 [ParserTarget("refraction", optional = true)]
-                private Texture2DParser refraction
+                public Texture2DParser refraction
                 {
-                    set { _mod.refraction = value.value; }
+                    get { return mod.refraction; }
+                    set { mod.refraction = value; }
                 }
 
                 // spaceAltitude
                 [ParserTarget("spaceAltitude", optional = true)]
-                private NumericParser<double> spaceAltitude
+                public NumericParser<double> spaceAltitude
                 {
-                    set { _mod.spaceAltitude = value.value; }
+                    get { return mod.spaceAltitude; }
+                    set { mod.spaceAltitude = value; }
                 }
 
                 // spaceSurfaceBlend
                 [ParserTarget("spaceSurfaceBlend", optional = true)]
-                private NumericParser<float> spaceSurfaceBlend
+                public NumericParser<float> spaceSurfaceBlend
                 {
-                    set { _mod.spaceSurfaceBlend = value.value; }
+                    get { return mod.spaceSurfaceBlend; }
+                    set { mod.spaceSurfaceBlend = value; }
                 }
 
                 // specColor
                 [ParserTarget("specColor", optional = true)]
-                private ColorParser specColor
+                public ColorParser specColor
                 {
-                    set { _mod.specColor = value.value; }
+                    get { return mod.specColor; }
+                    set { mod.specColor = value; }
                 }
 
                 // texBlend
                 [ParserTarget("texBlend", optional = true)]
-                private NumericParser<float> texBlend
+                public NumericParser<float> texBlend
                 {
-                    set { _mod.texBlend = value.value; }
+                    get { return mod.texBlend; }
+                    set { mod.texBlend = value; }
                 }
 
                 // txIndex
                 [ParserTarget("txIndex", optional = true)]
-                private NumericParser<int> txIndex
+                public NumericParser<int> txIndex
                 {
-                    set { _mod.txIndex = value.value; }
+                    get { return mod.txIndex; }
+                    set { mod.txIndex = value; }
                 }
 
-                void IParserEventSubscriber.Apply(ConfigNode node)
+                // Watermain
+                [ParserTarget("Watermain", optional = true)]
+                public ConfigNode watermain
                 {
-                    
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-                    if (node.HasNode("Watermain"))
+                    get
                     {
-                        // Parse the watermain textures
-                        ConfigNode watermain = node.GetNode("Watermain");
+                        if (mod.watermain == null)
+                            return new ConfigNode("Watermain");
 
+                        // Not null
+                        ConfigNode watermain = new ConfigNode("Watermain");
+                        foreach (Texture2D texture in mod.watermain)
+                            watermain.AddValue("waterTex-" + mod.watermain.ToList().IndexOf(texture), texture.name);
+                        return watermain;
+                    }
+                    set
+                    {
                         // Set the Watermain length
-                        _mod.waterMainLength = watermain.values.Count;
+                        mod.waterMainLength = value.values.Count;
+
+                        // If the array isn't there, recreate it
+                        if (mod.watermain == null) mod.watermain = new Texture2D[(int)mod.waterMainLength];
 
                         // If the count doesn't matches, recreate the array
-                        if (_mod.watermain.Length != _mod.waterMainLength)
+                        if (mod.watermain.Length != mod.waterMainLength)
                         {
-                            _mod.watermain = new Texture2D[(int)_mod.waterMainLength];
+                            mod.watermain = new Texture2D[(int)mod.waterMainLength];
                         }
 
                         // Load the textures
                         int i = 0;
-                        foreach (string s in watermain.GetValuesStartsWith("waterTex-"))
+                        foreach (string s in value.GetValuesStartsWith("waterTex-"))
                         {
                             Texture2DParser texParser = new Texture2DParser();
                             texParser.SetFromString(s);
-                            _mod.watermain[i] = texParser.value;
+                            mod.watermain[i] = texParser.value;
                             i++;
                         }
                     }
                 }
 
-                public OceanFX()
+                // Create the mod
+                public override void Create()
                 {
                     // Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
                     PSystemBody Body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
@@ -179,21 +193,15 @@ namespace Kopernicus
                     {
                         if (ocean.name == "LaytheOcean")
                         {
-                            _mod = PQSMod.Instantiate(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0]) as PQSMod_OceanFX;
-                            _mod.gameObject.transform.parent = Utility.Deactivator;
-                            _mod.name = "OceanFX";
-                            _mod.gameObject.name = "OceanFX";
-                            _mod.transform.name = "OceanFX";
+                            mod = Object.Instantiate(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0]) as PQSMod_OceanFX;
+                            mod.name = "OceanFX";
+                            mod.gameObject.name = "OceanFX";
+                            mod.transform.name = "OceanFX";
                         }
-                    } 
-                    base.mod = _mod;
-                }
-
-                public OceanFX(PQSMod template)
-                {
-                    _mod = template as PQSMod_OceanFX;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    }
+                    mod.transform.parent = generatedBody.pqsVersion.transform;
+                    mod.sphere = generatedBody.pqsVersion;
+                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
                 }
             }
         }

@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,91 +37,70 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexSimplexHeightMap : ModLoader, IParserEventSubscriber
+            public class VertexSimplexHeightMap : ModLoader<PQSMod_VertexSimplexHeightMap>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexSimplexHeightMap _mod;
-
                 // The deformity of the simplex terrain
                 [ParserTarget("deformity")]
-                private NumericParser<double> deformity
+                public NumericParser<double> deformity
                 {
-                    set { _mod.deformity = value.value; }
+                    get { return mod.deformity; }
+                    set { mod.deformity = value; }
                 }
 
                 // The frequency of the simplex terrain
                 [ParserTarget("frequency")]
-                private NumericParser<double> frequency
+                public NumericParser<double> frequency
                 {
-                    set { _mod.frequency = value.value; }
+                    get { return mod.frequency; }
+                    set { mod.frequency = value; }
                 }
 
                 // Height end
                 [ParserTarget("heightEnd")]
-                private NumericParser<float> heightEnd
+                public NumericParser<float> heightEnd
                 {
-                    set { _mod.heightEnd = value.value; }
+                    get { return mod.heightEnd; }
+                    set { mod.heightEnd = value; }
                 }
 
                 // Height start
                 [ParserTarget("heightStart")]
-                private NumericParser<float> heightStart
+                public NumericParser<float> heightStart
                 {
-                    set { _mod.heightStart = value.value; }
+                    get { return mod.heightStart; }
+                    set { mod.heightStart = value; }
                 }
 
                 // The greyscale map texture used
                 [ParserTarget("map")]
-                private MapSOParser_GreyScale<MapSO> heightMap
+                public MapSOParser_GreyScale<MapSO> heightMap
                 {
-                    set { _mod.heightMap = value.value; }
+                    get { return mod.heightMap; }
+                    set { mod.heightMap = value; }
                 }
 
                 // Octaves of the simplex terrain
                 [ParserTarget("octaves")]
-                private NumericParser<double> octaves
+                public NumericParser<double> octaves
                 {
-                    set { _mod.octaves = value.value; }
+                    get { return mod.octaves; }
+                    set { mod.octaves = value; }
                 }
 
                 // Persistence of the simplex terrain
                 [ParserTarget("persistence")]
-                private NumericParser<double> persistence
+                public NumericParser<double> persistence
                 {
-                    set { _mod.persistence = value.value; }
+                    get { return mod.persistence; }
+                    set { mod.persistence = value; }
                 }
 
                 // The seed of the simplex terrain
                 [ParserTarget("seed")]
-                private NumericParser<int> seed
+                public NumericParser<int> seed
                 {
-                    set { _mod.seed = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexSimplexHeightMap()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexSimplexHeightMap");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexSimplexHeightMap>();
-                    base.mod = _mod;
-                }
-
-                public VertexSimplexHeightMap(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexSimplexHeightMap;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.seed; }
+                    set { mod.seed = value; }
                 }
             }
         }

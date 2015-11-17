@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,84 +37,62 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexSimplexNoiseColor : ModLoader, IParserEventSubscriber
+            public class VertexSimplexNoiseColor : ModLoader<PQSMod_VertexSimplexNoiseColor>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexSimplexNoiseColor _mod;
-
                 // The deformity of the simplex terrain
                 [ParserTarget("blend")]
-                private NumericParser<float> blend
+                public NumericParser<float> blend
                 {
-                    set { _mod.blend = value.value; }
+                    get { return mod.blend; }
+                    set { mod.blend = value; }
                 }
 
                 // Color of the class
                 [ParserTarget("colorStart")]
-                private ColorParser colorStart
+                public ColorParser colorStart
                 {
-                    set { _mod.colorStart = value.value; }
+                    get { return mod.colorStart; }
+                    set { mod.colorStart = value; }
                 }
 
                 // Color of the class
                 [ParserTarget("colorEnd")]
-                private ColorParser colorEnd
+                public ColorParser colorEnd
                 {
-                    set { _mod.colorEnd = value.value; }
+                    get { return mod.colorEnd; }
+                    set { mod.colorEnd = value; }
                 }
 
                 // The frequency of the simplex terrain
                 [ParserTarget("frequency")]
-                private NumericParser<double> frequency
+                public NumericParser<double> frequency
                 {
-                    set { _mod.frequency = value.value; }
+                    get { return mod.frequency; }
+                    set { mod.frequency = value; }
                 }
 
                 // Octaves of the simplex height
                 [ParserTarget("octaves")]
-                private NumericParser<double> octaves
+                public NumericParser<double> octaves
                 {
-                    set { _mod.octaves = value.value; }
+                    get { return mod.octaves; }
+                    set { mod.octaves = value; }
                 }
 
                 // Persistence of the simplex height
                 [ParserTarget("persistence")]
-                private NumericParser<double> persistence
+                public NumericParser<double> persistence
                 {
-                    set { _mod.persistence = value.value; }
+                    get { return mod.persistence; }
+                    set { mod.persistence = value; }
                 }
 
                 // The seed of the simplex height
                 [ParserTarget("seed")]
-                private NumericParser<int> seed
+                public NumericParser<int> seed
                 {
-                    set { _mod.seed = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexSimplexNoiseColor()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexSimplexNoiseColor");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexSimplexNoiseColor> ();
-                    base.mod = _mod;
-                }
-
-                public VertexSimplexNoiseColor(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexSimplexNoiseColor;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.seed; }
+                    set { mod.seed = value; }
                 }
             }
         }

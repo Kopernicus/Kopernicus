@@ -37,67 +37,45 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightMapStep : ModLoader, IParserEventSubscriber
+            public class VertexHeightMapStep : ModLoader<PQSMod_VertexHeightMapStep>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexHeightMapStep _mod;
-
                 // The map texture for the planet
                 [ParserTarget("map", optional = false)]
-                private string heightMap
+                public Texture2DParser heightMap
                 {
-                    set { 
-                        _mod.heightMap = new Texture2D(2, 2);
-                        _mod.heightMap.LoadImage(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + value));
-                    }
+                    get { return mod.heightMap; }
+                    set { mod.heightMap = value; }
                 }
 
                 // Height map offset
                 [ParserTarget("offset", optional = true)]
-                private NumericParser<double> heightMapOffset 
+                public NumericParser<double> heightMapOffset 
                 {
-                    set { _mod.heightMapOffset = value.value; }
+                    get { return mod.heightMapOffset; }
+                    set { mod.heightMapOffset = value; }
                 }
 
                 // Height map offset
                 [ParserTarget("deformity", optional = true)]
-                private NumericParser<double> heightMapDeformity
+                public NumericParser<double> heightMapDeformity
                 {
-                    set { _mod.heightMapDeformity = value.value; }
+                    get { return mod.heightMapDeformity; }
+                    set { mod.heightMapDeformity = value; }
                 }
 
                 // Height map offset
                 [ParserTarget("scaleDeformityByRadius", optional = true)]
-                private NumericParser<bool> scaleDeformityByRadius
+                public NumericParser<bool> scaleDeformityByRadius
                 {
-                    set { _mod.scaleDeformityByRadius = value.value; }
+                    get { return mod.scaleDeformityByRadius; }
+                    set { mod.scaleDeformityByRadius = value; }
                 }
 
                 [ParserTarget("coastHeight", optional = true)]
-                private NumericParser<double> coastHeight
+                public NumericParser<double> coastHeight
                 {
-                    set { _mod.coastHeight = value.value; }
-                }
-
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexHeightMapStep()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject ("VertexHeightMapStep");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexHeightMapStep> ();
-                    _mod.requirements = PQS.ModiferRequirements.MeshCustomNormals | PQS.ModiferRequirements.VertexMapCoords;
-                    base.mod = _mod;
+                    get { return mod.coastHeight; }
+                    set { mod.coastHeight = value; }
                 }
             }
         }

@@ -1,13 +1,9 @@
 /**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,18 +21,14 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Reflection;
-
 using UnityEngine;
 using Kopernicus.Configuration;
 
@@ -46,22 +38,32 @@ namespace Kopernicus
     [KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
     public class Injector : MonoBehaviour 
     {
-        public Templates templates = null;
+        // Name of the config node group which manages Kopernicus
+        private const string rootNodeName = "Kopernicus";
 
-        public static bool dontUpdate = true; // Should OnDemand update?
+        // Things that are used often
+        public Templates templates = null;
         
-        /**
-         * Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
-         * it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
-         *
-         * TL,DR - Custom planet injection happens here
-         * 
-         **/
+        // Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
+        // it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
         public void Awake()
         {
+            // Abort, if KSP isn't compatible
+            if (!CompatibilityChecker.IsCompatible())
+            {
+                string supported = CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision;
+                string current = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
+                Debug.LogWarning("[Kopernicus] Detected incompatible install.\nCurrent version of KSP: " + current + ".\nSupported version of KSP: " + supported + ".\nPlease wait, until Kopernicus gets updated to match your version of KSP.");
+                Debug.Log("[Kopernicus] Aborting...");
+
+                // Abort
+                Destroy(this);
+                return;
+            }
+
             // We're ALIVE
             Logger.Initialize();
-            Logger.Default.SetAsActive ();
+            Logger.Default.SetAsActive();
             Logger.Default.Log("Injector.Awake(): Begin");
 
             // Yo garbage collector - we have work to do man
@@ -80,17 +82,16 @@ namespace Kopernicus
 
             // Grab templates
             templates = new Templates();
-           
+
+            // Get the configNode
+            ConfigNode kopernicus = GameDatabase.Instance.GetConfigs(rootNodeName)[0].config;
 
             // THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
-            PSystemManager.Instance.systemPrefab = (new Configuration.Loader()).Generate();
+            PSystemManager.Instance.systemPrefab = Parser.CreateObjectFromConfigNode<Loader>(kopernicus).systemPrefab;
 
             // SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
             RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController> (true).First ();
             archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
-
-            // Add the BaryCenter controller
-            archivesController.gameObject.AddComponent<HiddenObjectUtils.RDBaryCenter>();
 
             // Clear space center instance so it will accept nouveau Kerbin
             SpaceCenter.Instance = null;
@@ -105,7 +106,7 @@ namespace Kopernicus
         }
 
         // Post spawn fixups (ewwwww........)
-        public void PostSpawnFixups ()
+        public void PostSpawnFixups()
         {
             Debug.Log("[Kopernicus]: Post-Spawn");
 
@@ -113,34 +114,34 @@ namespace Kopernicus
             int counter = 0;
             foreach (CelestialBody body in FlightGlobals.Bodies) 
             {
+                // Patch the flightGlobalsIndex
                 body.flightGlobalsIndex = counter++;
 
-                // Path the SOI
-                if (Templates.sphereOfInfluence.ContainsKey(body.bodyTransform.name))
-                {
-                    body.sphereOfInfluence = Templates.sphereOfInfluence[body.bodyTransform.name];
-                }
+                // Finalize the Orbit
+                if (Templates.finalizeBodies.Contains(body.transform.name))
+                    OrbitLoader.FinalizeOrbit(body);
+
+                // Patch the SOI
+                if (Templates.sphereOfInfluence.ContainsKey(body.transform.name))
+                    body.sphereOfInfluence = Templates.sphereOfInfluence[body.transform.name];
 
                 // Patch the Hill Sphere
-                if (Templates.hillSphere.ContainsKey(body.bodyTransform.name))
-                {
-                    body.hillSphere = Templates.hillSphere[body.bodyTransform.name];
-                }
+                if (Templates.hillSphere.ContainsKey(body.transform.name))
+                    body.hillSphere = Templates.hillSphere[body.transform.name];
 
                 // Make the Body a barycenter
-                if (Templates.barycenters.Contains(body.GetTransform().name))
-                {
-                    // Deactivate ScaledVersion
-                    body.scaledBody.SetActiveRecursively(false);
-                }
+                if (Templates.barycenters.Contains(body.transform.name))
+                    body.scaledBody.SetActive(false);
+
+                // Apply Orbit mode changes
+                if (Templates.drawMode.ContainsKey(body.transform.name))
+                    body.orbitDriver.Renderer.drawMode = Templates.drawMode[body.transform.name];
+
+                // Apply Orbit icon changes
+                if (Templates.drawIcons.ContainsKey(body.transform.name))
+                    body.orbitDriver.Renderer.drawIcons = Templates.drawIcons[body.transform.name];
 
                 Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
-            }
-
-            // Move KSC around
-            if (SpaceCenterSwitcher.Instance != null)
-            {
-                SpaceCenterSwitcher.Instance.MoveKSC();
             }
 
             // Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
@@ -171,13 +172,10 @@ namespace Kopernicus
             MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
 
             // Select the closest star to home
-            StarLightSwitcher.HomeStar ().SetAsActive ();
+            StarLightSwitcher.HomeStar().SetAsActive ();
 
-            // Declare we're done.
-            Templates.loadFinished = true;
-
-            // Enable OnDemand Updates
-            dontUpdate = false;
+            // Flush the logger
+            Logger.Default.Flush();
 
             // Fixups complete, time to surrender to fate
             Destroy (this);
@@ -187,8 +185,8 @@ namespace Kopernicus
         public void OnDestroy()
         {
             Logger.Default.Log("Injector.OnDestroy(): Complete");
-            Logger.Default.Flush ();
+            Logger.Default.Flush();
         }
     }
-} //namespace
+}
 

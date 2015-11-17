@@ -13,91 +13,104 @@ namespace Kopernicus
         {
             // Saturation, default = 1
             [ParserTarget("saturation", optional = true)]
-            private NumericParser<float> saturationSetter
+            public NumericParser<float> saturationSetter
             {
-                set { base.saturation = value.value; }
+                get { return saturation; }
+                set { saturation = value; }
             }
 
             // Contrast, default = 1
             [ParserTarget("contrast", optional = true)]
-            private NumericParser<float> contrastSetter
+            public NumericParser<float> contrastSetter
             {
-                set { base.contrast = value.value; }
+                get { return contrast; }
+                set { contrast = value; }
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
             [ParserTarget("tintColor", optional = true)]
-            private ColorParser tintColorSetter
+            public ColorParser tintColorSetter
             {
-                set { base.tintColor = value.value; }
+                get { return tintColor; }
+                set { tintColor = value; }
             }
 
             // Near Tiling, default = 1000
             [ParserTarget("texTiling", optional = true)]
-            private NumericParser<float> texTilingSetter
+            public NumericParser<float> texTilingSetter
             {
-                set { base.texTiling = value.value; }
+                get { return texTiling; }
+                set { texTiling = value; }
             }
 
             // Near Blend, default = 0.5
             [ParserTarget("texPower", optional = true)]
-            private NumericParser<float> texPowerSetter
+            public NumericParser<float> texPowerSetter
             {
-                set { base.texPower = value.value; }
+                get { return texPower; }
+                set { texPower = value; }
             }
 
             // Far Blend, default = 0.5
             [ParserTarget("multiPower", optional = true)]
-            private NumericParser<float> multiPowerSetter
+            public NumericParser<float> multiPowerSetter
             {
-                set { base.multiPower = value.value; }
+                get { return multiPower; }
+                set { multiPower = value; }
             }
 
             // NearFar Start, default = 2000
             [ParserTarget("groundTexStart", optional = true)]
-            private NumericParser<float> groundTexStartSetter
+            public NumericParser<float> groundTexStartSetter
             {
-                set { base.groundTexStart = value.value; }
+                get { return groundTexStart; }
+                set { groundTexStart = value; }
             }
 
             // NearFar Start, default = 10000
             [ParserTarget("groundTexEnd", optional = true)]
-            private NumericParser<float> groundTexEndSetter
+            public NumericParser<float> groundTexEndSetter
             {
-                set { base.groundTexEnd = value.value; }
+                get { return groundTexEnd; }
+                set { groundTexEnd = value; }
             }
 
             // Multifactor, default = 0.5
             [ParserTarget("multiFactor", optional = true)]
-            private NumericParser<float> multiFactorSetter
+            public NumericParser<float> multiFactorSetter
             {
-                set { base.multiFactor = value.value; }
+                get { return multiFactor; }
+                set { multiFactor = value; }
             }
 
             // Main Texture, default = "white" {}
             [ParserTarget("mainTex", optional = true)]
-            private Texture2DParser mainTexSetter
+            public Texture2DParser mainTexSetter
             {
-                set { base.mainTex = value.value; }
+                get { return mainTex; }
+                set { mainTex = value; }
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            private Vector2Parser mainTexScaleSetter
+            public Vector2Parser mainTexScaleSetter
             {
-                set { base.mainTexScale = value.value; }
+                get { return mainTexScale; }
+                set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            private Vector2Parser mainTexOffsetSetter
+            public Vector2Parser mainTexOffsetSetter
             {
-                set { base.mainTexOffset = value.value; }
+                get { return mainTexOffset; }
+                set { mainTexOffset = value; }
             }
 
             // PlanetOpacity, default = 1
             [ParserTarget("planetOpacity", optional = true)]
-            private NumericParser<float> planetOpacitySetter
+            public NumericParser<float> planetOpacitySetter
             {
-                set { base.planetOpacity = value.value; }
+                get { return planetOpacity; }
+                set { planetOpacity = value; }
             }
 
             // Constructors

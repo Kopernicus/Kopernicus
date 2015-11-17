@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,49 +37,22 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexDefineCoastLine : ModLoader, IParserEventSubscriber
+            public class VertexDefineCoastLine : ModLoader<PQSMod_VertexDefineCoastLine>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexDefineCoastLine _mod;
-
                 // depthOffset
                 [ParserTarget("depthOffset", optional = true)]
-                private NumericParser<double> depthOffset
+                public NumericParser<double> depthOffset
                 {
-                    set { _mod.depthOffset = value.value; }
+                    get { return mod.depthOffset; }
+                    set { mod.depthOffset = value; }
                 }
 
                 // oceanRadiusOffset
                 [ParserTarget("oceanRadiusOffset", optional = true)]
-                private NumericParser<double> oceanRadiusOffset
+                public NumericParser<double> oceanRadiusOffset
                 {
-                    set { _mod.oceanRadiusOffset = value.value; }
-                }
-                
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexDefineCoastLine()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexDefineCoastLine");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexDefineCoastLine>();
-                    base.mod = _mod;
-                }
-
-                public VertexDefineCoastLine(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexDefineCoastLine;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.oceanRadiusOffset; }
+                    set { mod.oceanRadiusOffset = value; }
                 }
             }
         }

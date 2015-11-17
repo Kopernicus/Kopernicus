@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,15 +21,14 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using UnityEngine;
-
+ 
 namespace Kopernicus
 {
     namespace Configuration
@@ -41,84 +36,69 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class FlattenArea : ModLoader, IParserEventSubscriber
+            public class FlattenArea : ModLoader<PQSMod_FlattenArea>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_FlattenArea _mod;
-
                 // DEBUG_showColors
                 [ParserTarget("DEBUG_showColors", optional = true)]
-                private NumericParser<bool> DEBUG_showColors
+                public NumericParser<bool> DEBUG_showColors
                 {
-                    set { _mod.DEBUG_showColors = value.value; }
+                    get { return mod.DEBUG_showColors; }
+                    set { mod.DEBUG_showColors = value; }
                 }
 
                 // flattenTo
                 [ParserTarget("flattenTo", optional = true)]
-                private NumericParser<double> flattenTo
+                public NumericParser<double> flattenTo
                 {
-                    set { _mod.flattenTo = value.value; }
+                    get { return mod.flattenTo; }
+                    set { mod.flattenTo = value; }
                 }
 
                 // innerRadius
                 [ParserTarget("innerRadius", optional = true)]
-                private NumericParser<double> innerRadius
+                public NumericParser<double> innerRadius
                 {
-                    set { _mod.innerRadius = value.value; }
+                    get { return mod.innerRadius; }
+                    set { mod.innerRadius = value; }
                 }
 
                 // outerRadius
                 [ParserTarget("outerRadius", optional = true)]
-                private NumericParser<double> outerRadius
+                public NumericParser<double> outerRadius
                 {
-                    set { _mod.outerRadius = value.value; }
+                    get { return mod.outerRadius; }
+                    set { mod.outerRadius = value; }
                 }
 
                 // position
                 [ParserTarget("position", optional = true)]
-                private Vector3Parser position
+                public Vector3Parser position
                 {
-                    set { _mod.position = value.value; }
+                    get { return mod.position; }
+                    set { mod.position = value; }
+                }
+
+                // position v2
+                [ParserTarget("Position", optional = true)]
+                public PositionParser Position
+                {
+                    set { mod.position = value; }
                 }
 
                 // smoothEnd
                 [ParserTarget("smoothEnd", optional = true)]
-                private NumericParser<double> smoothEnd
+                public NumericParser<double> smoothEnd
                 {
-                    set { _mod.smoothEnd = value.value; }
+                    get { return mod.smoothEnd; }
+                    set { mod.smoothEnd = value; }
                 }
 
                 // smoothStart
                 [ParserTarget("smoothStart", optional = true)]
-                private NumericParser<double> smoothStart
+                public NumericParser<double> smoothStart
                 {
-                    set { _mod.smoothStart = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public FlattenArea()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("FlattenArea");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_FlattenArea>();
-                    base.mod = _mod;
-                }
-
-                public FlattenArea(PQSMod template)
-                {
-                    _mod = template as PQSMod_FlattenArea;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.smoothStart; }
+                    set { mod.smoothStart = value; }
                 }
             }
         }

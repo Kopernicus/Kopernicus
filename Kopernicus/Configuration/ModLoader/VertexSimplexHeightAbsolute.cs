@@ -1,13 +1,9 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * Maintained by: - Thomas P.
- * 				  - NathanKell
- * 
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+ * Maintained by: Thomas P., NathanKell and KillAshley
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +21,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -41,70 +37,46 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexSimplexHeightAbsolute : ModLoader, IParserEventSubscriber
+            public class VertexSimplexHeightAbsolute : ModLoader<PQSMod_VertexSimplexHeightAbsolute>
             {
-                // Actual PQS mod we are loading
-                private PQSMod_VertexSimplexHeightAbsolute _mod;
-
                 // The deformity of the simplex terrain
                 [ParserTarget("deformity", optional = true)]
-                private NumericParser<double> deformity
+                public NumericParser<double> deformity
                 {
-                    set { _mod.deformity = value.value; }
+                    get { return mod.deformity; }
+                    set { mod.deformity = value; }
                 }
 
                 // The frequency of the simplex terrain
                 [ParserTarget("frequency", optional = true)]
-                private NumericParser<double> frequency
+                public NumericParser<double> frequency
                 {
-                    set { _mod.frequency = value.value; }
+                    get { return mod.frequency; }
+                    set { mod.frequency = value; }
                 }
 
                 // Octaves of the simplex height
                 [ParserTarget("octaves", optional = true)]
-                private NumericParser<double> octaves
+                public NumericParser<double> octaves
                 {
-                    set { _mod.octaves = value.value; }
+                    get { return mod.octaves; }
+                    set { mod.octaves = value; }
                 }
 
                 // Persistence of the simplex height
                 [ParserTarget("persistence", optional = true)]
-                private NumericParser<double> persistence
+                public NumericParser<double> persistence
                 {
-                    set { _mod.persistence = value.value; }
+                    get { return mod.persistence; }
+                    set { mod.persistence = value; }
                 }
 
                 // The seed of the simplex height
                 [ParserTarget("seed", optional = true)]
-                private NumericParser<int> seed
+                public NumericParser<int> seed
                 {
-                    set { _mod.seed = value.value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-
-                }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-
-                }
-
-                public VertexSimplexHeightAbsolute()
-                {
-                    // Create the base mod
-                    GameObject modObject = new GameObject("VertexSimplexHeightAbsolute");
-                    modObject.transform.parent = Utility.Deactivator;
-                    _mod = modObject.AddComponent<PQSMod_VertexSimplexHeightAbsolute> ();
-                    base.mod = _mod;
-                }
-
-                public VertexSimplexHeightAbsolute(PQSMod template)
-                {
-                    _mod = template as PQSMod_VertexSimplexHeightAbsolute;
-                    _mod.transform.parent = Utility.Deactivator;
-                    base.mod = _mod;
+                    get { return mod.seed; }
+                    set { mod.seed = value; }
                 }
             }
         }
