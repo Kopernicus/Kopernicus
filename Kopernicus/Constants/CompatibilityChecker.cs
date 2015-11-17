@@ -44,7 +44,7 @@ namespace Kopernicus
      */
 
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
-    internal class CompatibilityChecker : MonoBehaviour
+    public class CompatibilityChecker : MonoBehaviour
     {
         // Compatible version
         internal const int version_major = 1;
