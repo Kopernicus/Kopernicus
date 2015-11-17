@@ -74,6 +74,24 @@ namespace Kopernicus
                     mod.sphere = generatedBody.pqsVersion;
                     mod.gameObject.layer = Constants.GameLayers.LocalSpace;
                 }
+
+                // Creates the a PQSMod of type T with given PQS
+                public virtual void Create(PQS pqsVersion)
+                {
+                    mod = new GameObject(typeof(T).Name.Replace("PQSMod_", "").Replace("PQS", "")).AddComponent<T>();
+                    mod.transform.parent = pqsVersion.transform;
+                    mod.sphere = pqsVersion;
+                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                }
+
+                // Grabs a PQSMod of type T from a parameter with a given PQS
+                public virtual void Create(T _mod, PQS pqsVersion)
+                {
+                    mod = _mod;
+                    mod.transform.parent = pqsVersion.transform;
+                    mod.sphere = pqsVersion;
+                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                }
             }
         }
     }

@@ -374,6 +374,12 @@ namespace Kopernicus
                             patchedMods.Add (existingMod);
                             Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
                         }
+                        else
+                        {
+                            createNew.Invoke(loader, null);
+                            Parser.LoadObjectFromConfigurationNode(loader, mod);
+                            Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
+                        }
                     }
                     else
                     {

@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Kopernicus.Components;
 using UnityEngine;
 
@@ -232,24 +233,37 @@ namespace Kopernicus
                     // Do any PQS Mods already exist on this PQS matching this mod?
                     IEnumerable<PQSMod> existingMods = ocean.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) &&
                                                                                                                     m.transform.parent == ocean.transform);
-                    ModLoader.ModLoader<PQSMod> loader = new ModLoader.ModLoader<PQSMod>();
+
+                    // Create the loader
+                    object loader = Activator.CreateInstance(loaderType);
+
+                    // Reflection, because C# being silly... :/
+                    MethodInfo createNew = loaderType.GetMethod("Create", new Type[] { typeof(PQS) });
+                    MethodInfo create = loaderType.GetMethod("Create", new Type[] { modType, typeof(PQS) });
+
                     if (existingMods.Count() > 0)
                     {
                         // Attempt to find a PQS mod we can edit that we have not edited before
                         PQSMod existingMod = existingMods.Where(m => !patchedMods.Contains(m) && (mod.HasValue("name") ? m.name == mod.GetValue("name") : true)).FirstOrDefault();
                         if (existingMod != null)
                         {
-                            loader.Create(existingMod);
+                            create.Invoke(loader, new object[] { existingMod, ocean });
                             Parser.LoadObjectFromConfigurationNode(loader, mod);
                             patchedMods.Add(existingMod);
-                            Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
+                            Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
+                        }
+                        else
+                        {
+                            createNew.Invoke(loader, new object[] { ocean });
+                            Parser.LoadObjectFromConfigurationNode(loader, mod);
+                            Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                         }
                     }
                     else
                     {
-                        loader.Create();
+                        createNew.Invoke(loader, new object[] { ocean });
                         Parser.LoadObjectFromConfigurationNode(loader, mod);
-                        Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
+                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
                 }
             }
