@@ -90,6 +90,7 @@
     <Compile Include="Configuration\Parser\External\ExternalParserTargetLoader.cs" />
     <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
+    <Compile Include="Configuration\FogLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />
     <Compile Include="Configuration\LightShifterLoader.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />

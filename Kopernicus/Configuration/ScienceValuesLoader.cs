@@ -35,11 +35,11 @@ namespace Kopernicus
         public class ScienceValuesLoader : BaseLoader
         {
             // Science parameters we are going to be modifying
-            public CelestialBodyScienceParams scienceParams { get; private set; }
+            public CelestialBodyScienceParams scienceParams { get; set; }
 
             // Science multipler (?) for landed science
             [ParserTarget("landedDataValue", optional = true, allowMerge = false)]
-            private NumericParser<float> landedDataValue 
+            public NumericParser<float> landedDataValue 
             {
                 get { return scienceParams.LandedDataValue; }
                 set { scienceParams.LandedDataValue = value; }
@@ -47,7 +47,7 @@ namespace Kopernicus
 
             // Science multipler (?) for splashed down science
             [ParserTarget("splashedDataValue", optional = true, allowMerge = false)]
-            private NumericParser<float> splashedDataValue 
+            public NumericParser<float> splashedDataValue 
             {
                 get { return scienceParams.SplashedDataValue; }
                 set { scienceParams.SplashedDataValue = value; }
@@ -55,7 +55,7 @@ namespace Kopernicus
 
             // Science multipler (?) for flying low science
             [ParserTarget("flyingLowDataValue", optional = true, allowMerge = false)]
-            private NumericParser<float> flyingLowDataValue 
+            public NumericParser<float> flyingLowDataValue 
             {
                 get { return scienceParams.FlyingLowDataValue; }
                 set { scienceParams.FlyingLowDataValue = value; }
@@ -63,7 +63,7 @@ namespace Kopernicus
 
             // Science multipler (?) for flying high science
             [ParserTarget("flyingHighDataValue", optional = true, allowMerge = false)]
-            private NumericParser<float> flyingHighDataValue 
+            public NumericParser<float> flyingHighDataValue 
             {
                 get { return scienceParams.FlyingHighDataValue; }
                 set { scienceParams.FlyingHighDataValue = value; }
@@ -71,7 +71,7 @@ namespace Kopernicus
             
             // Science multipler (?) for in space low science
             [ParserTarget("inSpaceLowDataValue", optional = true, allowMerge = false)]
-            private NumericParser<float> inSpaceLowDataValue
+            public NumericParser<float> inSpaceLowDataValue
             {
                 get { return scienceParams.InSpaceLowDataValue; }
                 set { scienceParams.InSpaceLowDataValue = value; }
@@ -79,7 +79,7 @@ namespace Kopernicus
             
             // Science multipler (?) for in space high science
             [ParserTarget("inSpaceHighDataValue", optional = true, allowMerge = false)]
-            private NumericParser<float> inSpaceHighDataValue
+            public NumericParser<float> inSpaceHighDataValue
             {
                 get { return scienceParams.InSpaceHighDataValue; }
                 set { scienceParams.InSpaceHighDataValue = value; }
@@ -89,7 +89,7 @@ namespace Kopernicus
             // for value OR describe a multiplier for recovery of a craft returning from this
             // body....
             [ParserTarget("recoveryValue", optional = true, allowMerge = false)]
-            private NumericParser<float> recoveryValue
+            public NumericParser<float> recoveryValue
             {
                 get { return scienceParams.RecoveryValue; }
                 set { scienceParams.RecoveryValue = value; }
@@ -97,7 +97,7 @@ namespace Kopernicus
 
             // Altitude when "flying at <body>" transistions from/to "from <body>'s upper atmosphere"
             [ParserTarget("flyingAltitudeThreshold", optional = true, allowMerge = false)]
-            private NumericParser<float> flyingAltitudeThreshold
+            public NumericParser<float> flyingAltitudeThreshold
             {
                 get { return scienceParams.flyingAltitudeThreshold; }
                 set { scienceParams.flyingAltitudeThreshold = value.value; }
@@ -105,7 +105,7 @@ namespace Kopernicus
             
             // Altitude when "in space low" transistions from/to "in space high"
             [ParserTarget("spaceAltitudeThreshold", optional = true, allowMerge = false)]
-            private NumericParser<float> spaceAltitudeThreshold
+            public NumericParser<float> spaceAltitudeThreshold
             {
                 get { return scienceParams.spaceAltitudeThreshold; }
                 set { scienceParams.spaceAltitudeThreshold = value.value; }

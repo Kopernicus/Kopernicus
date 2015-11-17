@@ -48,15 +48,35 @@ namespace Kopernicus
 
             // We have an ocean?
             [ParserTarget("ocean", optional = true)]
-            public NumericParser<bool> mapOcean = new NumericParser<bool>(false);
+            public NumericParser<bool> mapOcean
+            {
+                get { return generatedBody.pqsVersion.mapOcean && generatedBody.celestialBody.ocean; }
+                set { generatedBody.pqsVersion.mapOcean = generatedBody.celestialBody.ocean = value; }
+            }
 
             // Color of the ocean on the map
             [ParserTarget("oceanColor", optional = true)]
-            public ColorParser oceanColor = new ColorParser();
+            public ColorParser oceanColor
+            {
+                get { return generatedBody.pqsVersion.mapOceanColor; }
+                set { generatedBody.pqsVersion.mapOceanColor = value; }
+            }
 
             // Height of the Ocean
             [ParserTarget("oceanHeight", optional = true)]
-            public NumericParser<double> oceanHeight = new NumericParser<double>();
+            public NumericParser<double> oceanHeight
+            {
+                get { return generatedBody.pqsVersion.mapOceanHeight; }
+                set { generatedBody.pqsVersion.mapOceanHeight = value; }
+            }
+
+            // Density of the Ocean
+            [ParserTarget("density", optional = true)]
+            public NumericParser<double> density
+            {
+                get { return generatedBody.celestialBody.oceanDensity; }
+                set { generatedBody.celestialBody.oceanDensity = value; }
+            }
 
             // PQS level of detail settings
             [ParserTarget("minLevel", optional = true)]
@@ -98,6 +118,10 @@ namespace Kopernicus
             // Killer-Ocean
             [ParserTarget("HazardousOcean", optional = true, allowMerge = true)]
             public FloatCurveParser hazardousOcean;
+
+            // Ocean-Fog
+            [ParserTarget("Fog", allowMerge = true, optional = true)]
+            public FogLoader fog;
 
             // Runtime Constructor
             public OceanLoader(PQS ocean)
@@ -174,7 +198,11 @@ namespace Kopernicus
             }
 
             // Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                // Make assumptions
+                mapOcean = true;
+            }
 
             // Post Apply
             void IParserEventSubscriber.PostApply(ConfigNode node)
@@ -185,37 +213,24 @@ namespace Kopernicus
                     ocean.gameObject.AddComponent<HazardousOcean>().heatCurve = hazardousOcean;
                 }
 
-                // == DUMP OCEAN MATERIALS == //
-                Utility.DumpObjectProperties(ocean.surfaceMaterial, " ---- Ocean Material (Post Ocean Loader) ---- ");
-                Utility.GameObjectWalk(ocean.gameObject);
-
                 // Apply the Ocean
-                if (!generatedBody.celestialBody.ocean)
-                {
-                    ocean.gameObject.transform.parent = generatedBody.pqsVersion.transform;
+                ocean.transform.parent = generatedBody.pqsVersion.transform;
 
-                    // Add the ocean PQS to the secondary renders of the CelestialBody Transform
-                    PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).Where(mod => mod.transform.parent == generatedBody.pqsVersion.transform).FirstOrDefault();
-                    transform.planetFade.secondaryRenderers.Add(ocean.gameObject);
+                // Add the ocean PQS to the secondary renders of the CelestialBody Transform
+                PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).Where(mod => mod.transform.parent == generatedBody.pqsVersion.transform).FirstOrDefault();
+                transform.planetFade.secondaryRenderers.Add(ocean.gameObject);
 
-                    // Names!
-                    ocean.name = generatedBody.pqsVersion.name + "Ocean";
-                    ocean.gameObject.name = generatedBody.pqsVersion.name + "Ocean";
-                    ocean.transform.name = generatedBody.pqsVersion.name + "Ocean";
-                }
-
-                // Ajust map settings of the parent PQS
-                generatedBody.pqsVersion.mapOcean = ocean.mapOcean;
-                generatedBody.celestialBody.ocean = ocean.mapOcean;
-                if (oceanColor != null) generatedBody.pqsVersion.mapOceanColor = oceanColor;
-                generatedBody.pqsVersion.mapOceanHeight = oceanHeight;
+                // Names!
+                ocean.name = generatedBody.pqsVersion.name + "Ocean";
+                ocean.gameObject.name = generatedBody.pqsVersion.name + "Ocean";
+                ocean.transform.name = generatedBody.pqsVersion.name + "Ocean";
 
                 // Set up the ocean PQS
                 ocean.parentSphere = generatedBody.pqsVersion;
 
                 // Load mods
                 if (!node.HasNode("Mods"))
-                    return;
+                    goto Debug;
                 List<PQSMod> patchedMods = new List<PQSMod>();
 
                 // Get all loaded types
@@ -266,6 +281,11 @@ namespace Kopernicus
                         Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
                 }
+
+                Debug:
+                // == DUMP OCEAN MATERIALS == //
+                Utility.DumpObjectProperties(ocean.surfaceMaterial, " ---- Ocean Material (Post Ocean Loader) ---- ");
+                Utility.GameObjectWalk(ocean.gameObject);
             }
         }
     }
