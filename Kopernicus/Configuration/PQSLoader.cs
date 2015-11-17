@@ -136,11 +136,11 @@ namespace Kopernicus
             }
 
             // Surface Material of the PQS
-            //[ParserTarget("Material", optional = true, allowMerge = true)]
+            [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
             public Material surfaceMaterial;
 
             // Fallback Material of the PQS (its always the same material)
-            [ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
+            [ParserTarget("FallbackMaterial", optional = true, allowMerge = true, getChild = false)]
             public PQSProjectionFallbackLoader fallbackMaterial;
 
             /**
@@ -185,8 +185,8 @@ namespace Kopernicus
                     {
                         pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader(pqsVersion.surfaceMaterial);
                     }
-                    //surfaceMaterial = pqsVersion.surfaceMaterial;
-                    //surfaceMaterial.name = Guid.NewGuid().ToString();
+                    surfaceMaterial = pqsVersion.surfaceMaterial;
+                    surfaceMaterial.name = Guid.NewGuid().ToString();
 
                     // Clone the fallback material of the PQS
                     fallbackMaterial = new PQSProjectionFallbackLoader(pqsVersion.fallbackMaterial);
@@ -292,26 +292,26 @@ namespace Kopernicus
                 {
                     pqsVersion.surfaceMaterial = new PQSMainOptimisedLoader(pqsVersion.surfaceMaterial);
                     if (((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
-                        ((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+                        ((PQSMainOptimisedLoader)pqsVersion.surfaceMaterial).globalDensity = -8E-06f;
                 }
                 else if (PQSMainShader.UsesSameShader(pqsVersion.surfaceMaterial))
                 {
                     pqsVersion.surfaceMaterial = new PQSMainShaderLoader(pqsVersion.surfaceMaterial);
                     if (((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
-                        ((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+                        ((PQSMainShaderLoader)pqsVersion.surfaceMaterial).globalDensity = -8E-06f;
                 }
                 else if (PQSProjectionAerialQuadRelative.UsesSameShader(pqsVersion.surfaceMaterial))
                 {
                     pqsVersion.surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(pqsVersion.surfaceMaterial);
                     if (((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity < 2)
-                        ((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity = (float)-8E-06;
+                        ((PQSProjectionAerialQuadRelativeLoader)pqsVersion.surfaceMaterial).globalDensity = -8E-06f;
                 }
                 else if (PQSProjectionSurfaceQuad.UsesSameShader(pqsVersion.surfaceMaterial))
                 {
                     pqsVersion.surfaceMaterial = new PQSProjectionSurfaceQuadLoader(pqsVersion.surfaceMaterial);
                 }
-                //surfaceMaterial = pqsVersion.surfaceMaterial;
-                //surfaceMaterial.name = Guid.NewGuid ().ToString ();
+                surfaceMaterial = pqsVersion.surfaceMaterial;
+                surfaceMaterial.name = Guid.NewGuid ().ToString ();
 
                 // Clone the fallback material of the PQS
                 fallbackMaterial = new PQSProjectionFallbackLoader (pqsVersion.fallbackMaterial);
@@ -391,7 +391,7 @@ namespace Kopernicus
 
                 Debug:
                 // ----------- DEBUG -------------
-                Utility.DumpObjectProperties(pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
+                // Utility.DumpObjectProperties(pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
                 Utility.GameObjectWalk(pqsVersion.gameObject, "  ");
                 // -------------------------------
             }

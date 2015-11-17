@@ -159,6 +159,9 @@ namespace Kopernicus
                         // Set the Watermain length
                         mod.waterMainLength = value.values.Count;
 
+                        // If the array isn't there, recreate it
+                        if (mod.watermain == null) mod.watermain = new Texture2D[(int)mod.waterMainLength];
+
                         // If the count doesn't matches, recreate the array
                         if (mod.watermain.Length != mod.waterMainLength)
                         {

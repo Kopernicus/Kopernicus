@@ -67,7 +67,7 @@ namespace Kopernicus
                 [ParserTarget("CraterCurve", optional = true)]
                 public FloatCurveParser craterCurve
                 {
-                    get { return new FloatCurve(mod.craterCurve.keys); }
+                    get { return mod.craterCurve != null ? new FloatCurve(mod.craterCurve.keys) : new FloatCurve(); }
                     set { mod.craterCurve = value.curve.Curve; }
                 }
 
@@ -83,7 +83,7 @@ namespace Kopernicus
                 [ParserTarget("JitterCurve", optional = true)]
                 public FloatCurveParser jitterCurve
                 {
-                    get { return new FloatCurve(mod.jitterCurve.keys); }
+                    get { return mod.jitterCurve != null ? new FloatCurve(mod.jitterCurve.keys) : new FloatCurve(); }
                     set { mod.jitterCurve = value.curve.Curve; }
                 }
 

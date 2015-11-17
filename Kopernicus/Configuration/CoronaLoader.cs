@@ -85,7 +85,7 @@ namespace Kopernicus
                 set { coronaComponent.Rotation = value; }
             }
 
-            [ParserTarget("Material", optional = true, allowMerge = true)]
+            [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
             public ParticleAddSmoothLoader material
             {
                 get { return new ParticleAddSmoothLoader(coronaComponent.renderer.sharedMaterial); }

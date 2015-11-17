@@ -504,7 +504,7 @@ namespace Kopernicus
             public void SetFromString(string s)
             {
                 // Should we use OnDemand?
-                bool useOnDemand = typeof(T) == typeof(CBAttributeMapSO) ? OnDemandStorage.useOnDemandBiomes : OnDemandStorage.useOnDemand;
+                bool useOnDemand = OnDemandStorage.useOnDemand;
 
                 if (s.StartsWith("BUILTIN/"))
                 {
@@ -588,7 +588,7 @@ namespace Kopernicus
             public void SetFromString(string s)
             {
                 // Should we use OnDemand?
-                bool useOnDemand = typeof(T) == typeof(CBAttributeMapSO) ? OnDemandStorage.useOnDemandBiomes : OnDemandStorage.useOnDemand;
+                bool useOnDemand = OnDemandStorage.useOnDemand;
 
                 if (s.StartsWith("BUILTIN/"))
                 {

@@ -59,7 +59,7 @@ namespace Kopernicus
                 [ParserTarget("inputHeightCurve")]
                 public FloatCurveParser inputHeightCurve
                 {
-                    get { return new FloatCurve(mod.inputHeightCurve.keys); }
+                    get { return mod.inputHeightCurve != null ? new FloatCurve(mod.inputHeightCurve.keys) : new FloatCurve(); }
                     set { mod.inputHeightCurve = value.curve.Curve; }
                 }
 

@@ -187,7 +187,7 @@ namespace Kopernicus
                     public ConfigNode experiment;
 
                     // Custom scatter material
-                    [ParserTarget("Material", optional = true, allowMerge = true)]
+                    [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
                     public Material customMaterial;
 
                     // The mesh

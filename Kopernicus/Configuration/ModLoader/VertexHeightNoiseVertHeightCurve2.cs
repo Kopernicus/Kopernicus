@@ -123,7 +123,7 @@ namespace Kopernicus
                 [ParserTarget("simplexCurve", optional = true)]
                 public FloatCurveParser simplexCurve
                 {
-                    get { return new FloatCurve(mod.simplexCurve.keys); }
+                    get { return mod.simplexCurve != null ? new FloatCurve(mod.simplexCurve.keys) : new FloatCurve(); }
                     set { mod.simplexCurve = value.curve.Curve; }
                 }
 

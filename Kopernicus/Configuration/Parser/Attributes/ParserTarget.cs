@@ -49,6 +49,9 @@ namespace Kopernicus
             // via reflection with a potentially present field.  If the field is null,
             // this flag is disregarged
             public bool allowMerge = false;
+
+            // Flag indicating whether the parser should try to call the getter on properties on this object
+            public bool getChild = true;
             
             // Constructor sets name
             public ParserTarget(string fieldName = null)

@@ -42,7 +42,7 @@ namespace Kopernicus
 
             // Namespace of any generated classes for NameSignificance.Type
             public string typePrefix = "";
-            
+
             // Constructor sets name
             public ParserTargetCollection(string fieldName = null) : base (fieldName) { }
         }
