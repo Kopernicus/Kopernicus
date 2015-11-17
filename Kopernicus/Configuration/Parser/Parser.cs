@@ -375,12 +375,12 @@ namespace Kopernicus
                     // If the target type is a ConfigNode, this works natively
                     if (targetType.Equals(typeof(ConfigNode)))
                     {
-                        targetValue = node;
+                        targetValue = node.GetNode(target.fieldName);
                     }
 
                     // We need to get an instance of the object we are trying to populate
                     // If we are not allowed to merge, or the object does not exist, make a new instance
-                    if(targetValue == null || !target.allowMerge)
+                    else if(targetValue == null || !target.allowMerge)
                     {
                         targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName), target.getChild);
                     }
