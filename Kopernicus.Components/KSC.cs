@@ -153,11 +153,16 @@ namespace Kopernicus
                     mapDecal.position = position.Value;
 
                 // Move the SpaceCenter
-                SpaceCenter.Instance.transform.localPosition = ksc.transform.localPosition;
-                SpaceCenter.Instance.transform.localRotation = ksc.transform.localRotation;
+                if (SpaceCenter.Instance != null)
+                {
+                    SpaceCenter.Instance.transform.localPosition = ksc.transform.localPosition;
+                    SpaceCenter.Instance.transform.localRotation = ksc.transform.localRotation;
 
-                // Reset the SpaceCenter
-                typeof(SpaceCenter).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(SpaceCenter.Instance, null);
+                    // Reset the SpaceCenter
+                    SpaceCenter.Instance.Start();
+                }
+                else
+                    Debug.Log("[Kopernicus]: KSC: No SpaceCenter instance!");
 
                 // Add a material fixer
                 DontDestroyOnLoad(gameObject.AddComponent<MaterialFixer>());
