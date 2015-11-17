@@ -127,6 +127,14 @@ namespace Kopernicus
     public class AtmosphereFixer : MonoBehaviour
     {
         double timeCounter = 0d;
+        void Awake()
+        {
+            if (!CompatibilityChecker.IsCompatible())
+            {
+                Destroy(this);
+                return;
+            }
+        }
         public void Start()
         {
             if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)

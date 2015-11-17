@@ -57,8 +57,6 @@ namespace Kopernicus
                 Debug.Log("[Kopernicus] Aborting...");
 
                 // Abort
-                AssemblyLoader.LoadedAssembly assembly = AssemblyLoader.loadedAssemblies.GetByAssembly(GetType().Assembly);
-                assembly.Unload();
                 Destroy(this);
                 return;
             }

@@ -46,6 +46,13 @@ namespace Kopernicus
         // Awake() - flag this class as don't destroy on load and register delegates
         void Awake ()
         {
+            // Don't run if Kopernicus isn't compatible
+            if (!CompatibilityChecker.IsCompatible())
+            {
+                Destroy(this);
+                return;
+            }
+
             // Make sure the runtime utility isn't killed
             DontDestroyOnLoad (this);
 

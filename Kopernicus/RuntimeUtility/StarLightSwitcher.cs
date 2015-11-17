@@ -132,6 +132,13 @@ namespace Kopernicus
         // On awake(), preserve the star
         void Awake()
         {
+            // Don't run if Kopernicus is incompatible
+            if (!CompatibilityChecker.IsCompatible())
+            {
+                Destroy(this);
+                return;
+            }
+
             Logger.Default.Log ("StarLightSwitcher.Awake(): Begin");
             Logger.Default.Flush ();
             DontDestroyOnLoad (this);
