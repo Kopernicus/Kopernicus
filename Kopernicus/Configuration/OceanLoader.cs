@@ -168,7 +168,7 @@ namespace Kopernicus
                     if (ocean.name == "LaytheOcean")
                     {
                         // Copying Laythes Ocean-properties
-                        Utility.CopyObjectFields<PQS>(ocean, ocean);
+                        Utility.CopyObjectFields<PQS>(ocean, this.ocean);
 
                         // Load Surface material
                         surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
