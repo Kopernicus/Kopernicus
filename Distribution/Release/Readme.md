@@ -1,23 +1,42 @@
-Kopernicus Beta Release 4
+Kopernicus Beta Release 5
 ==============================
-September 14th, 2015
-
-Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
-   		    - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- 
-Maintained by: - Thomas P.
-			   - NathanKell
- 
-Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, Majiir (CompatibilityChecker)
+November 17th, 2015
+* Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+* Maintained by: Thomas P., NathanKell and KillAshley
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 
 New in this version
 -------------------
-- finalizeOrbits only recalculates the SOI, if it is not set in Properties { }
-- Optimizations for non spherical oceans
-- Kopernicus now sets the altitude where the "space-music" starts
-- Fixed a bug with SpaceCenter and recovery distances.
-- Fixed a bug with the flightGlobalsIndex patcher, now every body's flightGlobalsIndex is fixed.
-- Other minor improvements
+- Implemented working OnDemand-Loading library, for MapSO, CBAttributeMapSO and ScaledSpace Textures
+- Removed .mu support for Scatter Meshes, because it doesn't fit well for this purpose
+- Added support for BUILTIN/ Biome Maps
+- Added operators to convert the internal parsers to their respective values
+- Moved custom components into a seperate library
+- Complete reengineering of the code. Kopernicus code is now much cleaner, easier to extend and to debug
+- ModLoader is now powered by generics, so that the whole namespace is cleaner
+- External ModLoaders don't have to use the Namespace Kopernicus.Configuration.ModLoader anymore. Use whatever you want :)
+- Removed the custom ring shaders and reverted back to the builtin ones. Fixed the halo-bug differently
+- Created components for Rings and the KSC mover, to make them more modular
+- Added support for SOI-Debbugging (i.e. making the SOI visible). Use Debug { showSOI = true }
+- Removed Debug { exportBin } option, and added exportMesh and update. exportMesh will force Kopernicus to write a mesh (or not), and update will force a ScaledSpace Update, which is neccisary for exportMesh.
+- Cleaned up the runtime utility, everything is now in a single class (no KSPAdddon spam)
+- Removed the old Finalize System
+- Added Body { finalizeOrbit } which will apply the same changes to this single body like the old System did to all bodies
+- Implemented BaseLoader, to fetch the currently edited PSystemBody. That allows us to create everything in the background.
+- Renamed all loading classes to <ThingItLoads>Loader, to have a consistent naming scheme.
+- Added getters and setters to almost all parser targets, to support dynamic generation of Kopernicus configs.
+- Official KSP 1.0.5 support
+- Removed the non-spherical ocean feature, because PartBuoyancy is way to complex now, so I can't replicate it's behaviour.
+- Removed the energy curve for stars in Body {}
+- Renamed ScaledVersion { SolarLightColor { } } to Light { }
+- Added luminosity and insolation settings to Light { }, to patch the light behaviour that is executed by the FlightIntegrator
+- Removed the need for Planetarium.fetch.Sun replacement, SolarPanels are now moddable (thanks NathanKell!)
+- Added Majiir's CompatibilityChecker, to lock Kopernicus on unsupported versions
+- Moved Ocean { HazardousOcean { HeatCurve { } } } to Ocean { HazardousOcean { } }
+- Completely removed the debugging utility, including the exporting tool (Mod+E+P). You are encouraged to use KittopiaTechs exporter.
+- Added density value to the Ocean node, to parse the density of the ocean
+- Added FogParser to parse the Underwater-Fog from an Ocean { Fog { } } node.
+- Many other changes that I forgot, if you find something that has changed, feel free to inform me.
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
@@ -36,30 +55,14 @@ We have yet to see if removing or rearranging the other bodies causes any sort o
 
 Instructions
 ------------
-
-1) Copy the contents of the GameData/ folder to KSP’s GameData/ folder
-
-2) Launch KSP and enjoy!
-
-3) Please report any bugs you may find to either or both of the email addresses above.
-
+- Copy the contents of the GameData/ folder to KSP’s GameData/ folder
+- Launch KSP and enjoy!
+- Please report any bugs you may find to either or both of the email addresses above.
 
 Examples
 ----------
-Selectively copy folders inside [KopernicusExamples/](https://github.com/Kopernicus/KopernicusExamples/) into a GameData/KopernicusExamples/ folder.  There are a number of examples of how to use Kopernicus.
-
+Selectively copy folders inside of [KopernicusExamples/](https://github.com/Kopernicus/KopernicusExamples/) into a GameData/KopernicusExamples/ folder.  There are a number of examples of how to use Kopernicus.
 
 Information
 -----------
 Coming Soon
-
-Debugging Features
-------------------
-
-After the Kopernicus.Injector behavior rewrites the system prefab and terminates, a behavior called Kopernicus.RuntimeUtility is started to provide debugging functions.
-
-PQS Inspector (Mod-P): Pressing Mod-P will explode your console with information about the PQS controller of the body currently being orbited
-
-PQS Quad Visualizer (Mod-;, Mod-/): Pressing Mod-; will draw green lines on the normal vectors to the surface of the planet at the PQ nodes.  This lets the LOD structure be visualized.  Used for testing LOD levels and whether your temperamental ocean just wants to be invisible or is decidedly non present.  Pressing Mod-/ will remove the lines (and save your framerate).
-
-Map Exporter (Mod-E-P): Pressing Mod-E-P will open the Kopernicus Map Export. The first, empty, line is for the name of the body, that you want to export. The second one is the resolution of the exported maps. The textures will be saved to GameData/Kopernicus/Cache/PluginData

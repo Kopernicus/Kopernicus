@@ -40,7 +40,7 @@ namespace Kopernicus
         public class Version
         {
             // Versioning information
-            private const string versionNumber = "0.4"; 
+            private const string versionNumber = "0.5"; 
 
             // Get a string for the logging
             public static string version
@@ -52,19 +52,19 @@ namespace Kopernicus
                     #else
                     bool developmentBuild = false;
                     #endif
-                    return "Kopernicus " + versionNumber + ((developmentBuild) ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
+                    return "Kopernicus " + versionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
             }
 
             // Returns the SHA1 Hash of the assembly
-            private static string AssemblyHandle()
+            public static string AssemblyHandle()
             {
                 string filePath = Assembly.GetCallingAssembly().Location;
                 return Convert.ToBase64String(SHA1.Create().ComputeHash(File.ReadAllBytes(filePath)));
             }
 
             // Returns the time when the assembly was built
-            private static DateTime BuiltTime()
+            public static DateTime BuiltTime()
             {
                 string filePath = Assembly.GetCallingAssembly().Location;
                 const int c_PeHeaderOffset = 60;
