@@ -149,6 +149,10 @@ namespace Kopernicus
                 {
                     get
                     {
+                        if (mod.watermain == null)
+                            return new ConfigNode("Watermain");
+
+                        // Not null
                         ConfigNode watermain = new ConfigNode("Watermain");
                         foreach (Texture2D texture in mod.watermain)
                             watermain.AddValue("waterTex-" + mod.watermain.ToList().IndexOf(texture), texture.name);
