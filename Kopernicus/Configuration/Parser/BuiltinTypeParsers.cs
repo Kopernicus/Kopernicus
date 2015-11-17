@@ -451,7 +451,7 @@ namespace Kopernicus
                 if (s.StartsWith ("BUILTIN/")) 
                 {
                     string textureName = Regex.Replace (s, "BUILTIN/", "");
-                    value = UnityEngine.Object.Instantiate(Resources.FindObjectsOfTypeAll<Texture>().Where(tex => tex.name == textureName).First()) as Texture2D;
+                    value = Resources.FindObjectsOfTypeAll<Texture>().Where(tex => tex.name == textureName).First() as Texture2D;
                     value.name = s;
                     return;
                 }
