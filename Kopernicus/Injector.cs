@@ -39,7 +39,7 @@ namespace Kopernicus
     public class Injector : MonoBehaviour 
     {
         // Name of the config node group which manages Kopernicus
-        private const string rootNodeName = "Kopernicus";
+        public const string rootNodeName = "Kopernicus";
 
         // Things that are used often
         public Templates templates = null;

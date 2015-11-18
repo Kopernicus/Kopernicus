@@ -37,7 +37,7 @@ namespace Kopernicus
         [AttributeUsage(AttributeTargets.Class)]
         public class RequireConfigType : Attribute
         {
-            public ConfigType type { get; private set; }
+            public ConfigType type { get; set; }
             public RequireConfigType (ConfigType type)
             {
                 this.type = type;

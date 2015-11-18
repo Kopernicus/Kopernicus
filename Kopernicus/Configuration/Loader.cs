@@ -40,13 +40,13 @@ namespace Kopernicus
         public class Loader : IParserEventSubscriber
         {
             // Name of the config type which holds the body definition
-            private const string bodyNodeName = "Body";
+            public const string bodyNodeName = "Body";
 
             // Currently edited body
-            public static Body currentBody { get; private set; }
+            public static Body currentBody { get; set; }
 
             // The returned PSystem
-            public PSystem systemPrefab { get; protected set; }
+            public PSystem systemPrefab { get; set; }
 
             // The name of the PSystem
             [ParserTarget("name", optional = true)]
@@ -199,7 +199,7 @@ namespace Kopernicus
             }
 
             // Sort bodies by distance from parent body
-            private static void RecursivelySortBodies (PSystemBody body)
+            public static void RecursivelySortBodies (PSystemBody body)
             {
                 body.children = body.children.OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList();
                 foreach (PSystemBody child in body.children) 
@@ -209,7 +209,7 @@ namespace Kopernicus
             }
 
             // Patch the FlightGlobalsIndex of bodies
-            private static void PatchFGI(ref List<int> numbers, ref int index, PSystemBody rootBody)
+            public static void PatchFGI(ref List<int> numbers, ref int index, PSystemBody rootBody)
             {
                 foreach (PSystemBody body in rootBody.children)
                 {

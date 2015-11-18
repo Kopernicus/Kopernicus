@@ -45,7 +45,7 @@ namespace Kopernicus
         public class NumericParser<T> : IParsable
         {
             public T value;
-            private MethodInfo parserMethod;
+            public MethodInfo parserMethod;
             public void SetFromString(string s)
             {
                 value = (T) parserMethod.Invoke (null, new object[] {s});
@@ -76,7 +76,7 @@ namespace Kopernicus
         public class NumericCollectionParser<T> : IParsable
         {
             public List<T> value;
-            private MethodInfo parserMethod;
+            public MethodInfo parserMethod;
             public void SetFromString (string s)
             {
                 // Need a new list
@@ -666,7 +666,7 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class FloatCurveParser : IParserEventSubscriber
         {
-            public FloatCurve curve { get; private set; }
+            public FloatCurve curve { get; set; }
 
             // Build the curve from the data found in the node
             void IParserEventSubscriber.Apply(ConfigNode node)

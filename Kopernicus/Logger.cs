@@ -41,7 +41,7 @@ namespace Kopernicus
         private static bool isInitialized = false;
 
         // Logger output path
-        private static string LogDirectory 
+        public static string LogDirectory 
         {
             get { return KSPUtil.ApplicationRootPath + "Logs/"; }
         }

@@ -106,7 +106,7 @@ namespace Kopernicus
 
             // Set the color that the star emits
             [ParserTarget("sunLensFlareColor", optional = true)]
-            private ColorParser sunLensFlareColor
+            public ColorParser sunLensFlareColor
             {
                 get { return lsc.sunLensFlareColor; }
                 set { lsc.sunLensFlareColor = value; }

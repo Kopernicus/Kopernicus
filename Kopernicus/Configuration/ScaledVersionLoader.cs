@@ -39,12 +39,12 @@ namespace Kopernicus
         public class ScaledVersionLoader : BaseLoader, IParserEventSubscriber
         {
             // Node name which represents the scaled version material
-            private const string materialNodeName = "Material";
+            public const string materialNodeName = "Material";
 
             // Scaled representation of a planet for map view to modify
-            private GameObject scaledVersion;
-            private CelestialBody owner;
-            private StarComponent component;
+            public GameObject scaledVersion;
+            public CelestialBody owner;
+            public StarComponent component;
 
             // Type of object this body's scaled version is
             [PreApply]

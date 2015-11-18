@@ -13,7 +13,7 @@ using System.Text;
 
 public static class ObjImporter
 {
-    private struct meshStruct
+    public struct meshStruct
     {
         public Vector3[] vertices;
         public Vector3[] normals;
@@ -60,7 +60,7 @@ public static class ObjImporter
         return mesh;
     }
 
-    private static meshStruct createMeshStruct(string filename)
+    public static meshStruct createMeshStruct(string filename)
     {
         int triangles = 0;
         int vertices = 0;
@@ -126,7 +126,7 @@ public static class ObjImporter
         return mesh;
     }
 
-    private static void populateMeshStruct(ref meshStruct mesh)
+    public static void populateMeshStruct(ref meshStruct mesh)
     {
         StreamReader stream = File.OpenText(mesh.fileName);
         string entireText = stream.ReadToEnd();
