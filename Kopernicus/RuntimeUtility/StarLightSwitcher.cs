@@ -42,7 +42,7 @@ namespace Kopernicus
         public FloatCurve powerCurve;
 
         // Celestial body which represents the star
-        public CelestialBody celestialBody { get; private set; }
+        public CelestialBody celestialBody { get; set; }
 
         // We need to patch the sun Transform of the Radiators
         private static FieldInfo radiatorSun { get; set; }
@@ -127,7 +127,7 @@ namespace Kopernicus
     public class StarLightSwitcher : MonoBehaviour
     {
         // List of celestial bodies that are stars
-        private List<StarComponent> stars;
+        public List<StarComponent> stars;
 
         // On awake(), preserve the star
         void Awake()

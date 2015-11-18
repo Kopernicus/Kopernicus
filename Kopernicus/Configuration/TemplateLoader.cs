@@ -43,18 +43,18 @@ namespace Kopernicus
             public PSystemBody body;
 
             // Initial radius of the body
-            public double radius { get; private set; }
+            public double radius { get; set; }
 
             // Initial type of the body
-            public BodyType type { get; private set; }
+            public BodyType type { get; set; }
 
             // PSystemBody to use as a template in lookup & clone
-            private PSystemBody originalBody; 
+            public PSystemBody originalBody; 
 
             // Name of the body to use for the template
             [PreApply]
             [ParserTarget("name", optional = false)]
-            private string name 
+            public string name 
             {
                 // Crawl the system prefab for the body
                 set 
@@ -70,27 +70,27 @@ namespace Kopernicus
             // Should we strip the PQS off
             [PreApply]
             [ParserTarget("removePQS", optional = true)]
-            private NumericParser<bool> removePQS = new NumericParser<bool> (false);
+            public NumericParser<bool> removePQS = new NumericParser<bool> (false);
 
             // Should we strip the atmosphere off
             [ParserTarget("removeAtmosphere", optional = true)]
-            private NumericParser<bool> removeAtmosphere = new NumericParser<bool>(false);
+            public NumericParser<bool> removeAtmosphere = new NumericParser<bool>(false);
 
             // Should we strip the ocean off
             [ParserTarget("removeOcean", optional = true)]
-            private NumericParser<bool> removeOcean = new NumericParser<bool>(false);
+            public NumericParser<bool> removeOcean = new NumericParser<bool>(false);
 
             // Collection of PQS mods to remove
             [ParserTarget("removePQSMods", optional = true)]
-            private StringCollectionParser removePQSMods;
+            public StringCollectionParser removePQSMods;
 
             // Should we strip all Mods off
             [ParserTarget("removeAllPQSMods", optional = true)]
-            private NumericParser<bool> removeAllMods = new NumericParser<bool>(false);
+            public NumericParser<bool> removeAllMods = new NumericParser<bool>(false);
 
             // Collection of PQS mods to remove
             [ParserTarget("removeProgressTree", optional = true)]
-            private NumericParser<bool> removeProgressTree = new NumericParser<bool> (true);
+            public NumericParser<bool> removeProgressTree = new NumericParser<bool> (true);
 
             // Apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
@@ -206,7 +206,7 @@ namespace Kopernicus
             }
 
             // Private exception to throw in the case the template doesn't load
-            private class TemplateNotFoundException : Exception
+            public class TemplateNotFoundException : Exception
             {
                 public TemplateNotFoundException(string s) : base(s)
                 {

@@ -41,7 +41,7 @@ namespace Kopernicus
     public class RuntimeUtility : MonoBehaviour
     {
         // Variables
-        private MapObject previous;
+        public MapObject previous;
 
         // Awake() - flag this class as don't destroy on load and register delegates
         void Awake ()

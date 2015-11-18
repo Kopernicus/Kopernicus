@@ -1,6 +1,6 @@
-Kopernicus Beta Release 5
+Kopernicus Beta Release 5.1
 ==============================
-November 17th, 2015
+November 18th, 2015
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
@@ -37,6 +37,11 @@ New in this version
 - Added density value to the Ocean node, to parse the density of the ocean
 - Added FogParser to parse the Underwater-Fog from an Ocean { Fog { } } node.
 - Many other changes that I forgot, if you find something that has changed, feel free to inform me.
+
+New in 0.5.1
+------------
+- Fixed a bug where Kopernicus crashes if the body doesn't have a ScaledVersion { } node
+- Made more things public, so that other mods can access them.
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 

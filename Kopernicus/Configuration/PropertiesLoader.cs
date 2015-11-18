@@ -39,7 +39,7 @@ namespace Kopernicus
         public class PropertiesLoader : BaseLoader, IParserEventSubscriber
         {
             // Celestial body to edit
-            public CelestialBody celestialBody { get; private set; }
+            public CelestialBody celestialBody { get; set; }
 
             // Body description
             [ParserTarget("description", optional = true)]
@@ -299,7 +299,7 @@ namespace Kopernicus
             }
 
             // Mass converters
-            private void GeeASLToOthers()
+            public void GeeASLToOthers()
             {
                 double rsq = celestialBody.Radius;
                 rsq *= rsq;

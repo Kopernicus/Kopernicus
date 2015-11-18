@@ -145,7 +145,7 @@ namespace Kopernicus
              * @param o Instance of the object which owns member
              * @param node Configuration node from which to load data
              **/
-            private static void LoadCollectionMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node, bool getChilds = true)
+            public static void LoadCollectionMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node, bool getChilds = true)
             {
                 // Get the target attribute
                 ParserTargetCollection target = (member.GetCustomAttributes ((typeof(ParserTargetCollection)), true) as ParserTargetCollection[]) [0];
@@ -280,7 +280,7 @@ namespace Kopernicus
              * @param o Instance of the object which owns member
              * @param node Configuration node from which to load data
              **/
-            private static void LoadObjectMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node, bool getChilds = true)
+            public static void LoadObjectMemberFromConfigurationNode (MemberInfo member, object o, ConfigNode node, bool getChilds = true)
             {
                 // Get the parser target, only one is allowed so it will be first
                 ParserTarget target = (member.GetCustomAttributes ((typeof(ParserTarget)), true) as ParserTarget[]) [0];
@@ -329,8 +329,8 @@ namespace Kopernicus
                         throw new ParserTargetMissingException ("Missing non-optional field: " + o.GetType () + "." + target.fieldName);
                     }
                     
-                    // Nothing to do, so return
-                    return;
+                    // Nothing to do, so DONT return!
+                    // return;
                 }
 
                 // Does this node have a required config source type (and if so, check if valid)
@@ -391,6 +391,9 @@ namespace Kopernicus
                         LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), target.getChild);
                     }
                 }
+
+                // get at least an empty object, null checks suck
+                if (targetValue == null) targetValue = Activator.CreateInstance(targetType);
                 
                 // If the member type is a field, set the value
                 if(member.MemberType == MemberTypes.Field)
@@ -416,7 +419,7 @@ namespace Kopernicus
             }
 
             // Loads ParserTargets from other assemblies in GameData/
-            private static void LoadExternalParserTargets(ConfigNode node)
+            public static void LoadExternalParserTargets(ConfigNode node)
             {
                 // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
                 foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)

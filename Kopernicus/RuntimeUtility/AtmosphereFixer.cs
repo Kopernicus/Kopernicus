@@ -86,7 +86,7 @@ namespace Kopernicus
             return false;
         }
 
-        private AFGInfo(AtmosphereFromGround afg)
+        public AFGInfo(AtmosphereFromGround afg)
         {
             DEBUG_alwaysUpdateAll = afg.DEBUG_alwaysUpdateAll;
             doScale = afg.doScale;
@@ -102,7 +102,7 @@ namespace Kopernicus
             outerRadius = afg.outerRadius;
             innerRadius = afg.innerRadius;
         }
-        private void Apply(AtmosphereFromGround afg)
+        public void Apply(AtmosphereFromGround afg)
         {
             afg.UpdateAtmosphere(true);
             afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;

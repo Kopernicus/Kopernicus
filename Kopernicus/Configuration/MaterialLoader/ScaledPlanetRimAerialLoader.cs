@@ -81,16 +81,6 @@ namespace Kopernicus
             [ParserTarget("Gradient", optional = true)]
             public Gradient rimColorRampGradientSetter 
             {
-                get
-                {
-                    // Generate the gradient from a texture
-                    Gradient gradient = new Gradient();
-                    Color[] colors = Utility.CreateReadable(rimColorRamp).GetPixels(0);
-                    gradient.Add(0f, colors[0]);
-                    gradient.Add(0.6f, colors[(int)(colors.Length * 0.6f) - 1]);
-                    gradient.Add(1f, colors[colors.Length - 1]);
-                    return gradient;
-                }
                 set 
                 {
                     // Generate the ramp from a gradient
