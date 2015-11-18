@@ -163,7 +163,7 @@ namespace Kopernicus
             void Update()
             {
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.localRotation = rotation;
+                if (lockRotation) transform.rotation = rotation;
             }
 
             /// <summary>
@@ -172,7 +172,7 @@ namespace Kopernicus
             void FixedUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.localRotation = rotation;
+                if (lockRotation) transform.rotation = rotation;
             }
 
             /// <summary>
@@ -181,7 +181,7 @@ namespace Kopernicus
             void LateUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.localRotation = rotation;
+                if (lockRotation) transform.rotation = rotation;
             }
         }
     }
