@@ -1,4 +1,4 @@
-Kopernicus Beta Release 5.1
+Kopernicus Beta Release 5.2
 ==============================
 November 18th, 2015
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
@@ -42,6 +42,11 @@ New in 0.5.1
 ------------
 - Fixed a bug where Kopernicus crashes if the body doesn't have a ScaledVersion { } node
 - Made more things public, so that other mods can access them.
+
+New in 0.5.2
+------------
+- Fixed a bug that was introduced through 0.5.1 bugfixing
+- Fixed ScaledSpace OnDemand loading for gas giants
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
