@@ -40,7 +40,7 @@ namespace Kopernicus
         public class Version
         {
             // Versioning information
-            public const string versionNumber = "0.5.1"; 
+            public const string versionNumber = "0.5.2"; 
 
             // Get a string for the logging
             public static string version

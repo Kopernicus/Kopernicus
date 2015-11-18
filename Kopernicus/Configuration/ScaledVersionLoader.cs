@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Kopernicus.OnDemand;
 
 namespace Kopernicus
 {
@@ -229,20 +230,15 @@ namespace Kopernicus
                 }
 
                 // If we use OnDemand, we need to delete the original textures and reload them
-                if (OnDemand.OnDemandStorage.useOnDemand && type.value != BodyType.Star)
+                if (OnDemandStorage.useOnDemand && type.value != BodyType.Star)
                 {
-                    try
-                    {
-                        string texturePath = scaledVersion.renderer.material.GetTexture("_MainTex").name;
-                        string normalsPath = scaledVersion.renderer.material.GetTexture("_BumpMap").name;
-                        OnDemand.ScaledSpaceDemand texture = scaledVersion.AddComponent<OnDemand.ScaledSpaceDemand>();
-                        if (Utility.TextureExists(texturePath)) texture.texture = texturePath;
-                        if (Utility.TextureExists(normalsPath)) texture.normals = normalsPath;
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Active.LogException(e);
-                    }
+                    Texture2D texture = scaledVersion.renderer.material.GetTexture("_MainTex") as Texture2D;
+                    Texture2D normals = scaledVersion.renderer.material.GetTexture("_BumpMap") as Texture2D;
+                    ScaledSpaceDemand demand = scaledVersion.AddComponent<ScaledSpaceDemand>();
+                    if (texture != null)
+                        demand.texture = texture.name;
+                    if (normals != null)
+                        demand.normals = normals.name;
                 }
             }
 

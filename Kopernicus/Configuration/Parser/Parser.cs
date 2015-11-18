@@ -330,7 +330,7 @@ namespace Kopernicus
                     }
                     
                     // Nothing to do, so DONT return!
-                    // return;
+                    return;
                 }
 
                 // Does this node have a required config source type (and if so, check if valid)
@@ -391,9 +391,6 @@ namespace Kopernicus
                         LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), target.getChild);
                     }
                 }
-
-                // get at least an empty object, null checks suck
-                if (targetValue == null) targetValue = Activator.CreateInstance(targetType);
                 
                 // If the member type is a field, set the value
                 if(member.MemberType == MemberTypes.Field)

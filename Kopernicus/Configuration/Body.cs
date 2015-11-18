@@ -144,7 +144,7 @@ namespace Kopernicus
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
                 // If we have a template, generatedBody *is* the template body
-                if (template != null)
+                if (template != null && template.body)
                 {
                     generatedBody = template.body;
 
@@ -201,14 +201,18 @@ namespace Kopernicus
             // Parser Post Apply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                Logger.Active.Log(scaledVersion);
+                // If Debug Mode is null, create default values
+                if (debug == null) debug = new DebugLoader();
+                if (scaledVersion == null) scaledVersion = new ScaledVersionLoader();
+
+                // PQS
                 if (generatedBody.pqsVersion)
                 {
                     // Adjust the radius of the PQSs appropriately
                     foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
                         p.radius = generatedBody.celestialBody.Radius;
                 }
-                Logger.Active.Log(scaledVersion);
+
                 // Create a barycenter
                 if (barycenter.value)
                 {
@@ -226,10 +230,7 @@ namespace Kopernicus
                     // Stop ScaledSpace Cache
                     scaledVersion.deferMesh = true;
                 }
-                Logger.Active.Log(scaledVersion);
-                // If Debug Mode is null, create default values
-                if (debug == null) debug = new DebugLoader();
-                Logger.Active.Log(scaledVersion);
+
                 // We need to generate new scaled space meshes if 
                 //   a) we are using a template and we've change either the radius or type of body
                 //   b) we aren't using a template
@@ -247,14 +248,14 @@ namespace Kopernicus
                                                 debug.exportMesh,
                                                 scaledVersion.sphericalModel);
                 }
-                Logger.Active.Log(scaledVersion);
+
                 // Visualize the SOI
                 if (debug.showSOI)
                     generatedBody.celestialBody.gameObject.AddComponent<Wiresphere>();
-                Logger.Active.Log(scaledVersion);
+
                 // Loads external parser targets
                 Parser.LoadExternalParserTargetsRecursive(node);
-                Logger.Active.Log(scaledVersion);
+
                 // Post gen celestial body
                 Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
             }
