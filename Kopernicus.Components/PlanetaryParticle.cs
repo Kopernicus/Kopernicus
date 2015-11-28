@@ -28,6 +28,9 @@
  */
 
 using UnityEngine;
+using System.Reflection;
+using System.IO;
+using System.Linq;
 
 namespace Kopernicus
 {
@@ -42,6 +45,7 @@ namespace Kopernicus
             public ParticleEmitter emitter;
             public ParticleAnimator animator;
             public ParticleRenderer renderer;
+            public MeshFilter filter;
 
             /// Variables
             public string target = "Sun";
@@ -53,6 +57,24 @@ namespace Kopernicus
             public Color[] colorAnimation;
             public Texture2D mainTexture;
             public Vector3 randomVelocity;
+            public Vector3 scale = Vector3.one;
+            public Mesh mesh;
+
+            /// <summary>
+            /// Attaches a Planet Particle Emitter to a host, that has a meshfilter attached
+            /// </summary>
+            public static PlanetParticleEmitter Create(GameObject host)
+            {
+                /// Create the GameObject
+                GameObject emitter = GetWorldParticleCollider();
+                emitter.transform.parent = host.transform;
+                emitter.transform.localPosition = Vector3.zero;
+                emitter.SetLayerRecursive(10);
+                emitter.name = "Particles";
+
+                /// Add the Particle Emitter
+                return emitter.AddComponent<PlanetParticleEmitter>();
+            }
 
             /// <summary>
             /// The main initialisation. Here we create the subcomponents.
@@ -89,6 +111,15 @@ namespace Kopernicus
                 {
                     renderer = GetComponent<ParticleRenderer>();
                 }
+
+                if (!GetComponent<MeshFilter>())
+                {
+                    filter = gameObject.AddComponent<MeshFilter>();
+                }
+                else
+                {
+                    filter = GetComponent<MeshFilter>();
+                }
             }
 
             /// <summary>
@@ -101,6 +132,7 @@ namespace Kopernicus
                 animator.sizeGrow = sizeGrow;
                 animator.colorAnimation = colorAnimation;
                 renderer.material.mainTexture = mainTexture;
+                filter.mesh = filter.sharedMesh = mesh != null ? mesh : transform.parent.GetComponent<MeshFilter>().sharedMesh;
             }
 
             /// <summary>
@@ -109,7 +141,7 @@ namespace Kopernicus
             void Update()
             {
                 Vector3 speed = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target).position;
-                speed -= transform.position;
+                speed -= transform.parent.position;
                 speed *= speedScale;
                 emitter.minEnergy = minEnergy / TimeWarp.CurrentRate;
                 emitter.maxEnergy = maxEnergy / TimeWarp.CurrentRate;
@@ -118,6 +150,40 @@ namespace Kopernicus
                 emitter.rndVelocity = randomVelocity * TimeWarp.CurrentRate;
                 speed *= TimeWarp.CurrentRate;
                 emitter.worldVelocity = speed;
+                transform.localScale = scale;
+            }
+
+            /// <summary>
+            /// Detect Particle collisions
+            /// </summary>
+            /// <param name="other"></param>
+            void OnParticleCollision(GameObject other)
+            {
+                /// Don't collide with the planet
+                if (other == transform.parent.gameObject)
+                    return;
+
+                /// We need a rigidbody
+                if (!other.rigidbody)
+                    return;
+
+                /// Do funny things
+                Particle partice = emitter.particles.OrderBy(p => Vector3.Distance(other.transform.position, p.position)).First();
+                other.rigidbody.AddForceAtPosition(partice.velocity.normalized * partice.energy, partice.position, ForceMode.Impulse);
+                partice.energy = 0;
+            }
+
+            /// <summary>
+            /// Returns a copy of the world particle collider prefab
+            /// </summary>
+            public static GameObject GetWorldParticleCollider()
+            {
+                Stream stream = typeof(PlanetParticleEmitter).Assembly.GetManifestResourceStream("Kopernicus.Components.Assets.WorldParticleCollider.unity3d");
+                byte[] buffer = new byte[stream.Length];
+                stream.Read(buffer, 0, (int)stream.Length);
+                AssetBundle bundle = AssetBundle.CreateFromMemoryImmediate(buffer);
+                GameObject collider = Instantiate(bundle.Load("WorldParticleCollider", typeof(GameObject))) as GameObject;
+                return collider;
             }
         }
     }

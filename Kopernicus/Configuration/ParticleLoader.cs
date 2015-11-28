@@ -130,23 +130,39 @@ namespace Kopernicus
                 set { particle.mainTexture = value; }
             }
 
+            // scale
+            [ParserTarget("scale", optional = true, allowMerge = false)]
+            public Vector3Parser scale
+            {
+                get { return particle.scale; }
+                set { particle.scale = value; }
+            }
+
+            // mesh
+            [ParserTarget("mesh", optional = true, allowMerge = false)]
+            public MeshParser mesh
+            {
+                get { return particle.mesh; }
+                set { particle.mesh = value; }
+            }
+
             // Default Constructor
             public ParticleLoader()
             {
                 scaledVersion = generatedBody.scaledVersion;
+                particle = PlanetParticleEmitter.Create(scaledVersion);
             }
 
             // Runtime constructor
-            public ParticleLoader(CelestialBody body)
+            public ParticleLoader(CelestialBody body, GameObject particleHost)
             {
                 scaledVersion = body.scaledBody;
+                particle = particleHost.GetComponent<PlanetParticleEmitter>();
             }
 
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                if (particle == null)
-                    particle = scaledVersion.AddComponent<PlanetParticleEmitter>();
             }
 
             // Post-Apply event
