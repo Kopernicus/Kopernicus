@@ -448,6 +448,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new Texture2D(_width, _height);
                 }
+                _data.Apply(false, false);
                 return _data;
             }
 
