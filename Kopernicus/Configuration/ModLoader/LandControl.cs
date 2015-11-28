@@ -885,27 +885,6 @@ namespace Kopernicus
                     mod.latitudeSimplex = latitudeSimplex.simplex;
                     mod.longitudeSimplex = longitudeSimplex.simplex;
 
-                    // Add Colliders to the scatters
-                    foreach (PQSLandControl.LandClassScatter scatter in mod.scatters)
-                    {
-                        // If nothing's there, abort
-                        if (!scatters.Any(s => s.scatter.scatterName == scatter.scatterName))
-                            continue;
-
-                        // Get the Loader
-                        LandClassScatterLoader loader = scatters.First(s => s.scatter.scatterName == scatter.scatterName);
-
-                        // Create the Scatter-Parent
-                        GameObject scatterParent = new GameObject("Scatter " + scatter.scatterName);
-                        scatterParent.transform.parent = mod.sphere.transform;
-                        scatterParent.transform.localPosition = Vector3.zero;
-                        scatterParent.transform.localRotation = Quaternion.identity;
-                        scatterParent.transform.localScale = Vector3.one;
-
-                        // Add the ScatterExtension
-                        Scatter.CreateInstance(scatterParent, loader.science, loader.collide, loader.experiment);
-                    }
-
                     // Load the LandClasses manually, to support patching
                     if (node.HasNode("landClasses"))
                     {
@@ -994,8 +973,12 @@ namespace Kopernicus
 
                     if (scatters.Count > 0)
                         mod.scatters = scatters.Select(s => s.scatter).ToArray();
+                    else
+                        mod.scatters = new PQSLandControl.LandClassScatter[0];
                     if (landClasses.Count > 0)
                         mod.landClasses = landClasses.Select(c => c.landClass).ToArray();
+                    else
+                        mod.landClasses = new PQSLandControl.LandClass[0];
 
                     // Assign each scatter amount with their corresponding scatter
                     foreach (PQSLandControl.LandClass landClass in mod.landClasses)
@@ -1015,6 +998,27 @@ namespace Kopernicus
                                 amount.scatter = mod.scatters[i];
                             }
                         }
+                    }
+
+                    // Add Colliders to the scatters
+                    foreach (PQSLandControl.LandClassScatter scatter in mod.scatters)
+                    {
+                        // If nothing's there, abort
+                        if (!scatters.Any(s => s.scatter.scatterName == scatter.scatterName))
+                            continue;
+
+                        // Get the Loader
+                        LandClassScatterLoader loader = scatters.First(s => s.scatter.scatterName == scatter.scatterName);
+
+                        // Create the Scatter-Parent
+                        GameObject scatterParent = new GameObject("Scatter " + scatter.scatterName);
+                        scatterParent.transform.parent = mod.sphere.transform;
+                        scatterParent.transform.localPosition = Vector3.zero;
+                        scatterParent.transform.localRotation = Quaternion.identity;
+                        scatterParent.transform.localScale = Vector3.one;
+
+                        // Add the ScatterExtension
+                        Scatter.CreateInstance(scatterParent, loader.science, loader.collide, loader.experiment);
                     }
                 }
 
