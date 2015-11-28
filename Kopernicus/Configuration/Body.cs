@@ -129,7 +129,7 @@ namespace Kopernicus
             public List<RingLoader> rings = new List<RingLoader>();
 
             // Wrapper around Particle class for editing/loading
-            [ParserTargetCollection("Particle", optional = true, nameSignificance = NameSignificance.None, allowMerge = true)]
+            [ParserTargetCollection("Particles", optional = true, nameSignificance = NameSignificance.None, allowMerge = true)]
             public List<ParticleLoader> particle = new List<ParticleLoader>();
         
             // Wrapper around the settings for the SpaceCenter
