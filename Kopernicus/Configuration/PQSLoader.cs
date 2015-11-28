@@ -320,7 +320,11 @@ namespace Kopernicus
             }
 
             // Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                generatedBody.pqsVersion.surfaceMaterial = surfaceMaterial;
+                surfaceMaterial.name = Guid.NewGuid().ToString();
+            }
 
             // PostApply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
