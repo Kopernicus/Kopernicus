@@ -31,6 +31,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using Kopernicus.Configuration.Asteroids;
 
 namespace Kopernicus
 {
@@ -42,11 +43,17 @@ namespace Kopernicus
             // Name of the config type which holds the body definition
             public const string bodyNodeName = "Body";
 
+            // Name of the config type which holds the asteroid definition
+            public const string asteroidNodeName = "Asteroid";
+
             // Currently edited body
             public static Body currentBody { get; set; }
 
             // The returned PSystem
             public PSystem systemPrefab { get; set; }
+
+            // The current instance of the Loader
+            public static Loader Instance { get; set; }
 
             // The name of the PSystem
             [ParserTarget("name", optional = true)]
@@ -112,6 +119,12 @@ namespace Kopernicus
                 set { Templates.menuBody = value; }
             }
 
+            // Instance
+            public Loader()
+            {
+                Instance = this;
+            }
+
             // Create the new planetary system
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
@@ -136,7 +149,7 @@ namespace Kopernicus
             {
                 // Dictionary of bodies generated
                 Dictionary<string, Body> bodies = new Dictionary<string, Body>();
-                
+
                 // Load all of the bodies
                 foreach (ConfigNode bodyNode in node.GetNodes(bodyNodeName)) 
                 {
@@ -161,7 +174,32 @@ namespace Kopernicus
                     // Restore default logger
                     bodyLogger.Flush ();
                     Logger.Default.SetAsActive ();
-                }                
+                }
+
+                // Load all of the asteroids                
+                foreach (ConfigNode asteroidNode in node.GetNodes(asteroidNodeName))
+                {
+                    // Create a logger for this asteroid
+                    Logger logger = new Logger(asteroidNode.GetValue("name") + ".Asteroid");
+                    logger.SetAsActive();
+
+                    // Attempt to create the Asteroid
+                    try
+                    {
+                        Asteroid asteroid = Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode);
+                        DiscoverableObjects.asteroids.Add(asteroid);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.name);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogException(e);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Asteroid: " + asteroidNode.GetValue("name"));
+                    }
+
+                    // Restore default logger
+                    logger.Flush();
+                    Logger.Default.SetAsActive();
+                }
 
                 // Glue all the orbits together in the defined pattern
                 foreach (KeyValuePair<string, Body> body in bodies) 

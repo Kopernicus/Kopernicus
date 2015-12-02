@@ -62,7 +62,6 @@ namespace Kopernicus
             }
 
             // We're ALIVE
-            Logger.Initialize();
             Logger.Default.SetAsActive();
             Logger.Default.Log("Injector.Awake(): Begin");
 
@@ -79,9 +78,6 @@ namespace Kopernicus
 
             // Get the current time
             DateTime start = DateTime.Now;
-
-            // Grab templates
-            templates = new Templates();
 
             // Get the configNode
             ConfigNode kopernicus = GameDatabase.Instance.GetConfigs(rootNodeName)[0].config;

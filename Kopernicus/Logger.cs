@@ -161,7 +161,7 @@ namespace Kopernicus
         }
 
         // Initialize the Logger (i.e. delete old logs) 
-        public static void Initialize()
+        static Logger()
         {
             // Attempt to clean the log directory
             try

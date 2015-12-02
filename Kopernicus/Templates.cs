@@ -49,7 +49,7 @@ namespace Kopernicus
         public static List<string> finalizeBodies { get; set; }
 
         // The body that should appear in MainMenu
-        public static string menuBody { get; set; } = "Kerbin";
+        public static string menuBody { get; set; }
 
         // SOI's
         public static Dictionary<string, double> sphereOfInfluence { get; set; }
@@ -80,6 +80,9 @@ namespace Kopernicus
             // Create lists
             barycenters = new List<string>();
             finalizeBodies = new List<string>();
+
+            // Main Menu body
+            menuBody = "Kerbin";
         }
     }
 }
