@@ -1,52 +1,29 @@
-Kopernicus Beta Release 5.2
+Kopernicus Beta Release 6
 ==============================
-November 18th, 2015
+December 12th, 2015
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 
 New in this version
 -------------------
-- Implemented working OnDemand-Loading library, for MapSO, CBAttributeMapSO and ScaledSpace Textures
-- Removed .mu support for Scatter Meshes, because it doesn't fit well for this purpose
-- Added support for BUILTIN/ Biome Maps
-- Added operators to convert the internal parsers to their respective values
-- Moved custom components into a seperate library
-- Complete reengineering of the code. Kopernicus code is now much cleaner, easier to extend and to debug
-- ModLoader is now powered by generics, so that the whole namespace is cleaner
-- External ModLoaders don't have to use the Namespace Kopernicus.Configuration.ModLoader anymore. Use whatever you want :)
-- Removed the custom ring shaders and reverted back to the builtin ones. Fixed the halo-bug differently
-- Created components for Rings and the KSC mover, to make them more modular
-- Added support for SOI-Debbugging (i.e. making the SOI visible). Use Debug { showSOI = true }
-- Removed Debug { exportBin } option, and added exportMesh and update. exportMesh will force Kopernicus to write a mesh (or not), and update will force a ScaledSpace Update, which is neccisary for exportMesh.
-- Cleaned up the runtime utility, everything is now in a single class (no KSPAdddon spam)
-- Removed the old Finalize System
-- Added Body { finalizeOrbit } which will apply the same changes to this single body like the old System did to all bodies
-- Implemented BaseLoader, to fetch the currently edited PSystemBody. That allows us to create everything in the background.
-- Renamed all loading classes to <ThingItLoads>Loader, to have a consistent naming scheme.
-- Added getters and setters to almost all parser targets, to support dynamic generation of Kopernicus configs.
-- Official KSP 1.0.5 support
-- Removed the non-spherical ocean feature, because PartBuoyancy is way to complex now, so I can't replicate it's behaviour.
-- Removed the energy curve for stars in Body {}
-- Renamed ScaledVersion { SolarLightColor { } } to Light { }
-- Added luminosity and insolation settings to Light { }, to patch the light behaviour that is executed by the FlightIntegrator
-- Removed the need for Planetarium.fetch.Sun replacement, SolarPanels are now moddable (thanks NathanKell!)
-- Added Majiir's CompatibilityChecker, to lock Kopernicus on unsupported versions
-- Moved Ocean { HazardousOcean { HeatCurve { } } } to Ocean { HazardousOcean { } }
-- Completely removed the debugging utility, including the exporting tool (Mod+E+P). You are encouraged to use KittopiaTechs exporter.
-- Added density value to the Ocean node, to parse the density of the ocean
-- Added FogParser to parse the Underwater-Fog from an Ocean { Fog { } } node.
-- Many other changes that I forgot, if you find something that has changed, feel free to inform me.
-
-New in 0.5.1
-------------
-- Fixed a bug where Kopernicus crashes if the body doesn't have a ScaledVersion { } node
-- Made more things public, so that other mods can access them.
-
-New in 0.5.2
-------------
-- Fixed a bug that was introduced through 0.5.1 bugfixing
-- Fixed ScaledSpace OnDemand loading for gas giants
+- Fixed the Biome-View in Tracking Station
+- Fixed PQSMaterials
+- Fixed LandControl
+- Added the ability to create multiple Particle Emitters with custom meshes (mesh = <path>.obj) and scales (scale = 1.0, 1.0, 1.0)
+- Particles are now in a Particles {} node (Body { Particles { Particle { <your definition> } Particle { <your other definition> } } })
+- Added early support for particle collisions, toggleable using collide = true in the Particle settings (defaults to false)
+- Added the ability to apply a constant force to the particles (force = 1.0, 1.0, 1.0)
+- Added asteroid customization through Asteroid { } nodes in the Kopernicus { } node. See System.cfg for the stock configuration
+- Added support for HSBA() colors (0-255)
+- Fixed AtmosphereFromGround loading
+- Removed Debug Spam and fixed some exceptions in the parser
+- The SOI-Debugging lines are better visible and nicer now
+- The changes to the main menu should persist between scene changes
+- EVE clouds should get copied to the main menu again
+- Added visibility tweaking (icon and mode in Orbit { } and selectable in Properties { })
+- PQSMods are now sorted using the order value when caching the scaled space
+- Various other fixes and things that I forgot
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 

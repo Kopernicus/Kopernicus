@@ -40,7 +40,7 @@ namespace Kopernicus
         public class Version
         {
             // Versioning information
-            public const string versionNumber = "0.5.2"; 
+            public const string versionNumber = "0.6"; 
 
             // Get a string for the logging
             public static string version
@@ -48,9 +48,9 @@ namespace Kopernicus
                 get
                 {
                     #if DEBUG
-                    bool developmentBuild = true;
+                    const bool developmentBuild = true;
                     #else
-                    bool developmentBuild = false;
+                    const bool developmentBuild = false;
                     #endif
                     return "Kopernicus " + versionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
