@@ -313,7 +313,7 @@ namespace Kopernicus
                     catch (Exception e)
                     {
                         // Ignore runtime getters
-                        if (!e.Source.Contains(".get_"))
+                        if (!e.StackTrace.Contains(".get_"))
                             Debug.LogException(e);
                     }
                 }
