@@ -59,6 +59,8 @@ namespace Kopernicus
             public Vector3 randomVelocity;
             public Vector3 scale = Vector3.one;
             public Mesh mesh;
+            public bool collideable;
+            public Vector3 force = Vector3.zero;
 
             /// <summary>
             /// Attaches a Planet Particle Emitter to a host, that has a meshfilter attached
@@ -133,6 +135,7 @@ namespace Kopernicus
                 animator.colorAnimation = colorAnimation;
                 renderer.material.mainTexture = mainTexture;
                 filter.mesh = filter.sharedMesh = mesh != null ? mesh : transform.parent.GetComponent<MeshFilter>().sharedMesh;
+                animator.force = force;
             }
 
             /// <summary>
@@ -169,6 +172,10 @@ namespace Kopernicus
             /// <param name="other"></param>
             void OnParticleCollision(GameObject other)
             {
+                /// If we dont want collisions, abort
+                if (!collideable)
+                    return;
+
                 /// Don't collide with the planet
                 if (other == transform.parent.gameObject)
                     return;
