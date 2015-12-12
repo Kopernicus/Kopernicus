@@ -172,7 +172,6 @@ namespace Kopernicus
             // Parser apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                return;
                 // Set Defaults
                 afg.planet = body;
                 afg.ESun = 30f;
