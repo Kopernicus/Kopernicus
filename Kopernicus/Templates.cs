@@ -58,6 +58,9 @@ namespace Kopernicus
         // Barycenters
         public static List<string> barycenters { get; set; }
 
+        // Bodies who aren't selectable
+        public static List<string> notSelectable { get; set; }
+
         // Orbits
         public static Dictionary<string, OrbitRenderer.DrawIcons> drawIcons { get; set; }
         public static Dictionary<string, OrbitRenderer.DrawMode> drawMode { get; set; }
@@ -79,6 +82,7 @@ namespace Kopernicus
 
             // Create lists
             barycenters = new List<string>();
+            notSelectable = new List<string>();
             finalizeBodies = new List<string>();
 
             // Main Menu body

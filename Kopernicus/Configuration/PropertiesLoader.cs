@@ -246,6 +246,14 @@ namespace Kopernicus
                 set { celestialBody.use_The_InName = value; }
             }
 
+            // If the body should be unselectable
+            [ParserTarget("selectable", optional = true)]
+            public NumericParser<bool> selectable
+            {
+                get { return !Templates.notSelectable.Contains(celestialBody.transform.name); }
+                set { if (!value.value) Templates.notSelectable.Add(celestialBody.transform.name); }
+            }
+
             // Apply Event
             void IParserEventSubscriber.Apply (ConfigNode node)
             {
