@@ -96,6 +96,7 @@ namespace Kopernicus
                     line.vectorObject.renderer.receiveShadows = false;
                     line.layer = 31;
                 }
+                line.vectorObject.renderer.material = MapView.OrbitLinesMaterial;
                 Vector3[] points = new Vector3[(int)Math.Floor(360 / 15d)];
                 Orbit orbit = new Orbit(inclination, 0, radius, lan, 0, 0, 0, body);
                 for (int i = 0; i < Math.Floor(360 / 15d); i++)
@@ -103,7 +104,7 @@ namespace Kopernicus
                     points[i] = ScaledSpace.LocalToScaledSpace(orbit.getPositionFromEccAnomaly(i * 15 * Math.PI / 180));
                 }
                 Vector.MakeSplineInLine(line, points, true);
-                Vector.SetColor(line, new Color(color.r, color.g, color.b, 0.1f));
+                Vector.SetColor(line, color);
                 return line;
             }
         }
