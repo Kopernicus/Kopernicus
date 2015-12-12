@@ -46,6 +46,9 @@ namespace Kopernicus
         // All ateroid configurations we know
         public static List<Asteroid> asteroids { get; set; }
 
+        // Spawn interval
+        public float spawnInterval = 0.1f;
+
         // Construct
         static DiscoverableObjects()
         {
@@ -184,7 +187,7 @@ namespace Kopernicus
                 UpdateAsteroid(asteroid, Planetarium.GetUniversalTime());
 
                 // Wait
-                yield return new WaitForSeconds(Mathf.Max(asteroid.interval / TimeWarp.CurrentRate, 0.1f));
+                yield return new WaitForSeconds(Mathf.Max(asteroid.interval / TimeWarp.CurrentRate, spawnInterval));
             }
         }
 
