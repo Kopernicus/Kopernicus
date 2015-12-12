@@ -160,7 +160,7 @@ namespace Kopernicus
             [ParserTarget("timewarpAltitudeLimits", optional = true)]
             public NumericCollectionParser<float> timewarpAltitudeLimits 
             {
-                get { return celestialBody.timeWarpAltitudeLimits; }
+                get { return celestialBody.timeWarpAltitudeLimits != null ? celestialBody.timeWarpAltitudeLimits : new float[0]; }
                 set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray(); }
             }
 
