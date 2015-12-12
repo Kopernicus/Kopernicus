@@ -154,7 +154,6 @@ namespace Kopernicus
             // Calculates the default members for the AFG
             public static void CalculatedMembers(AtmosphereFromGround atmo)
             {
-                return;
                 atmo.g2 = atmo.g * atmo.g;
                 atmo.KrESun = atmo.Kr * atmo.ESun;
                 atmo.KmESun = atmo.Km * atmo.ESun;
@@ -172,7 +171,6 @@ namespace Kopernicus
             // Parser apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                return;
                 // Set Defaults
                 afg.planet = body;
                 afg.ESun = 30f;

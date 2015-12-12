@@ -80,7 +80,14 @@ namespace Kopernicus
             AFGInfo info = null;
             if (atmospheres.TryGetValue(afg.planet.bodyName, out info))
             {
-                info.Apply(afg);
+                try
+                {
+                    info.Apply(afg);
+                }
+                catch
+                {
+                    return false;
+                }
                 return true;
             }
             return false;
@@ -104,7 +111,6 @@ namespace Kopernicus
         }
         public void Apply(AtmosphereFromGround afg)
         {
-            afg.UpdateAtmosphere(true);
             afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
             afg.doScale = doScale;
             afg.ESun = ESun;

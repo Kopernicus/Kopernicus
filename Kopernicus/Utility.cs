@@ -391,7 +391,7 @@ namespace Kopernicus
                 }
 
                 // Find the PQS mods and enable the PQS-sphere
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled);
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
 
                 pqsVersion.ActivateSphere();
                 pqsVersion.isBuildingMaps = true;

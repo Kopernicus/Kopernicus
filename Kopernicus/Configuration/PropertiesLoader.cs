@@ -160,7 +160,7 @@ namespace Kopernicus
             [ParserTarget("timewarpAltitudeLimits", optional = true)]
             public NumericCollectionParser<float> timewarpAltitudeLimits 
             {
-                get { return celestialBody.timeWarpAltitudeLimits; }
+                get { return celestialBody.timeWarpAltitudeLimits != null ? celestialBody.timeWarpAltitudeLimits : new float[0]; }
                 set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray(); }
             }
 
@@ -244,6 +244,14 @@ namespace Kopernicus
             {
                 get { return celestialBody.use_The_InName; }
                 set { celestialBody.use_The_InName = value; }
+            }
+
+            // If the body should be unselectable
+            [ParserTarget("selectable", optional = true)]
+            public NumericParser<bool> selectable
+            {
+                get { return !Templates.notSelectable.Contains(celestialBody.transform.name); }
+                set { if (!value.value) Templates.notSelectable.Add(celestialBody.transform.name); }
             }
 
             // Apply Event

@@ -63,8 +63,10 @@ namespace Kopernicus
             {
                 if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null)
                     MapView.fetch.max3DlineDrawDist = 20000f;
+                if (scene == GameScenes.MAINMENU)
+                    UpdateMenu();
+                isDone2 = false;
             });
-            GameEvents.onPlanetariumTargetChanged.Add(onPlanetariumTargetChanged);
             GameEvents.onGUIRnDComplexSpawn.Add(RDFixer);
 
             // Log
@@ -77,12 +79,17 @@ namespace Kopernicus
         {
             UpdateMenu();
             previous = PlanetariumCamera.fetch.initialTarget;
+            PlanetariumCamera.fetch.targets
+                .Where(m => Templates.barycenters.Contains(m.GetName()) || Templates.notSelectable.Contains(m.GetName()))
+                .ToList()
+                .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
         }
 
         // Stuff
         void LateUpdate()
         {
             FixZooming();
+            ApplyOrbitVisibility();
         }
 
         // Status
@@ -99,6 +106,35 @@ namespace Kopernicus
 
                 // Terminate for the moment.
                 isDone = true;
+            }
+        }
+
+        // Status
+        bool isDone2 = false;
+
+        // Applies invisible orbits
+        void ApplyOrbitVisibility()
+        {
+            if ((HighLogic.LoadedScene == GameScenes.TRACKSTATION || (HighLogic.LoadedSceneIsFlight && MapView.MapIsEnabled)) && !isDone2)
+            {
+                // Loop
+                foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+                {
+                    // Check for Renderer
+                    if (!body.orbitDriver)
+                        continue;
+                    if (!body.orbitDriver.Renderer)
+                        return;
+
+                    // Apply Orbit mode changes
+                    if (Templates.drawMode.ContainsKey(body.transform.name))
+                        body.orbitDriver.Renderer.drawMode = Templates.drawMode[body.transform.name];
+
+                    // Apply Orbit icon changes
+                    if (Templates.drawIcons.ContainsKey(body.transform.name))
+                        body.orbitDriver.Renderer.drawIcons = Templates.drawIcons[body.transform.name];
+                }
+                isDone2 = true;
             }
         }
 
@@ -201,16 +237,14 @@ namespace Kopernicus
             // Copy EVE 7.4 clouds / Rings
             for (int i = 0; i < planetCB.scaledBody.transform.childCount; i++)
             {
+                // Just clone everything
                 Transform t = planetCB.scaledBody.transform.GetChild(i);
-                if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
-                {
-                    GameObject newT = Instantiate(t.gameObject) as GameObject;
-                    newT.transform.parent = menuPlanet.transform;
-                    newT.layer = 0;
-                    newT.transform.localPosition = Vector3.zero;
-                    newT.transform.localRotation = Quaternion.identity;
-                    newT.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
-                }
+                GameObject newT = Instantiate(t.gameObject) as GameObject;
+                newT.transform.parent = menuPlanet.transform;
+                newT.layer = 0;
+                newT.transform.localPosition = Vector3.zero;
+                newT.transform.localRotation = Quaternion.identity;
+                newT.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
             }
 
             // And now, create the moons
@@ -262,32 +296,12 @@ namespace Kopernicus
                 for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
                 {
                     Transform t = moonCB.scaledBody.transform.GetChild(i);
-                    if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
-                    {
-                        GameObject newT = Instantiate(t.gameObject) as GameObject;
-                        newT.transform.parent = menuMoon.transform;
-                        newT.layer = 0;
-                        newT.transform.localPosition = Vector3.zero;
-                        newT.transform.localRotation = Quaternion.identity;
-                        newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
-                    }
-                }
-            }
-        }
-
-        // Barycenter-Utils
-        void onPlanetariumTargetChanged(MapObject map)
-        {
-            // If we switched to a barycenter..
-            if (map != null && previous != null)
-            {
-                if (Templates.barycenters.Contains(map.GetName()))
-                {
-                    // Don't center the barycenter
-                    List<MapObject> objects = PlanetariumCamera.fetch.targets;
-                    int nextIndex = objects.IndexOf(previous) < objects.IndexOf(map) ? (objects.IndexOf(map) + 1) % objects.Count : objects.IndexOf(map) - 1 + (objects.IndexOf(map) - 1 >= 0 ? 0 : objects.Count);
-                    PlanetariumCamera.fetch.SetTarget(objects[nextIndex]);
-                    previous = objects[nextIndex];
+                    GameObject newT = Instantiate(t.gameObject) as GameObject;
+                    newT.transform.parent = menuMoon.transform;
+                    newT.layer = 0;
+                    newT.transform.localPosition = Vector3.zero;
+                    newT.transform.localRotation = Quaternion.identity;
+                    newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
                 }
             }
         }
@@ -299,7 +313,7 @@ namespace Kopernicus
             foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
             {
                 // Barycenter
-                if (Templates.barycenters.Contains(planetItem.label_planetName.text))
+                if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
                 {
                     planetItem.planet.SetActive(false);
                     planetItem.label_planetName.anchor = SpriteText.Anchor_Pos.Middle_Center;
@@ -443,7 +457,6 @@ namespace Kopernicus
         {
             GameEvents.onPartUnpack.Remove(OnPartUnpack);
             GameEvents.onLevelWasLoaded.Remove(FixCameras);
-            GameEvents.onPlanetariumTargetChanged.Remove(onPlanetariumTargetChanged);
             GameEvents.onGUIRnDComplexSpawn.Remove(RDFixer);
         }
     }

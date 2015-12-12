@@ -63,7 +63,6 @@ namespace Kopernicus
 
         public void SetAsActive(bool forcedUpdate = false)
         {
-            Debug.Log(celestialBody);
             // Only reset the Sun / SolarPanels if we don't force an update
             if (!forcedUpdate)
             {

@@ -152,38 +152,104 @@ namespace Kopernicus
         public class ColorParser : IParsable
         {
             public Color value;
-            public void SetFromString(string s)
+            public void SetFromString(string str)
             {
-                if (s.StartsWith("RGBA("))
+                if (str.StartsWith("RGBA("))
                 {
-                    s = s.Replace("RGBA(", string.Empty);
-                    s = s.Replace(")", string.Empty);
-                    s = s.Replace(" ", string.Empty);
-                    string[] colorArray = s.Split(',');
+                    str = str.Replace("RGBA(", string.Empty);
+                    str = str.Replace(")", string.Empty);
+                    str = str.Replace(" ", string.Empty);
+                    string[] colorArray = str.Split(',');
 
                     value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, float.Parse(colorArray[3]) / 255);
                 }
-                else if (s.StartsWith("RGB("))
+                else if (str.StartsWith("RGB("))
                 {
-                    s = s.Replace("RGB(", string.Empty);
-                    s = s.Replace(")", string.Empty);
-                    s = s.Replace(" ", string.Empty);
-                    string[] colorArray = s.Split(',');
+                    str = str.Replace("RGB(", string.Empty);
+                    str = str.Replace(")", string.Empty);
+                    str = str.Replace(" ", string.Empty);
+                    string[] colorArray = str.Split(',');
 
                     value = new Color(float.Parse(colorArray[0]) / 255, float.Parse(colorArray[1]) / 255, float.Parse(colorArray[2]) / 255, 1);
                 }
-                else if (s.StartsWith("XKCD."))
+                else if (str.StartsWith("HSBA("))
                 {
-                    PropertyInfo color = typeof(XKCDColors).GetProperty(s.Replace("XKCD.", ""), BindingFlags.Static | BindingFlags.Public);
+                    str = str.Replace("HSBA(", string.Empty);
+                    str = str.Replace(")", string.Empty);
+                    str = str.Replace(" ", string.Empty);
+                    string[] colorArray = str.Split(',');
+
+                    // Parse
+                    float h = Single.Parse(colorArray[0]) / 255f;
+                    float s = Single.Parse(colorArray[1]) / 255f;
+                    float b = Single.Parse(colorArray[2]) / 255f;
+
+                    // RGB
+                    value = new Color(b, b, b, Single.Parse(colorArray[3]) / 255f);
+                    if (s != 0)
+                    {
+                        float max = b;
+                        float dif = b * s;
+                        float min = b - dif;
+                        h = h * 360f;
+
+                        // Check
+                        if (h < 60f)
+                        {
+                            value.r = max;
+                            value.g = h * dif / 60f + min;
+                            value.b = min;
+                        }
+                        else if (h < 120f)
+                        {
+                            value.r = -(h - 120f) * dif / 60f + min;
+                            value.g = max;
+                            value.b = min;
+                        }
+                        else if (h < 180f)
+                        {
+                            value.r = min;
+                            value.g = max;
+                            value.b = (h - 120f) * dif / 60f + min;
+                        }
+                        else if (h < 240f)
+                        {
+                            value.r = min;
+                            value.g = -(h - 240f) * dif / 60f + min;
+                            value.b = max;
+                        }
+                        else if (h < 300f)
+                        {
+                            value.r = (h - 240f) * dif / 60f + min;
+                            value.g = min;
+                            value.b = max;
+                        }
+                        else if (h <= 360f)
+                        {
+                            value.r = max;
+                            value.g = min;
+                            value.b = -(h - 360f) * dif / 60 + min;
+                        }
+                        else
+                        {
+                            value.r = 0;
+                            value.g = 0;
+                            value.b = 0;
+                        }
+                    }
+                }
+                else if (str.StartsWith("XKCD."))
+                {
+                    PropertyInfo color = typeof(XKCDColors).GetProperty(str.Replace("XKCD.", ""), BindingFlags.Static | BindingFlags.Public);
                     value = (Color)color.GetValue(null, null);
                 }
-                else if (s.StartsWith("#"))
+                else if (str.StartsWith("#"))
                 {
-                    value = XKCDColors.ColorTranslator.FromHtml(s);
+                    value = XKCDColors.ColorTranslator.FromHtml(str);
                 }
                 else
                 {
-                    value = ConfigNode.ParseColor(s);
+                    value = ConfigNode.ParseColor(str);
                 }
             }
             public ColorParser()
