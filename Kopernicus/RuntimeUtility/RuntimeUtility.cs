@@ -63,6 +63,8 @@ namespace Kopernicus
             {
                 if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null)
                     MapView.fetch.max3DlineDrawDist = 20000f;
+                if (scene == GameScenes.MAINMENU)
+                    UpdateMenu();
             });
             GameEvents.onPlanetariumTargetChanged.Add(onPlanetariumTargetChanged);
             GameEvents.onGUIRnDComplexSpawn.Add(RDFixer);
@@ -201,16 +203,14 @@ namespace Kopernicus
             // Copy EVE 7.4 clouds / Rings
             for (int i = 0; i < planetCB.scaledBody.transform.childCount; i++)
             {
+                // Just clone everything
                 Transform t = planetCB.scaledBody.transform.GetChild(i);
-                if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
-                {
-                    GameObject newT = Instantiate(t.gameObject) as GameObject;
-                    newT.transform.parent = menuPlanet.transform;
-                    newT.layer = 0;
-                    newT.transform.localPosition = Vector3.zero;
-                    newT.transform.localRotation = Quaternion.identity;
-                    newT.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
-                }
+                GameObject newT = Instantiate(t.gameObject) as GameObject;
+                newT.transform.parent = menuPlanet.transform;
+                newT.layer = 0;
+                newT.transform.localPosition = Vector3.zero;
+                newT.transform.localRotation = Quaternion.identity;
+                newT.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
             }
 
             // And now, create the moons
@@ -262,15 +262,12 @@ namespace Kopernicus
                 for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
                 {
                     Transform t = moonCB.scaledBody.transform.GetChild(i);
-                    if ((t.name == "New Game Object" && t.gameObject.GetComponents<MeshRenderer>().Length == 1 && t.gameObject.GetComponents<MeshFilter>().Length == 1) || t.name == "PlanetaryRingObject")
-                    {
-                        GameObject newT = Instantiate(t.gameObject) as GameObject;
-                        newT.transform.parent = menuMoon.transform;
-                        newT.layer = 0;
-                        newT.transform.localPosition = Vector3.zero;
-                        newT.transform.localRotation = Quaternion.identity;
-                        newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
-                    }
+                    GameObject newT = Instantiate(t.gameObject) as GameObject;
+                    newT.transform.parent = menuMoon.transform;
+                    newT.layer = 0;
+                    newT.transform.localPosition = Vector3.zero;
+                    newT.transform.localRotation = Quaternion.identity;
+                    newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
                 }
             }
         }
