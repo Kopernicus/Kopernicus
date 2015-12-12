@@ -141,10 +141,8 @@ namespace Kopernicus
                                 if (loader != null)
                                 {
                                     Parser.LoadObjectFromConfigurationNode(loader, lcNode);
-                                    if (loader.delete.value)
-                                        landClasses.Remove(loader);
-                                    else
-                                        patchedClasses.Add(loader.landClass);
+                                    landClasses.Remove(loader);
+                                    patchedClasses.Add(loader.landClass);
                                 }
                             }
 
@@ -155,7 +153,8 @@ namespace Kopernicus
                             }
 
                             // Add the Loader to the List
-                            landClasses.Add(loader);
+                            if (!loader.delete.value)
+                                landClasses.Add(loader);
                         }
                     }
                 }
