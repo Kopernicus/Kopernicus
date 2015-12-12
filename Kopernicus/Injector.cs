@@ -129,14 +129,6 @@ namespace Kopernicus
                 if (Templates.barycenters.Contains(body.transform.name))
                     body.scaledBody.SetActive(false);
 
-                // Apply Orbit mode changes
-                if (Templates.drawMode.ContainsKey(body.transform.name))
-                    body.orbitDriver.Renderer.drawMode = Templates.drawMode[body.transform.name];
-
-                // Apply Orbit icon changes
-                if (Templates.drawIcons.ContainsKey(body.transform.name))
-                    body.orbitDriver.Renderer.drawIcons = Templates.drawIcons[body.transform.name];
-
                 Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
             }
 
