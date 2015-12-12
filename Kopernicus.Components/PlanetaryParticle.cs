@@ -48,7 +48,7 @@ namespace Kopernicus
             public MeshFilter filter;
 
             /// Variables
-            public string target = "Sun";
+            public string target = "None";
             public float speedScale = 0f;
             public float minEmission, maxEmission;
             public float minEnergy, maxEnergy;
@@ -136,20 +136,30 @@ namespace Kopernicus
             }
 
             /// <summary>
+            /// The position of our target
+            /// </summary>
+            public Transform targetTransform { get; set; }
+
+            /// <summary>
             /// Updates the target position and emits the particles
             /// </summary>
             void Update()
             {
-                Vector3 speed = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target).position;
-                speed -= transform.parent.position;
-                speed *= speedScale;
-                emitter.minEnergy = minEnergy / TimeWarp.CurrentRate;
-                emitter.maxEnergy = maxEnergy / TimeWarp.CurrentRate;
-                emitter.maxEmission = maxEmission * TimeWarp.CurrentRate;
-                emitter.minEmission = minEmission * TimeWarp.CurrentRate;
-                emitter.rndVelocity = randomVelocity * TimeWarp.CurrentRate;
-                speed *= TimeWarp.CurrentRate;
-                emitter.worldVelocity = speed;
+                /// We have a target
+                if (target != "None")
+                {
+                    if (targetTransform == null) targetTransform = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target);
+                    Vector3 speed = targetTransform.position;
+                    speed -= transform.parent.position;
+                    speed *= speedScale;
+                    emitter.minEnergy = minEnergy / TimeWarp.CurrentRate;
+                    emitter.maxEnergy = maxEnergy / TimeWarp.CurrentRate;
+                    emitter.maxEmission = maxEmission * TimeWarp.CurrentRate;
+                    emitter.minEmission = minEmission * TimeWarp.CurrentRate;
+                    emitter.rndVelocity = randomVelocity * TimeWarp.CurrentRate;
+                    speed *= TimeWarp.CurrentRate;
+                    emitter.worldVelocity = speed;
+                }
                 transform.localScale = scale;
             }
 
