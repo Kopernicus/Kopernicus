@@ -329,7 +329,21 @@ namespace Kopernicus
 
                     void IParserEventSubscriber.Apply(ConfigNode node) 
                     {
-                        customMaterial = scatter.material;
+                        if (!customMaterial && scatter.material)
+                        {
+                            if (scatter.material.shader == new NormalDiffuse().shader)
+                                customMaterial = new NormalDiffuseLoader(scatter.material);
+                            else if (scatter.material.shader == new NormalBumped().shader)
+                                customMaterial = new NormalBumpedLoader(scatter.material);
+                            else if (scatter.material.shader == new NormalDiffuseDetail().shader)
+                                customMaterial = new NormalDiffuseLoader(scatter.material);
+                            else if (scatter.material.shader == new DiffuseWrapLoader().shader)
+                                customMaterial = new DiffuseWrapLoader(scatter.material);
+                            else if (scatter.material.shader == new AlphaTestDiffuse().shader)
+                                customMaterial = new AlphaTestDiffuseLoader(scatter.material);
+                            else if (scatter.material.shader == new AerialTransCutout().shader)
+                                customMaterial = new AerialTransCutoutLoader(scatter.material);
+                        }
                     }
 
                     void IParserEventSubscriber.PostApply(ConfigNode node)
@@ -910,10 +924,8 @@ namespace Kopernicus
                                 if (loader != null)
                                 {
                                     Parser.LoadObjectFromConfigurationNode(loader, lcNode);
-                                    if (loader.delete.value)
-                                        landClasses.Remove(loader);
-                                    else
-                                        patchedClasses.Add(loader.landClass);
+                                    landClasses.Remove(loader);
+                                    patchedClasses.Add(loader.landClass);
                                 }
                             }
 
@@ -924,7 +936,8 @@ namespace Kopernicus
                             }
 
                             // Add the Loader to the List
-                            landClasses.Add(loader);
+                            if (!loader.delete.value)
+                                landClasses.Add(loader);
                         }
                     }
 
@@ -949,14 +962,13 @@ namespace Kopernicus
                                 loader = scatters.Where(m => !patchedScatters.Contains(m.scatter) && (scatterNode.HasValue("name") ? m.scatter.scatterName == scatterNode.GetValue("name") : false))
                                                                  .FirstOrDefault();
 
+
                                 // Load the Loader (lol)
                                 if (loader != null)
                                 {
                                     Parser.LoadObjectFromConfigurationNode(loader, scatterNode);
-                                    if (loader.delete.value)
-                                        scatters.Remove(loader);
-                                    else 
-                                        patchedScatters.Add(loader.scatter);
+                                    scatters.Remove(loader);
+                                    patchedScatters.Add(loader.scatter);
                                 }
                             }
 
@@ -967,7 +979,8 @@ namespace Kopernicus
                             }
 
                             // Add the Loader to the List
-                            scatters.Add(loader);
+                            if (!loader.delete.value)
+                                scatters.Add(loader);
                         }
                     }
 
