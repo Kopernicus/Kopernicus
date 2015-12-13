@@ -64,7 +64,15 @@ namespace Kopernicus
                 return;
             }
             base.OnAwake();
-            HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects));
+            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects))) {
+                // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
+                foreach(ScenarioDiscoverableObjects scen in 
+                    Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects))) {
+                    scen.StopAllCoroutines();
+                    Destroy(scen);
+                }
+                Debug.Log("[Kopernicus]: ScenarioDiscoverableObjects successfully removed.");
+            }
         }
 
         // Startup
