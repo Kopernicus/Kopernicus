@@ -900,12 +900,11 @@ namespace Kopernicus
                     mod.longitudeSimplex = longitudeSimplex.simplex;
 
                     // Load the LandClasses manually, to support patching
+                    if (mod.landClasses != null) mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
                     if (node.HasNode("landClasses"))
                     {
                         // Already patched classes
                         List<PQSLandControl.LandClass> patchedClasses = new List<PQSLandControl.LandClass>();
-                        if (mod.landClasses != null)
-                            mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
 
                         // Go through the nodes
                         foreach (ConfigNode lcNode in node.GetNode("landClasses").nodes)
@@ -942,12 +941,11 @@ namespace Kopernicus
                     }
 
                     // Load the Scatters manually, to support patching
+                    if (mod.scatters != null)  mod.scatters.ToList().ForEach(s => scatters.Add(new LandClassScatterLoader(s)));
                     if (node.HasNode("scatters"))
                     {
                         // Already patched scatters
                         List<PQSLandControl.LandClassScatter> patchedScatters = new List<PQSLandControl.LandClassScatter>();
-                        if (mod.scatters != null)
-                            mod.scatters.ToList().ForEach(s => scatters.Add(new LandClassScatterLoader(s)));
 
                         // Go through the nodes
                         foreach (ConfigNode scatterNode in node.GetNode("scatters").nodes)

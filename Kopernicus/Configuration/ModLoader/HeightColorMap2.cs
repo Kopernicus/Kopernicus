@@ -133,12 +133,11 @@ namespace Kopernicus
                 void IParserEventSubscriber.Apply(ConfigNode node)
                 {
                     // Load the LandClasses manually, to support patching
+                    if (mod.landClasses != null) mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader2(c)));
                     if (node.HasNode("LandClasses"))
                     {
                         // Already patched classes
                         List<PQSMod_HeightColorMap2.LandClass> patchedClasses = new List<PQSMod_HeightColorMap2.LandClass>();
-                        if (mod.landClasses != null)
-                            mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader2(c)));
 
                         // Go through the nodes
                         foreach (ConfigNode lcNode in node.GetNode("LandClasses").nodes)
