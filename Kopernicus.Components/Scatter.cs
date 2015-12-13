@@ -86,7 +86,7 @@ namespace Kopernicus
                 scatter.GetType().GetField("scatterParent", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(scatter, gameObject);
 
                 // The ConfigNode is lost, so find it again!
-                PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == transform.name);
+                PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == transform.parent.name);
                 experiment = body.pqsVersion.gameObject.GetChild(name).GetComponent<Scatter>().experiment;
             }
 
