@@ -64,41 +64,20 @@ namespace Kopernicus
                 return;
             }
             base.OnAwake();
-            if (HighLogic.CurrentGame.RemoveProtoScenarioModule (typeof(ScenarioDiscoverableObjects))) {
+            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects))) {
+                // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
+                foreach(ScenarioDiscoverableObjects scen in 
+                    Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects))) {
+                    scen.StopAllCoroutines();
+                    Destroy(scen);
+                }
                 Debug.Log("[Kopernicus]: ScenarioDiscoverableObjects successfully removed.");
-            }
-            // Workaround for ScenarioDiscoverableObjects being able to do one last tick
-            GameEvents.onVesselCreate.Add(blockStockSpawn);
-        }
-
-        /** 
-         * Workaround for a bug in which stock spawner continues to create asteroids 
-         * for one frame after being removed.
-         * 
-         * @param[in] vessel a newly created ship object
-         * 
-         * @post if @p vessel is a newly created asteroid, it is deleted
-         * 
-         * @exceptsafe Does not throw exceptions
-         */
-        private void blockStockSpawn(Vessel vessel) {
-            if (vessel.vesselType == VesselType.SpaceObject) {
-                // Verify that each asteroid is caught exactly once
-                Debug.Log("[Kopernicus]: Blocked stock spawn of " + vessel.GetName());
-                vessel.Die();
             }
         }
 
         // Startup
         void Start()
         {
-            // Just in case, on some platforms, ScenarioDiscoverableObjects was added after calling
-            // onAwake()
-            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects))) {
-                Debug.LogWarning("[Kopernicus]: ScenarioDiscoverableObjects was not removed when expected.");
-            }
-            GameEvents.onVesselCreate.Remove(blockStockSpawn);
-
             foreach (Asteroid asteroid in asteroids)
                 StartCoroutine(AsteroidDaemon(asteroid));
         }
