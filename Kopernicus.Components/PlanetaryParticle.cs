@@ -200,6 +200,7 @@ namespace Kopernicus
                 stream.Read(buffer, 0, (int)stream.Length);
                 AssetBundle bundle = AssetBundle.CreateFromMemoryImmediate(buffer);
                 GameObject collider = Instantiate(bundle.Load("WorldParticleCollider", typeof(GameObject))) as GameObject;
+                bundle.Unload(true);
                 return collider;
             }
         }
