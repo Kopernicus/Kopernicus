@@ -110,6 +110,10 @@ namespace Kopernicus
                     }
                 }
 
+                // Node null
+                if (experimentNode == null)
+                    return;
+
                 // Process science
                 if (!FlightGlobals.ActiveVessel)
                     return;
