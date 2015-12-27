@@ -66,6 +66,14 @@ namespace Kopernicus
                 [ParserTarget("probability", optional = true)]
                 public NumericParser<float> probability { get; set; }
 
+                // Min Limit
+                [ParserTarget("spawnGroupMinLimit", optional = true)]
+                public NumericParser<int> spawnGroupMinLimit { get; set; }
+
+                // Max Limit
+                [ParserTarget("spawnGroupMaxLimit", optional = true)]
+                public NumericParser<int> spawnGroupMaxLimit { get; set; }
+
                 // Classes of the asteroid
                 [ParserTarget("Size", optional = true)]
                 public FloatCurveParser size { get; set; }

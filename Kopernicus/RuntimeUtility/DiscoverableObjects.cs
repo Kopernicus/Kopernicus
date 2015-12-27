@@ -86,6 +86,7 @@ namespace Kopernicus
         public void UpdateAsteroid(Asteroid asteroid, double time)
         {
             List<Vessel> spaceObjects = FlightGlobals.Vessels.Where(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors) && v.DiscoveryInfo.GetSignalLife(Planetarium.GetUniversalTime()) == 0).ToList();
+            int limit = Random.Range(asteroid.spawnGroupMinLimit, asteroid.spawnGroupMaxLimit);
             if (spaceObjects.Any())
             {
                 Vessel vessel = spaceObjects.First();
@@ -94,15 +95,20 @@ namespace Kopernicus
             }
             else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)))
             {
-                if (Random.Range(0, 100) < asteroid.probability)
+                int untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) - spaceObjects.Count;
+                int max = Mathf.Max(untrackedCount, limit);
+                if (max > untrackedCount)
                 {
-                    uint seed = (uint)Random.Range(0, Int32.MaxValue);
-                    Random.seed = (int)seed;
-                    SpawnAsteroid(asteroid, seed);
-                }
-                else
-                {
-                    Debug.Log("[Kopernicus]: No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
+                    if (Random.Range(0, 100) < asteroid.probability)
+                    {
+                        uint seed = (uint)Random.Range(0, Int32.MaxValue);
+                        Random.seed = (int)seed;
+                        SpawnAsteroid(asteroid, seed);
+                    }
+                    else
+                    {
+                        Debug.Log("[Kopernicus]: No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
+                    }
                 }
             }
         }
