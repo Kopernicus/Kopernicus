@@ -1,5 +1,5 @@
 #.gitignore
-*/.vs/*
+.vs/*
 *.orig
 */bin/*
 */obj/*
