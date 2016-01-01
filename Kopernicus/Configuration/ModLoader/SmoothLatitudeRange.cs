@@ -40,7 +40,7 @@ namespace Kopernicus
             public class SmoothLatitudeRange : ModLoader<PQSMod_SmoothLatitudeRange>, IParserEventSubscriber
             {
                 // latitudeRange
-                [ParserTarget("LatitudeRange", optional = true)]
+                [ParserTarget("LatitudeRange", optional = true, allowMerge = true)]
                 public LandControl.LerpRangeLoader latitudeRange { get; set; }
 
                 // smoothToAltitude

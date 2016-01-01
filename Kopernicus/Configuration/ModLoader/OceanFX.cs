@@ -185,23 +185,15 @@ namespace Kopernicus
                 }
 
                 // Create the mod
-                public override void Create()
+                public override void Create(PQS pqsVersion)
                 {
                     // Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
                     PSystemBody Body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
                     foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
                     {
                         if (ocean.name == "LaytheOcean")
-                        {
-                            mod = Object.Instantiate(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0]) as PQSMod_OceanFX;
-                            mod.name = "OceanFX";
-                            mod.gameObject.name = "OceanFX";
-                            mod.transform.name = "OceanFX";
-                        }
+                            Utility.CopyObjectFields(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0], mod);
                     }
-                    mod.transform.parent = generatedBody.pqsVersion.transform;
-                    mod.sphere = generatedBody.pqsVersion;
-                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
                 }
             }
         }

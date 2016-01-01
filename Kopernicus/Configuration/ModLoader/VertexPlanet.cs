@@ -213,7 +213,7 @@ namespace Kopernicus
                     }
 
                     // noise
-                    [ParserTarget("Noise", optional = true)]
+                    [ParserTarget("Noise", optional = true, allowMerge = true)]
                     public RiggedParser riggedNoise { get; set; }
 
                     // Apply Event
@@ -285,7 +285,7 @@ namespace Kopernicus
                     }
 
                     // colorNoiseMap
-                    [ParserTarget("SimplexNoiseMap")]
+                    [ParserTarget("SimplexNoiseMap", allowMerge = true)]
                     public SimplexWrapper colorNoiseMap { get; set; }
 
                     // fractalEnd
@@ -376,19 +376,19 @@ namespace Kopernicus
                 }
 
                 // continental
-                [ParserTarget("ContinentalSimplex", optional = true)]
+                [ParserTarget("ContinentalSimplex", optional = true, allowMerge = true)]
                 public SimplexWrapper continental { get; set; }
 
                 // continentalRuggedness
-                [ParserTarget("RuggednessSimplex", optional = true)]
+                [ParserTarget("RuggednessSimplex", optional = true, allowMerge = true)]
                 public SimplexWrapper continentalRuggedness { get; set; }
 
                 // continentalSharpness
-                [ParserTarget("SharpnessNoise", optional = true)]
+                [ParserTarget("SharpnessNoise", optional = true, allowMerge = true)]
                 public NoiseModWrapper continentalSharpness { get; set; }
 
                 // continentalSharpnessMap
-                [ParserTarget("SharpnessSimplexMap", optional = true)]
+                [ParserTarget("SharpnessSimplexMap", optional = true, allowMerge = true)]
                 public SimplexWrapper continentalSharpnessMap { get; set; }
 
                 // deformity
@@ -400,7 +400,6 @@ namespace Kopernicus
                 }
 
                 // landClasses
-                [ParserTargetCollection("LandClasses", optional = true, nameSignificance = NameSignificance.None)]
                 public List<LandClassLoader> landClasses = new List<LandClassLoader>();
 
                 // oceanDepth
@@ -492,7 +491,7 @@ namespace Kopernicus
                 }
 
                 // terrainType
-                [ParserTarget("TerrainTypeSimplex", optional = true)]
+                [ParserTarget("TerrainTypeSimplex", optional = true, allowMerge = true)]
                 public SimplexWrapper terrainType { get; set; }
                 
                 // Apply Event

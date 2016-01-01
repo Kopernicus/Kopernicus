@@ -463,7 +463,7 @@ namespace Kopernicus
                     }
 
                     // altitudeRange
-                    [ParserTarget("altitudeRange", optional = true)]
+                    [ParserTarget("altitudeRange", optional = true, allowMerge = true)]
                     public LerpRangeLoader altitudeRange { get; set; }
 
                     // color
@@ -515,7 +515,7 @@ namespace Kopernicus
                     }
 
                     // coverageSimplex
-                    [ParserTarget("coverageSimplex", optional = true)]
+                    [ParserTarget("coverageSimplex", optional = true, allowMerge = true)]
                     public SimplexLoader coverageSimplex { get; set; }
 
                     // The name of the landclass
@@ -543,11 +543,11 @@ namespace Kopernicus
                     }
 
                     // latitudeDoubleRange
-                    [ParserTarget("latitudeDoubleRange", optional = true)]
+                    [ParserTarget("latitudeDoubleRange", optional = true, allowMerge = true)]
                     public LerpRangeLoader latitudeDoubleRange { get; set; }
 
                     // latitudeRange
-                    [ParserTarget("latitudeRange", optional = true)]
+                    [ParserTarget("latitudeRange", optional = true, allowMerge = true)]
                     public LerpRangeLoader latitudeRange { get; set; }
 
                     // lonDelta
@@ -559,7 +559,7 @@ namespace Kopernicus
                     }
 
                     // longitudeRange
-                    [ParserTarget("longitudeRange", optional = true)]
+                    [ParserTarget("longitudeRange", optional = true, allowMerge = true)]
                     public LerpRangeLoader longitudeRange { get; set; }
 
                     // minimumRealHeight
@@ -619,7 +619,7 @@ namespace Kopernicus
                     }
 
                     // noiseSimplex
-                    [ParserTarget("noiseSimplex", optional = true)]
+                    [ParserTarget("noiseSimplex", optional = true, allowMerge = true)]
                     public SimplexLoader noiseSimplex { get; set; }
 
                     // List of scatters used
