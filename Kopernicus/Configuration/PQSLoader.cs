@@ -271,6 +271,9 @@ namespace Kopernicus
 
                 // Create physics material editor
                 physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
+
+                // Assing the new PQS
+                generatedBody.pqsVersion = pqsVersion;
             }
 
             // Constructor for pre-existing PQS
