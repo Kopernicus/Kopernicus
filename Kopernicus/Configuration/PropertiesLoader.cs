@@ -223,20 +223,20 @@ namespace Kopernicus
             }
 
             // Threshold for Biomes
-            // [ParserTarget("nonExactThreshold", optional = true)]
-            // public NumericParser<float> nonExactThreshold
-            // {
-            // get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.nonExactThreshold : 0.05f; }
-            // set { celestialBody.BiomeMap.nonExactThreshold = value; }
-            // }
+            [ParserTarget("nonExactThreshold", optional = true)]
+            public NumericParser<float> nonExactThreshold
+            {
+                get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.nonExactThreshold : 0.05f; }
+                set { celestialBody.BiomeMap.nonExactThreshold = value; }
+            }
 
             // If the biome threshold should get used
-            // [ParserTarget("exactSearch", optional = true)]
-            // public NumericParser<bool> exactSearch
-            // {
-            // get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.exactSearch : false; }
-            // set { celestialBody.BiomeMap.exactSearch = value; }
-            // }
+            [ParserTarget("exactSearch", optional = true)]
+            public NumericParser<bool> exactSearch
+            {
+                get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.exactSearch : false; }
+                set { celestialBody.BiomeMap.exactSearch = value; }
+            }
 
             // If the body name should be prefixed with "the" in some situations
             [ParserTarget("useTheInName", optional = true)]
