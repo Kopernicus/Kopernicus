@@ -336,7 +336,7 @@ namespace Kopernicus
                             else if (scatter.material.shader == new NormalBumped().shader)
                                 customMaterial = new NormalBumpedLoader(scatter.material);
                             else if (scatter.material.shader == new NormalDiffuseDetail().shader)
-                                customMaterial = new NormalDiffuseLoader(scatter.material);
+                                customMaterial = new NormalDiffuseDetailLoader(scatter.material);
                             else if (scatter.material.shader == new DiffuseWrapLoader().shader)
                                 customMaterial = new DiffuseWrapLoader(scatter.material);
                             else if (scatter.material.shader == new AlphaTestDiffuse().shader)
