@@ -1,0 +1,3 @@
+D:\GitHub\Kopernicus\Distribution\Release\GameData\Kopernicus\Plugins\Kopernicus.Components.dll
+D:\GitHub\Kopernicus\Kopernicus.Components\obj\Release\Kopernicus.Components.csprojResolveAssemblyReference.cache
+D:\GitHub\Kopernicus\Kopernicus.Components\obj\Release\Kopernicus.Components.dll
