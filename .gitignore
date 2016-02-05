@@ -1,11 +1,14 @@
 #.gitignore
 .vs/*
+bin/*
+obj/*
 *.orig
-*/bin/*
-*/obj/*
 *.suo
 *.userprefs
 *.bin
 *.user
 *.pdb
 *.mdb
+Assembly-CSharp.dll
+Assembly-CSharp-firstpass.dll
+UnityEngine.dll

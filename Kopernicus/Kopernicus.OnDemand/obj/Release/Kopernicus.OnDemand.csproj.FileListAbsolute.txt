@@ -1,3 +1,0 @@
-D:\GitHub\Kopernicus\Distribution\Release\GameData\Kopernicus\Plugins\Kopernicus.OnDemand.dll
-D:\GitHub\Kopernicus\Kopernicus.OnDemand\obj\Release\Kopernicus.OnDemand.dll
-D:\GitHub\Kopernicus\Kopernicus.OnDemand\obj\Release\Kopernicus.OnDemand.csprojResolveAssemblyReference.cache

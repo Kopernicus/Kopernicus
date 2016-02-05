@@ -53,3 +53,7 @@ Selectively copy folders inside of [KopernicusExamples/](https://github.com/Kope
 Information
 -----------
 Coming Soon
+
+Compiling
+----------
+To compile Kopernicus you need to add the assemblies named "Assembly-CSharp.dll", "Assembly-CSharp-firstpass.dll" and "UnityEngine.dll" from your KSP_Data/Managed folder into the toplevel directory of the repository. After that you can compile the .sln file with VS, MonoDevelop or other build tools.

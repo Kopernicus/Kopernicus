@@ -1,3 +1,0 @@
-D:\GitHub\Kopernicus\Distribution\Release\GameData\Kopernicus\Plugins\Kopernicus.dll
-D:\GitHub\Kopernicus\Kopernicus\obj\Release\Kopernicus.csprojResolveAssemblyReference.cache
-D:\GitHub\Kopernicus\Kopernicus\obj\Release\Kopernicus.dll

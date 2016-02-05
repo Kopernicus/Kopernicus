@@ -1,5 +1,0 @@
-D:\GitHub\Kopernicus\Distribution\Development\Kopernicus.dll
-D:\GitHub\Kopernicus\Distribution\Development\Kopernicus.pdb
-D:\GitHub\Kopernicus\Kopernicus\obj\Debug\Kopernicus.csprojResolveAssemblyReference.cache
-D:\GitHub\Kopernicus\Kopernicus\obj\Debug\Kopernicus.dll
-D:\GitHub\Kopernicus\Kopernicus\obj\Debug\Kopernicus.pdb
