@@ -102,6 +102,14 @@ namespace Kopernicus
                     get { return mod.mode; }
                     set { mod.mode = value; }
                 }
+
+                // Lacunarity
+                [ParserTarget("lacunarity", optional = true)]
+                public NumericParser<float> lacunarity
+                {
+                    get { return mod.lacunarity; }
+                    set { mod.lacunarity = value; }
+                }
             }
         }
     }
