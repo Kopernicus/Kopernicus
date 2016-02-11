@@ -118,6 +118,14 @@ namespace Kopernicus
                 set { transform.deactivateAltitude = value; }
             }
 
+            // Map Export Arguments
+            [ParserTarget("mapMaxHeight", optional = true)]
+            public NumericParser<double> mapMaxHeight
+            {
+                get { return pqsVersion.mapMaxHeight; }
+                set { pqsVersion.mapMaxHeight = value; }
+            }
+
             [PreApply]
             [ParserTarget("materialType", optional = true)]
             public EnumParser<PQSMaterialType> materialType
