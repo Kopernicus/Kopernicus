@@ -172,15 +172,43 @@ namespace Kopernicus
                     {
                         // We need a List with Types to remove
                         List<Type> mods = new List<Type>();
-                        foreach (string mod in removePQSMods.value) 
+                        Dictionary<string, Type> modsPerName = new Dictionary<string, Type>();
+                        foreach (string mod in removePQSMods.value)
                         {
+                            // If the definition has a name specified, grab that
+                            string type = mod;
+                            string name = "";
+                            if (type.EndsWith("]"))
+                            {
+                                string[] split = type.Split('[');
+                                type = split[0];
+                                name = split[1].Remove(split[1].Length - 1);
+                            }
+
                             // Get the mods matching the string
-                            string modName = mod;
+                            string modName = type;
                             if(!mod.Contains("PQS"))
                                 modName = "PQSMod_" + mod;
-                            mods.Add(Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                            if (name == "")
+                                mods.Add(Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                            else
+                                modsPerName.Add(name, Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
                         }
                         Utility.RemoveModsOfType(mods, body.pqsVersion);
+                        foreach (KeyValuePair<string, Type> kvP in modsPerName)
+                        {
+                            int index = 0;
+                            string name = kvP.Key;
+                            if (name.Contains(','))
+                            {
+                                string[] split = name.Split(',');
+                                name = split[0];
+                                Int32.TryParse(split[1], out index);
+                            }
+                            PQSMod[] allMods = body.pqsVersion.GetComponentsInChildren(kvP.Value, true).Select(m => m as PQSMod).Where(m => m.name == name).ToArray();
+                            if (allMods.Length > 0)
+                                UnityEngine.Object.Destroy(allMods[index]);
+                        }
                     }
 
                     if (removeAllMods != null && removeAllMods.value)
