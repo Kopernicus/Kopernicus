@@ -40,9 +40,6 @@ namespace Kopernicus
     {
         // Name of the config node group which manages Kopernicus
         public const string rootNodeName = "Kopernicus";
-
-        // Things that are used often
-        public Templates templates = null;
         
         // Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
         // it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
