@@ -421,42 +421,50 @@ namespace Kopernicus
                 // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    // Only get types implementing IParserEventSubscriber, and extending ExternalParserTargetLoader
-                    foreach (Type type in assembly.GetExportedTypes().Where(t => t.GetInterface("IParserEventSubscriber") != null).Where(t => t.BaseType == typeof(ExternalParserTargetLoader)))
+                    try
                     {
-                        ExternalParserTarget[] attributes = type.GetCustomAttributes(typeof(ExternalParserTarget), false) as ExternalParserTarget[];
-                        if (attributes.Length != 0)
+                        // Only get types implementing IParserEventSubscriber, and extending ExternalParserTargetLoader
+                        foreach (Type type in assembly.GetTypes().Where(t => t.GetInterface("IParserEventSubscriber") != null).Where(t => t.BaseType == typeof(ExternalParserTargetLoader)))
                         {
-                            ExternalParserTarget external = attributes[0];
-                            if (node.name != external.parentNodeName)
-                                continue;
-                            string nodeName = external.configNodeName;
-                            if (nodeName == null)
-                                nodeName = type.Name;
-                            if (node.HasNode(nodeName))
+                            ExternalParserTarget[] attributes = type.GetCustomAttributes(typeof(ExternalParserTarget), false) as ExternalParserTarget[];
+                            if (attributes.Length != 0)
                             {
-                                try
+                                ExternalParserTarget external = attributes[0];
+                                if (node.name != external.parentNodeName)
+                                    continue;
+                                string nodeName = external.configNodeName;
+                                if (nodeName == null)
+                                    nodeName = type.Name;
+                                if (node.HasNode(nodeName))
                                 {
-                                    Logger.Active.Log("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + assembly.FullName);
-                                    ConfigNode nodeToLoad = node.GetNode(nodeName);
-                                    ExternalParserTargetLoader obj = Activator.CreateInstance(type) as ExternalParserTargetLoader;
-                                    obj.generatedBody = BaseLoader.generatedBody;
-                                    LoadObjectFromConfigurationNode(obj, nodeToLoad);
-                                }
-                                catch (MissingMethodException missingMethod)
-                                {
-                                    Logger.Active.Log("Failed to load ExternalParserTarget " + nodeName + " because it does not have a parameterless constructor");
-                                    Logger.Active.LogException(missingMethod);
-                                }
-                                catch (Exception exception)
-                                {
-                                    Logger.Active.Log("Failed to load ExternalParserTarget " + nodeName + " from node " + external.parentNodeName);
-                                    Logger.Active.LogException(exception);
+                                    try
+                                    {
+                                        Logger.Active.Log("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + assembly.FullName);
+                                        ConfigNode nodeToLoad = node.GetNode(nodeName);
+                                        ExternalParserTargetLoader obj = Activator.CreateInstance(type) as ExternalParserTargetLoader;
+                                        obj.generatedBody = BaseLoader.generatedBody;
+                                        LoadObjectFromConfigurationNode(obj, nodeToLoad);
+                                    }
+                                    catch (MissingMethodException missingMethod)
+                                    {
+                                        Logger.Active.Log("Failed to load ExternalParserTarget " + nodeName + " because it does not have a parameterless constructor");
+                                        Logger.Active.LogException(missingMethod);
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        Logger.Active.Log("Failed to load ExternalParserTarget " + nodeName + " from node " + external.parentNodeName);
+                                        Logger.Active.LogException(exception);
+                                    }
                                 }
                             }
                         }
                     }
+                    catch (ReflectionTypeLoadException e)
+                    {
+
+                    }
                 }
+
             }
 
             // End class
