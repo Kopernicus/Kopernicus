@@ -113,30 +113,33 @@ namespace Kopernicus
 
                 if (sunLight && scaledSunLight)
                 {
+                    Light light = sunLight.GetComponent<Light>();
+                    Light scaledLight = scaledSunLight.GetComponent<Light>();
                     if (sunlightColor != null)
-                        sunLight.light.color = sunlightColor;
+                        light.color = sunlightColor;
 
                     if (sunlightIntensity != float.NaN)
-                        sunLight.light.intensity = sunlightIntensity;
+                        light.intensity = sunlightIntensity;
 
                     if (sunlightShadowStrength != float.NaN)
-                        sunLight.light.shadowStrength = sunlightShadowStrength;
+                        light.shadowStrength = sunlightShadowStrength;
 
                     if (scaledSunlightColor != null)
-                        scaledSunLight.light.color = scaledSunlightColor;
+                        scaledLight.color = scaledSunlightColor;
 
                     if (scaledSunlightIntensity != float.NaN)
-                        scaledSunLight.light.intensity = scaledSunlightIntensity;
+                        scaledLight.intensity = scaledSunlightIntensity;
 
                     if (scene == GameScenes.FLIGHT)
                     {
                         GameObject IVASun = GameObject.Find("IVASun");
+                        Light IVALight = IVASun.GetComponent<Light>();
                         if (IVASun)
                         {
                             if (IVASunColor != null)
-                                IVASun.light.color = IVASunColor;
+                                IVALight.color = IVASunColor;
                             if (IVASunIntensity != float.NaN)
-                                IVASun.light.intensity = IVASunIntensity;
+                                IVALight.intensity = IVASunIntensity;
                         }
                     }
 

@@ -33,6 +33,7 @@ using Kopernicus.Components;
 using System;
 using System.Reflection;
 using System.Linq;
+using KSP.UI.Screens;
 
 namespace Kopernicus
 {
@@ -232,7 +233,7 @@ namespace Kopernicus
             menuPlanet.layer = 0;
 
             // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
-            menuPlanet.renderer.sharedMaterial = planetCB.scaledBody.renderer.sharedMaterial;
+            menuPlanet.GetComponent<Renderer>().sharedMaterial = planetCB.scaledBody.GetComponent<Renderer>().sharedMaterial;
 
             // Copy EVE 7.4 clouds / Rings
             for (int i = 0; i < planetCB.scaledBody.transform.childCount; i++)
@@ -290,7 +291,7 @@ namespace Kopernicus
                 menuMoon.layer = 0;
 
                 // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
-                menuMoon.renderer.sharedMaterial = moonCB.scaledBody.renderer.sharedMaterial;
+                menuMoon.GetComponent<Renderer>().sharedMaterial = moonCB.scaledBody.GetComponent<Renderer>().sharedMaterial;
 
                 // Copy EVE 7.4 clouds / Rings
                 for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
@@ -316,7 +317,7 @@ namespace Kopernicus
                 if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
                 {
                     planetItem.planet.SetActive(false);
-                    planetItem.label_planetName.anchor = SpriteText.Anchor_Pos.Middle_Center;
+                    planetItem.label_planetName.alignment = TextAnchor.MiddleCenter;
                 }
 
                 // namechanges

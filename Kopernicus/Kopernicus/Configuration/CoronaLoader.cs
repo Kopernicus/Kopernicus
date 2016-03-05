@@ -88,8 +88,8 @@ namespace Kopernicus
             [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
             public ParticleAddSmoothLoader material
             {
-                get { return new ParticleAddSmoothLoader(coronaComponent.renderer.sharedMaterial); }
-                set { coronaComponent.renderer.sharedMaterial = new Material(value); }
+                get { return new ParticleAddSmoothLoader(coronaComponent.GetComponent<Renderer>().sharedMaterial); }
+                set { coronaComponent.GetComponent<Renderer>().sharedMaterial = new Material(value); }
             }
 
             // Default constructor
@@ -104,7 +104,7 @@ namespace Kopernicus
                 coronaComponent = corona.GetComponent<SunCoronas> ();
 
                 // Setup the material loader
-                material = new ParticleAddSmoothLoader (corona.renderer.material);
+                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().material);
                 material.name = Guid.NewGuid().ToString();
             }
 

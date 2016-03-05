@@ -268,9 +268,6 @@ namespace Kopernicus
                 collider.physicsMaterial.dynamicFriction = 0.6f;
                 collider.physicsMaterial.staticFriction = 0.8f;
                 collider.physicsMaterial.bounciness = 0.0f;
-                collider.physicsMaterial.frictionDirection2 = Vector3.zero;
-                collider.physicsMaterial.dynamicFriction2 = 0.0f;
-                collider.physicsMaterial.staticFriction2 = 0.0f;
                 collider.physicsMaterial.frictionCombine = PhysicMaterialCombine.Maximum;
                 collider.physicsMaterial.bounceCombine = PhysicMaterialCombine.Average;
                 collider.requirements = PQS.ModiferRequirements.Default;

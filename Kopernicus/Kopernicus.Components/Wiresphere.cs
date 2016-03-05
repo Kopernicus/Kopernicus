@@ -25,7 +25,7 @@
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- */
+ *
 
 using UnityEngine;
 using System;
@@ -109,4 +109,4 @@ namespace Kopernicus
             }
         }
     }
-}
+*/

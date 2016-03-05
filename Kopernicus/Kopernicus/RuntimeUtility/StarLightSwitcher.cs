@@ -81,8 +81,7 @@ namespace Kopernicus
                         radiatorSun.SetValue(rad, celestialBody.transform);
 
                     // Flight Integrator
-                    FlightIntegrator integrator = FlightGlobals.ActiveVessel.GetComponent<FlightIntegrator>();
-                    integrator.sunBody = celestialBody;
+                    FlightIntegrator.sunBody = celestialBody;
                 }
             }
 
@@ -220,7 +219,7 @@ namespace Kopernicus
         {
             // Debug the scaled space size of the star
             Utility.PrintTransform (scaledVersion.transform, " " + scaledVersion.name + " Transform ");
-            Utility.DumpObjectProperties (scaledVersion.renderer.material);
+            Utility.DumpObjectProperties (scaledVersion.GetComponent<Renderer>().material);
 
             // Get the sun corona objects in scaled space
             foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
@@ -228,7 +227,7 @@ namespace Kopernicus
                 Logger.Active.Log ("---- Sun Corona ----");
                 Utility.PrintTransform (corona.transform);
                 Utility.DumpObjectProperties (corona);
-                Utility.DumpObjectProperties (corona.renderer.material);
+                Utility.DumpObjectProperties (corona.GetComponent<Renderer>().material);
                 Logger.Active.Log ("--------------------");
             }
         }

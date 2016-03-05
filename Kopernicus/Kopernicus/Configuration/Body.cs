@@ -250,8 +250,8 @@ namespace Kopernicus
                 }
 
                 // Visualize the SOI
-                if (debug.showSOI)
-                    generatedBody.celestialBody.gameObject.AddComponent<Wiresphere>();
+                //if (debug.showSOI)
+                //    generatedBody.celestialBody.gameObject.AddComponent<Wiresphere>();
 
                 // Loads external parser targets
                 Parser.LoadExternalParserTargetsRecursive(node);

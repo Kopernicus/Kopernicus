@@ -788,13 +788,6 @@ namespace Kopernicus
                 get { return material.frictionCombine; }
                 set { material.frictionCombine = value; }
             }
-            
-            [ParserTarget("frictionDirection2", optional = true)]
-            public Vector3Parser frictionDirection2
-            {
-                get { return material.frictionDirection2; }
-                set { material.frictionDirection2 = value; }
-            }
 
             [ParserTarget("bounciness", optional = true)]
             public NumericParser<float> bounciness
@@ -810,25 +803,11 @@ namespace Kopernicus
                 set { material.staticFriction = value; }
             }
             
-            [ParserTarget("staticFriction2", optional = true)]
-            public NumericParser<float> staticFriction2
-            {
-                get { return material.staticFriction2; }
-                set { material.staticFriction2 = value.value; }
-            }
-            
             [ParserTarget("dynamicFriction", optional = true)]
             public NumericParser<float> dynamicFriction
             {
                 get { return material.dynamicFriction; }
                 set { material.dynamicFriction = value.value; }
-            }
-            
-            [ParserTarget("dynamicFriction2", optional = true)]
-            public NumericParser<float> dynamicFriction2
-            {
-                get { return material.dynamicFriction2; }
-                set { material.dynamicFriction2 = value.value; }
             }
 
             void IParserEventSubscriber.Apply(ConfigNode node) { }

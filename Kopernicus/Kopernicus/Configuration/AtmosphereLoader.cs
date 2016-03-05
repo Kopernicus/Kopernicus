@@ -243,12 +243,11 @@ namespace Kopernicus
                     materialLightDirection.valueName            = "_localLightDirection";
 
                     // Create the atmosphere shell game object
-                    GameObject kerbinAtmosphere = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Kerbin").scaledVersion.GetChild("Atmosphere");
                     GameObject scaledAtmosphere       = new GameObject("Atmosphere");
                     scaledAtmosphere.transform.parent = scaledVersion.transform;
                     scaledAtmosphere.layer            = Constants.GameLayers.ScaledSpaceAtmosphere;
                     MeshRenderer renderer             = scaledAtmosphere.AddComponent<MeshRenderer>();
-                    renderer.sharedMaterial           = new MaterialWrapper.AtmosphereFromGround(kerbinAtmosphere.renderer.material);
+                    renderer.sharedMaterial           = new MaterialWrapper.AtmosphereFromGround();
                     MeshFilter meshFilter             = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh             = Templates.ReferenceGeosphere;
                     scaledAtmosphere.AddComponent<AtmosphereFromGround>();

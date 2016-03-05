@@ -147,14 +147,15 @@ namespace Kopernicus
 
                 // Set texture
                 MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
+                Renderer parentRenderer = parent.GetComponent<Renderer>();
                 if (unlit)
                     meshRenderer.material = new Material(Shader.Find("Unlit/Transparent"));
                 else
                     meshRenderer.material = new Material(Shader.Find("Transparent/Diffuse"));
                 meshRenderer.material.mainTexture = texture;
                 meshRenderer.material.color = color;
-                meshRenderer.material.renderQueue = parent.renderer.material.renderQueue;
-                parent.renderer.material.renderQueue--;
+                meshRenderer.material.renderQueue = parentRenderer.material.renderQueue;
+                parentRenderer.material.renderQueue--;
             }
 
             /// <summary>

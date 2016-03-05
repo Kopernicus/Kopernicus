@@ -85,7 +85,7 @@ namespace Kopernicus
             {
                 if (!GetComponent<ParticleEmitter>())
                 {
-                    emitter = (ParticleEmitter)gameObject.AddComponent("MeshParticleEmitter");
+                    emitter = gameObject.AddComponent<MeshParticleEmitter>();
                     emitter.useWorldSpace = false;
                     emitter.emit = true;
                 }
@@ -151,7 +151,7 @@ namespace Kopernicus
                 /// We have a target
                 if (target != "None")
                 {
-                    if (targetTransform == null) targetTransform = ScaledSpace.Instance.scaledSpaceTransforms.Find(t => t.name == target);
+                    if (targetTransform == null) targetTransform = PSystemManager.Instance.localBodies.Find(b => b.transform.name == target).scaledBody.transform;
                     Vector3 speed = targetTransform.position;
                     speed -= transform.parent.position;
                     speed *= speedScale;
@@ -181,12 +181,12 @@ namespace Kopernicus
                     return;
 
                 /// We need a rigidbody
-                if (!other.rigidbody)
+                if (!other.GetComponent<Rigidbody>())
                     return;
 
                 /// Do funny things
                 Particle partice = emitter.particles.OrderBy(p => Vector3.Distance(other.transform.position, p.position)).First();
-                other.rigidbody.AddForceAtPosition(partice.velocity.normalized * partice.energy, partice.position, ForceMode.Impulse);
+                other.GetComponent<Rigidbody>().AddForceAtPosition(partice.velocity.normalized * partice.energy, partice.position, ForceMode.Impulse);
                 partice.energy = 0;
             }
 
@@ -199,7 +199,7 @@ namespace Kopernicus
                 byte[] buffer = new byte[stream.Length];
                 stream.Read(buffer, 0, (int)stream.Length);
                 AssetBundle bundle = AssetBundle.CreateFromMemoryImmediate(buffer);
-                GameObject collider = Instantiate(bundle.Load("WorldParticleCollider", typeof(GameObject))) as GameObject;
+                GameObject collider = Instantiate(bundle.LoadAsset("WorldParticleCollider", typeof(GameObject))) as GameObject;
                 bundle.Unload(true);
                 return collider;
             }

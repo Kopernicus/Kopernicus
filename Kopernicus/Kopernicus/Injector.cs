@@ -31,6 +31,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using Kopernicus.Configuration;
+using KSP.UI.Screens;
 
 namespace Kopernicus 
 {

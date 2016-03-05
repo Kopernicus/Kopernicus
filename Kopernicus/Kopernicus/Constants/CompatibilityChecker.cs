@@ -48,8 +48,8 @@ namespace Kopernicus
     {
         // Compatible version
         internal const int version_major = 1;
-        internal const int version_minor = 0;
-        internal const int Revision = 5;
+        internal const int version_minor = 1;
+        internal const int Revision = 0;
 
         public static bool IsCompatible()
         {
@@ -166,10 +166,10 @@ namespace Kopernicus
 
             String message = String.Empty;
 
-            if (IsWin64())
-            {
-                message += "WARNING: You are using 64-bit KSP on Windows. This version of KSP is known to cause crashes. It's highly recommended that you use either 32-bit KSP on Windows or switch to Linux.";
-            }
+            // if (IsWin64())
+            // {
+            //    message += "WARNING: You are using 64-bit KSP on Windows. This version of KSP is known to cause crashes. It's highly recommended that you use either 32-bit KSP on Windows or switch to Linux.";
+            // }
 
             if ((incompatible.Length > 0) || (incompatibleUnity.Length > 0))
             {
@@ -192,7 +192,7 @@ namespace Kopernicus
 
             if ((incompatible.Length > 0) || (incompatibleUnity.Length > 0) || IsWin64())
             {
-                PopupDialog.SpawnPopupDialog("Incompatible Mods Detected", message, "OK", true, HighLogic.Skin);
+                PopupDialog.SpawnPopupDialog(new Vector2(0f, 1f), new Vector2(0f, 1f), "Incompatible Mods Detected", message, "OK", true, UISkinManager.defaultSkin);
             }
         }
 

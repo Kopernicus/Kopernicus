@@ -86,7 +86,7 @@ namespace Kopernicus
             void IParserEventSubscriber.Apply (ConfigNode node)
             {
                 // Get any existing material we might have on this scaled version
-                Material material = scaledVersion.renderer.sharedMaterial;
+                Material material = scaledVersion.GetComponent<Renderer>().sharedMaterial;
                 ConfigNode data = node.GetNode (materialNodeName);
 
                 // Check for bad condition (no material, no new material)
@@ -131,7 +131,7 @@ namespace Kopernicus
                         newMaterial.name = Guid.NewGuid().ToString();
                         newMaterial.rimColorRamp.wrapMode = TextureWrapMode.Clamp;
                         newMaterial.rimColorRamp.mipMapBias = 0.0f;
-                        scaledVersion.renderer.sharedMaterial = newMaterial;
+                        scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
                     }
 
                     // Generate new vacuum body material
@@ -149,7 +149,7 @@ namespace Kopernicus
                             newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data);
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
-                        scaledVersion.renderer.sharedMaterial = newMaterial;
+                        scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
                     }
                 }
 
@@ -183,7 +183,7 @@ namespace Kopernicus
                     }
 
                     newMaterial.name = Guid.NewGuid().ToString();
-                    scaledVersion.renderer.sharedMaterial = newMaterial;
+                    scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
                 }
             }
 
@@ -232,8 +232,8 @@ namespace Kopernicus
                 // If we use OnDemand, we need to delete the original textures and reload them
                 if (OnDemandStorage.useOnDemand && type.value != BodyType.Star)
                 {
-                    Texture2D texture = scaledVersion.renderer.material.GetTexture("_MainTex") as Texture2D;
-                    Texture2D normals = scaledVersion.renderer.material.GetTexture("_BumpMap") as Texture2D;
+                    Texture2D texture = scaledVersion.GetComponent<Renderer>().material.GetTexture("_MainTex") as Texture2D;
+                    Texture2D normals = scaledVersion.GetComponent<Renderer>().material.GetTexture("_BumpMap") as Texture2D;
                     ScaledSpaceDemand demand = scaledVersion.AddComponent<ScaledSpaceDemand>();
                     if (texture != null)
                         demand.texture = texture.name;
@@ -256,7 +256,7 @@ namespace Kopernicus
                 if(scaledVersion.GetComponent<MeshRenderer>() == null)
                 {
                     scaledVersion.AddComponent<MeshRenderer>();
-                    scaledVersion.renderer.material = null;
+                    scaledVersion.GetComponent<Renderer>().material = null;
                 }
             }
 
