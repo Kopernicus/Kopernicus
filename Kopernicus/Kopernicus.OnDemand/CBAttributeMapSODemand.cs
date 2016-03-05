@@ -59,35 +59,35 @@ namespace Kopernicus
             public new MapDepth Depth { get; set; }
 
             // Load the Map
-            public bool Load()
+            public void Load()
             {
                 // Check if the Map is already loaded
                 if (IsLoaded)
-                    return false;
+                    return;
 
                 // Load the Map
-                Texture2D map = OnDemandStorage.LoadTexture(Path, false, false, false);
-
-                // If the map isn't null
-                if (map != null)
+                OnDemandStorage.LoadTextureAsync(Path, false, false, false, map =>
                 {
-                    CreateMap(Depth, map);
-                    IsLoaded = true;
-                    Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
-                    return true;
-                }
 
-                // Return nothing
-                Debug.Log("[OD] ERROR: Failed to load CBmap " + name + " at path " + Path);
-                return false;
+                    // If the map isn't null
+                    if (map != null)
+                    {
+                        CreateMap(Depth, map);
+                        IsLoaded = true;
+                        Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
+                    }
+
+                    // Return nothing
+                    Debug.Log("[OD] ERROR: Failed to load CBmap " + name + " at path " + Path);
+                });
             }
 
             // Unload the map
-            public bool Unload()
+            public void Unload()
             {
                 // We can only destroy the map, if it is loaded and initialized
                 if (!IsLoaded || !string.IsNullOrEmpty(Path))
-                    return false;
+                    return;
 
                 // Nuke the map
                 DestroyImmediate(_data);
@@ -97,9 +97,6 @@ namespace Kopernicus
 
                 // Log
                 Debug.Log("[OD] CBmap " + name + " disabling self. Path = " + Path);
-
-                // We're done here
-                return true;
             }
 
             // Create a map from a Texture2D

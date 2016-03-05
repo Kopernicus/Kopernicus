@@ -65,11 +65,11 @@ namespace Kopernicus
 
                 // Load Diffuse
                 if (OnDemandStorage.TextureExists(texture))
-                    scaledRenderer.material.SetTexture("_MainTex", OnDemandStorage.LoadTexture(texture, false, true, true));
+                    OnDemandStorage.LoadTextureAsync(texture, false, true, true, texture => scaledRenderer.material.SetTexture("_MainTex", texture));
 
                 // Load Normals
                 if (OnDemandStorage.TextureExists(normals))
-                    scaledRenderer.material.SetTexture("_BumpMap", OnDemandStorage.LoadTexture(normals, false, true, false));
+                    OnDemandStorage.LoadTextureAsync(normals, false, true, false, normals => scaledRenderer.material.SetTexture("_BumpMap", normals));
 
                 // Flags
                 isLoaded = true;

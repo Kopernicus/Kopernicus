@@ -39,10 +39,10 @@ namespace Kopernicus
         public interface ILoadOnDemand
         {
             // Load the Map
-            bool Load();
+            void Load();
 
             // Unload the map
-            bool Unload();
+            void Unload();
 
             // Name
             string name { get; set; }
