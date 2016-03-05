@@ -241,7 +241,7 @@ namespace Kopernicus
                             else if (target.nameSignificance == NameSignificance.Type) 
                             {
                                 // Generate the type from the name
-                                Type elementType = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes()).FirstOrDefault(t => t.Name == subnode.name);
+                                Type elementType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.Name == subnode.name);
 
                                 // Add the object to the collection
                                 collection.Add (CreateObjectFromConfigNode (elementType, subnode, target.getChild));
@@ -419,10 +419,10 @@ namespace Kopernicus
             public static void LoadExternalParserTargets(ConfigNode node)
             {
                 // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
-                foreach (AssemblyLoader.LoadedAssembly assembly in AssemblyLoader.loadedAssemblies)
+                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
                     // Only get types implementing IParserEventSubscriber, and extending ExternalParserTargetLoader
-                    foreach (Type type in assembly.assembly.GetExportedTypes().Where(t => t.GetInterface("IParserEventSubscriber") != null).Where(t => t.BaseType == typeof(ExternalParserTargetLoader)))
+                    foreach (Type type in assembly.GetExportedTypes().Where(t => t.GetInterface("IParserEventSubscriber") != null).Where(t => t.BaseType == typeof(ExternalParserTargetLoader)))
                     {
                         ExternalParserTarget[] attributes = type.GetCustomAttributes(typeof(ExternalParserTarget), false) as ExternalParserTarget[];
                         if (attributes.Length != 0)
@@ -437,7 +437,7 @@ namespace Kopernicus
                             {
                                 try
                                 {
-                                    Logger.Active.Log("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + assembly.assembly.FullName);
+                                    Logger.Active.Log("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + assembly.FullName);
                                     ConfigNode nodeToLoad = node.GetNode(nodeName);
                                     ExternalParserTargetLoader obj = Activator.CreateInstance(type) as ExternalParserTargetLoader;
                                     obj.generatedBody = BaseLoader.generatedBody;

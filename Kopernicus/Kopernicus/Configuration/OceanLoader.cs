@@ -234,7 +234,7 @@ namespace Kopernicus
                 List<PQSMod> patchedMods = new List<PQSMod>();
 
                 // Get all loaded types
-                IEnumerable<Type> types = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes());
+                IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes());
 
                 // Load mods manually because of patching
                 foreach (ConfigNode mod in node.GetNode("Mods").nodes)
