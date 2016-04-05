@@ -54,12 +54,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FixedOffset.cs" />
     <Compile Include="HazardousOcean.cs" />
     <Compile Include="KopernicusBuoyancy.cs" />
     <Compile Include="KSC.cs" />
     <Compile Include="LightShifter.cs" />
-    <Compile Include="FixedOblate.cs" />
     <Compile Include="MaterialWrapper\AerialTransCutout.cs" />
     <Compile Include="MaterialWrapper\AlphaTestDiffuse.cs" />
     <Compile Include="MaterialWrapper\AtmosphereFromGround.cs" />
