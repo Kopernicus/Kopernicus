@@ -38,7 +38,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightOblate : ModLoader<PQSMod_FixedOblate>
+            public class VertexHeightOblate : ModLoader<PQSMod_VertexHeightOblate>
             {
                 // The height where the terrain is oblated
                 [ParserTarget("height", optional = true)]

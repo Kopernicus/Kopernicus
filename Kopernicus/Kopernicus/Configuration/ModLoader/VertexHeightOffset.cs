@@ -38,7 +38,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightOffset : ModLoader<PQSMod_FixedOffset>
+            public class VertexHeightOffset : ModLoader<PQSMod_VertexHeightOffset>
             {
                 // Offset of the Terrain
                 [ParserTarget("offset", optional = true)]
