@@ -66,7 +66,6 @@ namespace Kopernicus
                     MapView.fetch.max3DlineDrawDist = 20000f;
                 if (scene == GameScenes.MAINMENU)
                     UpdateMenu();
-                isDone2 = false;
             });
             GameEvents.onGUIRnDComplexSpawn.Add(RDFixer);
 
@@ -110,13 +109,10 @@ namespace Kopernicus
             }
         }
 
-        // Status
-        bool isDone2 = false;
-
         // Applies invisible orbits
         void ApplyOrbitVisibility()
         {
-            if ((HighLogic.LoadedScene == GameScenes.TRACKSTATION || (HighLogic.LoadedSceneIsFlight && MapView.MapIsEnabled)) && !isDone2)
+            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || (HighLogic.LoadedSceneIsFlight && MapView.MapIsEnabled))
             {
                 // Loop
                 foreach (CelestialBody body in PSystemManager.Instance.localBodies)
@@ -135,7 +131,6 @@ namespace Kopernicus
                     if (Templates.drawIcons.ContainsKey(body.transform.name))
                         body.orbitDriver.Renderer.drawIcons = Templates.drawIcons[body.transform.name];
                 }
-                isDone2 = true;
             }
         }
 
@@ -310,21 +305,50 @@ namespace Kopernicus
         // Remove the thumbnail for Barycenters in the RD and patch name changes
         void RDFixer()
         {
-            // Loop through the Container
-            foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
+            // Only run in SpaceCenter
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-                // Barycenter
-                if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
+                // Loop through the Container
+                foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
                 {
-                    planetItem.planet.SetActive(false);
-                    planetItem.label_planetName.alignment = TextAnchor.MiddleCenter;
-                }
+                    // Barycenter
+                    if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
+                    {
+                        // Call function recursively
+                        Utility.DoRecursive(planetItem, i => Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(p => p.parent == i), (item) =>
+                        {
+                            // Reparent
+                            foreach (RDPlanetListItemContainer child in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(p => p.parent == item))
+                            {
+                                child.parent = item.parent;
+                                child.hierarchy_level += 1;
+                                float scale = 0.8f;
+                                float container_height = 60f;
+                                if (child.hierarchy_level > 1)
+                                {
+                                    scale = 0.5f;
+                                    container_height = 60f;
+                                }
+                                float magnitude = child.planet.GetComponent<MeshFilter>().mesh.bounds.size.magnitude;
+                                FieldInfo float0 = child.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(float)).ToArray()[0];
+                                FieldInfo float1 = child.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(float)).ToArray()[1];
+                                float0.SetValue(child, 80f / magnitude * scale);
+                                float1.SetValue(child, (80f / magnitude * scale) * 1.1f);
+                                child.planet.transform.localScale = Vector3.one * (80f / magnitude * scale);
+                                child.layoutElement.preferredHeight = container_height;
+                            }
+                        });
 
-                // namechanges
-                if (FindObjectsOfType<NameChanger>().Where(n => n.oldName == planetItem.label_planetName.text).Count() != 0)
-                {
-                    NameChanger changer = FindObjectsOfType<NameChanger>().First(n => n.oldName == planetItem.label_planetName.text);
-                    planetItem.label_planetName.text = changer.newName;
+                        // Hide
+                        planetItem.Hide();
+                    }
+
+                    // namechanges
+                    if (FindObjectsOfType<NameChanger>().Where(n => n.oldName == planetItem.label_planetName.text).Count() != 0)
+                    {
+                        NameChanger changer = FindObjectsOfType<NameChanger>().First(n => n.oldName == planetItem.label_planetName.text);
+                        planetItem.label_planetName.text = changer.newName;
+                    }
                 }
             }
         }
