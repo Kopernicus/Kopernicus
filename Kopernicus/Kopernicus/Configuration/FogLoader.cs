@@ -69,14 +69,6 @@ namespace Kopernicus
                 set { body.oceanAFGMin = value; }
             }
 
-            // fogColorAltMult
-            [ParserTarget("fogColorAltMult", optional = true, allowMerge = false)]
-            public NumericParser<float> oceanFogColorAltMult
-            {
-                get { return body.oceanFogColorAltMult; }
-                set { body.oceanFogColorAltMult = value; }
-            }
-
             // fogColorEnd
             [ParserTarget("fogColorEnd", optional = true, allowMerge = false)]
             public ColorParser oceanFogColorEnd
