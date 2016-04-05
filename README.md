@@ -7,23 +7,23 @@ December 12th, 2015
 
 New in this version
 -------------------
-- Fixed the Biome-View in Tracking Station
-- Fixed PQSMaterials
-- Fixed LandControl
-- Added the ability to create multiple Particle Emitters with custom meshes (mesh = <path>.obj) and scales (scale = 1.0, 1.0, 1.0)
-- Particles are now in a Particles {} node (Body { Particles { Particle { <your definition> } Particle { <your other definition> } } })
-- Added early support for particle collisions, toggleable using collide = true in the Particle settings (defaults to false)
-- Added the ability to apply a constant force to the particles (force = 1.0, 1.0, 1.0)
-- Added asteroid customization through Asteroid { } nodes in the Kopernicus { } node. See System.cfg for the stock configuration
-- Added support for HSBA() colors (0-255)
-- Fixed AtmosphereFromGround loading
-- Removed Debug Spam and fixed some exceptions in the parser
-- The SOI-Debugging lines are better visible and nicer now
-- The changes to the main menu should persist between scene changes
-- EVE clouds should get copied to the main menu again
-- Added visibility tweaking (icon and mode in Orbit { } and selectable in Properties { })
-- PQSMods are now sorted using the order value when caching the scaled space
-- Various other fixes and things that I forgot
+* Fixed the Biome-View in Tracking Station
+* Fixed PQSMaterials
+* Fixed LandControl
+* Added the ability to create multiple Particle Emitters with custom meshes (mesh = <path>.obj) and scales (scale = 1.0, 1.0, 1.0)
+* Particles are now in a Particles {} node (Body { Particles { Particle { <your definition> } Particle { <your other definition> } } })
+* Added early support for particle collisions, toggleable using collide = true in the Particle settings (defaults to false)
+* Added the ability to apply a constant force to the particles (force = 1.0, 1.0, 1.0)
+* Added asteroid customization through Asteroid { } nodes in the Kopernicus { } node. See System.cfg for the stock configuration
+* Added support for HSBA() colors (0-255)
+* Fixed AtmosphereFromGround loading
+* Removed Debug Spam and fixed some exceptions in the parser
+* The SOI-Debugging lines are better visible and nicer now
+* The changes to the main menu should persist between scene changes
+* EVE clouds should get copied to the main menu again
+* Added visibility tweaking (icon and mode in Orbit { } and selectable in Properties { })
+* PQSMods are now sorted using the order value when caching the scaled space
+* Various other fixes and things that I forgot
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
@@ -56,4 +56,12 @@ Coming Soon
 
 Compiling
 ----------
-To compile Kopernicus you need to add the assemblies named "Assembly-CSharp.dll", "Assembly-CSharp-firstpass.dll" and "UnityEngine.dll" from your KSP_Data/Managed folder into the toplevel directory of the repository. After that you can compile the .sln file with VS, MonoDevelop or other build tools.
+To compile Kopernicus you need to add the following assemblies from your KSP_Data/Managed folder into the toplevel directory of the repository:
+
+* Assembly-CSharp.dll
+* Assembly-CSharp-firstpass.dll
+* KSPUtil.dll
+* UnityEngine.dll
+* UnityEngine.UI.dll
+
+After that you can compile the .sln file with VS, MonoDevelop or other build tools.
