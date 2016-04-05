@@ -1087,6 +1087,27 @@ namespace Kopernicus
             return finalTexture;
         }
 
+        // Runs a function recursively
+        public static TOut DoRecursive<TIn, TOut>(TIn start, Func<TIn, IEnumerable<TIn>> selector, Func<TOut, bool> check, Func<TIn, TOut> action)
+        {
+            TOut tout = action(start);
+            if (check(tout))
+                return tout;
+            foreach (TIn tin in selector(start))
+            {
+                tout = DoRecursive(tin, selector, check, action);
+                if (check(tout))
+                    return tout;
+            }
+            return default(TOut);
+        }
+
+        // Runs a function recursively
+        public static void DoRecursive<T>(T start, Func<T, IEnumerable<T>> selector, Action<T> action)
+        {
+            DoRecursive<T, object>(start, selector, tout => false, tin => { action(tin); return null; });
+        }
+
         /** 
          * Enumerable class to iterate over parents.  Defined to allow us to use Linq
          * and predicates. 
