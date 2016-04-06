@@ -118,7 +118,7 @@ namespace Kopernicus
             }
 
             // Enable a list of maps
-            public static void EnableMapList(List<ILoadOnDemand> maps, [Optional] List<ILoadOnDemand> exclude)
+            public static void EnableMapList(List<ILoadOnDemand> maps, List<ILoadOnDemand> exclude = null)
             {
                 // If the excludes are null, create an empty list
                 if (exclude == null)
@@ -136,7 +136,7 @@ namespace Kopernicus
             }
 
             // Disable a list of maps
-            public static void DisableMapList(List<ILoadOnDemand> maps, [Optional] List<ILoadOnDemand> exclude)
+            public static void DisableMapList(List<ILoadOnDemand> maps, List<ILoadOnDemand> exclude = null)
             {
                 // If the excludes are null, create an empty list
                 if (exclude == null)

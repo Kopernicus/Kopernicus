@@ -211,22 +211,7 @@ namespace Kopernicus
                 set { lowMultiFactor = value; }
             }
 
-            // Low Bump Near Tiling, default = 1
-            [ParserTarget("lowBumpNearTiling", optional = true)]
-            public NumericParser<float> lowBumpNearTilingSetter
-            {
-                get { return lowBumpNearTiling; }
-                set { lowBumpNearTiling = value; }
-            }
-
-            // Low Bump Far Tiling, default = 1
-            [ParserTarget("lowBumpFarTiling", optional = true)]
-            public NumericParser<float> lowBumpFarTilingSetter
-            {
-                get { return lowBumpFarTiling; }
-                set { lowBumpFarTiling = value; }
-            }
-
+            
             // Mid Texture, default = "white" {}
             [ParserTarget("midTex", optional = true)]
             public Texture2DParser midTexSetter
@@ -294,15 +279,7 @@ namespace Kopernicus
                 get { return midBumpNearTiling; }
                 set { midBumpNearTiling = value; }
             }
-
-            // Mid Bump Far Tiling, default = 1
-            [ParserTarget("midBumpFarTiling", optional = true)]
-            public NumericParser<float> midBumpFarTilingSetter
-            {
-                get { return midBumpFarTiling; }
-                set { midBumpFarTiling = value; }
-            }
-
+            
             // High Texture, default = "white" {}
             [ParserTarget("highTex", optional = true)]
             public Texture2DParser highTexSetter
@@ -362,23 +339,7 @@ namespace Kopernicus
                 get { return highMultiFactor; }
                 set { highMultiFactor = value; }
             }
-
-            // High Bump Near Tiling, default = 1
-            [ParserTarget("highBumpNearTiling", optional = true)]
-            public NumericParser<float> highBumpNearTilingSetter
-            {
-                get { return highBumpNearTiling; }
-                set { highBumpNearTiling = value; }
-            }
-
-            // High Bump Far Tiling, default = 1
-            [ParserTarget("highBumpFarTiling", optional = true)]
-            public NumericParser<float> highBumpFarTilingSetter
-            {
-                get { return highBumpFarTiling; }
-                set { highBumpFarTiling = value; }
-            }
-
+            
             // Low Transition Start, default = 0
             [ParserTarget("lowStart", optional = true)]
             public NumericParser<float> lowStartSetter

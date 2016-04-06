@@ -176,23 +176,33 @@ namespace Kopernicus
                         foreach (string mod in removePQSMods.value)
                         {
                             // If the definition has a name specified, grab that
-                            string type = mod;
+                            string mType = mod;
                             string name = "";
-                            if (type.EndsWith("]"))
+                            if (mType.EndsWith("]"))
                             {
-                                string[] split = type.Split('[');
-                                type = split[0];
+                                string[] split = mType.Split('[');
+                                mType = split[0];
                                 name = split[1].Remove(split[1].Length - 1);
                             }
-
+                            
                             // Get the mods matching the string
-                            string modName = type;
+                            string modName = mType;
                             if(!mod.Contains("PQS"))
                                 modName = "PQSMod_" + mod;
                             if (name == "")
-                                mods.Add(Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                            {
+                                //mods.Add(Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                                Type t = Injector.PQSModTypes.Find(m => m.Name == modName);
+                                if (t != null)
+                                    mods.Add(t);
+                            }
                             else
-                                modsPerName.Add(name, Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                            {
+                                //modsPerName.Add(name, Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                                Type t = Injector.PQSModTypes.Find(m => m.Name == modName);
+                                if (t != null)
+                                    modsPerName.Add(name, t);
+                            }
                         }
                         Utility.RemoveModsOfType(mods, body.pqsVersion);
                         foreach (KeyValuePair<string, Type> kvP in modsPerName)

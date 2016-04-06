@@ -163,18 +163,18 @@ namespace Kopernicus
 
                 // Setup materials
                 PSystemBody Body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
-                foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
+                foreach (PQS oc in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
                 {
-                    if (ocean.name == "LaytheOcean")
+                    if (oc.name == "LaytheOcean")
                     {
                         // Copying Laythes Ocean-properties
-                        Utility.CopyObjectFields<PQS>(ocean, this.ocean);
+                        Utility.CopyObjectFields<PQS>(oc, this.ocean);
 
                         // Load Surface material
-                        surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
+                        surfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
 
                         // Load Fallback-Material
-                        fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(ocean.fallbackMaterial);
+                        fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oc.fallbackMaterial);
                         break;
                     }
                 }

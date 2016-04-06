@@ -39,8 +39,8 @@ namespace Kopernicus
         public static Mesh ReferenceGeosphere { get; set; }
 
         // Finalize Orbits stuff
-        public static double SOIMinRadiusMult { get; set; } = 2.0d;
-        public static double SOIMinAltitude { get; set; } = 40000d;
+        public static double SOIMinRadiusMult /*{ get; set; }*/ = 2.0d;
+        public static double SOIMinAltitude /*{ get; set; }*/ = 40000d;
 
         // Global base epoch
         public static double epoch { get; set; }

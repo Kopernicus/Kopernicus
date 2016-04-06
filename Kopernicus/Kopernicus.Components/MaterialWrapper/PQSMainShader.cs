@@ -380,25 +380,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.lowTexKey, value); }
             }
 
-            // Low Bump Map, default = "bump" {}
-            public Texture2D lowBumpMap
-            {
-                get { return GetTexture (Properties.Instance.lowBumpMapID) as Texture2D; }
-                set { SetTexture (Properties.Instance.lowBumpMapID, value); }
-            }
-
-            public Vector2 lowBumpMapScale
-            {
-                get { return GetTextureScale (Properties.lowBumpMapKey); }
-                set { SetTextureScale (Properties.lowBumpMapKey, value); }
-            }
-
-            public Vector2 lowBumpMapOffset
-            {
-                get { return GetTextureOffset (Properties.lowBumpMapKey); }
-                set { SetTextureOffset (Properties.lowBumpMapKey, value); }
-            }
-
+            
             // Low Near Tiling, default = 1000
             public float lowNearTiling
             {
@@ -412,20 +394,7 @@ namespace Kopernicus
                 get { return GetFloat (Properties.Instance.lowMultiFactorID); }
                 set { SetFloat (Properties.Instance.lowMultiFactorID, value); }
             }
-
-            // Low Bump Near Tiling, default = 1
-            public float lowBumpNearTiling
-            {
-                get { return GetFloat (Properties.Instance.lowBumpNearTilingID); }
-                set { SetFloat (Properties.Instance.lowBumpNearTilingID, value); }
-            }
-
-            // Low Bump Far Tiling, default = 1
-            public float lowBumpFarTiling
-            {
-                get { return GetFloat (Properties.Instance.lowBumpFarTilingID); }
-                set { SetFloat (Properties.Instance.lowBumpFarTilingID, value); }
-            }
+            
 
             // Mid Texture, default = "white" {}
             public Texture2D midTex
@@ -486,13 +455,6 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.midBumpNearTilingID, value); }
             }
 
-            // Mid Bump Far Tiling, default = 1
-            public float midBumpFarTiling
-            {
-                get { return GetFloat (Properties.Instance.midBumpFarTilingID); }
-                set { SetFloat (Properties.Instance.midBumpFarTilingID, value); }
-            }
-
             // High Texture, default = "white" {}
             public Texture2D highTex
             {
@@ -511,25 +473,7 @@ namespace Kopernicus
                 get { return GetTextureOffset (Properties.highTexKey); }
                 set { SetTextureOffset (Properties.highTexKey, value); }
             }
-
-            // High Bump Map, default = "bump" {}
-            public Texture2D highBumpMap
-            {
-                get { return GetTexture (Properties.Instance.highBumpMapID) as Texture2D; }
-                set { SetTexture (Properties.Instance.highBumpMapID, value); }
-            }
-
-            public Vector2 highBumpMapScale
-            {
-                get { return GetTextureScale (Properties.highBumpMapKey); }
-                set { SetTextureScale (Properties.highBumpMapKey, value); }
-            }
-
-            public Vector2 highBumpMapOffset
-            {
-                get { return GetTextureOffset (Properties.highBumpMapKey); }
-                set { SetTextureOffset (Properties.highBumpMapKey, value); }
-            }
+            
 
             // High Near Tiling, default = 1000
             public float highNearTiling
@@ -544,21 +488,7 @@ namespace Kopernicus
                 get { return GetFloat (Properties.Instance.highMultiFactorID); }
                 set { SetFloat (Properties.Instance.highMultiFactorID, value); }
             }
-
-            // High Bump Near Tiling, default = 1
-            public float highBumpNearTiling
-            {
-                get { return GetFloat (Properties.Instance.highBumpNearTilingID); }
-                set { SetFloat (Properties.Instance.highBumpNearTilingID, value); }
-            }
-
-            // High Bump Far Tiling, default = 1
-            public float highBumpFarTiling
-            {
-                get { return GetFloat (Properties.Instance.highBumpFarTilingID); }
-                set { SetFloat (Properties.Instance.highBumpFarTilingID, value); }
-            }
-
+            
             // Low Transition Start, default = 0
             public float lowStart
             {

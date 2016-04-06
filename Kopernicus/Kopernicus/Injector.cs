@@ -41,7 +41,19 @@ namespace Kopernicus
     {
         // Name of the config node group which manages Kopernicus
         public const string rootNodeName = "Kopernicus";
-        
+
+        public static System.Collections.Generic.List<Type> ModTypes;
+        public static System.Collections.Generic.List<Type> PQSModTypes
+        {
+            get
+            {
+                if (ModTypes == null)
+                    GetModTypes();
+
+                return ModTypes;
+            }
+        }
+
         // Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
         // it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
         public void Awake()
@@ -97,6 +109,49 @@ namespace Kopernicus
             TimeSpan duration = (DateTime.Now - start);
             Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
             Logger.Default.Flush ();
+        }
+
+        public static void GetModTypes()
+        {
+            ModTypes = new System.Collections.Generic.List<Type>(); //AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes());
+                                                                                                       //IEnumerable<Type> types = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes());
+                                                                                                       //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().ToList())
+            System.Collections.Generic.List<System.Reflection.Assembly> asms = new System.Collections.Generic.List<System.Reflection.Assembly>();
+            foreach (AssemblyLoader.LoadedAssembly la in AssemblyLoader.loadedAssemblies)
+                asms.Add(la.assembly);
+            asms.AddUnique(typeof(PQSMod_VertexSimplexHeightAbsolute).Assembly);
+            asms.AddUnique(typeof(PQSLandControl).Assembly);
+            foreach (System.Reflection.Assembly assembly in asms)
+            {
+                if (assembly.FullName.StartsWith("Mono.Cecil"))
+                    continue;
+
+                if (assembly.FullName.StartsWith("UnityScript"))
+                    continue;
+
+                if (assembly.FullName.StartsWith("Boo.Lan"))
+                    continue;
+
+                if (assembly.FullName.StartsWith("System"))
+                    continue;
+
+                if (assembly.FullName.StartsWith("I18N"))
+                    continue;
+
+                if (assembly.FullName.StartsWith("UnityEngine"))
+                    continue;
+
+                if (assembly.FullName.StartsWith("UnityEditor"))
+                    continue;
+
+                if (assembly.FullName.StartsWith("mscorlib"))
+                    continue;
+
+                foreach (Type t in assembly.GetTypes())
+                {
+                    ModTypes.Add(t);
+                }
+            }
         }
 
         // Post spawn fixups (ewwwww........)
@@ -155,7 +210,8 @@ namespace Kopernicus
             PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
             // Update Music Logic
-            MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
+            if(MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
+                MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
 
             // Select the closest star to home
             StarLightSwitcher.HomeStar().SetAsActive ();

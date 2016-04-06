@@ -413,20 +413,6 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.lowMultiFactorID, value); }
             }
 
-            // Low Bump Near Tiling, default = 1
-            public float lowBumpNearTiling
-            {
-                get { return GetFloat (Properties.Instance.lowBumpNearTilingID); }
-                set { SetFloat (Properties.Instance.lowBumpNearTilingID, value); }
-            }
-
-            // Low Bump Far Tiling, default = 1
-            public float lowBumpFarTiling
-            {
-                get { return GetFloat (Properties.Instance.lowBumpFarTilingID); }
-                set { SetFloat (Properties.Instance.lowBumpFarTilingID, value); }
-            }
-
             // Mid Texture, default = "white" {}
             public Texture2D midTex
             {
@@ -486,13 +472,6 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.midBumpNearTilingID, value); }
             }
 
-            // Mid Bump Far Tiling, default = 1
-            public float midBumpFarTiling
-            {
-                get { return GetFloat (Properties.Instance.midBumpFarTilingID); }
-                set { SetFloat (Properties.Instance.midBumpFarTilingID, value); }
-            }
-
             // High Texture, default = "white" {}
             public Texture2D highTex
             {
@@ -543,20 +522,6 @@ namespace Kopernicus
             {
                 get { return GetFloat (Properties.Instance.highMultiFactorID); }
                 set { SetFloat (Properties.Instance.highMultiFactorID, value); }
-            }
-
-            // High Bump Near Tiling, default = 1
-            public float highBumpNearTiling
-            {
-                get { return GetFloat (Properties.Instance.highBumpNearTilingID); }
-                set { SetFloat (Properties.Instance.highBumpNearTilingID, value); }
-            }
-
-            // High Bump Far Tiling, default = 1
-            public float highBumpFarTiling
-            {
-                get { return GetFloat (Properties.Instance.highBumpFarTilingID); }
-                set { SetFloat (Properties.Instance.highBumpFarTilingID, value); }
             }
 
             // Low Transition Start, default = 0

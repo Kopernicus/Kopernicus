@@ -517,7 +517,12 @@ namespace Kopernicus
                 if (s.StartsWith ("BUILTIN/")) 
                 {
                     string textureName = Regex.Replace (s, "BUILTIN/", "");
-                    value = Resources.FindObjectsOfTypeAll<Texture>().Where(tex => tex.name == textureName).First() as Texture2D;
+                    value = Resources.FindObjectsOfTypeAll<Texture>().Where(tex => tex.name == textureName).FirstOrDefault() as Texture2D;
+                    if (value == null)
+                    {
+                        Debug.LogError("[Kopernicus]: Could not find built-in texture " + textureName);
+                        Logger.Active.Log("Could not find built-in texture " + textureName);
+                    }
                     return;
                 }
 

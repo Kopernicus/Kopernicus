@@ -193,7 +193,7 @@ namespace Kopernicus
                     KSC ksc = GetComponent<KSC>();
 
                     // Loop through all Materials and change their settings
-                    foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.382f, 0.451f, 0.000f, 0.729f).ToString()))
+                    /*foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.382f, 0.451f, 0.000f, 0.729f).ToString()))
                     {
                         // Patch the texture
                         if (ksc.mainTexture != null)
@@ -207,7 +207,8 @@ namespace Kopernicus
                             material.color = ksc.color.Value;
                         }
                         Destroy(this);
-                    }
+                    }*/
+                    Destroy(this);
                 }
             }
         }

@@ -333,7 +333,6 @@ namespace Kopernicus
                 generatedBody.pqsVersion.surfaceMaterial = surfaceMaterial;
                 surfaceMaterial.name = Guid.NewGuid().ToString();
             }
-
             // PostApply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
@@ -353,20 +352,25 @@ namespace Kopernicus
                 List<PQSMod> patchedMods = new List<PQSMod>();
 
                 // Get all loaded types
-                IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes());
+                List<Type> types = Injector.PQSModTypes;
 
                 // Load mods manually because of patching
-                foreach (ConfigNode mod in node.GetNode ("Mods").nodes) 
+                foreach (ConfigNode mod in node.GetNode("Mods").nodes)
                 {
                     // get the mod type
                     if (types.Where(t => t.Name == mod.name).Count() == 0)
                         continue;
-                    Type loaderType = types.First(t => t.Name == mod.name);
-                    Type modType = types.First(t => t.Name == (mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl"));
-
+                    Type loaderType = types.FirstOrDefault(t => t.Name == mod.name);
+                    string testName = mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl";
+                    Type modType = types.FirstOrDefault(t => t.Name == testName);
+                    if (loaderType == null || modType == null)
+                    {
+                        Debug.LogError("MOD NULL: Loadertype " + mod.name + " with mod type " + testName + " and null? " + (loaderType == null) + (modType == null));
+                        continue;
+                    }
                     // Do any PQS Mods already exist on this PQS matching this mod?
-                    IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) && 
-                                                                                                                    m.transform.parent == pqsVersion.transform);
+                    IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) &&
+                                                                                                                   m.transform.parent == pqsVersion.transform);
 
                     // Create the loader
                     object loader = Activator.CreateInstance(loaderType);
@@ -375,15 +379,15 @@ namespace Kopernicus
                     MethodInfo createNew = loaderType.GetMethod("Create", Type.EmptyTypes);
                     MethodInfo create = loaderType.GetMethod("Create", new Type[] { modType });
 
-                    if (existingMods.Count () > 0) 
+                    if (existingMods.Count() > 0)
                     {
                         // Attempt to find a PQS mod we can edit that we have not edited before
-                        PQSMod existingMod = existingMods.Where (m => !patchedMods.Contains(m) && (mod.HasValue ("name") ? m.name == mod.GetValue ("name") : true)).FirstOrDefault ();
-                        if (existingMod != null) 
+                        PQSMod existingMod = existingMods.Where(m => !patchedMods.Contains(m) && (mod.HasValue("name") ? m.name == mod.GetValue("name") : true)).FirstOrDefault();
+                        if (existingMod != null)
                         {
                             create.Invoke(loader, new[] { existingMod });
                             Parser.LoadObjectFromConfigurationNode(loader, mod);
-                            patchedMods.Add (existingMod);
+                            patchedMods.Add(existingMod);
                             Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
                         }
                         else
@@ -397,7 +401,7 @@ namespace Kopernicus
                     {
                         createNew.Invoke(loader, null);
                         Parser.LoadObjectFromConfigurationNode(loader, mod);
-                        Logger.Active.Log ("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
+                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
                 }
 
