@@ -175,6 +175,14 @@ public class MaterialWrapperGenerator
         // Synthesize the internal properties class
         System.out.println(" --> Synthesizing Property Storage Class");
         content.addAll(MaterialWrapperGenerator.synthesizeInternalPropertiesClass(shaderProperties, shaderResource));
+		
+        // Synthesize UsesSameShader function
+        System.out.println(" --> Synthesizing UsesSameShader function");
+        content.add("// Is some random material this material\n");
+        content.add("public static bool UsesSameShader(Material m)\n");
+        content.add("{\n");
+        content.add("	return m.shader.name == Properties.shader.name;\n");
+        content.add("}\n\n");
 
         // Synthesize the accessor properties
         System.out.println(" --> Synthesizing Properties");

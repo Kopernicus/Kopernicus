@@ -231,7 +231,7 @@ public class ShaderProperty
             p.add("[ParserTarget(\"" + name + "Offset\", optional = true)]\n");
             p.add("private Vector2Parser " + name + "OffsetSetter\n");
             p.add("{\n");
-			p.add("    get { return " + name + "Offset; }\n")
+            p.add("    get { return " + name + "Offset; }\n");
             p.add("    set { " + name + "Offset = value; }\n");
             p.add("}\n\n");
         }
