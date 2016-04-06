@@ -23,7 +23,7 @@ namespace Kopernicus
                 public const string colorKey = "_Color";
                 public int colorID { get; private set; }
 
-                // Base (RGB) Trans (A), default = "white" {}
+                // Base (RGB) Trans (A), default = "white" { }
                 public const string mainTexKey = "_MainTex";
                 public int mainTexID { get; private set; }
 
@@ -80,7 +80,7 @@ namespace Kopernicus
                 set { SetColor (Properties.Instance.colorID, value); }
             }
 
-            // Base (RGB) Trans (A), default = "white" {}
+            // Base (RGB) Trans (A), default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }

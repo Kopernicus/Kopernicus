@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Transparent/Cutout/Diffuse";
+                private const string shaderName = "Legacy Shaders/Transparent/Cutout/Diffuse";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -23,7 +23,7 @@ namespace Kopernicus
                 public const string colorKey = "_Color";
                 public int colorID { get; private set; }
 
-                // Base (RGB) Trans (A), default = "white" {}
+                // Base (RGB) Trans (A), default = "white" { }
                 public const string mainTexKey = "_MainTex";
                 public int mainTexID { get; private set; }
 
@@ -60,7 +60,7 @@ namespace Kopernicus
                 set { SetColor (Properties.Instance.colorID, value); }
             }
 
-            // Base (RGB) Trans (A), default = "white" {}
+            // Base (RGB) Trans (A), default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
@@ -99,7 +99,7 @@ namespace Kopernicus
             {
                 // Throw exception if this material was not the proper material
                 if (material.shader.name != Properties.shader.name)
-                    throw new InvalidOperationException("Type Mismatch: Transparent/Cutout/Diffuse shader required");
+                    throw new InvalidOperationException("Type Mismatch: Legacy Shaders/Transparent/Cutout/Diffuse shader required");
             }
 
         }

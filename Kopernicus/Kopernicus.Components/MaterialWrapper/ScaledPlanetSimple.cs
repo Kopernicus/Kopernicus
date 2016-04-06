@@ -13,34 +13,38 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "Terrain/Scaled Planet (Simple)";
+                private const string shaderName = "Terrain/Scaled Planet (Simple)";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
                 }
 
+                // Main Color, default = (1,1,1,1)
+                public const string colorKey = "_Color";
+                public int colorID { get; private set; }
+
                 // Specular Color, default = (0.5,0.5,0.5,1)
-                private const string specColorKey = "_SpecColor";
+                public const string specColorKey = "_SpecColor";
                 public int specColorID { get; private set; }
 
                 // Shininess, default = 0.078125
-                private const string shininessKey = "_Shininess";
+                public const string shininessKey = "_Shininess";
                 public int shininessID { get; private set; }
 
-                // Base (RGB) Gloss (A), default = "white" {}
-                private const string mainTexKey = "_MainTex";
+                // Base (RGB) Gloss (A), default = "white" { }
+                public const string mainTexKey = "_MainTex";
                 public int mainTexID { get; private set; }
 
-                // Normalmap, default = "bump" {}
-                private const string bumpMapKey = "_BumpMap";
+                // Normalmap, default = "bump" { }
+                public const string bumpMapKey = "_BumpMap";
                 public int bumpMapID { get; private set; }
 
                 // Opacity, default = 1
-                private const string opacityKey = "_Opacity";
+                public const string opacityKey = "_Opacity";
                 public int opacityID { get; private set; }
 
-                // Resource Map (RGB), default = "black" {}
-                private const string resourceMapKey = "_ResourceMap";
+                // Resource Map (RGB), default = "black" { }
+                public const string resourceMapKey = "_ResourceMap";
                 public int resourceMapID { get; private set; }
 
                 // Singleton instance
@@ -57,8 +61,9 @@ namespace Kopernicus
                     }
                 }
 
-                protected Properties()
+                private Properties()
                 {
+                    colorID = Shader.PropertyToID(colorKey);
                     specColorID = Shader.PropertyToID(specColorKey);
                     shininessID = Shader.PropertyToID(shininessKey);
                     mainTexID = Shader.PropertyToID(mainTexKey);
@@ -68,10 +73,11 @@ namespace Kopernicus
                 }
             }
 
-            // Is some random material this material
-            public static bool UsesSameShader(Material m)
+            // Main Color, default = (1,1,1,1)
+            public Color color
             {
-                return m.shader.name == Properties.shaderName;
+                get { return GetColor (Properties.Instance.colorID); }
+                set { SetColor (Properties.Instance.colorID, value); }
             }
 
             // Specular Color, default = (0.5,0.5,0.5,1)
@@ -88,18 +94,42 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.shininessID, Mathf.Clamp(value,0.03f,1f)); }
             }
 
-            // Base (RGB) Gloss (A), default = "white" {}
+            // Base (RGB) Gloss (A), default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.mainTexID, value); }
             }
 
-            // Normalmap, default = "bump" {}
+            public Vector2 mainTexScale
+            {
+                get { return GetTextureScale (Properties.mainTexKey); }
+                set { SetTextureScale (Properties.mainTexKey, value); }
+            }
+
+            public Vector2 mainTexOffset
+            {
+                get { return GetTextureOffset (Properties.mainTexKey); }
+                set { SetTextureOffset (Properties.mainTexKey, value); }
+            }
+
+            // Normalmap, default = "bump" { }
             public Texture2D bumpMap
             {
                 get { return GetTexture (Properties.Instance.bumpMapID) as Texture2D; }
                 set { SetTexture (Properties.Instance.bumpMapID, value); }
+            }
+
+            public Vector2 bumpMapScale
+            {
+                get { return GetTextureScale (Properties.bumpMapKey); }
+                set { SetTextureScale (Properties.bumpMapKey, value); }
+            }
+
+            public Vector2 bumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.bumpMapKey); }
+                set { SetTextureOffset (Properties.bumpMapKey, value); }
             }
 
             // Opacity, default = 1
@@ -109,11 +139,23 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.opacityID, Mathf.Clamp(value,0f,1f)); }
             }
 
-            // Resource Map (RGB), default = "black" {}
+            // Resource Map (RGB), default = "black" { }
             public Texture2D resourceMap
             {
                 get { return GetTexture (Properties.Instance.resourceMapID) as Texture2D; }
                 set { SetTexture (Properties.Instance.resourceMapID, value); }
+            }
+
+            public Vector2 resourceMapScale
+            {
+                get { return GetTextureScale (Properties.resourceMapKey); }
+                set { SetTextureScale (Properties.resourceMapKey, value); }
+            }
+
+            public Vector2 resourceMapOffset
+            {
+                get { return GetTextureOffset (Properties.resourceMapKey); }
+                set { SetTextureOffset (Properties.resourceMapKey, value); }
             }
 
             public ScaledPlanetSimple() : base(Properties.shader)
@@ -127,8 +169,9 @@ namespace Kopernicus
 
             public ScaledPlanetSimple(Material material) : base(material)
             {
-                // Constructor copies properties from other material, force our shader
-                base.shader = Properties.shader;
+                // Throw exception if this material was not the proper material
+                if (material.shader.name != Properties.shader.name)
+                    throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (Simple) shader required");
             }
 
         }

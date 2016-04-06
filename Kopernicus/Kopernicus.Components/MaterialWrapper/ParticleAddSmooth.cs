@@ -13,18 +13,18 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "Particles/Additive (Soft)";
+                private const string shaderName = "Particles/Additive (Soft)";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
                 }
 
-                // Particle Texture, default = "white" {}
-                private const string mainTexKey = "_MainTex";
+                // Particle Texture, default = "white" { }
+                public const string mainTexKey = "_MainTex";
                 public int mainTexID { get; private set; }
 
                 // Soft Particles Factor, default = 1
-                private const string invFadeKey = "_InvFade";
+                public const string invFadeKey = "_InvFade";
                 public int invFadeID { get; private set; }
 
                 // Singleton instance
@@ -48,17 +48,23 @@ namespace Kopernicus
                 }
             }
 
-            // Is some random material this material
-            public static bool UsesSameShader(Material m)
-            {
-                return m.shader.name == Properties.shaderName;
-            }
-
-            // Particle Texture, default = "white" {}
+            // Particle Texture, default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
                 set { SetTexture (Properties.Instance.mainTexID, value); }
+            }
+
+            public Vector2 mainTexScale
+            {
+                get { return GetTextureScale (Properties.mainTexKey); }
+                set { SetTextureScale (Properties.mainTexKey, value); }
+            }
+
+            public Vector2 mainTexOffset
+            {
+                get { return GetTextureOffset (Properties.mainTexKey); }
+                set { SetTextureOffset (Properties.mainTexKey, value); }
             }
 
             // Soft Particles Factor, default = 1
@@ -80,7 +86,8 @@ namespace Kopernicus
             public ParticleAddSmooth(Material material) : base(material)
             {
                 // Throw exception if this material was not the proper material
-                base.shader = Properties.shader;
+                if (material.shader.name != Properties.shader.name)
+                    throw new InvalidOperationException("Type Mismatch: Particles/Additive (Soft) shader required");
             }
 
         }

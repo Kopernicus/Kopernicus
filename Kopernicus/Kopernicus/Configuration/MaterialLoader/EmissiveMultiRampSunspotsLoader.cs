@@ -11,12 +11,48 @@ namespace Kopernicus
     {
         public class EmissiveMultiRampSunspotsLoader : EmissiveMultiRampSunspots
         {
-            // Noise Map (RGBA), default = "white" {}
+            // Ramp Map (RGBA), default = "white" { }
+            [ParserTarget("rampMap", optional = true)]
+            public Texture2DParser rampMapSetter
+            {
+                get { return rampMap; }
+                set { rampMap = value; }
+            }
+
+            [ParserTarget("rampMapScale", optional = true)]
+            private Vector2Parser rampMapScaleSetter
+            {
+                get { return rampMapScale; }
+                set { rampMapScale = value; }
+            }
+
+            [ParserTarget("rampMapOffset", optional = true)]
+            private Vector2Parser rampMapOffsetSetter
+            {
+                get { return rampMapOffset; }
+                set { rampMapOffset = value; }
+            }
+
+            // Noise Map (RGBA), default = "white" { }
             [ParserTarget("noiseMap", optional = true)]
             public Texture2DParser noiseMapSetter
             {
                 get { return noiseMap; }
                 set { noiseMap = value; }
+            }
+
+            [ParserTarget("noiseMapScale", optional = true)]
+            private Vector2Parser noiseMapScaleSetter
+            {
+                get { return noiseMapScale; }
+                set { noiseMapScale = value; }
+            }
+
+            [ParserTarget("noiseMapOffset", optional = true)]
+            private Vector2Parser noiseMapOffsetSetter
+            {
+                get { return noiseMapOffset; }
+                set { noiseMapOffset = value; }
             }
 
             // Emission Color 0, default = (1,1,1,1)
@@ -35,12 +71,26 @@ namespace Kopernicus
                 set { emitColor1 = value; }
             }
 
-            // Sunspot Map (R), default = "white" {}
-            [ParserTarget("sunspotTexture", optional = true)]
+            // Sunspot Map (R), default = "white" { }
+            [ParserTarget("sunspotTex", optional = true)]
             public Texture2DParser sunspotTexSetter
             {
                 get { return sunspotTex; }
                 set { sunspotTex = value; }
+            }
+
+            [ParserTarget("sunspotTexScale", optional = true)]
+            private Vector2Parser sunspotTexScaleSetter
+            {
+                get { return sunspotTexScale; }
+                set { sunspotTexScale = value; }
+            }
+
+            [ParserTarget("sunspotTexOffset", optional = true)]
+            private Vector2Parser sunspotTexOffsetSetter
+            {
+                get { return sunspotTexOffset; }
+                set { sunspotTexOffset = value; }
             }
 
             // Sunspot Power, default = 1

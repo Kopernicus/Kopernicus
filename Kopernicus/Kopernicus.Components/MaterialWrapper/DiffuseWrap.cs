@@ -19,7 +19,7 @@ namespace Kopernicus
                     get { return Shader.Find (shaderName); }
                 }
 
-                // Texture, default = "white" {}
+                // Texture, default = "white" { }
                 public const string mainTexKey = "_MainTex";
                 public int mainTexID { get; private set; }
 
@@ -53,7 +53,7 @@ namespace Kopernicus
                 }
             }
 
-            // Texture, default = "white" {}
+            // Texture, default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }

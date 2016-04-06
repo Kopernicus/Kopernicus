@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "Terrain/PQS/Ocean Surface Quad";
+                private const string shaderName = "Terrain/PQS/Ocean Surface Quad";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -43,11 +43,11 @@ namespace Kopernicus
                 public const string tilingKey = "_tiling";
                 public int tilingID { get; private set; }
 
-                // Tex0, default = "white" {}
+                // Tex0, default = "white" { }
                 public const string waterTexKey = "_WaterTex";
                 public int waterTexID { get; private set; }
 
-                // Tex1, default = "white" {}
+                // Tex1, default = "white" { }
                 public const string waterTex1Key = "_WaterTex1";
                 public int waterTex1ID { get; private set; }
 
@@ -55,13 +55,17 @@ namespace Kopernicus
                 public const string bTilingKey = "_bTiling";
                 public int bTilingID { get; private set; }
 
-                // Normalmap0, default = "bump" {}
+                // Normalmap0, default = "bump" { }
                 public const string bumpMapKey = "_BumpMap";
                 public int bumpMapID { get; private set; }
 
                 // Water Movement, default = 1
                 public const string displacementKey = "_displacement";
                 public int displacementID { get; private set; }
+
+                // Texture Displacement, default = 1
+                public const string texDisplacementKey = "_texDisplacement";
+                public int texDisplacementID { get; private set; }
 
                 // Water Freq, default = 1
                 public const string dispFreqKey = "_dispFreq";
@@ -99,7 +103,7 @@ namespace Kopernicus
                 public const string atmosphereDepthKey = "_atmosphereDepth";
                 public int atmosphereDepthID { get; private set; }
 
-                // FogColorRamp, default = "white" {}
+                // FogColorRamp, default = "white" { }
                 public const string fogColorRampKey = "_fogColorRamp";
                 public int fogColorRampID { get; private set; }
 
@@ -114,6 +118,14 @@ namespace Kopernicus
                 // PlanetOpacity, default = 1
                 public const string planetOpacityKey = "_PlanetOpacity";
                 public int planetOpacityID { get; private set; }
+
+                // NormalXYFudge, default = 0.1
+                public const string normalXYFudgeKey = "_NormalXYFudge";
+                public int normalXYFudgeID { get; private set; }
+
+                // NormalZFudge, default = 1.1
+                public const string normalZFudgeKey = "_NormalZFudge";
+                public int normalZFudgeID { get; private set; }
 
                 // Singleton instance
                 private static Properties singleton = null;
@@ -142,6 +154,7 @@ namespace Kopernicus
                     bTilingID = Shader.PropertyToID(bTilingKey);
                     bumpMapID = Shader.PropertyToID(bumpMapKey);
                     displacementID = Shader.PropertyToID(displacementKey);
+                    texDisplacementID = Shader.PropertyToID(texDisplacementKey);
                     dispFreqID = Shader.PropertyToID(dispFreqKey);
                     mixID = Shader.PropertyToID(mixKey);
                     oceanOpacityID = Shader.PropertyToID(oceanOpacityKey);
@@ -155,13 +168,16 @@ namespace Kopernicus
                     fadeStartID = Shader.PropertyToID(fadeStartKey);
                     fadeEndID = Shader.PropertyToID(fadeEndKey);
                     planetOpacityID = Shader.PropertyToID(planetOpacityKey);
+                    normalXYFudgeID = Shader.PropertyToID(normalXYFudgeKey);
+                    normalZFudgeID = Shader.PropertyToID(normalZFudgeKey);
                 }
             }
 
-            // Is some random material this material
-            public static bool UsesSameShader(Material m)
+            // Main Color, default = (1,1,1,1)
+            public Color color
             {
-                return m.shader.name == Properties.shaderName;
+                get { return GetColor (Properties.Instance.colorID); }
+                set { SetColor (Properties.Instance.colorID, value); }
             }
 
             // Color From Space, default = (1,1,1,1)
@@ -199,7 +215,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.tilingID, value); }
             }
 
-            // Tex0, default = "white" {}
+            // Tex0, default = "white" { }
             public Texture2D waterTex
             {
                 get { return GetTexture (Properties.Instance.waterTexID) as Texture2D; }
@@ -218,7 +234,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.waterTexKey, value); }
             }
 
-            // Tex1, default = "white" {}
+            // Tex1, default = "white" { }
             public Texture2D waterTex1
             {
                 get { return GetTexture (Properties.Instance.waterTex1ID) as Texture2D; }
@@ -244,7 +260,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.bTilingID, value); }
             }
 
-            // Normalmap0, default = "bump" {}
+            // Normalmap0, default = "bump" { }
             public Texture2D bumpMap
             {
                 get { return GetTexture (Properties.Instance.bumpMapID) as Texture2D; }
@@ -268,6 +284,13 @@ namespace Kopernicus
             {
                 get { return GetFloat (Properties.Instance.displacementID); }
                 set { SetFloat (Properties.Instance.displacementID, value); }
+            }
+
+            // Texture Displacement, default = 1
+            public float texDisplacement
+            {
+                get { return GetFloat (Properties.Instance.texDisplacementID); }
+                set { SetFloat (Properties.Instance.texDisplacementID, value); }
             }
 
             // Water Freq, default = 1
@@ -333,7 +356,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.atmosphereDepthID, value); }
             }
 
-            // FogColorRamp, default = "white" {}
+            // FogColorRamp, default = "white" { }
             public Texture2D fogColorRamp
             {
                 get { return GetTexture (Properties.Instance.fogColorRampID) as Texture2D; }
@@ -371,6 +394,20 @@ namespace Kopernicus
             {
                 get { return GetFloat (Properties.Instance.planetOpacityID); }
                 set { SetFloat (Properties.Instance.planetOpacityID, value); }
+            }
+
+            // NormalXYFudge, default = 0.1
+            public float normalXYFudge
+            {
+                get { return GetFloat (Properties.Instance.normalXYFudgeID); }
+                set { SetFloat (Properties.Instance.normalXYFudgeID, value); }
+            }
+
+            // NormalZFudge, default = 1.1
+            public float normalZFudge
+            {
+                get { return GetFloat (Properties.Instance.normalZFudgeID); }
+                set { SetFloat (Properties.Instance.normalZFudgeID, value); }
             }
 
             public PQSOceanSurfaceQuad() : base(Properties.shader)

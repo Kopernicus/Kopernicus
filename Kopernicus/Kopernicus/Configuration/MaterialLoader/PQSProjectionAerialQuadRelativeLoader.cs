@@ -107,7 +107,7 @@ namespace Kopernicus
                 set { steepTexEnd = value; }
             }
 
-            // Deep ground, default = "white" {}
+            // Deep ground, default = "white" { }
             [ParserTarget("deepTex", optional = true)]
             public Texture2DParser deepTexSetter
             {
@@ -116,20 +116,20 @@ namespace Kopernicus
             }
 
             [ParserTarget("deepTexScale", optional = true)]
-            public Vector2Parser deepTexScaleSetter
+            private Vector2Parser deepTexScaleSetter
             {
                 get { return deepTexScale; }
                 set { deepTexScale = value; }
             }
 
             [ParserTarget("deepTexOffset", optional = true)]
-            public Vector2Parser deepTexOffsetSetter
+            private Vector2Parser deepTexOffsetSetter
             {
                 get { return deepTexOffset; }
                 set { deepTexOffset = value; }
             }
 
-            // Deep MT, default = "white" {}
+            // Deep MT, default = "white" { }
             [ParserTarget("deepMultiTex", optional = true)]
             public Texture2DParser deepMultiTexSetter
             {
@@ -138,14 +138,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("deepMultiTexScale", optional = true)]
-            public Vector2Parser deepMultiTexScaleSetter
+            private Vector2Parser deepMultiTexScaleSetter
             {
                 get { return deepMultiTexScale; }
                 set { deepMultiTexScale = value; }
             }
 
             [ParserTarget("deepMultiTexOffset", optional = true)]
-            public Vector2Parser deepMultiTexOffsetSetter
+            private Vector2Parser deepMultiTexOffsetSetter
             {
                 get { return deepMultiTexOffset; }
                 set { deepMultiTexOffset = value; }
@@ -159,7 +159,7 @@ namespace Kopernicus
                 set { deepMultiFactor = value; }
             }
 
-            // Main Texture, default = "white" {}
+            // Main Texture, default = "white" { }
             [ParserTarget("mainTex", optional = true)]
             public Texture2DParser mainTexSetter
             {
@@ -168,20 +168,20 @@ namespace Kopernicus
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            public Vector2Parser mainTexScaleSetter
+            private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            public Vector2Parser mainTexOffsetSetter
+            private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
                 set { mainTexOffset = value; }
             }
 
-            // Main MT, default = "white" {}
+            // Main MT, default = "white" { }
             [ParserTarget("mainMultiTex", optional = true)]
             public Texture2DParser mainMultiTexSetter
             {
@@ -190,14 +190,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("mainMultiTexScale", optional = true)]
-            public Vector2Parser mainMultiTexScaleSetter
+            private Vector2Parser mainMultiTexScaleSetter
             {
                 get { return mainMultiTexScale; }
                 set { mainMultiTexScale = value; }
             }
 
             [ParserTarget("mainMultiTexOffset", optional = true)]
-            public Vector2Parser mainMultiTexOffsetSetter
+            private Vector2Parser mainMultiTexOffsetSetter
             {
                 get { return mainMultiTexOffset; }
                 set { mainMultiTexOffset = value; }
@@ -211,7 +211,7 @@ namespace Kopernicus
                 set { mainMultiFactor = value; }
             }
 
-            // High Ground, default = "white" {}
+            // High Ground, default = "white" { }
             [ParserTarget("highTex", optional = true)]
             public Texture2DParser highTexSetter
             {
@@ -220,20 +220,20 @@ namespace Kopernicus
             }
 
             [ParserTarget("highTexScale", optional = true)]
-            public Vector2Parser highTexScaleSetter
+            private Vector2Parser highTexScaleSetter
             {
                 get { return highTexScale; }
                 set { highTexScale = value; }
             }
 
             [ParserTarget("highTexOffset", optional = true)]
-            public Vector2Parser highTexOffsetSetter
+            private Vector2Parser highTexOffsetSetter
             {
                 get { return highTexOffset; }
                 set { highTexOffset = value; }
             }
 
-            // High MT, default = "white" {}
+            // High MT, default = "white" { }
             [ParserTarget("highMultiTex", optional = true)]
             public Texture2DParser highMultiTexSetter
             {
@@ -242,14 +242,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("highMultiTexScale", optional = true)]
-            public Vector2Parser highMultiTexScaleSetter
+            private Vector2Parser highMultiTexScaleSetter
             {
                 get { return highMultiTexScale; }
                 set { highMultiTexScale = value; }
             }
 
             [ParserTarget("highMultiTexOffset", optional = true)]
-            public Vector2Parser highMultiTexOffsetSetter
+            private Vector2Parser highMultiTexOffsetSetter
             {
                 get { return highMultiTexOffset; }
                 set { highMultiTexOffset = value; }
@@ -263,7 +263,7 @@ namespace Kopernicus
                 set { highMultiFactor = value; }
             }
 
-            // Snow, default = "white" {}
+            // Snow, default = "white" { }
             [ParserTarget("snowTex", optional = true)]
             public Texture2DParser snowTexSetter
             {
@@ -272,20 +272,20 @@ namespace Kopernicus
             }
 
             [ParserTarget("snowTexScale", optional = true)]
-            public Vector2Parser snowTexScaleSetter
+            private Vector2Parser snowTexScaleSetter
             {
                 get { return snowTexScale; }
                 set { snowTexScale = value; }
             }
 
             [ParserTarget("snowTexOffset", optional = true)]
-            public Vector2Parser snowTexOffsetSetter
+            private Vector2Parser snowTexOffsetSetter
             {
                 get { return snowTexOffset; }
                 set { snowTexOffset = value; }
             }
 
-            // Snow MT, default = "white" {}
+            // Snow MT, default = "white" { }
             [ParserTarget("snowMultiTex", optional = true)]
             public Texture2DParser snowMultiTexSetter
             {
@@ -294,14 +294,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("snowMultiTexScale", optional = true)]
-            public Vector2Parser snowMultiTexScaleSetter
+            private Vector2Parser snowMultiTexScaleSetter
             {
                 get { return snowMultiTexScale; }
                 set { snowMultiTexScale = value; }
             }
 
             [ParserTarget("snowMultiTexOffset", optional = true)]
-            public Vector2Parser snowMultiTexOffsetSetter
+            private Vector2Parser snowMultiTexOffsetSetter
             {
                 get { return snowMultiTexOffset; }
                 set { snowMultiTexOffset = value; }
@@ -315,7 +315,7 @@ namespace Kopernicus
                 set { snowMultiFactor = value; }
             }
 
-            // Steep Texture, default = "white" {}
+            // Steep Texture, default = "white" { }
             [ParserTarget("steepTex", optional = true)]
             public Texture2DParser steepTexSetter
             {
@@ -324,14 +324,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("steepTexScale", optional = true)]
-            public Vector2Parser steepTexScaleSetter
+            private Vector2Parser steepTexScaleSetter
             {
                 get { return steepTexScale; }
                 set { steepTexScale = value; }
             }
 
             [ParserTarget("steepTexOffset", optional = true)]
-            public Vector2Parser steepTexOffsetSetter
+            private Vector2Parser steepTexOffsetSetter
             {
                 get { return steepTexOffset; }
                 set { steepTexOffset = value; }
@@ -465,7 +465,7 @@ namespace Kopernicus
                 set { atmosphereDepth = value; }
             }
 
-            // FogColorRamp, default = "white" {}
+            // FogColorRamp, default = "white" { }
             [ParserTarget("fogColorRamp", optional = true)]
             public Texture2DParser fogColorRampSetter
             {
@@ -474,14 +474,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("fogColorRampScale", optional = true)]
-            public Vector2Parser fogColorRampScaleSetter
+            private Vector2Parser fogColorRampScaleSetter
             {
                 get { return fogColorRampScale; }
                 set { fogColorRampScale = value; }
             }
 
             [ParserTarget("fogColorRampOffset", optional = true)]
-            public Vector2Parser fogColorRampOffsetSetter
+            private Vector2Parser fogColorRampOffsetSetter
             {
                 get { return fogColorRampOffset; }
                 set { fogColorRampOffset = value; }

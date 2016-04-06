@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback) ";
+                private const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD (Fallback) ";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -55,7 +55,7 @@ namespace Kopernicus
                 public const string multiFactorKey = "_multiFactor";
                 public int multiFactorID { get; private set; }
 
-                // Main Texture, default = "white" {}
+                // Main Texture, default = "white" { }
                 public const string mainTexKey = "_mainTex";
                 public int mainTexID { get; private set; }
 
@@ -91,12 +91,6 @@ namespace Kopernicus
                     mainTexID = Shader.PropertyToID(mainTexKey);
                     planetOpacityID = Shader.PropertyToID(planetOpacityKey);
                 }
-            }
-
-            // Is some random material this material
-            public static bool UsesSameShader(Material m)
-            {
-                return m.shader.name == Properties.shaderName;
             }
 
             // Saturation, default = 1
@@ -162,7 +156,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.multiFactorID, value); }
             }
 
-            // Main Texture, default = "white" {}
+            // Main Texture, default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }

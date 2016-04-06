@@ -59,7 +59,7 @@ namespace Kopernicus
                 set { tiling = value; }
             }
 
-            // Tex0, default = "white" {}
+            // Tex0, default = "white" { }
             [ParserTarget("waterTex", optional = true)]
             public Texture2DParser waterTexSetter
             {
@@ -68,20 +68,20 @@ namespace Kopernicus
             }
 
             [ParserTarget("waterTexScale", optional = true)]
-            public Vector2Parser waterTexScaleSetter
+            private Vector2Parser waterTexScaleSetter
             {
                 get { return waterTexScale; }
                 set { waterTexScale = value; }
             }
 
             [ParserTarget("waterTexOffset", optional = true)]
-            public Vector2Parser waterTexOffsetSetter
+            private Vector2Parser waterTexOffsetSetter
             {
                 get { return waterTexOffset; }
                 set { waterTexOffset = value; }
             }
 
-            // Tex1, default = "white" {}
+            // Tex1, default = "white" { }
             [ParserTarget("waterTex1", optional = true)]
             public Texture2DParser waterTex1Setter
             {
@@ -90,14 +90,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("waterTex1Scale", optional = true)]
-            public Vector2Parser waterTex1ScaleSetter
+            private Vector2Parser waterTex1ScaleSetter
             {
                 get { return waterTex1Scale; }
                 set { waterTex1Scale = value; }
             }
 
             [ParserTarget("waterTex1Offset", optional = true)]
-            public Vector2Parser waterTex1OffsetSetter
+            private Vector2Parser waterTex1OffsetSetter
             {
                 get { return waterTex1Offset; }
                 set { waterTex1Offset = value; }

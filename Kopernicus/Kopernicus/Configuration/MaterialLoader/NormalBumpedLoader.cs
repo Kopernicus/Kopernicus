@@ -19,7 +19,7 @@ namespace Kopernicus
                 set { color = value; }
             }
 
-            // Base (RGB), default = "white" {}
+            // Base (RGB), default = "white" { }
             [ParserTarget("mainTex", optional = true)]
             public Texture2DParser mainTexSetter
             {
@@ -28,20 +28,20 @@ namespace Kopernicus
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            public Vector2Parser mainTexScaleSetter
+            private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            public Vector2Parser mainTexOffsetSetter
+            private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
                 set { mainTexOffset = value; }
             }
 
-            // Normalmap, default = "bump" {}
+            // Normalmap, default = "bump" { }
             [ParserTarget("bumpMap", optional = true)]
             public Texture2DParser bumpMapSetter
             {
@@ -50,14 +50,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("bumpMapScale", optional = true)]
-            public Vector2Parser bumpMapScaleSetter
+            private Vector2Parser bumpMapScaleSetter
             {
                 get { return bumpMapScale; }
                 set { bumpMapScale = value; }
             }
 
             [ParserTarget("bumpMapOffset", optional = true)]
-            public Vector2Parser bumpMapOffsetSetter
+            private Vector2Parser bumpMapOffsetSetter
             {
                 get { return bumpMapOffset; }
                 set { bumpMapOffset = value; }

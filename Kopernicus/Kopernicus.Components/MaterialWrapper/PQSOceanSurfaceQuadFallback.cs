@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "Terrain/PQS/Ocean Surface Quad (Fallback)";
+                private const string shaderName = "Terrain/PQS/Ocean Surface Quad (Fallback)";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -43,11 +43,11 @@ namespace Kopernicus
                 public const string tilingKey = "_tiling";
                 public int tilingID { get; private set; }
 
-                // Tex0, default = "white" {}
+                // Tex0, default = "white" { }
                 public const string waterTexKey = "_WaterTex";
                 public int waterTexID { get; private set; }
 
-                // Tex1, default = "white" {}
+                // Tex1, default = "white" { }
                 public const string waterTex1Key = "_WaterTex1";
                 public int waterTex1ID { get; private set; }
 
@@ -93,10 +93,11 @@ namespace Kopernicus
                 }
             }
 
-            // Is some random material this material
-            public static bool UsesSameShader(Material m)
+            // Main Color, default = (1,1,1,1)
+            public Color color
             {
-                return m.shader.name == Properties.shaderName;
+                get { return GetColor (Properties.Instance.colorID); }
+                set { SetColor (Properties.Instance.colorID, value); }
             }
 
             // Color From Space, default = (1,1,1,1)
@@ -134,7 +135,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.tilingID, value); }
             }
 
-            // Tex0, default = "white" {}
+            // Tex0, default = "white" { }
             public Texture2D waterTex
             {
                 get { return GetTexture (Properties.Instance.waterTexID) as Texture2D; }
@@ -153,7 +154,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.waterTexKey, value); }
             }
 
-            // Tex1, default = "white" {}
+            // Tex1, default = "white" { }
             public Texture2D waterTex1
             {
                 get { return GetTexture (Properties.Instance.waterTex1ID) as Texture2D; }

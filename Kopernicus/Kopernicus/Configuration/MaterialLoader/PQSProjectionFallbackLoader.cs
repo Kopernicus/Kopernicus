@@ -83,7 +83,7 @@ namespace Kopernicus
                 set { multiFactor = value; }
             }
 
-            // Main Texture, default = "white" {}
+            // Main Texture, default = "white" { }
             [ParserTarget("mainTex", optional = true)]
             public Texture2DParser mainTexSetter
             {
@@ -92,14 +92,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            public Vector2Parser mainTexScaleSetter
+            private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            public Vector2Parser mainTexOffsetSetter
+            private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
                 set { mainTexOffset = value; }

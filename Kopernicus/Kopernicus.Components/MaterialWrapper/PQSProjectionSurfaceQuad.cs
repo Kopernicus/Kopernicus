@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD";
+                private const string shaderName = "Terrain/PQS/Sphere Projection SURFACE QUAD";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -67,11 +67,11 @@ namespace Kopernicus
                 public const string steepTexEndKey = "_steepTexEnd";
                 public int steepTexEndID { get; private set; }
 
-                // Deep ground, default = "white" {}
+                // Deep ground, default = "white" { }
                 public const string deepTexKey = "_deepTex";
                 public int deepTexID { get; private set; }
 
-                // Deep MT, default = "white" {}
+                // Deep MT, default = "white" { }
                 public const string deepMultiTexKey = "_deepMultiTex";
                 public int deepMultiTexID { get; private set; }
 
@@ -79,11 +79,11 @@ namespace Kopernicus
                 public const string deepMultiFactorKey = "_deepMultiFactor";
                 public int deepMultiFactorID { get; private set; }
 
-                // Main Texture, default = "white" {}
+                // Main Texture, default = "white" { }
                 public const string mainTexKey = "_mainTex";
                 public int mainTexID { get; private set; }
 
-                // Main MT, default = "white" {}
+                // Main MT, default = "white" { }
                 public const string mainMultiTexKey = "_mainMultiTex";
                 public int mainMultiTexID { get; private set; }
 
@@ -91,11 +91,11 @@ namespace Kopernicus
                 public const string mainMultiFactorKey = "_mainMultiFactor";
                 public int mainMultiFactorID { get; private set; }
 
-                // High Ground, default = "white" {}
+                // High Ground, default = "white" { }
                 public const string highTexKey = "_highTex";
                 public int highTexID { get; private set; }
 
-                // High MT, default = "white" {}
+                // High MT, default = "white" { }
                 public const string highMultiTexKey = "_highMultiTex";
                 public int highMultiTexID { get; private set; }
 
@@ -103,11 +103,11 @@ namespace Kopernicus
                 public const string highMultiFactorKey = "_highMultiFactor";
                 public int highMultiFactorID { get; private set; }
 
-                // Snow, default = "white" {}
+                // Snow, default = "white" { }
                 public const string snowTexKey = "_snowTex";
                 public int snowTexID { get; private set; }
 
-                // Snow MT, default = "white" {}
+                // Snow MT, default = "white" { }
                 public const string snowMultiTexKey = "_snowMultiTex";
                 public int snowMultiTexID { get; private set; }
 
@@ -115,7 +115,7 @@ namespace Kopernicus
                 public const string snowMultiFactorKey = "_snowMultiFactor";
                 public int snowMultiFactorID { get; private set; }
 
-                // Steep Texture, default = "white" {}
+                // Steep Texture, default = "white" { }
                 public const string steepTexKey = "_steepTex";
                 public int steepTexID { get; private set; }
 
@@ -228,12 +228,6 @@ namespace Kopernicus
                 }
             }
 
-            // Is some random material this material
-            public static bool UsesSameShader(Material m)
-            {
-                return m.shader.name == Properties.shaderName;
-            }
-
             // Saturation, default = 1
             public float saturation
             {
@@ -318,7 +312,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.steepTexEndID, value); }
             }
 
-            // Deep ground, default = "white" {}
+            // Deep ground, default = "white" { }
             public Texture2D deepTex
             {
                 get { return GetTexture (Properties.Instance.deepTexID) as Texture2D; }
@@ -337,7 +331,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.deepTexKey, value); }
             }
 
-            // Deep MT, default = "white" {}
+            // Deep MT, default = "white" { }
             public Texture2D deepMultiTex
             {
                 get { return GetTexture (Properties.Instance.deepMultiTexID) as Texture2D; }
@@ -363,7 +357,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.deepMultiFactorID, value); }
             }
 
-            // Main Texture, default = "white" {}
+            // Main Texture, default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
@@ -382,7 +376,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.mainTexKey, value); }
             }
 
-            // Main MT, default = "white" {}
+            // Main MT, default = "white" { }
             public Texture2D mainMultiTex
             {
                 get { return GetTexture (Properties.Instance.mainMultiTexID) as Texture2D; }
@@ -408,7 +402,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.mainMultiFactorID, value); }
             }
 
-            // High Ground, default = "white" {}
+            // High Ground, default = "white" { }
             public Texture2D highTex
             {
                 get { return GetTexture (Properties.Instance.highTexID) as Texture2D; }
@@ -427,7 +421,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.highTexKey, value); }
             }
 
-            // High MT, default = "white" {}
+            // High MT, default = "white" { }
             public Texture2D highMultiTex
             {
                 get { return GetTexture (Properties.Instance.highMultiTexID) as Texture2D; }
@@ -453,7 +447,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.highMultiFactorID, value); }
             }
 
-            // Snow, default = "white" {}
+            // Snow, default = "white" { }
             public Texture2D snowTex
             {
                 get { return GetTexture (Properties.Instance.snowTexID) as Texture2D; }
@@ -472,7 +466,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.snowTexKey, value); }
             }
 
-            // Snow MT, default = "white" {}
+            // Snow MT, default = "white" { }
             public Texture2D snowMultiTex
             {
                 get { return GetTexture (Properties.Instance.snowMultiTexID) as Texture2D; }
@@ -498,7 +492,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.snowMultiFactorID, value); }
             }
 
-            // Steep Texture, default = "white" {}
+            // Steep Texture, default = "white" { }
             public Texture2D steepTex
             {
                 get { return GetTexture (Properties.Instance.steepTexID) as Texture2D; }

@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Bumped Diffuse";
+                private const string shaderName = "Legacy Shaders/Bumped Diffuse";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -23,11 +23,11 @@ namespace Kopernicus
                 public const string colorKey = "_Color";
                 public int colorID { get; private set; }
 
-                // Base (RGB), default = "white" {}
+                // Base (RGB), default = "white" { }
                 public const string mainTexKey = "_MainTex";
                 public int mainTexID { get; private set; }
 
-                // Normalmap, default = "bump" {}
+                // Normalmap, default = "bump" { }
                 public const string bumpMapKey = "_BumpMap";
                 public int bumpMapID { get; private set; }
 
@@ -60,7 +60,7 @@ namespace Kopernicus
                 set { SetColor (Properties.Instance.colorID, value); }
             }
 
-            // Base (RGB), default = "white" {}
+            // Base (RGB), default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
@@ -79,7 +79,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.mainTexKey, value); }
             }
 
-            // Normalmap, default = "bump" {}
+            // Normalmap, default = "bump" { }
             public Texture2D bumpMap
             {
                 get { return GetTexture (Properties.Instance.bumpMapID) as Texture2D; }
@@ -111,7 +111,7 @@ namespace Kopernicus
             {
                 // Throw exception if this material was not the proper material
                 if (material.shader.name != Properties.shader.name)
-                    throw new InvalidOperationException("Type Mismatch: Bumped Diffuse shader required");
+                    throw new InvalidOperationException("Type Mismatch: Legacy Shaders/Bumped Diffuse shader required");
             }
 
         }

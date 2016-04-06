@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                private const string shaderName = "Diffuse Detail";
+                private const string shaderName = "Legacy Shaders/Diffuse Detail";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -23,11 +23,11 @@ namespace Kopernicus
                 public const string colorKey = "_Color";
                 public int colorID { get; private set; }
 
-                // Base (RGB), default = "white" {}
+                // Base (RGB), default = "white" { }
                 public const string mainTexKey = "_MainTex";
                 public int mainTexID { get; private set; }
 
-                // Detail (RGB), default = "gray" {}
+                // Detail (RGB), default = "gray" { }
                 public const string detailKey = "_Detail";
                 public int detailID { get; private set; }
 
@@ -60,7 +60,7 @@ namespace Kopernicus
                 set { SetColor (Properties.Instance.colorID, value); }
             }
 
-            // Base (RGB), default = "white" {}
+            // Base (RGB), default = "white" { }
             public Texture2D mainTex
             {
                 get { return GetTexture (Properties.Instance.mainTexID) as Texture2D; }
@@ -79,7 +79,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.mainTexKey, value); }
             }
 
-            // Detail (RGB), default = "gray" {}
+            // Detail (RGB), default = "gray" { }
             public Texture2D detail
             {
                 get { return GetTexture (Properties.Instance.detailID) as Texture2D; }
@@ -111,7 +111,7 @@ namespace Kopernicus
             {
                 // Throw exception if this material was not the proper material
                 if (material.shader.name != Properties.shader.name)
-                    throw new InvalidOperationException("Type Mismatch: Diffuse Detail shader required");
+                    throw new InvalidOperationException("Type Mismatch: Legacy Shaders/Diffuse Detail shader required");
             }
 
         }

@@ -19,7 +19,7 @@ namespace Kopernicus
                 set { color = value; }
             }
 
-            // Base (RGB), default = "white" {}
+            // Base (RGB), default = "white" { }
             [ParserTarget("mainTex", optional = true)]
             public Texture2DParser mainTexSetter
             {
@@ -28,20 +28,20 @@ namespace Kopernicus
             }
 
             [ParserTarget("mainTexScale", optional = true)]
-            public Vector2Parser mainTexScaleSetter
+            private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
             [ParserTarget("mainTexOffset", optional = true)]
-            public Vector2Parser mainTexOffsetSetter
+            private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
                 set { mainTexOffset = value; }
             }
 
-            // Detail (RGB), default = "gray" {}
+            // Detail (RGB), default = "gray" { }
             [ParserTarget("detail", optional = true)]
             public Texture2DParser detailSetter
             {
@@ -50,14 +50,14 @@ namespace Kopernicus
             }
 
             [ParserTarget("detailScale", optional = true)]
-            public Vector2Parser detailScaleSetter
+            private Vector2Parser detailScaleSetter
             {
                 get { return detailScale; }
                 set { detailScale = value; }
             }
 
             [ParserTarget("detailOffset", optional = true)]
-            public Vector2Parser detailOffsetSetter
+            private Vector2Parser detailOffsetSetter
             {
                 get { return detailOffset; }
                 set { detailOffset = value; }

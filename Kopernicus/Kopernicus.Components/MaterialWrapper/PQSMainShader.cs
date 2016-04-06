@@ -13,7 +13,7 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "Terrain/PQS/PQS Main Shader";
+                private const string shaderName = "Terrain/PQS/PQS Main Shader";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
@@ -59,11 +59,11 @@ namespace Kopernicus
                 public const string steepTexEndKey = "_steepTexEnd";
                 public int steepTexEndID { get; private set; }
 
-                // Steep Texture, default = "white" {}
+                // Steep Texture, default = "white" { }
                 public const string steepTexKey = "_steepTex";
                 public int steepTexID { get; private set; }
 
-                // Steep Bump Map, default = "bump" {}
+                // Steep Bump Map, default = "bump" { }
                 public const string steepBumpMapKey = "_steepBumpMap";
                 public int steepBumpMapID { get; private set; }
 
@@ -75,11 +75,11 @@ namespace Kopernicus
                 public const string steepTilingKey = "_steepTiling";
                 public int steepTilingID { get; private set; }
 
-                // Low Texture, default = "white" {}
+                // Low Texture, default = "white" { }
                 public const string lowTexKey = "_lowTex";
                 public int lowTexID { get; private set; }
 
-                // Low Bump Map, default = "bump" {}
+                // Low Bump Map, default = "bump" { }
                 public const string lowBumpMapKey = "_lowBumpMap";
                 public int lowBumpMapID { get; private set; }
 
@@ -99,11 +99,11 @@ namespace Kopernicus
                 public const string lowBumpFarTilingKey = "_lowBumpFarTiling";
                 public int lowBumpFarTilingID { get; private set; }
 
-                // Mid Texture, default = "white" {}
+                // Mid Texture, default = "white" { }
                 public const string midTexKey = "_midTex";
                 public int midTexID { get; private set; }
 
-                // Mid Bump Map, default = "bump" {}
+                // Mid Bump Map, default = "bump" { }
                 public const string midBumpMapKey = "_midBumpMap";
                 public int midBumpMapID { get; private set; }
 
@@ -123,11 +123,11 @@ namespace Kopernicus
                 public const string midBumpFarTilingKey = "_midBumpFarTiling";
                 public int midBumpFarTilingID { get; private set; }
 
-                // High Texture, default = "white" {}
+                // High Texture, default = "white" { }
                 public const string highTexKey = "_highTex";
                 public int highTexID { get; private set; }
 
-                // High Bump Map, default = "bump" {}
+                // High Bump Map, default = "bump" { }
                 public const string highBumpMapKey = "_highBumpMap";
                 public int highBumpMapID { get; private set; }
 
@@ -167,7 +167,7 @@ namespace Kopernicus
                 public const string globalDensityKey = "_globalDensity";
                 public int globalDensityID { get; private set; }
 
-                // FogColorRamp, default = "white" {}
+                // FogColorRamp, default = "white" { }
                 public const string fogColorRampKey = "_fogColorRamp";
                 public int fogColorRampID { get; private set; }
 
@@ -231,12 +231,6 @@ namespace Kopernicus
                     fogColorRampID = Shader.PropertyToID(fogColorRampKey);
                     planetOpacityID = Shader.PropertyToID(planetOpacityKey);
                 }
-            }
-
-            // Is some random material this material
-            public static bool UsesSameShader(Material m)
-            {
-                return m.shader.name == Properties.shaderName;
             }
 
             // Saturation, default = 1
@@ -309,7 +303,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.steepTexEndID, value); }
             }
 
-            // Steep Texture, default = "white" {}
+            // Steep Texture, default = "white" { }
             public Texture2D steepTex
             {
                 get { return GetTexture (Properties.Instance.steepTexID) as Texture2D; }
@@ -328,7 +322,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.steepTexKey, value); }
             }
 
-            // Steep Bump Map, default = "bump" {}
+            // Steep Bump Map, default = "bump" { }
             public Texture2D steepBumpMap
             {
                 get { return GetTexture (Properties.Instance.steepBumpMapID) as Texture2D; }
@@ -361,7 +355,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.steepTilingID, value); }
             }
 
-            // Low Texture, default = "white" {}
+            // Low Texture, default = "white" { }
             public Texture2D lowTex
             {
                 get { return GetTexture (Properties.Instance.lowTexID) as Texture2D; }
@@ -380,7 +374,25 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.lowTexKey, value); }
             }
 
-            
+            // Low Bump Map, default = "bump" { }
+            public Texture2D lowBumpMap
+            {
+                get { return GetTexture (Properties.Instance.lowBumpMapID) as Texture2D; }
+                set { SetTexture (Properties.Instance.lowBumpMapID, value); }
+            }
+
+            public Vector2 lowBumpMapScale
+            {
+                get { return GetTextureScale (Properties.lowBumpMapKey); }
+                set { SetTextureScale (Properties.lowBumpMapKey, value); }
+            }
+
+            public Vector2 lowBumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.lowBumpMapKey); }
+                set { SetTextureOffset (Properties.lowBumpMapKey, value); }
+            }
+
             // Low Near Tiling, default = 1000
             public float lowNearTiling
             {
@@ -394,9 +406,22 @@ namespace Kopernicus
                 get { return GetFloat (Properties.Instance.lowMultiFactorID); }
                 set { SetFloat (Properties.Instance.lowMultiFactorID, value); }
             }
-            
 
-            // Mid Texture, default = "white" {}
+            // Low Bump Near Tiling, default = 1
+            public float lowBumpNearTiling
+            {
+                get { return GetFloat (Properties.Instance.lowBumpNearTilingID); }
+                set { SetFloat (Properties.Instance.lowBumpNearTilingID, value); }
+            }
+
+            // Low Bump Far Tiling, default = 1
+            public float lowBumpFarTiling
+            {
+                get { return GetFloat (Properties.Instance.lowBumpFarTilingID); }
+                set { SetFloat (Properties.Instance.lowBumpFarTilingID, value); }
+            }
+
+            // Mid Texture, default = "white" { }
             public Texture2D midTex
             {
                 get { return GetTexture (Properties.Instance.midTexID) as Texture2D; }
@@ -415,7 +440,7 @@ namespace Kopernicus
                 set { SetTextureOffset (Properties.midTexKey, value); }
             }
 
-            // Mid Bump Map, default = "bump" {}
+            // Mid Bump Map, default = "bump" { }
             public Texture2D midBumpMap
             {
                 get { return GetTexture (Properties.Instance.midBumpMapID) as Texture2D; }
@@ -455,7 +480,14 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.midBumpNearTilingID, value); }
             }
 
-            // High Texture, default = "white" {}
+            // Mid Bump Far Tiling, default = 1
+            public float midBumpFarTiling
+            {
+                get { return GetFloat (Properties.Instance.midBumpFarTilingID); }
+                set { SetFloat (Properties.Instance.midBumpFarTilingID, value); }
+            }
+
+            // High Texture, default = "white" { }
             public Texture2D highTex
             {
                 get { return GetTexture (Properties.Instance.highTexID) as Texture2D; }
@@ -473,7 +505,25 @@ namespace Kopernicus
                 get { return GetTextureOffset (Properties.highTexKey); }
                 set { SetTextureOffset (Properties.highTexKey, value); }
             }
-            
+
+            // High Bump Map, default = "bump" { }
+            public Texture2D highBumpMap
+            {
+                get { return GetTexture (Properties.Instance.highBumpMapID) as Texture2D; }
+                set { SetTexture (Properties.Instance.highBumpMapID, value); }
+            }
+
+            public Vector2 highBumpMapScale
+            {
+                get { return GetTextureScale (Properties.highBumpMapKey); }
+                set { SetTextureScale (Properties.highBumpMapKey, value); }
+            }
+
+            public Vector2 highBumpMapOffset
+            {
+                get { return GetTextureOffset (Properties.highBumpMapKey); }
+                set { SetTextureOffset (Properties.highBumpMapKey, value); }
+            }
 
             // High Near Tiling, default = 1000
             public float highNearTiling
@@ -488,7 +538,21 @@ namespace Kopernicus
                 get { return GetFloat (Properties.Instance.highMultiFactorID); }
                 set { SetFloat (Properties.Instance.highMultiFactorID, value); }
             }
-            
+
+            // High Bump Near Tiling, default = 1
+            public float highBumpNearTiling
+            {
+                get { return GetFloat (Properties.Instance.highBumpNearTilingID); }
+                set { SetFloat (Properties.Instance.highBumpNearTilingID, value); }
+            }
+
+            // High Bump Far Tiling, default = 1
+            public float highBumpFarTiling
+            {
+                get { return GetFloat (Properties.Instance.highBumpFarTilingID); }
+                set { SetFloat (Properties.Instance.highBumpFarTilingID, value); }
+            }
+
             // Low Transition Start, default = 0
             public float lowStart
             {
@@ -524,7 +588,7 @@ namespace Kopernicus
                 set { SetFloat (Properties.Instance.globalDensityID, value); }
             }
 
-            // FogColorRamp, default = "white" {}
+            // FogColorRamp, default = "white" { }
             public Texture2D fogColorRamp
             {
                 get { return GetTexture (Properties.Instance.fogColorRampID) as Texture2D; }
