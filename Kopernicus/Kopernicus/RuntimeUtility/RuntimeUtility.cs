@@ -69,6 +69,10 @@ namespace Kopernicus
             });
             GameEvents.onGUIRnDComplexSpawn.Add(RDFixer);
 
+            // Update Music Logic
+            if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
+                MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
+
             // Log
             Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
             Logger.Default.Flush ();
