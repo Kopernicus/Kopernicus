@@ -13,91 +13,119 @@ namespace Kopernicus
             protected class Properties
             {
                 // Return the shader for this wrapper
-                public const string shaderName = "AtmosphereFromGround";
+                private const string shaderName = "AtmosphereFromGround";
                 public static Shader shader
                 {
                     get { return Shader.Find (shaderName); }
                 }
 
                 // Offset Transform, default = (0,0,0,1)
-                private const string offsetTransformKey = "_OffsetTransform";
+                public const string offsetTransformKey = "_OffsetTransform";
                 public int offsetTransformID { get; private set; }
 
                 // Camera Position, default = (0,0,0,0)
-                private const string v4CameraPosKey = "_v4CameraPos";
+                public const string v4CameraPosKey = "_v4CameraPos";
                 public int v4CameraPosID { get; private set; }
 
                 // Light Direction, default = (0,0,0,0)
-                private const string v4LightDirKey = "_v4LightDir";
+                public const string v4LightDirKey = "_v4LightDir";
                 public int v4LightDirID { get; private set; }
 
                 // Inverse WaveLength, default = (0,0,0,0)
-                private const string cInvWaveLengthKey = "_cInvWaveLength";
+                public const string cInvWaveLengthKey = "_cInvWaveLength";
                 public int cInvWaveLengthID { get; private set; }
 
                 // Camera Height, default = 0
-                private const string fCameraHeightKey = "_fCameraHeight";
+                public const string fCameraHeightKey = "_fCameraHeight";
                 public int fCameraHeightID { get; private set; }
 
                 // Camera Height2, default = 0
-                private const string fCameraHeight2Key = "_fCameraHeight2";
+                public const string fCameraHeight2Key = "_fCameraHeight2";
                 public int fCameraHeight2ID { get; private set; }
 
                 // Outer Radius, default = 0
-                private const string fOuterRadiusKey = "_fOuterRadius";
+                public const string fOuterRadiusKey = "_fOuterRadius";
                 public int fOuterRadiusID { get; private set; }
 
                 // Outer Radius 2, default = 0
-                private const string fOuterRadius2Key = "_fOuterRadius2";
+                public const string fOuterRadius2Key = "_fOuterRadius2";
                 public int fOuterRadius2ID { get; private set; }
 
                 // Inner Radius, default = 0
-                private const string fInnerRadiusKey = "_fInnerRadius";
+                public const string fInnerRadiusKey = "_fInnerRadius";
                 public int fInnerRadiusID { get; private set; }
 
                 // Inner Radius 2, default = 0
-                private const string fInnerRadius2Key = "_fInnerRadius2";
+                public const string fInnerRadius2Key = "_fInnerRadius2";
                 public int fInnerRadius2ID { get; private set; }
 
                 // KrESun, default = 0
-                private const string fKrESunKey = "_fKrESun";
+                public const string fKrESunKey = "_fKrESun";
                 public int fKrESunID { get; private set; }
 
                 // KmESun, default = 0
-                private const string fKmESunKey = "_fKmESun";
+                public const string fKmESunKey = "_fKmESun";
                 public int fKmESunID { get; private set; }
 
                 // Kr4PI, default = 0
-                private const string fKr4PIKey = "_fKr4PI";
+                public const string fKr4PIKey = "_fKr4PI";
                 public int fKr4PIID { get; private set; }
 
                 // Km4PI, default = 0
-                private const string fKm4PIKey = "_fKm4PI";
+                public const string fKm4PIKey = "_fKm4PI";
                 public int fKm4PIID { get; private set; }
 
                 // Scale, default = 0
-                private const string fScaleKey = "_fScale";
+                public const string fScaleKey = "_fScale";
                 public int fScaleID { get; private set; }
 
                 // Scale Depth, default = 0
-                private const string fScaleDepthKey = "_fScaleDepth";
+                public const string fScaleDepthKey = "_fScaleDepth";
                 public int fScaleDepthID { get; private set; }
 
                 // Scale Over Scale Depth, default = 0
-                private const string fScaleOverScaleDepthKey = "_fScaleOverScaleDepth";
+                public const string fScaleOverScaleDepthKey = "_fScaleOverScaleDepth";
                 public int fScaleOverScaleDepthID { get; private set; }
 
                 // Samples, default = 0
-                private const string samplesKey = "_Samples";
+                public const string samplesKey = "_Samples";
                 public int samplesID { get; private set; }
 
                 // G, default = 0
-                private const string gKey = "_G";
+                public const string gKey = "_G";
                 public int gID { get; private set; }
 
                 // G2, default = 0
-                private const string g2Key = "_G2";
+                public const string g2Key = "_G2";
                 public int g2ID { get; private set; }
+
+                // Exposure, default = 0
+                public const string fExposureKey = "_fExposure";
+                public int fExposureID { get; private set; }
+
+                // Camera Depth, default = 0
+                public const string fCamHeightUnderwaterKey = "_fCamHeightUnderwater";
+                public int fCamHeightUnderwaterID { get; private set; }
+
+                // Underwater Opacity Base, default = 0
+                public const string underwaterOpacityAltBaseKey = "_underwaterOpacityAltBase";
+                public int underwaterOpacityAltBaseID { get; private set; }
+
+                // Underwater Opacity Alt Mult, default = 0
+                public const string underwaterOpacityAltMultKey = "_underwaterOpacityAltMult";
+                public int underwaterOpacityAltMultID { get; private set; }
+
+                // Underwater Color Start, default = (0,0,0,0)
+                public const string underwaterColorStartKey = "_underwaterColorStart";
+                public int underwaterColorStartID { get; private set; }
+
+                // Underwater Color End, default = (0,0,0,0)
+                public const string underwaterColorEndKey = "_underwaterColorEnd";
+                public int underwaterColorEndID { get; private set; }
+
+                // Light dot with upaxis, default = 0
+                public const string lightDotKey = "_lightDot";
+                public int lightDotID { get; private set; }
 
                 // Singleton instance
                 private static Properties singleton = null;
@@ -135,13 +163,20 @@ namespace Kopernicus
                     samplesID = Shader.PropertyToID(samplesKey);
                     gID = Shader.PropertyToID(gKey);
                     g2ID = Shader.PropertyToID(g2Key);
+                    fExposureID = Shader.PropertyToID(fExposureKey);
+                    fCamHeightUnderwaterID = Shader.PropertyToID(fCamHeightUnderwaterKey);
+                    underwaterOpacityAltBaseID = Shader.PropertyToID(underwaterOpacityAltBaseKey);
+                    underwaterOpacityAltMultID = Shader.PropertyToID(underwaterOpacityAltMultKey);
+                    underwaterColorStartID = Shader.PropertyToID(underwaterColorStartKey);
+                    underwaterColorEndID = Shader.PropertyToID(underwaterColorEndKey);
+                    lightDotID = Shader.PropertyToID(lightDotKey);
                 }
             }
 
             // Is some random material this material
             public static bool UsesSameShader(Material m)
             {
-                return m.shader.name == Properties.shaderName;
+            	return m.shader.name == Properties.shader.name;
             }
 
             // Offset Transform, default = (0,0,0,1)
@@ -282,6 +317,55 @@ namespace Kopernicus
             {
                 get { return GetFloat (Properties.Instance.g2ID); }
                 set { SetFloat (Properties.Instance.g2ID, value); }
+            }
+
+            // Exposure, default = 0
+            public float fExposure
+            {
+                get { return GetFloat (Properties.Instance.fExposureID); }
+                set { SetFloat (Properties.Instance.fExposureID, value); }
+            }
+
+            // Camera Depth, default = 0
+            public float fCamHeightUnderwater
+            {
+                get { return GetFloat (Properties.Instance.fCamHeightUnderwaterID); }
+                set { SetFloat (Properties.Instance.fCamHeightUnderwaterID, value); }
+            }
+
+            // Underwater Opacity Base, default = 0
+            public float underwaterOpacityAltBase
+            {
+                get { return GetFloat (Properties.Instance.underwaterOpacityAltBaseID); }
+                set { SetFloat (Properties.Instance.underwaterOpacityAltBaseID, value); }
+            }
+
+            // Underwater Opacity Alt Mult, default = 0
+            public float underwaterOpacityAltMult
+            {
+                get { return GetFloat (Properties.Instance.underwaterOpacityAltMultID); }
+                set { SetFloat (Properties.Instance.underwaterOpacityAltMultID, value); }
+            }
+
+            // Underwater Color Start, default = (0,0,0,0)
+            public Color underwaterColorStart
+            {
+                get { return GetColor (Properties.Instance.underwaterColorStartID); }
+                set { SetColor (Properties.Instance.underwaterColorStartID, value); }
+            }
+
+            // Underwater Color End, default = (0,0,0,0)
+            public Color underwaterColorEnd
+            {
+                get { return GetColor (Properties.Instance.underwaterColorEndID); }
+                set { SetColor (Properties.Instance.underwaterColorEndID, value); }
+            }
+
+            // Light dot with upaxis, default = 0
+            public float lightDot
+            {
+                get { return GetFloat (Properties.Instance.lightDotID); }
+                set { SetFloat (Properties.Instance.lightDotID, value); }
             }
 
             public AtmosphereFromGround() : base(Properties.shader)
