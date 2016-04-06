@@ -33,6 +33,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using System.Threading;
+using System.IO;
 using System.ComponentModel;
 
 namespace Kopernicus
@@ -183,8 +184,8 @@ namespace Kopernicus
                 worker.DoWork += delegate (object sender, DoWorkEventArgs e)
                 {
                     Texture2D map = null;
-                    path = KSPUtil.ApplicationRootPath + "GameData/" + path;
-                    if (System.IO.File.Exists(path))
+                    path = Directory.GetCurrentDirectory() + "/GameData/" + path;
+                    if (File.Exists(path))
                     {
                         bool uncaught = true;
                         try
@@ -193,8 +194,8 @@ namespace Kopernicus
                             {
                                 // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
                                 // Also borrowed the extra bits from Sarbian.
-                                byte[] buffer = System.IO.File.ReadAllBytes(path);
-                                System.IO.BinaryReader binaryReader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
+                                byte[] buffer = File.ReadAllBytes(path);
+                                BinaryReader binaryReader = new BinaryReader(new MemoryStream(buffer));
                                 uint num = binaryReader.ReadUInt32();
                                 if (num == DDSHeaders.DDSValues.uintMagic)
                                 {
@@ -337,8 +338,8 @@ namespace Kopernicus
             // Checks if a Texture exists
             public static bool TextureExists(string path)
             {
-                path = KSPUtil.ApplicationRootPath + "GameData/" + path;
-                return System.IO.File.Exists(path);
+                path = Directory.GetCurrentDirectory() + "/GameData/" + path;
+                return File.Exists(path);
             }
         }
     }
