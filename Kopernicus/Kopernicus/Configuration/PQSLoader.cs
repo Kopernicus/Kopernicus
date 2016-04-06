@@ -352,7 +352,7 @@ namespace Kopernicus
                 List<PQSMod> patchedMods = new List<PQSMod>();
 
                 // Get all loaded types
-                List<Type> types = Injector.PQSModTypes;
+                List<Type> types = Injector.ModTypes;
 
                 // Load mods manually because of patching
                 foreach (ConfigNode mod in node.GetNode("Mods").nodes)

@@ -241,7 +241,7 @@ namespace Kopernicus
                             else if (target.nameSignificance == NameSignificance.Type) 
                             {
                                 // Generate the type from the name
-                                Type elementType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.Name == subnode.name);
+                                Type elementType = Injector.ModTypes.FirstOrDefault(t => t.Name == subnode.name);
 
                                 // Add the object to the collection
                                 collection.Add (CreateObjectFromConfigNode (elementType, subnode, target.getChild));
@@ -419,7 +419,10 @@ namespace Kopernicus
             public static void LoadExternalParserTargets(ConfigNode node)
             {
                 // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
-                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                List<Assembly> assemblies = new List<Assembly>();
+                foreach (Type t in Injector.ModTypes)
+                    assemblies.AddUnique(t.Assembly);
+                foreach (Assembly assembly in assemblies)
                 {
                     try
                     {

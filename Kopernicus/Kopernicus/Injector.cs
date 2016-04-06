@@ -29,6 +29,8 @@
 
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using Kopernicus.Configuration;
 using KSP.UI.Screens;
@@ -42,15 +44,15 @@ namespace Kopernicus
         // Name of the config node group which manages Kopernicus
         public const string rootNodeName = "Kopernicus";
 
-        public static System.Collections.Generic.List<Type> ModTypes;
-        public static System.Collections.Generic.List<Type> PQSModTypes
+        // Custom Assembly query since AppDomain and Assembly loader are not quite what we want in 1.1
+        private static List<Type> _ModTypes;
+        public static List<Type> ModTypes
         {
             get
             {
-                if (ModTypes == null)
+                if (_ModTypes == null)
                     GetModTypes();
-
-                return ModTypes;
+                return _ModTypes;
             }
         }
 
@@ -113,44 +115,14 @@ namespace Kopernicus
 
         public static void GetModTypes()
         {
-            ModTypes = new System.Collections.Generic.List<Type>(); //AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes());
-                                                                                                       //IEnumerable<Type> types = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes());
-                                                                                                       //foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().ToList())
-            System.Collections.Generic.List<System.Reflection.Assembly> asms = new System.Collections.Generic.List<System.Reflection.Assembly>();
-            foreach (AssemblyLoader.LoadedAssembly la in AssemblyLoader.loadedAssemblies)
-                asms.Add(la.assembly);
+            _ModTypes = new List<Type>();
+            List<Assembly> asms = new List<Assembly>();
+            asms.AddRange(AssemblyLoader.loadedAssemblies.Select(la => la.assembly));
             asms.AddUnique(typeof(PQSMod_VertexSimplexHeightAbsolute).Assembly);
             asms.AddUnique(typeof(PQSLandControl).Assembly);
-            foreach (System.Reflection.Assembly assembly in asms)
+            foreach (Type t in asms.SelectMany(a => a.GetTypes()))
             {
-                if (assembly.FullName.StartsWith("Mono.Cecil"))
-                    continue;
-
-                if (assembly.FullName.StartsWith("UnityScript"))
-                    continue;
-
-                if (assembly.FullName.StartsWith("Boo.Lan"))
-                    continue;
-
-                if (assembly.FullName.StartsWith("System"))
-                    continue;
-
-                if (assembly.FullName.StartsWith("I18N"))
-                    continue;
-
-                if (assembly.FullName.StartsWith("UnityEngine"))
-                    continue;
-
-                if (assembly.FullName.StartsWith("UnityEditor"))
-                    continue;
-
-                if (assembly.FullName.StartsWith("mscorlib"))
-                    continue;
-
-                foreach (Type t in assembly.GetTypes())
-                {
-                    ModTypes.Add(t);
-                }
+                _ModTypes.Add(t);
             }
         }
 

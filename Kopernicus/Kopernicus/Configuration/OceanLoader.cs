@@ -234,7 +234,7 @@ namespace Kopernicus
                 List<PQSMod> patchedMods = new List<PQSMod>();
 
                 // Get all loaded types
-                IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes());
+                List<Type> types = Injector.ModTypes;
 
                 // Load mods manually because of patching
                 foreach (ConfigNode mod in node.GetNode("Mods").nodes)
@@ -242,8 +242,14 @@ namespace Kopernicus
                     // get the mod type
                     if (types.Where(t => t.Name == mod.name).Count() == 0)
                         continue;
-                    Type loaderType = types.First(t => t.Name == mod.name);
-                    Type modType = types.First(t => t.Name == (mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl"));
+                    Type loaderType = types.FirstOrDefault(t => t.Name == mod.name);
+                    string testName = mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl";
+                    Type modType = types.FirstOrDefault(t => t.Name == testName);
+                    if (loaderType == null || modType == null)
+                    {
+                        Debug.LogError("MOD NULL: Loadertype " + mod.name + " with mod type " + testName + " and null? " + (loaderType == null) + (modType == null));
+                        continue;
+                    }
 
                     // Do any PQS Mods already exist on this PQS matching this mod?
                     IEnumerable<PQSMod> existingMods = ocean.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) &&

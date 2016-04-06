@@ -100,7 +100,7 @@ namespace Kopernicus
         {
             // Checkers are identified by the type name and version field name.
             FieldInfo[] fields =
-                getAllTypes()
+                Injector.ModTypes
                 .Where(t => t.Name == "CompatibilityChecker")
                 .Select(t => t.GetField("_version", BindingFlags.Static | BindingFlags.NonPublic))
                 .Where(f => f != null)
@@ -199,27 +199,6 @@ namespace Kopernicus
         public static bool IsWin64()
         {
             return (IntPtr.Size == 8) && (Environment.OSVersion.Platform == PlatformID.Win32NT);
-        }
-
-        private static IEnumerable<Type> getAllTypes()
-        {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                Type[] types;
-                try
-                {
-                    types = assembly.GetTypes();
-                }
-                catch (Exception)
-                {
-                    types = Type.EmptyTypes;
-                }
-
-                foreach (var type in types)
-                {
-                    yield return type;
-                }
-            }
         }
     }
 }
