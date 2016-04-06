@@ -178,7 +178,13 @@ namespace Kopernicus
             }
             else
                 Debug.Log("[Kopernicus]: Root body null!");
-            Debug.Log("Found max distance " + maximumDistance);
+            if (Templates.maxViewDistance >= 0)
+            {
+                maximumDistance = Templates.maxViewDistance;
+                Debug.Log("Found max distance override " + maximumDistance);
+            }
+            else
+                Debug.Log("Found max distance " + maximumDistance);
             PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
             // Select the closest star to home

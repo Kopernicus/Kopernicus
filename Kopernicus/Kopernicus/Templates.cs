@@ -42,6 +42,9 @@ namespace Kopernicus
         public static double SOIMinRadiusMult /*{ get; set; }*/ = 2.0d;
         public static double SOIMinAltitude /*{ get; set; }*/ = 40000d;
 
+        // Max view distance
+        public static double maxViewDistance = -1d;
+
         // Global base epoch
         public static double epoch { get; set; }
 

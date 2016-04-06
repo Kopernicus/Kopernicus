@@ -119,6 +119,14 @@ namespace Kopernicus
                 set { Templates.menuBody = value; }
             }
 
+            // The maximum viewing distance in tracking station
+            [ParserTarget("maxViewingDistance", optional = true)]
+            public NumericParser<double> maxViewDistance
+            {
+                get { return Templates.maxViewDistance; }
+                set { Templates.maxViewDistance = value; }
+            }
+
             // Instance
             public Loader()
             {
