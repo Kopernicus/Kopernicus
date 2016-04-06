@@ -357,16 +357,7 @@ namespace Kopernicus
                     {
                         // Create a new object
                         IParsable targetParsable = (IParsable) Activator.CreateInstance(targetType);
-                        try
-                        {
-                            targetParsable.SetFromString(node.GetValue(target.fieldName));
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Active.Log("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" has failed to parse. Failing value: " + node.GetValue(target.fieldName));
-                            Logger.Active.Log("[Kopernicus]: Configuration.Parser: Reason: " + e.Message);
-                            return;
-                        }
+                        targetParsable.SetFromString(node.GetValue(target.fieldName));
                         targetValue = targetParsable;
                     }
 
