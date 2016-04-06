@@ -88,6 +88,12 @@ namespace Kopernicus
                 }
             }
 
+            // Is some random material this material 
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shader.name;
+            }
+
             // Ramp Map (RGBA), default = "white" { }
             public Texture2D rampMap
             {

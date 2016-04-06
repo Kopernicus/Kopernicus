@@ -53,6 +53,12 @@ namespace Kopernicus
                 }
             }
 
+            // Is some random material this material 
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shader.name;
+            }
+
             // Main Color, default = (1,1,1,1)
             public Color color
             {

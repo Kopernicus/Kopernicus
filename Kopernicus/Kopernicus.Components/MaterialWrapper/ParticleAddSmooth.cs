@@ -48,6 +48,12 @@ namespace Kopernicus
                 }
             }
 
+            // Is some random material this material 
+            public static bool UsesSameShader(Material m)
+            {
+                return m.shader.name == Properties.shader.name;
+            }
+
             // Particle Texture, default = "white" { }
             public Texture2D mainTex
             {
