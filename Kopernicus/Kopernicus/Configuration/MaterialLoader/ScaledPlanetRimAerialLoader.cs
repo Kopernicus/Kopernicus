@@ -125,6 +125,28 @@ namespace Kopernicus
                 set { rimColorRampOffset = value; }
             }
 
+            [ParserTarget("Gradient", optional = true)]
+            public Gradient rimColorRampGradientSetter
+            {
+                set
+                {
+                    // Generate the ramp from a gradient 
+                    Texture2D ramp = new Texture2D(512, 1);
+                    Color[] colors = ramp.GetPixels(0);
+                    for (int i = 0; i < colors.Length; i++)
+                    {
+                        // Compute the position in the gradient 
+                        float k = (float)i / colors.Length;
+                        colors[i] = value.ColorAt(k);
+                    }
+                    ramp.SetPixels(colors, 0);
+                    ramp.Apply(true, false);
+
+                    // Set the color ramp 
+                    rimColorRamp = ramp;
+                }
+            }
+
             // LightDirection, default = (1,0,0,0)
             [ParserTarget("localLightDirection", optional = true)]
             public Vector4Parser localLightDirectionSetter
