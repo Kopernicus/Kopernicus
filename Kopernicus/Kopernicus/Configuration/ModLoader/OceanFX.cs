@@ -187,6 +187,9 @@ namespace Kopernicus
                 // Create the mod
                 public override void Create(PQS pqsVersion)
                 {
+                    // Call base
+                    base.Create(pqsVersion);
+
                     // Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
                     PSystemBody Body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
                     foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
