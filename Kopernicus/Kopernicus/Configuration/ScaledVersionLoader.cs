@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Kopernicus.OnDemand;
+using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
@@ -118,7 +119,7 @@ namespace Kopernicus
                     if (type.value == BodyType.Atmospheric) 
                     {
                         ScaledPlanetRimAerialLoader newMaterial = null;
-                        if (material != null) 
+                        if (material != null && ScaledPlanetRimAerial.UsesSameShader(material)) 
                         {
                             newMaterial = new ScaledPlanetRimAerialLoader (material);
                             if(data != null)
@@ -138,7 +139,7 @@ namespace Kopernicus
                     else 
                     {
                         ScaledPlanetSimpleLoader newMaterial = null;
-                        if (material != null) 
+                        if (material != null && ScaledPlanetSimple.UsesSameShader(material)) 
                         {
                             newMaterial = new ScaledPlanetSimpleLoader (material);
                             if(data != null)
@@ -171,7 +172,7 @@ namespace Kopernicus
 
                     // Generate a new material for the star
                     EmissiveMultiRampSunspotsLoader newMaterial = null;
-                    if(material != null)
+                    if(material != null && EmissiveMultiRampSunspots.UsesSameShader(material))
                     {
                         newMaterial = new EmissiveMultiRampSunspotsLoader (material);
                         if(data != null)
