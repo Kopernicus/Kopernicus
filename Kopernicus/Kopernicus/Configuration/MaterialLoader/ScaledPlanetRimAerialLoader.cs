@@ -35,6 +35,13 @@ namespace Kopernicus
                 set { shininess = value; }
             }
 
+            [ParserTarget("texture", optional = true)]
+            public Texture2DParser textureSetter
+            {
+                get { return mainTex; }
+                set { mainTex = value; }
+            }
+
             // Base (RGB) Gloss (A), default = "white" { }
             [ParserTarget("mainTex", optional = true)]
             public Texture2DParser mainTexSetter
@@ -55,6 +62,13 @@ namespace Kopernicus
             {
                 get { return mainTexOffset; }
                 set { mainTexOffset = value; }
+            }
+                       
+            [ParserTarget("normals", optional = true)]
+            public Texture2DParser normalsSetter
+            {
+                get { return bumpMap; }
+                set { bumpMap = value; }
             }
 
             // Normalmap, default = "bump" { }
