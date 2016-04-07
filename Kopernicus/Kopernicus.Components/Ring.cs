@@ -54,7 +54,8 @@ namespace Kopernicus
             /// </summary>
             void Start()
             {
-                BuildRing();
+                if (gameObject.GetComponent<MeshFilter>() == null)
+                    BuildRing();
             }
 
             /// <summary>
