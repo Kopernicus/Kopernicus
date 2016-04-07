@@ -90,7 +90,10 @@ namespace Kopernicus
                     // Runtime Constructor
                     public SimplexLoader(Simplex simplex)
                     {
-                        this.simplex = simplex;
+                        if (simplex != null)
+                            this.simplex = simplex;
+                        else
+                            this.simplex = new Simplex(0, 1, 1, 1);
                     }
                 }
 
@@ -324,7 +327,17 @@ namespace Kopernicus
                     // Runtime constructor
                     public LandClassScatterLoader(PQSLandControl.LandClassScatter scatter)
                     {
-                        this.scatter = scatter;
+                        if (scatter != null)
+                            this.scatter = scatter;
+                        else
+                        {
+                            this.scatter = new PQSLandControl.LandClassScatter();
+
+                            // Initialize default parameters
+                            scatter.maxCache = 512;
+                            scatter.maxCacheDelta = 32;
+                            scatter.maxSpeed = 1000;
+                        }
                     }
 
                     void IParserEventSubscriber.Apply(ConfigNode node) 
@@ -383,7 +396,10 @@ namespace Kopernicus
                     // Runtime Constructor
                     public LandClassScatterAmountLoader(PQSLandControl.LandClassScatterAmount amount)
                     {
-                        scatterAmount = amount;
+                        if (scatterAmount != null)
+                            scatterAmount = amount;
+                        else
+                            scatterAmount = new PQSLandControl.LandClassScatterAmount();
                     }
                 }
 
@@ -433,7 +449,10 @@ namespace Kopernicus
                     // Runtime Constructor
                     public LerpRangeLoader(PQSLandControl.LerpRange lerp)
                     {
-                        lerpRange = lerp;
+                        if (lerp != null)
+                            lerpRange = lerp;
+                        else
+                            lerpRange = new PQSLandControl.LerpRange();
                     }
                 }
 
