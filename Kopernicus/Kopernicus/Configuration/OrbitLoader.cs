@@ -159,6 +159,7 @@ namespace Kopernicus
                     orbit.epoch += Templates.epoch;
                 generatedBody.orbitDriver.orbit = orbit;
                 generatedBody.orbitRenderer.orbitColor = color.value;
+                generatedBody.orbitRenderer.nodeColor = color.value;
                 generatedBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
                 generatedBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
             }
