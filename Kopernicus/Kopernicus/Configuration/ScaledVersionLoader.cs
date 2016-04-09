@@ -130,8 +130,11 @@ namespace Kopernicus
                             newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data);
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
-                        newMaterial.rimColorRamp.wrapMode = TextureWrapMode.Clamp;
-                        newMaterial.rimColorRamp.mipMapBias = 0.0f;
+                        if (newMaterial.rimColorRamp != null)
+                        {
+                            newMaterial.rimColorRamp.wrapMode = TextureWrapMode.Clamp;
+                            newMaterial.rimColorRamp.mipMapBias = 0.0f;
+                        }
                         scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
                     }
 
