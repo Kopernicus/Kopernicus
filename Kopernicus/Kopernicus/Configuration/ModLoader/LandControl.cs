@@ -126,10 +126,15 @@ namespace Kopernicus
                         // Convert
                         public static implicit operator Material(StockMaterialParser parser)
                         {
-                            return parser.value;
+                            if (parser != null)
+                                return parser.value;
+                            else
+                                return null;
                         }
                         public static implicit operator StockMaterialParser(Material material)
                         {
+                            if (material == null)
+                                return new StockMaterialParser();
                             Material m = new Material(material);
                             m.name = "BUILTIN/" + m.name;
                             return new StockMaterialParser { value = m };
@@ -142,17 +147,19 @@ namespace Kopernicus
                     {
                         get
                         {
-                            if (customMaterial.shader == new NormalDiffuse().shader)
+                            if (customMaterial == null)
+                                return null;
+                            if (NormalDiffuse.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.Diffuse;
-                            else if (customMaterial.shader == new NormalBumped().shader)
+                            else if (NormalBumped.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.BumpedDiffuse;
-                            else if (customMaterial.shader == new NormalDiffuseDetail().shader)
+                            else if (NormalDiffuseDetail.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.DiffuseDetail;
-                            else if (customMaterial.shader == new DiffuseWrapLoader().shader)
+                            else if (DiffuseWrap.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.DiffuseWrapped;
-                            else if (customMaterial.shader == new AlphaTestDiffuse().shader)
+                            else if (AlphaTestDiffuse.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.CutoutDiffuse;
-                            else if (customMaterial.shader == new AerialTransCutout().shader)
+                            else if (AerialTransCutout.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.AerialCutout;
                             return null;
                         }
