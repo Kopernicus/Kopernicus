@@ -23,13 +23,16 @@ ONDEMAND_CODE := $(CURRENT_DIR)/Kopernicus/Kopernicus.OnDemand
 CORLIB := $(MONO_ASSEMBLIES)/mscorlib.dll,$(MONO_ASSEMBLIES)/System.dll,$(MONO_ASSEMBLIES)/System.Core.dll
 REFS := $(CORLIB),Assembly-CSharp.dll,Assembly-CSharp-firstpass.dll,KSPUtil.dll,UnityEngine.dll,UnityEngine.UI.dll
 
+# Zip File
+ZIP_NAME := Kopernicus-$(shell git describe --tags)-$(shell date "+%Y-%m-%d").zip
+
 ### BUILD TARGETS ###
 all: plugin
 core: $(ONDEMAND) $(COMPONENTS) $(CORE)
 components: $(COMPONENTS)
 ondemand: $(ONDEMAND)
 plugin: core copy_plugin_files
-	cd $(RELEASE_DIR); zip -r Kopernicus-$(shell git describe --tags)-$(shell date "+%Y-%m-%d").zip .
+	cd $(RELEASE_DIR); zip -r $(ZIP_NAME) .
 	
 ### LIBRARIES ###
 $(CORE): generate_dirs
@@ -46,3 +49,4 @@ copy_plugin_files:
 	cp $(ONDEMAND) $(COMPONENTS) $(CORE) $(BUILD_DIR)
 clean:
 	rm -r $(PLUGIN_DIR)
+	rm $(RELEASE_DIR)/$(ZIP_NAME)
