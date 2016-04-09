@@ -92,6 +92,10 @@ namespace Kopernicus
             [ParserTarget("removeProgressTree", optional = true)]
             public NumericParser<bool> removeProgressTree = new NumericParser<bool> (true);
 
+            // Remove coronas for star
+            [ParserTarget("removeCoronas", optional = true)]
+            public NumericParser<bool> removeCoronas = new NumericParser<bool>(true);
+
             // Apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
             {
@@ -241,6 +245,13 @@ namespace Kopernicus
                     type = BodyType.Atmospheric;
                 else
                     type = BodyType.Vacuum;
+
+                // remove coronas
+                if (type == BodyType.Star && removeCoronas)
+                {
+                    foreach (SunCoronas corona in body.scaledVersion.GetComponentsInChildren<SunCoronas>(true))
+                        corona.GetComponent<Renderer>().enabled = false; // RnD hard refs Coronas, so we need to disable them
+                }
             }
 
             // Private exception to throw in the case the template doesn't load
