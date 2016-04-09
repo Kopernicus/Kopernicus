@@ -50,3 +50,4 @@ copy_plugin_files:
 clean:
 	rm -r $(PLUGIN_DIR)
 	rm $(RELEASE_DIR)/$(ZIP_NAME)
+	rm *.dll
