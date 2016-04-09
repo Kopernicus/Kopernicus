@@ -94,7 +94,7 @@ namespace Kopernicus
 
             // Remove coronas for star
             [ParserTarget("removeCoronas", optional = true)]
-            public NumericParser<bool> removeCoronas = new NumericParser<bool>(true);
+            public NumericParser<bool> removeCoronas = new NumericParser<bool>(false);
 
             // Apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
