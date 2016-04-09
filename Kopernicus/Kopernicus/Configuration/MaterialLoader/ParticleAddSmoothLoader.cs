@@ -12,7 +12,7 @@ namespace Kopernicus
         public class ParticleAddSmoothLoader : ParticleAddSmooth
         {
             // Particle Texture, default = "white" { }
-            [ParserTarget("mainTex", optional = true)]
+            [ParserTarget("texture", optional = true)]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
