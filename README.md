@@ -64,4 +64,4 @@ To compile Kopernicus you need to add the following assemblies from your KSP_Dat
 * UnityEngine.dll
 * UnityEngine.UI.dll
 
-After that you can compile the .sln file with VS, MonoDevelop or other build tools.
+After that you can compile the .sln file with VS, MonoDevelop or other build tools. If you have Linux experience you can use Makefiles too, however, you will need Microsofts Roslyn compiler for it.
