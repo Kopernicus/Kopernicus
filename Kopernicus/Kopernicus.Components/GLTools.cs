@@ -62,6 +62,16 @@ namespace Kopernicus
             private static Material _material;
 
             /// <summary>
+            /// The screen points
+            /// </summary>
+            private static Vector3 screenPoint1, screenPoint2;
+
+            /// <summary>
+            /// A list with vertices for the GL Line
+            /// </summary>
+            private static List<Vector3d> points = new List<Vector3d>();
+
+            /// <summary>
             /// Gets or sets the used GL material.
             /// </summary>
             /// <value>
@@ -129,8 +139,8 @@ namespace Kopernicus
             /// <param name="style">The style of the created line.</param>
             public static void DrawOrbit(Orbit orbit, Color color, Style style)
             {
-                /// A list with vertices for the GL Line
-                List<Vector3d> points = new List<Vector3d>();
+                /// Clear points
+                points.Clear();
 
                 /// Calculations for elliptical orbits
                 if (orbit.eccentricity < 1)
@@ -171,18 +181,15 @@ namespace Kopernicus
                 /// Draw every point
                 for (int i = 0; i < points.Count - 1; i += step)
                 {
-                    if (!IsOccluded(points[i], body) && !IsOccluded(points[i + 1], body))
+                    /// Map world coordinates to screen coordinates
+                    screenPoint1 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i]);
+                    screenPoint2 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i + 1]);
+
+                    /// Draw the GL vertices
+                    if (screenPoint1.z > 0 && screenPoint2.z > 0)
                     {
-                        /// Map world coordinates to screen coordinates
-                        Vector3 screenPoint1, screenPoint2;
-                        screenPoint1 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i]);
-                        screenPoint2 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i + 1]);
-                        /// Draw the GL vertices
-                        if (screenPoint1.z > 0 && screenPoint2.z > 0)
-                        {
-                            GL.Vertex3(screenPoint1.x, screenPoint1.y, 0);
-                            GL.Vertex3(screenPoint2.x, screenPoint2.y, 0);
-                        }
+                        GL.Vertex3(screenPoint1.x, screenPoint1.y, 0);
+                        GL.Vertex3(screenPoint2.x, screenPoint2.y, 0);
                     }
                 }
                 GL.End();
@@ -191,7 +198,7 @@ namespace Kopernicus
 
             /// <summary>
             ///  Determines whether the specified position is occluded by a celestial body.
-            /// Borrowed from Sarbian
+            ///  Borrowed from Sarbian
             /// </summary>
             /// <param name="worldPosition">The world position.</param>
             /// <param name="byBody">The by body.</param>
