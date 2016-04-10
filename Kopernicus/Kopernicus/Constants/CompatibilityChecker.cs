@@ -190,9 +190,9 @@ namespace Kopernicus
                 }
             }
 
-            if ((incompatible.Length > 0) || (incompatibleUnity.Length > 0) || IsWin64())
+            if ((incompatible.Length > 0) || (incompatibleUnity.Length > 0) /*|| IsWin64()*/)
             {
-                PopupDialog.SpawnPopupDialog(new Vector2(0f, 1f), new Vector2(0f, 1f), "Incompatible Mods Detected", message, "OK", true, UISkinManager.defaultSkin);
+                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Incompatible Mods Detected", message, "OK", true, UISkinManager.defaultSkin);
             }
         }
 
