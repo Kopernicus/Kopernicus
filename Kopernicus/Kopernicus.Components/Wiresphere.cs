@@ -25,10 +25,11 @@
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
- *
+ */
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
@@ -42,12 +43,7 @@ namespace Kopernicus
         public class Wiresphere : MonoBehaviour
         {
             /// Variables
-            public float radius { get; set; }
-            public Color color { get; set; }
             public CelestialBody body { get; set; }
-
-            /// Vectrosity
-            private VectorLine[] lines { get; set; }
 
             /// <summary>
             /// Gets the Celestial Body we're attached to and reads the values
@@ -55,58 +51,21 @@ namespace Kopernicus
             void Start()
             {
                 body = GetComponent<CelestialBody>();
-                color = body.orbitDriver != null ? body.orbitDriver.orbitColor : Color.white;
-                radius = (float)body.sphereOfInfluence;
-                lines = new VectorLine[] { CreateLine(0, 0), CreateLine(90, 0), CreateLine(90, 90) };
             }
 
             /// <summary>
             /// Updates the wiresphere
             /// </summary>
-            void LateUpdate()
+            void OnGUI()
             {
                 if (!MapView.MapIsEnabled)
                     return;
 
                 // Draw
-                Vector.DrawLine(CreateLine(0, 0, lines[0]));
-                Vector.DrawLine(CreateLine(90, 0, lines[1]));
-                Vector.DrawLine(CreateLine(90, 90, lines[2]));
-            }
-
-            /// <summary>
-            /// Destroy the Lines
-            /// </summary>
-            void OnDestroy()
-            {
-                for (int i = 0; i < 3; i++)
-                    Vector.DestroyLine(ref lines[i]);
-            }
-
-            /// <summary>
-            /// Creates a Vectrosity Line using an orbit
-            /// </summary>
-            public VectorLine CreateLine(double inclination, double lan, VectorLine line = null)
-            {
-                if (line == null)
-                {
-                    line = new VectorLine(body.name + " SOI", new Vector3[360 / 15 * 8 * 2], color, MapView.OrbitLinesMaterial, 5f, LineType.Discrete);
-                    line.vectorObject.transform.parent = ScaledSpace.Instance.transform;
-                    line.vectorObject.renderer.castShadows = false;
-                    line.vectorObject.renderer.receiveShadows = false;
-                    line.layer = 31;
-                }
-                line.vectorObject.renderer.material = MapView.OrbitLinesMaterial;
-                Vector3[] points = new Vector3[(int)Math.Floor(360 / 15d)];
-                Orbit orbit = new Orbit(inclination, 0, radius, lan, 0, 0, 0, body);
-                for (int i = 0; i < Math.Floor(360 / 15d); i++)
-                {
-                    points[i] = ScaledSpace.LocalToScaledSpace(orbit.getPositionFromEccAnomaly(i * 15 * Math.PI / 180));
-                }
-                Vector.MakeSplineInLine(line, points, true);
-                Vector.SetColor(line, color);
-                return line;
+                GLTools.DrawOrbit(0, 0, body.sphereOfInfluence, 0, 0, 0, 0, body, body.orbitDriver.Renderer.orbitColor, GLTools.Style.DASHED);
+                GLTools.DrawOrbit(90, 0, body.sphereOfInfluence, 0, 0, 0, 0, body, body.orbitDriver.Renderer.orbitColor, GLTools.Style.DASHED);
+                GLTools.DrawOrbit(90, 0, body.sphereOfInfluence, 90, 0, 0, 0, body, body.orbitDriver.Renderer.orbitColor, GLTools.Style.DASHED);
             }
         }
     }
-*/
+}
