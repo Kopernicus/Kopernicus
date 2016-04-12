@@ -130,7 +130,16 @@ namespace Kopernicus
                 body = PSystemManager.Instance.localBodies.Find(b => b.name == around.body);
                 if (!body) return;
                 if (around.reached && !ReachedBody(body)) return;
-                orbit = Orbit.CreateRandomOrbitAround(body, around.minAltitude, around.maxAltitude);
+                orbit = new Orbit();
+                orbit.referenceBody = body;
+                orbit.eccentricity = around.eccentricity;
+                orbit.semiMajorAxis = around.semiMajorAxis;
+                orbit.inclination = around.inclination;
+                orbit.LAN = around.longitudeOfAscendingNode;
+                orbit.argumentOfPeriapsis = around.argumentOfPeriapsis;
+                orbit.meanAnomalyAtEpoch = around.meanAnomalyAtEpoch;
+                orbit.epoch = around.epoch;
+                orbit.Init();
             }
             else if (type == 1 && asteroid.location.nearby.Count != 0)
             {
@@ -140,7 +149,16 @@ namespace Kopernicus
                 body = PSystemManager.Instance.localBodies.Find(b => b.name == nearby.body);
                 if (!body) return;
                 if (nearby.reached && !ReachedBody(body)) return;
-                orbit = Orbit.CreateRandomOrbitNearby(body.orbit);
+                orbit = new Orbit();
+                orbit.eccentricity = body.orbit.eccentricity + nearby.eccentricity;
+                orbit.semiMajorAxis = body.orbit.semiMajorAxis * nearby.semiMajorAxis;
+                orbit.inclination = body.orbit.inclination + nearby.inclination;
+                orbit.LAN = body.orbit.LAN * nearby.longitudeOfAscendingNode;
+                orbit.argumentOfPeriapsis = body.orbit.argumentOfPeriapsis * nearby.argumentOfPeriapsis;
+                orbit.meanAnomalyAtEpoch = body.orbit.meanAnomalyAtEpoch * nearby.meanAnomalyAtEpoch;
+                orbit.epoch = body.orbit.epoch;
+                orbit.referenceBody = body.orbit.referenceBody;
+                orbit.Init();
             }
             else if (type == 2 && asteroid.location.flyby.Count != 0)
             {

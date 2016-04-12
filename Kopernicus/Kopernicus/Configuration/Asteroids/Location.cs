@@ -50,6 +50,30 @@ namespace Kopernicus
                     [ParserTarget("body", optional = true)]
                     public string body { get; set; }
 
+                    // eccentricity
+                    [ParserTarget("eccentricity", optional = true)]
+                    public RandomRangeLoader eccentricity = new RandomRangeLoader(0.0001f, 0.01f);
+
+                    // semiMajorAxis
+                    [ParserTarget("semiMajorAxis", optional = true)]
+                    public RandomRangeLoader semiMajorAxis = new RandomRangeLoader(0.999f, 1.001f);
+
+                    // inclination
+                    [ParserTarget("inclination", optional = true)]
+                    public RandomRangeLoader inclination = new RandomRangeLoader(-0.001f, 0.001f);
+
+                    // longitudeOfAscendingNode
+                    [ParserTarget("longitudeOfAscendingNode", optional = true)]
+                    public RandomRangeLoader longitudeOfAscendingNode = new RandomRangeLoader(0.999f, 1.001f);
+
+                    // argumentOfPeriapsis
+                    [ParserTarget("argumentOfPeriapsis", optional = true)]
+                    public RandomRangeLoader argumentOfPeriapsis = new RandomRangeLoader(0.999f, 1.001f);
+
+                    // meanAnomalyAtEpoch
+                    [ParserTarget("meanAnomalyAtEpoch", optional = true)]
+                    public RandomRangeLoader meanAnomalyAtEpoch = new RandomRangeLoader(0.999f, 1.001f);
+
                     // The probability of this Orbit type
                     [ParserTarget("probability", optional = true)]
                     public NumericParser<float> probability { get; set; }
@@ -92,13 +116,33 @@ namespace Kopernicus
                     [ParserTarget("body", optional = true)]
                     public string body { get; set; }
 
-                    // The minimum altitude
-                    [ParserTarget("minAltitude", optional = true)]
-                    public NumericParser<float> minAltitude { get; set; }
+                    // eccentricity
+                    [ParserTarget("eccentricity", optional = true)]
+                    public RandomRangeLoader eccentricity = new RandomRangeLoader(0.0001f, 0.01f);
 
-                    // The maximum altitude
-                    [ParserTarget("maxAltitude", optional = true)]
-                    public NumericParser<float> maxAltitude { get; set; }
+                    // semiMajorAxis
+                    [ParserTarget("semiMajorAxis", optional = true)]
+                    public RandomRangeLoader semiMajorAxis { get; set; }
+
+                    // inclination
+                    [ParserTarget("inclination", optional = true)]
+                    public RandomRangeLoader inclination = new RandomRangeLoader(-0.001f, 0.001f);
+
+                    // longitudeOfAscendingNode
+                    [ParserTarget("longitudeOfAscendingNode", optional = true)]
+                    public RandomRangeLoader longitudeOfAscendingNode = new RandomRangeLoader(0.999f, 1.001f);
+
+                    // argumentOfPeriapsis
+                    [ParserTarget("argumentOfPeriapsis", optional = true)]
+                    public RandomRangeLoader argumentOfPeriapsis = new RandomRangeLoader(0.999f, 1.001f);
+
+                    // meanAnomalyAtEpoch
+                    [ParserTarget("meanAnomalyAtEpoch", optional = true)]
+                    public RandomRangeLoader meanAnomalyAtEpoch = new RandomRangeLoader(0.999f, 1.001f);
+
+                    // epoch
+                    [ParserTarget("epoch", optional = true)]
+                    public RandomRangeLoader epoch = new RandomRangeLoader(0.999f, 1.001f);
 
                     // The probability of this Orbit type
                     [ParserTarget("probability", optional = true)]
@@ -107,6 +151,39 @@ namespace Kopernicus
                     // Whether the body must be reached
                     [ParserTarget("reached", optional = true)]
                     public NumericParser<bool> reached { get; set; }
+                }
+
+                // Loads a random range value
+                [RequireConfigType(ConfigType.Node)]
+                public class RandomRangeLoader
+                {
+                    // The min value
+                    [ParserTarget("minValue", optional = true)]
+                    public NumericParser<float> minValue { get; set; }
+
+                    // The max value
+                    [ParserTarget("maxValue", optional = true)]
+                    public NumericParser<float> maxValue { get; set; }
+
+                    // Convert this to int, and return a random value
+                    public static implicit operator float(RandomRangeLoader loader)
+                    {
+                        return UnityEngine.Random.Range(loader.minValue, loader.maxValue);
+                    }
+
+                    // Create a loader from given values
+                    public RandomRangeLoader()
+                    {
+                        this.maxValue = 1;
+                        this.minValue = 0;
+                    }
+
+                    // Create a loader from given values
+                    public RandomRangeLoader(float minValue, float maxValue)
+                    {
+                        this.maxValue = maxValue;
+                        this.minValue = minValue;
+                    }
                 }
 
                 // Nearby-Orbits
