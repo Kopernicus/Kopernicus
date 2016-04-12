@@ -139,6 +139,10 @@ namespace Kopernicus
             /// <param name="style">The style of the created line.</param>
             public static void DrawOrbit(Orbit orbit, Color color, Style style)
             {
+                /// Only render visible stuff
+                if (!orbit.referenceBody.scaledBody.GetComponent<Renderer>().isVisible)
+                    return;
+
                 /// Clear points
                 points.Clear();
 
@@ -181,6 +185,11 @@ namespace Kopernicus
                 /// Draw every point
                 for (int i = 0; i < points.Count - 1; i += step)
                 {
+                    /// Occlusion check
+                    Vector3 cameraPos = PlanetariumCamera.Camera.transform.position;
+                    if (Physics.Raycast(cameraPos, (points[i] - cameraPos).normalized) || Physics.Raycast(cameraPos, (points[i + 1] - cameraPos).normalized))
+                        continue;
+
                     /// Map world coordinates to screen coordinates
                     screenPoint1 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i]);
                     screenPoint2 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i + 1]);
