@@ -76,7 +76,7 @@ namespace Kopernicus
 
                 // Whether the asteroid name should be unique per savegame
                 [ParserTarget("uniqueName", optional = true)]
-                public NumericParser<bool> uniqueName { get; set; }
+                public NumericParser<bool> uniqueName = new NumericParser<bool>(false);
 
                 // Config Node that overloads the created vessel node
                 [ParserTarget("Vessel", optional = true)]

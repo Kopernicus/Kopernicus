@@ -238,6 +238,10 @@ namespace Kopernicus
         // Overrides a ConfigNode recursively
         protected void OverrideNode(ref ConfigNode original, ConfigNode custom)
         {
+            // null checks
+            if (original == null || custom == null)
+                return;
+
             // Go through the values
             foreach (ConfigNode.Value value in custom.values)
                 original.SetValue(value.name, value.value, true);
