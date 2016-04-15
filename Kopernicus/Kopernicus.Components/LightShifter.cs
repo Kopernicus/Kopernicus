@@ -63,10 +63,10 @@ namespace Kopernicus
 
                     // Fill it with default values
                     prefab.sunlightColor = Color.white;
-                    prefab.sunlightIntensity = 0.45f;
+                    prefab.sunlightIntensity = 0.9f;
                     prefab.sunlightShadowStrength = 0.7523364f;
                     prefab.scaledSunlightColor = Color.white;
-                    prefab.scaledSunlightIntensity = 0.45f;
+                    prefab.scaledSunlightIntensity = 0.9f;
                     prefab.IVASunColor = new Color(1.0f, 0.977f, 0.896f, 1.0f);
                     prefab.IVASunIntensity = 0.34f;
                     prefab.sunLensFlareColor = Color.white;
