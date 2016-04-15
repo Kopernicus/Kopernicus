@@ -185,7 +185,6 @@ namespace Kopernicus
             UntrackedObjectClass size = (UntrackedObjectClass)((int)(asteroid.size.curve.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length));
 
             // Spawn
-            Debug.Log("[Kopernicus]: New object found near " + body.name + ": " + name + "!");
             ConfigNode vessel = ProtoVessel.CreateVesselNode(
                 name,
                 VesselType.SpaceObject,
@@ -207,7 +206,12 @@ namespace Kopernicus
                     maxLifetime
                 )
             );
-            HighLogic.CurrentGame.AddVessel(vessel);
+            OverrideNode(ref vessel, asteroid.vessel);
+            ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
+            if (asteroid.uniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0) return;
+            protoVessel.Load(HighLogic.CurrentGame.flightState);
+            GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
+            Debug.Log("[Kopernicus]: New object found near " + body.name + ": " + protoVessel.vesselName + "!");
         }
 
         // Asteroid Spawner
@@ -229,6 +233,38 @@ namespace Kopernicus
             for (int i = 0; i < enumerable.Count(); i++)
                 for (int j = 0; j < probabilities.ElementAt(i); j++)
                     yield return enumerable.ElementAt(i);
+        }
+
+        // Overrides a ConfigNode recursively
+        protected void OverrideNode(ref ConfigNode original, ConfigNode custom)
+        {
+            // Go through the values
+            foreach (ConfigNode.Value value in custom.values)
+                original.SetValue(value.name, value.value, true);
+
+            // Get nodes that should get removed
+            if (original.HasValue("removeNodes"))
+            {
+                string[] names = original.GetValue("removeNodes").Split(new char[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string name in names)
+                    original.RemoveNodes(name);
+            }
+
+            // Go through the nodes
+            foreach (ConfigNode node in custom.nodes)
+            {
+                if (original.HasNode(node.name) && original.GetNodes().Count(n => !n.HasValue("__PATCHED__")) != 0)
+                {
+                    ConfigNode node_ = original.GetNodes().First(n => !n.HasValue("__PATCHED__"));
+                    OverrideNode(ref node_, node);
+                    node_.AddValue("__PATCHED__", "__YES__");
+                }
+                else
+                {
+                    ConfigNode node_ = original.AddNode(node);
+                    node_.AddValue("__PATCHED__", "__YES__");
+                }
+            }
         }
 
         // Determines whether a body was already visited

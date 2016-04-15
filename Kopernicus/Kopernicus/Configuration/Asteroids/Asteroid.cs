@@ -74,6 +74,14 @@ namespace Kopernicus
                 [ParserTarget("spawnGroupMaxLimit", optional = true)]
                 public NumericParser<int> spawnGroupMaxLimit { get; set; }
 
+                // Whether the asteroid name should be unique per savegame
+                [ParserTarget("uniqueName", optional = true)]
+                public NumericParser<bool> uniqueName { get; set; }
+
+                // Config Node that overloads the created vessel node
+                [ParserTarget("Vessel", optional = true)]
+                public ConfigNode vessel { get; set; }
+
                 // Classes of the asteroid
                 [ParserTarget("Size", optional = true)]
                 public FloatCurveParser size { get; set; }
