@@ -28,6 +28,7 @@
  */
 
 using System;
+using System.Timers;
 using UnityEngine;
 
 namespace Kopernicus
@@ -53,6 +54,9 @@ namespace Kopernicus
             // MapDepth
             public new MapDepth Depth { get; set; }
 
+            // Unload timer
+            public Timer timer { get; set; }
+
             // Load the Map
             public void Load()
             {
@@ -67,6 +71,9 @@ namespace Kopernicus
                     if (map != null)
                     {
                         CreateMap(Depth, map);
+                        timer = new Timer(10000d);
+                        timer.Elapsed += delegate (object sender, ElapsedEventArgs e) { Unload(); };
+                        timer.Start();
                         IsLoaded = true;
                         Debug.Log("[OD] Map " + name + " enabling self. Path = " + Path);
                         return;
@@ -135,6 +142,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0;
                 }
+                timer.Stop(); timer.Start();
                 return (byte)(_data.GetPixel(x, y).r * Float2Byte);
             }
 
@@ -147,6 +155,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color.Lerp(
@@ -170,6 +179,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color.Lerp(
@@ -193,6 +203,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
+                timer.Stop(); timer.Start();
                 return _data.GetPixel(x, y);
             }
 
@@ -205,6 +216,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color32.Lerp(
@@ -228,6 +240,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color32.Lerp(
@@ -251,6 +264,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new Color32();
                 }
+                timer.Stop(); timer.Start();
                 return _data.GetPixel(x, y);
             }
 
@@ -263,6 +277,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0f;
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Mathf.Lerp(
@@ -286,6 +301,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0f;
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Mathf.Lerp(
@@ -309,6 +325,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0f;
                 }
+                timer.Stop(); timer.Start();
 
                 Color pixel = _data.GetPixel(x, y);
                 float value = 0f;
@@ -337,6 +354,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new HeightAlpha(0f, 0f);
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return HeightAlpha.Lerp(
@@ -360,6 +378,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new HeightAlpha(0f, 0f);
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return HeightAlpha.Lerp(
@@ -383,6 +402,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new HeightAlpha(0f, 0f);
                 }
+                timer.Stop(); timer.Start();
 
                 Color pixel = _data.GetPixel(x, y);
                 if (Depth == (MapDepth.HeightAlpha | MapDepth.RGBA))
@@ -400,6 +420,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0;
                 }
+                timer.Stop(); timer.Start();
                 return (byte)(Float2Byte * _data.GetPixel(x, y).r);
             }
 
@@ -412,6 +433,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0f;
                 }
+                timer.Stop(); timer.Start();
                 return _data.GetPixel(x, y).grayscale;
             }
 
@@ -424,6 +446,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new byte[_bpp];
                 }
+                timer.Stop(); timer.Start();
 
                 Color c = _data.GetPixel(x, y);
                 if (Depth == MapDepth.Greyscale)
@@ -445,6 +468,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new Texture2D(_width, _height);
                 }
+                timer.Stop(); timer.Start();
                 Texture2D compiled = Instantiate(_data) as Texture2D;
                 compiled.Apply(false, true);
                 return compiled;

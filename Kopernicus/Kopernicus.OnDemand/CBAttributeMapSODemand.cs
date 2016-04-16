@@ -28,13 +28,8 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using KSP;
+using System.Timers;
 using UnityEngine;
-using System.IO;
 
 namespace Kopernicus
 {
@@ -58,6 +53,9 @@ namespace Kopernicus
             // MapDepth
             public new MapDepth Depth { get; set; }
 
+            // Unload timer
+            public Timer timer { get; set; }
+
             // Load the Map
             public void Load()
             {
@@ -73,6 +71,9 @@ namespace Kopernicus
                     if (map != null)
                     {
                         CreateMap(Depth, map);
+                        timer = new Timer(10000d);
+                        timer.Elapsed += delegate (object sender, ElapsedEventArgs e) { Unload(); };
+                        timer.Start();
                         IsLoaded = true;
                         Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
                     }
@@ -139,6 +140,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Attributes[0];
                 }
+                timer.Stop(); timer.Start();
                 return base.GetAtt(lat, lon);
             }
 
@@ -151,6 +153,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
+                timer.Stop(); timer.Start();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color.Lerp(
@@ -174,6 +177,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
+                timer.Stop(); timer.Start();
                 return _data.GetPixel(x, y);
             }
 
@@ -186,6 +190,7 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new Texture2D(_width, _height);
                 }
+                timer.Stop(); timer.Start();
                 Texture2D compiled = Instantiate(_data) as Texture2D;
                 compiled.Apply(false, true);
                 return compiled;
