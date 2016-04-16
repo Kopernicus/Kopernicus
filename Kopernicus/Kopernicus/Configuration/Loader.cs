@@ -127,6 +127,14 @@ namespace Kopernicus
                 set { Templates.maxViewDistance = value; }
             }
 
+            // Fade multiplier for tracking station
+            [ParserTarget("scaledSpaceFaderMult", optional = true)]
+            public NumericParser<double> scaledSpaceFaderMult
+            {
+                get { return ScaledSpaceFader.faderMult; }
+                set { ScaledSpaceFader.faderMult = value; }
+            }
+           
             // Instance
             public Loader()
             {
