@@ -263,7 +263,7 @@ namespace Kopernicus
             {
                 if (original.HasNode(node.name) && original.GetNodes().Count(n => !n.HasValue("__PATCHED__")) != 0)
                 {
-                    ConfigNode node_ = original.GetNodes().First(n => !n.HasValue("__PATCHED__"));
+                    ConfigNode node_ = original.GetNodes().First(n => !n.HasValue("__PATCHED__") && n.name == node.name);
                     OverrideNode(ref node_, node);
                     node_.AddValue("__PATCHED__", "__YES__");
                 }
