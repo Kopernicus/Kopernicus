@@ -71,7 +71,7 @@ namespace Kopernicus
                 if (map != null)
                 {
                     CreateMap(Depth, map);
-                    timer = new Timer(10000d);
+                    timer = new Timer(60000d);
                     timer.Elapsed += delegate (object sender, ElapsedEventArgs e) { Unload(); };
                     timer.Start();
                     IsLoaded = true;
