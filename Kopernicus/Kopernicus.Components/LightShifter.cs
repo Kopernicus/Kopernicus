@@ -133,9 +133,9 @@ namespace Kopernicus
                     if (scene == GameScenes.FLIGHT)
                     {
                         GameObject IVASun = GameObject.Find("IVASun");
-                        Light IVALight = IVASun.GetComponent<Light>();
                         if (IVASun)
                         {
+                            Light IVALight = IVASun.GetComponent<Light>();
                             if (IVASunColor != null)
                                 IVALight.color = IVASunColor;
                             if (IVASunIntensity != float.NaN)
