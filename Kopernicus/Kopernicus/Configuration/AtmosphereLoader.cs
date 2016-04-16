@@ -251,6 +251,7 @@ namespace Kopernicus
                     MeshFilter meshFilter             = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh             = Templates.ReferenceGeosphere;
                     scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+                    atmosphereFromGround = new AtmosphereFromGroundLoader();
 
                     // Setup known defaults
                     celestialBody.atmospherePressureSeaLevel = 1.0f;
@@ -258,7 +259,11 @@ namespace Kopernicus
             }
 
             // Parser post apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node) { }
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                if (atmosphereFromGround != null)
+                    AFGInfo.StoreAFG(atmosphereFromGround.afg);
+            }
 
             // Default constructor
             public AtmosphereLoader()

@@ -124,6 +124,7 @@ namespace Kopernicus
             afg.invWaveLength = invWaveLength;
             afg.outerRadius = outerRadius;
             afg.innerRadius = innerRadius;
+            afg.transform.localPosition = Vector3.zero;
 
             Configuration.AtmosphereFromGroundLoader.CalculatedMembers(afg);
             afg.SetMaterial(true);

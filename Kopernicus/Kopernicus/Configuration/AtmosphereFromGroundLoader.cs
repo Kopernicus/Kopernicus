@@ -169,8 +169,20 @@ namespace Kopernicus
             }
 
             // Parser apply event
-            void IParserEventSubscriber.Apply(ConfigNode node)
+            void IParserEventSubscriber.Apply(ConfigNode node) { }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                CalculatedMembers(afg); // with the new values.
+            }
+
+            // Default Constructor
+            public AtmosphereFromGroundLoader()
+            {
+                body = generatedBody.celestialBody;
+                afg = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0];
+                
                 // Set Defaults
                 afg.planet = body;
                 afg.ESun = 30f;
@@ -191,22 +203,8 @@ namespace Kopernicus
                 CalculatedMembers(afg);
             }
 
-            // Parser post apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-                CalculatedMembers(afg); // with the new values.
-                AFGInfo.StoreAFG(afg);
-            }
-
-            // Default Constructor
-            public AtmosphereFromGroundLoader()
-            {
-                body = generatedBody.celestialBody;
-                afg = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0];
-            }
-
             // Runtime constructor
-            public AtmosphereFromGroundLoader(CelestialBody body)
+            public AtmosphereFromGroundLoader(CelestialBody body) : this()
             {
                 this.body = body;
                 afg = body.scaledBody.GetComponentInChildren<AtmosphereFromGround>();
