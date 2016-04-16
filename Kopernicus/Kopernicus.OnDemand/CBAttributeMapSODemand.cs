@@ -64,24 +64,24 @@ namespace Kopernicus
                     return;
 
                 // Load the Map
-                OnDemandStorage.LoadTextureAsync(Path, false, false, false, map =>
+                Texture2D map = OnDemandStorage.LoadTexture(Path, false, false, false);
+
+                // If the map isn't null
+                if (map != null)
                 {
+                    CreateMap(Depth, map);
+                    timer = new Timer(10000d);
+                    timer.Elapsed += delegate (object sender, ElapsedEventArgs e) { Unload(); };
+                    timer.Start();
+                    IsLoaded = true;
+                    Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
+                    return;
+                }
 
-                    // If the map isn't null
-                    if (map != null)
-                    {
-                        CreateMap(Depth, map);
-                        timer = new Timer(10000d);
-                        timer.Elapsed += delegate (object sender, ElapsedEventArgs e) { Unload(); };
-                        timer.Start();
-                        IsLoaded = true;
-                        Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
-                    }
-
-                    // Return nothing
-                    Debug.Log("[OD] ERROR: Failed to load CBmap " + name + " at path " + Path);
-                });
+                // Return nothing
+                Debug.Log("[OD] ERROR: Failed to load CBmap " + name + " at path " + Path);
             }
+            
 
             // Unload the map
             public void Unload()
