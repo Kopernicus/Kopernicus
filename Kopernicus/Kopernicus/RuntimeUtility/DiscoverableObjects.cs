@@ -172,7 +172,11 @@ namespace Kopernicus
             }
 
             // Check 
-            if (orbit == null) return;
+            if (orbit == null)
+            {
+                Debug.Log("[Kopernicus]: No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
+                return;
+            }
 
             // Name
             string name = DiscoverableObjectsUtil.GenerateAsteroidName();
