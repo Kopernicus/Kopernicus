@@ -79,7 +79,8 @@ namespace Kopernicus
                 public NumericParser<bool> uniqueName = new NumericParser<bool>(false);
 
                 // Config Node that overloads the created vessel node
-                [ParserTarget("Vessel", optional = true)]
+                // Reason for the Caps: Sigma was messing up his configs
+                [ParserTarget("VESSEL", optional = true)]
                 public ConfigNode vessel { get; set; }
 
                 // Classes of the asteroid
