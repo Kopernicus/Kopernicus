@@ -211,6 +211,7 @@ namespace Kopernicus
                 )
             );
             OverrideNode(ref vessel, asteroid.vessel);
+            Debug.Log(vessel);
             ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
             if (asteroid.uniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0) return;
             protoVessel.Load(HighLogic.CurrentGame.flightState);
@@ -261,9 +262,10 @@ namespace Kopernicus
             // Go through the nodes
             foreach (ConfigNode node in custom.nodes)
             {
-                if (original.HasNode(node.name) && original.GetNodes().Count(n => !n.HasValue("__PATCHED__")) != 0)
+                ConfigNode[] nodes = node.GetNodes();
+                if (nodes.Any(n => !n.HasValue("__PATCHED__") && n.name == node.name))
                 {
-                    ConfigNode node_ = original.GetNodes().First(n => !n.HasValue("__PATCHED__") && n.name == node.name);
+                    ConfigNode node_ = nodes.First(n => !n.HasValue("__PATCHED__") && n.name == node.name);
                     OverrideNode(ref node_, node);
                     node_.AddValue("__PATCHED__", "__YES__");
                 }
