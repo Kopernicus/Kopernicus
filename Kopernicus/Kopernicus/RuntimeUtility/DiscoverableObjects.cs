@@ -211,7 +211,6 @@ namespace Kopernicus
                 )
             );
             OverrideNode(ref vessel, asteroid.vessel);
-            Debug.Log(vessel);
             ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
             if (asteroid.uniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0) return;
             protoVessel.Load(HighLogic.CurrentGame.flightState);
@@ -241,7 +240,7 @@ namespace Kopernicus
         }
 
         // Overrides a ConfigNode recursively
-        protected void OverrideNode(ref ConfigNode original, ConfigNode custom)
+        protected void OverrideNode(ref ConfigNode original, ConfigNode custom, bool rec = false)
         {
             // null checks
             if (original == null || custom == null)
@@ -262,19 +261,25 @@ namespace Kopernicus
             // Go through the nodes
             foreach (ConfigNode node in custom.nodes)
             {
-                ConfigNode[] nodes = node.GetNodes();
-                if (nodes.Any(n => !n.HasValue("__PATCHED__") && n.name == node.name))
+                if (!original.HasNode(node.name))
                 {
-                    ConfigNode node_ = nodes.First(n => !n.HasValue("__PATCHED__") && n.name == node.name);
-                    OverrideNode(ref node_, node);
+                    original.AddNode(node).AddValue("__PATCHED__", "__YES__");
+                    continue;
+                }
+                ConfigNode[] nodes = original.GetNodes(node.name);
+                if (nodes.Any(n => !n.HasValue("__PATCHED__")))
+                {
+                    ConfigNode node_ = nodes.First(n => !n.HasValue("__PATCHED__"));
+                    OverrideNode(ref node_, node, true);
                     node_.AddValue("__PATCHED__", "__YES__");
                 }
                 else
-                {
-                    ConfigNode node_ = original.AddNode(node);
-                    node_.AddValue("__PATCHED__", "__YES__");
-                }
+                    original.AddNode(node).AddValue("__PATCHED__", "__YES__");
             }
+
+            // Remove patches
+            if (!rec)
+                Utility.DoRecursive(original, o => o.GetNodes(), node => node.RemoveValues("__PATCHED__"));
         }
 
         // Determines whether a body was already visited
