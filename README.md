@@ -1,29 +1,41 @@
-Kopernicus Beta Release 6
+Kopernicus
 ==============================
 December 12th, 2015
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 
-New in this version
+New in this version (1.0)
 -------------------
-* Fixed the Biome-View in Tracking Station
-* Fixed PQSMaterials
-* Fixed LandControl
-* Added the ability to create multiple Particle Emitters with custom meshes (mesh = <path>.obj) and scales (scale = 1.0, 1.0, 1.0)
-* Particles are now in a Particles {} node (Body { Particles { Particle { <your definition> } Particle { <your other definition> } } })
-* Added early support for particle collisions, toggleable using collide = true in the Particle settings (defaults to false)
-* Added the ability to apply a constant force to the particles (force = 1.0, 1.0, 1.0)
-* Added asteroid customization through Asteroid { } nodes in the Kopernicus { } node. See System.cfg for the stock configuration
-* Added support for HSBA() colors (0-255)
-* Fixed AtmosphereFromGround loading
-* Removed Debug Spam and fixed some exceptions in the parser
-* The SOI-Debugging lines are better visible and nicer now
-* The changes to the main menu should persist between scene changes
-* EVE clouds should get copied to the main menu again
-* Added visibility tweaking (icon and mode in Orbit { } and selectable in Properties { })
-* PQSMods are now sorted using the order value when caching the scaled space
-* Various other fixes and things that I forgot
+* Fixed an issues with subobjects on PQSMods (like landclasses)
+* Fixed an issue with PQS on template-less worlds
+* Fixed a Material issue in LandControl
+* Added the biome map settings "nonExactThreshold" and "exactSearch" to the Properties node
+* Added a loader for mapMaxHeight in the PQS node
+* Added a loader for lacunarity in VertexHeightNoiseVertHeight
+* Added the ability to reference PQSMods by name and index in the component tree in removePQSMods. (removePQSMods = PQSMod_VertexHeightMap[_Height, 1] would remove the second heightmap named _Height)
+* Updated the code to make use of the updated KSP 1.1 and Unity 5 API
+* Tried to implement async loading of scaled space textures (on demand), but failed because Unity was doing weird things :(
+* Removed PQSMod_FixedOblate and PQSMod_FixedOffset - the fixes are now included in the stock versions
+* Removed oceanFogColorAltMult because it is gone in KSP
+* Fixed an issue with custom orbit modes
+* Actually remove hidden bodies in RnD, not just remove their thumbnail and center the name
+* Updated the shader wrappers to the 1.1 versions and did some updates to the generator
+* Added maxViewDistance override for tracking station to the Kopernicus node
+* Added null checks
+* Added more null checks
+* Fixed OceanFX creation
+* Made some changes to make changing the scaled space material possible (again?)
+* Only build rings if they aren't built
+* Added removeCoronas option in Template that hides the coronas of a star
+* Removed Win64 warning from CompatibilityChecker (it might still appear as I didn't bump the version number of CC and other mods could override Kopernicus checker)
+* Use GL calls to draw the lines for the SOI debugger instead of Vectrosity, makes them nicer and easier to use
+* Made the orbit generation for the asteroids more customizeable (there will be some mods using it out soon, so I won't explain the structure now)
+* Added the ability to patch the config node that gets created by the asteroid loader and that contains the vessel that gets created (Savegame VESSEL syntax)
+* Automated unloading of MapSO's after being unused for 1 minute
+* FINALLY fixed the issue where adding an AFG to a templated planet would cause a black sky and no AFG \o/
+* Fixed the previously added null checks
+* Added a loader for the fade multiplier in scaled space fader
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
