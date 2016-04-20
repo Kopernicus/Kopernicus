@@ -38,26 +38,10 @@ namespace Kopernicus
             {
                 // atmosphereDepth
                 [ParserTarget("atmosphereDepth", optional = true)]
-                public NumericParser<float> deformity
+                public NumericParser<float> atmosphereDepth
                 {
                     get { return mod.atmosphereDepth; }
                     set { mod.atmosphereDepth = value; }
-                }
-
-                // The altitude of the camera
-                [ParserTarget("cameraAlt", optional = true)]
-                public NumericParser<double> cameraAlt
-                {
-                    get { return mod.cameraAlt; }
-                    set { mod.cameraAlt = value; }
-                }
-
-                // Athmospheric altitude of the camera.
-                [ParserTarget("cameraAtmosAlt", optional = true)]
-                public NumericParser<float> cameraAtmosAlt
-                {
-                    get { return mod.cameraAtmosAlt; }
-                    set { mod.cameraAtmosAlt = value; }
                 }
 
                 // DEBUG_SetEveryFrame
@@ -76,20 +60,20 @@ namespace Kopernicus
                     set { mod.globalDensity = value; }
                 }
 
-                // heightDensAtViewer
-                [ParserTarget("heightDensAtViewer", optional = true)]
-                public NumericParser<float> heightDensAtViewer
-                {
-                    get { return mod.heightDensAtViewer; }
-                    set { mod.heightDensAtViewer = value; }
-                }
-
                 // heightFalloff
                 [ParserTarget("heightFalloff", optional = true)]
                 public NumericParser<float> heightFalloff
                 {
                     get { return mod.heightFalloff; }
                     set { mod.heightFalloff = value; }
+                }
+
+                // atmosphereDepth
+                [ParserTarget("oceanDepth", optional = true)]
+                public NumericParser<float> oceanDepth
+                {
+                    get { return mod.oceanDepth; }
+                    set { mod.oceanDepth = value; }
                 }
             }
         }
