@@ -40,6 +40,7 @@ namespace Kopernicus
         {
             // KSP orbit objects we are editing
             public Orbit orbit { get; set; }
+            public CelestialBody body { get; set; }
 
             // Reference body to orbit
             [ParserTarget("referenceBody", optional = true)]
@@ -113,7 +114,7 @@ namespace Kopernicus
             [ParserTarget("color", optional = true)]
             public ColorParser color
             {
-                get { return generatedBody.orbitRenderer.nodeColor; }
+                get { return HighLogic.LoadedScene == GameScenes.PSYSTEM ? generatedBody.orbitRenderer.nodeColor : (body.orbitDriver.orbitColor * 2).A(body.orbitDriver.orbitColor.a); }
                 set { generatedBody.orbitRenderer.SetColor(value); }
             }
 
@@ -149,7 +150,6 @@ namespace Kopernicus
                 // Setup orbit
                 generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
                 orbit = generatedBody.orbitDriver.orbit;
-                color = generatedBody.orbitRenderer.orbitColor;
                 referenceBody = orbit?.referenceBody?.name;
                 float[] bounds = new float[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
                 cameraSmaRatioBounds = bounds;
@@ -173,9 +173,9 @@ namespace Kopernicus
             // Copy orbit provided
             public OrbitLoader(CelestialBody body)
             {
+                this.body = body;
                 orbit = body.orbitDriver.orbit;
                 referenceBody = body.orbit.referenceBody.name;
-                color = body.orbitDriver.orbitColor;
                 float[] bounds = new float[] { body.orbitDriver.lowerCamVsSmaRatio, body.orbitDriver.upperCamVsSmaRatio };
                 cameraSmaRatioBounds.value = bounds.ToList();
             }
