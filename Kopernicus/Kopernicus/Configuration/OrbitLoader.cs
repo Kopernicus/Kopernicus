@@ -111,7 +111,11 @@ namespace Kopernicus
             
             // Orbit renderer color
             [ParserTarget("color", optional = true)]
-            public ColorParser color { get; set; }
+            public ColorParser color
+            {
+                get { return generatedBody.orbitRenderer.nodeColor; }
+                set { generatedBody.orbitRenderer.SetColor(value); }
+            }
 
             // Orbit Draw Mode
             [ParserTarget("mode", optional = true)]
@@ -146,6 +150,7 @@ namespace Kopernicus
                 generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
                 orbit = generatedBody.orbitDriver.orbit;
                 color = generatedBody.orbitRenderer.orbitColor;
+                referenceBody = orbit?.referenceBody?.name;
                 float[] bounds = new float[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
                 cameraSmaRatioBounds = bounds;
 
@@ -158,7 +163,6 @@ namespace Kopernicus
                 if (epoch != null)
                     orbit.epoch += Templates.epoch;
                 generatedBody.orbitDriver.orbit = orbit;
-                generatedBody.orbitRenderer.SetColor(color.value);
                 generatedBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
                 generatedBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
             }
@@ -170,7 +174,7 @@ namespace Kopernicus
             public OrbitLoader(CelestialBody body)
             {
                 orbit = body.orbitDriver.orbit;
-                referenceBody = body.name;
+                referenceBody = body.orbit.referenceBody.name;
                 color = body.orbitDriver.orbitColor;
                 float[] bounds = new float[] { body.orbitDriver.lowerCamVsSmaRatio, body.orbitDriver.upperCamVsSmaRatio };
                 cameraSmaRatioBounds.value = bounds.ToList();
