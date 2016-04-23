@@ -114,7 +114,7 @@ namespace Kopernicus
             [ParserTarget("color", optional = true)]
             public ColorParser color
             {
-                get { return HighLogic.LoadedScene == GameScenes.PSYSTEM ? generatedBody.orbitRenderer.nodeColor : (body.orbitDriver.orbitColor * 2).A(body.orbitDriver.orbitColor.a); }
+                get { return generatedBody != null ? generatedBody.orbitRenderer.nodeColor : (body.orbitDriver.orbitColor * 2).A(body.orbitDriver.orbitColor.a); }
                 set { generatedBody.orbitRenderer.SetColor(value); }
             }
 
