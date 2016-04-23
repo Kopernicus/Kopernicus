@@ -195,6 +195,9 @@ namespace Kopernicus
                     // Loop through all Materials and change their settings
                     foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString()))
                     {
+                        // Die even if there is an exception
+                        Destroy(this);
+
                         // Patch the texture
                         if (ksc.mainTexture != null)
                         {
@@ -206,7 +209,6 @@ namespace Kopernicus
                         {
                             material.color = ksc.color.Value;
                         }
-                        Destroy(this);
                     }
                 }
             }
