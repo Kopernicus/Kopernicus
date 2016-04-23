@@ -67,7 +67,6 @@ namespace Kopernicus
                 if (scene == GameScenes.MAINMENU)
                     UpdateMenu();
             });
-            GameEvents.onGUIRnDComplexSpawn.Add(RDFixer);
 
             // Update Music Logic
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
@@ -94,10 +93,14 @@ namespace Kopernicus
         {
             FixZooming();
             ApplyOrbitVisibility();
+            RDFixer();
+            if (Resources.FindObjectsOfTypeAll<RDArchivesController>().Count() > 1)
+                isDone2 = false;
         }
 
         // Status
         bool isDone = false;
+        bool isDone2 = false;
 
         // Fix the Zooming-Out bug
         void FixZooming()
@@ -312,6 +315,14 @@ namespace Kopernicus
             // Only run in SpaceCenter
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
+                // Done
+                if (isDone2)
+                    return;
+
+                // Waaah
+                foreach (RDArchivesController controller in Resources.FindObjectsOfTypeAll<RDArchivesController>())
+                    controller.systemPrefab = PSystemManager.Instance.systemPrefab;
+
                 // Loop through the Container
                 foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
                 {
@@ -348,11 +359,13 @@ namespace Kopernicus
                     }
 
                     // namechanges
-                    if (FindObjectsOfType<NameChanger>().Where(n => n.oldName == planetItem.label_planetName.text).Count() != 0)
+                    if (FindObjectsOfType<NameChanger>().Where(n => n.oldName == planetItem.label_planetName.text).Count() != 0 && !planetItem.label_planetName.name.EndsWith("NAMECHANGER"))
                     {
                         NameChanger changer = FindObjectsOfType<NameChanger>().First(n => n.oldName == planetItem.label_planetName.text);
                         planetItem.label_planetName.text = changer.newName;
+                        planetItem.label_planetName.name += "NAMECHANGER";
                     }
+                    isDone2 = true;
                 }
             }
         }
