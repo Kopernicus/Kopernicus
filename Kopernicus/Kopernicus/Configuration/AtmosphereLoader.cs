@@ -201,11 +201,27 @@ namespace Kopernicus
             }
 
             // axialTemperatureSunMultCurve
+            [ParserTarget("temperatureAxialSunBiasCurve", optional = true)]
+            public FloatCurveParser axialTemperatureSunBiasCurve
+            {
+                get { return celestialBody.axialTemperatureSunBiasCurve; }
+                set { celestialBody.axialTemperatureSunBiasCurve = value; }
+            }
+            
+            // axialTemperatureSunMultCurve
             [ParserTarget("temperatureAxialSunMultCurve", optional = true)]
             public FloatCurveParser axialTemperatureSunMultCurve
             {
                 get { return celestialBody.axialTemperatureSunMultCurve; }
                 set { celestialBody.axialTemperatureSunMultCurve = value; }
+            }
+            
+            // eccentricityTemperatureBiasCurve
+            [ParserTarget("temperatureEccentricityBiasCurve", optional = true)]
+            public FloatCurveParser eccentricityTemperatureBiasCurve
+            {
+                get { return celestialBody.eccentricityTemperatureBiasCurve; }
+                set { celestialBody.eccentricityTemperatureBiasCurve = value; }
             }
 
             // ambient atmosphere color
