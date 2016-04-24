@@ -94,8 +94,6 @@ namespace Kopernicus
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
-            if (Resources.FindObjectsOfTypeAll<RDArchivesController>().Count() > 1)
-                isDone2 = false;
         }
 
         // Status
@@ -321,51 +319,11 @@ namespace Kopernicus
 
                 // Waaah
                 foreach (RDArchivesController controller in Resources.FindObjectsOfTypeAll<RDArchivesController>())
-                    controller.systemPrefab = PSystemManager.Instance.systemPrefab;
-
-                // Loop through the Container
-                foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
                 {
-                    // Barycenter
-                    if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
-                    {
-                        // Call function recursively
-                        Utility.DoRecursive(planetItem, i => Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(p => p.parent == i), (item) =>
-                        {
-                            // Reparent
-                            foreach (RDPlanetListItemContainer child in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(p => p.parent == item))
-                            {
-                                child.parent = item.parent;
-                                child.hierarchy_level += 1;
-                                float scale = 0.8f;
-                                float container_height = 60f;
-                                if (child.hierarchy_level > 1)
-                                {
-                                    scale = 0.5f;
-                                    container_height = 60f;
-                                }
-                                float magnitude = child.planet.GetComponent<MeshFilter>().mesh.bounds.size.magnitude;
-                                FieldInfo float0 = child.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(float)).ToArray()[0];
-                                FieldInfo float1 = child.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(float)).ToArray()[1];
-                                float0.SetValue(child, 80f / magnitude * scale);
-                                float1.SetValue(child, (80f / magnitude * scale) * 1.1f);
-                                child.planet.transform.localScale = Vector3.one * (80f / magnitude * scale);
-                                child.layoutElement.preferredHeight = container_height;
-                            }
-                        });
-
-                        // Hide
-                        planetItem.Hide();
-                    }
-
-                    // namechanges
-                    if (FindObjectsOfType<NameChanger>().Where(n => n.oldName == planetItem.label_planetName.text).Count() != 0 && !planetItem.label_planetName.name.EndsWith("NAMECHANGER"))
-                    {
-                        NameChanger changer = FindObjectsOfType<NameChanger>().First(n => n.oldName == planetItem.label_planetName.text);
-                        planetItem.label_planetName.text = changer.newName;
-                        planetItem.label_planetName.name += "NAMECHANGER";
-                    }
-                    isDone2 = true;
+                    if (controller.systemPrefab.name != PSystemManager.Instance.systemPrefab.name)
+                        isDone2 = true;
+                    controller.systemPrefab = PSystemManager.Instance.systemPrefab;
+                    controller.gameObject.AddOrGetComponent<RnDFixer>();
                 }
             }
         }
