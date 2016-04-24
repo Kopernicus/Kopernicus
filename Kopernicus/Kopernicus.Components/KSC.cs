@@ -193,23 +193,28 @@ namespace Kopernicus
                     KSC ksc = GetComponent<KSC>();
 
                     // Loop through all Materials and change their settings
-                    foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString()))
+                    try
                     {
-                        // Die even if there is an exception
-                        Destroy(this);
-
-                        // Patch the texture
-                        if (ksc.mainTexture != null)
+                        foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString()))
                         {
-                            material.mainTexture = ksc.mainTexture;
-                        }
-
-                        // Patch the color
-                        if (ksc.color.HasValue)
-                        {
-                            material.color = ksc.color.Value;
+                            // Patch the texture
+                            if (ksc.mainTexture != null)
+                            {
+                                material.mainTexture = ksc.mainTexture;
+                            }
+    
+                            // Patch the color
+                            if (ksc.color.HasValue)
+                            {
+                                material.color = ksc.color.Value;
+                            }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        Debug.Log("[Kopernicus]: MaterialFixer: Exception " + e);
+                    }
+                    Destroy(this);
                 }
             }
         }
