@@ -43,6 +43,9 @@ namespace Kopernicus
             // Representation of the map
             protected new Texture2D _data { get; set; }
 
+            // Timer for delayed unload
+            Timer timer;
+
             // States
             public bool IsLoaded { get; set; }
             public bool AutoLoad { get; set; }
@@ -56,6 +59,13 @@ namespace Kopernicus
             // Load the Map
             public void Load()
             {
+                // If we have an unload timer going then get rid
+                if (timer != null)
+                {
+                    timer.Kill();
+                    timer = null;
+                }
+
                 // Check if the Map is already loaded
                 if (IsLoaded)
                     return;
@@ -79,10 +89,15 @@ namespace Kopernicus
             // Unload the map
             public void Unload()
             {
-                // We can only destroy the map, if it is loaded
+                // We can only destroy the map, if it is loaded and initialized
                 if (!IsLoaded)
                     return;
 
+                timer = new Timer(10000d, DestroyData);
+            }
+
+            void DestroyData()
+            {
                 // Nuke the map
                 DestroyImmediate(_data);
 

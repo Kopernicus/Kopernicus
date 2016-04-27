@@ -63,6 +63,7 @@
     <Compile Include="PQSMod_OnDemandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScaledSpaceDemand.cs" />
+    <Compile Include="Timer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
