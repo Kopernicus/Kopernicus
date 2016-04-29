@@ -47,7 +47,8 @@ namespace Kopernicus
                 Vacuum,
                 AtmosphericBasic,
                 AtmosphericMain,
-                AtmosphericOptimized
+                AtmosphericOptimized,
+                AtmosphericExtra
             };
 
             // PQS we are creating
@@ -133,13 +134,15 @@ namespace Kopernicus
                 set 
                 {
                     if (value.value == PQSMaterialType.AtmosphericOptimized)
-                        surfaceMaterial = new PQSMainOptimisedLoader ();
+                        surfaceMaterial = new PQSMainOptimisedLoader();
                     else if (value.value == PQSMaterialType.AtmosphericMain)
-                        surfaceMaterial = new PQSMainShaderLoader ();
+                        surfaceMaterial = new PQSMainShaderLoader();
                     else if (value.value == PQSMaterialType.AtmosphericBasic)
-                        surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader ();
+                        surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
                     else if (value.value == PQSMaterialType.Vacuum)
-                        surfaceMaterial = new PQSProjectionSurfaceQuadLoader ();
+                        surfaceMaterial = new PQSProjectionSurfaceQuadLoader();
+                    else if (value.value == PQSMaterialType.AtmosphericExtra)
+                        surfaceMaterial = new PQSMainExtrasLoader();
                 }
             }
 
