@@ -71,8 +71,8 @@ namespace Kopernicus
             //
             return 
                 Versioning.version_major == version_major && 
-                Versioning.version_minor == version_minor; //&& 
-                //Versioning.Revision == Revision;
+                Versioning.version_minor == version_minor && 
+                Versioning.Revision == Revision;
 
             /*-----------------------------------------------*\
             | IMPLEMENTERS SHOULD NOT EDIT BEYOND THIS POINT! |
