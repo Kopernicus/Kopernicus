@@ -49,7 +49,7 @@ namespace Kopernicus
         // Compatible version
         internal const int version_major = 1;
         internal const int version_minor = 1;
-        internal const int Revision = 0;
+        //internal const int Revision = 0;
 
         public static bool IsCompatible()
         {
@@ -71,8 +71,8 @@ namespace Kopernicus
             //
             return 
                 Versioning.version_major == version_major && 
-                Versioning.version_minor == version_minor && 
-                Versioning.Revision == Revision;
+                Versioning.version_minor == version_minor; //&& 
+                //Versioning.Revision == Revision;
 
             /*-----------------------------------------------*\
             | IMPLEMENTERS SHOULD NOT EDIT BEYOND THIS POINT! |
