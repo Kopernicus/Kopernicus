@@ -68,6 +68,7 @@
     <Compile Include="MaterialWrapper\NormalDiffuse.cs" />
     <Compile Include="MaterialWrapper\NormalDiffuseDetail.cs" />
     <Compile Include="MaterialWrapper\ParticleAddSmooth.cs" />
+    <Compile Include="MaterialWrapper\PQSMainExtras.cs" />
     <Compile Include="MaterialWrapper\PQSMainOptimised.cs" />
     <Compile Include="MaterialWrapper\PQSMainShader.cs" />
     <Compile Include="MaterialWrapper\PQSOceanSurfaceQuad.cs" />
