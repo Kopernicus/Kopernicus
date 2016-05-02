@@ -31,8 +31,6 @@
 * https://kerbalspaceprogram.com
 */
 
-using System.Timers;
-
 namespace Kopernicus
 {
     namespace OnDemand
@@ -54,9 +52,6 @@ namespace Kopernicus
 
             // AutoLoad
             bool AutoLoad { get; set; }
-
-            // Unload Timer
-            Timer timer { get; set; }
         }
     }
 }
