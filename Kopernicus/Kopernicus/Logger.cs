@@ -29,7 +29,7 @@
 
 using System;
 using System.IO;
-
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Kopernicus
@@ -41,25 +41,33 @@ namespace Kopernicus
         private static bool isInitialized = false;
 
         // Logger output path
-        public static string LogDirectory 
+        public static string LogDirectory
         {
-            get { return KSPUtil.ApplicationRootPath + "Logs/"; }
+            get { return KSPUtil.ApplicationRootPath + "Logs/" + typeof (Logger).Assembly.GetName().Name + "/"; }
+        }
+
+        // ==> Implement own version
+        public static string version
+        {
+            get { return Constants.Version.version; }
         }
 
         // Default logger
         private static Logger _DefaultLogger = null;
-        public static Logger Default 
+
+        public static Logger Default
         {
-            get 
+            get
             {
                 if (_DefaultLogger == null)
-                    _DefaultLogger = new Logger ();
+                    _DefaultLogger = new Logger();
                 return _DefaultLogger;
             }
         }
 
         // Currently active logger
         private static Logger _ActiveLogger = null;
+
         public static Logger Active
         {
             get
@@ -80,7 +88,8 @@ namespace Kopernicus
             if (loggerStream == null)
                 return;
 
-            loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: " + o);
+            loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: " + o);
+            loggerStream.Flush();
         }
 
         // Write text to the log
@@ -89,10 +98,13 @@ namespace Kopernicus
             if (loggerStream == null)
                 return;
 
-            loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: Exception Was Recorded: " + e.Message + "\n" + e.StackTrace);
+            loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: Exception Was Recorded: " +
+                                   e.Message + "\n" + e.StackTrace);
 
-            if(e.InnerException != null)
-                loggerStream.WriteLine ("[LOG " + DateTime.Now.ToString ("HH:mm:ss") + "]: Inner Exception Was Recorded: " + e.InnerException.Message + "\n" + e.InnerException.StackTrace);
+            if (e.InnerException != null)
+                loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: Inner Exception Was Recorded: " +
+                                       e.InnerException.Message + "\n" + e.InnerException.StackTrace);
+            loggerStream.Flush();
         }
 
         // Set logger as the active logger
@@ -105,8 +117,8 @@ namespace Kopernicus
         {
             if (loggerStream == null)
                 return;
-            
-            loggerStream.Flush ();
+
+            loggerStream.Flush();
         }
 
         // Close the logger
@@ -115,26 +127,29 @@ namespace Kopernicus
             if (loggerStream == null)
                 return;
 
-            loggerStream.Flush ();
-            loggerStream.Close ();
+            loggerStream.Flush();
+            loggerStream.Close();
             loggerStream = null;
         }
 
         // Create a logger
-        public Logger (string LogFileName = "Kopernicus")
+        public Logger([Optional] string LogFileName)
         {
             if (!isInitialized)
                 return;
-            
+            if (String.IsNullOrEmpty(LogFileName))
+                LogFileName = typeof(Logger).Assembly.GetName().Name;
+
+
             try
             {
                 // Open the log file (overwrite existing logs)
                 LogFileName = LogFileName.Replace("/", "").Replace("\\", "");
                 string LogFile = Logger.LogDirectory + LogFileName + ".log";
-                loggerStream = new StreamWriter(File.Create (LogFile));
+                loggerStream = new StreamWriter(LogFile);
 
                 // Write an opening message
-                string logVersion = "//=====  " + Constants.Version.version + "  =====//";
+                string logVersion = "//=====  " + version + "  =====//";
 
                 // Create the header this way, because I'm maybe too stupid to find the "fill" function
                 string logHeader = "";
