@@ -49,37 +49,12 @@ namespace Kopernicus
                 // Barycenter
                 if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
                 {
-                    // Call function recursively
-                    Utility.DoRecursive(planetItem, i => Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(p => p.parent == i), (item) =>
-                    {
-                        // Reparent
-                        foreach (RDPlanetListItemContainer child in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(p => p.parent == item))
-                        {
-                            child.parent = item.parent;
-                            child.hierarchy_level += 1;
-                            float scale = 0.8f;
-                            float container_height = 60f;
-                            if (child.hierarchy_level > 1)
-                            {
-                                scale = 0.5f;
-                                container_height = 60f;
-                            }
-                            float magnitude = child.planet.GetComponent<MeshFilter>().mesh.bounds.size.magnitude;
-                            FieldInfo float0 = child.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(float)).ToArray()[0];
-                            FieldInfo float1 = child.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(float)).ToArray()[1];
-                            float0.SetValue(child, 80f / magnitude * scale);
-                            float1.SetValue(child, (80f / magnitude * scale) * 1.1f);
-                            child.planet.transform.localScale = Vector3.one * (80f / magnitude * scale);
-                            child.layoutElement.preferredHeight = container_height;
-                        }
-                    });
-
-                    // Hide
-                    planetItem.Hide();
+                    planetItem.planet.SetActive(false);
+                    planetItem.label_planetName.alignment = TextAnchor.MiddleLeft;
                 }
 
                 // namechanges
-                if (FindObjectsOfType<NameChanger>().Where(n => n.oldName == planetItem.label_planetName.text).Count() != 0 && !planetItem.label_planetName.name.EndsWith("NAMECHANGER"))
+                if (FindObjectsOfType<NameChanger>().Count(n => n.oldName == planetItem.label_planetName.text) != 0 && !planetItem.label_planetName.name.EndsWith("NAMECHANGER"))
                 {
                     NameChanger changer = FindObjectsOfType<NameChanger>().First(n => n.oldName == planetItem.label_planetName.text);
                     planetItem.label_planetName.text = changer.newName;
