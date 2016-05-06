@@ -254,6 +254,14 @@ namespace Kopernicus
                 set { if (!value.value) Templates.notSelectable.Add(celestialBody.transform.name); }
             }
 
+            // If the body should be hidden in RnD
+            [ParserTarget("hiddenRnD", optional = true)]
+            public NumericParser<bool> hiddenRnD
+            {
+                get { return Templates.hiddenRnD.Contains(celestialBody.transform.name); }
+                set { if (value.value) Templates.hiddenRnD.Add(celestialBody.transform.name); }
+            }
+
             // Apply Event
             void IParserEventSubscriber.Apply (ConfigNode node)
             {

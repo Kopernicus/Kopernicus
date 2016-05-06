@@ -26,7 +26,8 @@
  * 
  * https://kerbalspaceprogram.com
  */
- 
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -63,6 +64,7 @@ namespace Kopernicus
 
         // Bodies who aren't selectable
         public static List<string> notSelectable { get; set; }
+        public static List<string> hiddenRnD { get; set; } 
 
         // Orbits
         public static Dictionary<string, OrbitRenderer.DrawIcons> drawIcons { get; set; }
@@ -87,6 +89,7 @@ namespace Kopernicus
             barycenters = new List<string>();
             notSelectable = new List<string>();
             finalizeBodies = new List<string>();
+            hiddenRnD = new List<String>();
 
             // Main Menu body
             menuBody = "Kerbin";
