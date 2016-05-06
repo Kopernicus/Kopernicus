@@ -52,9 +52,6 @@ namespace Kopernicus
             // MapDepth
             public new MapDepth Depth { get; set; }
 
-            // Unload timer
-            public Timer timer { get; set; }
-
             // Load the Map
             public void Load()
             {
@@ -69,8 +66,6 @@ namespace Kopernicus
                 if (map != null)
                 {
                     CreateMap(Depth, map);
-                    timer = new Timer(60000d, Unload);
-                    timer.Start();
                     IsLoaded = true;
                     Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
                     return;
@@ -138,7 +133,6 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Attributes[0];
                 }
-                timer.Reset();
                 return base.GetAtt(lat, lon);
             }
 
@@ -151,7 +145,6 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
-                timer.Reset();
 
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color.Lerp(
@@ -175,7 +168,6 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return Color.black;
                 }
-                timer.Reset();
                 return _data.GetPixel(x, y);
             }
 
@@ -188,7 +180,6 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new Texture2D(_width, _height);
                 }
-                timer.Reset();
                 Texture2D compiled = Instantiate(_data) as Texture2D;
                 compiled.Apply(false, true);
                 return compiled;
