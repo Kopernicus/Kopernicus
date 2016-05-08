@@ -392,6 +392,8 @@ namespace Kopernicus
 
                 // Find the PQS mods and enable the PQS-sphere
                 IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
+                foreach (PQSMod flatten in mods.Where(m => m is PQSMod_FlattenArea))
+                    flatten.GetType().GetField("quadActive", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(flatten, true);
 
                 pqsVersion.StartUpSphere();
                 pqsVersion.isBuildingMaps = true;
@@ -419,10 +421,7 @@ namespace Kopernicus
 
                         // Build from the PQS
                         foreach (PQSMod mod in mods)
-                        {
-                            mod.OnVertexBuild(vertex); // Why in heaven are there mods who modify height in OnVertexBuild() rather than OnVertexBuildHeight()?!?!
                             mod.OnVertexBuildHeight(vertex);
-                        }
 
                         // Check for sea level
                         if (body.ocean && vertex.vertHeight < body.Radius)
