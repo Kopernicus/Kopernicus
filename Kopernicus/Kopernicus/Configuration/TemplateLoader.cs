@@ -221,7 +221,7 @@ namespace Kopernicus
                             }
                             PQSMod[] allMods = body.pqsVersion.GetComponentsInChildren(kvP.Value, true).Select(m => m as PQSMod).Where(m => m.name == name).ToArray();
                             if (allMods.Length > 0)
-                                UnityEngine.Object.Destroy(allMods[index]);
+                                UnityEngine.Object.DestroyImmediate(allMods[index]);
                         }
                     }
 
