@@ -204,10 +204,29 @@ namespace Kopernicus
             }
 
             // Runtime constructor
-            public AtmosphereFromGroundLoader(CelestialBody body) : this()
+            public AtmosphereFromGroundLoader(CelestialBody body)
             {
                 this.body = body;
-                afg = body.scaledBody.GetComponentInChildren<AtmosphereFromGround>();
+                afg = body.afg;
+
+                // Set Defaults
+                afg.planet = body;
+                afg.ESun = 30f;
+                afg.Kr = 0.00125f;
+                afg.Km = 0.00015f;
+
+                afg.samples = 4f;
+                afg.g = -0.85f;
+                if (afg.waveLength == new Color(0f, 0f, 0f, 0f))
+                {
+                    afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
+                }
+                afg.outerRadius = (((float)body.Radius) * 1.025f) * INVSCALEFACTOR;
+                afg.innerRadius = afg.outerRadius * 0.975f;
+                afg.scaleDepth = -0.25f;
+                afg.invWaveLength = new Color((float)(1d / Math.Pow(afg.waveLength[0], 4)), (float)(1d / Math.Pow(afg.waveLength[1], 4)), (float)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
+
+                CalculatedMembers(afg);
             }
 
         }
