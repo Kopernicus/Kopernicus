@@ -403,7 +403,7 @@ namespace Kopernicus
                     // Runtime Constructor
                     public LandClassScatterAmountLoader(PQSLandControl.LandClassScatterAmount amount)
                     {
-                        if (scatterAmount != null)
+                        if (amount != null)
                             scatterAmount = amount;
                         else
                             scatterAmount = new PQSLandControl.LandClassScatterAmount();
