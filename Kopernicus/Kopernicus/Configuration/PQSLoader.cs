@@ -385,7 +385,7 @@ namespace Kopernicus
                     if (existingMods.Any())
                     {
                         // Attempt to find a PQS mod we can edit that we have not edited before
-                        PQSMod existingMod = existingMods.FirstOrDefault(m => !patchedMods.Contains(m) && (!mod.HasValue("name") || mod.HasValue("index") ? existingMods.ToList().IndexOf(m) == Int32.Parse(mod.GetValue("index")) && m.name == mod.GetValue("name") : m.name == mod.GetValue("name")));
+                        PQSMod existingMod = existingMods.FirstOrDefault(m => !patchedMods.Contains(m) && (!mod.HasValue("name") || (mod.HasValue("index") ? existingMods.ToList().IndexOf(m) == Int32.Parse(mod.GetValue("index")) && m.name == mod.GetValue("name") : m.name == mod.GetValue("name"))));
                         if (existingMod != null)
                         {
                             create.Invoke(loader, new[] { existingMod });
