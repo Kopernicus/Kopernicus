@@ -333,8 +333,6 @@ namespace Kopernicus
             // Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                generatedBody.pqsVersion.surfaceMaterial = surfaceMaterial;
-                surfaceMaterial.name = Guid.NewGuid().ToString();
             }
             // PostApply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
@@ -345,6 +343,8 @@ namespace Kopernicus
                 generatedBody.pqsVersion.transform.name = generatedBody.name;
                 generatedBody.pqsVersion.gameObject.name = generatedBody.name;
                 generatedBody.pqsVersion.radius = generatedBody.celestialBody.Radius;
+                generatedBody.pqsVersion.surfaceMaterial = surfaceMaterial;
+                surfaceMaterial.name = Guid.NewGuid().ToString();
 
                 // Add an OnDemand Handler
                 OnDemand.OnDemandStorage.AddHandler(generatedBody.pqsVersion);
