@@ -141,7 +141,7 @@ namespace Kopernicus
             public OceanLoader()
             {
                 // Load existing Oceans
-                if (generatedBody.pqsVersion.ChildSpheres.Where(p => p.name.EndsWith("Ocean")).Count() != 0)
+                if (generatedBody.pqsVersion.ChildSpheres.Count(p => p.name.EndsWith("Ocean")) != 0)
                 {
                     ocean = generatedBody.pqsVersion.ChildSpheres.First(p => p.name.EndsWith("Ocean"));
                     gameObject = ocean.gameObject;
@@ -217,7 +217,7 @@ namespace Kopernicus
                 ocean.transform.parent = generatedBody.pqsVersion.transform;
 
                 // Add the ocean PQS to the secondary renders of the CelestialBody Transform
-                PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).Where(mod => mod.transform.parent == generatedBody.pqsVersion.transform).FirstOrDefault();
+                PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).FirstOrDefault(mod => mod.transform.parent == generatedBody.pqsVersion.transform);
                 transform.planetFade.secondaryRenderers.Add(ocean.gameObject);
 
                 // Names!
@@ -240,7 +240,7 @@ namespace Kopernicus
                 foreach (ConfigNode mod in node.GetNode("Mods").nodes)
                 {
                     // get the mod type
-                    if (types.Where(t => t.Name == mod.name).Count() == 0)
+                    if (types.All(t => t.Name != mod.name))
                         continue;
                     Type loaderType = types.FirstOrDefault(t => t.Name == mod.name);
                     string testName = mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl";
@@ -252,7 +252,7 @@ namespace Kopernicus
                     }
 
                     // Do any PQS Mods already exist on this PQS matching this mod?
-                    IEnumerable<PQSMod> existingMods = ocean.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType().Equals(modType) &&
+                    IEnumerable<PQSMod> existingMods = ocean.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == modType &&
                                                                                                                     m.transform.parent == ocean.transform);
 
                     // Create the loader
@@ -262,10 +262,10 @@ namespace Kopernicus
                     MethodInfo createNew = loaderType.GetMethod("Create", new Type[] { typeof(PQS) });
                     MethodInfo create = loaderType.GetMethod("Create", new Type[] { modType, typeof(PQS) });
 
-                    if (existingMods.Count() > 0)
+                    if (existingMods.Any())
                     {
                         // Attempt to find a PQS mod we can edit that we have not edited before
-                        PQSMod existingMod = existingMods.Where(m => !patchedMods.Contains(m) && (mod.HasValue("name") ? m.name == mod.GetValue("name") : true)).FirstOrDefault();
+                        PQSMod existingMod = existingMods.FirstOrDefault(m => !patchedMods.Contains(m) && (mod.HasValue("name") ? m.name == mod.GetValue("name") : true));
                         if (existingMod != null)
                         {
                             create.Invoke(loader, new object[] { existingMod, ocean });
