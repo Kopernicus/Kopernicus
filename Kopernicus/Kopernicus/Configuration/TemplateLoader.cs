@@ -213,9 +213,9 @@ namespace Kopernicus
                         {
                             int index = 0;
                             string name = kvP.Key;
-                            if (name.Contains(','))
+                            if (name.Contains(';'))
                             {
-                                string[] split = name.Split(',');
+                                string[] split = name.Split(';');
                                 name = split[0];
                                 Int32.TryParse(split[1], out index);
                             }
