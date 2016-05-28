@@ -56,6 +56,9 @@ namespace Kopernicus
             }
         }
 
+        // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
+        public static PSystem StockSystemPrefab { get; set; }
+
         // Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
         // it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
         public void Awake()
@@ -87,6 +90,9 @@ namespace Kopernicus
                 Logger.Default.Log("Injector.Awake(): If PSystemManager.Instance is null, there is nothing to do");
                 return;
             }
+
+            // Backup the old prefab
+            StockSystemPrefab = PSystemManager.Instance.systemPrefab;
 
             // Get the current time
             DateTime start = DateTime.Now;
