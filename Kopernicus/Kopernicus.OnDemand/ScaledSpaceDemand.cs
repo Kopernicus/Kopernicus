@@ -27,6 +27,7 @@
 * https://kerbalspaceprogram.com
 */
 
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -65,11 +66,11 @@ namespace Kopernicus
 
                 // Load Diffuse
                 if (OnDemandStorage.TextureExists(texture))
-                    scaledRenderer.material.SetTexture("_MainTex", OnDemandStorage.LoadTexture(texture, false, true, true));
+                    OnDemandStorage.LoadTextureAsync(texture, false, true, false, tex => scaledRenderer.material.SetTexture("_MainTex", tex));
 
                 // Load Normals
                 if (OnDemandStorage.TextureExists(normals))
-                    scaledRenderer.material.SetTexture("_BumpMap", OnDemandStorage.LoadTexture(normals, false, true, false));
+                    OnDemandStorage.LoadTextureAsync(normals, false, true, false, tex => scaledRenderer.material.SetTexture("_BumpMap", tex));
 
                 // Flags
                 isLoaded = true;
