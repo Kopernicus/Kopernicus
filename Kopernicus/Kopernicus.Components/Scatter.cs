@@ -92,22 +92,46 @@ namespace Kopernicus
 
             void Update()
             {
-                // If there's nothing to do, abort
-                if (transform.childCount == 0)
-                    return;
-
-                // Add Colliders
-                if (!meshColliders.Any())
-                {
-                    foreach (Transform t in transform)
-                    {
-                        // If we should add colliders, add them
-                        MeshCollider collider = t.gameObject.AddComponent<MeshCollider>();
-                        collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
-                        collider.sharedMesh.Optimize();
-                        collider.enabled = colliders;
-                        meshColliders.Add(collider);
+                // If there's nothing to do, discard any old colliders and abort
+                if (transform.childCount == 0) {
+                    if (meshColliders.Any()) {
+                        Debug.LogWarning("Discard old colliders");
+                        foreach (var collider in meshColliders)
+                            if (collider) Destroy(collider);
+                        meshColliders.Clear();
                     }
+                    return;
+                }
+
+                if (colliders) {
+                    var rebuild = false;
+                    if (transform.childCount > meshColliders.Count) {
+                        Debug.LogWarning("Add " + (transform.childCount - meshColliders.Count) + " colliders");
+                        rebuild = true;
+                    } else if (transform.childCount < meshColliders.Count) {
+                        Debug.LogWarning("Remove " + (meshColliders.Count - transform.childCount) + " colliders");
+                        rebuild = true;
+                    } else if (meshColliders[0].sharedMesh != transform.GetChild(0).GetComponent<MeshFilter>().sharedMesh) {
+                        Debug.LogWarning("Replacing colliders");
+                        rebuild = true;
+                    }
+                    if (rebuild) {
+                        foreach (Transform t in transform) {
+                            MeshCollider collider = t.gameObject.GetComponent<MeshCollider>();
+                            if (!collider) {
+                                collider = t.gameObject.AddComponent<MeshCollider>();
+                                collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
+                                collider.sharedMesh.Optimize();
+                                collider.enabled = true;
+                                meshColliders.Add(collider);
+                            }
+                        }
+                    }
+                } else if (meshColliders.Any()) {
+                    Debug.LogWarning("Discard unused colliders");
+                    foreach (var collider in meshColliders)
+                        if (collider) Destroy(collider);
+                    meshColliders.Clear();
                 }
 
                 // Node null
