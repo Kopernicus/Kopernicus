@@ -58,7 +58,7 @@ namespace Kopernicus
             // Start(), get the scaled Mesh renderer
             void Start()
             {
-                unloadDelay = Stopwatch.Frequency * 30;
+                unloadDelay = Stopwatch.Frequency * 10;
                 scaledRenderer = GetComponent<MeshRenderer>();
                 OnBecameInvisible();
             }
@@ -104,14 +104,14 @@ namespace Kopernicus
                 // Load Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
-                    //print("ScaledSpaceDemand.OnBecameVisible loading " + texture);
+                    //print("ScaledSpaceDemand.LoadTextures loading " + texture);
                     scaledRenderer.material.SetTexture("_MainTex", OnDemandStorage.LoadTexture(texture, false, true, true));
                 }
 
                 // Load Normals
                 if (OnDemandStorage.TextureExists(normals))
                 {
-                    //print("ScaledSpaceDemand.OnBecameVisible loading " + normals);
+                    //print("ScaledSpaceDemand.LoadTextures loading " + normals);
                     scaledRenderer.material.SetTexture("_BumpMap", OnDemandStorage.LoadTexture(normals, false, true, false));
                 }
 
@@ -124,14 +124,14 @@ namespace Kopernicus
                 // Kill Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
-                    //print("ScaledSpaceDemand.OnBecameInvisible destroying " + texture);
+                    //print("ScaledSpaceDemand.UnloadTextures destroying " + texture);
                     DestroyImmediate(scaledRenderer.material.GetTexture("_MainTex"));
                 }
 
                 // Kill Normals
                 if (OnDemandStorage.TextureExists(normals))
                 {
-                    //print("ScaledSpaceDemand.OnBecameInvisible destroying " + normals);
+                    //print("ScaledSpaceDemand.UnloadTextures destroying " + normals);
                     DestroyImmediate(scaledRenderer.material.GetTexture("_BumpMap"));
                 }
 
