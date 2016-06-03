@@ -27,7 +27,6 @@
 * https://kerbalspaceprogram.com
 */
 
-using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
 
