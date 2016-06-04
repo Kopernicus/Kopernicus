@@ -319,8 +319,6 @@ namespace Kopernicus
                         {
                             // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
                             // Also borrowed the extra bits from Sarbian.
-                            //byte[] buffer = File.ReadAllBytes(path);
-                            //BinaryReader binaryReader = new BinaryReader(new MemoryStream(buffer));
                             BinaryReader binaryReader = new BinaryReader(File.OpenRead(path));
                             uint num = binaryReader.ReadUInt32();
                             if (num == DDSHeaders.DDSValues.uintMagic)
