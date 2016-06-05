@@ -186,7 +186,7 @@ namespace Kopernicus
             {
                 // If we haven't worked out if we can patch array length then do it
                 if (arrayLengthOffset == 0)
-                    CalculateByteArrayLengthOffset();
+                    CalculateArrayLengthOffset();
 
                 // If we can't patch array length then just use the normal function
                 if (arrayLengthOffset == 1)
@@ -203,7 +203,7 @@ namespace Kopernicus
                 {
                     // Round it up to a 1MB multiple
                     sizeWholeFile = (fileBytes + 0xFFFFF) & ~0xFFFFF;
-                    MonoBehaviour.print("LoadWholeFile reallocating buffer to " + sizeWholeFile);
+                    Debug.Log("[OD] LoadWholeFile reallocating buffer to " + sizeWholeFile);
                     wholeFileBuffer = new byte[sizeWholeFile];
                 }
                 else
@@ -234,7 +234,7 @@ namespace Kopernicus
             {
                 // If we haven't worked out if we can patch array length then do it
                 if (arrayLengthOffset == 0)
-                    CalculateByteArrayLengthOffset();
+                    CalculateArrayLengthOffset();
 
                 long chunkBytes = reader.BaseStream.Length - reader.BaseStream.Position;
                 if (chunkBytes > int.MaxValue)
@@ -250,7 +250,7 @@ namespace Kopernicus
                 {
                     // Round it up to a 1MB multiple
                     sizeWholeFile = (fileBytes + 0xFFFFF) & ~0xFFFFF;
-                    MonoBehaviour.print("LoadRestOfReader reallocating buffer to " + sizeWholeFile);
+                    Debug.Log("[OD] LoadRestOfReader reallocating buffer to " + sizeWholeFile);
                     wholeFileBuffer = new byte[sizeWholeFile];
                 }
                 else
@@ -277,7 +277,7 @@ namespace Kopernicus
                 return wholeFileBuffer;
             }
 
-            unsafe static void CalculateByteArrayLengthOffset()
+            unsafe static void CalculateArrayLengthOffset()
             {
                 // Work out the offset by allocating a small array and searching backwards until we find the correct value
                 int[] temp = new int[3];
@@ -292,7 +292,7 @@ namespace Kopernicus
                     }
 
                     arrayLengthOffset = (*p == 3) ? offset : 1;
-                    MonoBehaviour.print("Using arrayLengthOffset of " + arrayLengthOffset);
+                    Debug.Log("[OD] CalculateArrayLengthOffset using offset of " + arrayLengthOffset);
                 }
             }
 

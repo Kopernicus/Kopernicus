@@ -27,7 +27,6 @@
 * https://kerbalspaceprogram.com
 */
 
-using System.Diagnostics;
 using UnityEngine;
 
 namespace Kopernicus
@@ -37,6 +36,8 @@ namespace Kopernicus
         // Class to load ScaledSpace Textures on Demand
         public class ScaledSpaceDemand : MonoBehaviour
         {
+            const int UnloadDelaySeconds = 10;
+            
             // Path to the Texture
             public string texture;
 
@@ -58,7 +59,7 @@ namespace Kopernicus
             // Start(), get the scaled Mesh renderer
             void Start()
             {
-                unloadDelay = Stopwatch.Frequency * 10;
+                unloadDelay = System.Diagnostics.Stopwatch.Frequency * UnloadDelaySeconds;
                 scaledRenderer = GetComponent<MeshRenderer>();
                 OnBecameInvisible();
             }
@@ -70,7 +71,7 @@ namespace Kopernicus
                     return;
 
                 // If we're past the unload time then unload
-                if (Stopwatch.GetTimestamp() > unloadTime)
+                if (System.Diagnostics.Stopwatch.GetTimestamp() > unloadTime)
                     UnloadTextures();
             }
 
@@ -96,22 +97,21 @@ namespace Kopernicus
                     return;
 
                 // Set the time at which to unload
-                unloadTime = Stopwatch.GetTimestamp() + unloadDelay;
+                unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
             }
 
             void LoadTextures()
             {
+                Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
                 // Load Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
-                    //print("ScaledSpaceDemand.LoadTextures loading " + texture);
                     scaledRenderer.material.SetTexture("_MainTex", OnDemandStorage.LoadTexture(texture, false, true, true));
                 }
 
                 // Load Normals
                 if (OnDemandStorage.TextureExists(normals))
                 {
-                    //print("ScaledSpaceDemand.LoadTextures loading " + normals);
                     scaledRenderer.material.SetTexture("_BumpMap", OnDemandStorage.LoadTexture(normals, false, true, false));
                 }
 
@@ -121,17 +121,16 @@ namespace Kopernicus
 
             void UnloadTextures()
             {
+                Debug.Log("[OD] <--- ScaledSpaceDemand.UnloadTextures destroying " + texture + " and " + normals);
                 // Kill Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
-                    //print("ScaledSpaceDemand.UnloadTextures destroying " + texture);
                     DestroyImmediate(scaledRenderer.material.GetTexture("_MainTex"));
                 }
 
                 // Kill Normals
                 if (OnDemandStorage.TextureExists(normals))
                 {
-                    //print("ScaledSpaceDemand.UnloadTextures destroying " + normals);
                     DestroyImmediate(scaledRenderer.material.GetTexture("_BumpMap"));
                 }
 
