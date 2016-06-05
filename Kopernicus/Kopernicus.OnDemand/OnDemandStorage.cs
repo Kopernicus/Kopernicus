@@ -48,6 +48,11 @@ namespace Kopernicus
             public static Dictionary<PQS, PQSMod_OnDemandHandler> handlers = new Dictionary<PQS, PQSMod_OnDemandHandler>();
             public static string currentBody = "";
 
+            // Whole file buffer management
+            private static byte[] wholeFileBuffer = null;
+            private static int sizeWholeFile = 0;
+            private static int arrayLengthOffset = 0;
+
             // OnDemand flags
             public static bool useOnDemand = true;
             public static bool useOnDemandBiomes = true;
@@ -177,6 +182,129 @@ namespace Kopernicus
                 return false;
             }
 
+            public static byte[] LoadWholeFile(string path)
+            {
+                // If we haven't worked out if we can patch array length then do it
+                if (arrayLengthOffset == 0)
+                    CalculateArrayLengthOffset();
+
+                // If we can't patch array length then just use the normal function
+                if (arrayLengthOffset == 1)
+                    return File.ReadAllBytes(path);
+
+                // Otherwise we do cunning stuff
+                FileStream file = File.OpenRead(path);
+                if (file.Length > int.MaxValue)
+                    throw new Exception("File too large");
+
+                int fileBytes = (int)file.Length;
+
+                if (wholeFileBuffer == null || fileBytes > sizeWholeFile)
+                {
+                    // Round it up to a 1MB multiple
+                    sizeWholeFile = (fileBytes + 0xFFFFF) & ~0xFFFFF;
+                    Debug.Log("[OD] LoadWholeFile reallocating buffer to " + sizeWholeFile);
+                    wholeFileBuffer = new byte[sizeWholeFile];
+                }
+                else
+                {
+                    // Reset the length of the array to the full size
+                    FudgeByteArrayLength(wholeFileBuffer, sizeWholeFile);
+                }
+
+                // Read all the data from the file
+                int i = 0;
+                while (fileBytes > 0)
+                {
+                    int read = file.Read(wholeFileBuffer, i, (fileBytes > 0x100000) ? 0x100000 : fileBytes);
+                    if (read > 0)
+                    {
+                        i += read;
+                        fileBytes -= read;
+                    }
+                }
+
+                // Fudge the length of the array
+                FudgeByteArrayLength(wholeFileBuffer, i);
+
+                return wholeFileBuffer;
+            }
+
+            public static byte[] LoadRestOfReader(BinaryReader reader)
+            {
+                // If we haven't worked out if we can patch array length then do it
+                if (arrayLengthOffset == 0)
+                    CalculateArrayLengthOffset();
+
+                long chunkBytes = reader.BaseStream.Length - reader.BaseStream.Position;
+                if (chunkBytes > int.MaxValue)
+                    throw new Exception("Chunk too large");
+
+                // If we can't patch array length then just use the normal function
+                if (arrayLengthOffset == 1)
+                    return reader.ReadBytes((int)chunkBytes);
+
+                // Otherwise we do cunning stuff
+                int fileBytes = (int)chunkBytes;
+                if (wholeFileBuffer == null || fileBytes > sizeWholeFile)
+                {
+                    // Round it up to a 1MB multiple
+                    sizeWholeFile = (fileBytes + 0xFFFFF) & ~0xFFFFF;
+                    Debug.Log("[OD] LoadRestOfReader reallocating buffer to " + sizeWholeFile);
+                    wholeFileBuffer = new byte[sizeWholeFile];
+                }
+                else
+                {
+                    // Reset the length of the array to the full size
+                    FudgeByteArrayLength(wholeFileBuffer, sizeWholeFile);
+                }
+
+                // Read all the data from the file
+                int i = 0;
+                while (fileBytes > 0)
+                {
+                    int read = reader.Read(wholeFileBuffer, i, (fileBytes > 0x100000) ? 0x100000 : fileBytes);
+                    if (read > 0)
+                    {
+                        i += read;
+                        fileBytes -= read;
+                    }
+                }
+
+                // Fudge the length of the array
+                FudgeByteArrayLength(wholeFileBuffer, i);
+
+                return wholeFileBuffer;
+            }
+
+            unsafe static void CalculateArrayLengthOffset()
+            {
+                // Work out the offset by allocating a small array and searching backwards until we find the correct value
+                int[] temp = new int[3];
+                int offset = -4;
+                fixed (int* ptr = &temp[0])
+                {
+                    int* p = ptr - 1;
+                    while (*p != 3 && offset > -44)
+                    {
+                        offset -= 4;
+                        p--;
+                    }
+
+                    arrayLengthOffset = (*p == 3) ? offset : 1;
+                    Debug.Log("[OD] CalculateArrayLengthOffset using offset of " + arrayLengthOffset);
+                }
+            }
+
+            unsafe static void FudgeByteArrayLength(byte[] array, int len)
+            {
+                fixed (byte* ptr = &array[0])
+                {
+                    int* pLen = (int*)(ptr + arrayLengthOffset);
+                    *pLen = len;
+                }
+            }
+
             // Loads a texture
             public static Texture2D LoadTexture(string path, bool compress, bool upload, bool unreadable)
             {
@@ -191,8 +319,7 @@ namespace Kopernicus
                         {
                             // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
                             // Also borrowed the extra bits from Sarbian.
-                            byte[] buffer = File.ReadAllBytes(path);
-                            BinaryReader binaryReader = new BinaryReader(new MemoryStream(buffer));
+                            BinaryReader binaryReader = new BinaryReader(File.OpenRead(path));
                             uint num = binaryReader.ReadUInt32();
                             if (num == DDSHeaders.DDSValues.uintMagic)
                             {
@@ -222,17 +349,17 @@ namespace Kopernicus
                                     if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
                                     {
                                         map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
-                                        map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                        map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
                                     {
                                         map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
-                                        map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                        map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
                                     {
                                         map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
-                                        map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                        map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
                                     {
@@ -287,7 +414,7 @@ namespace Kopernicus
                                     if (ok)
                                     {
                                         map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
-                                        map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                        map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
 
                                 }
@@ -301,7 +428,11 @@ namespace Kopernicus
                         else
                         {
                             map = new Texture2D(2, 2);
-                            map.LoadImage(System.IO.File.ReadAllBytes(path));
+                            byte[] data = LoadWholeFile(path);
+                            if (data == null)
+                                throw new Exception("LoadWholeFile failed");
+
+                            map.LoadImage(data);
                             if (compress)
                                 map.Compress(true);
                             if (upload)

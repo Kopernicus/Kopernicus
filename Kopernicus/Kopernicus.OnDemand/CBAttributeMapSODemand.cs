@@ -67,7 +67,7 @@ namespace Kopernicus
                 {
                     CreateMap(Depth, map);
                     IsLoaded = true;
-                    Debug.Log("[OD] CBmap " + name + " enabling self. Path = " + Path);
+                    Debug.Log("[OD] ---> CBmap " + name + " enabling self. Path = " + Path);
                     return;
                 }
 
@@ -90,7 +90,7 @@ namespace Kopernicus
                 IsLoaded = false;
 
                 // Log
-                Debug.Log("[OD] CBmap " + name + " disabling self. Path = " + Path);
+                Debug.Log("[OD] <--- CBmap " + name + " disabling self. Path = " + Path);
             }
 
             // Create a map from a Texture2D
