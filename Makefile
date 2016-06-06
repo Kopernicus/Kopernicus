@@ -40,7 +40,7 @@ $(CORE): generate_dirs
 $(COMPONENTS): generate_dirs
 	$(CS) /debug+ /debug:portable /out:$(COMPONENTS) /nostdlib+ /target:library /platform:anycpu /resource:$(COMPONENT_CODE)/Assets/WorldParticleCollider.unity3d,Kopernicus.Components.Assets.WorldParticleCollider.unity3d /recurse:$(COMPONENT_CODE)/*.cs /reference:$(REFS)
 $(ONDEMAND): generate_dirs
-	$(CS) /debug+ /debug:portable /out:$(ONDEMAND) /nostdlib+ /target:library /platform:anycpu /recurse:$(ONDEMAND_CODE)/*.cs /reference:$(REFS)
+	$(CS) /debug+ /debug:portable /out:$(ONDEMAND) /nostdlib+ /target:library /platform:anycpu /unsafe+ /recurse:$(ONDEMAND_CODE)/*.cs /reference:$(REFS)
 
 ### UTILS ###
 generate_dirs:
