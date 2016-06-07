@@ -58,6 +58,7 @@ namespace Kopernicus
             public static bool useOnDemandBiomes = true;
             public static bool onDemandLoadOnMissing = true;
             public static bool onDemandLogOnMissing = true;
+            public static int onDemandUnloadDelay = 10;
 
             // Add the management handler to the PQS
             public static void AddHandler(PQS pqsVersion)

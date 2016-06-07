@@ -36,7 +36,6 @@ namespace Kopernicus
         public class PQSMod_OnDemandHandler : PQSMod
         {
             // Delayed unload
-            const int UnloadDelaySeconds = 10;
             private long unloadTime;                // If non-zero the textures will be unloaded once the timer exceeds the value
 
             // State
@@ -51,7 +50,7 @@ namespace Kopernicus
 
                 // Set the time at which to unload
                 unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + 
-                    System.Diagnostics.Stopwatch.Frequency * UnloadDelaySeconds;
+                    System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
             }
 
             // Enabling

@@ -93,7 +93,7 @@ namespace Kopernicus
                 if (!IsLoaded)
                     return;
 
-                timer = new Timer(10000d, DestroyData);
+                timer = new Timer(OnDemandStorage.onDemandUnloadDelay * 1000, DestroyData);
             }
 
             void DestroyData()
