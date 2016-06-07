@@ -64,20 +64,25 @@ namespace Kopernicus
                 return;
             }
             base.OnAwake();
-            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects))) {
-                // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
-                foreach(ScenarioDiscoverableObjects scen in 
-                    Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects))) {
-                    scen.StopAllCoroutines();
-                    Destroy(scen);
-                }
-                Debug.Log("[Kopernicus]: ScenarioDiscoverableObjects successfully removed.");
-            }
         }
 
         // Startup
         void Start()
         {
+            // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
+            // @Squad: I stab you with a try { } catch { } block.
+            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
+            {
+                // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
+                foreach (ScenarioDiscoverableObjects scen in
+                    Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
+                {
+                    scen.StopAllCoroutines();
+                    Destroy(scen);
+                }
+                Debug.Log("[Kopernicus]: ScenarioDiscoverableObjects successfully removed.");
+            }
+
             foreach (Asteroid asteroid in asteroids)
                 StartCoroutine(AsteroidDaemon(asteroid));
         }
