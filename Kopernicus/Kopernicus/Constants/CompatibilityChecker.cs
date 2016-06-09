@@ -69,10 +69,14 @@ namespace Kopernicus
             // Even if you don't lock down functionality, you should return true if your users
             // can expect a future update to be available.
             //
-            return 
+#if RELEASE
+            return
                 Versioning.version_major == version_major && 
                 Versioning.version_minor == version_minor && 
                 Versioning.Revision == Revision;
+#elif DEBUG
+            return true;
+#endif
 
             /*-----------------------------------------------*\
             | IMPLEMENTERS SHOULD NOT EDIT BEYOND THIS POINT! |
