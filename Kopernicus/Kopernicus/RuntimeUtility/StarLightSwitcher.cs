@@ -26,7 +26,8 @@
  * 
  * https://kerbalspaceprogram.com
  */
- 
+
+using System;
 using Kopernicus.Components;
 using System.Collections.Generic;
 using System.Reflection;
@@ -38,14 +39,12 @@ namespace Kopernicus
     // Class to manage the properties of custom stars
     public class StarComponent : MonoBehaviour
     {
-        // Solar power curve of the star
-        public FloatCurve powerCurve;
 
         // Celestial body which represents the star
         public CelestialBody celestialBody { get; set; }
 
         // We need to patch the sun Transform of the Radiators
-        private static FieldInfo radiatorSun { get; set; }
+        private static FieldInfo radiatorSun { get; }
 
         // get the FieldInfo
         static StarComponent()
@@ -56,68 +55,36 @@ namespace Kopernicus
         void Start()
         {
             // Find the celestial body we are attached to
-            celestialBody = PSystemManager.Instance.localBodies.Where(body => body.scaledBody == gameObject).First();
+            celestialBody = PSystemManager.Instance.localBodies.First(body => body.scaledBody == gameObject);
             Logger.Default.Log("StarLightSwitcher.Start() => " + celestialBody.bodyName);
             Logger.Default.Flush();
         }
 
-        public void SetAsActive(bool forcedUpdate = false)
+        public void SetAsActive()
         {
-            // Only reset the Sun / SolarPanels if we don't force an update
-            if (!forcedUpdate)
+            // Set star as active star
+            Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
+            KopernicusStar.Current = KopernicusStar.Stars.Find(s => s.sun == celestialBody);
+
+            // Set custom powerCurve for solar panels and reset Radiators
+            if (FlightGlobals.ActiveVessel != null)
             {
-                // Set star as active star
-                Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
+                // SolarPanels
+                foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
+                    sp.sunTransform = celestialBody.transform;
 
-                // Set custom powerCurve for solar panels and reset Radiators
-                if (FlightGlobals.ActiveVessel != null)
-                {
-                    // SoalrPanels
-                    foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-                        sp.sunTransform = celestialBody.transform;
-
-                    // Radiators
-                    foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
-                        radiatorSun.SetValue(rad, celestialBody.transform);
-
-                    // Flight Integrator
-                    FlightIntegrator.sunBody = celestialBody;
-                }
+                // Radiators
+                foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
+                    radiatorSun.SetValue(rad, celestialBody.transform);
             }
 
-            // Reset the LightShifter
-            LightShifter lsc = null;
-            LightShifter[] comps = Sun.Instance.sun.scaledBody.GetComponentsInChildren<LightShifter>(true);
-            if (comps != null && comps.Length > 0)
-            {
-                lsc = comps[0];
-                lsc.SetStatus(false, HighLogic.LoadedScene);
-            }
-            Sun.Instance.sun = celestialBody;
-            comps = celestialBody.scaledBody.GetComponentsInChildren<LightShifter>(true);
-            if (comps != null && comps.Length > 0)
-            {
-                lsc = comps[0];
-                lsc.SetStatus(true, HighLogic.LoadedScene);
-
-                // Set SunFlare color
-                Sun.Instance.sunFlare.color = lsc.sunLensFlareColor;
-                Sun.Instance.SunlightEnabled(lsc.givesOffLight);
-
-                // Set other stuff
-                Sun.Instance.AU = lsc.AU;
-                Sun.Instance.brightnessCurve = lsc.brightnessCurve.Curve;
-
-                // Physics Globals
-                PhysicsGlobals.SolarLuminosityAtHome = lsc.solarLuminosity;
-                PhysicsGlobals.SolarInsolationAtHome = lsc.solarInsolation;
-            }
-
+            // Apply Ambient Light
+            KopernicusStar.Current.shifter.ApplyAmbient();
         }
 
         public bool IsActiveStar()
         {
-            return (Sun.Instance.sun == celestialBody);
+            return (KopernicusStar.Current.sun == celestialBody);
         }
     }
 
@@ -142,45 +109,27 @@ namespace Kopernicus
             DontDestroyOnLoad (this);
         }
 
-        // On Scene Change, update the current star to "fix" PSystemSetup
-        private bool forcedUpdate = false;
-        private void OnLevelWasLoaded(int level)
-        {
-            if (HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)
-                forcedUpdate = true;
-        }
-
         void Start()
         {
             // find all the stars in the system
             stars = PSystemManager.Instance.localBodies.SelectMany (body => body.scaledBody.GetComponentsInChildren<StarComponent>(true)).ToList();
 
-            // Disable queued update because Planetarium is overly complicated and does strange things
-            foreach (CelestialBody star in PSystemManager.Instance.localBodies)
-                if (star.orbitDriver != null)
-                    star.orbitDriver.QueuedUpdate = false;
-
             // Flush the log
             Logger.Default.Flush ();
+
+            // GameScenes
+            GameEvents.onLevelWasLoaded.Add(scene => HomeStar().SetAsActive());
         }
 
         void Update()
         {
             StarComponent selectedStar = null;
-        
-            // If forceUpdate is enabled, update the active star
-            if (forcedUpdate && Sun.Instance)
-            {
-                stars.First(s => s.IsActiveStar()).SetAsActive(forcedUpdate);
-                // reset forced Update
-                forcedUpdate = false;
-            }
 
             // If we are in the tracking station, space center or game, 
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 // Get the current position of the active vessel
-                if (PlanetariumCamera.fetch.enabled == true) 
+                if (PlanetariumCamera.fetch.enabled) 
                 {
                     Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
                     selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
@@ -211,7 +160,7 @@ namespace Kopernicus
         // Select the home star
         public static StarComponent HomeStar()
         {
-            return PSystemManager.Instance.localBodies.Where (body => body.flightGlobalsIndex == 0).First ().scaledBody.GetComponent<StarComponent> ();
+            return PSystemManager.Instance.localBodies.First (body => body.flightGlobalsIndex == 0).scaledBody.GetComponent<StarComponent> ();
         }
 
         // Debug a star's coronas
