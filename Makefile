@@ -36,11 +36,11 @@ plugin: core copy_plugin_files
 	
 ### LIBRARIES ###
 $(CORE): generate_dirs
-	$(CS) /debug+ /debug:portable /out:$(CORE) /nostdlib+ /target:library /platform:anycpu /recurse:$(CORE_CODE)/*.cs /reference:$(REFS),$(COMPONENTS),$(ONDEMAND)
+	$(CS) /debug+ /debug:portable /define:DEBUG /out:$(CORE) /nostdlib+ /target:library /platform:anycpu /recurse:$(CORE_CODE)/*.cs /reference:$(REFS),$(COMPONENTS),$(ONDEMAND)
 $(COMPONENTS): generate_dirs
-	$(CS) /debug+ /debug:portable /out:$(COMPONENTS) /nostdlib+ /target:library /platform:anycpu /resource:$(COMPONENT_CODE)/Assets/WorldParticleCollider.unity3d,Kopernicus.Components.Assets.WorldParticleCollider.unity3d /recurse:$(COMPONENT_CODE)/*.cs /reference:$(REFS)
+	$(CS) /debug+ /debug:portable /define:DEBUG /out:$(COMPONENTS) /nostdlib+ /target:library /platform:anycpu /resource:$(COMPONENT_CODE)/Assets/WorldParticleCollider.unity3d,Kopernicus.Components.Assets.WorldParticleCollider.unity3d /recurse:$(COMPONENT_CODE)/*.cs /reference:$(REFS)
 $(ONDEMAND): generate_dirs
-	$(CS) /debug+ /debug:portable /out:$(ONDEMAND) /nostdlib+ /target:library /platform:anycpu /unsafe+ /recurse:$(ONDEMAND_CODE)/*.cs /reference:$(REFS)
+	$(CS) /debug+ /debug:portable /define:DEBUG /out:$(ONDEMAND) /nostdlib+ /target:library /platform:anycpu /unsafe+ /recurse:$(ONDEMAND_CODE)/*.cs /reference:$(REFS)
 
 ### UTILS ###
 generate_dirs:
