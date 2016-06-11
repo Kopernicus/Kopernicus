@@ -462,7 +462,7 @@ namespace Kopernicus
                             }
                         }
                     }
-                    catch (ReflectionTypeLoadException e)
+                    catch (ReflectionTypeLoadException)
                     {
 
                     }

@@ -62,9 +62,8 @@ namespace Kopernicus
             public NumericParser<double> geeASL 
             {
                 get { return celestialBody.GeeASL; }
-                set { celestialBody.GeeASL = value; hasGeeASL = true; }
+                set { celestialBody.GeeASL = value; }
             }
-            private bool hasGeeASL = false;
             
             // Mass
             [ParserTarget("mass", optional = true)]
