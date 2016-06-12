@@ -81,6 +81,11 @@ namespace Kopernicus
             // Apply Ambient Light
             KopernicusStar.Current.shifter.ApplyAmbient();
             PhysicsGlobals.RadiationFactor = KopernicusStar.Current.shifter.radiationFactor;
+
+            // Apply Sky
+            GalaxyCubeControl.Instance.sunRef = KopernicusStar.Current;
+            foreach (SkySphereControl c in Resources.FindObjectsOfTypeAll<SkySphereControl>())
+                c.sunRef = KopernicusStar.Current;
         }
 
         public bool IsActiveStar()

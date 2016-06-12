@@ -94,9 +94,6 @@ namespace Kopernicus
             Utility.CopyObjectFields(Sun.Instance, star, false);
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
-            GalaxyCubeControl.Instance.sunRef = star;
-            foreach (SkySphereControl c in Resources.FindObjectsOfTypeAll<SkySphereControl>())
-                c.sunRef = star;
 
             // More stars
             foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.flightGlobalsIndex != 0 && b.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0))
