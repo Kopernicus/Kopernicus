@@ -70,6 +70,18 @@ namespace Kopernicus
                     UpdateMenu();
                 if (scene == GameScenes.SPACECENTER)
                     PatchFI();
+                foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+                {
+                    GameObject star_ = KopernicusStar.GetNearest(body).gameObject;
+                    if (body.afg != null)
+                        body.afg.sunLight = star_;
+                    if (body.scaledBody.GetComponent<MaterialSetDirection>() != null)
+                        body.scaledBody.GetComponent<MaterialSetDirection>().target = star_.transform;
+                    foreach (PQSMod_MaterialSetDirection msd in body.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true))
+                        msd.target = star_.transform;
+                }
+                foreach (TimeOfDayAnimation anim in Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>())
+                    anim.target = KopernicusStar.GetNearest(FlightGlobals.GetHomeBody()).gameObject.transform;
             });
 
             // Update Music Logic
@@ -123,6 +135,14 @@ namespace Kopernicus
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
+
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.afg != null))
+            {
+                GameObject star_ = KopernicusStar.GetNearest(body).gameObject;
+                Vector3 planet2cam = body.scaledBody.transform.position - body.afg.mainCamera.transform.position;
+                body.afg.lightDot = Mathf.Clamp01(Vector3.Dot(planet2cam, body.afg.mainCamera.transform.position - star_.transform.position) * body.afg.dawnFactor);
+                body.afg.GetComponent<Renderer>().material.SetFloat("_lightDot", body.afg.lightDot);
+            }
         }
 
         // Status
@@ -484,6 +504,7 @@ namespace Kopernicus
         // Patch FlightIntegrator
         void PatchFI()
         {
+            ModularFI.ModularFlightIntegrator.RegisterCalculateSunBodyFluxPre(mfi => {}); // MFI workaround
             ModularFI.ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
         }
 

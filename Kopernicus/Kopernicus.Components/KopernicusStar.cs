@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using ModularFI;
 
 namespace Kopernicus
 {
@@ -70,79 +71,114 @@ namespace Kopernicus
             /// <summary>
             /// Override for <see cref="FlightIntegrator.CalculateSunBodyFlux"/>
             /// </summary>
-            public static void SunBodyFlux(ModularFI.ModularFlightIntegrator flightIntegrator)
+            public static void SunBodyFlux(ModularFlightIntegrator flightIntegrator)
             {
                 // Set Physics
                 PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
                 PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
+                CalculatePhysics();
 
                 // Get "Correct" values
-                CelestialBody sunBody = FlightIntegrator.sunBody;
                 flightIntegrator.BaseFICalculateSunBodyFlux();
 
                 // FI Values
                 bool directSunlight = flightIntegrator.Vessel.directSunlight;
-                Vector3 sunVector = flightIntegrator.sunVector;
                 double solarFlux = flightIntegrator.solarFlux;
-                float sunAxialDot = flightIntegrator.sunAxialDot;
-                double sunDotCorrected = flightIntegrator.sunDotCorrected;
                 double bodySunFlux = flightIntegrator.bodySunFlux;
-                double atmosphereTemperatureOffset = flightIntegrator.atmosphereTemperatureOffset;
-                double bodyEmissiveFlux = flightIntegrator.bodyEmissiveFlux;
-                double bodyTemperature = flightIntegrator.bodyTemperature;
-                double bodyAlbedoFlux = flightIntegrator.bodyAlbedoFlux;
-                double bodyPolarAngle = flightIntegrator.bodyPolarAngle;
-                double sunPolarAngle = flightIntegrator.sunPolarAngle;
-                double sunBodyMaxDot = flightIntegrator.sunBodyMaxDot;
-                double sunBodyMinDot = flightIntegrator.sunBodyMinDot;
-                double bodyDayFraction = flightIntegrator.bodyDayFraction;
-                double sunDotNormalized = flightIntegrator.sunDotNormalized;
-                double realDistanceToSun = flightIntegrator.realDistanceToSun;
 
                 // Calculate the values for all bodies
-                foreach (KopernicusStar star in Stars.Where(s => s.sun != sunBody))
+                foreach (KopernicusStar star in Stars.Where(s => s.sun != FlightIntegrator.sunBody))
                 {
                     // Set Physics
                     PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
                     PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
+                    CalculatePhysics();
 
-                    FlightIntegrator.sunBody = star.sun;
-                    flightIntegrator.BaseFICalculateSunBodyFlux();
+                    // Calculate Flux
+                    Flux(flightIntegrator, star);
 
                     // And save them
                     if (flightIntegrator.Vessel.directSunlight)
                         directSunlight = true;
                     solarFlux += flightIntegrator.solarFlux;
                     bodySunFlux += flightIntegrator.bodySunFlux;
-                    atmosphereTemperatureOffset += flightIntegrator.atmosphereTemperatureOffset;
-                    bodyEmissiveFlux += flightIntegrator.bodyEmissiveFlux;
-                    bodyTemperature += flightIntegrator.bodyTemperature;
-                    bodyAlbedoFlux += flightIntegrator.bodyAlbedoFlux;
                 }
 
                 // Reapply
                 flightIntegrator.Vessel.directSunlight = directSunlight;
-                flightIntegrator.sunVector = sunVector;
                 flightIntegrator.solarFlux = solarFlux;
-                flightIntegrator.sunAxialDot = sunAxialDot;
-                flightIntegrator.sunDotCorrected = sunDotCorrected;
                 flightIntegrator.bodySunFlux = bodySunFlux;
-                flightIntegrator.atmosphereTemperatureOffset = atmosphereTemperatureOffset;
-                flightIntegrator.bodyEmissiveFlux = bodyEmissiveFlux;
-                flightIntegrator.bodyTemperature = bodyTemperature;
-                flightIntegrator.bodyAlbedoFlux = bodyAlbedoFlux;
-                flightIntegrator.bodyPolarAngle = bodyPolarAngle;
-                flightIntegrator.sunPolarAngle = sunPolarAngle;
-                flightIntegrator.sunBodyMaxDot = sunBodyMaxDot;
-                flightIntegrator.sunBodyMinDot = sunBodyMinDot;
-                flightIntegrator.bodyDayFraction = bodyDayFraction;
-                flightIntegrator.sunDotNormalized = sunDotNormalized;
-                flightIntegrator.realDistanceToSun = realDistanceToSun;
-                FlightIntegrator.sunBody = sunBody;
             }
 
             /// <summary>
-            /// Starts up this instance
+            /// Fixes the Calculation for Luminosity
+            /// </summary>
+            public static void CalculatePhysics()
+            {
+                if (!FlightGlobals.ready) return;
+                CelestialBody homeBody = FlightGlobals.GetHomeBody();
+                if (homeBody == null) return;
+                while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+                    homeBody = homeBody.referenceBody;
+                typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(PhysicsGlobals.Instance, Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 * PhysicsGlobals.SolarLuminosityAtHome);
+            }
+
+            /// <summary>
+            /// Small method to handle flux
+            /// </summary>
+            public static void Flux(ModularFlightIntegrator fi, KopernicusStar star)
+            {
+                // Nullchecks
+                if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
+                {
+                    return;
+                }
+
+                // Get sunVector
+                RaycastHit raycastHit;
+                Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(fi.IntegratorTransform.position);
+                double scale = Math.Max((star.sun.scaledBody.transform.position - scaledSpace).magnitude, 1);
+                Vector3 sunVector = (star.sun.scaledBody.transform.position - scaledSpace) / scale;
+                Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(fi.IntegratorTransform.position), sunVector);
+
+                // Get Body flux
+                Vector3d scaleFactor = ((Vector3d)star.sun.scaledBody.transform.position - fi.CurrentMainBody.scaledBody.transform.position) * (double)ScaledSpace.ScaleFactor;
+                fi.bodySunFlux = star.sunFlare == fi.CurrentMainBody ? 0 : PhysicsGlobals.SolarLuminosity / Math.PI * 4 * scaleFactor.sqrMagnitude;
+
+                // Get Solar Flux
+                double realDistanceToSun = 0;
+                bool localDirectSunLight = false;
+                if (!Physics.Raycast(ray, out raycastHit, Single.MaxValue, ModularFI.ModularFlightIntegrator.SunLayerMask))
+                {
+                    localDirectSunLight = true;
+                    realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
+                }
+                else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
+                {
+                    realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
+                    localDirectSunLight = true;
+                }
+                if (localDirectSunLight)
+                {
+                    fi.solarFlux = PhysicsGlobals.SolarLuminosity/(12.5663706143592*realDistanceToSun*realDistanceToSun);
+                    if (!fi.Vessel.directSunlight)
+                        fi.Vessel.directSunlight = true;
+                }
+            }
+
+            /// <summary>
+            /// Returns the star the given body orbits
+            /// </summary>
+            public static KopernicusStar GetNearest(CelestialBody body)
+            {
+                CelestialBody homeBody = body;
+                while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+                    homeBody = homeBody.referenceBody;
+                return Stars.Find(s => s.sun == homeBody.referenceBody);
+            }
+
+            /// <summary>
+            /// Starts up fi instance
             /// </summary>
             protected override void Awake()
             {
@@ -192,6 +228,8 @@ namespace Kopernicus
             void SceneLoaded(GameScenes scene)
             {
                 light.shadowBias = scene != GameScenes.SPACECENTER ? 0.125f : 1f;
+                if (gameObject.GetComponentInChildren<IVASun>() != null)
+                    DestroyImmediate(gameObject.GetComponentInChildren<IVASun>().gameObject);
 
                 // IVA Sun
                 if (HighLogic.LoadedSceneIsFlight)
@@ -208,7 +246,7 @@ namespace Kopernicus
             void LateUpdate()
             {
                 // Update the lensflare orientation and scale
-                sunFlare.brightness = brightnessMultiplier * brightnessCurve.Evaluate((float)(1 / (Vector3d.Distance(Camera.current.transform.position, ScaledSpace.LocalToScaledSpace(sun.position)) / (AU * ScaledSpace.InverseScaleFactor))));
+                sunFlare.brightness = brightnessMultiplier * brightnessCurve.Evaluate((float)(1 / (Vector3d.Distance(target.position, ScaledSpace.LocalToScaledSpace(sun.position)) / (AU * ScaledSpace.InverseScaleFactor))));
 
                 // Apply light settings
                 shifter.Apply(light, scaledSunLight, iva?.GetComponent<Light>());
@@ -257,7 +295,7 @@ namespace Kopernicus
             {
                 Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
                 Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
-                double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1 * Vector3d.AngleBetween(pos1, pos2)) / 6.28318530717959 + 0.5;
+                double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) * Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
                 if (angle > Math.PI * 2)
                     angle -= Math.PI * 2;
                 return angle;
