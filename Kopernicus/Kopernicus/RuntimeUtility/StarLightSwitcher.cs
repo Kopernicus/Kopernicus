@@ -80,6 +80,7 @@ namespace Kopernicus
 
             // Apply Ambient Light
             KopernicusStar.Current.shifter.ApplyAmbient();
+            PhysicsGlobals.RadiationFactor = KopernicusStar.Current.shifter.radiationFactor;
         }
 
         public bool IsActiveStar()

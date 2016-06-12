@@ -152,6 +152,14 @@ namespace Kopernicus
                 set { lsc.solarInsolation = value; }
             }
 
+            // sunAU
+            [ParserTarget("radiationFactor", optional = true, allowMerge = false)]
+            public NumericParser<double> radiation
+            {
+                get { return lsc.radiationFactor; }
+                set { lsc.radiationFactor = value; }
+            }
+
             // Default constructor
             public LightShifterLoader()
             {
