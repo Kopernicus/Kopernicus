@@ -42,6 +42,10 @@
       <HintPath>..\..\KSPUtil.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ModularFlightIntegrator">
+      <HintPath>..\..\ModularFlightIntegrator.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -80,6 +84,7 @@
     <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="NameChanger.cs" />
     <Compile Include="Scatter.cs" />
+    <Compile Include="KopernicusStar.cs" />
     <Compile Include="Wiresphere.cs" />
     <Compile Include="PlanetaryParticle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,6 +93,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Assets\WorldParticleCollider.unity3d" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <PostBuildEvent>"C:\Program Files (x86)\Mono\bin\mono.exe" "C:\Program Files (x86)\Mono\lib\mono\4.5\pdb2mdb.exe" "$(TargetFileName)"</PostBuildEvent>

@@ -1,0 +1,26 @@
+{
+    "NAME": "ModularFlightIntegrator",
+    "URL": "https://ksp.sarbian.com/jenkins/job/ModularFlightIntegrator/lastSuccessfulBuild/artifact/ModularFlightIntegrator/ModularFlightIntegrator.version",
+    "DOWNLOAD": "http://forum.kerbalspaceprogram.com/threads/118088",
+    "VERSION":{
+        "MAJOR": 1,
+        "MINOR": 1,
+        "PATCH": 5,
+        "BUILD": 0
+    },
+    "KSP_VERSION": {
+        "MAJOR": 1,
+        "MINOR": 1,
+        "PATCH": 2
+    },
+    "KSP_VERSION_MIN": {
+        "MAJOR": 1,
+        "MINOR": 1,
+        "PATCH": 2
+    },
+    "KSP_VERSION_MAX": {
+        "MAJOR": 1,
+        "MINOR": 1,
+        "PATCH": 2
+    }
+}

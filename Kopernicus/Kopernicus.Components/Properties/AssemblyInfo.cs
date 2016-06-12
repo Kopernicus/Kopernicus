@@ -7,6 +7,7 @@ using System.Reflection;
 [assembly: AssemblyProduct("Kopernicus.Components")]
 [assembly: AssemblyCopyright("Copyright (C) Kopernicus Project 2015 ")]
 [assembly: KSPAssembly("Kopernicus.Components", 1, 0)]
+[assembly: KSPAssemblyDependency("ModularFlightIntegrator", 1, 0)]
 [assembly: AssemblyVersion("1.0.0")]
 [assembly: ComVisible(false)]
 

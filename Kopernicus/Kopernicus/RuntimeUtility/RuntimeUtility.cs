@@ -33,7 +33,9 @@ using Kopernicus.Components;
 using System;
 using System.Reflection;
 using System.Linq;
+using EditorGizmos;
 using KSP.UI.Screens;
+using ModularFlightIntegrator = ModularFI.ModularFlightIntegrator;
 
 namespace Kopernicus
 {
@@ -66,11 +68,47 @@ namespace Kopernicus
                     MapView.fetch.max3DlineDrawDist = 20000f;
                 if (scene == GameScenes.MAINMENU)
                     UpdateMenu();
+                if (scene == GameScenes.SPACECENTER)
+                    PatchFI();
+                foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+                {
+                    GameObject star_ = KopernicusStar.GetNearest(body).gameObject;
+                    if (body.afg != null)
+                        body.afg.sunLight = star_;
+                    if (body.scaledBody.GetComponent<MaterialSetDirection>() != null)
+                        body.scaledBody.GetComponent<MaterialSetDirection>().target = star_.transform;
+                    foreach (PQSMod_MaterialSetDirection msd in body.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true))
+                        msd.target = star_.transform;
+                }
+                foreach (TimeOfDayAnimation anim in Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>())
+                    anim.target = KopernicusStar.GetNearest(FlightGlobals.GetHomeBody()).gameObject.transform;
             });
 
             // Update Music Logic
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
+
+            // Stars
+            GameObject gob = Sun.Instance.gameObject;
+            KopernicusStar star = gob.AddComponent<KopernicusStar>();
+            Utility.CopyObjectFields(Sun.Instance, star, false);
+            DestroyImmediate(Sun.Instance);
+            Sun.Instance = star;
+
+            // More stars
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.flightGlobalsIndex != 0 && b.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0))
+            {
+                GameObject starObj = Instantiate(Sun.Instance.gameObject);
+                KopernicusStar star_ = starObj.GetComponent<KopernicusStar>();
+                star_.sun = body;
+                starObj.transform.parent = Sun.Instance.transform.parent;
+                starObj.name = body.name;
+                starObj.transform.localPosition = Vector3.zero;
+                starObj.transform.localRotation = Quaternion.identity;
+                starObj.transform.localScale = Vector3.one;
+                starObj.transform.position = body.position;
+                starObj.transform.rotation = body.rotation;
+            }
 
             // Log
             Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
@@ -94,6 +132,14 @@ namespace Kopernicus
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
+
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.afg != null))
+            {
+                GameObject star_ = KopernicusStar.GetNearest(body).gameObject;
+                Vector3 planet2cam = body.scaledBody.transform.position - body.afg.mainCamera.transform.position;
+                body.afg.lightDot = Mathf.Clamp01(Vector3.Dot(planet2cam, body.afg.mainCamera.transform.position - star_.transform.position) * body.afg.dawnFactor);
+                body.afg.GetComponent<Renderer>().material.SetFloat("_lightDot", body.afg.lightDot);
+            }
         }
 
         // Status
@@ -450,6 +496,12 @@ namespace Kopernicus
                 else
                     Debug.Log("[Kopernicus]: ERROR fixing space center camera, could not find some fields");
             }
+        }
+
+        // Patch FlightIntegrator
+        void PatchFI()
+        {
+            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
         }
 
         // Remove the Handlers

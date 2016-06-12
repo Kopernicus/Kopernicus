@@ -51,6 +51,7 @@ namespace Kopernicus
             public FloatCurve brightnessCurve;
             public double solarInsolation;
             public double solarLuminosity;
+            public double radiationFactor;
 
             // Prefab that makes every star yellow by default
             public static LightShifter prefab
@@ -81,72 +82,47 @@ namespace Kopernicus
                     prefab.givesOffLight = true;
                     prefab.solarInsolation = PhysicsGlobals.SolarInsolationAtHome;
                     prefab.solarLuminosity = PhysicsGlobals.SolarLuminosityAtHome;
+                    prefab.radiationFactor = PhysicsGlobals.RadiationFactor;
 
                     // Return the prefab
                     return prefab;
                 }
             }
 
-            // Status
-            private bool isActive = false;
-
-            // Sets the light of the star as active
-            public void SetStatus(bool status, GameScenes scene)
-            {
-                isActive = status;
-                if (isActive)
-                    SetActive(scene);
-            }
-
-            // When a level was loaded, reset the current star
-            private void OnLevelWasLoaded(int loadedLevel)
-            {
-                if (isActive)
-                    SetActive((GameScenes)loadedLevel);
-            }
-
             // Patches all light sources
-            private void SetActive(GameScenes scene)
+            public void Apply(Light light, Light scaledLight, Light ivaLight)
             {
-                GameObject sunLight = GameObject.Find("SunLight");
-                GameObject scaledSunLight = GameObject.Find("Scaledspace SunLight");
-
-                if (sunLight && scaledSunLight)
+                // Patch the local space light
+                if (light)
                 {
-                    Light light = sunLight.GetComponent<Light>();
-                    Light scaledLight = scaledSunLight.GetComponent<Light>();
-                    if (sunlightColor != null)
-                        light.color = sunlightColor;
-
-                    if (sunlightIntensity != float.NaN)
-                        light.intensity = sunlightIntensity;
-
-                    if (sunlightShadowStrength != float.NaN)
-                        light.shadowStrength = sunlightShadowStrength;
-
-                    if (scaledSunlightColor != null)
-                        scaledLight.color = scaledSunlightColor;
-
-                    if (scaledSunlightIntensity != float.NaN)
-                        scaledLight.intensity = scaledSunlightIntensity;
-
-                    if (scene == GameScenes.FLIGHT)
-                    {
-                        GameObject IVASun = GameObject.Find("IVASun");
-                        if (IVASun)
-                        {
-                            Light IVALight = IVASun.GetComponent<Light>();
-                            if (IVASunColor != null)
-                                IVALight.color = IVASunColor;
-                            if (IVASunIntensity != float.NaN)
-                                IVALight.intensity = IVASunIntensity;
-                        }
-                    }
-
-                    DynamicAmbientLight ambientLight = FindObjectOfType(typeof(DynamicAmbientLight)) as DynamicAmbientLight;
-                    if (ambientLightColor != null && ambientLight)
-                        ambientLight.vacuumAmbientColor = ambientLightColor;
+                    light.color = sunlightColor;
+                    light.intensity = sunlightIntensity;
+                    light.shadowStrength = sunlightShadowStrength;
                 }
+
+                // Patch the ScaledSpace light
+                if (scaledLight)
+                {
+                    scaledLight.color = scaledSunlightColor;
+                    scaledLight.intensity = scaledSunlightIntensity;
+                }
+
+                if (HighLogic.LoadedSceneIsFlight && ivaLight)
+                {
+                    ivaLight.color = IVASunColor;
+                    ivaLight.intensity = IVASunIntensity;
+                }
+
+            }
+
+            /// <summary>
+            /// Applies the ambient color.
+            /// </summary>
+            public void ApplyAmbient()
+            {
+                DynamicAmbientLight ambientLight = FindObjectOfType(typeof (DynamicAmbientLight)) as DynamicAmbientLight;
+                if (ambientLight)
+                    ambientLight.vacuumAmbientColor = ambientLightColor;
             }
         }
     }

@@ -193,9 +193,6 @@ namespace Kopernicus
                 Debug.Log("Found max distance " + maximumDistance);
             PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
-            // Select the closest star to home
-            StarLightSwitcher.HomeStar().SetAsActive ();
-
             // Flush the logger
             Logger.Default.Flush();
 
