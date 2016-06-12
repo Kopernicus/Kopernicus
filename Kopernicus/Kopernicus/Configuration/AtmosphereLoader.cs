@@ -52,6 +52,11 @@ namespace Kopernicus
                 set { celestialBody.atmosphere = value; }
             }
 
+            // Whether an AFG should get added
+            [PreApply]
+            [ParserTarget("addAFG", optional = true)]
+            public NumericParser<bool> addAFG = new NumericParser<bool>(true);
+
             // Does this atmosphere contain oxygen
             [ParserTarget("oxygen", optional = true)]
             public NumericParser<bool> oxygen 
@@ -248,7 +253,7 @@ namespace Kopernicus
             void IParserEventSubscriber.Apply (ConfigNode node)
             { 
                 // If we don't want an atmosphere, ignore this step
-                if(!celestialBody.atmosphere)
+                if(!celestialBody.atmosphere || !addAFG)
                     return;
 
                 // If we don't already have an atmospheric shell generated
@@ -267,6 +272,8 @@ namespace Kopernicus
                     MeshFilter meshFilter             = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh             = Templates.ReferenceGeosphere;
                     scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+
+                    // Store the AFG
                     atmosphereFromGround = new AtmosphereFromGroundLoader();
 
                     // Setup known defaults
