@@ -504,8 +504,7 @@ namespace Kopernicus
         // Patch FlightIntegrator
         void PatchFI()
         {
-            ModularFI.ModularFlightIntegrator.RegisterCalculateSunBodyFluxPre(mfi => {}); // MFI workaround
-            ModularFI.ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
         }
 
         // Remove the Handlers
