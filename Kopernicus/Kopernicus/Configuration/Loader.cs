@@ -119,6 +119,10 @@ namespace Kopernicus
                 set { Templates.menuBody = value; }
             }
 
+            // Whether the main menu body should be randomized
+            [ParserTarget("randomMainMenuBody", optional = true)]
+            public StringCollectionParser randomMainMenuBody = new StringCollectionParser();
+
             // The maximum viewing distance in tracking station
             [ParserTarget("maxViewingDistance", optional = true)]
             public NumericParser<double> maxViewDistance
@@ -250,6 +254,10 @@ namespace Kopernicus
                 List<int> numbers = new List<int>() { 0 };
                 int index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
                 PatchFGI(ref numbers, ref index, systemPrefab.rootBody);
+
+                // Main Menu bodies
+                if (randomMainMenuBody.value.Any())
+                    Templates.menuBody = randomMainMenuBody.value[UnityEngine.Random.Range(0, randomMainMenuBody.value.Count)];
             }
 
             // Sort bodies by distance from parent body

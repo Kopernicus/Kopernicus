@@ -121,7 +121,7 @@ namespace Kopernicus
             public void SetFromString (string s)
             {
                 // Need a new list
-                value = new List<string> (Regex.Replace (s, "\\s+", "").Split (','));
+                value = new List<string> (s.Split (',').Select(a => a.Trim()));
             }
             public StringCollectionParser()
             {
