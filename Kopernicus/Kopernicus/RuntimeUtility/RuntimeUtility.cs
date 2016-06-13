@@ -203,7 +203,7 @@ namespace Kopernicus
         void UpdateMenu()
         {
             // Grab the main body
-            CelestialBody planetCB = PSystemManager.Instance.localBodies.Find(b => b.bodyName == Templates.menuBody);
+            CelestialBody planetCB = PSystemManager.Instance.localBodies.Find(b => b.transform.name == Templates.menuBody);
             PSystemBody planet = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Templates.menuBody);
             if (planetCB == null || planet == null)
             {
