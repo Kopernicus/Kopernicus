@@ -578,7 +578,7 @@ namespace Kopernicus
 
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T; // can't make built-in maps On-Demand.....yet... >:D
+                    value = Utility.FindMapSO<T>(s);
                 }
                 else
                 {
@@ -662,7 +662,7 @@ namespace Kopernicus
 
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    value = Utility.FindMapSO(s, typeof(T) == typeof(CBAttributeMapSO)) as T;
+                    value = Utility.FindMapSO<T>(s);
                 }
                 else
                 {

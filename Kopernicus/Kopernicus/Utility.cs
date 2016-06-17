@@ -883,15 +883,15 @@ namespace Kopernicus
             return map;
         }
 
-        public static MapSO FindMapSO(string url, bool cbMap)
+        public static T FindMapSO<T>(string url) where T : MapSO
         {
-            if (cbMap)
+            string name = url.Replace("BUILTIN/", "");
+            T retVal = Resources.FindObjectsOfTypeAll<T>().First(m => m.name == name);
+            if (retVal != null)
             {
-                string name = url.Replace("BUILTIN/", "");
-                CBAttributeMapSO map = Resources.FindObjectsOfTypeAll<CBAttributeMapSO>().First(m => m.MapName == name);
-                return map;
+                retVal.name = url;
+                return retVal;
             }
-            MapSO retVal = null;
             bool modFound = false;
             string trim = url.Replace("BUILTIN/", "");
             string mBody = Regex.Replace(trim, @"/.*", "");
@@ -908,26 +908,20 @@ namespace Kopernicus
                 }
                 catch (Exception e)
                 {
-                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but type not found. VertexHeight type for reference = " + typeof(PQSMod_VertexHeightMap).FullName + ". Exception: " + e);
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but type not found. VertexHeight type for reference = " + typeof (PQSMod_VertexHeightMap).FullName + ". Exception: " + e);
                 }
                 if (mType != null)
                 {
                     PQSMod[] mods = body.pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mType).ToArray();
-                    foreach (PQSMod m in mods)
+                    foreach (PQSMod m in mods.Where(m => m.name == mName))
                     {
-                        if (m.name != mName)
-                            continue;
                         modFound = true;
-                        foreach (FieldInfo fi in m.GetType().GetFields())
+                        foreach (FieldInfo fi in m.GetType().GetFields().Where(fi => fi.FieldType == typeof (MapSO)))
                         {
-                            if (fi.FieldType.Equals(typeof(MapSO)))
-                            {
-                                retVal = fi.GetValue(m) as MapSO;
-                                break;
-                            }
+                            retVal = fi.GetValue(m) as T;
+                            break;
                         }
                     }
-
                 }
             }
             else
@@ -940,7 +934,8 @@ namespace Kopernicus
                 else
                     Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but could not find PQSMod of that type of the given name");
             }
-            retVal.name = url;
+            if (retVal != null)
+                retVal.name = url;
             return retVal;
         }
 
