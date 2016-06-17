@@ -111,6 +111,14 @@ namespace Kopernicus
                 set { OnDemand.OnDemandStorage.onDemandLogOnMissing = value; }
             }
 
+            // Set this to the unload delay in seconds
+            [ParserTarget("onDemandUnloadDelay", optional = true)]
+            public NumericParser<int> onDemandUnloadDelay
+            {
+                get { return OnDemand.OnDemandStorage.onDemandUnloadDelay; }
+                set { OnDemand.OnDemandStorage.onDemandUnloadDelay = value; }
+            }
+
             // The body that is displayed at main menu
             [ParserTarget("mainMenuBody", optional = true)]
             public string mainMenuBody

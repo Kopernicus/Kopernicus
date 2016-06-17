@@ -35,6 +35,9 @@ namespace Kopernicus
     {
         public class PQSMod_OnDemandHandler : PQSMod
         {
+            // Delayed unload
+            private long unloadTime;                // If non-zero the textures will be unloaded once the timer exceeds the value
+
             // State
             private bool isLoaded = false;
 
@@ -45,17 +48,17 @@ namespace Kopernicus
                 if (!isLoaded)
                     return;
 
-                // Enable the maps
-                if (OnDemandStorage.DisableBody(sphere.name))
-                {
-                    isLoaded = false;
-                    Debug.Log("[OD] Disabling Body " + base.sphere.name + ": " + isLoaded);
-                }
+                // Set the time at which to unload
+                unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + 
+                    System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
             }
 
             // Enabling
             public override void OnQuadPreBuild(PQ quad)
             {
+                // It is supposed to be loaded now so clear the unload time
+                unloadTime = 0;
+
                 // Don't update, if the Injector is still running
                 if (isLoaded)
                     return;
@@ -65,6 +68,24 @@ namespace Kopernicus
                 {
                     isLoaded = true;
                     Debug.Log("[OD] Enabling Body " + base.sphere.name + ": " + isLoaded);
+                }
+            }
+
+            void LateUpdate()
+            {
+                // If we aren't loaded or we're not wanting to unload then do nothing
+                if (!isLoaded || unloadTime == 0)
+                    return;
+
+                // If we're past the unload time then unload
+                if (System.Diagnostics.Stopwatch.GetTimestamp() > unloadTime)
+                {
+                    // Disable the maps
+                    if (OnDemandStorage.DisableBody(sphere.name))
+                    {
+                        Debug.Log("[OD] Disabling Body " + base.sphere.name + ": " + isLoaded);
+                    }
+                    isLoaded = false;
                 }
             }
         }

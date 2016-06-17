@@ -36,8 +36,6 @@ namespace Kopernicus
         // Class to load ScaledSpace Textures on Demand
         public class ScaledSpaceDemand : MonoBehaviour
         {
-            const int UnloadDelaySeconds = 10;
-            
             // Path to the Texture
             public string texture;
 
@@ -59,7 +57,7 @@ namespace Kopernicus
             // Start(), get the scaled Mesh renderer
             void Start()
             {
-                unloadDelay = System.Diagnostics.Stopwatch.Frequency * UnloadDelaySeconds;
+                unloadDelay = System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
                 scaledRenderer = GetComponent<MeshRenderer>();
                 OnBecameInvisible();
             }
