@@ -346,10 +346,19 @@ namespace Kopernicus
                 // If this object is a value (attempt no merge here)
                 if(isValue)
                 {
+                    // The node value
+                    string nodeValue = node.GetValue(target.fieldName);
+
+                    // Merge all values of the node
+                    if (target.getAll != null)
+                    {
+                        nodeValue = String.Join(target.getAll, node.GetValues(target.fieldName))
+                    }
+
                     // If the target is a string, it works natively
                     if(targetType.Equals(typeof (string)))
                     {
-                        targetValue = node.GetValue(target.fieldName);
+                        targetValue = nodeValue;
                     }
 
                     // Figure out if this object is a parsable type
@@ -357,7 +366,7 @@ namespace Kopernicus
                     {
                         // Create a new object
                         IParsable targetParsable = (IParsable) Activator.CreateInstance(targetType);
-                        targetParsable.SetFromString(node.GetValue(target.fieldName));
+                        targetParsable.SetFromString(nodeValue);
                         targetValue = targetParsable;
                     }
 

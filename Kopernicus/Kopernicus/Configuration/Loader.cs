@@ -120,7 +120,7 @@ namespace Kopernicus
             }
 
             // Whether the main menu body should be randomized
-            [ParserTarget("randomMainMenuBody", optional = true)]
+            [ParserTarget("randomMainMenuBody", optional = true, getAll = ",")]
             public StringCollectionParser randomMainMenuBody = new StringCollectionParser();
 
             // The maximum viewing distance in tracking station

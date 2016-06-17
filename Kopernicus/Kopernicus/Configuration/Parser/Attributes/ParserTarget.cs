@@ -52,6 +52,10 @@ namespace Kopernicus
 
             // Flag indicating whether the parser should try to call the getter on properties on this object
             public bool getChild = true;
+
+            // Whether the parser should merge all values in the config node into one
+            // Use this only one collections, the implementation is veeeeery dumb
+            public string getAll = null;
             
             // Constructor sets name
             public ParserTarget(string fieldName = null)
