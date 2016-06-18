@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexVoronoi : ModLoader<PQSMod_VertexVoronoi>
             { 
                 // Deformation of the Voronoi
-                [ParserTarget("deformation", optional = true)]
+                [ParserTarget("deformation")]
                 public NumericParser<double> deformation
                 {
                     get { return mod.deformation; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // Displacement of the Voronoi
-                [ParserTarget("displacement", optional = true)]
+                [ParserTarget("displacement")]
                 public NumericParser<double> voronoiDisplacement
                 {
                     get { return mod.voronoiDisplacement; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // Enabled distance of the Voronoi
-                [ParserTarget("enableDistance", optional = true)]
+                [ParserTarget("enableDistance")]
                 public NumericParser<bool> voronoiEnableDistance
                 {
                     get { return mod.voronoiEnableDistance; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // Frequency of the Voronoi
-                [ParserTarget("frequency", optional = true)]
+                [ParserTarget("frequency")]
                 public NumericParser<double> frequency
                 {
                     get { return mod.voronoiFrequency; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // Seed of the Voronoi
-                [ParserTarget("seed", optional = true)]
+                [ParserTarget("seed")]
                 public NumericParser<int> seed
                 {
                     get { return mod.voronoiSeed; }

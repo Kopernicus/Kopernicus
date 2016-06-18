@@ -17,7 +17,7 @@ namespace Kopernicus
             public CelestialBody body;
 
             // DEBUG_alwaysUpdateAll
-            [ParserTarget("DEBUG_alwaysUpdateAll", optional = true)]
+            [ParserTarget("DEBUG_alwaysUpdateAll")]
             public NumericParser<bool> DEBUG_alwaysUpdateAll
             {
                 get { return afg.DEBUG_alwaysUpdateAll; }
@@ -25,7 +25,7 @@ namespace Kopernicus
             }
 
             // doScale
-            [ParserTarget("doScale", optional = true)]
+            [ParserTarget("doScale")]
             public NumericParser<bool> doScale
             {
                 get { return afg.doScale; }
@@ -33,7 +33,7 @@ namespace Kopernicus
             }
 
             // ESun
-            [ParserTarget("ESun", optional = true)]
+            [ParserTarget("ESun")]
             public NumericParser<float> ESun
             {
                 get { return afg.ESun; }
@@ -41,7 +41,7 @@ namespace Kopernicus
             }
 
             // g
-            [ParserTarget("g", optional = true)]
+            [ParserTarget("g")]
             public NumericParser<float> g
             {
                 get { return afg.g; }
@@ -49,7 +49,7 @@ namespace Kopernicus
             }
 
             // innerRadius
-            [ParserTarget("innerRadius", optional = true)]
+            [ParserTarget("innerRadius")]
             public NumericParser<float> innerRadius
             {
                 get { return afg.innerRadius / INVSCALEFACTOR; }
@@ -57,7 +57,7 @@ namespace Kopernicus
             }
 
             // invWaveLength
-            [ParserTarget("invWaveLength", optional = true)]
+            [ParserTarget("invWaveLength")]
             public ColorParser invWaveLength
             {
                 get { return afg.invWaveLength; }
@@ -69,7 +69,7 @@ namespace Kopernicus
             }
 
             // Km
-            [ParserTarget("Km", optional = true)]
+            [ParserTarget("Km")]
             public NumericParser<float> Km
             {
                 get { return afg.Km; }
@@ -77,7 +77,7 @@ namespace Kopernicus
             }
 
             // Kr
-            [ParserTarget("Kr", optional = true)]
+            [ParserTarget("Kr")]
             public NumericParser<float> Kr
             {
                 get { return afg.Kr; }
@@ -85,7 +85,7 @@ namespace Kopernicus
             }
 
             // outerRadius
-            [ParserTarget("outerRadius", optional = true)]
+            [ParserTarget("outerRadius")]
             public NumericParser<float> outerRadius
             {
                 get { return afg.outerRadius / INVSCALEFACTOR; }
@@ -93,7 +93,7 @@ namespace Kopernicus
             }
 
             // samples
-            [ParserTarget("samples", optional = true)]
+            [ParserTarget("samples")]
             public NumericParser<float> samples
             {
                 get { return afg.samples; }
@@ -101,7 +101,7 @@ namespace Kopernicus
             }
 
             // scale
-            [ParserTarget("scale", optional = true)]
+            [ParserTarget("scale")]
             public NumericParser<float> scale
             {
                 get { return afg.scale; }
@@ -109,14 +109,14 @@ namespace Kopernicus
             }
 
             // scaleDepth
-            [ParserTarget("scaleDepth", optional = true)]
+            [ParserTarget("scaleDepth")]
             public NumericParser<float> scaleDepth
             {
                 get { return afg.scaleDepth; }
                 set { afg.scaleDepth = value; }
             }
 
-            [ParserTarget("transformScale", optional = true)]
+            [ParserTarget("transformScale")]
             public Vector3Parser transformScale
             {
                 get { return afg.doScale ? Vector3.zero : afg.transform.localScale; }
@@ -124,7 +124,7 @@ namespace Kopernicus
             }
 
             // waveLength
-            [ParserTarget("waveLength", optional = true)]
+            [ParserTarget("waveLength")]
             public ColorParser waveLength
             {
                 get { return afg.waveLength; }
@@ -136,7 +136,7 @@ namespace Kopernicus
             }
 
             // outerRadiusMult
-            [ParserTarget("outerRadiusMult", optional = true)]
+            [ParserTarget("outerRadiusMult")]
             public NumericParser<float> outerRadiusMult
             {
                 get { return (afg.outerRadius / INVSCALEFACTOR) / (float)body.Radius; }
@@ -144,7 +144,7 @@ namespace Kopernicus
             }
 
             // innerRadiusMult
-            [ParserTarget("innerRadiusMult", optional = true)]
+            [ParserTarget("innerRadiusMult")]
             public NumericParser<float> innerRadiusMult
             {
                 get { return afg.innerRadius / afg.outerRadius; }

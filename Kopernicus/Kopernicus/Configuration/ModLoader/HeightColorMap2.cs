@@ -55,7 +55,7 @@ namespace Kopernicus
                     }
 
                     // Delete the landclass
-                    [ParserTarget("delete", optional = true)]
+                    [ParserTarget("delete")]
                     public NumericParser<bool> delete = new NumericParser<bool>(false);
 
                     // Color of the class
@@ -104,7 +104,7 @@ namespace Kopernicus
                 }
 
                 // The deformity of the simplex terrain
-                [ParserTarget("blend", optional = true)]
+                [ParserTarget("blend")]
                 public NumericParser<float> blend
                 {
                     get { return mod.blend; }
@@ -112,7 +112,7 @@ namespace Kopernicus
                 }
 
                 // The deformity of the simplex terrain
-                [ParserTarget("maxHeight", optional = true)]
+                [ParserTarget("maxHeight")]
                 public NumericParser<double> maxHeight
                 {
                     get { return mod.maxHeight; }
@@ -120,7 +120,7 @@ namespace Kopernicus
                 }
 
                 // The deformity of the simplex terrain
-                [ParserTarget("minHeight", optional = true)]
+                [ParserTarget("minHeight")]
                 public NumericParser<double> minHeight
                 {
                     get { return mod.minHeight; }

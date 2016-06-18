@@ -37,7 +37,7 @@ namespace Kopernicus
             public class MaterialFadeAltitudeDouble : ModLoader<PQSMod_MaterialFadeAltitudeDouble>
             {
                 // inFadeEnd
-                [ParserTarget("inFadeEnd", optional = true)]
+                [ParserTarget("inFadeEnd")]
                 public NumericParser<float> inFadeEnd
                 {
                     get { return mod.inFadeEnd; }
@@ -45,7 +45,7 @@ namespace Kopernicus
                 }
 
                 // inFadeStart
-                [ParserTarget("inFadeStart", optional = true)]
+                [ParserTarget("inFadeStart")]
                 public NumericParser<float> inFadeStart
                 {
                     get { return mod.inFadeStart; }
@@ -53,7 +53,7 @@ namespace Kopernicus
                 }
 
                 // outFadeEnd
-                [ParserTarget("outFadeEnd", optional = true)]
+                [ParserTarget("outFadeEnd")]
                 public NumericParser<float> outFadeEnd
                 {
                     get { return mod.outFadeEnd; }
@@ -61,7 +61,7 @@ namespace Kopernicus
                 }
 
                 // outFadeStart
-                [ParserTarget("outFadeStart", optional = true)]
+                [ParserTarget("outFadeStart")]
                 public NumericParser<float> outFadeStart
                 {
                     get { return mod.outFadeStart; }
@@ -69,7 +69,7 @@ namespace Kopernicus
                 }
 
                 // valueEnd
-                [ParserTarget("valueEnd", optional = true)]
+                [ParserTarget("valueEnd")]
                 public NumericParser<float> valueEnd
                 {
                     get { return mod.valueEnd; }
@@ -77,7 +77,7 @@ namespace Kopernicus
                 }
 
                 // valueMid
-                [ParserTarget("valueMid", optional = true)]
+                [ParserTarget("valueMid")]
                 public NumericParser<float> valueMid
                 {
                     get { return mod.valueMid; }
@@ -85,7 +85,7 @@ namespace Kopernicus
                 }
 
                 // valueStart
-                [ParserTarget("valueStart", optional = true)]
+                [ParserTarget("valueStart")]
                 public NumericParser<float> valueStart
                 {
                     get { return mod.valueStart; }

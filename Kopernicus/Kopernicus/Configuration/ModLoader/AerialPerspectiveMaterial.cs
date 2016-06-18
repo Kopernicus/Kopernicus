@@ -37,7 +37,7 @@ namespace Kopernicus
             public class AerialPerspectiveMaterial : ModLoader<PQSMod_AerialPerspectiveMaterial>
             {
                 // atmosphereDepth
-                [ParserTarget("atmosphereDepth", optional = true)]
+                [ParserTarget("atmosphereDepth")]
                 public NumericParser<float> atmosphereDepth
                 {
                     get { return mod.atmosphereDepth; }
@@ -45,7 +45,7 @@ namespace Kopernicus
                 }
 
                 // DEBUG_SetEveryFrame
-                [ParserTarget("DEBUG_SetEveryFrame", optional = true)]
+                [ParserTarget("DEBUG_SetEveryFrame")]
                 public NumericParser<bool> DEBUG_SetEveryFrame
                 {
                     get { return mod.DEBUG_SetEveryFrame; }
@@ -53,7 +53,7 @@ namespace Kopernicus
                 }
 
                 // Global density of the material
-                [ParserTarget("globalDensity", optional = true)]
+                [ParserTarget("globalDensity")]
                 public NumericParser<float> globalDensity
                 {
                     get { return mod.globalDensity; }
@@ -61,7 +61,7 @@ namespace Kopernicus
                 }
 
                 // heightFalloff
-                [ParserTarget("heightFalloff", optional = true)]
+                [ParserTarget("heightFalloff")]
                 public NumericParser<float> heightFalloff
                 {
                     get { return mod.heightFalloff; }
@@ -69,7 +69,7 @@ namespace Kopernicus
                 }
 
                 // atmosphereDepth
-                [ParserTarget("oceanDepth", optional = true)]
+                [ParserTarget("oceanDepth")]
                 public NumericParser<float> oceanDepth
                 {
                     get { return mod.oceanDepth; }

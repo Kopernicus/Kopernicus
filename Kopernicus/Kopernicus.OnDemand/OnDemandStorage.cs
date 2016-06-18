@@ -457,22 +457,6 @@ namespace Kopernicus
                 return map;
             }
 
-            // Loads Textures In a seperated Thread
-            public static void LoadTextureAsync(string path, bool compress, bool upload, bool unreadable, Action<Texture2D> predicate)
-            {
-                BackgroundWorker worker = new BackgroundWorker();
-                worker.DoWork += delegate (object sender, DoWorkEventArgs e)
-                {
-                    e.Result = LoadTexture(path, compress, upload, unreadable); 
-                };
-                worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e)
-                {
-                    if (e.Result != null)
-                        predicate(e.Result as Texture2D);
-                };
-                worker.RunWorkerAsync();
-            }
-
             // Checks if a Texture exists
             public static bool TextureExists(string path)
             {

@@ -12,21 +12,21 @@ namespace Kopernicus
         public class ParticleAddSmoothLoader : ParticleAddSmooth
         {
             // Particle Texture, default = "white" { }
-            [ParserTarget("texture", optional = true)]
+            [ParserTarget("texture")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
                 set { mainTex = value; }
             }
 
-            [ParserTarget("mainTexScale", optional = true)]
+            [ParserTarget("mainTexScale")]
             private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
-            [ParserTarget("mainTexOffset", optional = true)]
+            [ParserTarget("mainTexOffset")]
             private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
@@ -34,7 +34,7 @@ namespace Kopernicus
             }
 
             // Soft Particles Factor, default = 1
-            [ParserTarget("invFade", optional = true)]
+            [ParserTarget("invFade")]
             public NumericParser<float> invFadeSetter
             {
                 get { return invFade; }

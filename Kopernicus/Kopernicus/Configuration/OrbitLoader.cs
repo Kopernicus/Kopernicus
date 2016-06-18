@@ -43,11 +43,11 @@ namespace Kopernicus
             public CelestialBody body { get; set; }
 
             // Reference body to orbit
-            [ParserTarget("referenceBody", optional = true)]
+            [ParserTarget("referenceBody")]
             public string referenceBody { get; set; }
 
             // How inclined is the orbit
-            [ParserTarget("inclination", optional = true)]
+            [ParserTarget("inclination")]
             public NumericParser<double> inclination 
             {
                 get { return orbit.inclination; }
@@ -55,7 +55,7 @@ namespace Kopernicus
             }
             
             // How excentric is the orbit
-            [ParserTarget("eccentricity", optional = true)]
+            [ParserTarget("eccentricity")]
             public NumericParser<double> eccentricity
             {
                 get { return orbit.eccentricity; }
@@ -63,7 +63,7 @@ namespace Kopernicus
             }
 
             // Highest point of the orbit
-            [ParserTarget("semiMajorAxis", optional = true)]
+            [ParserTarget("semiMajorAxis")]
             public NumericParser<double> semiMajorAxis
             {
                 get { return orbit.semiMajorAxis; }
@@ -71,7 +71,7 @@ namespace Kopernicus
             }
 
             // Position of the highest point on the orbit circle
-            [ParserTarget("longitudeOfAscendingNode", optional = true)]
+            [ParserTarget("longitudeOfAscendingNode")]
             public NumericParser<double> longitudeOfAscendingNode
             {
                 get { return orbit.LAN; }
@@ -79,7 +79,7 @@ namespace Kopernicus
             }
 
             // argumentOfPeriapsis
-            [ParserTarget("argumentOfPeriapsis", optional = true)]
+            [ParserTarget("argumentOfPeriapsis")]
             public NumericParser<double> argumentOfPeriapsis
             {
                 get { return orbit.argumentOfPeriapsis; }
@@ -87,7 +87,7 @@ namespace Kopernicus
             }
 
             // meanAnomalyAtEpoch
-            [ParserTarget("meanAnomalyAtEpoch", optional = true)]
+            [ParserTarget("meanAnomalyAtEpoch")]
             public NumericParser<double> meanAnomalyAtEpoch
             {
                 get { return orbit.meanAnomalyAtEpoch; }
@@ -95,7 +95,7 @@ namespace Kopernicus
             }
 
             // meanAnomalyAtEpochD
-            [ParserTarget("meanAnomalyAtEpochD", optional = true)]
+            [ParserTarget("meanAnomalyAtEpochD")]
             public NumericParser<double> meanAnomalyAtEpochD
             {
                 get { return orbit.meanAnomalyAtEpoch / Math.PI * 180d; }
@@ -103,7 +103,7 @@ namespace Kopernicus
             }
 
             // epoch
-            [ParserTarget("epoch", optional = true)]
+            [ParserTarget("epoch")]
             public NumericParser<double> epoch
             {
                 get { return orbit.epoch; }
@@ -111,7 +111,7 @@ namespace Kopernicus
             }
             
             // Orbit renderer color
-            [ParserTarget("color", optional = true)]
+            [ParserTarget("color")]
             public ColorParser color
             {
                 get { return generatedBody != null ? generatedBody.orbitRenderer.nodeColor : (body.orbitDriver.orbitColor * 2).A(body.orbitDriver.orbitColor.a); }
@@ -119,7 +119,7 @@ namespace Kopernicus
             }
 
             // Orbit Draw Mode
-            [ParserTarget("mode", optional = true)]
+            [ParserTarget("mode")]
             public EnumParser<OrbitRenderer.DrawMode> mode
             {
                 //get { return FlightGlobals.getMainBody(orbit.getPositionAtUT(Planetarium.GetUniversalTime())).orbitDriver.Renderer.drawMode; }
@@ -127,7 +127,7 @@ namespace Kopernicus
             }
 
             // Orbit Icon Mode
-            [ParserTarget("icon", optional = true)]
+            [ParserTarget("icon")]
             public EnumParser<OrbitRenderer.DrawIcons> icon
             {
                 //get { return FlightGlobals.getMainBody(orbit.getPositionAtUT(Planetarium.GetUniversalTime())).orbitDriver.Renderer.drawIcons; }
@@ -135,7 +135,7 @@ namespace Kopernicus
             }
 
             // Orbit rendering bounds
-            [ParserTarget("cameraSmaRatioBounds", optional = true)]
+            [ParserTarget("cameraSmaRatioBounds")]
             public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] { 0.3f, 25f });
 
             void IParserEventSubscriber.Apply(ConfigNode node)

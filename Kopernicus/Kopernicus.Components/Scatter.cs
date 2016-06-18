@@ -93,44 +93,53 @@ namespace Kopernicus
             void Update()
             {
                 // If there's nothing to do, discard any old colliders and abort
-                if (transform.childCount == 0) {
-                    if (meshColliders.Any()) {
-                        Debug.LogWarning("Discard old colliders");
-                        foreach (var collider in meshColliders)
-                            if (collider) Destroy(collider);
-                        meshColliders.Clear();
-                    }
+                if (transform.childCount == 0)
+                {
+                    if (!meshColliders.Any()) return;
+                    Debug.LogWarning("Discard old colliders");
+                    foreach (MeshCollider collider in meshColliders.Where(collider => collider))
+                        Destroy(collider);
+                    meshColliders.Clear();
                     return;
                 }
 
-                if (colliders) {
-                    var rebuild = false;
-                    if (transform.childCount > meshColliders.Count) {
+                if (colliders)
+                {
+                    bool rebuild = false;
+                    if (transform.childCount > meshColliders.Count)
+                    {
                         Debug.LogWarning("Add " + (transform.childCount - meshColliders.Count) + " colliders");
                         rebuild = true;
-                    } else if (transform.childCount < meshColliders.Count) {
+                    }
+                    else if (transform.childCount < meshColliders.Count)
+                    {
                         Debug.LogWarning("Remove " + (meshColliders.Count - transform.childCount) + " colliders");
                         rebuild = true;
-                    } else if (meshColliders[0].sharedMesh != transform.GetChild(0).GetComponent<MeshFilter>().sharedMesh) {
+                    }
+                    else if (meshColliders[0].sharedMesh != transform.GetChild(0).GetComponent<MeshFilter>().sharedMesh)
+                    {
                         Debug.LogWarning("Replacing colliders");
                         rebuild = true;
                     }
-                    if (rebuild) {
-                        foreach (Transform t in transform) {
+                    if (rebuild)
+                    {
+                        foreach (Transform t in transform)
+                        {
                             MeshCollider collider = t.gameObject.GetComponent<MeshCollider>();
-                            if (!collider) {
-                                collider = t.gameObject.AddComponent<MeshCollider>();
-                                collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
-                                collider.sharedMesh.Optimize();
-                                collider.enabled = true;
-                                meshColliders.Add(collider);
-                            }
+                            if (collider) continue;
+                            collider = t.gameObject.AddComponent<MeshCollider>();
+                            collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
+                            collider.sharedMesh.Optimize();
+                            collider.enabled = true;
+                            meshColliders.Add(collider);
                         }
                     }
-                } else if (meshColliders.Any()) {
+                }
+                else if (meshColliders.Any())
+                {
                     Debug.LogWarning("Discard unused colliders");
-                    foreach (var collider in meshColliders)
-                        if (collider) Destroy(collider);
+                    foreach (MeshCollider collider in meshColliders.Where(collider => collider))
+                        Destroy(collider);
                     meshColliders.Clear();
                 }
 
@@ -147,8 +156,7 @@ namespace Kopernicus
                     return;
 
                 // We need an Experiment
-                if (FlightGlobals.ActiveVessel.evaController.part.FindModulesImplementing<ModuleScienceExperiment>()
-                    .Where(e => e.experimentID == experimentNode.GetValue("experimentID")).Count() == 0 &&
+                if (!FlightGlobals.ActiveVessel.evaController.part.FindModulesImplementing<ModuleScienceExperiment>().Any(e => e.experimentID == experimentNode.GetValue("experimentID")) &&
                     !vesselID.Contains(FlightGlobals.ActiveVessel.id) &&
                     !FlightGlobals.ActiveVessel.packed)
                     AddScienceExperiment();
@@ -157,7 +165,7 @@ namespace Kopernicus
                     return;
 
                 // Toggle the experiment
-                ToggleExperiment(Physics.OverlapSphere(FlightGlobals.ship_position, 10f).Where(c => c.gameObject.transform.parent.name == name).Count() > 0);
+                ToggleExperiment(Physics.OverlapSphere(FlightGlobals.ship_position, 10f).Any(c => c.gameObject.transform.parent.name == name));
             }
 
             /// <summary>

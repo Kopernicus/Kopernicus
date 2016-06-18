@@ -26,7 +26,8 @@
  * 
  * https://kerbalspaceprogram.com
  */
- 
+
+using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
@@ -47,10 +48,8 @@ namespace Kopernicus
             /// </summary>
             void Start()
             {
-                foreach (CelestialBody b in FlightGlobals.Bodies)
+                foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
                 {
-                    if (b.bodyName != oldName)
-                        continue;
                     b.bodyName = b.bodyName.Replace(oldName, newName);
                     PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
                 }

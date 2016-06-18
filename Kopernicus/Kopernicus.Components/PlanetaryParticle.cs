@@ -67,14 +67,14 @@ namespace Kopernicus
             /// </summary>
             public static PlanetParticleEmitter Create(GameObject host)
             {
-                /// Create the GameObject
+                // Create the GameObject
                 GameObject emitter = GetWorldParticleCollider();
                 emitter.transform.parent = host.transform;
                 emitter.transform.localPosition = Vector3.zero;
                 emitter.SetLayerRecursive(10);
                 emitter.name = "Particles";
 
-                /// Add the Particle Emitter
+                // Add the Particle Emitter
                 return emitter.AddComponent<PlanetParticleEmitter>();
             }
 
@@ -114,14 +114,7 @@ namespace Kopernicus
                     renderer = GetComponent<ParticleRenderer>();
                 }
 
-                if (!GetComponent<MeshFilter>())
-                {
-                    filter = gameObject.AddComponent<MeshFilter>();
-                }
-                else
-                {
-                    filter = GetComponent<MeshFilter>();
-                }
+                filter = !GetComponent<MeshFilter>() ? gameObject.AddComponent<MeshFilter>() : GetComponent<MeshFilter>();
             }
 
             /// <summary>
@@ -134,7 +127,7 @@ namespace Kopernicus
                 animator.sizeGrow = sizeGrow;
                 animator.colorAnimation = colorAnimation;
                 renderer.material.mainTexture = mainTexture;
-                filter.mesh = filter.sharedMesh = mesh != null ? mesh : transform.parent.GetComponent<MeshFilter>().sharedMesh;
+                filter.mesh = filter.sharedMesh = mesh ?? transform.parent.GetComponent<MeshFilter>().sharedMesh;
                 animator.force = force;
             }
 
@@ -148,7 +141,7 @@ namespace Kopernicus
             /// </summary>
             void Update()
             {
-                /// We have a target
+                // We have a target
                 if (target != "None")
                 {
                     if (targetTransform == null) targetTransform = PSystemManager.Instance.localBodies.Find(b => b.transform.name == target).scaledBody.transform;
@@ -172,19 +165,19 @@ namespace Kopernicus
             /// <param name="other"></param>
             void OnParticleCollision(GameObject other)
             {
-                /// If we dont want collisions, abort
+                // If we dont want collisions, abort
                 if (!collideable)
                     return;
 
-                /// Don't collide with the planet
+                // Don't collide with the planet
                 if (other == transform.parent.gameObject)
                     return;
 
-                /// We need a rigidbody
+                // We need a rigidbody
                 if (!other.GetComponent<Rigidbody>())
                     return;
 
-                /// Do funny things
+                // Do funny things
                 Particle partice = emitter.particles.OrderBy(p => Vector3.Distance(other.transform.position, p.position)).First();
                 other.GetComponent<Rigidbody>().AddForceAtPosition(partice.velocity.normalized * partice.energy, partice.position, ForceMode.Impulse);
                 partice.energy = 0;

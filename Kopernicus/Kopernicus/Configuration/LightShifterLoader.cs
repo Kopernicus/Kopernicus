@@ -41,7 +41,7 @@ namespace Kopernicus
             public LightShifter lsc { get; set; }
 
             // sunlightColor
-            [ParserTarget("sunlightColor", optional = true, allowMerge = false)]
+            [ParserTarget("sunlightColor")]
             public ColorParser sunlightColor
             {
                 get { return lsc.sunlightColor; }
@@ -49,7 +49,7 @@ namespace Kopernicus
             }
 
             // sunlightIntensity
-            [ParserTarget("sunlightIntensity", optional = true, allowMerge = false)]
+            [ParserTarget("sunlightIntensity")]
             public NumericParser<float> sunlightIntensity
             {
                 get { return lsc.sunlightIntensity; }
@@ -57,7 +57,7 @@ namespace Kopernicus
             }
 
             // sunlightShadowStrength
-            [ParserTarget("sunlightShadowStrength", optional = true, allowMerge = false)]
+            [ParserTarget("sunlightShadowStrength")]
             public NumericParser<float> sunlightShadowStrength
             {
                 get { return lsc.sunlightShadowStrength; }
@@ -65,7 +65,7 @@ namespace Kopernicus
             }
 
             // scaledSunlightColor
-            [ParserTarget("scaledSunlightColor", optional = true, allowMerge = false)]
+            [ParserTarget("scaledSunlightColor")]
             public ColorParser scaledSunlightColor
             {
                 get { return lsc.scaledSunlightColor; }
@@ -73,7 +73,7 @@ namespace Kopernicus
             }
 
             // scaledSunlightIntensity
-            [ParserTarget("scaledSunlightIntensity", optional = true, allowMerge = false)]
+            [ParserTarget("scaledSunlightIntensity")]
             public NumericParser<float> scaledSunlightIntensity
             {
                 get { return lsc.scaledSunlightIntensity; }
@@ -81,7 +81,7 @@ namespace Kopernicus
             }
 
             // IVASunColor
-            [ParserTarget("IVASunColor", optional = true, allowMerge = false)]
+            [ParserTarget("IVASunColor")]
             public ColorParser IVASunColor
             {
                 get { return lsc.IVASunColor; }
@@ -89,7 +89,7 @@ namespace Kopernicus
             }
 
             // IVASunIntensity
-            [ParserTarget("IVASunIntensity", optional = true, allowMerge = false)]
+            [ParserTarget("IVASunIntensity")]
             public NumericParser<float> IVASunIntensity
             {
                 get { return lsc.IVASunIntensity; }
@@ -97,7 +97,7 @@ namespace Kopernicus
             }
 
             // ambientLightColor
-            [ParserTarget("ambientLightColor", optional = true, allowMerge = false)]
+            [ParserTarget("ambientLightColor")]
             public ColorParser ambientLightColor
             {
                 get { return lsc.ambientLightColor; }
@@ -105,7 +105,7 @@ namespace Kopernicus
             }
 
             // Set the color that the star emits
-            [ParserTarget("sunLensFlareColor", optional = true)]
+            [ParserTarget("sunLensFlareColor")]
             public ColorParser sunLensFlareColor
             {
                 get { return lsc.sunLensFlareColor; }
@@ -113,7 +113,7 @@ namespace Kopernicus
             }
 
             // givesOffLight
-            [ParserTarget("givesOffLight", optional = true, allowMerge = false)]
+            [ParserTarget("givesOffLight")]
             public NumericParser<bool> givesOffLight
             {
                 get { return lsc.givesOffLight; }
@@ -121,7 +121,7 @@ namespace Kopernicus
             }
 
             // sunAU
-            [ParserTarget("sunAU", optional = true, allowMerge = false)]
+            [ParserTarget("sunAU")]
             public NumericParser<double> sunAU
             {
                 get { return lsc.AU; }
@@ -129,7 +129,7 @@ namespace Kopernicus
             }
 
             // brightnessCurve
-            [ParserTarget("brightnessCurve", optional = true, allowMerge = false)]
+            [ParserTarget("brightnessCurve")]
             public FloatCurveParser brightnessCurve
             {
                 get { return lsc.brightnessCurve; }
@@ -137,7 +137,7 @@ namespace Kopernicus
             }
 
             // sunAU
-            [ParserTarget("luminosity", optional = true, allowMerge = false)]
+            [ParserTarget("luminosity")]
             public NumericParser<double> luminosity
             {
                 get { return lsc.solarLuminosity; }
@@ -145,7 +145,7 @@ namespace Kopernicus
             }
 
             // sunAU
-            [ParserTarget("insolation", optional = true, allowMerge = false)]
+            [ParserTarget("insolation")]
             public NumericParser<double> insolation
             {
                 get { return lsc.solarInsolation; }
@@ -153,7 +153,7 @@ namespace Kopernicus
             }
 
             // sunAU
-            [ParserTarget("radiationFactor", optional = true, allowMerge = false)]
+            [ParserTarget("radiationFactor")]
             public NumericParser<double> radiation
             {
                 get { return lsc.radiationFactor; }

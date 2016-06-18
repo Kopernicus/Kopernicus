@@ -45,7 +45,7 @@ namespace Kopernicus
             public Ring ring { get; set; }
 
             // Inner Radius of our ring
-            [ParserTarget("innerRadius", optional = true, allowMerge = false)]
+            [ParserTarget("innerRadius")]
             public NumericParser<float> innerRadius
             {
                 get { return ring.innerRadius; }
@@ -53,7 +53,7 @@ namespace Kopernicus
             }
 
             // Outer Radius of our ring
-            [ParserTarget("outerRadius", optional = true, allowMerge = false)]
+            [ParserTarget("outerRadius")]
             public NumericParser<float> outerRadius
             {
                 get { return ring.outerRadius; }
@@ -61,7 +61,7 @@ namespace Kopernicus
             }
 
             // Axis angle of our ring
-            [ParserTarget("angle", optional = true, allowMerge = false)]
+            [ParserTarget("angle")]
             public NumericParser<float> angle
             {
                 get { return ring.rotation.eulerAngles.x; }
@@ -69,7 +69,7 @@ namespace Kopernicus
             }
 
             // Texture of our ring
-            [ParserTarget("texture", optional = true, allowMerge = false)]
+            [ParserTarget("texture")]
             public Texture2DParser texture
             {
                 get { return ring.texture; }
@@ -77,7 +77,7 @@ namespace Kopernicus
             }
 
             // Color of our ring
-            [ParserTarget("color", optional = true, allowMerge = false)]
+            [ParserTarget("color")]
             public ColorParser color
             {
                 get { return ring.color; }
@@ -85,7 +85,7 @@ namespace Kopernicus
             }
 
             // Lock rotation of our ring?
-            [ParserTarget("lockRotation", optional = true, allowMerge = false)]
+            [ParserTarget("lockRotation")]
             public NumericParser<bool> lockRotation
             {
                 get { return ring.lockRotation; }
@@ -93,7 +93,7 @@ namespace Kopernicus
             }
 
             // Unlit our ring?
-            [ParserTarget("unlit", optional = true, allowMerge = false)]
+            [ParserTarget("unlit")]
             public NumericParser<bool> unlit
             {
                 get { return ring.unlit; }
@@ -101,7 +101,7 @@ namespace Kopernicus
             }
 
             // Amount of vertices arount the ring
-            [ParserTarget("steps", optional = true, allowMerge = false)]
+            [ParserTarget("steps")]
             public NumericParser<int> steps
             {
                 get { return ring.steps; }

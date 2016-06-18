@@ -41,7 +41,7 @@ namespace Kopernicus
             public class VertexHeightOblate : ModLoader<PQSMod_VertexHeightOblate>
             {
                 // The height where the terrain is oblated
-                [ParserTarget("height", optional = true)]
+                [ParserTarget("height")]
                 public NumericParser<double> height
                 {
                     get { return mod.height; }
@@ -49,7 +49,7 @@ namespace Kopernicus
                 }
 
                 // The pow of the terrain
-                [ParserTarget("pow", optional = true)]
+                [ParserTarget("pow")]
                 public NumericParser<double> pow
                 {
                     get { return mod.pow; }

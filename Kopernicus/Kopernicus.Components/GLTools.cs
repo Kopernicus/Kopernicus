@@ -139,28 +139,28 @@ namespace Kopernicus
             /// <param name="style">The style of the created line.</param>
             public static void DrawOrbit(Orbit orbit, Color color, Style style)
             {
-                /// Only render visible stuff
+                // Only render visible stuff
                 if (!orbit.referenceBody.scaledBody.GetComponent<Renderer>().isVisible)
                     return;
 
-                /// Clear points
+                // Clear points
                 points.Clear();
 
-                /// Calculations for elliptical orbits
+                // Calculations for elliptical orbits
                 if (orbit.eccentricity < 1)
                 {
                     for (int i = 0; i < Math.Floor(360.0 / resolution); i++)
                         points.Add(ScaledSpace.LocalToScaledSpace(orbit.getPositionFromEccAnomaly(i * resolution * Math.PI / 180)));
-                    points.Add(points[0]); /// close the loop
+                    points.Add(points[0]); // close the loop
                 }
-                /// Calculations for hyperbolic orbits
+                // Calculations for hyperbolic orbits
                 else
                 {
                     for (int i = -1000; i <= 1000; i += 5)
                         points.Add(ScaledSpace.LocalToScaledSpace(orbit.getPositionFromEccAnomaly(i * resolution * Math.PI / 180)));
                 }
 
-                /// Draw the path
+                // Draw the path
                 DrawPath(orbit.referenceBody, points, color, style);
             }
 
@@ -172,29 +172,29 @@ namespace Kopernicus
             /// <param name="style">Whether the path is dashed or solid</param>
             public static void DrawPath(CelestialBody body, List<Vector3d> points, Color color, Style style)
             {
-                /// Start the GL drawing
+                // Start the GL drawing
                 GL.PushMatrix();
                 material.SetPass(0);
                 GL.LoadPixelMatrix();
                 GL.Begin(GL.LINES);
                 GL.Color(color);
 
-                /// Evaluate the needed amount of steps
+                // Evaluate the needed amount of steps
                 int step = (int)style;
 
-                /// Draw every point
+                // Draw every point
                 for (int i = 0; i < points.Count - 1; i += step)
                 {
-                    /// Occlusion check
+                    // Occlusion check
                     Vector3 cameraPos = PlanetariumCamera.Camera.transform.position;
                     if (Physics.Raycast(cameraPos, (points[i] - cameraPos).normalized) || Physics.Raycast(cameraPos, (points[i + 1] - cameraPos).normalized))
                         continue;
 
-                    /// Map world coordinates to screen coordinates
+                    // Map world coordinates to screen coordinates
                     screenPoint1 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i]);
                     screenPoint2 = PlanetariumCamera.Camera.WorldToScreenPoint(points[i + 1]);
 
-                    /// Draw the GL vertices
+                    // Draw the GL vertices
                     if (screenPoint1.z > 0 && screenPoint2.z > 0)
                     {
                         GL.Vertex3(screenPoint1.x, screenPoint1.y, 0);

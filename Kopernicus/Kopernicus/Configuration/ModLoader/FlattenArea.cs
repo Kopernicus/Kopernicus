@@ -39,7 +39,7 @@ namespace Kopernicus
             public class FlattenArea : ModLoader<PQSMod_FlattenArea>
             {
                 // DEBUG_showColors
-                [ParserTarget("DEBUG_showColors", optional = true)]
+                [ParserTarget("DEBUG_showColors")]
                 public NumericParser<bool> DEBUG_showColors
                 {
                     get { return mod.DEBUG_showColors; }
@@ -47,7 +47,7 @@ namespace Kopernicus
                 }
 
                 // flattenTo
-                [ParserTarget("flattenTo", optional = true)]
+                [ParserTarget("flattenTo")]
                 public NumericParser<double> flattenTo
                 {
                     get { return mod.flattenTo; }
@@ -55,7 +55,7 @@ namespace Kopernicus
                 }
 
                 // innerRadius
-                [ParserTarget("innerRadius", optional = true)]
+                [ParserTarget("innerRadius")]
                 public NumericParser<double> innerRadius
                 {
                     get { return mod.innerRadius; }
@@ -63,7 +63,7 @@ namespace Kopernicus
                 }
 
                 // outerRadius
-                [ParserTarget("outerRadius", optional = true)]
+                [ParserTarget("outerRadius")]
                 public NumericParser<double> outerRadius
                 {
                     get { return mod.outerRadius; }
@@ -71,7 +71,7 @@ namespace Kopernicus
                 }
 
                 // position
-                [ParserTarget("position", optional = true)]
+                [ParserTarget("position")]
                 public Vector3Parser position
                 {
                     get { return mod.position; }
@@ -79,14 +79,14 @@ namespace Kopernicus
                 }
 
                 // position v2
-                [ParserTarget("Position", optional = true)]
+                [ParserTarget("Position")]
                 public PositionParser Position
                 {
                     set { mod.position = value; }
                 }
 
                 // smoothEnd
-                [ParserTarget("smoothEnd", optional = true)]
+                [ParserTarget("smoothEnd")]
                 public NumericParser<double> smoothEnd
                 {
                     get { return mod.smoothEnd; }
@@ -94,7 +94,7 @@ namespace Kopernicus
                 }
 
                 // smoothStart
-                [ParserTarget("smoothStart", optional = true)]
+                [ParserTarget("smoothStart")]
                 public NumericParser<double> smoothStart
                 {
                     get { return mod.smoothStart; }

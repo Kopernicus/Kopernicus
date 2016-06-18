@@ -39,7 +39,7 @@ namespace Kopernicus
             private long unloadTime;                // If non-zero the textures will be unloaded once the timer exceeds the value
 
             // State
-            private bool isLoaded = false;
+            private bool isLoaded;
 
             // Disabling
             public override void OnSphereInactive()

@@ -12,7 +12,7 @@ namespace Kopernicus
         public class PQSProjectionFallbackLoader : PQSProjectionFallback
         {
             // Saturation, default = 1
-            [ParserTarget("saturation", optional = true)]
+            [ParserTarget("saturation")]
             public NumericParser<float> saturationSetter
             {
                 get { return saturation; }
@@ -20,7 +20,7 @@ namespace Kopernicus
             }
 
             // Contrast, default = 1
-            [ParserTarget("contrast", optional = true)]
+            [ParserTarget("contrast")]
             public NumericParser<float> contrastSetter
             {
                 get { return contrast; }
@@ -28,7 +28,7 @@ namespace Kopernicus
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-            [ParserTarget("tintColor", optional = true)]
+            [ParserTarget("tintColor")]
             public ColorParser tintColorSetter
             {
                 get { return tintColor; }
@@ -36,7 +36,7 @@ namespace Kopernicus
             }
 
             // Near Tiling, default = 1000
-            [ParserTarget("texTiling", optional = true)]
+            [ParserTarget("texTiling")]
             public NumericParser<float> texTilingSetter
             {
                 get { return texTiling; }
@@ -44,7 +44,7 @@ namespace Kopernicus
             }
 
             // Near Blend, default = 0.5
-            [ParserTarget("texPower", optional = true)]
+            [ParserTarget("texPower")]
             public NumericParser<float> texPowerSetter
             {
                 get { return texPower; }
@@ -52,7 +52,7 @@ namespace Kopernicus
             }
 
             // Far Blend, default = 0.5
-            [ParserTarget("multiPower", optional = true)]
+            [ParserTarget("multiPower")]
             public NumericParser<float> multiPowerSetter
             {
                 get { return multiPower; }
@@ -60,7 +60,7 @@ namespace Kopernicus
             }
 
             // NearFar Start, default = 2000
-            [ParserTarget("groundTexStart", optional = true)]
+            [ParserTarget("groundTexStart")]
             public NumericParser<float> groundTexStartSetter
             {
                 get { return groundTexStart; }
@@ -68,7 +68,7 @@ namespace Kopernicus
             }
 
             // NearFar Start, default = 10000
-            [ParserTarget("groundTexEnd", optional = true)]
+            [ParserTarget("groundTexEnd")]
             public NumericParser<float> groundTexEndSetter
             {
                 get { return groundTexEnd; }
@@ -76,7 +76,7 @@ namespace Kopernicus
             }
 
             // Multifactor, default = 0.5
-            [ParserTarget("multiFactor", optional = true)]
+            [ParserTarget("multiFactor")]
             public NumericParser<float> multiFactorSetter
             {
                 get { return multiFactor; }
@@ -84,21 +84,21 @@ namespace Kopernicus
             }
 
             // Main Texture, default = "white" { }
-            [ParserTarget("mainTex", optional = true)]
+            [ParserTarget("mainTex")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
                 set { mainTex = value; }
             }
 
-            [ParserTarget("mainTexScale", optional = true)]
+            [ParserTarget("mainTexScale")]
             private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
-            [ParserTarget("mainTexOffset", optional = true)]
+            [ParserTarget("mainTexOffset")]
             private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
@@ -106,7 +106,7 @@ namespace Kopernicus
             }
 
             // PlanetOpacity, default = 1
-            [ParserTarget("planetOpacity", optional = true)]
+            [ParserTarget("planetOpacity")]
             public NumericParser<float> planetOpacitySetter
             {
                 get { return planetOpacity; }

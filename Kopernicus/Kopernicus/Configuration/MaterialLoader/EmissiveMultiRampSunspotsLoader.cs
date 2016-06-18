@@ -12,21 +12,21 @@ namespace Kopernicus
         public class EmissiveMultiRampSunspotsLoader : EmissiveMultiRampSunspots
         {
             // Ramp Map (RGBA), default = "white" { }
-            [ParserTarget("rampMap", optional = true)]
+            [ParserTarget("rampMap")]
             public Texture2DParser rampMapSetter
             {
                 get { return rampMap; }
                 set { rampMap = value; }
             }
 
-            [ParserTarget("rampMapScale", optional = true)]
+            [ParserTarget("rampMapScale")]
             private Vector2Parser rampMapScaleSetter
             {
                 get { return rampMapScale; }
                 set { rampMapScale = value; }
             }
 
-            [ParserTarget("rampMapOffset", optional = true)]
+            [ParserTarget("rampMapOffset")]
             private Vector2Parser rampMapOffsetSetter
             {
                 get { return rampMapOffset; }
@@ -34,21 +34,21 @@ namespace Kopernicus
             }
 
             // Noise Map (RGBA), default = "white" { }
-            [ParserTarget("noiseMap", optional = true)]
+            [ParserTarget("noiseMap")]
             public Texture2DParser noiseMapSetter
             {
                 get { return noiseMap; }
                 set { noiseMap = value; }
             }
 
-            [ParserTarget("noiseMapScale", optional = true)]
+            [ParserTarget("noiseMapScale")]
             private Vector2Parser noiseMapScaleSetter
             {
                 get { return noiseMapScale; }
                 set { noiseMapScale = value; }
             }
 
-            [ParserTarget("noiseMapOffset", optional = true)]
+            [ParserTarget("noiseMapOffset")]
             private Vector2Parser noiseMapOffsetSetter
             {
                 get { return noiseMapOffset; }
@@ -56,7 +56,7 @@ namespace Kopernicus
             }
 
             // Emission Color 0, default = (1,1,1,1)
-            [ParserTarget("emitColor0", optional = true)]
+            [ParserTarget("emitColor0")]
             public ColorParser emitColor0Setter
             {
                 get { return emitColor0; }
@@ -64,7 +64,7 @@ namespace Kopernicus
             }
 
             // Emission Color 1, default = (1,1,1,1)
-            [ParserTarget("emitColor1", optional = true)]
+            [ParserTarget("emitColor1")]
             public ColorParser emitColor1Setter
             {
                 get { return emitColor1; }
@@ -72,21 +72,21 @@ namespace Kopernicus
             }
 
             // Sunspot Map (R), default = "white" { }
-            [ParserTarget("sunspotTex", optional = true)]
+            [ParserTarget("sunspotTex")]
             public Texture2DParser sunspotTexSetter
             {
                 get { return sunspotTex; }
                 set { sunspotTex = value; }
             }
 
-            [ParserTarget("sunspotTexScale", optional = true)]
+            [ParserTarget("sunspotTexScale")]
             private Vector2Parser sunspotTexScaleSetter
             {
                 get { return sunspotTexScale; }
                 set { sunspotTexScale = value; }
             }
 
-            [ParserTarget("sunspotTexOffset", optional = true)]
+            [ParserTarget("sunspotTexOffset")]
             private Vector2Parser sunspotTexOffsetSetter
             {
                 get { return sunspotTexOffset; }
@@ -94,7 +94,7 @@ namespace Kopernicus
             }
 
             // Sunspot Power, default = 1
-            [ParserTarget("sunspotPower", optional = true)]
+            [ParserTarget("sunspotPower")]
             public NumericParser<float> sunspotPowerSetter
             {
                 get { return sunspotPower; }
@@ -102,7 +102,7 @@ namespace Kopernicus
             }
 
             // Sunspot Color, default = (0,0,0,0)
-            [ParserTarget("sunspotColor", optional = true)]
+            [ParserTarget("sunspotColor")]
             public ColorParser sunspotColorSetter
             {
                 get { return sunspotColor; }
@@ -110,7 +110,7 @@ namespace Kopernicus
             }
 
             // Rimlight Color, default = (1,1,1,1)
-            [ParserTarget("rimColor", optional = true)]
+            [ParserTarget("rimColor")]
             public ColorParser rimColorSetter
             {
                 get { return rimColor; }
@@ -118,7 +118,7 @@ namespace Kopernicus
             }
 
             // Rimlight Power, default = 0.2
-            [ParserTarget("rimPower", optional = true)]
+            [ParserTarget("rimPower")]
             public NumericParser<float> rimPowerSetter
             {
                 get { return rimPower; }
@@ -126,7 +126,7 @@ namespace Kopernicus
             }
 
             // Rimlight Blend, default = 0.2
-            [ParserTarget("rimBlend", optional = true)]
+            [ParserTarget("rimBlend")]
             public NumericParser<float> rimBlendSetter
             {
                 get { return rimBlend; }

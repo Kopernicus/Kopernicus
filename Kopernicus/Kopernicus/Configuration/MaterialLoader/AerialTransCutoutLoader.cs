@@ -12,7 +12,7 @@ namespace Kopernicus
         public class AerialTransCutoutLoader : AerialTransCutout
         {
             // Main Color, default = (1,1,1,1)
-            [ParserTarget("color", optional = true)]
+            [ParserTarget("color")]
             public ColorParser colorSetter
             {
                 get { return color; }
@@ -20,21 +20,21 @@ namespace Kopernicus
             }
 
             // Base (RGB) Trans (A), default = "white" { }
-            [ParserTarget("mainTex", optional = true)]
+            [ParserTarget("mainTex")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
                 set { mainTex = value; }
             }
 
-            [ParserTarget("mainTexScale", optional = true)]
+            [ParserTarget("mainTexScale")]
             private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
-            [ParserTarget("mainTexOffset", optional = true)]
+            [ParserTarget("mainTexOffset")]
             private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
@@ -42,7 +42,7 @@ namespace Kopernicus
             }
 
             // Alpha cutoff, default = 0.5
-            [ParserTarget("texCutoff", optional = true)]
+            [ParserTarget("texCutoff")]
             public NumericParser<float> texCutoffSetter
             {
                 get { return texCutoff; }
@@ -50,7 +50,7 @@ namespace Kopernicus
             }
 
             // AP Fog Color, default = (0,0,1,1)
-            [ParserTarget("fogColor", optional = true)]
+            [ParserTarget("fogColor")]
             public ColorParser fogColorSetter
             {
                 get { return fogColor; }
@@ -58,7 +58,7 @@ namespace Kopernicus
             }
 
             // AP Height Fall Off, default = 1
-            [ParserTarget("heightFallOff", optional = true)]
+            [ParserTarget("heightFallOff")]
             public NumericParser<float> heightFallOffSetter
             {
                 get { return heightFallOff; }
@@ -66,7 +66,7 @@ namespace Kopernicus
             }
 
             // AP Global Density, default = 1
-            [ParserTarget("globalDensity", optional = true)]
+            [ParserTarget("globalDensity")]
             public NumericParser<float> globalDensitySetter
             {
                 get { return globalDensity; }
@@ -74,7 +74,7 @@ namespace Kopernicus
             }
 
             // AP Atmosphere Depth, default = 1
-            [ParserTarget("atmosphereDepth", optional = true)]
+            [ParserTarget("atmosphereDepth")]
             public NumericParser<float> atmosphereDepthSetter
             {
                 get { return atmosphereDepth; }

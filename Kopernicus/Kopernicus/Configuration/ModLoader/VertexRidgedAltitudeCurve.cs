@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexRidgedAltitudeCurve : ModLoader<PQSMod_VertexRidgedAltitudeCurve>
             {
                 // deformity
-                [ParserTarget("deformity", optional = true)]
+                [ParserTarget("deformity")]
                 public NumericParser<float> deformity
                 {
                     get { return mod.deformity; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // ridgedAddFrequency
-                [ParserTarget("ridgedAddFrequency", optional = true)]
+                [ParserTarget("ridgedAddFrequency")]
                 public NumericParser<float> ridgedAddFrequency
                 {
                     get { return mod.ridgedAddFrequency; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // ridgedAddLacunarity
-                [ParserTarget("ridgedAddLacunarity", optional = true)]
+                [ParserTarget("ridgedAddLacunarity")]
                 public NumericParser<float> ridgedAddLacunarity
                 {
                     get { return mod.ridgedAddLacunarity; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // ridgedAddOctaves
-                [ParserTarget("ridgedAddOctaves", optional = true)]
+                [ParserTarget("ridgedAddOctaves")]
                 public NumericParser<int> ridgedAddOctaves
                 {
                     get { return mod.ridgedAddOctaves; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // ridgedAddSeed
-                [ParserTarget("ridgedAddSeed", optional = true)]
+                [ParserTarget("ridgedAddSeed")]
                 public NumericParser<int> ridgedAddSeed
                 {
                     get { return mod.ridgedAddSeed; }
@@ -80,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // ridgedMinimum
-                [ParserTarget("ridgedMinimum", optional = true)]
+                [ParserTarget("ridgedMinimum")]
                 public NumericParser<float> ridgedMinimum
                 {
                     get { return mod.ridgedMinimum; }
@@ -88,7 +88,7 @@ namespace Kopernicus
                 }
                 
                 // ridgedMode
-                [ParserTarget("ridgedMode", optional = true)]
+                [ParserTarget("ridgedMode")]
                 public EnumParser<LibNoise.Unity.QualityMode> ridgedMode
                 {
                     get { return mod.ridgedMode; }
@@ -96,7 +96,7 @@ namespace Kopernicus
                 }
 
                 // simplexCurve
-                [ParserTarget("simplexCurve", optional = true)]
+                [ParserTarget("simplexCurve")]
                 public FloatCurveParser simplexCurve
                 {
                     get { return mod.simplexCurve != null ? new FloatCurve(mod.simplexCurve.keys) : new FloatCurve(); }
@@ -104,7 +104,7 @@ namespace Kopernicus
                 }
 
                 // simplexFrequency
-                [ParserTarget("simplexFrequency", optional = true)]
+                [ParserTarget("simplexFrequency")]
                 public NumericParser<double> simplexFrequency
                 {
                     get { return mod.simplexFrequency; }
@@ -112,7 +112,7 @@ namespace Kopernicus
                 }
 
                 // simplexHeightEnd
-                [ParserTarget("simplexHeightEnd", optional = true)]
+                [ParserTarget("simplexHeightEnd")]
                 public NumericParser<double> simplexHeightEnd
                 {
                     get { return mod.simplexHeightEnd; }
@@ -120,7 +120,7 @@ namespace Kopernicus
                 }
 
                 // simplexHeightStart
-                [ParserTarget("simplexHeightStart", optional = true)]
+                [ParserTarget("simplexHeightStart")]
                 public NumericParser<double> simplexHeightStart
                 {
                     get { return mod.simplexHeightStart; }
@@ -128,7 +128,7 @@ namespace Kopernicus
                 }
 
                 // simplexOctaves
-                [ParserTarget("simplexOctaves", optional = true)]
+                [ParserTarget("simplexOctaves")]
                 public NumericParser<double> simplexOctaves
                 {
                     get { return mod.simplexOctaves; }
@@ -136,7 +136,7 @@ namespace Kopernicus
                 }
 
                 // simplexPersistence
-                [ParserTarget("simplexPersistence", optional = true)]
+                [ParserTarget("simplexPersistence")]
                 public NumericParser<double> simplexPersistence
                 {
                     get { return mod.simplexPersistence; }
@@ -144,7 +144,7 @@ namespace Kopernicus
                 }
 
                 // simplexSeed
-                [ParserTarget("simplexSeed", optional = true)]
+                [ParserTarget("simplexSeed")]
                 public NumericParser<int> simplexSeed
                 {
                     get { return mod.simplexSeed; }

@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexDefineCoastLine : ModLoader<PQSMod_VertexDefineCoastLine>
             {
                 // depthOffset
-                [ParserTarget("depthOffset", optional = true)]
+                [ParserTarget("depthOffset")]
                 public NumericParser<double> depthOffset
                 {
                     get { return mod.depthOffset; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // oceanRadiusOffset
-                [ParserTarget("oceanRadiusOffset", optional = true)]
+                [ParserTarget("oceanRadiusOffset")]
                 public NumericParser<double> oceanRadiusOffset
                 {
                     get { return mod.oceanRadiusOffset; }

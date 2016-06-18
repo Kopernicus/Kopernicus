@@ -43,48 +43,48 @@ namespace Kopernicus
             public class Asteroid
             {
                 // Name
-                [ParserTarget("name", optional = true)]
+                [ParserTarget("name")]
                 public string name { get; set; }
 
                 // Spawning Locations
-                [ParserTarget("Locations", optional = true)]
+                [ParserTarget("Locations")]
                 public Location location = new Location();
 
                 // Spawn interval
-                [ParserTarget("interval", optional = true)]
+                [ParserTarget("interval")]
                 public NumericParser<float> interval { get; set; }
 
                 // Maximal untracked lifetime
-                [ParserTarget("maxUntrackedLifetime", optional = true)]
+                [ParserTarget("maxUntrackedLifetime")]
                 public NumericParser<float> maxUntrackedLifetime { get; set; }
 
                 // Minimal untracked lifetime
-                [ParserTarget("minUntrackedLifetime", optional = true)]
+                [ParserTarget("minUntrackedLifetime")]
                 public NumericParser<float> minUntrackedLifetime { get; set; }
 
                 // Probability of a spawn
-                [ParserTarget("probability", optional = true)]
+                [ParserTarget("probability")]
                 public NumericParser<float> probability { get; set; }
 
                 // Min Limit
-                [ParserTarget("spawnGroupMinLimit", optional = true)]
+                [ParserTarget("spawnGroupMinLimit")]
                 public NumericParser<int> spawnGroupMinLimit { get; set; }
 
                 // Max Limit
-                [ParserTarget("spawnGroupMaxLimit", optional = true)]
+                [ParserTarget("spawnGroupMaxLimit")]
                 public NumericParser<int> spawnGroupMaxLimit { get; set; }
 
                 // Whether the asteroid name should be unique per savegame
-                [ParserTarget("uniqueName", optional = true)]
+                [ParserTarget("uniqueName")]
                 public NumericParser<bool> uniqueName = new NumericParser<bool>(false);
 
                 // Config Node that overloads the created vessel node
                 // Reason for the Caps: Sigma was messing up his configs
-                [ParserTarget("VESSEL", optional = true)]
+                [ParserTarget("VESSEL")]
                 public ConfigNode vessel { get; set; }
 
                 // Classes of the asteroid
-                [ParserTarget("Size", optional = true)]
+                [ParserTarget("Size")]
                 public FloatCurveParser size { get; set; }
             }
         }

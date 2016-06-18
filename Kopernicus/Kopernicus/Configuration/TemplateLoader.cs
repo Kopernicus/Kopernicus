@@ -69,31 +69,31 @@ namespace Kopernicus
 
             // Should we strip the PQS off
             [PreApply]
-            [ParserTarget("removePQS", optional = true)]
+            [ParserTarget("removePQS")]
             public NumericParser<bool> removePQS = new NumericParser<bool> (false);
 
             // Should we strip the atmosphere off
-            [ParserTarget("removeAtmosphere", optional = true)]
+            [ParserTarget("removeAtmosphere")]
             public NumericParser<bool> removeAtmosphere = new NumericParser<bool>(false);
 
             // Should we strip the ocean off
-            [ParserTarget("removeOcean", optional = true)]
+            [ParserTarget("removeOcean")]
             public NumericParser<bool> removeOcean = new NumericParser<bool>(false);
 
             // Collection of PQS mods to remove
-            [ParserTarget("removePQSMods", optional = true)]
+            [ParserTarget("removePQSMods")]
             public StringCollectionParser removePQSMods;
 
             // Should we strip all Mods off
-            [ParserTarget("removeAllPQSMods", optional = true)]
+            [ParserTarget("removeAllPQSMods")]
             public NumericParser<bool> removeAllMods = new NumericParser<bool>(false);
 
             // Collection of PQS mods to remove
-            [ParserTarget("removeProgressTree", optional = true)]
+            [ParserTarget("removeProgressTree")]
             public NumericParser<bool> removeProgressTree = new NumericParser<bool> (true);
 
             // Remove coronas for star
-            [ParserTarget("removeCoronas", optional = true)]
+            [ParserTarget("removeCoronas")]
             public NumericParser<bool> removeCoronas = new NumericParser<bool>(false);
 
             // Apply event

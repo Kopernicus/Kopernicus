@@ -50,11 +50,11 @@ namespace Kopernicus
 
             // Type of object this body's scaled version is
             [PreApply]
-            [ParserTarget("type", optional = true)]
+            [ParserTarget("type")]
             public EnumParser<BodyType> type { get; set; }
 
             // Set the altitude where the fade to scaled space starts
-            [ParserTarget("fadeStart", optional = true)]
+            [ParserTarget("fadeStart")]
             public NumericParser<float> fadeStart 
             {
                 get { return scaledVersion.GetComponentInChildren<ScaledSpaceFader>() ? scaledVersion.GetComponentInChildren<ScaledSpaceFader>().fadeStart : 0; }
@@ -62,7 +62,7 @@ namespace Kopernicus
             }
             
             // Set the altitude where the fade to scaled space starts
-            [ParserTarget("fadeEnd", optional = true)]
+            [ParserTarget("fadeEnd")]
             public NumericParser<float> fadeEnd
             {
                 get { return scaledVersion.GetComponent<ScaledSpaceFader>() ? scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd : 0; }
@@ -70,17 +70,17 @@ namespace Kopernicus
             }
 
             // Create the Kopernicus LightShifter
-            [ParserTarget("Light", optional = true, allowMerge = true)]
+            [ParserTarget("Light", allowMerge = true)]
             public LightShifterLoader lightShifter { get; set; }
 
             // Coronas for a star's scaled version
-            [ParserTargetCollection("Coronas", optional = true, nameSignificance = NameSignificance.None)]
+            [ParserTargetCollection("Coronas", nameSignificance = NameSignificance.None)]
             public List<CoronaLoader> coronas = new List<CoronaLoader>();
 
-            [ParserTarget("sphericalModel", optional = true)]
+            [ParserTarget("sphericalModel")]
             public NumericParser<bool> sphericalModel = new NumericParser<bool>(false);
 
-            [ParserTarget("deferMesh", optional = true)]
+            [ParserTarget("deferMesh")]
             public NumericParser<bool> deferMesh = new NumericParser<bool>(false);
 
             // Parser apply event

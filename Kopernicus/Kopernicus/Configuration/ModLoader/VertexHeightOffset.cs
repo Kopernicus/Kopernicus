@@ -41,7 +41,7 @@ namespace Kopernicus
             public class VertexHeightOffset : ModLoader<PQSMod_VertexHeightOffset>
             {
                 // Offset of the Terrain
-                [ParserTarget("offset", optional = true)]
+                [ParserTarget("offset")]
                 public NumericParser<double> offset
                 {
                     get { return mod.offset; }

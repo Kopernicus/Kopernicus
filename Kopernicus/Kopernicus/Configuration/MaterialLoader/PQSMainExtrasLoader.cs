@@ -12,7 +12,7 @@ namespace Kopernicus
         public class PQSMainExtrasLoader : PQSMainExtras
         {
             // Saturation, default = 1
-            [ParserTarget("saturation", optional = true)]
+            [ParserTarget("saturation")]
             public NumericParser<float> saturationSetter
             {
                 get { return saturation; }
@@ -20,7 +20,7 @@ namespace Kopernicus
             }
 
             // Contrast, default = 1
-            [ParserTarget("contrast", optional = true)]
+            [ParserTarget("contrast")]
             public NumericParser<float> contrastSetter
             {
                 get { return contrast; }
@@ -28,7 +28,7 @@ namespace Kopernicus
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-            [ParserTarget("tintColor", optional = true)]
+            [ParserTarget("tintColor")]
             public ColorParser tintColorSetter
             {
                 get { return tintColor; }
@@ -36,7 +36,7 @@ namespace Kopernicus
             }
 
             // Near Blend, default = 0.5
-            [ParserTarget("powerNear", optional = true)]
+            [ParserTarget("powerNear")]
             public NumericParser<float> powerNearSetter
             {
                 get { return powerNear; }
@@ -44,7 +44,7 @@ namespace Kopernicus
             }
 
             // Far Blend, default = 0.5
-            [ParserTarget("powerFar", optional = true)]
+            [ParserTarget("powerFar")]
             public NumericParser<float> powerFarSetter
             {
                 get { return powerFar; }
@@ -52,7 +52,7 @@ namespace Kopernicus
             }
 
             // NearFar Start, default = 2000
-            [ParserTarget("groundTexStart", optional = true)]
+            [ParserTarget("groundTexStart")]
             public NumericParser<float> groundTexStartSetter
             {
                 get { return groundTexStart; }
@@ -60,7 +60,7 @@ namespace Kopernicus
             }
 
             // NearFar End, default = 10000
-            [ParserTarget("groundTexEnd", optional = true)]
+            [ParserTarget("groundTexEnd")]
             public NumericParser<float> groundTexEndSetter
             {
                 get { return groundTexEnd; }
@@ -68,7 +68,7 @@ namespace Kopernicus
             }
 
             // Steep Blend, default = 1
-            [ParserTarget("steepPower", optional = true)]
+            [ParserTarget("steepPower")]
             public NumericParser<float> steepPowerSetter
             {
                 get { return steepPower; }
@@ -76,7 +76,7 @@ namespace Kopernicus
             }
 
             // Steep Fade Start, default = 20000
-            [ParserTarget("steepTexStart", optional = true)]
+            [ParserTarget("steepTexStart")]
             public NumericParser<float> steepTexStartSetter
             {
                 get { return steepTexStart; }
@@ -84,7 +84,7 @@ namespace Kopernicus
             }
 
             // Steep Fade End, default = 30000
-            [ParserTarget("steepTexEnd", optional = true)]
+            [ParserTarget("steepTexEnd")]
             public NumericParser<float> steepTexEndSetter
             {
                 get { return steepTexEnd; }
@@ -92,21 +92,21 @@ namespace Kopernicus
             }
 
             // Steep Texture, default = "white" {}
-            [ParserTarget("steepTex", optional = true)]
+            [ParserTarget("steepTex")]
             public Texture2DParser steepTexSetter
             {
                 get { return steepTex; }
                 set { steepTex = value; }
             }
 
-            [ParserTarget("steepTexScale", optional = true)]
+            [ParserTarget("steepTexScale")]
             public Vector2Parser steepTexScaleSetter
             {
                 get { return steepTexScale; }
                 set { steepTexScale = value; }
             }
 
-            [ParserTarget("steepTexOffset", optional = true)]
+            [ParserTarget("steepTexOffset")]
             public Vector2Parser steepTexOffsetSetter
             {
                 get { return steepTexOffset; }
@@ -114,21 +114,21 @@ namespace Kopernicus
             }
 
             // Steep Bump Map, default = "bump" {}
-            [ParserTarget("steepBumpMap", optional = true)]
+            [ParserTarget("steepBumpMap")]
             public Texture2DParser steepBumpMapSetter
             {
                 get { return steepBumpMap; }
                 set { steepBumpMap = value; }
             }
 
-            [ParserTarget("steepBumpMapScale", optional = true)]
+            [ParserTarget("steepBumpMapScale")]
             public Vector2Parser steepBumpMapScaleSetter
             {
                 get { return steepBumpMapScale; }
                 set { steepBumpMapScale = value; }
             }
 
-            [ParserTarget("steepBumpMapOffset", optional = true)]
+            [ParserTarget("steepBumpMapOffset")]
             public Vector2Parser steepBumpMapOffsetSetter
             {
                 get { return steepBumpMapOffset; }
@@ -136,7 +136,7 @@ namespace Kopernicus
             }
 
             // Steep Near Tiling, default = 1
-            [ParserTarget("steepNearTiling", optional = true)]
+            [ParserTarget("steepNearTiling")]
             public NumericParser<float> steepNearTilingSetter
             {
                 get { return steepNearTiling; }
@@ -144,7 +144,7 @@ namespace Kopernicus
             }
 
             // Steep Far Tiling, default = 1
-            [ParserTarget("steepTiling", optional = true)]
+            [ParserTarget("steepTiling")]
             public NumericParser<float> steepTilingSetter
             {
                 get { return steepTiling; }
@@ -152,21 +152,21 @@ namespace Kopernicus
             }
 
             // Low Texture, default = "white" {}
-            [ParserTarget("lowTex", optional = true)]
+            [ParserTarget("lowTex")]
             public Texture2DParser lowTexSetter
             {
                 get { return lowTex; }
                 set { lowTex = value; }
             }
 
-            [ParserTarget("lowTexScale", optional = true)]
+            [ParserTarget("lowTexScale")]
             public Vector2Parser lowTexScaleSetter
             {
                 get { return lowTexScale; }
                 set { lowTexScale = value; }
             }
 
-            [ParserTarget("lowTexOffset", optional = true)]
+            [ParserTarget("lowTexOffset")]
             public Vector2Parser lowTexOffsetSetter
             {
                 get { return lowTexOffset; }
@@ -174,21 +174,21 @@ namespace Kopernicus
             }
 
             // Low Bump Map, default = "bump" {}
-            [ParserTarget("lowBumpMap", optional = true)]
+            [ParserTarget("lowBumpMap")]
             public Texture2DParser lowBumpMapSetter
             {
                 get { return lowBumpMap; }
                 set { lowBumpMap = value; }
             }
 
-            [ParserTarget("lowBumpMapScale", optional = true)]
+            [ParserTarget("lowBumpMapScale")]
             public Vector2Parser lowBumpMapScaleSetter
             {
                 get { return lowBumpMapScale; }
                 set { lowBumpMapScale = value; }
             }
 
-            [ParserTarget("lowBumpMapOffset", optional = true)]
+            [ParserTarget("lowBumpMapOffset")]
             public Vector2Parser lowBumpMapOffsetSetter
             {
                 get { return lowBumpMapOffset; }
@@ -196,7 +196,7 @@ namespace Kopernicus
             }
 
             // Low Near Tiling, default = 1000
-            [ParserTarget("lowNearTiling", optional = true)]
+            [ParserTarget("lowNearTiling")]
             public NumericParser<float> lowNearTilingSetter
             {
                 get { return lowNearTiling; }
@@ -204,7 +204,7 @@ namespace Kopernicus
             }
 
             // Low Far Tiling, default = 10
-            [ParserTarget("lowMultiFactor", optional = true)]
+            [ParserTarget("lowMultiFactor")]
             public NumericParser<float> lowMultiFactorSetter
             {
                 get { return lowMultiFactor; }
@@ -212,7 +212,7 @@ namespace Kopernicus
             }
 
             // Low Bump Near Tiling, default = 1
-            [ParserTarget("lowBumpNearTiling", optional = true)]
+            [ParserTarget("lowBumpNearTiling")]
             public NumericParser<float> lowBumpNearTilingSetter
             {
                 get { return lowBumpNearTiling; }
@@ -220,7 +220,7 @@ namespace Kopernicus
             }
 
             // Low Bump Far Tiling, default = 1
-            [ParserTarget("lowBumpFarTiling", optional = true)]
+            [ParserTarget("lowBumpFarTiling")]
             public NumericParser<float> lowBumpFarTilingSetter
             {
                 get { return lowBumpFarTiling; }
@@ -228,21 +228,21 @@ namespace Kopernicus
             }
 
             // Mid Texture, default = "white" {}
-            [ParserTarget("midTex", optional = true)]
+            [ParserTarget("midTex")]
             public Texture2DParser midTexSetter
             {
                 get { return midTex; }
                 set { midTex = value; }
             }
 
-            [ParserTarget("midTexScale", optional = true)]
+            [ParserTarget("midTexScale")]
             public Vector2Parser midTexScaleSetter
             {
                 get { return midTexScale; }
                 set { midTexScale = value; }
             }
 
-            [ParserTarget("midTexOffset", optional = true)]
+            [ParserTarget("midTexOffset")]
             public Vector2Parser midTexOffsetSetter
             {
                 get { return midTexOffset; }
@@ -250,21 +250,21 @@ namespace Kopernicus
             }
 
             // Mid Bump Map, default = "bump" {}
-            [ParserTarget("midBumpMap", optional = true)]
+            [ParserTarget("midBumpMap")]
             public Texture2DParser midBumpMapSetter
             {
                 get { return midBumpMap; }
                 set { midBumpMap = value; }
             }
 
-            [ParserTarget("midBumpMapScale", optional = true)]
+            [ParserTarget("midBumpMapScale")]
             public Vector2Parser midBumpMapScaleSetter
             {
                 get { return midBumpMapScale; }
                 set { midBumpMapScale = value; }
             }
 
-            [ParserTarget("midBumpMapOffset", optional = true)]
+            [ParserTarget("midBumpMapOffset")]
             public Vector2Parser midBumpMapOffsetSetter
             {
                 get { return midBumpMapOffset; }
@@ -272,7 +272,7 @@ namespace Kopernicus
             }
 
             // Mid Near Tiling, default = 1000
-            [ParserTarget("midNearTiling", optional = true)]
+            [ParserTarget("midNearTiling")]
             public NumericParser<float> midNearTilingSetter
             {
                 get { return midNearTiling; }
@@ -280,7 +280,7 @@ namespace Kopernicus
             }
 
             // Mid Far Tiling, default = 10
-            [ParserTarget("midMultiFactor", optional = true)]
+            [ParserTarget("midMultiFactor")]
             public NumericParser<float> midMultiFactorSetter
             {
                 get { return midMultiFactor; }
@@ -288,7 +288,7 @@ namespace Kopernicus
             }
 
             // Mid Bump Near Tiling, default = 1
-            [ParserTarget("midBumpNearTiling", optional = true)]
+            [ParserTarget("midBumpNearTiling")]
             public NumericParser<float> midBumpNearTilingSetter
             {
                 get { return midBumpNearTiling; }
@@ -296,7 +296,7 @@ namespace Kopernicus
             }
 
             // Mid Bump Far Tiling, default = 1
-            [ParserTarget("midBumpFarTiling", optional = true)]
+            [ParserTarget("midBumpFarTiling")]
             public NumericParser<float> midBumpFarTilingSetter
             {
                 get { return midBumpFarTiling; }
@@ -304,21 +304,21 @@ namespace Kopernicus
             }
 
             // High Texture, default = "white" {}
-            [ParserTarget("highTex", optional = true)]
+            [ParserTarget("highTex")]
             public Texture2DParser highTexSetter
             {
                 get { return highTex; }
                 set { highTex = value; }
             }
 
-            [ParserTarget("highTexScale", optional = true)]
+            [ParserTarget("highTexScale")]
             public Vector2Parser highTexScaleSetter
             {
                 get { return highTexScale; }
                 set { highTexScale = value; }
             }
 
-            [ParserTarget("highTexOffset", optional = true)]
+            [ParserTarget("highTexOffset")]
             public Vector2Parser highTexOffsetSetter
             {
                 get { return highTexOffset; }
@@ -326,21 +326,21 @@ namespace Kopernicus
             }
 
             // High Bump Map, default = "bump" {}
-            [ParserTarget("highBumpMap", optional = true)]
+            [ParserTarget("highBumpMap")]
             public Texture2DParser highBumpMapSetter
             {
                 get { return highBumpMap; }
                 set { highBumpMap = value; }
             }
 
-            [ParserTarget("highBumpMapScale", optional = true)]
+            [ParserTarget("highBumpMapScale")]
             public Vector2Parser highBumpMapScaleSetter
             {
                 get { return highBumpMapScale; }
                 set { highBumpMapScale = value; }
             }
 
-            [ParserTarget("highBumpMapOffset", optional = true)]
+            [ParserTarget("highBumpMapOffset")]
             public Vector2Parser highBumpMapOffsetSetter
             {
                 get { return highBumpMapOffset; }
@@ -348,7 +348,7 @@ namespace Kopernicus
             }
 
             // High Near Tiling, default = 1000
-            [ParserTarget("highNearTiling", optional = true)]
+            [ParserTarget("highNearTiling")]
             public NumericParser<float> highNearTilingSetter
             {
                 get { return highNearTiling; }
@@ -356,7 +356,7 @@ namespace Kopernicus
             }
 
             // High Far Tiling, default = 10
-            [ParserTarget("highMultiFactor", optional = true)]
+            [ParserTarget("highMultiFactor")]
             public NumericParser<float> highMultiFactorSetter
             {
                 get { return highMultiFactor; }
@@ -364,7 +364,7 @@ namespace Kopernicus
             }
 
             // High Bump Near Tiling, default = 1
-            [ParserTarget("highBumpNearTiling", optional = true)]
+            [ParserTarget("highBumpNearTiling")]
             public NumericParser<float> highBumpNearTilingSetter
             {
                 get { return highBumpNearTiling; }
@@ -372,7 +372,7 @@ namespace Kopernicus
             }
 
             // High Bump Far Tiling, default = 1
-            [ParserTarget("highBumpFarTiling", optional = true)]
+            [ParserTarget("highBumpFarTiling")]
             public NumericParser<float> highBumpFarTilingSetter
             {
                 get { return highBumpFarTiling; }
@@ -380,7 +380,7 @@ namespace Kopernicus
             }
 
             // Low Transition Start, default = 0
-            [ParserTarget("lowStart", optional = true)]
+            [ParserTarget("lowStart")]
             public NumericParser<float> lowStartSetter
             {
                 get { return lowStart; }
@@ -388,7 +388,7 @@ namespace Kopernicus
             }
 
             // Low Transition End, default = 0.3
-            [ParserTarget("lowEnd", optional = true)]
+            [ParserTarget("lowEnd")]
             public NumericParser<float> lowEndSetter
             {
                 get { return lowEnd; }
@@ -396,7 +396,7 @@ namespace Kopernicus
             }
 
             // High Transition Start, default = 0.8
-            [ParserTarget("highStart", optional = true)]
+            [ParserTarget("highStart")]
             public NumericParser<float> highStartSetter
             {
                 get { return highStart; }
@@ -404,7 +404,7 @@ namespace Kopernicus
             }
 
             // High Transition End, default = 1
-            [ParserTarget("highEnd", optional = true)]
+            [ParserTarget("highEnd")]
             public NumericParser<float> highEndSetter
             {
                 get { return highEnd; }
@@ -412,7 +412,7 @@ namespace Kopernicus
             }
 
             // AP Global Density, default = 1
-            [ParserTarget("globalDensity", optional = true)]
+            [ParserTarget("globalDensity")]
             public NumericParser<float> globalDensitySetter
             {
                 get { return globalDensity; }
@@ -420,21 +420,21 @@ namespace Kopernicus
             }
 
             // FogColorRamp, default = "white" {}
-            [ParserTarget("fogColorRamp", optional = true)]
+            [ParserTarget("fogColorRamp")]
             public Texture2DParser fogColorRampSetter
             {
                 get { return fogColorRamp; }
                 set { fogColorRamp = value; }
             }
 
-            [ParserTarget("fogColorRampScale", optional = true)]
+            [ParserTarget("fogColorRampScale")]
             public Vector2Parser fogColorRampScaleSetter
             {
                 get { return fogColorRampScale; }
                 set { fogColorRampScale = value; }
             }
 
-            [ParserTarget("fogColorRampOffset", optional = true)]
+            [ParserTarget("fogColorRampOffset")]
             public Vector2Parser fogColorRampOffsetSetter
             {
                 get { return fogColorRampOffset; }
@@ -442,7 +442,7 @@ namespace Kopernicus
             }
 
             // PlanetOpacity, default = 1
-            [ParserTarget("planetOpacity", optional = true)]
+            [ParserTarget("planetOpacity")]
             public NumericParser<float> planetOpacitySetter
             {
                 get { return planetOpacity; }

@@ -37,7 +37,7 @@ namespace Kopernicus
             public class CreateSphereCollider : ModLoader<PQSMod_CreateSphereCollider>
             {
                 // radiusOffset
-                [ParserTarget("radiusOffset", optional = true)]
+                [ParserTarget("radiusOffset")]
                 public NumericParser<float> radiusOffset
                 {
                     get { return mod.radiusOffset; }

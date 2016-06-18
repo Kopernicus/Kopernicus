@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexSimplexHeightAbsolute : ModLoader<PQSMod_VertexSimplexHeightAbsolute>
             {
                 // The deformity of the simplex terrain
-                [ParserTarget("deformity", optional = true)]
+                [ParserTarget("deformity")]
                 public NumericParser<double> deformity
                 {
                     get { return mod.deformity; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // The frequency of the simplex terrain
-                [ParserTarget("frequency", optional = true)]
+                [ParserTarget("frequency")]
                 public NumericParser<double> frequency
                 {
                     get { return mod.frequency; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // Octaves of the simplex height
-                [ParserTarget("octaves", optional = true)]
+                [ParserTarget("octaves")]
                 public NumericParser<double> octaves
                 {
                     get { return mod.octaves; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // Persistence of the simplex height
-                [ParserTarget("persistence", optional = true)]
+                [ParserTarget("persistence")]
                 public NumericParser<double> persistence
                 {
                     get { return mod.persistence; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // The seed of the simplex height
-                [ParserTarget("seed", optional = true)]
+                [ParserTarget("seed")]
                 public NumericParser<int> seed
                 {
                     get { return mod.seed; }

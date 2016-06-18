@@ -42,7 +42,7 @@ namespace Kopernicus
             public KSC ksc;
 
             // latitude
-            [ParserTarget("latitude", optional = true, allowMerge = false)]
+            [ParserTarget("latitude")]
             public NumericParser<double> latitude
             {
                 get { return ksc.latitude; }
@@ -50,14 +50,14 @@ namespace Kopernicus
             }
 
             // longitude
-            [ParserTarget("longitude", optional = true, allowMerge = false)]
+            [ParserTarget("longitude")]
             public NumericParser<double> longitude
             {
                 get { return ksc.longitude; }
                 set { ksc.longitude = value; }
             }
 
-            [ParserTarget("repositionRadial", optional = true, allowMerge = false)]
+            [ParserTarget("repositionRadial")]
             public Vector3Parser repositionRadial
             {
                 get { return ksc.repositionRadial; }
@@ -65,7 +65,7 @@ namespace Kopernicus
             }
 
             // decalLatitude
-            [ParserTarget("decalLatitude", optional = true, allowMerge = false)]
+            [ParserTarget("decalLatitude")]
             public NumericParser<double> decalLatitude
             {
                 get { return ksc.decalLatitude; }
@@ -73,7 +73,7 @@ namespace Kopernicus
             }
 
             // decalLongitude
-            [ParserTarget("decalLongitude", optional = true, allowMerge = false)]
+            [ParserTarget("decalLongitude")]
             public NumericParser<double> decalLongitude
             {
                 get { return ksc.decalLongitude; }
@@ -81,7 +81,7 @@ namespace Kopernicus
             }
 
             // lodvisibleRangeMultipler
-            [ParserTarget("lodvisibleRangeMultipler", optional = true, allowMerge = false)]
+            [ParserTarget("lodvisibleRangeMultipler")]
             public NumericParser<double> lodvisibleRangeMultipler
             {
                 get { return ksc.lodvisibleRangeMult; }
@@ -89,7 +89,7 @@ namespace Kopernicus
             }
 
             // reorientFinalAngle
-            [ParserTarget("reorientFinalAngle", optional = true, allowMerge = false)]
+            [ParserTarget("reorientFinalAngle")]
             public NumericParser<float> reorientFinalAngle
             {
                 get { return ksc.reorientFinalAngle; }
@@ -97,7 +97,7 @@ namespace Kopernicus
             }
 
             // reorientInitialUp
-            [ParserTarget("reorientInitialUp", optional = true, allowMerge = false)]
+            [ParserTarget("reorientInitialUp")]
             public Vector3Parser reorientInitialUp
             {
                 get { return ksc.reorientInitialUp; }
@@ -105,7 +105,7 @@ namespace Kopernicus
             }
 
             // reorientToSphere
-            [ParserTarget("reorientToSphere", optional = true, allowMerge = false)]
+            [ParserTarget("reorientToSphere")]
             public NumericParser<bool> reorientToSphere
             {
                 get { return ksc.reorientToSphere; }
@@ -113,7 +113,7 @@ namespace Kopernicus
             }
 
             // repositionRadiusOffset
-            [ParserTarget("repositionRadiusOffset", optional = true, allowMerge = false)]
+            [ParserTarget("repositionRadiusOffset")]
             public NumericParser<double> repositionRadiusOffset
             {
                 get { return ksc.repositionRadiusOffset; }
@@ -121,7 +121,7 @@ namespace Kopernicus
             }
 
             // repositionToSphere
-            [ParserTarget("repositionToSphere", optional = true, allowMerge = false)]
+            [ParserTarget("repositionToSphere")]
             public NumericParser<bool> repositionToSphere
             {
                 get { return ksc.repositionToSphere; }
@@ -129,7 +129,7 @@ namespace Kopernicus
             }
 
             // repositionToSphereSurface
-            [ParserTarget("repositionToSphereSurface", optional = true, allowMerge = false)]
+            [ParserTarget("repositionToSphereSurface")]
             public NumericParser<bool> repositionToSphereSurface
             {
                 get { return ksc.repositionToSphereSurface; }
@@ -137,7 +137,7 @@ namespace Kopernicus
             }
 
             // repositionToSphereSurfaceAddHeight
-            [ParserTarget("repositionToSphereSurfaceAddHeight", optional = true, allowMerge = false)]
+            [ParserTarget("repositionToSphereSurfaceAddHeight")]
             public NumericParser<bool> repositionToSphereSurfaceAddHeight
             {
                 get { return ksc.repositionToSphereSurfaceAddHeight; }
@@ -145,7 +145,7 @@ namespace Kopernicus
             }
 
             // position
-            [ParserTarget("position", optional = true, allowMerge = false)]
+            [ParserTarget("position")]
             public Vector3Parser position
             {
                 get { return ksc.position; }
@@ -153,7 +153,7 @@ namespace Kopernicus
             }
 
             // radius
-            [ParserTarget("radius", optional = true, allowMerge = false)]
+            [ParserTarget("radius")]
             public NumericParser<double> radius
             {
                 get { return ksc.radius; }
@@ -161,7 +161,7 @@ namespace Kopernicus
             }
 
             // heightMapDeformity
-            [ParserTarget("heightMapDeformity", optional = true, allowMerge = false)]
+            [ParserTarget("heightMapDeformity")]
             public NumericParser<double> heightMapDeformity
             {
                 get { return ksc.heightMapDeformity; }
@@ -169,7 +169,7 @@ namespace Kopernicus
             }
 
             // absoluteOffset
-            [ParserTarget("absoluteOffset", optional = true, allowMerge = false)]
+            [ParserTarget("absoluteOffset")]
             public NumericParser<double> absoluteOffset
             {
                 get { return ksc.absoluteOffset; }
@@ -177,7 +177,7 @@ namespace Kopernicus
             }
 
             // absolute
-            [ParserTarget("absolute", optional = true, allowMerge = false)]
+            [ParserTarget("absolute")]
             public NumericParser<bool> absolute
             {
                 get { return ksc.absolute; }
@@ -185,7 +185,7 @@ namespace Kopernicus
             }
 
             // groundColor
-            [ParserTarget("groundColor", optional = true, allowMerge = false)]
+            [ParserTarget("groundColor")]
             public ColorParser groundColorParser
             {
                 get { return ksc.color; }
@@ -193,7 +193,7 @@ namespace Kopernicus
             }
 
             // Texture
-            [ParserTarget("groundTexture", optional = true, allowMerge = false)]
+            [ParserTarget("groundTexture")]
             public Texture2DParser groundTextureParser
             {
                 get { return ksc.mainTexture; }

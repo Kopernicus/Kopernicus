@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexHeightNoise : ModLoader<PQSMod_VertexHeightNoise>
             {
                 // The deformity of the simplex terrain noise
-                [ParserTarget("deformity", optional = true)]
+                [ParserTarget("deformity")]
                 public NumericParser<float> deformity
                 {
                     get { return mod.deformity; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // The frequency of the simplex terrain noise
-                [ParserTarget("frequency", optional = true)]
+                [ParserTarget("frequency")]
                 public NumericParser<float> frequency
                 {
                     get { return mod.frequency; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // Octaves of the simplex height noise
-                [ParserTarget("octaves", optional = true)]
+                [ParserTarget("octaves")]
                 public NumericParser<int> octaves
                 {
                     get { return mod.octaves; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // Persistence of the simplex height noise
-                [ParserTarget("persistence", optional = true)]
+                [ParserTarget("persistence")]
                 public NumericParser<float> persistence
                 {
                     get { return mod.persistance; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // The seed of the simplex height noise
-                [ParserTarget("seed", optional = true)]
+                [ParserTarget("seed")]
                 public NumericParser<int> seed
                 {
                     get { return mod.seed; }
@@ -80,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // The type of the simplex height noise
-                [ParserTarget("noiseType", optional = true)]
+                [ParserTarget("noiseType")]
                 public EnumParser<PQSMod_VertexHeightNoise.NoiseType> noiseType
                 {
                     get { return mod.noiseType; }
@@ -88,7 +88,7 @@ namespace Kopernicus
                 }
 
                 // The mode of the simplex height noise
-                [ParserTarget("mode", optional = true)]
+                [ParserTarget("mode")]
                 public EnumParser<LibNoise.Unity.QualityMode> mode
                 {
                     get { return mod.mode; }
@@ -96,7 +96,7 @@ namespace Kopernicus
                 }
 
                 // The lacunarity of the simplex height noise
-                [ParserTarget("lacunarity", optional = true)]
+                [ParserTarget("lacunarity")]
                 public NumericParser<float> lacunarity
                 {
                     get { return mod.lacunarity; }

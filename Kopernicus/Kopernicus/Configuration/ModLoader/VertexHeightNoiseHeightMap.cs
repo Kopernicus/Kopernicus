@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexHeightNoiseHeightMap : ModLoader<PQSMod_VertexHeightNoiseHeightMap>
             {            
                 // The texture of the simplex terrain
-                [ParserTarget("map", optional = true)]
+                [ParserTarget("map")]
                 public Texture2DParser map
                 {
                     get { return mod.heightMap; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // Where the heightMap starts
-                [ParserTarget("heightStart", optional = true)]
+                [ParserTarget("heightStart")]
                 public NumericParser<float> heightStart
                 {
                     get { return mod.heightStart; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // Where the heightMap ends
-                [ParserTarget("heightEnd", optional = true)]
+                [ParserTarget("heightEnd")]
                 public NumericParser<float> heightEnd
                 {
                     get { return mod.heightEnd; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // The deformity of the simplex terrain
-                [ParserTarget("deformity", optional = true)]
+                [ParserTarget("deformity")]
                 public NumericParser<float> deformity
                 {
                     get { return mod.deformity; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // The frequency of the simplex terrain
-                [ParserTarget("frequency", optional = true)]
+                [ParserTarget("frequency")]
                 public NumericParser<float> frequency
                 {
                     get { return mod.frequency; }
@@ -80,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // Octaves of the simplex height
-                [ParserTarget("octaves", optional = true)]
+                [ParserTarget("octaves")]
                 public NumericParser<int> octaves
                 {
                     get { return mod.octaves; }
@@ -88,7 +88,7 @@ namespace Kopernicus
                 }
 
                 // Persistence of the simplex height
-                [ParserTarget("persistance", optional = true)]
+                [ParserTarget("persistance")]
                 public NumericParser<float> persistance
                 {
                     get { return mod.persistance; }
@@ -96,7 +96,7 @@ namespace Kopernicus
                 }
 
                 // The seed of the simplex height
-                [ParserTarget("seed", optional = true)]
+                [ParserTarget("seed")]
                 public NumericParser<int> seed
                 {
                     get { return mod.seed; }

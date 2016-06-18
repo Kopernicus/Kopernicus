@@ -12,7 +12,7 @@ namespace Kopernicus
         public class PQSProjectionAerialQuadRelativeLoader : PQSProjectionAerialQuadRelative
         {
             // Saturation, default = 1
-            [ParserTarget("saturation", optional = true)]
+            [ParserTarget("saturation")]
             public NumericParser<float> saturationSetter
             {
                 get { return saturation; }
@@ -20,7 +20,7 @@ namespace Kopernicus
             }
 
             // Contrast, default = 1
-            [ParserTarget("contrast", optional = true)]
+            [ParserTarget("contrast")]
             public NumericParser<float> contrastSetter
             {
                 get { return contrast; }
@@ -28,7 +28,7 @@ namespace Kopernicus
             }
 
             // Colour Unsaturation (A = Factor), default = (1,1,1,0)
-            [ParserTarget("tintColor", optional = true)]
+            [ParserTarget("tintColor")]
             public ColorParser tintColorSetter
             {
                 get { return tintColor; }
@@ -36,7 +36,7 @@ namespace Kopernicus
             }
 
             // Near Tiling, default = 1000
-            [ParserTarget("texTiling", optional = true)]
+            [ParserTarget("texTiling")]
             public NumericParser<float> texTilingSetter
             {
                 get { return texTiling; }
@@ -44,7 +44,7 @@ namespace Kopernicus
             }
 
             // Near Blend, default = 0.5
-            [ParserTarget("texPower", optional = true)]
+            [ParserTarget("texPower")]
             public NumericParser<float> texPowerSetter
             {
                 get { return texPower; }
@@ -52,7 +52,7 @@ namespace Kopernicus
             }
 
             // Far Blend, default = 0.5
-            [ParserTarget("multiPower", optional = true)]
+            [ParserTarget("multiPower")]
             public NumericParser<float> multiPowerSetter
             {
                 get { return multiPower; }
@@ -60,7 +60,7 @@ namespace Kopernicus
             }
 
             // NearFar Start, default = 2000
-            [ParserTarget("groundTexStart", optional = true)]
+            [ParserTarget("groundTexStart")]
             public NumericParser<float> groundTexStartSetter
             {
                 get { return groundTexStart; }
@@ -68,7 +68,7 @@ namespace Kopernicus
             }
 
             // NearFar Start, default = 10000
-            [ParserTarget("groundTexEnd", optional = true)]
+            [ParserTarget("groundTexEnd")]
             public NumericParser<float> groundTexEndSetter
             {
                 get { return groundTexEnd; }
@@ -76,7 +76,7 @@ namespace Kopernicus
             }
 
             // Steep Tiling, default = 1
-            [ParserTarget("steepTiling", optional = true)]
+            [ParserTarget("steepTiling")]
             public NumericParser<float> steepTilingSetter
             {
                 get { return steepTiling; }
@@ -84,7 +84,7 @@ namespace Kopernicus
             }
 
             // Steep Blend, default = 1
-            [ParserTarget("steepPower", optional = true)]
+            [ParserTarget("steepPower")]
             public NumericParser<float> steepPowerSetter
             {
                 get { return steepPower; }
@@ -92,7 +92,7 @@ namespace Kopernicus
             }
 
             // Steep Fade Start, default = 20000
-            [ParserTarget("steepTexStart", optional = true)]
+            [ParserTarget("steepTexStart")]
             public NumericParser<float> steepTexStartSetter
             {
                 get { return steepTexStart; }
@@ -100,7 +100,7 @@ namespace Kopernicus
             }
 
             // Steep Fade End, default = 30000
-            [ParserTarget("steepTexEnd", optional = true)]
+            [ParserTarget("steepTexEnd")]
             public NumericParser<float> steepTexEndSetter
             {
                 get { return steepTexEnd; }
@@ -108,21 +108,21 @@ namespace Kopernicus
             }
 
             // Deep ground, default = "white" { }
-            [ParserTarget("deepTex", optional = true)]
+            [ParserTarget("deepTex")]
             public Texture2DParser deepTexSetter
             {
                 get { return deepTex; }
                 set { deepTex = value; }
             }
 
-            [ParserTarget("deepTexScale", optional = true)]
+            [ParserTarget("deepTexScale")]
             private Vector2Parser deepTexScaleSetter
             {
                 get { return deepTexScale; }
                 set { deepTexScale = value; }
             }
 
-            [ParserTarget("deepTexOffset", optional = true)]
+            [ParserTarget("deepTexOffset")]
             private Vector2Parser deepTexOffsetSetter
             {
                 get { return deepTexOffset; }
@@ -130,21 +130,21 @@ namespace Kopernicus
             }
 
             // Deep MT, default = "white" { }
-            [ParserTarget("deepMultiTex", optional = true)]
+            [ParserTarget("deepMultiTex")]
             public Texture2DParser deepMultiTexSetter
             {
                 get { return deepMultiTex; }
                 set { deepMultiTex = value; }
             }
 
-            [ParserTarget("deepMultiTexScale", optional = true)]
+            [ParserTarget("deepMultiTexScale")]
             private Vector2Parser deepMultiTexScaleSetter
             {
                 get { return deepMultiTexScale; }
                 set { deepMultiTexScale = value; }
             }
 
-            [ParserTarget("deepMultiTexOffset", optional = true)]
+            [ParserTarget("deepMultiTexOffset")]
             private Vector2Parser deepMultiTexOffsetSetter
             {
                 get { return deepMultiTexOffset; }
@@ -152,7 +152,7 @@ namespace Kopernicus
             }
 
             // Deep MT Tiling, default = 1
-            [ParserTarget("deepMultiFactor", optional = true)]
+            [ParserTarget("deepMultiFactor")]
             public NumericParser<float> deepMultiFactorSetter
             {
                 get { return deepMultiFactor; }
@@ -160,21 +160,21 @@ namespace Kopernicus
             }
 
             // Main Texture, default = "white" { }
-            [ParserTarget("mainTex", optional = true)]
+            [ParserTarget("mainTex")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
                 set { mainTex = value; }
             }
 
-            [ParserTarget("mainTexScale", optional = true)]
+            [ParserTarget("mainTexScale")]
             private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
-            [ParserTarget("mainTexOffset", optional = true)]
+            [ParserTarget("mainTexOffset")]
             private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
@@ -182,21 +182,21 @@ namespace Kopernicus
             }
 
             // Main MT, default = "white" { }
-            [ParserTarget("mainMultiTex", optional = true)]
+            [ParserTarget("mainMultiTex")]
             public Texture2DParser mainMultiTexSetter
             {
                 get { return mainMultiTex; }
                 set { mainMultiTex = value; }
             }
 
-            [ParserTarget("mainMultiTexScale", optional = true)]
+            [ParserTarget("mainMultiTexScale")]
             private Vector2Parser mainMultiTexScaleSetter
             {
                 get { return mainMultiTexScale; }
                 set { mainMultiTexScale = value; }
             }
 
-            [ParserTarget("mainMultiTexOffset", optional = true)]
+            [ParserTarget("mainMultiTexOffset")]
             private Vector2Parser mainMultiTexOffsetSetter
             {
                 get { return mainMultiTexOffset; }
@@ -204,7 +204,7 @@ namespace Kopernicus
             }
 
             // Main MT Tiling, default = 1
-            [ParserTarget("mainMultiFactor", optional = true)]
+            [ParserTarget("mainMultiFactor")]
             public NumericParser<float> mainMultiFactorSetter
             {
                 get { return mainMultiFactor; }
@@ -212,21 +212,21 @@ namespace Kopernicus
             }
 
             // High Ground, default = "white" { }
-            [ParserTarget("highTex", optional = true)]
+            [ParserTarget("highTex")]
             public Texture2DParser highTexSetter
             {
                 get { return highTex; }
                 set { highTex = value; }
             }
 
-            [ParserTarget("highTexScale", optional = true)]
+            [ParserTarget("highTexScale")]
             private Vector2Parser highTexScaleSetter
             {
                 get { return highTexScale; }
                 set { highTexScale = value; }
             }
 
-            [ParserTarget("highTexOffset", optional = true)]
+            [ParserTarget("highTexOffset")]
             private Vector2Parser highTexOffsetSetter
             {
                 get { return highTexOffset; }
@@ -234,21 +234,21 @@ namespace Kopernicus
             }
 
             // High MT, default = "white" { }
-            [ParserTarget("highMultiTex", optional = true)]
+            [ParserTarget("highMultiTex")]
             public Texture2DParser highMultiTexSetter
             {
                 get { return highMultiTex; }
                 set { highMultiTex = value; }
             }
 
-            [ParserTarget("highMultiTexScale", optional = true)]
+            [ParserTarget("highMultiTexScale")]
             private Vector2Parser highMultiTexScaleSetter
             {
                 get { return highMultiTexScale; }
                 set { highMultiTexScale = value; }
             }
 
-            [ParserTarget("highMultiTexOffset", optional = true)]
+            [ParserTarget("highMultiTexOffset")]
             private Vector2Parser highMultiTexOffsetSetter
             {
                 get { return highMultiTexOffset; }
@@ -256,7 +256,7 @@ namespace Kopernicus
             }
 
             // High MT Tiling, default = 1
-            [ParserTarget("highMultiFactor", optional = true)]
+            [ParserTarget("highMultiFactor")]
             public NumericParser<float> highMultiFactorSetter
             {
                 get { return highMultiFactor; }
@@ -264,21 +264,21 @@ namespace Kopernicus
             }
 
             // Snow, default = "white" { }
-            [ParserTarget("snowTex", optional = true)]
+            [ParserTarget("snowTex")]
             public Texture2DParser snowTexSetter
             {
                 get { return snowTex; }
                 set { snowTex = value; }
             }
 
-            [ParserTarget("snowTexScale", optional = true)]
+            [ParserTarget("snowTexScale")]
             private Vector2Parser snowTexScaleSetter
             {
                 get { return snowTexScale; }
                 set { snowTexScale = value; }
             }
 
-            [ParserTarget("snowTexOffset", optional = true)]
+            [ParserTarget("snowTexOffset")]
             private Vector2Parser snowTexOffsetSetter
             {
                 get { return snowTexOffset; }
@@ -286,21 +286,21 @@ namespace Kopernicus
             }
 
             // Snow MT, default = "white" { }
-            [ParserTarget("snowMultiTex", optional = true)]
+            [ParserTarget("snowMultiTex")]
             public Texture2DParser snowMultiTexSetter
             {
                 get { return snowMultiTex; }
                 set { snowMultiTex = value; }
             }
 
-            [ParserTarget("snowMultiTexScale", optional = true)]
+            [ParserTarget("snowMultiTexScale")]
             private Vector2Parser snowMultiTexScaleSetter
             {
                 get { return snowMultiTexScale; }
                 set { snowMultiTexScale = value; }
             }
 
-            [ParserTarget("snowMultiTexOffset", optional = true)]
+            [ParserTarget("snowMultiTexOffset")]
             private Vector2Parser snowMultiTexOffsetSetter
             {
                 get { return snowMultiTexOffset; }
@@ -308,7 +308,7 @@ namespace Kopernicus
             }
 
             // Snow MT Tiling, default = 1
-            [ParserTarget("snowMultiFactor", optional = true)]
+            [ParserTarget("snowMultiFactor")]
             public NumericParser<float> snowMultiFactorSetter
             {
                 get { return snowMultiFactor; }
@@ -316,21 +316,21 @@ namespace Kopernicus
             }
 
             // Steep Texture, default = "white" { }
-            [ParserTarget("steepTex", optional = true)]
+            [ParserTarget("steepTex")]
             public Texture2DParser steepTexSetter
             {
                 get { return steepTex; }
                 set { steepTex = value; }
             }
 
-            [ParserTarget("steepTexScale", optional = true)]
+            [ParserTarget("steepTexScale")]
             private Vector2Parser steepTexScaleSetter
             {
                 get { return steepTexScale; }
                 set { steepTexScale = value; }
             }
 
-            [ParserTarget("steepTexOffset", optional = true)]
+            [ParserTarget("steepTexOffset")]
             private Vector2Parser steepTexOffsetSetter
             {
                 get { return steepTexOffset; }
@@ -338,7 +338,7 @@ namespace Kopernicus
             }
 
             // Deep Start, default = 0
-            [ParserTarget("deepStart", optional = true)]
+            [ParserTarget("deepStart")]
             public NumericParser<float> deepStartSetter
             {
                 get { return deepStart; }
@@ -346,7 +346,7 @@ namespace Kopernicus
             }
 
             // Deep End, default = 0.3
-            [ParserTarget("deepEnd", optional = true)]
+            [ParserTarget("deepEnd")]
             public NumericParser<float> deepEndSetter
             {
                 get { return deepEnd; }
@@ -354,7 +354,7 @@ namespace Kopernicus
             }
 
             // Main lower boundary start, default = 0
-            [ParserTarget("mainLoStart", optional = true)]
+            [ParserTarget("mainLoStart")]
             public NumericParser<float> mainLoStartSetter
             {
                 get { return mainLoStart; }
@@ -362,7 +362,7 @@ namespace Kopernicus
             }
 
             // Main lower boundary end, default = 0.5
-            [ParserTarget("mainLoEnd", optional = true)]
+            [ParserTarget("mainLoEnd")]
             public NumericParser<float> mainLoEndSetter
             {
                 get { return mainLoEnd; }
@@ -370,7 +370,7 @@ namespace Kopernicus
             }
 
             // Main upper boundary start, default = 0.3
-            [ParserTarget("mainHiStart", optional = true)]
+            [ParserTarget("mainHiStart")]
             public NumericParser<float> mainHiStartSetter
             {
                 get { return mainHiStart; }
@@ -378,7 +378,7 @@ namespace Kopernicus
             }
 
             // Main upper boundary end, default = 0.5
-            [ParserTarget("mainHiEnd", optional = true)]
+            [ParserTarget("mainHiEnd")]
             public NumericParser<float> mainHiEndSetter
             {
                 get { return mainHiEnd; }
@@ -386,7 +386,7 @@ namespace Kopernicus
             }
 
             // High lower boundary start, default = 0.6
-            [ParserTarget("hiLoStart", optional = true)]
+            [ParserTarget("hiLoStart")]
             public NumericParser<float> hiLoStartSetter
             {
                 get { return hiLoStart; }
@@ -394,7 +394,7 @@ namespace Kopernicus
             }
 
             // High lower boundary end, default = 0.6
-            [ParserTarget("hiLoEnd", optional = true)]
+            [ParserTarget("hiLoEnd")]
             public NumericParser<float> hiLoEndSetter
             {
                 get { return hiLoEnd; }
@@ -402,7 +402,7 @@ namespace Kopernicus
             }
 
             // High upper boundary start, default = 0.6
-            [ParserTarget("hiHiStart", optional = true)]
+            [ParserTarget("hiHiStart")]
             public NumericParser<float> hiHiStartSetter
             {
                 get { return hiHiStart; }
@@ -410,7 +410,7 @@ namespace Kopernicus
             }
 
             // High upper boundary end, default = 0.9
-            [ParserTarget("hiHiEnd", optional = true)]
+            [ParserTarget("hiHiEnd")]
             public NumericParser<float> hiHiEndSetter
             {
                 get { return hiHiEnd; }
@@ -418,7 +418,7 @@ namespace Kopernicus
             }
 
             // Snow Start, default = 0.9
-            [ParserTarget("snowStart", optional = true)]
+            [ParserTarget("snowStart")]
             public NumericParser<float> snowStartSetter
             {
                 get { return snowStart; }
@@ -426,7 +426,7 @@ namespace Kopernicus
             }
 
             // Snow End, default = 1
-            [ParserTarget("snowEnd", optional = true)]
+            [ParserTarget("snowEnd")]
             public NumericParser<float> snowEndSetter
             {
                 get { return snowEnd; }
@@ -434,7 +434,7 @@ namespace Kopernicus
             }
 
             // AP Fog Color, default = (0,0,1,1)
-            [ParserTarget("fogColor", optional = true)]
+            [ParserTarget("fogColor")]
             public ColorParser fogColorSetter
             {
                 get { return fogColor; }
@@ -442,7 +442,7 @@ namespace Kopernicus
             }
 
             // AP Height Fall Off, default = 1
-            [ParserTarget("heightFallOff", optional = true)]
+            [ParserTarget("heightFallOff")]
             public NumericParser<float> heightFallOffSetter
             {
                 get { return heightFallOff; }
@@ -450,7 +450,7 @@ namespace Kopernicus
             }
 
             // AP Global Density, default = 1
-            [ParserTarget("globalDensity", optional = true)]
+            [ParserTarget("globalDensity")]
             public NumericParser<float> globalDensitySetter
             {
                 get { return globalDensity; }
@@ -458,7 +458,7 @@ namespace Kopernicus
             }
 
             // AP Atmosphere Depth, default = 1
-            [ParserTarget("atmosphereDepth", optional = true)]
+            [ParserTarget("atmosphereDepth")]
             public NumericParser<float> atmosphereDepthSetter
             {
                 get { return atmosphereDepth; }
@@ -466,21 +466,21 @@ namespace Kopernicus
             }
 
             // FogColorRamp, default = "white" { }
-            [ParserTarget("fogColorRamp", optional = true)]
+            [ParserTarget("fogColorRamp")]
             public Texture2DParser fogColorRampSetter
             {
                 get { return fogColorRamp; }
                 set { fogColorRamp = value; }
             }
 
-            [ParserTarget("fogColorRampScale", optional = true)]
+            [ParserTarget("fogColorRampScale")]
             private Vector2Parser fogColorRampScaleSetter
             {
                 get { return fogColorRampScale; }
                 set { fogColorRampScale = value; }
             }
 
-            [ParserTarget("fogColorRampOffset", optional = true)]
+            [ParserTarget("fogColorRampOffset")]
             private Vector2Parser fogColorRampOffsetSetter
             {
                 get { return fogColorRampOffset; }
@@ -488,7 +488,7 @@ namespace Kopernicus
             }
 
             // PlanetOpacity, default = 1
-            [ParserTarget("planetOpacity", optional = true)]
+            [ParserTarget("planetOpacity")]
             public NumericParser<float> planetOpacitySetter
             {
                 get { return planetOpacity; }

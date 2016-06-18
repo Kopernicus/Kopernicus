@@ -42,7 +42,7 @@ namespace Kopernicus
     [RequireConfigType(ConfigType.Node)]
     public class AddModLoader : IParserEventSubscriber
     {
-        [ParserTargetCollection("AddMods", optional = true, nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
+        [ParserTargetCollection("AddMods", nameSignificance = NameSignificance.Type, typePrefix = "Kopernicus.Configuration.ModLoader.")]
         public List<ModLoader<PQSMod>> mods = new List<ModLoader<PQSMod>>();
         void IParserEventSubscriber.Apply(ConfigNode node)
         {

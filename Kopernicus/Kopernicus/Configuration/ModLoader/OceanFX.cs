@@ -40,7 +40,7 @@ namespace Kopernicus
             public class OceanFX : ModLoader<PQSMod_OceanFX>
             {
                 // angle
-                [ParserTarget("angle", optional = true)]
+                [ParserTarget("angle")]
                 public NumericParser<float> angle
                 {
                     get { return mod.angle; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // The deformity of the map for the Quad Remover (?)
-                [ParserTarget("blendA", optional = true)]
+                [ParserTarget("blendA")]
                 public NumericParser<float> blendA
                 {
                     get { return mod.blendA; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // blendB
-                [ParserTarget("blendB", optional = true)]
+                [ParserTarget("blendB")]
                 public NumericParser<float> blendB
                 {
                     get { return mod.blendB; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // bump
-                [ParserTarget("bump", optional = true)]
+                [ParserTarget("bump")]
                 public Texture2DParser bump
                 {
                     get { return mod.bump; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // framesPerSecond
-                [ParserTarget("framesPerSecond", optional = true)]
+                [ParserTarget("framesPerSecond")]
                 public NumericParser<float> framesPerSecond
                 {
                     get { return mod.framesPerSecond; }
@@ -80,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // fresnel (???)
-                [ParserTarget("fresnel", optional = true)]
+                [ParserTarget("fresnel")]
                 public Texture2DParser fresnel
                 {
                     get { return mod.fresnel; }
@@ -88,7 +88,7 @@ namespace Kopernicus
                 }
 
                 // oceanOpacity
-                [ParserTarget("oceanOpacity", optional = true)]
+                [ParserTarget("oceanOpacity")]
                 public NumericParser<float> oceanOpacity
                 {
                     get { return mod.oceanOpacity; }
@@ -96,7 +96,7 @@ namespace Kopernicus
                 }
 
                 // refraction
-                [ParserTarget("refraction", optional = true)]
+                [ParserTarget("refraction")]
                 public Texture2DParser refraction
                 {
                     get { return mod.refraction; }
@@ -104,7 +104,7 @@ namespace Kopernicus
                 }
 
                 // spaceAltitude
-                [ParserTarget("spaceAltitude", optional = true)]
+                [ParserTarget("spaceAltitude")]
                 public NumericParser<double> spaceAltitude
                 {
                     get { return mod.spaceAltitude; }
@@ -112,7 +112,7 @@ namespace Kopernicus
                 }
 
                 // spaceSurfaceBlend
-                [ParserTarget("spaceSurfaceBlend", optional = true)]
+                [ParserTarget("spaceSurfaceBlend")]
                 public NumericParser<float> spaceSurfaceBlend
                 {
                     get { return mod.spaceSurfaceBlend; }
@@ -120,7 +120,7 @@ namespace Kopernicus
                 }
 
                 // specColor
-                [ParserTarget("specColor", optional = true)]
+                [ParserTarget("specColor")]
                 public ColorParser specColor
                 {
                     get { return mod.specColor; }
@@ -128,7 +128,7 @@ namespace Kopernicus
                 }
 
                 // texBlend
-                [ParserTarget("texBlend", optional = true)]
+                [ParserTarget("texBlend")]
                 public NumericParser<float> texBlend
                 {
                     get { return mod.texBlend; }
@@ -136,7 +136,7 @@ namespace Kopernicus
                 }
 
                 // txIndex
-                [ParserTarget("txIndex", optional = true)]
+                [ParserTarget("txIndex")]
                 public NumericParser<int> txIndex
                 {
                     get { return mod.txIndex; }
@@ -144,7 +144,7 @@ namespace Kopernicus
                 }
 
                 // Watermain
-                [ParserTarget("Watermain", optional = true)]
+                [ParserTarget("Watermain")]
                 public ConfigNode watermain
                 {
                     get

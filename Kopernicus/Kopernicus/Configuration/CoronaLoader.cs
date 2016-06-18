@@ -43,49 +43,49 @@ namespace Kopernicus
             public GameObject corona { get; set; }
 
             // Material definition for the Corona
-            [ParserTarget("scaleSpeed", optional = true, allowMerge = true)]
+            [ParserTarget("scaleSpeed", allowMerge = true)]
             public NumericParser<float> scaleSpeed
             {
                 get { return coronaComponent.scaleSpeed; }
                 set { coronaComponent.scaleSpeed = value; }
             }
 
-            [ParserTarget("scaleLimitY", optional = true, allowMerge = true)]
+            [ParserTarget("scaleLimitY", allowMerge = true)]
             public NumericParser<float> scaleLimitY 
             {
                 get { return coronaComponent.scaleLimitY; }
                 set { coronaComponent.scaleLimitY = value; }
             }
 
-            [ParserTarget("scaleLimitX", optional = true, allowMerge = true)]
+            [ParserTarget("scaleLimitX", allowMerge = true)]
             public NumericParser<float> scaleLimitX
             {
                 get { return coronaComponent.scaleLimitX; }
                 set { coronaComponent.scaleLimitX = value; }
             }
 
-            [ParserTarget("updateInterval", optional = true, allowMerge = true)]
+            [ParserTarget("updateInterval", allowMerge = true)]
             public NumericParser<float> updateInterval
             {
                 get { return coronaComponent.updateInterval; }
                 set { coronaComponent.updateInterval = value; }
             }
 
-            [ParserTarget("speed", optional = true, allowMerge = true)]
+            [ParserTarget("speed", allowMerge = true)]
             public NumericParser<int> speed
             {
                 get { return coronaComponent.Speed; }
                 set { coronaComponent.Speed = value; }
             }
 
-            [ParserTarget("rotation", optional = true, allowMerge = true)]
+            [ParserTarget("rotation", allowMerge = true)]
             public NumericParser<float> rotation
             {
                 get { return coronaComponent.Rotation; }
                 set { coronaComponent.Rotation = value; }
             }
 
-            [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
+            [ParserTarget("Material", allowMerge = true, getChild = false)]
             public ParticleAddSmoothLoader material
             {
                 get { return new ParticleAddSmoothLoader(coronaComponent.GetComponent<Renderer>().sharedMaterial); }

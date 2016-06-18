@@ -36,15 +36,15 @@ namespace Kopernicus
         public class DebugLoader
         {
             // If this is set to false, Kopernicus wont save a .bin file with the scaledSpace mesh 
-            [ParserTarget("exportMesh", optional = true)]
+            [ParserTarget("exportMesh")]
             public NumericParser<bool> exportMesh = new NumericParser<bool>(true);
 
             // If this is set to true, Kopernicus will update the ScaledSpace mesh, even if the original conditions aren't matched
-            [ParserTarget("update", optional = true)]
+            [ParserTarget("update")]
             public NumericParser<bool> update = new NumericParser<bool>(false);
 
             // If this is set to true, a wireframe will appear to visualize the SOI
-            [ParserTarget("showSOI", optional = true)]
+            [ParserTarget("showSOI")]
             public NumericParser<bool> showSOI = new NumericParser<bool>(false);
         }
     }

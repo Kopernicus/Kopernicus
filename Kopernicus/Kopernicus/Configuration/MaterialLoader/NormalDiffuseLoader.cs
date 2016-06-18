@@ -12,7 +12,7 @@ namespace Kopernicus
         public class NormalDiffuseLoader : NormalDiffuse
         {
             // Main Color, default = (1,1,1,1)
-            [ParserTarget("color", optional = true)]
+            [ParserTarget("color")]
             public ColorParser colorSetter
             {
                 get { return color; }
@@ -20,21 +20,21 @@ namespace Kopernicus
             }
 
             // Base (RGB), default = "white" { }
-            [ParserTarget("mainTex", optional = true)]
+            [ParserTarget("mainTex")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
                 set { mainTex = value; }
             }
 
-            [ParserTarget("mainTexScale", optional = true)]
+            [ParserTarget("mainTexScale")]
             private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
-            [ParserTarget("mainTexOffset", optional = true)]
+            [ParserTarget("mainTexOffset")]
             private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }

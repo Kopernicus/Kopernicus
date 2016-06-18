@@ -40,7 +40,7 @@ namespace Kopernicus
             public class TangentTextureRanges : ModLoader<PQSMod_TangentTextureRanges>
             {
                 // highEnd
-                [ParserTarget("highEnd", optional = true)]
+                [ParserTarget("highEnd")]
                 public NumericParser<double> highEnd
                 {
                     get { return mod.highEnd; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // highStart
-                [ParserTarget("highStart", optional = true)]
+                [ParserTarget("highStart")]
                 public NumericParser<double> highStart
                 {
                     get { return mod.highStart; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // lowEnd
-                [ParserTarget("lowEnd", optional = true)]
+                [ParserTarget("lowEnd")]
                 public NumericParser<double> lowEnd
                 {
                     get { return mod.lowEnd; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // lowStart
-                [ParserTarget("lowStart", optional = true)]
+                [ParserTarget("lowStart")]
                 public NumericParser<double> lowStart
                 {
                     get { return mod.lowStart; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // modulo
-                [ParserTarget("modulo", optional = true)]
+                [ParserTarget("modulo")]
                 public NumericParser<double> modulo
                 {
                     get { return mod.modulo; }

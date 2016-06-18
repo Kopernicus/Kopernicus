@@ -51,13 +51,13 @@ namespace Kopernicus
             [ParserTarget("name", optional = false)]
             public string name { get; set; }
 
-            [ParserTarget("cacheFile", optional = true)]
+            [ParserTarget("cacheFile")]
             public string cacheFile { get; set; }
 
-            [ParserTarget("barycenter", optional = true)]
+            [ParserTarget("barycenter")]
             public NumericParser<bool> barycenter = new NumericParser<bool>(false);
 
-            [ParserTarget("cbNameLater", optional = true)]
+            [ParserTarget("cbNameLater")]
             public string cbNameLater
             {
                 get
@@ -80,7 +80,7 @@ namespace Kopernicus
             }
             
             // Flight globals index of this body - for computing reference id
-            [ParserTarget("flightGlobalsIndex", optional = true)]
+            [ParserTarget("flightGlobalsIndex")]
             public NumericParser<int> flightGlobalsIndex 
             {
                 get { return generatedBody.flightGlobalsIndex; }
@@ -88,7 +88,7 @@ namespace Kopernicus
             }
 
             // Finalize the orbit of the body?
-            [ParserTarget("finalizeOrbit", optional = true)]
+            [ParserTarget("finalizeOrbit")]
             public NumericParser<bool> finalizeOrbit
             {
                 get { return Templates.finalizeBodies.Contains(generatedBody.name); }
@@ -97,47 +97,47 @@ namespace Kopernicus
 
             // Template property of a body - responsible for generating a PSystemBody from an existing one
             [PreApply]
-            [ParserTarget("Template", optional = true)]
+            [ParserTarget("Template")]
             public TemplateLoader template { get; set; }
 
             // Celestial body properties (description, mass, etc.)
-            [ParserTarget("Properties", optional = true, allowMerge = true)]
+            [ParserTarget("Properties", allowMerge = true)]
             public PropertiesLoader properties { get; set; }
 
             // Wrapper around KSP's Orbit class for editing/loading
-            [ParserTarget("Orbit", optional = true, allowMerge = true)]
+            [ParserTarget("Orbit", allowMerge = true)]
             public OrbitLoader orbit { get; set; }
 
             // Wrapper around the settings for the world's scaled version
-            [ParserTarget("ScaledVersion", optional = true, allowMerge = true)]
+            [ParserTarget("ScaledVersion", allowMerge = true)]
             public ScaledVersionLoader scaledVersion { get; set; }
             
             // Wrapper around the settings for the world's atmosphere
-            [ParserTarget("Atmosphere", optional = true, allowMerge = true)]
+            [ParserTarget("Atmosphere", allowMerge = true)]
             public AtmosphereLoader atmosphere { get; set; }
 
             // Wrapper around the settings for the PQS
-            [ParserTarget("PQS", optional = true, allowMerge = true)]
+            [ParserTarget("PQS", allowMerge = true)]
             public PQSLoader pqs { get; set; }
 
             // Wrapper around the settings for the Ocean
-            [ParserTarget("Ocean", optional = true, allowMerge = true)]
+            [ParserTarget("Ocean", allowMerge = true)]
             public OceanLoader ocean { get; set; }
 
             // Wrapper around Ring class for editing/loading
-            [ParserTargetCollection("Rings", optional = true, nameSignificance = NameSignificance.None, allowMerge = true)]
+            [ParserTargetCollection("Rings", nameSignificance = NameSignificance.None, allowMerge = true)]
             public List<RingLoader> rings = new List<RingLoader>();
 
             // Wrapper around Particle class for editing/loading
-            [ParserTargetCollection("Particles", optional = true, nameSignificance = NameSignificance.None, allowMerge = true)]
+            [ParserTargetCollection("Particles", nameSignificance = NameSignificance.None, allowMerge = true)]
             public List<ParticleLoader> particle = new List<ParticleLoader>();
         
             // Wrapper around the settings for the SpaceCenter
-            [ParserTarget("SpaceCenter", optional = true, allowMerge = true)]
+            [ParserTarget("SpaceCenter", allowMerge = true)]
             public SpaceCenterLoader spaceCenter { get; set; }
 
             // Wrapper around DebugMode settings
-            [ParserTarget("Debug", optional = true)]
+            [ParserTarget("Debug")]
             public DebugLoader debug { get; set; }
 
             // Parser Apply Event

@@ -40,7 +40,7 @@ namespace Kopernicus
             public class MaterialFadeAltitude : ModLoader<PQSMod_MaterialFadeAltitude>
             {
                 // fadeEnd
-                [ParserTarget("fadeEnd", optional = true)]
+                [ParserTarget("fadeEnd")]
                 public NumericParser<float> fadeEnd
                 {
                     get { return mod.fadeEnd; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // fadeStart
-                [ParserTarget("fadeStart", optional = true)]
+                [ParserTarget("fadeStart")]
                 public NumericParser<float> fadeStart
                 {
                     get { return mod.fadeStart; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // valueEnd
-                [ParserTarget("valueEnd", optional = true)]
+                [ParserTarget("valueEnd")]
                 public NumericParser<float> valueEnd
                 {
                     get { return mod.valueEnd; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // valueStart
-                [ParserTarget("valueStart", optional = true)]
+                [ParserTarget("valueStart")]
                 public NumericParser<float> valueStart
                 {
                     get { return mod.valueStart; }

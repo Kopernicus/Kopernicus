@@ -61,7 +61,7 @@ namespace Kopernicus
             public PQSMod_QuadMeshColliders        collider;
             
             // Surface physics material
-            [ParserTarget("PhysicsMaterial", optional = true, allowMerge = true)]
+            [ParserTarget("PhysicsMaterial", allowMerge = true)]
             public PhysicsMaterialParser physicsMaterial
             {
                 get { return collider.physicsMaterial; }
@@ -69,28 +69,28 @@ namespace Kopernicus
             }
 
             // PQS level of detail settings
-            [ParserTarget("minLevel", optional = true)]
+            [ParserTarget("minLevel")]
             public NumericParser<int> minLevel 
             {
                 get { return pqsVersion.minLevel; }
                 set { pqsVersion.minLevel = value; }
             }
 
-            [ParserTarget("maxLevel", optional = true)]
+            [ParserTarget("maxLevel")]
             public NumericParser<int> maxLevel 
             {
                 get { return pqsVersion.maxLevel; }
                 set { pqsVersion.maxLevel = value; }
             }
 
-            [ParserTarget("minDetailDistance", optional = true)]
+            [ParserTarget("minDetailDistance")]
             public NumericParser<double> minDetailDistance 
             {
                 get { return pqsVersion.minDetailDistance; }
                 set { pqsVersion.minDetailDistance = value; }
             }
 
-            [ParserTarget("maxQuadLengthsPerFrame", optional = true)]
+            [ParserTarget("maxQuadLengthsPerFrame")]
             public NumericParser<float> maxQuadLengthsPerFrame 
             {
                 get { return pqsVersion.maxQuadLenghtsPerFrame; }
@@ -98,21 +98,21 @@ namespace Kopernicus
             }
 
             // CelestialBodyTransform fades. should more or less line up with ScaledVersion's fadeStart/fadeEnd
-            [ParserTarget("fadeStart", optional = true)]
+            [ParserTarget("fadeStart")]
             public NumericParser<float> fadeStart
             {
                 get { return transform.planetFade.fadeStart; }
                 set { transform.planetFade.fadeStart = value; }
             }
 
-            [ParserTarget("fadeEnd", optional = true)]
+            [ParserTarget("fadeEnd")]
             public NumericParser<float> fadeEnd
             {
                 get { return transform.planetFade.fadeEnd; }
                 set { transform.planetFade.fadeEnd = value; }
             }
 
-            [ParserTarget("deactivateAltitude", optional = true)]
+            [ParserTarget("deactivateAltitude")]
             public NumericParser<double> deactivateAltitude
             {
                 get { return transform.deactivateAltitude; }
@@ -120,7 +120,7 @@ namespace Kopernicus
             }
 
             // Map Export Arguments
-            [ParserTarget("mapMaxHeight", optional = true)]
+            [ParserTarget("mapMaxHeight")]
             public NumericParser<double> mapMaxHeight
             {
                 get { return pqsVersion.mapMaxHeight; }
@@ -128,7 +128,7 @@ namespace Kopernicus
             }
 
             [PreApply]
-            [ParserTarget("materialType", optional = true)]
+            [ParserTarget("materialType")]
             public EnumParser<PQSMaterialType> materialType
             {
                 set 
@@ -147,11 +147,11 @@ namespace Kopernicus
             }
 
             // Surface Material of the PQS
-            [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
+            [ParserTarget("Material", allowMerge = true, getChild = false)]
             public Material surfaceMaterial;
 
             // Fallback Material of the PQS (its always the same material)
-            [ParserTarget("FallbackMaterial", optional = true, allowMerge = true, getChild = false)]
+            [ParserTarget("FallbackMaterial", allowMerge = true, getChild = false)]
             public PQSProjectionFallbackLoader fallbackMaterial;
 
             /**

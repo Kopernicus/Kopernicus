@@ -47,7 +47,7 @@ namespace Kopernicus
             public PQSMod_UVPlanetRelativePosition uvs;
 
             // We have an ocean?
-            [ParserTarget("ocean", optional = true)]
+            [ParserTarget("ocean")]
             public NumericParser<bool> mapOcean
             {
                 get { return generatedBody.pqsVersion.mapOcean && generatedBody.celestialBody.ocean; }
@@ -55,7 +55,7 @@ namespace Kopernicus
             }
 
             // Color of the ocean on the map
-            [ParserTarget("oceanColor", optional = true)]
+            [ParserTarget("oceanColor")]
             public ColorParser oceanColor
             {
                 get { return generatedBody.pqsVersion.mapOceanColor; }
@@ -63,7 +63,7 @@ namespace Kopernicus
             }
 
             // Height of the Ocean
-            [ParserTarget("oceanHeight", optional = true)]
+            [ParserTarget("oceanHeight")]
             public NumericParser<double> oceanHeight
             {
                 get { return generatedBody.pqsVersion.mapOceanHeight; }
@@ -71,7 +71,7 @@ namespace Kopernicus
             }
 
             // Density of the Ocean
-            [ParserTarget("density", optional = true)]
+            [ParserTarget("density")]
             public NumericParser<double> density
             {
                 get { return generatedBody.celestialBody.oceanDensity; }
@@ -79,28 +79,28 @@ namespace Kopernicus
             }
 
             // PQS level of detail settings
-            [ParserTarget("minLevel", optional = true)]
+            [ParserTarget("minLevel")]
             public NumericParser<int> minLevel
             {
                 get { return ocean.minLevel; }
                 set { ocean.minLevel = value; }
             }
 
-            [ParserTarget("maxLevel", optional = true)]
+            [ParserTarget("maxLevel")]
             public NumericParser<int> maxLevel
             {
                 get { return ocean.maxLevel; }
                 set { ocean.maxLevel = value; }
             }
 
-            [ParserTarget("minDetailDistance", optional = true)]
+            [ParserTarget("minDetailDistance")]
             public NumericParser<double> minDetailDistance
             {
                 get { return ocean.minDetailDistance; }
                 set { ocean.minDetailDistance = value; }
             }
 
-            [ParserTarget("maxQuadLengthsPerFrame", optional = true)]
+            [ParserTarget("maxQuadLengthsPerFrame")]
             public NumericParser<float> maxQuadLengthsPerFrame
             {
                 get { return ocean.maxQuadLenghtsPerFrame; }
@@ -108,19 +108,19 @@ namespace Kopernicus
             }
 
             // Surface Material of the PQS
-            [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
+            [ParserTarget("Material", allowMerge = true, getChild = false)]
             public Material surfaceMaterial;
 
             // Fallback Material of the PQS (its always the same material)
-            [ParserTarget("FallbackMaterial", optional = true, allowMerge = true)]
+            [ParserTarget("FallbackMaterial", allowMerge = true)]
             public PQSOceanSurfaceQuadFallbackLoader fallbackMaterial;
 
             // Killer-Ocean
-            [ParserTarget("HazardousOcean", optional = true, allowMerge = true)]
+            [ParserTarget("HazardousOcean", allowMerge = true)]
             public FloatCurveParser hazardousOcean;
 
             // Ocean-Fog
-            [ParserTarget("Fog", allowMerge = true, optional = true)]
+            [ParserTarget("Fog", allowMerge = true)]
             public FogLoader fog;
 
             // Runtime Constructor

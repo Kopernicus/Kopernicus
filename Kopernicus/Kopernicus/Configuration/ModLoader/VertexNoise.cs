@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexNoise : ModLoader<PQSMod_VertexNoise>
             {
                 // falloff
-                [ParserTarget("falloff", optional = true)]
+                [ParserTarget("falloff")]
                 public NumericParser<float> falloff
                 {
                     get { return mod.falloff; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // mesaVsPlainsBias
-                [ParserTarget("mesaVsPlainsBias", optional = true)]
+                [ParserTarget("mesaVsPlainsBias")]
                 public NumericParser<float> mesaVsPlainsBias
                 {
                     get { return mod.mesaVsPlainsBias; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // noiseDeformity
-                [ParserTarget("noiseDeformity", optional = true)]
+                [ParserTarget("noiseDeformity")]
                 public NumericParser<float> noiseDeformity
                 {
                     get { return mod.noiseDeformity; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // noisePasses
-                [ParserTarget("noisePasses", optional = true)]
+                [ParserTarget("noisePasses")]
                 public NumericParser<int> noisePasses
                 {
                     get { return mod.noisePasses; }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // plainSmoothness
-                [ParserTarget("plainSmoothness", optional = true)]
+                [ParserTarget("plainSmoothness")]
                 public NumericParser<float> plainSmoothness
                 {
                     get { return mod.plainSmoothness; }
@@ -80,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // plainsVsMountainSmoothness
-                [ParserTarget("plainsVsMountainSmoothness", optional = true)]
+                [ParserTarget("plainsVsMountainSmoothness")]
                 public NumericParser<float> plainsVsMountainSmoothness
                 {
                     get { return mod.plainsVsMountainSmoothness; }
@@ -88,7 +88,7 @@ namespace Kopernicus
                 }
 
                 // plainsVsMountainThreshold
-                [ParserTarget("plainsVsMountainThreshold", optional = true)]
+                [ParserTarget("plainsVsMountainThreshold")]
                 public NumericParser<float> plainsVsMountainThreshold
                 {
                     get { return mod.plainsVsMountainThreshold; }
@@ -96,7 +96,7 @@ namespace Kopernicus
                 }
 
                 // seed
-                [ParserTarget("seed", optional = true)]
+                [ParserTarget("seed")]
                 public NumericParser<int> seed
                 {
                     get { return mod.seed; }
@@ -104,7 +104,7 @@ namespace Kopernicus
                 }
 
                 // smoothness
-                [ParserTarget("smoothness", optional = true)]
+                [ParserTarget("smoothness")]
                 public NumericParser<float> smoothness
                 {
                     get { return mod.smoothness; }

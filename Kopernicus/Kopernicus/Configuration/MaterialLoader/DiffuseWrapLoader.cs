@@ -12,21 +12,21 @@ namespace Kopernicus
         public class DiffuseWrapLoader : DiffuseWrap
         {
             // Texture, default = "white" { }
-            [ParserTarget("mainTex", optional = true)]
+            [ParserTarget("mainTex")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
                 set { mainTex = value; }
             }
 
-            [ParserTarget("mainTexScale", optional = true)]
+            [ParserTarget("mainTexScale")]
             private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
-            [ParserTarget("mainTexOffset", optional = true)]
+            [ParserTarget("mainTexOffset")]
             private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
@@ -34,7 +34,7 @@ namespace Kopernicus
             }
 
             // Main Color, default = (1,1,1,1)
-            [ParserTarget("color", optional = true)]
+            [ParserTarget("color")]
             public ColorParser colorSetter
             {
                 get { return color; }
@@ -42,7 +42,7 @@ namespace Kopernicus
             }
 
             // Diffuse, default = 2
-            [ParserTarget("diff", optional = true)]
+            [ParserTarget("diff")]
             public NumericParser<float> diffSetter
             {
                 get { return diff; }

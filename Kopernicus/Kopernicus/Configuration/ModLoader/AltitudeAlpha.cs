@@ -40,7 +40,7 @@ namespace Kopernicus
             public class AltitudeAlpha : ModLoader<PQSMod_AltitudeAlpha>
             {                    
                 // The depth of the athmospere
-                [ParserTarget("atmosphereDepth", optional = true)]
+                [ParserTarget("atmosphereDepth")]
                 public NumericParser<double> atmosphereDepth 
                 {
                     get { return mod.atmosphereDepth; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // Invert?
-                [ParserTarget("invert", optional = true)]
+                [ParserTarget("invert")]
                 public NumericParser<bool> invert
                 {
                     get { return mod.invert; }

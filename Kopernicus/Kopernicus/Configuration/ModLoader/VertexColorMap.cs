@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexColorMap : ModLoader<PQSMod_VertexColorMap>
             {                    
                 // The map texture for the planet
-                [ParserTarget("map", optional = true)]
+                [ParserTarget("map")]
                 public MapSOParser_RGB<MapSO> colorMap 
                 {
                     get { return mod.vertexColorMap; }

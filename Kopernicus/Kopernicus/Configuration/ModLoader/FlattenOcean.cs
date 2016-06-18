@@ -37,7 +37,7 @@ namespace Kopernicus
             public class FlattenOcean : ModLoader<PQSMod_FlattenOcean>
             {                    
                 // The ocean Radius for the planet
-                [ParserTarget("oceanRadius", optional = true)]
+                [ParserTarget("oceanRadius")]
                 public NumericParser<double> oceanRadius
                 {
                     get { return mod.oceanRadius; }

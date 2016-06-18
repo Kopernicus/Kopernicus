@@ -12,7 +12,7 @@ namespace Kopernicus
         public class ScaledPlanetSimpleLoader : ScaledPlanetSimple
         {
             // Main Color, default = (1,1,1,1)
-            [ParserTarget("color", optional = true)]
+            [ParserTarget("color")]
             public ColorParser colorSetter
             {
                 get { return color; }
@@ -20,7 +20,7 @@ namespace Kopernicus
             }
 
             // Specular Color, default = (0.5,0.5,0.5,1)
-            [ParserTarget("specColor", optional = true)]
+            [ParserTarget("specColor")]
             public ColorParser specColorSetter
             {
                 get { return specColor; }
@@ -28,14 +28,14 @@ namespace Kopernicus
             }
 
             // Shininess, default = 0.078125
-            [ParserTarget("shininess", optional = true)]
+            [ParserTarget("shininess")]
             public NumericParser<float> shininessSetter
             {
                 get { return shininess; }
                 set { shininess = value; }
             }
 
-            [ParserTarget("texture", optional = true)]
+            [ParserTarget("texture")]
             public Texture2DParser textureSetter
             {
                 get { return mainTex; }
@@ -43,28 +43,28 @@ namespace Kopernicus
             }
 
             // Base (RGB) Gloss (A), default = "white" { }
-            [ParserTarget("mainTex", optional = true)]
+            [ParserTarget("mainTex")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
                 set { mainTex = value; }
             }
 
-            [ParserTarget("mainTexScale", optional = true)]
+            [ParserTarget("mainTexScale")]
             private Vector2Parser mainTexScaleSetter
             {
                 get { return mainTexScale; }
                 set { mainTexScale = value; }
             }
 
-            [ParserTarget("mainTexOffset", optional = true)]
+            [ParserTarget("mainTexOffset")]
             private Vector2Parser mainTexOffsetSetter
             {
                 get { return mainTexOffset; }
                 set { mainTexOffset = value; }
             }
 
-            [ParserTarget("normals", optional = true)]
+            [ParserTarget("normals")]
             public Texture2DParser normalsSetter
             {
                 get { return bumpMap; }
@@ -72,21 +72,21 @@ namespace Kopernicus
             }
 
             // Normalmap, default = "bump" { }
-            [ParserTarget("bumpMap", optional = true)]
+            [ParserTarget("bumpMap")]
             public Texture2DParser bumpMapSetter
             {
                 get { return bumpMap; }
                 set { bumpMap = value; }
             }
 
-            [ParserTarget("bumpMapScale", optional = true)]
+            [ParserTarget("bumpMapScale")]
             private Vector2Parser bumpMapScaleSetter
             {
                 get { return bumpMapScale; }
                 set { bumpMapScale = value; }
             }
 
-            [ParserTarget("bumpMapOffset", optional = true)]
+            [ParserTarget("bumpMapOffset")]
             private Vector2Parser bumpMapOffsetSetter
             {
                 get { return bumpMapOffset; }
@@ -94,7 +94,7 @@ namespace Kopernicus
             }
 
             // Opacity, default = 1
-            [ParserTarget("opacity", optional = true)]
+            [ParserTarget("opacity")]
             public NumericParser<float> opacitySetter
             {
                 get { return opacity; }
@@ -102,21 +102,21 @@ namespace Kopernicus
             }
 
             // Resource Map (RGB), default = "black" { }
-            [ParserTarget("resourceMap", optional = true)]
+            [ParserTarget("resourceMap")]
             public Texture2DParser resourceMapSetter
             {
                 get { return resourceMap; }
                 set { resourceMap = value; }
             }
 
-            [ParserTarget("resourceMapScale", optional = true)]
+            [ParserTarget("resourceMapScale")]
             private Vector2Parser resourceMapScaleSetter
             {
                 get { return resourceMapScale; }
                 set { resourceMapScale = value; }
             }
 
-            [ParserTarget("resourceMapOffset", optional = true)]
+            [ParserTarget("resourceMapOffset")]
             private Vector2Parser resourceMapOffsetSetter
             {
                 get { return resourceMapOffset; }

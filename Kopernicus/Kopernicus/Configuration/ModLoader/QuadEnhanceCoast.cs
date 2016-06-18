@@ -39,14 +39,14 @@ namespace Kopernicus
             [RequireConfigType(ConfigType.Node)]
             public class QuadEnhanceCoast : ModLoader<PQSMod_QuadEnhanceCoast>
             {
-                [ParserTarget("coastLessThan", optional = true)]
+                [ParserTarget("coastLessThan")]
                 public NumericParser<double> coastLessThan
                 {
                     get { return mod.coastLessThan; }
                     set { mod.coastLessThan = value; }
                 }
 
-                [ParserTarget("oceanFactor", optional = true)]
+                [ParserTarget("oceanFactor")]
                 public NumericParser<double> oceanFactor
                 {
                     get { return mod.oceanFactor; }

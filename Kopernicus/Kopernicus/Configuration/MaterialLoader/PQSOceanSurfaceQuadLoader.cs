@@ -12,7 +12,7 @@ namespace Kopernicus
         public class PQSOceanSurfaceQuadLoader : PQSOceanSurfaceQuad
         {
             // Main Color, default = (1,1,1,1)
-            [ParserTarget("color", optional = true)]
+            [ParserTarget("color")]
             public ColorParser colorSetter
             {
                 get { return color; }
@@ -20,7 +20,7 @@ namespace Kopernicus
             }
 
             // Color From Space, default = (1,1,1,1)
-            [ParserTarget("colorFromSpace", optional = true)]
+            [ParserTarget("colorFromSpace")]
             public ColorParser colorFromSpaceSetter
             {
                 get { return colorFromSpace; }
@@ -28,7 +28,7 @@ namespace Kopernicus
             }
 
             // Specular Color, default = (1,1,1,1)
-            [ParserTarget("specColor", optional = true)]
+            [ParserTarget("specColor")]
             public ColorParser specColorSetter
             {
                 get { return specColor; }
@@ -36,7 +36,7 @@ namespace Kopernicus
             }
 
             // Shininess, default = 0.078125
-            [ParserTarget("shininess", optional = true)]
+            [ParserTarget("shininess")]
             public NumericParser<float> shininessSetter
             {
                 get { return shininess; }
@@ -44,7 +44,7 @@ namespace Kopernicus
             }
 
             // Gloss, default = 0.078125
-            [ParserTarget("gloss", optional = true)]
+            [ParserTarget("gloss")]
             public NumericParser<float> glossSetter
             {
                 get { return gloss; }
@@ -52,7 +52,7 @@ namespace Kopernicus
             }
 
             // Tex Tiling, default = 1
-            [ParserTarget("tiling", optional = true)]
+            [ParserTarget("tiling")]
             public NumericParser<float> tilingSetter
             {
                 get { return tiling; }
@@ -60,21 +60,21 @@ namespace Kopernicus
             }
 
             // Tex0, default = "white" { }
-            [ParserTarget("waterTex", optional = true)]
+            [ParserTarget("waterTex")]
             public Texture2DParser waterTexSetter
             {
                 get { return waterTex; }
                 set { waterTex = value; }
             }
 
-            [ParserTarget("waterTexScale", optional = true)]
+            [ParserTarget("waterTexScale")]
             private Vector2Parser waterTexScaleSetter
             {
                 get { return waterTexScale; }
                 set { waterTexScale = value; }
             }
 
-            [ParserTarget("waterTexOffset", optional = true)]
+            [ParserTarget("waterTexOffset")]
             private Vector2Parser waterTexOffsetSetter
             {
                 get { return waterTexOffset; }
@@ -82,21 +82,21 @@ namespace Kopernicus
             }
 
             // Tex1, default = "white" { }
-            [ParserTarget("waterTex1", optional = true)]
+            [ParserTarget("waterTex1")]
             public Texture2DParser waterTex1Setter
             {
                 get { return waterTex1; }
                 set { waterTex1 = value; }
             }
 
-            [ParserTarget("waterTex1Scale", optional = true)]
+            [ParserTarget("waterTex1Scale")]
             private Vector2Parser waterTex1ScaleSetter
             {
                 get { return waterTex1Scale; }
                 set { waterTex1Scale = value; }
             }
 
-            [ParserTarget("waterTex1Offset", optional = true)]
+            [ParserTarget("waterTex1Offset")]
             private Vector2Parser waterTex1OffsetSetter
             {
                 get { return waterTex1Offset; }
@@ -104,7 +104,7 @@ namespace Kopernicus
             }
 
             // Normal Tiling, default = 1
-            [ParserTarget("bTiling", optional = true)]
+            [ParserTarget("bTiling")]
             public NumericParser<float> bTilingSetter
             {
                 get { return bTiling; }
@@ -112,21 +112,21 @@ namespace Kopernicus
             }
 
             // Normalmap0, default = "bump" { }
-            [ParserTarget("bumpMap", optional = true)]
+            [ParserTarget("bumpMap")]
             public Texture2DParser bumpMapSetter
             {
                 get { return bumpMap; }
                 set { bumpMap = value; }
             }
 
-            [ParserTarget("bumpMapScale", optional = true)]
+            [ParserTarget("bumpMapScale")]
             private Vector2Parser bumpMapScaleSetter
             {
                 get { return bumpMapScale; }
                 set { bumpMapScale = value; }
             }
 
-            [ParserTarget("bumpMapOffset", optional = true)]
+            [ParserTarget("bumpMapOffset")]
             private Vector2Parser bumpMapOffsetSetter
             {
                 get { return bumpMapOffset; }
@@ -134,7 +134,7 @@ namespace Kopernicus
             }
 
             // Water Movement, default = 1
-            [ParserTarget("displacement", optional = true)]
+            [ParserTarget("displacement")]
             public NumericParser<float> displacementSetter
             {
                 get { return displacement; }
@@ -142,7 +142,7 @@ namespace Kopernicus
             }
 
             // Texture Displacement, default = 1
-            [ParserTarget("texDisplacement", optional = true)]
+            [ParserTarget("texDisplacement")]
             public NumericParser<float> texDisplacementSetter
             {
                 get { return texDisplacement; }
@@ -150,7 +150,7 @@ namespace Kopernicus
             }
 
             // Water Freq, default = 1
-            [ParserTarget("dispFreq", optional = true)]
+            [ParserTarget("dispFreq")]
             public NumericParser<float> dispFreqSetter
             {
                 get { return dispFreq; }
@@ -158,7 +158,7 @@ namespace Kopernicus
             }
 
             // Mix, default = 1
-            [ParserTarget("mix", optional = true)]
+            [ParserTarget("mix")]
             public NumericParser<float> mixSetter
             {
                 get { return mix; }
@@ -166,7 +166,7 @@ namespace Kopernicus
             }
 
             // Opacity, default = 1
-            [ParserTarget("oceanOpacity", optional = true)]
+            [ParserTarget("oceanOpacity")]
             public NumericParser<float> oceanOpacitySetter
             {
                 get { return oceanOpacity; }
@@ -174,7 +174,7 @@ namespace Kopernicus
             }
 
             // Falloff Power, default = 1
-            [ParserTarget("falloffPower", optional = true)]
+            [ParserTarget("falloffPower")]
             public NumericParser<float> falloffPowerSetter
             {
                 get { return falloffPower; }
@@ -182,7 +182,7 @@ namespace Kopernicus
             }
 
             // Falloff Exp, default = 2
-            [ParserTarget("falloffExp", optional = true)]
+            [ParserTarget("falloffExp")]
             public NumericParser<float> falloffExpSetter
             {
                 get { return falloffExp; }
@@ -190,7 +190,7 @@ namespace Kopernicus
             }
 
             // AP Fog Color, default = (0,0,1,1)
-            [ParserTarget("fogColor", optional = true)]
+            [ParserTarget("fogColor")]
             public ColorParser fogColorSetter
             {
                 get { return fogColor; }
@@ -198,7 +198,7 @@ namespace Kopernicus
             }
 
             // AP Height Fall Off, default = 1
-            [ParserTarget("heightFallOff", optional = true)]
+            [ParserTarget("heightFallOff")]
             public NumericParser<float> heightFallOffSetter
             {
                 get { return heightFallOff; }
@@ -206,7 +206,7 @@ namespace Kopernicus
             }
 
             // AP Global Density, default = 1
-            [ParserTarget("globalDensity", optional = true)]
+            [ParserTarget("globalDensity")]
             public NumericParser<float> globalDensitySetter
             {
                 get { return globalDensity; }
@@ -214,7 +214,7 @@ namespace Kopernicus
             }
 
             // AP Atmosphere Depth, default = 1
-            [ParserTarget("atmosphereDepth", optional = true)]
+            [ParserTarget("atmosphereDepth")]
             public NumericParser<float> atmosphereDepthSetter
             {
                 get { return atmosphereDepth; }
@@ -222,21 +222,21 @@ namespace Kopernicus
             }
 
             // FogColorRamp, default = "white" { }
-            [ParserTarget("fogColorRamp", optional = true)]
+            [ParserTarget("fogColorRamp")]
             public Texture2DParser fogColorRampSetter
             {
                 get { return fogColorRamp; }
                 set { fogColorRamp = value; }
             }
 
-            [ParserTarget("fogColorRampScale", optional = true)]
+            [ParserTarget("fogColorRampScale")]
             private Vector2Parser fogColorRampScaleSetter
             {
                 get { return fogColorRampScale; }
                 set { fogColorRampScale = value; }
             }
 
-            [ParserTarget("fogColorRampOffset", optional = true)]
+            [ParserTarget("fogColorRampOffset")]
             private Vector2Parser fogColorRampOffsetSetter
             {
                 get { return fogColorRampOffset; }
@@ -244,7 +244,7 @@ namespace Kopernicus
             }
 
             // FadeStart, default = 1
-            [ParserTarget("fadeStart", optional = true)]
+            [ParserTarget("fadeStart")]
             public NumericParser<float> fadeStartSetter
             {
                 get { return fadeStart; }
@@ -252,7 +252,7 @@ namespace Kopernicus
             }
 
             // FadeEnd, default = 1
-            [ParserTarget("fadeEnd", optional = true)]
+            [ParserTarget("fadeEnd")]
             public NumericParser<float> fadeEndSetter
             {
                 get { return fadeEnd; }
@@ -260,7 +260,7 @@ namespace Kopernicus
             }
 
             // PlanetOpacity, default = 1
-            [ParserTarget("planetOpacity", optional = true)]
+            [ParserTarget("planetOpacity")]
             public NumericParser<float> planetOpacitySetter
             {
                 get { return planetOpacity; }
@@ -268,7 +268,7 @@ namespace Kopernicus
             }
 
             // NormalXYFudge, default = 0.1
-            [ParserTarget("normalXYFudge", optional = true)]
+            [ParserTarget("normalXYFudge")]
             public NumericParser<float> normalXYFudgeSetter
             {
                 get { return normalXYFudge; }
@@ -276,7 +276,7 @@ namespace Kopernicus
             }
 
             // NormalZFudge, default = 1.1
-            [ParserTarget("normalZFudge", optional = true)]
+            [ParserTarget("normalZFudge")]
             public NumericParser<float> normalZFudgeSetter
             {
                 get { return normalZFudge; }

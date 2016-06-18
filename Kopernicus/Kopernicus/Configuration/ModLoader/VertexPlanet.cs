@@ -49,7 +49,7 @@ namespace Kopernicus
                     public PQSMod_VertexPlanet.SimplexWrapper wrapper;
 
                     // deformity
-                    [ParserTarget("deformity", optional = true)]
+                    [ParserTarget("deformity")]
                     public NumericParser<double> deformity
                     {
                         get { return wrapper.deformity; }
@@ -57,7 +57,7 @@ namespace Kopernicus
                     }
 
                     // frequency
-                    [ParserTarget("frequency", optional = true)]
+                    [ParserTarget("frequency")]
                     public NumericParser<double> frequency
                     {
                         get { return wrapper.frequency; }
@@ -65,7 +65,7 @@ namespace Kopernicus
                     }
 
                     // octaves
-                    [ParserTarget("octaves", optional = true)]
+                    [ParserTarget("octaves")]
                     public NumericParser<double> octaves
                     {
                         get { return wrapper.octaves; }
@@ -73,7 +73,7 @@ namespace Kopernicus
                     }
 
                     // persistance
-                    [ParserTarget("persistance", optional = true)]
+                    [ParserTarget("persistance")]
                     public NumericParser<double> persistance
                     {
                         get { return wrapper.persistance; }
@@ -81,7 +81,7 @@ namespace Kopernicus
                     }
 
                     // seed
-                    [ParserTarget("seed", optional = true)]
+                    [ParserTarget("seed")]
                     public NumericParser<int> seed = new NumericParser<int>(0);
 
                     // Apply Event
@@ -119,7 +119,7 @@ namespace Kopernicus
                         public RiggedMultifractal noise;
 
                         // frequency
-                        [ParserTarget("frequency", optional = true)]
+                        [ParserTarget("frequency")]
                         public NumericParser<double> frequency
                         {
                             get { return noise.Frequency; }
@@ -127,7 +127,7 @@ namespace Kopernicus
                         }
 
                         // lacunarity
-                        [ParserTarget("lacunarity", optional = true)]
+                        [ParserTarget("lacunarity")]
                         public NumericParser<double> lacunarity
                         {
                             get { return noise.Lacunarity; }
@@ -135,7 +135,7 @@ namespace Kopernicus
                         }
 
                         // octaveCount
-                        [ParserTarget("octaveCount", optional = true)]
+                        [ParserTarget("octaveCount")]
                         public NumericParser<int> octaveCount
                         {
                             get { return noise.OctaveCount; }
@@ -143,7 +143,7 @@ namespace Kopernicus
                         }
 
                         // quality
-                        [ParserTarget("quality", optional = true)]
+                        [ParserTarget("quality")]
                         public EnumParser<LibNoise.Unity.QualityMode> quality
                         {
                             get { return noise.Quality; }
@@ -151,7 +151,7 @@ namespace Kopernicus
                         }
 
                         // seed
-                        [ParserTarget("seed", optional = true)]
+                        [ParserTarget("seed")]
                         public NumericParser<int> seed
                         {
                             get { return noise.Seed; }
@@ -173,7 +173,7 @@ namespace Kopernicus
                     }
 
                     // deformity
-                    [ParserTarget("deformity", optional = true)]
+                    [ParserTarget("deformity")]
                     public NumericParser<double> deformity
                     {
                         get { return wrapper.deformity; }
@@ -181,7 +181,7 @@ namespace Kopernicus
                     }
 
                     // frequency
-                    [ParserTarget("frequency", optional = true)]
+                    [ParserTarget("frequency")]
                     public NumericParser<double> frequency
                     {
                         get { return wrapper.frequency; }
@@ -189,7 +189,7 @@ namespace Kopernicus
                     }
 
                     // octaves
-                    [ParserTarget("octaves", optional = true)]
+                    [ParserTarget("octaves")]
                     public NumericParser<int> octaves
                     {
                         get { return wrapper.octaves; }
@@ -197,7 +197,7 @@ namespace Kopernicus
                     }
 
                     // persistance
-                    [ParserTarget("persistance", optional = true)]
+                    [ParserTarget("persistance")]
                     public NumericParser<double> persistance
                     {
                         get { return wrapper.persistance; }
@@ -205,7 +205,7 @@ namespace Kopernicus
                     }
 
                     // seed
-                    [ParserTarget("seed", optional = true)]
+                    [ParserTarget("seed")]
                     public NumericParser<int> seedLoader
                     {
                         get { return wrapper.seed; }
@@ -213,7 +213,7 @@ namespace Kopernicus
                     }
 
                     // noise
-                    [ParserTarget("Noise", optional = true, allowMerge = true)]
+                    [ParserTarget("Noise", allowMerge = true)]
                     public RiggedParser riggedNoise { get; set; }
 
                     // Apply Event
@@ -257,7 +257,7 @@ namespace Kopernicus
                     }
 
                     // Should we delete this
-                    [ParserTarget("delete", optional = true)]
+                    [ParserTarget("delete")]
                     public NumericParser<bool> delete = new NumericParser<bool>(false);
 
                     // baseColor
@@ -360,7 +360,7 @@ namespace Kopernicus
                 }
 
                 // buildHeightColors
-                [ParserTarget("buildHeightColors", optional = true)]
+                [ParserTarget("buildHeightColors")]
                 public NumericParser<bool> buildHeightColors 
                 {
                     get { return mod.buildHeightColors; }
@@ -368,7 +368,7 @@ namespace Kopernicus
                 }
 
                 // colorDeformity
-                [ParserTarget("colorDeformity", optional = true)]
+                [ParserTarget("colorDeformity")]
                 public NumericParser<double> colorDeformity
                 {
                     get { return mod.colorDeformity; }
@@ -376,23 +376,23 @@ namespace Kopernicus
                 }
 
                 // continental
-                [ParserTarget("ContinentalSimplex", optional = true, allowMerge = true)]
+                [ParserTarget("ContinentalSimplex", allowMerge = true)]
                 public SimplexWrapper continental { get; set; }
 
                 // continentalRuggedness
-                [ParserTarget("RuggednessSimplex", optional = true, allowMerge = true)]
+                [ParserTarget("RuggednessSimplex", allowMerge = true)]
                 public SimplexWrapper continentalRuggedness { get; set; }
 
                 // continentalSharpness
-                [ParserTarget("SharpnessNoise", optional = true, allowMerge = true)]
+                [ParserTarget("SharpnessNoise", allowMerge = true)]
                 public NoiseModWrapper continentalSharpness { get; set; }
 
                 // continentalSharpnessMap
-                [ParserTarget("SharpnessSimplexMap", optional = true, allowMerge = true)]
+                [ParserTarget("SharpnessSimplexMap", allowMerge = true)]
                 public SimplexWrapper continentalSharpnessMap { get; set; }
 
                 // deformity
-                [ParserTarget("deformity", optional = true)]
+                [ParserTarget("deformity")]
                 public NumericParser<double> deformity
                 {
                     get { return mod.deformity; }
@@ -403,7 +403,7 @@ namespace Kopernicus
                 public List<LandClassLoader> landClasses = new List<LandClassLoader>();
 
                 // oceanDepth
-                [ParserTarget("oceanDepth", optional = true)]
+                [ParserTarget("oceanDepth")]
                 public NumericParser<double> oceanDepth
                 {
                     get { return mod.oceanDepth; }
@@ -411,7 +411,7 @@ namespace Kopernicus
                 }
 
                 // oceanLevel
-                [ParserTarget("oceanLevel", optional = true)]
+                [ParserTarget("oceanLevel")]
                 public NumericParser<double> oceanLevel
                 {
                     get { return mod.oceanLevel; }
@@ -419,7 +419,7 @@ namespace Kopernicus
                 }
 
                 // oceanSnap
-                [ParserTarget("oceanSnap", optional = true)]
+                [ParserTarget("oceanSnap")]
                 public NumericParser<bool> oceanSnap
                 {
                     get { return mod.oceanSnap; }
@@ -427,7 +427,7 @@ namespace Kopernicus
                 }
 
                 // oceanStep
-                [ParserTarget("oceanStep", optional = true)]
+                [ParserTarget("oceanStep")]
                 public NumericParser<double> oceanStep
                 {
                     get { return mod.oceanStep; }
@@ -435,7 +435,7 @@ namespace Kopernicus
                 }
 
                 // seed
-                [ParserTarget("seed", optional = true)]
+                [ParserTarget("seed")]
                 public NumericParser<int> seed
                 {
                     get { return mod.seed; }
@@ -443,7 +443,7 @@ namespace Kopernicus
                 }
 
                 // terrainRidgeBalance
-                [ParserTarget("terrainRidgeBalance", optional = true)]
+                [ParserTarget("terrainRidgeBalance")]
                 public NumericParser<double> terrainRidgeBalance
                 {
                     get { return mod.terrainRidgeBalance; }
@@ -451,7 +451,7 @@ namespace Kopernicus
                 }
 
                 // terrainRidgesMax
-                [ParserTarget("terrainRidgesMax", optional = true)]
+                [ParserTarget("terrainRidgesMax")]
                 public NumericParser<double> terrainRidgesMax
                 {
                     get { return mod.terrainRidgesMax; }
@@ -459,7 +459,7 @@ namespace Kopernicus
                 }
 
                 // terrainRidgesMin
-                [ParserTarget("terrainRidgesMin", optional = true)]
+                [ParserTarget("terrainRidgesMin")]
                 public NumericParser<double> terrainRidgesMin
                 {
                     get { return mod.terrainRidgesMin; }
@@ -467,7 +467,7 @@ namespace Kopernicus
                 }
 
                 // terrainShapeEnd
-                [ParserTarget("terrainShapeEnd", optional = true)]
+                [ParserTarget("terrainShapeEnd")]
                 public NumericParser<double> terrainShapeEnd
                 {
                     get { return mod.terrainShapeEnd; }
@@ -475,7 +475,7 @@ namespace Kopernicus
                 }
 
                 // terrainShapeStart
-                [ParserTarget("terrainShapeStart", optional = true)]
+                [ParserTarget("terrainShapeStart")]
                 public NumericParser<double> terrainShapeStart
                 {
                     get { return mod.terrainShapeStart; }
@@ -483,7 +483,7 @@ namespace Kopernicus
                 }
 
                 // terrainSmoothing
-                [ParserTarget("terrainSmoothing", optional = true)]
+                [ParserTarget("terrainSmoothing")]
                 public NumericParser<double> terrainSmoothing
                 {
                     get { return mod.terrainSmoothing; }
@@ -491,7 +491,7 @@ namespace Kopernicus
                 }
 
                 // terrainType
-                [ParserTarget("TerrainTypeSimplex", optional = true, allowMerge = true)]
+                [ParserTarget("TerrainTypeSimplex", allowMerge = true)]
                 public SimplexWrapper terrainType { get; set; }
                 
                 // Apply Event

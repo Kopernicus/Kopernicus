@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VoronoiCraters : ModLoader<PQSMod_VoronoiCraters>
             {
                 // colorOpacity
-                [ParserTarget("colorOpacity", optional = true)]
+                [ParserTarget("colorOpacity")]
                 public NumericParser<float> colorOpacity
                 {
                     get { return mod.colorOpacity; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
                 
                 // DebugColorMapping
-                [ParserTarget("DebugColorMapping", optional = true)]
+                [ParserTarget("DebugColorMapping")]
                 public NumericParser<bool> DebugColorMapping
                 {
                     get { return mod.DebugColorMapping; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // Deformation of the Voronoi
-                [ParserTarget("deformation", optional = true)]
+                [ParserTarget("deformation")]
                 public NumericParser<double> deformation
                 {
                     get { return mod.deformation; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // CraterCurve
-                [ParserTarget("CraterCurve", optional = true)]
+                [ParserTarget("CraterCurve")]
                 public FloatCurveParser craterCurve
                 {
                     get { return mod.craterCurve != null ? new FloatCurve(mod.craterCurve.keys) : new FloatCurve(); }
@@ -72,7 +72,7 @@ namespace Kopernicus
                 }
 
                 // jitter
-                [ParserTarget("jitter", optional = true)]
+                [ParserTarget("jitter")]
                 public NumericParser<float> jitter
                 {
                     get { return mod.jitter; }
@@ -80,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // JitterCurve
-                [ParserTarget("JitterCurve", optional = true)]
+                [ParserTarget("JitterCurve")]
                 public FloatCurveParser jitterCurve
                 {
                     get { return mod.jitterCurve != null ? new FloatCurve(mod.jitterCurve.keys) : new FloatCurve(); }
@@ -88,7 +88,7 @@ namespace Kopernicus
                 }
 
                 // jitterHeight
-                [ParserTarget("jitterHeight", optional = true)]
+                [ParserTarget("jitterHeight")]
                 public NumericParser<float> jitterHeight
                 {
                     get { return mod.jitterHeight; }
@@ -96,7 +96,7 @@ namespace Kopernicus
                 }
 
                 // rFactor
-                [ParserTarget("rFactor", optional = true)]
+                [ParserTarget("rFactor")]
                 public NumericParser<float> rFactor
                 {
                     get { return mod.rFactor; }
@@ -104,7 +104,7 @@ namespace Kopernicus
                 }
 
                 // rOffset
-                [ParserTarget("rOffset", optional = true)]
+                [ParserTarget("rOffset")]
                 public NumericParser<float> rOffset
                 {
                     get { return mod.rOffset; }
@@ -112,7 +112,7 @@ namespace Kopernicus
                 }
 
                 // simplexFrequency
-                [ParserTarget("simplexFrequency", optional = true)]
+                [ParserTarget("simplexFrequency")]
                 public NumericParser<double> simplexFrequency
                 {
                     get { return mod.simplexFrequency; }
@@ -120,7 +120,7 @@ namespace Kopernicus
                 }
 
                 // simplexOctaves
-                [ParserTarget("simplexOctaves", optional = true)]
+                [ParserTarget("simplexOctaves")]
                 public NumericParser<double> simplexOctaves
                 {
                     get { return mod.simplexOctaves; }
@@ -128,7 +128,7 @@ namespace Kopernicus
                 }
 
                 // simplexPersistence
-                [ParserTarget("simplexPersistence", optional = true)]
+                [ParserTarget("simplexPersistence")]
                 public NumericParser<double> simplexPersistence
                 {
                     get { return mod.simplexPersistence; }
@@ -136,7 +136,7 @@ namespace Kopernicus
                 }
 
                 // simplexSeed
-                [ParserTarget("simplexSeed", optional = true)]
+                [ParserTarget("simplexSeed")]
                 public NumericParser<int> simplexSeed
                 {
                     get { return mod.simplexSeed; }
@@ -144,7 +144,7 @@ namespace Kopernicus
                 }
 
                 // voronoiDisplacement
-                [ParserTarget("voronoiDisplacement", optional = true)]
+                [ParserTarget("voronoiDisplacement")]
                 public NumericParser<double> voronoiDisplacement
                 {
                     get { return mod.voronoiDisplacement; }
@@ -152,7 +152,7 @@ namespace Kopernicus
                 }
 
                 // voronoiFrequency
-                [ParserTarget("voronoiFrequency", optional = true)]
+                [ParserTarget("voronoiFrequency")]
                 public NumericParser<double> voronoiFrequency
                 {
                     get { return mod.voronoiFrequency; }
@@ -160,7 +160,7 @@ namespace Kopernicus
                 }
 
                 // voronoiSeed
-                [ParserTarget("voronoiSeed", optional = true)]
+                [ParserTarget("voronoiSeed")]
                 public NumericParser<int> voronoiSeed
                 {
                     get { return mod.voronoiSeed; }

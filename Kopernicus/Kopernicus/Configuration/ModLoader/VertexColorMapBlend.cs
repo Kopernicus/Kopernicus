@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexColorMapBlend : ModLoader<PQSMod_VertexColorMapBlend>
             {                    
                 // The map texture for the planet
-                [ParserTarget("map", optional = true)]
+                [ParserTarget("map")]
                 public MapSOParser_RGB<MapSO> colorMap 
                 {
                     get { return mod.vertexColorMap; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // The blend value for the texture
-                [ParserTarget("blend", optional = true)]
+                [ParserTarget("blend")]
                 public NumericParser<float> blend
                 {
                     get { return mod.blend; }

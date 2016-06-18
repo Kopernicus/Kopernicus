@@ -40,7 +40,7 @@ namespace Kopernicus
             public class RemoveQuadMap : ModLoader<PQSMod_RemoveQuadMap>
             {
                 // The map texture for the Quad Remover (?)
-                [ParserTarget("map", optional = true)]
+                [ParserTarget("map")]
                 public MapSOParser_GreyScale<MapSO> map
                 {
                     get { return mod.map; }
@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // The deformity of the map for the Quad Remover (?)
-                [ParserTarget("deformity", optional = true)]
+                [ParserTarget("deformity")]
                 public NumericParser<float> mapDeformity
                 {
                     get { return mod.mapDeformity; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // The max. height for the Quad Remover (?)
-                [ParserTarget("maxHeight", optional = true)]
+                [ParserTarget("maxHeight")]
                 public NumericParser<float> maxHeight
                 {
                     get { return mod.maxHeight; }
@@ -64,7 +64,7 @@ namespace Kopernicus
                 }
 
                 // The min texture for the Quad Remover (?)
-                [ParserTarget("minHeight", optional = true)]
+                [ParserTarget("minHeight")]
                 public NumericParser<float> minHeight 
                 {
                     get { return mod.minHeight; }

@@ -40,7 +40,7 @@ namespace Kopernicus
             public class VertexSimplexColorRGB : ModLoader<PQSMod_VertexSimplexColorRGB>
             {
                 // blendColor
-                [ParserTarget("blendColor", optional = true)]
+                [ParserTarget("blendColor")]
                 public ColorParser blendColor
                 {
                     get { return new Color(mod.rBlend, mod.gBlend, mod.bBlend, 1); }
@@ -53,7 +53,7 @@ namespace Kopernicus
                 }
 
                 // blend
-                [ParserTarget("blend", optional = true)]
+                [ParserTarget("blend")]
                 public NumericParser<float> blend
                 {
                     get { return mod.blend; }
@@ -61,7 +61,7 @@ namespace Kopernicus
                 }
 
                 // frequency
-                [ParserTarget("frequency", optional = true)]
+                [ParserTarget("frequency")]
                 public NumericParser<double> frequency
                 {
                     get { return mod.frequency; }
@@ -69,7 +69,7 @@ namespace Kopernicus
                 }
 
                 // octaves
-                [ParserTarget("octaves", optional = true)]
+                [ParserTarget("octaves")]
                 public NumericParser<double> octaves
                 {
                     get { return mod.octaves; }
@@ -77,7 +77,7 @@ namespace Kopernicus
                 }
 
                 // persistence
-                [ParserTarget("persistence", optional = true)]
+                [ParserTarget("persistence")]
                 public NumericParser<double> persistence
                 {
                     get { return mod.persistence; }
@@ -85,7 +85,7 @@ namespace Kopernicus
                 }
 
                 // seed
-                [ParserTarget("seed", optional = true)]
+                [ParserTarget("seed")]
                 public NumericParser<int> seed
                 {
                     get { return mod.seed; }

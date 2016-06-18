@@ -47,39 +47,39 @@ namespace Kopernicus
                 public class NearbyLoader
                 {
                     // The body we are passing
-                    [ParserTarget("body", optional = true)]
+                    [ParserTarget("body")]
                     public string body { get; set; }
 
                     // eccentricity
-                    [ParserTarget("eccentricity", optional = true)]
+                    [ParserTarget("eccentricity")]
                     public RandomRangeLoader eccentricity = new RandomRangeLoader(0.0001f, 0.01f);
 
                     // semiMajorAxis
-                    [ParserTarget("semiMajorAxis", optional = true)]
+                    [ParserTarget("semiMajorAxis")]
                     public RandomRangeLoader semiMajorAxis = new RandomRangeLoader(0.999f, 1.001f);
 
                     // inclination
-                    [ParserTarget("inclination", optional = true)]
+                    [ParserTarget("inclination")]
                     public RandomRangeLoader inclination = new RandomRangeLoader(-0.001f, 0.001f);
 
                     // longitudeOfAscendingNode
-                    [ParserTarget("longitudeOfAscendingNode", optional = true)]
+                    [ParserTarget("longitudeOfAscendingNode")]
                     public RandomRangeLoader longitudeOfAscendingNode = new RandomRangeLoader(0.999f, 1.001f);
 
                     // argumentOfPeriapsis
-                    [ParserTarget("argumentOfPeriapsis", optional = true)]
+                    [ParserTarget("argumentOfPeriapsis")]
                     public RandomRangeLoader argumentOfPeriapsis = new RandomRangeLoader(0.999f, 1.001f);
 
                     // meanAnomalyAtEpoch
-                    [ParserTarget("meanAnomalyAtEpoch", optional = true)]
+                    [ParserTarget("meanAnomalyAtEpoch")]
                     public RandomRangeLoader meanAnomalyAtEpoch = new RandomRangeLoader(0.999f, 1.001f);
 
                     // The probability of this Orbit type
-                    [ParserTarget("probability", optional = true)]
+                    [ParserTarget("probability")]
                     public NumericParser<float> probability { get; set; }
 
                     // Whether the body must be reached
-                    [ParserTarget("reached", optional = true)]
+                    [ParserTarget("reached")]
                     public NumericParser<bool> reached { get; set; }
                 }
 
@@ -88,23 +88,23 @@ namespace Kopernicus
                 public class FlybyLoader
                 {
                     // The body we are passing
-                    [ParserTarget("body", optional = true)]
+                    [ParserTarget("body")]
                     public string body { get; set; }
 
                     // The minimum amount of days to closest approach
-                    [ParserTarget("minDuration", optional = true)]
+                    [ParserTarget("minDuration")]
                     public NumericParser<float> minDuration { get; set; }
 
                     // The maximum amount of days to closest approach
-                    [ParserTarget("maxDuration", optional = true)]
+                    [ParserTarget("maxDuration")]
                     public NumericParser<float> maxDuration { get; set; }
 
                     // The probability of this Orbit type
-                    [ParserTarget("probability", optional = true)]
+                    [ParserTarget("probability")]
                     public NumericParser<float> probability { get; set; }
 
                     // Whether the body must be reached
-                    [ParserTarget("reached", optional = true)]
+                    [ParserTarget("reached")]
                     public NumericParser<bool> reached { get; set; }
                 }
 
@@ -113,43 +113,43 @@ namespace Kopernicus
                 public class AroundLoader
                 {
                     // The body we are passing
-                    [ParserTarget("body", optional = true)]
+                    [ParserTarget("body")]
                     public string body { get; set; }
 
                     // eccentricity
-                    [ParserTarget("eccentricity", optional = true)]
+                    [ParserTarget("eccentricity")]
                     public RandomRangeLoader eccentricity = new RandomRangeLoader(0.0001f, 0.01f);
 
                     // semiMajorAxis
-                    [ParserTarget("semiMajorAxis", optional = true)]
+                    [ParserTarget("semiMajorAxis")]
                     public RandomRangeLoader semiMajorAxis { get; set; }
 
                     // inclination
-                    [ParserTarget("inclination", optional = true)]
+                    [ParserTarget("inclination")]
                     public RandomRangeLoader inclination = new RandomRangeLoader(-0.001f, 0.001f);
 
                     // longitudeOfAscendingNode
-                    [ParserTarget("longitudeOfAscendingNode", optional = true)]
+                    [ParserTarget("longitudeOfAscendingNode")]
                     public RandomRangeLoader longitudeOfAscendingNode = new RandomRangeLoader(0.999f, 1.001f);
 
                     // argumentOfPeriapsis
-                    [ParserTarget("argumentOfPeriapsis", optional = true)]
+                    [ParserTarget("argumentOfPeriapsis")]
                     public RandomRangeLoader argumentOfPeriapsis = new RandomRangeLoader(0.999f, 1.001f);
 
                     // meanAnomalyAtEpoch
-                    [ParserTarget("meanAnomalyAtEpoch", optional = true)]
+                    [ParserTarget("meanAnomalyAtEpoch")]
                     public RandomRangeLoader meanAnomalyAtEpoch = new RandomRangeLoader(0.999f, 1.001f);
 
                     // epoch
-                    [ParserTarget("epoch", optional = true)]
+                    [ParserTarget("epoch")]
                     public RandomRangeLoader epoch = new RandomRangeLoader(0.999f, 1.001f);
 
                     // The probability of this Orbit type
-                    [ParserTarget("probability", optional = true)]
+                    [ParserTarget("probability")]
                     public NumericParser<float> probability { get; set; }
 
                     // Whether the body must be reached
-                    [ParserTarget("reached", optional = true)]
+                    [ParserTarget("reached")]
                     public NumericParser<bool> reached { get; set; }
                 }
 
@@ -158,11 +158,11 @@ namespace Kopernicus
                 public class RandomRangeLoader
                 {
                     // The min value
-                    [ParserTarget("minValue", optional = true)]
+                    [ParserTarget("minValue")]
                     public NumericParser<float> minValue { get; set; }
 
                     // The max value
-                    [ParserTarget("maxValue", optional = true)]
+                    [ParserTarget("maxValue")]
                     public NumericParser<float> maxValue { get; set; }
 
                     // Convert this to int, and return a random value
@@ -187,15 +187,15 @@ namespace Kopernicus
                 }
 
                 // Nearby-Orbits
-                [ParserTargetCollection("Nearby", allowMerge = true, optional = true)]
+                [ParserTargetCollection("Nearby", allowMerge = true)]
                 public List<NearbyLoader> nearby = new List<NearbyLoader>();
 
                 // Flyby-Orbits
-                [ParserTargetCollection("Flyby", allowMerge = true, optional = true)]
+                [ParserTargetCollection("Flyby", allowMerge = true)]
                 public List<FlybyLoader> flyby = new List<FlybyLoader>();
 
                 // Around-Orbits
-                [ParserTargetCollection("Around", allowMerge = true, optional = true)]
+                [ParserTargetCollection("Around", allowMerge = true)]
                 public List<AroundLoader> around = new List<AroundLoader>();
             }
         }

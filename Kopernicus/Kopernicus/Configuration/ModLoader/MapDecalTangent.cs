@@ -37,7 +37,7 @@ namespace Kopernicus
             public class MapDecalTangent : ModLoader<PQSMod_MapDecalTangent>
             {
                 // absolute
-                [ParserTarget("absolute", optional = true)]
+                [ParserTarget("absolute")]
                 public NumericParser<bool> absolute
                 {
                     get { return mod.absolute; }
@@ -45,7 +45,7 @@ namespace Kopernicus
                 }
 
                 // absoluteOffset
-                [ParserTarget("absoluteOffset", optional = true)]
+                [ParserTarget("absoluteOffset")]
                 public NumericParser<double> absoluteOffset
                 {
                     get { return mod.absoluteOffset; }
@@ -53,7 +53,7 @@ namespace Kopernicus
                 }
 
                 // angle
-                [ParserTarget("angle", optional = true)]
+                [ParserTarget("angle")]
                 public NumericParser<float> angle
                 {
                     get { return mod.angle; }
@@ -61,7 +61,7 @@ namespace Kopernicus
                 }
 
                 // colorMap
-                [ParserTarget("colorMap", optional = true)]
+                [ParserTarget("colorMap")]
                 public MapSOParser_RGB<MapSO> colorMap
                 {
                     get { return mod.colorMap; }
@@ -69,7 +69,7 @@ namespace Kopernicus
                 }
 
                 // cullBlack
-                [ParserTarget("cullBlack", optional = true)]
+                [ParserTarget("cullBlack")]
                 public NumericParser<bool> cullBlack
                 {
                     get { return mod.cullBlack; }
@@ -77,7 +77,7 @@ namespace Kopernicus
                 }
 
                 // DEBUG_HighlightInclusion
-                [ParserTarget("DEBUG_HighlightInclusion", optional = true)]
+                [ParserTarget("DEBUG_HighlightInclusion")]
                 public NumericParser<bool> DEBUG_HighlightInclusion
                 {
                     get { return mod.DEBUG_HighlightInclusion; }
@@ -85,7 +85,7 @@ namespace Kopernicus
                 }
 
                 // heightMap
-                [ParserTarget("heightMap", optional = true)]
+                [ParserTarget("heightMap")]
                 public MapSOParser_GreyScale<MapSO> heightMap
                 {
                     get { return mod.heightMap; }
@@ -93,7 +93,7 @@ namespace Kopernicus
                 }
 
                 // heightMapDeformity
-                [ParserTarget("heightMapDeformity", optional = true)]
+                [ParserTarget("heightMapDeformity")]
                 public NumericParser<double> heightMapDeformity
                 {
                     get { return mod.heightMapDeformity; }
@@ -101,7 +101,7 @@ namespace Kopernicus
                 }
 
                 // position
-                [ParserTarget("position", optional = true)]
+                [ParserTarget("position")]
                 public Vector3Parser position
                 {
                     get { return mod.position; }
@@ -109,14 +109,14 @@ namespace Kopernicus
                 }
 
                 // position v2
-                [ParserTarget("Position", optional = true)]
+                [ParserTarget("Position")]
                 public PositionParser Position
                 {
                     set { mod.position = value; }
                 }
 
                 // removeScatter
-                [ParserTarget("removeScatter", optional = true)]
+                [ParserTarget("removeScatter")]
                 public NumericParser<bool> removeScatter
                 {
                     get { return mod.removeScatter; }
@@ -124,7 +124,7 @@ namespace Kopernicus
                 }
 
                 // radius
-                [ParserTarget("radius", optional = true)]
+                [ParserTarget("radius")]
                 public NumericParser<double> radius
                 {
                     get { return mod.radius; }
@@ -132,7 +132,7 @@ namespace Kopernicus
                 }
 
                 // smoothColor
-                [ParserTarget("smoothColor", optional = true)]
+                [ParserTarget("smoothColor")]
                 public NumericParser<float> smoothColor
                 {
                     get { return mod.smoothColor; }
@@ -140,7 +140,7 @@ namespace Kopernicus
                 }
 
                 // smoothHeight
-                [ParserTarget("smoothHeight", optional = true)]
+                [ParserTarget("smoothHeight")]
                 public NumericParser<float> smoothHeight
                 {
                     get { return mod.smoothHeight; }
@@ -148,7 +148,7 @@ namespace Kopernicus
                 }
 
                 // useAlphaHeightSmoothing
-                [ParserTarget("useAlphaHeightSmoothing", optional = true)]
+                [ParserTarget("useAlphaHeightSmoothing")]
                 public NumericParser<bool> useAlphaHeightSmoothing
                 {
                     get { return mod.useAlphaHeightSmoothing; }

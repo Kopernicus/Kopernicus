@@ -42,7 +42,7 @@ namespace Kopernicus
                 public T mod { get; set; }
 
                 // Mod loader provides basic PQS mod loading functions
-                [ParserTarget("order", optional = true)]
+                [ParserTarget("order")]
                 public NumericParser<int> order
                 {
                     get { return mod.order; }
@@ -50,7 +50,7 @@ namespace Kopernicus
                 }
 
                 // Mod loader provides basic PQS mod loading functions
-                [ParserTarget("enabled", optional = true)]
+                [ParserTarget("enabled")]
                 public NumericParser<bool> enabled
                 {
                     get { return mod.modEnabled; }

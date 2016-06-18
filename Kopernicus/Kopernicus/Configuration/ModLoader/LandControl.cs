@@ -51,7 +51,7 @@ namespace Kopernicus
                     public Simplex simplex;
 
                     // The frequency of the simplex noise
-                    [ParserTarget("frequency", optional = true)]
+                    [ParserTarget("frequency")]
                     public NumericParser<double> frequency
                     {
                         get { return simplex.frequency; }
@@ -59,7 +59,7 @@ namespace Kopernicus
                     }
                     
                     // Octaves of the simplex noise
-                    [ParserTarget("octaves", optional = true)]
+                    [ParserTarget("octaves")]
                     public NumericParser<double> octaves
                     {
                         get { return simplex.octaves; }
@@ -67,7 +67,7 @@ namespace Kopernicus
                     }
 
                     // Persistence of the simplex noise
-                    [ParserTarget("persistence", optional = true)]
+                    [ParserTarget("persistence")]
                     public NumericParser<double> persistence
                     {
                         get { return simplex.persistence; }
@@ -75,7 +75,7 @@ namespace Kopernicus
                     }
 
                     // The seed of the simplex noise
-                    [ParserTarget("seed", optional = true)]
+                    [ParserTarget("seed")]
                     public NumericParser<int> seed
                     {
                         set { simplex.seed = value; }
@@ -142,7 +142,7 @@ namespace Kopernicus
                     }
 
                     [PreApply]
-                    [ParserTarget("materialType", optional = true)]
+                    [ParserTarget("materialType")]
                     public EnumParser<ScatterMaterialType> materialType
                     {
                         get
@@ -181,27 +181,27 @@ namespace Kopernicus
                     }
 
                     // Should we delete the Scatter?
-                    [ParserTarget("delete", optional = true)]
+                    [ParserTarget("delete")]
                     public NumericParser<bool> delete = new NumericParser<bool>(false);
 
                     // Should we add colliders to the scatter=
-                    [ParserTarget("collide", optional = true)]
+                    [ParserTarget("collide")]
                     public NumericParser<bool> collide = new NumericParser<bool>(false);
 
                     // Should we add Science to the Scatter?
-                    [ParserTarget("science", optional = true)]
+                    [ParserTarget("science")]
                     public NumericParser<bool> science = new NumericParser<bool>(false);
 
                     // ConfigNode that stores the Experiment
-                    [ParserTarget("Experiment", optional = true)]
+                    [ParserTarget("Experiment")]
                     public ConfigNode experiment;
 
                     // Custom scatter material
-                    [ParserTarget("Material", optional = true, allowMerge = true, getChild = false)]
+                    [ParserTarget("Material", allowMerge = true, getChild = false)]
                     public Material customMaterial;
 
                     // The mesh
-                    [ParserTarget("mesh", optional = true)]
+                    [ParserTarget("mesh")]
                     public MeshParser baseMesh
                     {
                         get { return scatter.baseMesh; }
@@ -209,7 +209,7 @@ namespace Kopernicus
                     }
 
                     // castShadows
-                    [ParserTarget("castShadows", optional = true)]
+                    [ParserTarget("castShadows")]
                     public NumericParser<bool> castShadows
                     {
                         get { return scatter.castShadows; }
@@ -217,7 +217,7 @@ namespace Kopernicus
                     }
 
                     // densityFactor
-                    [ParserTarget("densityFactor", optional = true)]
+                    [ParserTarget("densityFactor")]
                     public NumericParser<double> densityFactor
                     {
                         get { return scatter.densityFactor; }
@@ -225,7 +225,7 @@ namespace Kopernicus
                     }
 
                     // Stock material
-                    [ParserTarget("material", optional = true)]
+                    [ParserTarget("material")]
                     public StockMaterialParser material
                     {
                         get { return scatter.material; }
@@ -233,7 +233,7 @@ namespace Kopernicus
                     }
 
                     // maxCache
-                    [ParserTarget("maxCache", optional = true)]
+                    [ParserTarget("maxCache")]
                     public NumericParser<int> maxCache
                     {
                         get { return scatter.maxCache; }
@@ -241,7 +241,7 @@ namespace Kopernicus
                     }
 
                     // maxCacheDelta
-                    [ParserTarget("maxCacheDelta", optional = true)]
+                    [ParserTarget("maxCacheDelta")]
                     public NumericParser<int> maxCacheDelta
                     {
                         get { return scatter.maxCacheDelta; }
@@ -249,7 +249,7 @@ namespace Kopernicus
                     }
 
                     // maxLevelOffset
-                    [ParserTarget("maxLevelOffset", optional = true)]
+                    [ParserTarget("maxLevelOffset")]
                     public NumericParser<int> maxLevelOffset
                     {
                         get { return scatter.maxLevelOffset; }
@@ -257,7 +257,7 @@ namespace Kopernicus
                     }
 
                     // maxScale
-                    [ParserTarget("maxScale", optional = true)]
+                    [ParserTarget("maxScale")]
                     public NumericParser<float> maxScale
                     {
                         get { return scatter.maxScale; }
@@ -265,7 +265,7 @@ namespace Kopernicus
                     }
 
                     // maxScatter
-                    [ParserTarget("maxScatter", optional = true)]
+                    [ParserTarget("maxScatter")]
                     public NumericParser<int> maxScatter
                     {
                         get { return scatter.maxScatter; }
@@ -273,7 +273,7 @@ namespace Kopernicus
                     }
 
                     // maxSpeed
-                    [ParserTarget("maxSpeed", optional = true)]
+                    [ParserTarget("maxSpeed")]
                     public NumericParser<double> maxSpeed
                     {
                         get { return scatter.maxSpeed; }
@@ -281,7 +281,7 @@ namespace Kopernicus
                     }
 
                     // minScale
-                    [ParserTarget("minScale", optional = true)]
+                    [ParserTarget("minScale")]
                     public NumericParser<float> minScale
                     {
                         get { return scatter.minScale; }
@@ -289,7 +289,7 @@ namespace Kopernicus
                     }
 
                     // recieveShadows
-                    [ParserTarget("recieveShadows", optional = true)]
+                    [ParserTarget("recieveShadows")]
                     public NumericParser<bool> recieveShadows
                     {
                         get { return scatter.recieveShadows; }
@@ -305,7 +305,7 @@ namespace Kopernicus
                     }
 
                     // Scatter seed
-                    [ParserTarget("seed", optional = true)]
+                    [ParserTarget("seed")]
                     public NumericParser<int> seed
                     {
                         get { return scatter.seed; }
@@ -313,7 +313,7 @@ namespace Kopernicus
                     }
 
                     // verticalOffset
-                    [ParserTarget("verticalOffset", optional = true)]
+                    [ParserTarget("verticalOffset")]
                     public NumericParser<float> verticalOffset
                     {
                         get { return scatter.verticalOffset; }
@@ -379,7 +379,7 @@ namespace Kopernicus
                     public PQSLandControl.LandClassScatterAmount scatterAmount;
 
                     // density
-                    [ParserTarget("density", optional = true)]
+                    [ParserTarget("density")]
                     public NumericParser<double> density
                     {
                         get { return scatterAmount.density; }
@@ -416,7 +416,7 @@ namespace Kopernicus
                     public PQSLandControl.LerpRange lerpRange;
 
                     // endEnd
-                    [ParserTarget("endEnd", optional = true)]
+                    [ParserTarget("endEnd")]
                     public NumericParser<double> endEnd
                     {
                         get { return lerpRange.endEnd; }
@@ -424,7 +424,7 @@ namespace Kopernicus
                     }
 
                     // endStart
-                    [ParserTarget("endStart", optional = true)]
+                    [ParserTarget("endStart")]
                     public NumericParser<double> endStart
                     {
                         get { return lerpRange.endStart; }
@@ -432,7 +432,7 @@ namespace Kopernicus
                     }
 
                     // startEnd
-                    [ParserTarget("startEnd", optional = true)]
+                    [ParserTarget("startEnd")]
                     public NumericParser<double> startEnd
                     {
                         get { return lerpRange.startEnd; }
@@ -440,7 +440,7 @@ namespace Kopernicus
                     }
 
                     // startStart
-                    [ParserTarget("startStart", optional = true)]
+                    [ParserTarget("startStart")]
                     public NumericParser<double> startStart
                     {
                         get { return lerpRange.startStart; }
@@ -469,11 +469,11 @@ namespace Kopernicus
                     public PQSLandControl.LandClass landClass;
 
                     // Should we delete the LandClass?
-                    [ParserTarget("delete", optional = true)]
+                    [ParserTarget("delete")]
                     public NumericParser<bool> delete = new NumericParser<bool>(false);
 
                     // alterApparentHeight
-                    [ParserTarget("alterApparentHeight", optional = true)]
+                    [ParserTarget("alterApparentHeight")]
                     public NumericParser<float> alterApparentHeight
                     {
                         get { return landClass.alterApparentHeight; }
@@ -481,7 +481,7 @@ namespace Kopernicus
                     }
 
                     // alterRealHeight
-                    [ParserTarget("alterRealHeight", optional = true)]
+                    [ParserTarget("alterRealHeight")]
                     public NumericParser<double> alterRealHeight
                     {
                         get { return landClass.alterRealHeight; }
@@ -489,11 +489,11 @@ namespace Kopernicus
                     }
 
                     // altitudeRange
-                    [ParserTarget("altitudeRange", optional = true, allowMerge = true)]
+                    [ParserTarget("altitudeRange", allowMerge = true)]
                     public LerpRangeLoader altitudeRange { get; set; }
 
                     // color
-                    [ParserTarget("color", optional = true)]
+                    [ParserTarget("color")]
                     public ColorParser color
                     {
                         get { return landClass.color; }
@@ -501,7 +501,7 @@ namespace Kopernicus
                     }
 
                     // coverageBlend
-                    [ParserTarget("coverageBlend", optional = true)]
+                    [ParserTarget("coverageBlend")]
                     public NumericParser<float> coverageBlend
                     {
                         get { return landClass.coverageBlend; }
@@ -509,7 +509,7 @@ namespace Kopernicus
                     }
 
                     // coverageFrequency
-                    [ParserTarget("coverageFrequency", optional = true)]
+                    [ParserTarget("coverageFrequency")]
                     public NumericParser<float> coverageFrequency
                     {
                         get { return landClass.coverageFrequency; }
@@ -517,7 +517,7 @@ namespace Kopernicus
                     }
 
                     // coverageOctaves
-                    [ParserTarget("coverageOctaves", optional = true)]
+                    [ParserTarget("coverageOctaves")]
                     public NumericParser<int> coverageOctaves
                     {
                         get { return landClass.coverageOctaves; }
@@ -525,7 +525,7 @@ namespace Kopernicus
                     }
 
                     // coveragePersistance
-                    [ParserTarget("coveragePersistance", optional = true)]
+                    [ParserTarget("coveragePersistance")]
                     public NumericParser<float> coveragePersistance
                     {
                         get { return landClass.coveragePersistance; }
@@ -533,7 +533,7 @@ namespace Kopernicus
                     }
 
                     // coverageSeed
-                    [ParserTarget("coverageSeed", optional = true)]
+                    [ParserTarget("coverageSeed")]
                     public NumericParser<int> coverageSeed
                     {
                         get { return landClass.coverageSeed; }
@@ -541,11 +541,11 @@ namespace Kopernicus
                     }
 
                     // coverageSimplex
-                    [ParserTarget("coverageSimplex", optional = true, allowMerge = true)]
+                    [ParserTarget("coverageSimplex", allowMerge = true)]
                     public SimplexLoader coverageSimplex { get; set; }
 
                     // The name of the landclass
-                    [ParserTarget("name", optional = true)]
+                    [ParserTarget("name")]
                     public string landClassName
                     {
                         get { return landClass.landClassName; }
@@ -553,7 +553,7 @@ namespace Kopernicus
                     }
 
                     // latDelta
-                    [ParserTarget("latDelta", optional = true)]
+                    [ParserTarget("latDelta")]
                     public NumericParser<double> latDelta
                     {
                         get { return landClass.latDelta; }
@@ -561,7 +561,7 @@ namespace Kopernicus
                     }
 
                     // latitudeDouble
-                    [ParserTarget("latitudeDouble", optional = true)]
+                    [ParserTarget("latitudeDouble")]
                     public NumericParser<bool> latitudeDouble
                     {
                         get { return landClass.latitudeDouble; }
@@ -569,15 +569,15 @@ namespace Kopernicus
                     }
 
                     // latitudeDoubleRange
-                    [ParserTarget("latitudeDoubleRange", optional = true, allowMerge = true)]
+                    [ParserTarget("latitudeDoubleRange", allowMerge = true)]
                     public LerpRangeLoader latitudeDoubleRange { get; set; }
 
                     // latitudeRange
-                    [ParserTarget("latitudeRange", optional = true, allowMerge = true)]
+                    [ParserTarget("latitudeRange", allowMerge = true)]
                     public LerpRangeLoader latitudeRange { get; set; }
 
                     // lonDelta
-                    [ParserTarget("lonDelta", optional = true)]
+                    [ParserTarget("lonDelta")]
                     public NumericParser<double> lonDelta
                     {
                         get { return landClass.lonDelta; }
@@ -585,11 +585,11 @@ namespace Kopernicus
                     }
 
                     // longitudeRange
-                    [ParserTarget("longitudeRange", optional = true, allowMerge = true)]
+                    [ParserTarget("longitudeRange", allowMerge = true)]
                     public LerpRangeLoader longitudeRange { get; set; }
 
                     // minimumRealHeight
-                    [ParserTarget("minimumRealHeight", optional = true)]
+                    [ParserTarget("minimumRealHeight")]
                     public NumericParser<double> minimumRealHeight
                     {
                         get { return landClass.minimumRealHeight; }
@@ -597,7 +597,7 @@ namespace Kopernicus
                     }
 
                     // noiseBlend
-                    [ParserTarget("noiseBlend", optional = true)]
+                    [ParserTarget("noiseBlend")]
                     public NumericParser<float> noiseBlend
                     {
                         get { return landClass.noiseBlend; }
@@ -605,7 +605,7 @@ namespace Kopernicus
                     }
 
                     // noiseColor
-                    [ParserTarget("noiseColor", optional = true)]
+                    [ParserTarget("noiseColor")]
                     public ColorParser noiseColor
                     {
                         get { return landClass.noiseColor; }
@@ -613,7 +613,7 @@ namespace Kopernicus
                     }
 
                     // noiseFrequency
-                    [ParserTarget("noiseFrequency", optional = true)]
+                    [ParserTarget("noiseFrequency")]
                     public NumericParser<float> noiseFrequency
                     {
                         get { return landClass.noiseFrequency; }
@@ -621,7 +621,7 @@ namespace Kopernicus
                     }
 
                     // noiseOctaves
-                    [ParserTarget("noiseOctaves", optional = true)]
+                    [ParserTarget("noiseOctaves")]
                     public NumericParser<int> noiseOctaves
                     {
                         get { return landClass.noiseOctaves; }
@@ -629,7 +629,7 @@ namespace Kopernicus
                     }
 
                     // noisePersistance
-                    [ParserTarget("noisePersistance", optional = true)]
+                    [ParserTarget("noisePersistance")]
                     public NumericParser<float> noisePersistance
                     {
                         get { return landClass.noisePersistance; }
@@ -637,7 +637,7 @@ namespace Kopernicus
                     }
 
                     // noiseSeed
-                    [ParserTarget("noiseSeed", optional = true)]
+                    [ParserTarget("noiseSeed")]
                     public NumericParser<int> noiseSeed
                     {
                         get { return landClass.noiseSeed; }
@@ -645,11 +645,11 @@ namespace Kopernicus
                     }
 
                     // noiseSimplex
-                    [ParserTarget("noiseSimplex", optional = true, allowMerge = true)]
+                    [ParserTarget("noiseSimplex", allowMerge = true)]
                     public SimplexLoader noiseSimplex { get; set; }
 
                     // List of scatters used
-                    [ParserTargetCollection("scatters", optional = true, nameSignificance = NameSignificance.None)]
+                    [ParserTargetCollection("scatters", nameSignificance = NameSignificance.None)]
                     public List<LandClassScatterAmountLoader> scatter = new List<LandClassScatterAmountLoader>();
 
                     // Apply Event
@@ -732,7 +732,7 @@ namespace Kopernicus
                 }
 
                 // altitudeBlend
-                [ParserTarget("altitudeBlend", optional = true)]
+                [ParserTarget("altitudeBlend")]
                 public NumericParser<float> altitudeBlend
                 {
                     get { return mod.altitudeBlend; }
@@ -740,7 +740,7 @@ namespace Kopernicus
                 }
 
                 // altitudeFrequency
-                [ParserTarget("altitudeFrequency", optional = true)]
+                [ParserTarget("altitudeFrequency")]
                 public NumericParser<float> altitudeFrequency
                 {
                     get { return mod.altitudeFrequency; }
@@ -748,7 +748,7 @@ namespace Kopernicus
                 }
 
                 // altitudeOctaves
-                [ParserTarget("altitudeOctaves", optional = true)]
+                [ParserTarget("altitudeOctaves")]
                 public NumericParser<int> altitudeOctaves
                 {
                     get { return mod.altitudeOctaves; }
@@ -756,7 +756,7 @@ namespace Kopernicus
                 }
 
                 // altitudePersistance
-                [ParserTarget("altitudePersistance", optional = true)]
+                [ParserTarget("altitudePersistance")]
                 public NumericParser<float> altitudePersistance
                 {
                     get { return mod.altitudePersistance; }
@@ -764,7 +764,7 @@ namespace Kopernicus
                 }
 
                 // altitudeSeed
-                [ParserTarget("altitudeSeed", optional = true)]
+                [ParserTarget("altitudeSeed")]
                 public NumericParser<int> altitudeSeed
                 {
                     get { return mod.altitudeSeed; }
@@ -772,11 +772,11 @@ namespace Kopernicus
                 }
 
                 // altitudeSimplex
-                [ParserTarget("altitudeSimplex", optional = true)]
+                [ParserTarget("altitudeSimplex")]
                 public SimplexLoader altitudeSimplex { get; set; }
 
                 // createColors
-                [ParserTarget("createColors", optional = true)]
+                [ParserTarget("createColors")]
                 public NumericParser<bool> createColors
                 {
                     get { return mod.createColors; }
@@ -784,7 +784,7 @@ namespace Kopernicus
                 }
 
                 // createScatter
-                [ParserTarget("createScatter", optional = true)]
+                [ParserTarget("createScatter")]
                 public NumericParser<bool> createScatter
                 {
                     get { return mod.createScatter; }
@@ -792,7 +792,7 @@ namespace Kopernicus
                 }
 
                 // heightMap
-                [ParserTarget("heightMap", optional = true)]
+                [ParserTarget("heightMap")]
                 public MapSOParser_GreyScale<MapSO> heightMap
                 {
                     get { return mod.heightMap; }
@@ -800,7 +800,7 @@ namespace Kopernicus
                 }
 
                 // latitudeBlend
-                [ParserTarget("latitudeBlend", optional = true)]
+                [ParserTarget("latitudeBlend")]
                 public NumericParser<float> latitudeBlend
                 {
                     get { return mod.latitudeBlend; }
@@ -808,7 +808,7 @@ namespace Kopernicus
                 }
 
                 // latitudeFrequency
-                [ParserTarget("latitudeFrequency", optional = true)]
+                [ParserTarget("latitudeFrequency")]
                 public NumericParser<float> latitudeFrequency
                 {
                     get { return mod.latitudeFrequency; }
@@ -816,7 +816,7 @@ namespace Kopernicus
                 }
 
                 // latitudeOctaves
-                [ParserTarget("latitudeOctaves", optional = true)]
+                [ParserTarget("latitudeOctaves")]
                 public NumericParser<int> latitudeOctaves
                 {
                     get { return mod.latitudeOctaves; }
@@ -824,7 +824,7 @@ namespace Kopernicus
                 }
 
                 // latitudePersistance
-                [ParserTarget("latitudePersistance", optional = true)]
+                [ParserTarget("latitudePersistance")]
                 public NumericParser<float> latitudePersistance
                 {
                     get { return mod.latitudePersistance; }
@@ -832,7 +832,7 @@ namespace Kopernicus
                 }
 
                 // latitudeSeed
-                [ParserTarget("latitudeSeed", optional = true)]
+                [ParserTarget("latitudeSeed")]
                 public NumericParser<int> latitudeSeed
                 {
                     get { return mod.latitudeSeed; }
@@ -840,11 +840,11 @@ namespace Kopernicus
                 }
 
                 // latitudeSimplex
-                [ParserTarget("latitudeSimplex", optional = true)]
+                [ParserTarget("latitudeSimplex")]
                 public SimplexLoader latitudeSimplex { get; set; }
 
                 // longitudeBlend
-                [ParserTarget("longitudeBlend", optional = true)]
+                [ParserTarget("longitudeBlend")]
                 public NumericParser<float> longitudeBlend
                 {
                     get { return mod.longitudeBlend; }
@@ -852,7 +852,7 @@ namespace Kopernicus
                 }
 
                 // longitudeFrequency
-                [ParserTarget("longitudeFrequency", optional = true)]
+                [ParserTarget("longitudeFrequency")]
                 public NumericParser<float> longitudeFrequency
                 {
                     get { return mod.longitudeFrequency; }
@@ -860,7 +860,7 @@ namespace Kopernicus
                 }
 
                 // longitudeOctaves
-                [ParserTarget("longitudeOctaves", optional = true)]
+                [ParserTarget("longitudeOctaves")]
                 public NumericParser<int> longitudeOctaves
                 {
                     get { return mod.longitudeOctaves; }
@@ -868,7 +868,7 @@ namespace Kopernicus
                 }
 
                 // longitudePersistance
-                [ParserTarget("longitudePersistance", optional = true)]
+                [ParserTarget("longitudePersistance")]
                 public NumericParser<float> longitudePersistance
                 {
                     get { return mod.longitudePersistance; }
@@ -876,7 +876,7 @@ namespace Kopernicus
                 }
 
                 // longitudeSeed
-                [ParserTarget("longitudeSeed", optional = true)]
+                [ParserTarget("longitudeSeed")]
                 public NumericParser<int> longitudeSeed
                 {
                     get { return mod.longitudeSeed; }
@@ -884,11 +884,11 @@ namespace Kopernicus
                 }
 
                 // longitudeSimplex
-                [ParserTarget("longitudeSimplex", optional = true)]
+                [ParserTarget("longitudeSimplex")]
                 public SimplexLoader longitudeSimplex { get; set; }
 
                 // useHeightMap
-                [ParserTarget("useHeightMap", optional = true)]
+                [ParserTarget("useHeightMap")]
                 public NumericParser<bool> useHeightMap
                 {
                     get { return mod.useHeightMap; }
@@ -896,7 +896,7 @@ namespace Kopernicus
                 }
 
                 // vHeightMax
-                [ParserTarget("vHeightMax", optional = true)]
+                [ParserTarget("vHeightMax")]
                 public NumericParser<float> vHeightMax
                 {
                     get { return mod.vHeightMax; }

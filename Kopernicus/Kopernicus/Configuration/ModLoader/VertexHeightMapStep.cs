@@ -48,7 +48,7 @@ namespace Kopernicus
                 }
 
                 // Height map offset
-                [ParserTarget("offset", optional = true)]
+                [ParserTarget("offset")]
                 public NumericParser<double> heightMapOffset 
                 {
                     get { return mod.heightMapOffset; }
@@ -56,7 +56,7 @@ namespace Kopernicus
                 }
 
                 // Height map offset
-                [ParserTarget("deformity", optional = true)]
+                [ParserTarget("deformity")]
                 public NumericParser<double> heightMapDeformity
                 {
                     get { return mod.heightMapDeformity; }
@@ -64,14 +64,14 @@ namespace Kopernicus
                 }
 
                 // Height map offset
-                [ParserTarget("scaleDeformityByRadius", optional = true)]
+                [ParserTarget("scaleDeformityByRadius")]
                 public NumericParser<bool> scaleDeformityByRadius
                 {
                     get { return mod.scaleDeformityByRadius; }
                     set { mod.scaleDeformityByRadius = value; }
                 }
 
-                [ParserTarget("coastHeight", optional = true)]
+                [ParserTarget("coastHeight")]
                 public NumericParser<double> coastHeight
                 {
                     get { return mod.coastHeight; }

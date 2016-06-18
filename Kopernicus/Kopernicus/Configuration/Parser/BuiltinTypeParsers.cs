@@ -422,15 +422,15 @@ namespace Kopernicus
         public class PositionParser : BaseLoader
         {
             // Latitude
-            [ParserTarget("latitude", optional = true)]
+            [ParserTarget("latitude")]
             public NumericParser<double> latitude { get; set; }
 
             // Longitude
-            [ParserTarget("longitude", optional = true)]
+            [ParserTarget("longitude")]
             public NumericParser<double> longitude { get; set; }
 
             // Altitude
-            [ParserTarget("altitude", optional = true)]
+            [ParserTarget("altitude")]
             public NumericParser<double> altitude { get; set; }
 
             // Default Constructor
@@ -780,35 +780,35 @@ namespace Kopernicus
             public PhysicMaterial material { get; set; }
 
             // Physics material parameters
-            [ParserTarget("bounceCombine", optional = true)]
+            [ParserTarget("bounceCombine")]
             public EnumParser<PhysicMaterialCombine> bounceCombine
             {
                 get { return material.bounceCombine; }
                 set { material.bounceCombine = value; }
             }
 
-            [ParserTarget("frictionCombine", optional = true)]
+            [ParserTarget("frictionCombine")]
             public EnumParser<PhysicMaterialCombine> frictionCombine
             {
                 get { return material.frictionCombine; }
                 set { material.frictionCombine = value; }
             }
 
-            [ParserTarget("bounciness", optional = true)]
+            [ParserTarget("bounciness")]
             public NumericParser<float> bounciness
             {
                 get { return material.bounciness; }
                 set { material.bounciness = value; }
             }           
             
-            [ParserTarget("staticFriction", optional = true)]
+            [ParserTarget("staticFriction")]
             public NumericParser<float> staticFriction
             { 
                 get { return material.staticFriction; }
                 set { material.staticFriction = value; }
             }
             
-            [ParserTarget("dynamicFriction", optional = true)]
+            [ParserTarget("dynamicFriction")]
             public NumericParser<float> dynamicFriction
             {
                 get { return material.dynamicFriction; }

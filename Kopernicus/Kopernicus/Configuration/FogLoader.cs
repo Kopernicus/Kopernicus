@@ -38,7 +38,7 @@ namespace Kopernicus
             public CelestialBody body { get; set; }
 
             // afgAltMult
-            [ParserTarget("afgAltMult", optional = true, allowMerge = false)]
+            [ParserTarget("afgAltMult")]
             public NumericParser<float> oceanAFGAltMult
             {
                 get { return body.oceanAFGAltMult; }
@@ -46,7 +46,7 @@ namespace Kopernicus
             }
 
             // afgBase
-            [ParserTarget("afgBase", optional = true, allowMerge = false)]
+            [ParserTarget("afgBase")]
             public NumericParser<float> oceanAFGBase
             {
                 get { return body.oceanAFGBase; }
@@ -54,7 +54,7 @@ namespace Kopernicus
             }
 
             // afgLerp
-            [ParserTarget("afgLerp", optional = true, allowMerge = false)]
+            [ParserTarget("afgLerp")]
             public NumericParser<bool> oceanAFGLerp
             {
                 get { return body.oceanAFGLerp; }
@@ -62,7 +62,7 @@ namespace Kopernicus
             }
 
             // afgMin
-            [ParserTarget("afgMin", optional = true, allowMerge = false)]
+            [ParserTarget("afgMin")]
             public NumericParser<float> oceanAFGMin
             {
                 get { return body.oceanAFGMin; }
@@ -70,7 +70,7 @@ namespace Kopernicus
             }
 
             // fogColorEnd
-            [ParserTarget("fogColorEnd", optional = true, allowMerge = false)]
+            [ParserTarget("fogColorEnd")]
             public ColorParser oceanFogColorEnd
             {
                 get { return body.oceanFogColorEnd; }
@@ -78,7 +78,7 @@ namespace Kopernicus
             }
 
             // fogColorStart
-            [ParserTarget("fogColorStart", optional = true, allowMerge = false)]
+            [ParserTarget("fogColorStart")]
             public ColorParser oceanFogColorStart
             {
                 get { return body.oceanFogColorStart; }
@@ -86,7 +86,7 @@ namespace Kopernicus
             }
 
             // fogDensityAltScalar
-            [ParserTarget("fogDensityAltScalar", optional = true, allowMerge = false)]
+            [ParserTarget("fogDensityAltScalar")]
             public NumericParser<float> oceanFogDensityAltScalar
             {
                 get { return body.oceanFogDensityAltScalar; }
@@ -94,7 +94,7 @@ namespace Kopernicus
             }
 
             // fogDensityEnd
-            [ParserTarget("fogDensityEnd", optional = true, allowMerge = false)]
+            [ParserTarget("fogDensityEnd")]
             public NumericParser<float> oceanFogDensityEnd
             {
                 get { return body.oceanFogDensityEnd; }
@@ -102,7 +102,7 @@ namespace Kopernicus
             }
 
             // fogDensityExponent
-            [ParserTarget("fogDensityExponent", optional = true, allowMerge = false)]
+            [ParserTarget("fogDensityExponent")]
             public NumericParser<float> oceanFogDensityExponent
             {
                 get { return body.oceanFogDensityExponent; }
@@ -110,7 +110,7 @@ namespace Kopernicus
             }
 
             // fogDensityPQSMult
-            [ParserTarget("fogDensityPQSMult", optional = true, allowMerge = false)]
+            [ParserTarget("fogDensityPQSMult")]
             public NumericParser<float> oceanFogDensityPQSMult
             {
                 get { return body.oceanFogDensityPQSMult; }
@@ -118,7 +118,7 @@ namespace Kopernicus
             }
 
             // fogDensityStart
-            [ParserTarget("fogDensityStart", optional = true, allowMerge = false)]
+            [ParserTarget("fogDensityStart")]
             public NumericParser<float> oceanFogDensityStart
             {
                 get { return body.oceanFogDensityStart; }
@@ -126,7 +126,7 @@ namespace Kopernicus
             }
 
             // skyColorMult
-            [ParserTarget("skyColorMult", optional = true, allowMerge = false)]
+            [ParserTarget("skyColorMult")]
             public NumericParser<float> oceanSkyColorMult
             {
                 get { return body.oceanSkyColorMult; }
@@ -134,7 +134,7 @@ namespace Kopernicus
             }
 
             // skyColorOpacityAltMult
-            [ParserTarget("skyColorOpacityAltMult", optional = true, allowMerge = false)]
+            [ParserTarget("skyColorOpacityAltMult")]
             public NumericParser<float> oceanSkyColorOpacityAltMult
             {
                 get { return body.oceanSkyColorOpacityAltMult; }
@@ -142,7 +142,7 @@ namespace Kopernicus
             }
 
             // skyColorOpacityBase
-            [ParserTarget("skyColorOpacityBase", optional = true, allowMerge = false)]
+            [ParserTarget("skyColorOpacityBase")]
             public NumericParser<float> oceanSkyColorOpacityBase
             {
                 get { return body.oceanSkyColorOpacityBase; }
@@ -150,7 +150,7 @@ namespace Kopernicus
             }
 
             // sunAltMult
-            [ParserTarget("sunAltMult", optional = true, allowMerge = false)]
+            [ParserTarget("sunAltMult")]
             public NumericParser<float> oceanSunAltMult
             {
                 get { return body.oceanSunAltMult; }
@@ -158,7 +158,7 @@ namespace Kopernicus
             }
 
             // sunBase
-            [ParserTarget("sunBase", optional = true, allowMerge = false)]
+            [ParserTarget("sunBase")]
             public NumericParser<float> oceanSunBase
             {
                 get { return body.oceanSunBase; }
@@ -166,7 +166,7 @@ namespace Kopernicus
             }
 
             // sunMin
-            [ParserTarget("sunMin", optional = true, allowMerge = false)]
+            [ParserTarget("sunMin")]
             public NumericParser<float> oceanSunMin
             {
                 get { return body.oceanSunMin; }
@@ -174,7 +174,7 @@ namespace Kopernicus
             }
 
             // useFog
-            [ParserTarget("useFog", optional = true, allowMerge = false)]
+            [ParserTarget("useFog")]
             public NumericParser<bool> oceanUseFog
             {
                 get { return body.oceanUseFog; }

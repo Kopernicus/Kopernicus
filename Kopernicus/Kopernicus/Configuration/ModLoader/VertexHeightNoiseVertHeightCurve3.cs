@@ -80,7 +80,7 @@ namespace Kopernicus
                 }
 
                 // The frequency of the simplex multiplier
-                [ParserTarget("multiplierFrequency", optional = true)]
+                [ParserTarget("multiplierFrequency")]
                 public NumericParser<double> multiplierFrequency
                 {
                     get { return mod.curveMultiplier.frequency; }
@@ -88,7 +88,7 @@ namespace Kopernicus
                 }
 
                 // Octaves of the simplex multiplier
-                [ParserTarget("multiplierOctaves", optional = true)]
+                [ParserTarget("multiplierOctaves")]
                 public NumericParser<int> multiplierOctaves
                 {
                     get { return mod.curveMultiplier.octaves; }
@@ -96,7 +96,7 @@ namespace Kopernicus
                 }
 
                 // Persistence of the simplex multiplier
-                [ParserTarget("multiplierPersistence", optional = true)]
+                [ParserTarget("multiplierPersistence")]
                 public NumericParser<double> multiplierPersistence
                 {
                     get { return mod.curveMultiplier.persistence; }
@@ -104,7 +104,7 @@ namespace Kopernicus
                 }
 
                 // The seed of the simplex multiplier
-                [ParserTarget("multiplierSeed", optional = true)]
+                [ParserTarget("multiplierSeed")]
                 public NumericParser<int> multiplierSeed
                 {
                     get { return mod.curveMultiplier.seed; }
@@ -112,7 +112,7 @@ namespace Kopernicus
                 }
 
                 // The frequency of the simplex noise on deformity
-                [ParserTarget("deformityFrequency", optional = true)]
+                [ParserTarget("deformityFrequency")]
                 public NumericParser<double> deformityFrequency
                 {
                     get { return mod.deformity.frequency; }
@@ -120,7 +120,7 @@ namespace Kopernicus
                 }
 
                 // Octaves of the simplex noise on deformity
-                [ParserTarget("deformityOctaves", optional = true)]
+                [ParserTarget("deformityOctaves")]
                 public NumericParser<int> deformityOctaves
                 {
                     get { return mod.deformity.octaves; }
@@ -128,7 +128,7 @@ namespace Kopernicus
                 }
 
                 // Persistence of the simplex noise on deformity
-                [ParserTarget("deformityPersistence", optional = true)]
+                [ParserTarget("deformityPersistence")]
                 public NumericParser<double> deformityPersistence
                 {
                     get { return mod.deformity.persistence; }
@@ -136,7 +136,7 @@ namespace Kopernicus
                 }
 
                 // The seed of the simplex noise on deformity
-                [ParserTarget("deformitySeed", optional = true)]
+                [ParserTarget("deformitySeed")]
                 public NumericParser<int> deformitySeed
                 {
                     get { return mod.deformity.seed; }
@@ -144,7 +144,7 @@ namespace Kopernicus
                 }
 
                 // The frequency of the additive noise
-                [ParserTarget("ridgedAddFrequency", optional = true)]
+                [ParserTarget("ridgedAddFrequency")]
                 public NumericParser<double> ridgedAddFrequency
                 {
                     get { return mod.ridgedAdd.frequency; }
@@ -152,7 +152,7 @@ namespace Kopernicus
                 }
 
                 // Lacunarity of the additive noise
-                [ParserTarget("ridgedAddLacunarity", optional = true)]
+                [ParserTarget("ridgedAddLacunarity")]
                 public NumericParser<double> ridgedAddLacunarity
                 {
                     get { return mod.ridgedAdd.lacunarity; }
@@ -160,7 +160,7 @@ namespace Kopernicus
                 }
 
                 // Octaves of the additive noise
-                [ParserTarget("ridgedAddOctaves", optional = true)]
+                [ParserTarget("ridgedAddOctaves")]
                 public NumericParser<int> ridgedAddOctaves
                 {
                     get { return mod.ridgedAdd.octaves; }
@@ -168,7 +168,7 @@ namespace Kopernicus
                 }
 
                 // The quality of the additive noise
-                [ParserTarget("ridgedAddQuality", optional = true)]
+                [ParserTarget("ridgedAddQuality")]
                 public EnumParser<LibNoise.Unity.QualityMode> ridgedAddQuality
                 {
                     get { return mod.ridgedAdd.quality; }
@@ -176,7 +176,7 @@ namespace Kopernicus
                 }
 
                 // The seed of the additive noise
-                [ParserTarget("ridgedAddSeed", optional = true)]
+                [ParserTarget("ridgedAddSeed")]
                 public NumericParser<int> ridgedAddSeed
                 {
                     get { return mod.ridgedAdd.seed; }
@@ -184,7 +184,7 @@ namespace Kopernicus
                 }
 
                 // The frequency of the subtractive noise
-                [ParserTarget("ridgedSubFrequency", optional = true)]
+                [ParserTarget("ridgedSubFrequency")]
                 public NumericParser<double> ridgedSubFrequency
                 {
                     get { return mod.ridgedSub.frequency; }
@@ -192,7 +192,7 @@ namespace Kopernicus
                 }
 
                 // Lacunarity of the subtractive noise
-                [ParserTarget("ridgedSubLacunarity", optional = true)]
+                [ParserTarget("ridgedSubLacunarity")]
                 public NumericParser<double> ridgedSubLacunarity
                 {
                     get { return mod.ridgedSub.lacunarity; }
@@ -200,7 +200,7 @@ namespace Kopernicus
                 }
 
                 // Octaves of the subtractive noise
-                [ParserTarget("ridgedSubOctaves", optional = true)]
+                [ParserTarget("ridgedSubOctaves")]
                 public NumericParser<int> ridgedSubOctaves
                 {
                     get { return mod.ridgedSub.octaves; }
@@ -208,7 +208,7 @@ namespace Kopernicus
                 }
 
                 // The quality of the subtractive noise
-                [ParserTarget("ridgedSubQuality", optional = true)]
+                [ParserTarget("ridgedSubQuality")]
                 public EnumParser<LibNoise.Unity.QualityMode> ridgedSubQuality
                 {
                     get { return mod.ridgedSub.quality; }
@@ -216,7 +216,7 @@ namespace Kopernicus
                 }
 
                 // The seed of the subtractive noise
-                [ParserTarget("ridgedSubSeed", optional = true)]
+                [ParserTarget("ridgedSubSeed")]
                 public NumericParser<int> ridgedSubSeed
                 {
                     get { return mod.ridgedSub.seed; }

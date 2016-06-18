@@ -43,7 +43,7 @@ namespace Kopernicus
             GameObject scaledVersion;
 
             // Target of our particles
-            [ParserTarget("target", optional = true, allowMerge = false)]
+            [ParserTarget("target")]
             public string target
             {
                 get { return particle.target; }
@@ -51,7 +51,7 @@ namespace Kopernicus
             }
 
             // minEmission of particles
-            [ParserTarget("minEmission", optional = true, allowMerge = false)]
+            [ParserTarget("minEmission")]
             public NumericParser<float> minEmission
             {
                 get { return particle.minEmission; }
@@ -59,7 +59,7 @@ namespace Kopernicus
             }
 
             // maxEmission of particles
-            [ParserTarget("maxEmission", optional = true, allowMerge = false)]
+            [ParserTarget("maxEmission")]
             public NumericParser<float> maxEmission
             {
                 get { return particle.maxEmission; }
@@ -67,7 +67,7 @@ namespace Kopernicus
             }
 
             // minimum lifespan of particles
-            [ParserTarget("lifespanMin", optional = true, allowMerge = false)]
+            [ParserTarget("lifespanMin")]
             public NumericParser<float> lifespanMin
             {
                 get { return particle.minEnergy; }
@@ -75,7 +75,7 @@ namespace Kopernicus
             }
 
             // maximum lifespan of particles
-            [ParserTarget("lifespanMax", optional = true, allowMerge = false)]
+            [ParserTarget("lifespanMax")]
             public NumericParser<float> lifespanMax
             {
                 get { return particle.maxEnergy; }
@@ -83,7 +83,7 @@ namespace Kopernicus
             }
 
             // minimum size of particles
-            [ParserTarget("sizeMin", optional = true, allowMerge = false)]
+            [ParserTarget("sizeMin")]
             public NumericParser<float> sizeMin
             {
                 get { return particle.minSize; }
@@ -91,7 +91,7 @@ namespace Kopernicus
             }
 
             // maximum size of particles
-            [ParserTarget("sizeMax", optional = true, allowMerge = false)]
+            [ParserTarget("sizeMax")]
             public NumericParser<float> sizeMax
             {
                 get { return particle.maxSize; }
@@ -99,7 +99,7 @@ namespace Kopernicus
             }
 
             // speedScale of particles
-            [ParserTarget("speedScale", optional = true, allowMerge = false)]
+            [ParserTarget("speedScale")]
             public NumericParser<float> speedScaleLoader
             {
                 get { return particle.speedScale; }
@@ -107,7 +107,7 @@ namespace Kopernicus
             }
 
             // grow rate of particles
-            [ParserTarget("rate", optional = true, allowMerge = false)]
+            [ParserTarget("rate")]
             public NumericParser<float> rate
             {
                 get { return particle.sizeGrow; }
@@ -115,7 +115,7 @@ namespace Kopernicus
             }
 
             // rand Velocity of particles
-            [ParserTarget("randVelocity", optional = true, allowMerge = false)]
+            [ParserTarget("randVelocity")]
             public Vector3Parser randVelocity
             {
                 get { return particle.randomVelocity; }
@@ -123,7 +123,7 @@ namespace Kopernicus
             }
 
             // Texture of particles
-            [ParserTarget("texture", optional = true, allowMerge = false)]
+            [ParserTarget("texture")]
             public Texture2DParser texture
             {
                 get { return particle.mainTexture as Texture2D; }
@@ -131,7 +131,7 @@ namespace Kopernicus
             }
 
             // scale
-            [ParserTarget("scale", optional = true, allowMerge = false)]
+            [ParserTarget("scale")]
             public Vector3Parser scale
             {
                 get { return particle.scale; }
@@ -139,7 +139,7 @@ namespace Kopernicus
             }
 
             // mesh
-            [ParserTarget("mesh", optional = true, allowMerge = false)]
+            [ParserTarget("mesh")]
             public MeshParser mesh
             {
                 get { return particle.mesh; }
@@ -147,7 +147,7 @@ namespace Kopernicus
             }
 
             // Whether the particles should collide with stuff
-            [ParserTarget("collide", optional = true, allowMerge = false)]
+            [ParserTarget("collide")]
             public NumericParser<bool> collide
             {
                 get { return particle.collideable; }
@@ -155,7 +155,7 @@ namespace Kopernicus
             }
 
             // force
-            [ParserTarget("force", optional = true, allowMerge = false)]
+            [ParserTarget("force")]
             public Vector3Parser force
             {
                 get { return particle.force; }
