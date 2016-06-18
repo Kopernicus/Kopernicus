@@ -40,6 +40,14 @@ namespace Kopernicus
             // The edited object
             public LightShifter lsc { get; set; }
 
+            // The sunflare for the star
+            [ParserTarget("sunFlare")]
+            public AssetParser<Flare> sunFlare
+            {
+                get { return lsc.sunFlare; }
+                set { lsc.sunFlare = value; }
+            }
+
             // sunlightColor
             [ParserTarget("sunlightColor")]
             public ColorParser sunlightColor

@@ -887,6 +887,45 @@ namespace Kopernicus
             }
         }
 
+        [RequireConfigType(ConfigType.Value)]
+        public class AssetParser<T> : IParsable where T : UnityEngine.Object
+        {
+            // The loaded value
+            public T value;
+
+            // Load the AssetBundle with the object
+            public void SetFromString(string s)
+            {
+                string[] split = s.Split(':');
+                if (!File.Exists(KSPUtil.ApplicationRootPath + "GameData/" + split[0]))
+                {
+                    Logger.Active.Log("Couldn't find asset file at path: " + KSPUtil.ApplicationRootPath + "GameData/" + split[0]);
+                    return;
+                }
+                AssetBundle bundle = AssetBundle.CreateFromMemoryImmediate(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + split[0]));
+                value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
+                bundle.Unload(true);
+            }
+            public AssetParser()
+            {
+
+            }
+            public AssetParser(T value)
+            {
+                this.value = value;
+            }
+
+            // Convert
+            public static implicit operator T(AssetParser<T> parser)
+            {
+                return parser.value;
+            }
+            public static implicit operator AssetParser<T>(T value)
+            {
+                return new AssetParser<T>(value);
+            }
+        }
+
         // parser for .mu
 		[RequireConfigType(ConfigType.Value)]
 		public class MuParser : IParsable

@@ -204,6 +204,9 @@ namespace Kopernicus
                 // Get the LightShifter
                 shifter = sun.scaledBody.GetComponentsInChildren<LightShifter>(true)?[0];
 
+                // Lensflare
+                sunFlare.flare = shifter.sunFlare ?? sunFlare.flare;
+
                 // Gah
                 typeof(Sun).GetField("lgt", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(this, light);
 

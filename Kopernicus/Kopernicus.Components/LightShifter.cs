@@ -52,6 +52,7 @@ namespace Kopernicus
             public double solarInsolation;
             public double solarLuminosity;
             public double radiationFactor;
+            public Flare sunFlare;
 
             // Prefab that makes every star yellow by default
             public static LightShifter prefab
@@ -83,6 +84,7 @@ namespace Kopernicus
                     prefab.solarInsolation = PhysicsGlobals.SolarInsolationAtHome;
                     prefab.solarLuminosity = PhysicsGlobals.SolarLuminosityAtHome;
                     prefab.radiationFactor = PhysicsGlobals.RadiationFactor;
+                    prefab.sunFlare = null;
 
                     // Return the prefab
                     return prefab;
