@@ -352,7 +352,7 @@ namespace Kopernicus
                     // Merge all values of the node
                     if (target.getAll != null)
                     {
-                        nodeValue = String.Join(target.getAll, node.GetValues(target.fieldName))
+                        nodeValue = String.Join(target.getAll, node.GetValues(target.fieldName));
                     }
 
                     // If the target is a string, it works natively
