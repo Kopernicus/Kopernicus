@@ -128,8 +128,7 @@ namespace Kopernicus
             }
 
             // Whether the main menu body should be randomized
-            [ParserTarget("randomMainMenuBody", getAll = ",")]
-            public StringCollectionParser randomMainMenuBody = new StringCollectionParser();
+            public List<string> randomMainMenuBodies = new List<String>();
 
             // The maximum viewing distance in tracking station
             [ParserTarget("maxViewingDistance")]
@@ -264,8 +263,8 @@ namespace Kopernicus
                 PatchFGI(ref numbers, ref index, systemPrefab.rootBody);
 
                 // Main Menu bodies
-                if (randomMainMenuBody.value.Any())
-                    Templates.menuBody = randomMainMenuBody.value[UnityEngine.Random.Range(0, randomMainMenuBody.value.Count)];
+                if (randomMainMenuBodies.Any())
+                    Templates.menuBody = randomMainMenuBodies[UnityEngine.Random.Range(0, randomMainMenuBodies.Count)];
             }
 
             // Sort bodies by distance from parent body

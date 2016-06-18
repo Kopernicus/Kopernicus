@@ -95,6 +95,14 @@ namespace Kopernicus
                 set { if (value) Templates.finalizeBodies.Add(generatedBody.name); }
             }
 
+            // Whether this body should be taken into account for the main menu body stuff
+            [ParserTarget("randomMainMenyBody")]
+            public NumericParser<bool> canBeMainMenuBody
+            {
+                get { return Loader.Instance?.randomMainMenuBodies.Contains(name); }
+                set { if (value) Loader.Instance.randomMainMenuBodies.Add(name); }
+            }
+
             // Template property of a body - responsible for generating a PSystemBody from an existing one
             [PreApply]
             [ParserTarget("Template")]
