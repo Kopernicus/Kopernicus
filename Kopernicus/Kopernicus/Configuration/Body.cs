@@ -96,7 +96,7 @@ namespace Kopernicus
             }
 
             // Whether this body should be taken into account for the main menu body stuff
-            [ParserTarget("randomMainMenyBody")]
+            [ParserTarget("randomMainMenuBody")]
             public NumericParser<bool> canBeMainMenuBody
             {
                 get { return Loader.Instance?.randomMainMenuBodies.Contains(name); }
