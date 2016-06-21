@@ -194,6 +194,13 @@ namespace Kopernicus
                 get { return celestialBody.navballSwitchRadiusMult; }
                 set { celestialBody.navballSwitchRadiusMult = value; }
             }
+            // navballSwitchRadiusMult
+            [ParserTarget("navballSwitchRadiusMultLow")]
+            public NumericParser<double> navballSwitchRadiusMultLow
+            {
+                get { return celestialBody.navballSwitchRadiusMultLow; }
+                set { celestialBody.navballSwitchRadiusMultLow = value; }
+            }
 
             // Science values of this body
             [ParserTarget("ScienceValues", allowMerge = true)]
