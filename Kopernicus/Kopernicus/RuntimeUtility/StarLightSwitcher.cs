@@ -71,7 +71,7 @@ namespace Kopernicus
             {
                 // SolarPanels
                 foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-                    sp.sunTransform = celestialBody.transform;
+                    sp.sunDotTransform = celestialBody.transform;
 
                 // Radiators
                 foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
