@@ -49,7 +49,7 @@ namespace Kopernicus
         // Compatible version
         internal const int version_major = 1;
         internal const int version_minor = 1;
-        internal const int Revision = 2;
+        internal const int Revision = 3;
 
         public static bool IsCompatible()
         {
@@ -69,12 +69,12 @@ namespace Kopernicus
             // Even if you don't lock down functionality, you should return true if your users
             // can expect a future update to be available.
             //
-#if RELEASE
+#if !DEBUG
             return
                 Versioning.version_major == version_major && 
                 Versioning.version_minor == version_minor && 
                 Versioning.Revision == Revision;
-#elif DEBUG
+#else
             return true;
 #endif
 

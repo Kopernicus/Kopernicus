@@ -1,17 +1,28 @@
 Kopernicus
 ==============================
-May 28th, 2016
+June 22th, 2016
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
+* Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.0.5)
+New in this version (1.1)
 -------------------
-* Fixed an issue with the deleting of PQSMods by name and / or index.
-* Changed the seperator key for deleting by index to ; (it would be removePQSMods = PQSMod_VertexHeightMap[_Height; 1] now)
-* Fix for PQSMod_FlattenArea to export in prefab mode and to cache in ScaledSpace
-* Some fixes needed for Kittopia Tech to work properly
-* Index value for PQSMod patching
+* Fix mesh colliders very often being out-of-sync with renderers in KSP 1.1.
+* ScaledSpace OnDemand optimisations by Padishar
+* Fixed the Asteroid ScenarioModule, because it prevented other Scenarios from getting spawned
+* Added support for multiple Lensflares
+* Added a dependency on ModularFlightIntegrator, and rewrote the Flux code to support heat from multiple stars
+* Made the spacecenter scene less buggy (it is still broken like hell, and I dont find the component responsible for it)
+* Added a loader for star radiation
+* Fixed the luminosity code for stars
+* Added a switch to prevent an AFG from getting created (Atmosphere { addAFG = false })
+* Randomization for the main menu body
+* Fix for main menu bodies using cbNameLater
+* Fixed BUILTIN MapSO
+* Experimental support for custom lensflares, from Unity asset bundles (Light { sunFlare = Kopernicus/Files/flare.unity3d:nameoftheasset)
+* Add new navballSwitchRadiusMultLow to Properties
+* 1.1.3 API changes (sunDotTransform)
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
