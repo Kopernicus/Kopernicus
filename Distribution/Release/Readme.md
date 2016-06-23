@@ -6,7 +6,7 @@ June 22th, 2016
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.1.1)
+New in this version (1.1.2)
 -------------------
 * Fix mesh colliders very often being out-of-sync with renderers in KSP 1.1.
 * ScaledSpace OnDemand optimisations by Padishar
