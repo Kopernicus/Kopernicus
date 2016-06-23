@@ -208,7 +208,7 @@ namespace Kopernicus
                 sunFlare.flare = shifter.sunFlare ?? sunFlare.flare;
 
                 // Gah
-                typeof(Sun).GetField("lgt", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(this, light);
+                typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(Light)).SetValue(this, light);
 
                 // Scaled Space Light
                 if (!useLocalSpaceSunLight) return;
