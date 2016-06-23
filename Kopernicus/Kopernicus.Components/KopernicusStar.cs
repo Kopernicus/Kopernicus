@@ -120,7 +120,7 @@ namespace Kopernicus
                 if (homeBody == null) return;
                 while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
                     homeBody = homeBody.referenceBody;
-                typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(PhysicsGlobals.Instance, Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 * PhysicsGlobals.SolarLuminosityAtHome);
+                typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(double)).ToArray()[2].SetValue(PhysicsGlobals.Instance, Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 * PhysicsGlobals.SolarLuminosityAtHome);
             }
 
             /// <summary>
@@ -187,6 +187,11 @@ namespace Kopernicus
                 Stars.Add(this);
                 DontDestroyOnLoad(this);
                 light = gameObject.GetComponent<Light>();
+
+                // Gah
+                typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Last(f => f.FieldType == typeof(Light)).SetValue(this, light);
+
+                // sun flare
                 Camera.onPreCull += cam =>
                 {
                     Vector3d scaledSpace = target.transform.position - ScaledSpace.LocalToScaledSpace(sun.position);
@@ -206,9 +211,6 @@ namespace Kopernicus
 
                 // Lensflare
                 sunFlare.flare = shifter.sunFlare ?? sunFlare.flare;
-
-                // Gah
-                typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(Light)).SetValue(this, light);
 
                 // Scaled Space Light
                 if (!useLocalSpaceSunLight) return;
@@ -248,9 +250,6 @@ namespace Kopernicus
             /// </summary>
             void LateUpdate()
             {
-                // Update the lensflare orientation and scale
-                sunFlare.brightness = brightnessMultiplier * brightnessCurve.Evaluate((float)(1 / (Vector3d.Distance(target.position, ScaledSpace.LocalToScaledSpace(sun.position)) / (AU * ScaledSpace.InverseScaleFactor))));
-
                 // Apply light settings
                 shifter.Apply(light, scaledSunLight, iva?.GetComponent<Light>());
 
@@ -261,9 +260,12 @@ namespace Kopernicus
                 AU = shifter.AU;
                 brightnessCurve = shifter.brightnessCurve.Curve;
 
+                // Update the lensflare orientation and scale
+                sunFlare.brightness = brightnessMultiplier * brightnessCurve.Evaluate((float)(1 / (Vector3d.Distance(target.position, ScaledSpace.LocalToScaledSpace(sun.position)) / (AU * ScaledSpace.InverseScaleFactor))));
+
                 // States
                 bool lightsOn = (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER);
-                light.enabled = shifter.givesOffLight && lightsOn && Current == this;
+                light.enabled = shifter.givesOffLight && lightsOn && Current == this && HighLogic.LoadedScene != GameScenes.TRACKSTATION && !MapView.MapIsEnabled;
                 sunFlare.enabled = shifter.givesOffLight && lightsOn;
                 if (useLocalSpaceSunLight && Sun.Instance.useLocalSpaceSunLight)
                     scaledSunLight.enabled = shifter.givesOffLight && lightsOn && Current == this;

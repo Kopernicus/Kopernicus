@@ -286,6 +286,8 @@ namespace Kopernicus
             {
                 // Just clone everything
                 Transform t = planetCB.scaledBody.transform.GetChild(i);
+                if (t.gameObject.GetComponent<AtmosphereFromGround>())
+                    continue;
                 GameObject newT = Instantiate(t.gameObject) as GameObject;
                 newT.transform.parent = menuPlanet.transform;
                 newT.layer = 0;
@@ -343,6 +345,8 @@ namespace Kopernicus
                 for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
                 {
                     Transform t = moonCB.scaledBody.transform.GetChild(i);
+                    if (t.gameObject.GetComponent<AtmosphereFromGround>())
+                        continue;
                     GameObject newT = Instantiate(t.gameObject) as GameObject;
                     newT.transform.parent = menuMoon.transform;
                     newT.layer = 0;
