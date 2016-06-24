@@ -212,6 +212,14 @@ namespace Kopernicus
                 // Lensflare
                 sunFlare.flare = shifter.sunFlare ?? sunFlare.flare;
 
+                // IVA Light
+                if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+                {
+                    iva = Instantiate(Resources.FindObjectsOfTypeAll<IVASun>().Last());
+                    iva.transform.parent = transform;
+                    iva.sunT = transform;
+                }
+
                 // Scaled Space Light
                 if (!useLocalSpaceSunLight) return;
                 scaledSunLight = (new GameObject("Scaledspace SunLight " + sun.name)).AddComponent<Light>();
@@ -235,14 +243,6 @@ namespace Kopernicus
                 light.shadowBias = scene != GameScenes.SPACECENTER ? 0.125f : 1f;
                 if (gameObject.GetComponentInChildren<IVASun>() != null)
                     DestroyImmediate(gameObject.GetComponentInChildren<IVASun>().gameObject);
-
-                // IVA Sun
-                if (HighLogic.LoadedSceneIsFlight)
-                {
-                    iva = Instantiate(Resources.FindObjectsOfTypeAll<IVASun>().Last());
-                    iva.transform.parent = transform;
-                    iva.sunT = transform;
-                }
             }
 
             /// <summary>
