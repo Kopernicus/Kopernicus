@@ -229,8 +229,7 @@ namespace Kopernicus
                 scaledSunLight.transform.parent = transform;
                 scaledSunLight.transform.localPosition = Vector3.zero;
                 scaledSunLight.transform.localRotation = Quaternion.identity;
-                scaledSunLight.cullingMask = 1024;
-                light.cullingMask = light.cullingMask ^ 1024;
+                scaledSunLight.cullingMask = 1 << 32;
                 GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
             }
 
