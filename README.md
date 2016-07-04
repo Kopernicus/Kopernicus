@@ -1,28 +1,15 @@
 Kopernicus
 ==============================
-June 22th, 2016
+July 4th, 2016
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.1.2)
+New in this version (1.1.3-1)
 -------------------
-* Fix mesh colliders very often being out-of-sync with renderers in KSP 1.1.
-* ScaledSpace OnDemand optimisations by Padishar
-* Fixed the Asteroid ScenarioModule, because it prevented other Scenarios from getting spawned
-* Added support for multiple Lensflares
-* Added a dependency on ModularFlightIntegrator, and rewrote the Flux code to support heat from multiple stars
-* Made the spacecenter scene less buggy (it is still broken like hell, and I dont find the component responsible for it)
-* Added a loader for star radiation
-* Fixed the luminosity code for stars
-* Added a switch to prevent an AFG from getting created (Atmosphere { addAFG = false })
-* Randomization for the main menu body
-* Fix for main menu bodies using cbNameLater
-* Fixed BUILTIN MapSO
-* Experimental support for custom lensflares, from Unity asset bundles (Light { sunFlare = Kopernicus/Files/flare.unity3d:nameoftheasset)
-* Add new navballSwitchRadiusMultLow to Properties
-* 1.1.3 API changes (sunDotTransform)
+* New versioning (<ksp version>-<kopernicus version for this ksp version>)
+* Fixed a lighting bug in ScaledSpace (Thanks to NovaSilisko for pointing me in the right direction)
 
 Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
 
@@ -60,6 +47,7 @@ To compile Kopernicus you need to add the following assemblies from your KSP_Dat
 * Assembly-CSharp.dll
 * Assembly-CSharp-firstpass.dll
 * KSPUtil.dll
+* ModularFlightIntegrator.dll
 * UnityEngine.dll
 * UnityEngine.UI.dll
 
