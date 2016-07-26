@@ -133,8 +133,9 @@ namespace Kopernicus
             ApplyOrbitVisibility();
             RDFixer();
 
-            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.afg != null))
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies)
             {
+                if (body.afg == null) continue;
                 GameObject star_ = KopernicusStar.GetNearest(body).gameObject;
                 Vector3 planet2cam = body.scaledBody.transform.position - body.afg.mainCamera.transform.position;
                 body.afg.lightDot = Mathf.Clamp01(Vector3.Dot(planet2cam, body.afg.mainCamera.transform.position - star_.transform.position) * body.afg.dawnFactor);
@@ -193,10 +194,10 @@ namespace Kopernicus
                 return;
 
             // Replace PartBuoyancy with KopernicusBuoyancy
-            // KopernicusBuoyancy buoyancy = part.gameObject.AddComponent<KopernicusBuoyancy>();
-            // Utility.CopyObjectFields(part.partBuoyancy, buoyancy, false);
-            // part.partBuoyancy = buoyancy;
-            // Destroy(part.GetComponent<PartBuoyancy>());
+            KopernicusBuoyancy buoyancy = part.gameObject.AddComponent<KopernicusBuoyancy>();
+            Utility.CopyObjectFields(part.partBuoyancy, buoyancy, false);
+            part.partBuoyancy = buoyancy;
+            Destroy(part.GetComponent<PartBuoyancy>());
         }
 
         // Update the menu body
