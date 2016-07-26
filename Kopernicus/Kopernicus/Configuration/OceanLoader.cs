@@ -141,9 +141,9 @@ namespace Kopernicus
             public OceanLoader()
             {
                 // Load existing Oceans
-                if (generatedBody.pqsVersion.ChildSpheres.Count(p => p.name.EndsWith("Ocean")) != 0)
+                if (generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
                 {
-                    ocean = generatedBody.pqsVersion.ChildSpheres.First(p => p.name.EndsWith("Ocean"));
+                    ocean = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
                     gameObject = ocean.gameObject;
 
                     ocean.surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
