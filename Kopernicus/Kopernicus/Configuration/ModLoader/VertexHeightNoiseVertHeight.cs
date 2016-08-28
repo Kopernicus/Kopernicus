@@ -103,6 +103,14 @@ namespace Kopernicus
                     set { mod.mode = value; }
                 }
 
+                // Noise type
+                [ParserTarget("noiseType")]
+                public EnumParser<PQSMod_VertexHeightNoiseVertHeight.NoiseType> noiseType
+                {
+                    get { return mod.noiseType; }
+                    set { mod.noiseType = value; }
+                }
+
                 // Lacunarity
                 [ParserTarget("lacunarity")]
                 public NumericParser<float> lacunarity
