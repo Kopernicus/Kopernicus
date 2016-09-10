@@ -360,7 +360,17 @@ namespace Kopernicus
         // Remove the thumbnail for Barycenters in the RD and patch name changes
         void RDFixer()
         {
-            // Only run in SpaceCenter
+	  // This has to be run again if we leave the Space Center and
+	  // come back to it(so the planets load in the R&D more than the
+	  // first time
+
+	    if(HighLogic.LoadedScene != GameScenes.SPACECENTER)
+	    {
+	        isDone2 = false;
+		return;
+	    }
+
+	  // Only run in SpaceCenter
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 // Done
