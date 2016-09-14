@@ -88,6 +88,21 @@ namespace Kopernicus
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
 
+            // Log
+            Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
+            Logger.Default.Flush ();
+        }
+
+        // Execute MainMenu functions
+        void Start()
+        {
+            UpdateMenu();
+            previous = PlanetariumCamera.fetch.initialTarget;
+            PlanetariumCamera.fetch.targets
+                .Where(m => Templates.barycenters.Contains(m.GetName()) || Templates.notSelectable.Contains(m.GetName()))
+                .ToList()
+                .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
+
             // Stars
             GameObject gob = Sun.Instance.gameObject;
             KopernicusStar star = gob.AddComponent<KopernicusStar>();
@@ -109,21 +124,6 @@ namespace Kopernicus
                 starObj.transform.position = body.position;
                 starObj.transform.rotation = body.rotation;
             }
-
-            // Log
-            Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
-            Logger.Default.Flush ();
-        }
-
-        // Execute MainMenu functions
-        void Start()
-        {
-            UpdateMenu();
-            previous = PlanetariumCamera.fetch.initialTarget;
-            PlanetariumCamera.fetch.targets
-                .Where(m => Templates.barycenters.Contains(m.GetName()) || Templates.notSelectable.Contains(m.GetName()))
-                .ToList()
-                .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
         }
 
         // Stuff
