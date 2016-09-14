@@ -72,16 +72,22 @@ namespace Kopernicus
                 // SolarPanels
                 foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
                 {
-                    sp.sunTransformLocal = celestialBody.transform;
+                    sp.trackingTransformLocal = celestialBody.transform;
                     if (celestialBody.scaledBody)
                     {
-                        sp.sunTransformScaled = celestialBody.scaledBody.transform;
+                        sp.trackingTransformLocal = celestialBody.scaledBody.transform;
                     }
                 }
 
                 // Radiators
                 foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
-                    radiatorSun.SetValue(rad, celestialBody.transform);
+                {
+                    rad.trackingTransformLocal = celestialBody.transform;
+                    if (celestialBody.scaledBody)
+                    {
+                        rad.trackingTransformLocal = celestialBody.scaledBody.transform;
+                    }
+                }
             }
 
             // Apply Ambient Light

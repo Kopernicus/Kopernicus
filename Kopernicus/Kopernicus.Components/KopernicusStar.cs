@@ -84,7 +84,8 @@ namespace Kopernicus
                 // FI Values
                 bool directSunlight = flightIntegrator.Vessel.directSunlight;
                 double solarFlux = flightIntegrator.solarFlux;
-                double bodySunFlux = flightIntegrator.bodySunFlux;
+                double bodyEmissiveFlux = flightIntegrator.bodyEmissiveFlux;
+                double bodyAlbedoFlux = flightIntegrator.bodyAlbedoFlux;
 
                 // Calculate the values for all bodies
                 foreach (KopernicusStar star in Stars.Where(s => s.sun != FlightIntegrator.sunBody))
@@ -101,13 +102,15 @@ namespace Kopernicus
                     if (flightIntegrator.Vessel.directSunlight)
                         directSunlight = true;
                     solarFlux += flightIntegrator.solarFlux;
-                    bodySunFlux += flightIntegrator.bodySunFlux;
+                    bodyEmissiveFlux += flightIntegrator.bodyEmissiveFlux;
+                    bodyAlbedoFlux += flightIntegrator.bodyAlbedoFlux;
                 }
 
                 // Reapply
                 flightIntegrator.Vessel.directSunlight = directSunlight;
                 flightIntegrator.solarFlux = solarFlux;
-                flightIntegrator.bodySunFlux = bodySunFlux;
+                flightIntegrator.bodyEmissiveFlux = bodyEmissiveFlux;
+                flightIntegrator.bodyAlbedoFlux = bodyAlbedoFlux;
             }
 
             /// <summary>
@@ -136,33 +139,33 @@ namespace Kopernicus
 
                 // Get sunVector
                 RaycastHit raycastHit;
+                fi.Vessel.directSunlight = false;
                 Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(fi.IntegratorTransform.position);
                 double scale = Math.Max((star.sun.scaledBody.transform.position - scaledSpace).magnitude, 1);
                 Vector3 sunVector = (star.sun.scaledBody.transform.position - scaledSpace) / scale;
                 Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(fi.IntegratorTransform.position), sunVector);
 
                 // Get Body flux
+                fi.solarFlux = 0;
+                fi.sunDot = Vector3d.Dot(fi.sunVector, fi.Vessel.upAxis);
+                fi.CurrentMainBody.GetAtmoThermalStats(true, FlightIntegrator.sunBody, fi.sunVector, fi.sunDot, fi.Vessel.upAxis, fi.altitude, out fi.atmosphereTemperatureOffset, out fi.bodyEmissiveFlux, out fi.bodyAlbedoFlux);
                 Vector3d scaleFactor = ((Vector3d)star.sun.scaledBody.transform.position - fi.CurrentMainBody.scaledBody.transform.position) * (double)ScaledSpace.ScaleFactor;
-                fi.bodySunFlux = star.sunFlare == fi.CurrentMainBody ? 0 : PhysicsGlobals.SolarLuminosity / Math.PI * 4 * scaleFactor.sqrMagnitude;
 
                 // Get Solar Flux
                 double realDistanceToSun = 0;
-                bool localDirectSunLight = false;
                 if (!Physics.Raycast(ray, out raycastHit, Single.MaxValue, ModularFI.ModularFlightIntegrator.SunLayerMask))
                 {
-                    localDirectSunLight = true;
+                    fi.Vessel.directSunlight = true;
                     realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
                 }
                 else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
                 {
                     realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
-                    localDirectSunLight = true;
+                    fi.Vessel.directSunlight = true;
                 }
-                if (localDirectSunLight)
+                if (fi.Vessel.directSunlight)
                 {
                     fi.solarFlux = PhysicsGlobals.SolarLuminosity/(12.5663706143592*realDistanceToSun*realDistanceToSun);
-                    if (!fi.Vessel.directSunlight)
-                        fi.Vessel.directSunlight = true;
                 }
             }
 

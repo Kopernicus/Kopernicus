@@ -902,7 +902,7 @@ namespace Kopernicus
                     Logger.Active.Log("Couldn't find asset file at path: " + KSPUtil.ApplicationRootPath + "GameData/" + split[0]);
                     return;
                 }
-                AssetBundle bundle = AssetBundle.CreateFromMemoryImmediate(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + split[0]));
+                AssetBundle bundle = AssetBundle.LoadFromMemory(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + split[0]));
                 value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
                 UnityEngine.Object.DontDestroyOnLoad(value);
                 bundle.Unload(false);

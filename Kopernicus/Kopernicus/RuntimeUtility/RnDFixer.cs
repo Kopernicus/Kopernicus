@@ -50,7 +50,7 @@ namespace Kopernicus
                 if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text) || Templates.hiddenRnD.Contains(planetItem.label_planetName.text))
                 {
                     planetItem.planet.SetActive(false);
-                    planetItem.label_planetName.alignment = TextAnchor.MiddleLeft;
+                    planetItem.label_planetName.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
                 }
 
                 // namechanges

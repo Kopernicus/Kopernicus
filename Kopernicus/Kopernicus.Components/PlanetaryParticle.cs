@@ -191,7 +191,7 @@ namespace Kopernicus
                 Stream stream = typeof(PlanetParticleEmitter).Assembly.GetManifestResourceStream("Kopernicus.Components.Assets.WorldParticleCollider.unity3d");
                 byte[] buffer = new byte[stream.Length];
                 stream.Read(buffer, 0, (int)stream.Length);
-                AssetBundle bundle = AssetBundle.CreateFromMemoryImmediate(buffer);
+                AssetBundle bundle = AssetBundle.LoadFromMemory(buffer);
                 GameObject collider = Instantiate(bundle.LoadAsset("WorldParticleCollider", typeof(GameObject))) as GameObject;
                 bundle.Unload(true);
                 return collider;

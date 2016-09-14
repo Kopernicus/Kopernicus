@@ -191,7 +191,6 @@ namespace Kopernicus
                     GameObject generatedBodyProperties = new GameObject(name);
                     generatedBodyProperties.transform.parent = generatedBodyGameObject.transform;
                     generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody>();
-                    generatedBody.resources = generatedBodyProperties.AddComponent<PResource>();
                     generatedBody.celestialBody.progressTree = null;
 
                     // Sensible defaults 

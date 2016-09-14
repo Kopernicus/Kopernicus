@@ -103,10 +103,6 @@ namespace Kopernicus
             // THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
             PSystemManager.Instance.systemPrefab = Parser.CreateObjectFromConfigNode<Loader>(kopernicus).systemPrefab;
 
-            // SEARCH FOR THE ARCHIVES CONTROLLER PREFAB AND OVERWRITE IT WITH THE CUSTOM SYSTEM
-            RDArchivesController archivesController = AssetBase.RnDTechTree.GetRDScreenPrefab ().GetComponentsInChildren<RDArchivesController> (true).First ();
-            archivesController.systemPrefab = PSystemManager.Instance.systemPrefab;
-
             // Clear space center instance so it will accept nouveau Kerbin
             SpaceCenter.Instance = null;
 
