@@ -389,7 +389,6 @@ namespace Kopernicus
         // Fix the Space Center
         void FixCameras(GameScenes scene)
         {
-            return;
             if (HighLogic.LoadedScene != GameScenes.SPACECENTER && !HighLogic.LoadedSceneIsEditor)
                 return;
 

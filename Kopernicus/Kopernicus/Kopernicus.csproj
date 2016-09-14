@@ -32,14 +32,6 @@
       <HintPath>..\..\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="KSPUtil">
-      <HintPath>..\..\KSPUtil.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="ModularFlightIntegrator">
       <HintPath>..\..\ModularFlightIntegrator.dll</HintPath>
       <Private>False</Private>
@@ -122,7 +114,6 @@
     <Compile Include="Configuration\ModLoader\AltitudeAlpha.cs" />
     <Compile Include="Configuration\ModLoader\GnomonicTest.cs" />
     <Compile Include="Configuration\ModLoader\CreateSphereCollider.cs" />
-    <Compile Include="Configuration\ModLoader\BlockActivation.cs" />
     <Compile Include="Configuration\ModLoader\FlattenOcean.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMapNoise.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap2.cs" />
