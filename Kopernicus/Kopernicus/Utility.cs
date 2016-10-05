@@ -292,7 +292,7 @@ namespace Kopernicus
             if (useKLog)
                 Logger.Default.Log(str);
             else
-                Debug.Log(str);
+                Debug.Log("[Kopernicus] " + str);
 
             foreach (Component c in t.GetComponents<Component>())
             {
@@ -300,7 +300,7 @@ namespace Kopernicus
                 if (useKLog)
                     Logger.Default.Log(str);
                 else
-                    Debug.Log(str);
+                    Debug.Log("[Kopernicus] " + str);
             }
             if (t.childCount > 0)
                 for (int i = 0; i < t.childCount; ++i)
@@ -327,14 +327,14 @@ namespace Kopernicus
                 CacheFile = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), cacheFile);
                 CacheDirectory = Path.GetDirectoryName(CacheFile);
 
-                Logger.Active.Log(string.Format("[Kopernicus]: {0} is using custom cache file '{1}' in '{2}'", body.name, CacheFile, CacheDirectory));
+                Logger.Active.Log($"{body.name} is using custom cache file '{CacheFile}' in '{CacheDirectory}'");
             }
 
             Directory.CreateDirectory(CacheDirectory);
 
             if (File.Exists(CacheFile) && exportBin)
             {
-                Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
+                Logger.Active.Log("Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
                 scaledMesh = Utility.DeserializeMesh(CacheFile);
                 Utility.RecalculateTangents(scaledMesh);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
@@ -343,7 +343,7 @@ namespace Kopernicus
             // Otherwise we have to generate the mesh
             else
             {
-                Logger.Active.Log("[Kopernicus]: Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
+                Logger.Active.Log("Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
                 scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
                 Utility.RecalculateTangents(scaledMesh);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
@@ -617,8 +617,8 @@ namespace Kopernicus
         public static void SerializeMesh(Mesh mesh, string path)
         {
             // Open an output filestream
-            System.IO.FileStream outputStream = new System.IO.FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write);
-            System.IO.BinaryWriter writer = new System.IO.BinaryWriter(outputStream);
+            FileStream outputStream = new FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            BinaryWriter writer = new BinaryWriter(outputStream);
 
             // Write the vertex count of the mesh
             writer.Write(mesh.vertices.Length);
@@ -648,8 +648,8 @@ namespace Kopernicus
         // Deserialize a mesh from disk
         public static Mesh DeserializeMesh(string path)
         {
-            System.IO.FileStream inputStream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-            System.IO.BinaryReader reader = new System.IO.BinaryReader(inputStream);
+            FileStream inputStream = new FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            BinaryReader reader = new BinaryReader(inputStream);
 
             // Get the vertices
             int count = reader.ReadInt32();
@@ -794,15 +794,15 @@ namespace Kopernicus
                                 }
                                 else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
                                 {
-                                    Debug.Log("[Kopernicus]: DXT2 not supported" + path);
+                                    Debug.Log("[Kopernicus] DXT2 not supported" + path);
                                 }
                                 else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT4)
                                 {
-                                    Debug.Log("[Kopernicus]: DXT4 not supported: " + path);
+                                    Debug.Log("[Kopernicus] DXT4 not supported: " + path);
                                 }
                                 else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
                                 {
-                                    Debug.Log("[Kopernicus]: DX10 dds not supported: " + path);
+                                    Debug.Log("[Kopernicus] DX10 dds not supported: " + path);
                                 }
                                 else
                                     fourcc = false;
@@ -840,7 +840,7 @@ namespace Kopernicus
                                 else
                                 {
                                     ok = false;
-                                    Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
+                                    Debug.Log("[Kopernicus] Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
                                 }
                                 if (ok)
                                 {
@@ -854,7 +854,7 @@ namespace Kopernicus
                                     map.Apply(false, unreadable);
                         }
                         else
-                            Debug.Log("[Kopernicus]: Bad DDS header.");
+                            Debug.Log("[Kopernicus] Bad DDS header.");
                     }
                     else
                     {
@@ -869,16 +869,16 @@ namespace Kopernicus
                 catch (Exception e)
                 {
                     uncaught = false;
-                    Debug.Log("[Kopernicus]: failed to load " + path + " with exception " + e.Message);
+                    Debug.Log("[Kopernicus] failed to load " + path + " with exception " + e.Message);
                 }
                 if (map == null && uncaught)
                 {
-                    Debug.Log("[Kopernicus]: failed to load " + path);
+                    Debug.Log("[Kopernicus] failed to load " + path);
                 }
                 map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
             }
             else
-                Debug.Log("[Kopernicus]: texture does not exist! " + path);
+                Debug.Log("[Kopernicus] texture does not exist! " + path);
 
             return map;
         }

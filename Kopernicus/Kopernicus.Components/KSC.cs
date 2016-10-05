@@ -104,12 +104,12 @@ namespace Kopernicus
                 }
                 if (ksc == null)
                 {
-                    Debug.LogError("[Kopernicus]: KSC: Unable to find homeworld body with PQSCity named KSC");
+                    Debug.LogError("[Kopernicus] KSC: Unable to find homeworld body with PQSCity named KSC");
                     return;
                 }
                 if (mapDecal == null)
                 {
-                    Debug.LogError("[Kopernicus]: KSC: Unable to find homeworld body with PQSMod_MapDecalTangent named KSC");
+                    Debug.LogError("[Kopernicus] KSC: Unable to find homeworld body with PQSMod_MapDecalTangent named KSC");
                     return;
                 }
 

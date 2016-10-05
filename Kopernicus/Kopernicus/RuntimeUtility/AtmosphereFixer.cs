@@ -56,7 +56,7 @@ namespace Kopernicus
         {
             if (afg.planet == null)
             {
-                Debug.Log("[Kopernicus]: Trying to store AFG, but planet null!");
+                Debug.Log("[Kopernicus] Trying to store AFG, but planet null!");
                 return false;
             }
             atmospheres[afg.planet.bodyName] = new AFGInfo(afg);
@@ -165,7 +165,7 @@ namespace Kopernicus
                     //if (!AFGInfo.PatchAFG(afg))
                     //    Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Couldn't patch AtmosphereFromGround for " + afg.planet.bodyName + "!");
                     if (AFGInfo.PatchAFG(afg))
-                        Debug.Log("[Kopernicus]: AtmosphereFixer => Patched AtmosphereFromGround for " + afg.planet.bodyName);
+                        Debug.Log("[Kopernicus] AtmosphereFixer => Patched AtmosphereFromGround for " + afg.planet.bodyName);
                 }
             }
             UnityEngine.Object.Destroy(this); // don't hang around.

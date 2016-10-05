@@ -26,16 +26,14 @@
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System.Collections.Generic;
+ 
 using UnityEngine;
 using Kopernicus.Components;
 using System;
 using System.Reflection;
 using System.Linq;
-using EditorGizmos;
 using KSP.UI.Screens;
-using ModularFlightIntegrator = ModularFI.ModularFlightIntegrator;
+using ModularFI;
 
 namespace Kopernicus
 {
@@ -89,7 +87,7 @@ namespace Kopernicus
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
 
             // Log
-            Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
+            Logger.Default.Log ("[Kopernicus] RuntimeUtility Started");
             Logger.Default.Flush ();
         }
 
@@ -153,6 +151,7 @@ namespace Kopernicus
             if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null && !isDone)
             {
                 // Fix the bug via switching away from Home and back immideatly. 
+                // TODO: Check if this still happend
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) + 1) % PlanetariumCamera.fetch.targets.Count]);
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) + (((PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) >= 0) ? 0 : PlanetariumCamera.fetch.targets.Count)]);
 
@@ -213,7 +212,7 @@ namespace Kopernicus
             }
             if (planet == null || planetCB == null)
             {
-                Debug.LogError("[Kopernicus]: Could not find homeworld!");
+                Debug.LogError("[Kopernicus] Could not find homeworld!");
                 return;
             }
 
@@ -221,7 +220,7 @@ namespace Kopernicus
             MainMenu main = FindObjectOfType<MainMenu>();
             if (main == null)
             {
-                Debug.LogError("[Kopernicus]: No main menu object!");
+                Debug.LogError("[Kopernicus] No main menu object!");
                 return;
             }
             MainMenuEnvLogic logic = main.envLogic;
@@ -229,7 +228,7 @@ namespace Kopernicus
             // Set it to Space, because the Mun-Area won't work with sth else than Mun
             if (logic.areas.Length < 2)
             {
-                Debug.LogError("[Kopernicus]: Not enough bodies");
+                Debug.LogError("[Kopernicus] Not enough bodies");
                 return;
             }
             logic.areas[0].SetActive(false);
@@ -242,7 +241,7 @@ namespace Kopernicus
             Transform kerbin = space.transform.Find("Kerbin");
             if (kerbin == null)
             {
-                Debug.LogError("[Kopernicus]: No Kerbin transform!");
+                Debug.LogError("[Kopernicus] No Kerbin transform!");
                 return;
             }
             kerbin.gameObject.SetActive(false);
@@ -251,7 +250,7 @@ namespace Kopernicus
             Transform mun = space.transform.Find("MunPivot");
             if (mun == null)
             {
-                Debug.LogError("[Kopernicus]: No MunPivot transform!");
+                Debug.LogError("[Kopernicus] No MunPivot transform!");
                 return;
             }
             mun.gameObject.SetActive(false);
@@ -402,17 +401,17 @@ namespace Kopernicus
             // If there's no body, exit.
             if (body == null)
             {
-                Debug.Log("[Kopernicus]: Couldn't find the parental body!");
+                Debug.Log("[Kopernicus] Couldn't find the parental body!");
                 return;
             }
 
             // Get the KSC object
-            PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).Where(m => m.name == "KSC").First();
+            PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
 
             // If there's no KSC, exit.
             if (ksc == null)
             {
-                Debug.Log("[Kopernicus]: Couldn't find the KSC object!");
+                Debug.Log("[Kopernicus] Couldn't find the KSC object!");
                 return;
             }
 
@@ -467,12 +466,12 @@ namespace Kopernicus
                     }
                     else
                     {
-                        Debug.Log("SSC2 can't find initial transform!");
+                        Debug.Log("[Kopernicus] SSC2 can't find initial transform!");
                         Transform initialTrfOrig = transform1.GetValue(cam) as Transform;
                         if (initialTrfOrig != null)
                             cam.transform.NestToParent(initialTrfOrig);
                         else
-                            Debug.Log("SSC2 own initial transform null!");
+                            Debug.Log("[Kopernicus] SSC2 own initial transform null!");
                     }
                     Transform camTransform = transform2.GetValue(cam) as Transform;
                     if (camTransform != null)
@@ -488,7 +487,7 @@ namespace Kopernicus
                         }
                     }
                     else
-                        Debug.Log("SSC2 cam transform null!");
+                        Debug.Log("[Kopernicus] SSC2 cam transform null!");
 
                     cam.ResetCamera();
 
@@ -499,14 +498,14 @@ namespace Kopernicus
                         DestroyImmediate(so);
                     }
                     else
-                        Debug.Log("SSC2 surfaceObject is null!");
+                        Debug.Log("[Kopernicus] SSC2 surfaceObject is null!");
 
                     surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
 
-                    Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
+                    Debug.Log("[Kopernicus] Fixed SpaceCenterCamera");
                 }
                 else
-                    Debug.Log("[Kopernicus]: ERROR fixing space center camera, could not find some fields");
+                    Debug.Log("[Kopernicus] ERROR fixing space center camera, could not find some fields");
             }
         }
 
