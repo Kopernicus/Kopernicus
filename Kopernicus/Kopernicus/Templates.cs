@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using Kopernicus.Configuration;
 using UnityEngine;
 
 namespace Kopernicus
@@ -64,11 +65,13 @@ namespace Kopernicus
 
         // Bodies who aren't selectable
         public static List<string> notSelectable { get; set; }
-        public static List<string> hiddenRnD { get; set; } 
 
         // Orbits
         public static Dictionary<string, OrbitRenderer.DrawIcons> drawIcons { get; set; }
         public static Dictionary<string, OrbitRenderer.DrawMode> drawMode { get; set; }
+
+        // RnD
+        public static Dictionary<string, PropertiesLoader.RDVisibility> hiddenRnD { get; set; }
 
         // Initialisation
         static Templates()
@@ -84,12 +87,12 @@ namespace Kopernicus
             hillSphere = new Dictionary<string, double>();
             drawIcons = new Dictionary<string, OrbitRenderer.DrawIcons>();
             drawMode = new Dictionary<string, OrbitRenderer.DrawMode>();
+            hiddenRnD = new Dictionary<String, PropertiesLoader.RDVisibility>();
 
             // Create lists
             barycenters = new List<string>();
             notSelectable = new List<string>();
             finalizeBodies = new List<string>();
-            hiddenRnD = new List<String>();
 
             // Main Menu body
             menuBody = "Kerbin";
