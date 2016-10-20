@@ -107,7 +107,7 @@ namespace Kopernicus
                     if (Random.Range(0, 100) < asteroid.probability)
                     {
                         uint seed = (uint)Random.Range(0, Int32.MaxValue);
-                        Random.seed = (int)seed;
+                        Random.InitState((int)seed);
                         SpawnAsteroid(asteroid, seed);
                     }
                     else
