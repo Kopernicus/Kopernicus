@@ -118,6 +118,14 @@ namespace Kopernicus
                 set { generatedBody.orbitRenderer.SetColor(value); }
             }
 
+            // Orbit Icon color
+            [ParserTarget("iconColor")]
+            public ColorParser color
+            {
+                //get {}
+                set { generatedBody.orbitRenderer.nodeColor = value.value; }
+            }
+
             // Orbit Draw Mode
             [ParserTarget("mode")]
             public EnumParser<OrbitRenderer.DrawMode> mode
