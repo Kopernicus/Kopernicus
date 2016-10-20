@@ -120,9 +120,9 @@ namespace Kopernicus
 
             // Orbit Icon color
             [ParserTarget("iconColor")]
-            public ColorParser color
+            public ColorParser iconColor
             {
-                //get {}
+                get { return generatedBody.orbitRenderer.nodeColor; }
                 set { generatedBody.orbitRenderer.nodeColor = value.value; }
             }
 
