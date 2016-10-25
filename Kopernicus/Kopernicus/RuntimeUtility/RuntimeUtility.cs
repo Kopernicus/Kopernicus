@@ -32,6 +32,7 @@ using Kopernicus.Components;
 using System;
 using System.Reflection;
 using System.Linq;
+using Kopernicus.Configuration;
 using KSP.UI.Screens;
 using ModularFI;
 
@@ -108,19 +109,32 @@ namespace Kopernicus
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
 
-            // More stars
-            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.flightGlobalsIndex != 0 && b.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0))
-            {
-                GameObject starObj = Instantiate(Sun.Instance.gameObject);
-                KopernicusStar star_ = starObj.GetComponent<KopernicusStar>();
-                star_.sun = body;
-                starObj.transform.parent = Sun.Instance.transform.parent;
-                starObj.name = body.name;
-                starObj.transform.localPosition = Vector3.zero;
-                starObj.transform.localRotation = Quaternion.identity;
-                starObj.transform.localScale = Vector3.one;
-                starObj.transform.position = body.position;
-                starObj.transform.rotation = body.rotation;
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+            {            
+                // More stars
+                if (body.flightGlobalsIndex != 0 && body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0)
+                {
+                    GameObject starObj = Instantiate(Sun.Instance.gameObject);
+                    KopernicusStar star_ = starObj.GetComponent<KopernicusStar>();
+                    star_.sun = body;
+                    starObj.transform.parent = Sun.Instance.transform.parent;
+                    starObj.name = body.name;
+                    starObj.transform.localPosition = Vector3.zero;
+                    starObj.transform.localRotation = Quaternion.identity;
+                    starObj.transform.localScale = Vector3.one;
+                    starObj.transform.position = body.position;
+                    starObj.transform.rotation = body.rotation;
+                }
+                
+                // Post spawn patcher
+                if (Templates.orbitPatches.ContainsKey(body.transform.name))
+                {
+                    ConfigNode orbitNode = Templates.orbitPatches[body.transform.name];
+                    OrbitLoader loader = new OrbitLoader(body);
+                    Parser.LoadObjectFromConfigurationNode(loader, orbitNode);
+                    body.orbit.referenceBody = body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.transform.name == loader.referenceBody);
+                    body.orbitDriver.UpdateOrbit();
+                }
             }
         }
 

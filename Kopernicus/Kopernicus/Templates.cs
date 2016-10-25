@@ -73,6 +73,9 @@ namespace Kopernicus
         // RnD
         public static Dictionary<string, PropertiesLoader.RDVisibility> hiddenRnD { get; set; }
 
+        // Orbit patcher
+        public static Dictionary<string, ConfigNode> orbitPatches { get; set; }
+
         // Initialisation
         static Templates()
         {
@@ -87,7 +90,8 @@ namespace Kopernicus
             hillSphere = new Dictionary<string, double>();
             drawIcons = new Dictionary<string, OrbitRenderer.DrawIcons>();
             drawMode = new Dictionary<string, OrbitRenderer.DrawMode>();
-            hiddenRnD = new Dictionary<String, PropertiesLoader.RDVisibility>();
+            hiddenRnD = new Dictionary<string, PropertiesLoader.RDVisibility>();
+            orbitPatches = new Dictionary<string, ConfigNode>();
 
             // Create lists
             barycenters = new List<string>();

@@ -148,6 +148,13 @@ namespace Kopernicus
             [ParserTarget("Debug")]
             public DebugLoader debug { get; set; }
 
+            // Post spawn orbit patcher
+            [ParserTarget("PostSpawnOrbit")]
+            public ConfigNode postspawn
+            {
+                set { Templates.orbitPatches.Add(generatedBody.name, value); }
+            }
+
             // Parser Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
