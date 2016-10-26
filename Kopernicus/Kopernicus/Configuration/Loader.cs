@@ -264,7 +264,10 @@ namespace Kopernicus
 
                 // Main Menu bodies
                 if (randomMainMenuBodies.Any())
-                    Templates.menuBody = randomMainMenuBodies[new System.Random().Next(0, randomMainMenuBodies.Count)];
+                    Templates.menuBody = randomMainMenuBodies[new System.Random().Next(0, randomMainMenuBodies.Count)]; 
+                
+                // We're done
+                currentBody.generatedBody = null;
             }
 
             // Sort bodies by distance from parent body

@@ -95,7 +95,6 @@ namespace Kopernicus
         // Execute MainMenu functions
         void Start()
         {
-            UpdateMenu();
             previous = PlanetariumCamera.fetch.initialTarget;
             PlanetariumCamera.fetch.targets
                 .Where(m => Templates.barycenters.Contains(m.GetName()) || Templates.notSelectable.Contains(m.GetName()))
@@ -125,17 +124,19 @@ namespace Kopernicus
                     starObj.transform.position = body.position;
                     starObj.transform.rotation = body.rotation;
                 }
-                
+
                 // Post spawn patcher
                 if (Templates.orbitPatches.ContainsKey(body.transform.name))
                 {
                     ConfigNode orbitNode = Templates.orbitPatches[body.transform.name];
                     OrbitLoader loader = new OrbitLoader(body);
                     Parser.LoadObjectFromConfigurationNode(loader, orbitNode);
+                    body.orbitDriver.orbit = loader.orbit;
                     body.orbit.referenceBody = body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.transform.name == loader.referenceBody);
                     body.orbitDriver.UpdateOrbit();
                 }
             }
+            UpdateMenu();
         }
 
         // Stuff

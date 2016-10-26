@@ -122,7 +122,7 @@ namespace Kopernicus
             [ParserTarget("iconColor")]
             public ColorParser iconColor
             {
-                get { return generatedBody.orbitRenderer.nodeColor; }
+                // get { return generatedBody.orbitRenderer.nodeColor; }
                 set { generatedBody.orbitRenderer.nodeColor = value.value; }
             }
 
@@ -148,6 +148,8 @@ namespace Kopernicus
 
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
+                if (generatedBody == null) return;
+
                 // If this body needs orbit controllers, create them
                 if (generatedBody.orbitDriver == null)
                 {
@@ -168,6 +170,7 @@ namespace Kopernicus
 
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                if (generatedBody == null) return;
                 if (epoch != null)
                     orbit.epoch += Templates.epoch;
                 generatedBody.orbitDriver.orbit = orbit;
