@@ -30,8 +30,10 @@
 using UnityEngine;
 using Kopernicus.Components;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using JetBrains.Annotations;
 using Kopernicus.Configuration;
 using KSP.UI.Screens;
 using ModularFI;
@@ -108,6 +110,9 @@ namespace Kopernicus
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
 
+            // Bodies
+            Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
+
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)
             {            
                 // More stars
@@ -132,9 +137,32 @@ namespace Kopernicus
                     OrbitLoader loader = new OrbitLoader(body);
                     Parser.LoadObjectFromConfigurationNode(loader, orbitNode);
                     body.orbitDriver.orbit = loader.orbit;
+                    CelestialBody oldRef = body.referenceBody;
+                    body.referenceBody.orbitingBodies.Remove(body);
                     body.orbit.referenceBody = body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.transform.name == loader.referenceBody);
+                    fixes.Add(body.transform.name, new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
+                    body.referenceBody.orbitingBodies.Add(body);
+                    body.referenceBody.orbitingBodies = body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
                     body.orbitDriver.UpdateOrbit();
                 }
+            }
+
+            // Update the order in the tracking station
+            List<MapObject> trackingstation = new List<MapObject>();
+            Utility.DoRecursive(PSystemManager.Instance.localBodies[0], cb => cb.orbitingBodies, cb =>
+            {
+                trackingstation.Add(PlanetariumCamera.fetch.targets.Find(t => t.celestialBody == cb));
+            });
+            PlanetariumCamera.fetch.targets.Clear();
+            PlanetariumCamera.fetch.targets.AddRange(trackingstation);
+
+            // Undo stuff
+            foreach (String key in Templates.orbitPatches.Keys)
+            {
+                CelestialBody b = PSystemManager.Instance.localBodies.Find(b2 => b2.transform.name == key);
+                fixes[key].Value.orbitingBodies.Remove(b);
+                fixes[key].Key.orbitingBodies.Add(b);
+                fixes[key].Key.orbitingBodies = fixes[key].Key.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
             }
             UpdateMenu();
         }
