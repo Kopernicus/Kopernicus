@@ -147,6 +147,9 @@ namespace Kopernicus
                     body.referenceBody.orbitingBodies = body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
                     body.orbit.Init();
                     body.orbitDriver.UpdateOrbit();
+
+                    // Hacks
+                    typeof(CelestialBody).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(body, null);
                 }
             }
 
