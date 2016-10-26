@@ -148,8 +148,15 @@ namespace Kopernicus
                     body.orbit.Init();
                     body.orbitDriver.UpdateOrbit();
 
-                    // Hacks
-                    typeof(CelestialBody).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(body, null);
+                    // Calculations
+                    body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
+                    body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
+                    if (body.solarRotationPeriod)
+                    {
+                        double rotPeriod = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody.rotationPeriod;
+                        double num1 = Math.PI * 2 * Math.Sqrt(Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3) / body.orbit.referenceBody.gravParameter);
+                        body.rotationPeriod = rotPeriod * num1 / (num1 + rotPeriod); ;
+                    }
                 }
             }
 
