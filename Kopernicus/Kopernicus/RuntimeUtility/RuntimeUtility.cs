@@ -101,7 +101,7 @@ namespace Kopernicus
         {
             previous = PlanetariumCamera.fetch.initialTarget;
             PlanetariumCamera.fetch.targets
-                .Where(m => Templates.barycenters.Contains(m.GetName()) || Templates.notSelectable.Contains(m.GetName()))
+                .Where(m => Templates.barycenters.Contains(m.celestialBody?.transform.name) || Templates.notSelectable.Contains(m.celestialBody?.transform.name))
                 .ToList()
                 .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
 
