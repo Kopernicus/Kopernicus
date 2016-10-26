@@ -36,6 +36,8 @@ using System.Linq;
 using JetBrains.Annotations;
 using Kopernicus.Configuration;
 using KSP.UI.Screens;
+using KSP.UI.Screens.Mapview;
+using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using ModularFI;
 
 namespace Kopernicus
@@ -168,12 +170,46 @@ namespace Kopernicus
             UpdateMenu();
         }
 
+        /// <summary>
+        /// Fields for the orbit targeter patching
+        /// </summary>
+        private FieldInfo[] fields;
+
         // Stuff
         void LateUpdate()
         {
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
+
+            // Remove buttons in map view for barycenters
+            if (MapView.MapIsEnabled)
+            {
+                if (fields == null)
+                {
+                    FieldInfo mode_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType.Name.EndsWith("MenuDrawMode"));
+                    FieldInfo context_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(MapContextMenu));
+                    FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
+                    fields = new FieldInfo[] { mode_f, context_f, cast_f };
+                }
+                OrbitTargeter targeter = FlightGlobals.ActiveVessel.orbitTargeter;
+                Int32 mode = (Int32) fields[0].GetValue(targeter);
+                if (mode == 2)
+                {
+                    OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
+                    CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or.discoveryInfo.name.Value);
+                    if (Templates.barycenters.Contains(body.transform.name) || Templates.notSelectable.Contains(body.transform.name))
+                    {
+                        MapContextMenu context = MapContextMenu.Create(body.name, new Rect(0.5f, 0.5f, 300f, 50f), cast, () =>
+                        {
+                            fields[0].SetValue(targeter, 0);
+                            fields[1].SetValue(targeter, null);
+                        }, new SetAsTarget(cast.driver.Targetable, () => FlightGlobals.fetch.VesselTarget));
+                        fields[1].SetValue(targeter, context);
+                    }
+                }
+            }
+
 
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)
             {
