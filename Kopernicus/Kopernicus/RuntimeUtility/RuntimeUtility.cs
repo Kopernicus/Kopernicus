@@ -143,6 +143,7 @@ namespace Kopernicus
                     fixes.Add(body.transform.name, new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
                     body.referenceBody.orbitingBodies.Add(body);
                     body.referenceBody.orbitingBodies = body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
+                    body.orbit.Init();
                     body.orbitDriver.UpdateOrbit();
                 }
             }
