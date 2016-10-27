@@ -1,22 +1,18 @@
 Kopernicus
 ==============================
-October 20th, 2016
+October 27th, 2016
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.2.0-1)
+New in this version (1.2.0-3)
 -------------------
-* Fixed an issue with flare loading
-* Fixed ocean detection. Kopernicus doesn't add two oceans anymore
-* Brought nonspherical oceans back
-* Added noise type parser to VHNVH
-* Updated code to work with KSP 1.2.0
-* Overhauled RD visibilty settings. You can choose between 3 values for RDVisibility in Properties: HIDDEN (removes entry + all children), NOICON (removes the planet icon) and VISIBLE (well, visible)
+* Implemented a system that allows to reparent Kerbin withough a massive amount of bugs.
+* Added loaders for PQSCity and PQSCity2
+* Made some fixes for barycenters
 
-Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
-Apart from that it causes lots of other issues, and I dont recommend it.
+Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
 About
 -----
