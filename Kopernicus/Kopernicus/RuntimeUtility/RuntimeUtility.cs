@@ -202,20 +202,23 @@ namespace Kopernicus
                     FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
                     fields = new FieldInfo[] { mode_f, context_f, cast_f };
                 }
-                OrbitTargeter targeter = FlightGlobals.ActiveVessel.orbitTargeter;
-                Int32 mode = (Int32) fields[0].GetValue(targeter);
-                if (mode == 2)
+                if (FlightGlobals.ActiveVessel != null)
                 {
-                    OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
-                    CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or.discoveryInfo.name.Value);
-                    if (Templates.barycenters.Contains(body.transform.name) || Templates.notSelectable.Contains(body.transform.name))
+                    OrbitTargeter targeter = FlightGlobals.ActiveVessel.orbitTargeter;
+                    Int32 mode = (Int32) fields[0].GetValue(targeter);
+                    if (mode == 2)
                     {
-                        MapContextMenu context = MapContextMenu.Create(body.name, new Rect(0.5f, 0.5f, 300f, 50f), cast, () =>
+                        OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
+                        CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or.discoveryInfo.name.Value);
+                        if (Templates.barycenters.Contains(body.transform.name) || Templates.notSelectable.Contains(body.transform.name))
                         {
-                            fields[0].SetValue(targeter, 0);
-                            fields[1].SetValue(targeter, null);
-                        }, new SetAsTarget(cast.driver.Targetable, () => FlightGlobals.fetch.VesselTarget));
-                        fields[1].SetValue(targeter, context);
+                            MapContextMenu context = MapContextMenu.Create(body.name, new Rect(0.5f, 0.5f, 300f, 50f), cast, () =>
+                            {
+                                fields[0].SetValue(targeter, 0);
+                                fields[1].SetValue(targeter, null);
+                            }, new SetAsTarget(cast.driver.Targetable, () => FlightGlobals.fetch.VesselTarget));
+                            fields[1].SetValue(targeter, context);
+                        }
                     }
                 }
             }
