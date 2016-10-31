@@ -75,7 +75,7 @@ namespace Kopernicus
                         changer.newName = value;
                     }
                     else
-                        generatedBody.celestialBody.gameObject.AddComponent<NameChanger>().newName = cbNameLater;
+                        generatedBody.celestialBody.gameObject.GetComponent<NameChanger>().newName = cbNameLater;
                 }
             }
             
