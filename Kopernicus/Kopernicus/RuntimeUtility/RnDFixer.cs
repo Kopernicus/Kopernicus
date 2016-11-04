@@ -33,6 +33,8 @@ using KSP.UI.Screens;
 using Kopernicus.Components;
 using Kopernicus.Configuration;
 using TMPro;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace Kopernicus
 {
@@ -43,6 +45,50 @@ namespace Kopernicus
     {
         void Start()
         {
+            bool hiddenObjects = false;
+
+            // Loop through the Container
+            foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
+            {
+                // If the body needs to be hidden
+                if (Templates.hiddenRnD.ContainsKey(planetItem.label_planetName.text) && Templates.hiddenRnD[planetItem.label_planetName.text] == PropertiesLoader.RDVisibility.HIDDEN)
+                {
+                    // Select the body to hide and its parentrndf
+                    PSystemBody hidden = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == planetItem.label_planetName.text);
+                    PSystemBody reference = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(hidden));
+                    
+                    if (reference != null)
+                    {
+                        // Find where the hidden body is
+                        int index = reference.children.IndexOf(hidden);
+
+                        // Put its children in its place
+                        reference.children.InsertRange(index, hidden.children);
+
+                        // Remove the hidden body from its parent's children list so it won't show up when clicking the parent
+                        reference.children.Remove(hidden);
+
+                        // Set this to 'true' so we know we need to trigger AddPlanets
+                        hiddenObjects = true;
+                    }
+                }
+            }
+            if (hiddenObjects)
+            {
+                // Stuff needed for AddPlanets
+                FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).First();
+                MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Skip(27).First();
+                var RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().First();
+
+                // AddPlanets requires this list to be empty when triggered
+                list.SetValue(RDAC, new Dictionary<string, List<RDArchivesController.Filter>>());
+
+                // AddPlanets!
+                add.Invoke(RDAC, null);
+            }
+
+
+
             // Loop through the Container
             foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
             {
@@ -62,12 +108,7 @@ namespace Kopernicus
                         planetItem.planet.SetActive(false);
                         planetItem.label_planetName.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
                     }
-                    else if (visibility == PropertiesLoader.RDVisibility.HIDDEN)
-                    {
-                        planetItem.Hide();
-                        planetItem.HideChildren();
-                    }
-                    else
+                    else if (visibility != PropertiesLoader.RDVisibility.HIDDEN) // 'HIDDEN' has already be taken care of in the earlier loop
                     {
                         planetItem.planet.SetActive(true);
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
