@@ -118,6 +118,14 @@ namespace Kopernicus
                 set { generatedBody.orbitRenderer.SetColor(value); }
             }
 
+            // Orbit Icon color
+            [ParserTarget("iconColor")]
+            public ColorParser iconColor
+            {
+                // get { return generatedBody.orbitRenderer.nodeColor; }
+                set { generatedBody.orbitRenderer.nodeColor = value.value; }
+            }
+
             // Orbit Draw Mode
             [ParserTarget("mode")]
             public EnumParser<OrbitRenderer.DrawMode> mode
@@ -140,6 +148,8 @@ namespace Kopernicus
 
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
+                if (generatedBody == null) return;
+
                 // If this body needs orbit controllers, create them
                 if (generatedBody.orbitDriver == null)
                 {
@@ -160,6 +170,7 @@ namespace Kopernicus
 
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                if (generatedBody == null) return;
                 if (epoch != null)
                     orbit.epoch += Templates.epoch;
                 generatedBody.orbitDriver.orbit = orbit;
@@ -198,6 +209,7 @@ namespace Kopernicus
 
                         // this is unlike stock KSP, where only the reference body's mass is used.
                         body.orbit.period = 2 * Math.PI * Math.Sqrt(Math.Pow(body.orbit.semiMajorAxis, 2) / 6.674E-11 * body.orbit.semiMajorAxis / (body.referenceBody.Mass + body.Mass));
+                        body.orbit.meanMotion = 2 * Math.PI / body.orbit.period;    // in theory this should work but I haven't tested it
 
                         if (body.orbit.eccentricity <= 1.0)
                         {

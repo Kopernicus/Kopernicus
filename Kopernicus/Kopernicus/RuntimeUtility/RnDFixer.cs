@@ -31,14 +31,14 @@ using System.Linq;
 using UnityEngine;
 using KSP.UI.Screens;
 using Kopernicus.Components;
-using System.Reflection;
+using Kopernicus.Configuration;
+using TMPro;
 
 namespace Kopernicus
 {
     /// <summary>
     /// A small class to fix the science archives
     /// </summary>
-    /// <seealso cref="UnityEngine.MonoBehaviour" />
     public class RnDFixer : MonoBehaviour
     {
         void Start()
@@ -47,10 +47,31 @@ namespace Kopernicus
             foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
             {
                 // Barycenter
-                if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text) || Templates.hiddenRnD.Contains(planetItem.label_planetName.text))
+                if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
                 {
                     planetItem.planet.SetActive(false);
                     planetItem.label_planetName.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
+                }
+
+                // RD Visibility
+                if (Templates.hiddenRnD.ContainsKey(planetItem.label_planetName.text))
+                {
+                    PropertiesLoader.RDVisibility visibility = Templates.hiddenRnD[planetItem.label_planetName.text];
+                    if (visibility == PropertiesLoader.RDVisibility.NOICON)
+                    {
+                        planetItem.planet.SetActive(false);
+                        planetItem.label_planetName.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
+                    }
+                    else if (visibility == PropertiesLoader.RDVisibility.HIDDEN)
+                    {
+                        planetItem.Hide();
+                        planetItem.HideChildren();
+                    }
+                    else
+                    {
+                        planetItem.planet.SetActive(true);
+                        planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
+                    }
                 }
 
                 // namechanges

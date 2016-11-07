@@ -261,11 +261,30 @@ namespace Kopernicus
             }
 
             // If the body should be hidden in RnD
-            [ParserTarget("hiddenRnD")]
-            public NumericParser<bool> hiddenRnD
+            [ParserTarget("RDVisibility")]
+            public EnumParser<RDVisibility> hiddenRnD
             {
-                get { return Templates.hiddenRnD.Contains(celestialBody.transform.name); }
-                set { if (value.value) Templates.hiddenRnD.Add(celestialBody.transform.name); }
+                get
+                {
+                    if (Templates.hiddenRnD.ContainsKey(celestialBody.transform.name))
+                        return Templates.hiddenRnD[celestialBody.transform.name];
+                    return RDVisibility.VISIBLE;
+                }
+                set
+                {
+                    if (Templates.hiddenRnD.ContainsKey(celestialBody.transform.name))
+                        Templates.hiddenRnD[celestialBody.transform.name] = value;
+                    else
+                        Templates.hiddenRnD.Add(celestialBody.transform.name, value);
+                }
+            }
+
+            // How visible should the planet be in the science archives
+            public enum RDVisibility
+            {
+                VISIBLE,
+                NOICON,
+                HIDDEN
             }
 
             // Apply Event

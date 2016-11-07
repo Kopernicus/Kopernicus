@@ -26,16 +26,19 @@
  * 
  * https://kerbalspaceprogram.com
  */
-
-using System.Collections.Generic;
+ 
 using UnityEngine;
 using Kopernicus.Components;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using EditorGizmos;
+using JetBrains.Annotations;
+using Kopernicus.Configuration;
 using KSP.UI.Screens;
-using ModularFlightIntegrator = ModularFI.ModularFlightIntegrator;
+using KSP.UI.Screens.Mapview;
+using KSP.UI.Screens.Mapview.MapContextMenuOptions;
+using ModularFI;
 
 namespace Kopernicus
 {
@@ -89,17 +92,16 @@ namespace Kopernicus
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
 
             // Log
-            Logger.Default.Log ("[Kopernicus]: RuntimeUtility Started");
+            Logger.Default.Log ("[Kopernicus] RuntimeUtility Started");
             Logger.Default.Flush ();
         }
 
         // Execute MainMenu functions
         void Start()
         {
-            UpdateMenu();
             previous = PlanetariumCamera.fetch.initialTarget;
             PlanetariumCamera.fetch.targets
-                .Where(m => Templates.barycenters.Contains(m.GetName()) || Templates.notSelectable.Contains(m.GetName()))
+                .Where(m => Templates.barycenters.Contains(m.celestialBody?.transform.name) || Templates.notSelectable.Contains(m.celestialBody?.transform.name))
                 .ToList()
                 .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
 
@@ -110,21 +112,78 @@ namespace Kopernicus
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
 
-            // More stars
-            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.flightGlobalsIndex != 0 && b.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0))
-            {
-                GameObject starObj = Instantiate(Sun.Instance.gameObject);
-                KopernicusStar star_ = starObj.GetComponent<KopernicusStar>();
-                star_.sun = body;
-                starObj.transform.parent = Sun.Instance.transform.parent;
-                starObj.name = body.name;
-                starObj.transform.localPosition = Vector3.zero;
-                starObj.transform.localRotation = Quaternion.identity;
-                starObj.transform.localScale = Vector3.one;
-                starObj.transform.position = body.position;
-                starObj.transform.rotation = body.rotation;
+            // Bodies
+            Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
+
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+            {            
+                // More stars
+                if (body.flightGlobalsIndex != 0 && body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0)
+                {
+                    GameObject starObj = Instantiate(Sun.Instance.gameObject);
+                    KopernicusStar star_ = starObj.GetComponent<KopernicusStar>();
+                    star_.sun = body;
+                    starObj.transform.parent = Sun.Instance.transform.parent;
+                    starObj.name = body.name;
+                    starObj.transform.localPosition = Vector3.zero;
+                    starObj.transform.localRotation = Quaternion.identity;
+                    starObj.transform.localScale = Vector3.one;
+                    starObj.transform.position = body.position;
+                    starObj.transform.rotation = body.rotation;
+                }
+
+                // Post spawn patcher
+                if (Templates.orbitPatches.ContainsKey(body.transform.name))
+                {
+                    ConfigNode orbitNode = Templates.orbitPatches[body.transform.name];
+                    OrbitLoader loader = new OrbitLoader(body);
+                    Parser.LoadObjectFromConfigurationNode(loader, orbitNode);
+                    body.orbitDriver.orbit = loader.orbit;
+                    CelestialBody oldRef = body.referenceBody;
+                    body.referenceBody.orbitingBodies.Remove(body);
+                    body.orbit.referenceBody = body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.transform.name == loader.referenceBody);
+                    fixes.Add(body.transform.name, new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
+                    body.referenceBody.orbitingBodies.Add(body);
+                    body.referenceBody.orbitingBodies = body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
+                    body.orbit.Init();
+                    body.orbitDriver.UpdateOrbit();
+
+                    // Calculations
+                    body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
+                    body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
+                    if (body.solarRotationPeriod)
+                    {
+                        double rotPeriod = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody.rotationPeriod;
+                        double num1 = Math.PI * 2 * Math.Sqrt(Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3) / body.orbit.referenceBody.gravParameter);
+                        body.rotationPeriod = rotPeriod * num1 / (num1 + rotPeriod); ;
+                    }
+                }
             }
+
+            // Update the order in the tracking station
+            List<MapObject> trackingstation = new List<MapObject>();
+            Utility.DoRecursive(PSystemManager.Instance.localBodies[0], cb => cb.orbitingBodies, cb =>
+            {
+                trackingstation.Add(PlanetariumCamera.fetch.targets.Find(t => t.celestialBody == cb));
+            });
+            PlanetariumCamera.fetch.targets.Clear();
+            PlanetariumCamera.fetch.targets.AddRange(trackingstation);
+
+            // Undo stuff
+            foreach (String key in Templates.orbitPatches.Keys)
+            {
+                CelestialBody b = PSystemManager.Instance.localBodies.Find(b2 => b2.transform.name == key);
+                fixes[key].Value.orbitingBodies.Remove(b);
+                fixes[key].Key.orbitingBodies.Add(b);
+                fixes[key].Key.orbitingBodies = fixes[key].Key.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
+            }
+            UpdateMenu();
         }
+
+        /// <summary>
+        /// Fields for the orbit targeter patching
+        /// </summary>
+        private FieldInfo[] fields;
 
         // Stuff
         void LateUpdate()
@@ -132,6 +191,38 @@ namespace Kopernicus
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
+
+            // Remove buttons in map view for barycenters
+            if (MapView.MapIsEnabled)
+            {
+                if (fields == null)
+                {
+                    FieldInfo mode_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType.Name.EndsWith("MenuDrawMode"));
+                    FieldInfo context_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(MapContextMenu));
+                    FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
+                    fields = new FieldInfo[] { mode_f, context_f, cast_f };
+                }
+                if (FlightGlobals.ActiveVessel != null)
+                {
+                    OrbitTargeter targeter = FlightGlobals.ActiveVessel.orbitTargeter;
+                    Int32 mode = (Int32) fields[0].GetValue(targeter);
+                    if (mode == 2)
+                    {
+                        OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
+                        CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or.discoveryInfo.name.Value);
+                        if (Templates.barycenters.Contains(body.transform.name) || Templates.notSelectable.Contains(body.transform.name))
+                        {
+                            MapContextMenu context = MapContextMenu.Create(body.name, new Rect(0.5f, 0.5f, 300f, 50f), cast, () =>
+                            {
+                                fields[0].SetValue(targeter, 0);
+                                fields[1].SetValue(targeter, null);
+                            }, new SetAsTarget(cast.driver.Targetable, () => FlightGlobals.fetch.VesselTarget));
+                            fields[1].SetValue(targeter, context);
+                        }
+                    }
+                }
+            }
+
 
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)
             {
@@ -153,6 +244,7 @@ namespace Kopernicus
             if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null && !isDone)
             {
                 // Fix the bug via switching away from Home and back immideatly. 
+                // TODO: Check if this still happend
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) + 1) % PlanetariumCamera.fetch.targets.Count]);
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) + (((PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) >= 0) ? 0 : PlanetariumCamera.fetch.targets.Count)]);
 
@@ -213,7 +305,7 @@ namespace Kopernicus
             }
             if (planet == null || planetCB == null)
             {
-                Debug.LogError("[Kopernicus]: Could not find homeworld!");
+                Debug.LogError("[Kopernicus] Could not find homeworld!");
                 return;
             }
 
@@ -221,7 +313,7 @@ namespace Kopernicus
             MainMenu main = FindObjectOfType<MainMenu>();
             if (main == null)
             {
-                Debug.LogError("[Kopernicus]: No main menu object!");
+                Debug.LogError("[Kopernicus] No main menu object!");
                 return;
             }
             MainMenuEnvLogic logic = main.envLogic;
@@ -229,7 +321,7 @@ namespace Kopernicus
             // Set it to Space, because the Mun-Area won't work with sth else than Mun
             if (logic.areas.Length < 2)
             {
-                Debug.LogError("[Kopernicus]: Not enough bodies");
+                Debug.LogError("[Kopernicus] Not enough bodies");
                 return;
             }
             logic.areas[0].SetActive(false);
@@ -242,7 +334,7 @@ namespace Kopernicus
             Transform kerbin = space.transform.Find("Kerbin");
             if (kerbin == null)
             {
-                Debug.LogError("[Kopernicus]: No Kerbin transform!");
+                Debug.LogError("[Kopernicus] No Kerbin transform!");
                 return;
             }
             kerbin.gameObject.SetActive(false);
@@ -251,7 +343,7 @@ namespace Kopernicus
             Transform mun = space.transform.Find("MunPivot");
             if (mun == null)
             {
-                Debug.LogError("[Kopernicus]: No MunPivot transform!");
+                Debug.LogError("[Kopernicus] No MunPivot transform!");
                 return;
             }
             mun.gameObject.SetActive(false);
@@ -361,16 +453,6 @@ namespace Kopernicus
         // Remove the thumbnail for Barycenters in the RD and patch name changes
         void RDFixer()
         {
-	        // This has to be run again if we leave the Space Center and
-	        // come back to it(so the planets load in the R&D more than the
-	        // first time
-
-	        if(HighLogic.LoadedScene != GameScenes.SPACECENTER)
-	        {
-	            isDone2 = false;
-		        return;
-	        }
-
 	        // Only run in SpaceCenter
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
@@ -380,9 +462,7 @@ namespace Kopernicus
 
                 // Waaah
                 foreach (RDArchivesController controller in Resources.FindObjectsOfTypeAll<RDArchivesController>())
-                {
                     controller.gameObject.AddOrGetComponent<RnDFixer>();
-                }
             }
         }
 
@@ -402,17 +482,17 @@ namespace Kopernicus
             // If there's no body, exit.
             if (body == null)
             {
-                Debug.Log("[Kopernicus]: Couldn't find the parental body!");
+                Debug.Log("[Kopernicus] Couldn't find the parental body!");
                 return;
             }
 
             // Get the KSC object
-            PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).Where(m => m.name == "KSC").First();
+            PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
 
             // If there's no KSC, exit.
             if (ksc == null)
             {
-                Debug.Log("[Kopernicus]: Couldn't find the KSC object!");
+                Debug.Log("[Kopernicus] Couldn't find the KSC object!");
                 return;
             }
 
@@ -467,12 +547,12 @@ namespace Kopernicus
                     }
                     else
                     {
-                        Debug.Log("SSC2 can't find initial transform!");
+                        Debug.Log("[Kopernicus] SSC2 can't find initial transform!");
                         Transform initialTrfOrig = transform1.GetValue(cam) as Transform;
                         if (initialTrfOrig != null)
                             cam.transform.NestToParent(initialTrfOrig);
                         else
-                            Debug.Log("SSC2 own initial transform null!");
+                            Debug.Log("[Kopernicus] SSC2 own initial transform null!");
                     }
                     Transform camTransform = transform2.GetValue(cam) as Transform;
                     if (camTransform != null)
@@ -488,7 +568,7 @@ namespace Kopernicus
                         }
                     }
                     else
-                        Debug.Log("SSC2 cam transform null!");
+                        Debug.Log("[Kopernicus] SSC2 cam transform null!");
 
                     cam.ResetCamera();
 
@@ -499,14 +579,14 @@ namespace Kopernicus
                         DestroyImmediate(so);
                     }
                     else
-                        Debug.Log("SSC2 surfaceObject is null!");
+                        Debug.Log("[Kopernicus] SSC2 surfaceObject is null!");
 
                     surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
 
-                    Debug.Log("[Kopernicus]: Fixed SpaceCenterCamera");
+                    Debug.Log("[Kopernicus] Fixed SpaceCenterCamera");
                 }
                 else
-                    Debug.Log("[Kopernicus]: ERROR fixing space center camera, could not find some fields");
+                    Debug.Log("[Kopernicus] ERROR fixing space center camera, could not find some fields");
             }
         }
 

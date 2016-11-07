@@ -75,7 +75,7 @@ namespace Kopernicus
                         changer.newName = value;
                     }
                     else
-                        generatedBody.celestialBody.gameObject.AddComponent<NameChanger>().newName = cbNameLater;
+                        generatedBody.celestialBody.gameObject.GetComponent<NameChanger>().newName = cbNameLater;
                 }
             }
             
@@ -147,6 +147,13 @@ namespace Kopernicus
             // Wrapper around DebugMode settings
             [ParserTarget("Debug")]
             public DebugLoader debug { get; set; }
+
+            // Post spawn orbit patcher
+            [ParserTarget("PostSpawnOrbit")]
+            public ConfigNode postspawn
+            {
+                set { Templates.orbitPatches.Add(generatedBody.name, value); }
+            }
 
             // Parser Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)

@@ -80,7 +80,7 @@ namespace Kopernicus
                     scen.StopAllCoroutines();
                     Destroy(scen);
                 }
-                Debug.Log("[Kopernicus]: ScenarioDiscoverableObjects successfully removed.");
+                Debug.Log("[Kopernicus] ScenarioDiscoverableObjects successfully removed.");
             }
 
             foreach (Asteroid asteroid in asteroids)
@@ -95,7 +95,7 @@ namespace Kopernicus
             if (spaceObjects.Any())
             {
                 Vessel vessel = spaceObjects.First();
-                Debug.Log("[Kopernicus]: " + vessel.vesselName + " has been untracked for too long and is now lost.");
+                Debug.Log("[Kopernicus] " + vessel.vesselName + " has been untracked for too long and is now lost.");
                 vessel.Die();
             }
             else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)))
@@ -107,12 +107,12 @@ namespace Kopernicus
                     if (Random.Range(0, 100) < asteroid.probability)
                     {
                         uint seed = (uint)Random.Range(0, Int32.MaxValue);
-                        Random.seed = (int)seed;
+                        Random.InitState((int)seed);
                         SpawnAsteroid(asteroid, seed);
                     }
                     else
                     {
-                        Debug.Log("[Kopernicus]: No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
+                        Debug.Log("[Kopernicus] No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
                     }
                 }
             }
@@ -179,7 +179,7 @@ namespace Kopernicus
             // Check 
             if (orbit == null)
             {
-                Debug.Log("[Kopernicus]: No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
+                Debug.Log("[Kopernicus] No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
                 return;
             }
 
@@ -220,7 +220,7 @@ namespace Kopernicus
             if (asteroid.uniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0) return;
             protoVessel.Load(HighLogic.CurrentGame.flightState);
             GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
-            Debug.Log("[Kopernicus]: New object found near " + body.name + ": " + protoVessel.vesselName + "!");
+            Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
         }
 
         // Asteroid Spawner

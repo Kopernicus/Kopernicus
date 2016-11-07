@@ -1,17 +1,17 @@
 Kopernicus
 ==============================
-July 4th, 2016
+November 3rd, 2016
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.1.3-1)
+New in this version (1.2.1-1)
 -------------------
-* New versioning (<ksp version>-<kopernicus version for this ksp version>)
-* Fixed a lighting bug in ScaledSpace (Thanks to NovaSilisko for pointing me in the right direction)
+* Updated to KSP 1.2.1
+* Added [monkeys](https://github.com/Kopernicus/Kopernicus/commit/ead8a66553d3dae1672f7e5049252f69cd68a5b6)
 
-Note - reparenting Kerbin or the Sun causes the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.  Reparenting the sun causes other stars positions to not update in the tracking station for some reason.
+Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
 About
 -----
