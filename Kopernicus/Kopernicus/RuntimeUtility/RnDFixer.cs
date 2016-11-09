@@ -35,7 +35,6 @@ using Kopernicus.Configuration;
 using TMPro;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 namespace Kopernicus
 {
@@ -48,8 +47,45 @@ namespace Kopernicus
         {
             // FIX POSTSPAWN REPARENTING HERE
 
-            // CODE NOT READY YET
-            
+            foreach (string name in Templates.orbitPatches.Keys)
+            {
+                // Fix position if the body gets moved PostSpawn
+                if (Templates.orbitPatches[name].GetValue("referenceBody") != null || Templates.orbitPatches[name].GetValue("semiMajorAxis") != null)
+                {
+                    // Get the body, the old parent and the new parent
+                    PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == name);
+                    PSystemBody oldParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(body));
+                    PSystemBody newParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == Templates.orbitPatches[name].GetValue("referenceBody"));
+
+                    if (body != null && oldParent != null)
+					{
+                        // If there is no new parent it means only SMA changed
+                        if (newParent == null)
+                            newParent = oldParent;
+
+                        // If there is no new SMA it means only the parent changed
+                        NumericParser<double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
+                        if (Templates.orbitPatches[name].GetValue("semiMajorAxis") != null)
+                            newSMA.SetFromString(Templates.orbitPatches[name].GetValue("semiMajorAxis"));
+
+                        // Count how many children comes before our body in the newParent.child list
+                        int index = 0;
+                        foreach (PSystemBody child in newParent.children)
+                        {
+                            if (child.orbitDriver.orbit.semiMajorAxis < newSMA.value)
+                                index++;
+                        }
+
+                        // Add the body as child for the new parent and remove it for the old parent
+                        newParent.children.Insert(index, body);
+                        oldParent.children.Remove(body);
+                    }
+                }
+            }
+
+
+            // FIX FOR   RDVisibility = SKIP
+
             List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
             // Create a list with body to hide and their parent
@@ -132,6 +168,8 @@ namespace Kopernicus
 
 
 
+            // FIX FOR   RDVisibility = HIDDEN  and  NOICON
+
             // Loop through the Container
             foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
             {
@@ -151,7 +189,13 @@ namespace Kopernicus
                         planetItem.planet.SetActive(false);
                         planetItem.label_planetName.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
                     }
-                    else if (visibility != PropertiesLoader.RDVisibility.HIDDEN) // 'HIDDEN' has already be taken care of in the earlier loop
+                    else if (visibility == PropertiesLoader.RDVisibility.HIDDEN)
+                    {
+                        planetItem.gameObject.SetActive(false);
+                        planetItem.Hide();
+                        planetItem.HideChildren();
+                    }
+                    else
                     {
                         planetItem.planet.SetActive(true);
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
