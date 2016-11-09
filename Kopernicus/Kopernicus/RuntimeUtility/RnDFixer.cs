@@ -26,7 +26,7 @@
  * 
  * https://kerbalspaceprogram.com
  */
- 
+
 using System.Linq;
 using UnityEngine;
 using KSP.UI.Screens;
@@ -35,6 +35,7 @@ using Kopernicus.Configuration;
 using TMPro;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace Kopernicus
 {
@@ -45,35 +46,57 @@ namespace Kopernicus
     {
         void Start()
         {
-            bool hiddenObjects = false;
+            // FIX POSTSPAWN REPARENTING HERE
 
-            // Loop through the Container
-            foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
+            // CODE NOT READY YET
+            
+            List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
+
+            // Create a list with body to hide and their parent
+            foreach (string name in Templates.hiddenRnD.Keys)
             {
-                // If the body needs to be hidden
-                if (Templates.hiddenRnD.ContainsKey(planetItem.label_planetName.text) && Templates.hiddenRnD[planetItem.label_planetName.text] == PropertiesLoader.RDVisibility.HIDDEN)
+                if (Templates.hiddenRnD[name] == PropertiesLoader.RDVisibility.SKIP)
                 {
-                    // Select the body to hide and its parentrndf
-                    PSystemBody hidden = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == planetItem.label_planetName.text);
-                    PSystemBody reference = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(hidden));
-                    
-                    if (reference != null)
+                    PSystemBody hidden = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == name);
+
+                    if (hidden.children.Count == 0)
                     {
-                        // Find where the hidden body is
-                        int index = reference.children.IndexOf(hidden);
-
-                        // Put its children in its place
-                        reference.children.InsertRange(index, hidden.children);
-
-                        // Remove the hidden body from its parent's children list so it won't show up when clicking the parent
-                        reference.children.Remove(hidden);
-
-                        // Set this to 'true' so we know we need to trigger AddPlanets
-                        hiddenObjects = true;
+                        Templates.hiddenRnD[name] = PropertiesLoader.RDVisibility.HIDDEN;
+                    }
+                    else
+                    {
+                        PSystemBody parent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(hidden));
+                        if (parent != null)
+                        {
+                            if (skipList.Any(b => b.Value == parent))
+                            {
+                                int index = skipList.IndexOf(skipList.First(b => b.Value == parent));
+                                skipList.Insert(index, new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
+                            }
+                            else
+                                skipList.Add(new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
+                        }
                     }
                 }
             }
-            if (hiddenObjects)
+
+            foreach (KeyValuePair<PSystemBody, PSystemBody> pair in skipList)
+            {
+                // Get hidden body and parent
+                PSystemBody hidden = pair.Key;
+                PSystemBody parent = pair.Value;
+
+                // Find where the hidden body is
+                int index = parent.children.IndexOf(hidden);
+
+                // Put its children in its place
+                parent.children.InsertRange(index, hidden.children);
+
+                // Remove the hidden body from its parent's children list so it won't show up when clicking the parent
+                parent.children.Remove(hidden);
+            }
+
+            if (skipList.Count > 0)
             {
                 // Stuff needed for AddPlanets
                 FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).First();
@@ -85,6 +108,25 @@ namespace Kopernicus
 
                 // AddPlanets!
                 add.Invoke(RDAC, null);
+
+
+                // Undo the changes to the PSystem
+
+                foreach (KeyValuePair<PSystemBody, PSystemBody> pair in skipList)
+                {     
+                    PSystemBody hidden = pair.Key;
+                    PSystemBody parent = pair.Value;
+                    
+                    int oldIndex = parent.children.IndexOf(hidden.children.First());
+
+                    parent.children.Insert(oldIndex, hidden);
+
+                    foreach (PSystemBody child in hidden.children)
+                    {
+                        if (parent.children.Contains(child))
+                            parent.children.Remove(child);
+                    }
+                }
             }
 
 

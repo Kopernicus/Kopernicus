@@ -284,7 +284,8 @@ namespace Kopernicus
             {
                 VISIBLE,
                 NOICON,
-                HIDDEN
+                HIDDEN,
+                SKIP
             }
 
             // Apply Event
