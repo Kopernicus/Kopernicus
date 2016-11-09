@@ -112,11 +112,11 @@ namespace Kopernicus
 
                 // Undo the changes to the PSystem
 
-                foreach (KeyValuePair<PSystemBody, PSystemBody> pair in skipList)
-                {     
-                    PSystemBody hidden = pair.Key;
-                    PSystemBody parent = pair.Value;
-                    
+                for (int i = skipList.Count; i > 0; i = i - 1)
+                {
+                    PSystemBody hidden = skipList.ElementAt(i).Key;
+                    PSystemBody parent = skipList.ElementAt(i).Value;
+
                     int oldIndex = parent.children.IndexOf(hidden.children.First());
 
                     parent.children.Insert(oldIndex, hidden);
@@ -126,6 +126,7 @@ namespace Kopernicus
                         if (parent.children.Contains(child))
                             parent.children.Remove(child);
                     }
+
                 }
             }
 
