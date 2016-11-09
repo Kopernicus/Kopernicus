@@ -45,8 +45,10 @@ namespace Kopernicus
     {
         void Start()
         {
-            // FIX POSTSPAWN REPARENTING HERE
 
+            ///  FIX BODIES MOVED POSTSPAWN  ///
+            
+            bool postSpawnChanges = false;
             foreach (string name in Templates.orbitPatches.Keys)
             {
                 // Fix position if the body gets moved PostSpawn
@@ -55,19 +57,17 @@ namespace Kopernicus
                     // Get the body, the old parent and the new parent
                     PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == name);
                     PSystemBody oldParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(body));
-                    PSystemBody newParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == Templates.orbitPatches[name].GetValue("referenceBody"));
+                    PSystemBody newParent = oldParent;
+                    if (Templates.orbitPatches[name].GetValue("referenceBody") != null)
+                        newParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == Templates.orbitPatches[name].GetValue("referenceBody"));
 
                     if (body != null && oldParent != null)
-					{
-                        // If there is no new parent it means only SMA changed
-                        if (newParent == null)
-                            newParent = oldParent;
-
+                    {
                         // If there is no new SMA it means only the parent changed
                         NumericParser<double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
                         if (Templates.orbitPatches[name].GetValue("semiMajorAxis") != null)
                             newSMA.SetFromString(Templates.orbitPatches[name].GetValue("semiMajorAxis"));
-
+                        
                         // Count how many children comes before our body in the newParent.child list
                         int index = 0;
                         foreach (PSystemBody child in newParent.children)
@@ -75,16 +75,26 @@ namespace Kopernicus
                             if (child.orbitDriver.orbit.semiMajorAxis < newSMA.value)
                                 index++;
                         }
-
+                        
                         // Add the body as child for the new parent and remove it for the old parent
-                        newParent.children.Insert(index, body);
+                        if (index > newParent.children.Count)
+                            newParent.children.Add(body);
+                        else
+                            newParent.children.Insert(index, body);
+                        
                         oldParent.children.Remove(body);
+                        postSpawnChanges = true;
                     }
                 }
             }
 
+            // Rebuild Archives
+            if (postSpawnChanges)
+                AddPlanets();
 
-            // FIX FOR   RDVisibility = SKIP
+
+
+            ///  RDVisibility = SKIP  ///
 
             List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
@@ -134,17 +144,8 @@ namespace Kopernicus
 
             if (skipList.Count > 0)
             {
-                // Stuff needed for AddPlanets
-                FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).First();
-                MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Skip(27).First();
-                var RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().First();
-
-                // AddPlanets requires this list to be empty when triggered
-                list.SetValue(RDAC, new Dictionary<string, List<RDArchivesController.Filter>>());
-
-                // AddPlanets!
-                add.Invoke(RDAC, null);
-
+                // Rebuild Archives
+                AddPlanets();
 
                 // Undo the changes to the PSystem
 
@@ -162,13 +163,12 @@ namespace Kopernicus
                         if (parent.children.Contains(child))
                             parent.children.Remove(child);
                     }
-
                 }
             }
 
 
 
-            // FIX FOR   RDVisibility = HIDDEN  and  NOICON
+            ///  RDVisibility = HIDDEN  ///  RDVisibility = NOICON  ///
 
             // Loop through the Container
             foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
@@ -210,6 +210,21 @@ namespace Kopernicus
                     planetItem.label_planetName.name += "NAMECHANGER";
                 }
             }
+        }
+
+
+        void AddPlanets()
+        {
+            // Stuff needed for AddPlanets
+            FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).First();
+            MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Skip(27).First();
+            var RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().First();
+
+            // AddPlanets requires this list to be empty when triggered
+            list.SetValue(RDAC, new Dictionary<string, List<RDArchivesController.Filter>>());
+
+            // AddPlanets!
+            add.Invoke(RDAC, null);
         }
     }
 }
