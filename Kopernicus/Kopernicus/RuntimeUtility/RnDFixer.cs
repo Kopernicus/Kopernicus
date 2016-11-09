@@ -68,9 +68,9 @@ namespace Kopernicus
                         PSystemBody parent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(hidden));
                         if (parent != null)
                         {
-                            if (skipList.Any(b => b.Value == parent))
+                            if (skipList.Any(b => b.Key == parent))
                             {
-                                int index = skipList.IndexOf(skipList.First(b => b.Value == parent));
+                                int index = skipList.IndexOf(skipList.First(b => b.Key == parent));
                                 skipList.Insert(index, new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
                             }
                             else
