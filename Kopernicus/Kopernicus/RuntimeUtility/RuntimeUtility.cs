@@ -251,6 +251,23 @@ namespace Kopernicus
                 // Terminate for the moment.
                 isDone = true;
             }
+
+            // Set custom Zoom-In limits
+            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || MapView.MapIsEnabled)
+            {
+                MapObject target = PlanetariumCamera.fetch.target;
+                if (target != null && target.celestialBody != null)
+                {
+                    string name = target.celestialBody.transform.name;
+                    if (Templates.maxZoom.ContainsKey(name))
+                    {
+                        if (Templates.maxZoom[name] != PlanetariumCamera.fetch.minDistance)
+                            PlanetariumCamera.fetch.minDistance = Templates.maxZoom[name];
+                    }
+                    else if (PlanetariumCamera.fetch.minDistance != 10)
+                        PlanetariumCamera.fetch.minDistance = 10;
+                }
+            }
         }
 
         // Applies invisible orbits

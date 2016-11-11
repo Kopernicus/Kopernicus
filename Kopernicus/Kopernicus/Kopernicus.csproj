@@ -177,7 +177,6 @@
     <Compile Include="Configuration\ModLoader\ModLoader.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap.cs" />
     <Compile Include="Utility.cs" />
-    <Compile Include="RuntimeUtility\ZoomFixer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kopernicus.Components\Kopernicus.Components.csproj">
