@@ -150,7 +150,7 @@ namespace Kopernicus
             else if (explicitPositive)
                 stringBuilder.Append("+ ");
 
-            int[] list = new int[] { num[2], num[3], num[4], num[5] < 0 ? 0 : num[5], num[1] };
+            int[] list = new int[] { num[2], num[3], num[4], num[5], num[1] };
             int num0 = list.Length;
             while (num0-- > 0)
             {
@@ -412,10 +412,11 @@ namespace Kopernicus
             // ( 10.5 + 3 + 0.5 = 14 )
 
             int num1 = (int)(time / year);
-            int num2 = (int)(num1 * year) % 60;
+            int num2 = (int)(time - (num1 * year));
             int num3 = num2 / 60 % 60;
             int num4 = num2 / 3600 % ((int)day / 3600);
             int num5 = (int)(num2 / year);
+            num2 = num2 % 60;
 
             num = new int[] { 0, num1, num2, num3, num4, num5 };
         }
