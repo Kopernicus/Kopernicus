@@ -145,7 +145,15 @@ namespace Kopernicus
                 get { return ScaledSpaceFader.faderMult; }
                 set { ScaledSpaceFader.faderMult = value; }
             }
-           
+
+            // If the custom Kopernicus clock is used
+            [ParserTarget("useKopernicusTime")]
+            public NumericParser<bool> useKopernicusTime
+            {
+                get { return Templates.useKopernicusTime; }
+                set { Templates.useKopernicusTime = value; }
+            }
+
             // Instance
             public Loader()
             {

@@ -47,6 +47,9 @@ namespace Kopernicus
         // Max view distance
         public static double maxViewDistance = -1d;
 
+        // Use Kopernicus Time
+        public static bool useKopernicusTime = false;
+
         // Global base epoch
         public static double epoch { get; set; }
 
