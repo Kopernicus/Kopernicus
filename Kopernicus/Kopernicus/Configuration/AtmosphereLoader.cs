@@ -241,8 +241,8 @@ namespace Kopernicus
             [ParserTarget("lightColor")]
             public ColorParser lightColor 
             {
-                get { return scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0].waveLength; }
-                set { scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true) [0].waveLength = value.value; }
+                get { return atmosphereFromGround.waveLength; }
+                set { atmosphereFromGround.waveLength = value; }
             }
 
             // AFG
