@@ -85,7 +85,7 @@ namespace Kopernicus
             GetTime(time);
             StringBuilder sb = StringBuilderCache.Acquire(256);
             sb.Append(num[1]).Append(num[1] == 1 ? "Year" : "Years").Append(", ");
-            sb.Append(num[5] < 0 ? 0 : num[5]).Append(num[5] == 1 ? "Day" : "Days").Append(", ");
+            sb.Append(num[5]).Append(num[5] == 1 ? "Day" : "Days").Append(", ");
             sb.Append(num[4]).Append(num[4] == 1 ? "Hour" : "Hours").Append(", ");
             sb.Append(num[3]).Append(num[3] == 1 ? "Min" : "Mins").Append(", ");
             sb.Append(num[2]).Append(num[2] == 1 ? "Sec" : "Secs");
@@ -104,7 +104,7 @@ namespace Kopernicus
             if (years)
                 stringBuilder.Append("Year ").Append(num[1]).Append(", ");
             if (days)
-                stringBuilder.Append("Day ").Append(num[5] < 0 ? 0 : num[5]).Append(" - ");
+                stringBuilder.Append("Day ").Append(num[5]).Append(" - ");
 
             stringBuilder.AppendFormat("{0:00}:{1:00}", num[4], num[3]);
 
@@ -126,7 +126,7 @@ namespace Kopernicus
                 stringBuilder.Append(num[1]).Append("y, ");
 
             if (days)
-                stringBuilder.Append(num[5] < 0 ? 0 : num[5]).Append("d, ");
+                stringBuilder.Append(num[5]).Append("d, ");
 
             stringBuilder.AppendFormat("{0:00}:{1:00}", num[4], num[3]);
             if (num[1] < 10)
