@@ -131,6 +131,7 @@
     <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeUtility\RuntimeUtility.cs" />
+    <Compile Include="RuntimeUtility\ClockFixer.cs" />
     <Compile Include="Injector.cs" />
     <Compile Include="RuntimeUtility\DiscoverableObjects.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
