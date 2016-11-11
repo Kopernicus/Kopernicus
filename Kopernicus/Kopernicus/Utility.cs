@@ -393,7 +393,7 @@ namespace Kopernicus
                 // Find the PQS mods and enable the PQS-sphere
                 IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
                 foreach (PQSMod flatten in mods.Where(m => m is PQSMod_FlattenArea))
-                    flatten.GetType().GetField("quadActive", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(flatten, true);
+                    flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(Boolean)).First().SetValue(flatten, true);
 
                 pqsVersion.StartUpSphere();
                 pqsVersion.isBuildingMaps = true;
