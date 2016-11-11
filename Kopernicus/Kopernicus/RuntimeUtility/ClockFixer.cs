@@ -47,7 +47,7 @@ namespace Kopernicus
             ClockFormatter.day = homePlanet.solarDayLength;
 
             // If tidally locked set day = year
-            if (ClockFormatter.year == homePlanet.orbitDriver.orbit.period)
+            if (ClockFormatter.year == homePlanet.rotationPeriod)
                 ClockFormatter.day = ClockFormatter.year;
 
             // Convert negative numbers to positive
