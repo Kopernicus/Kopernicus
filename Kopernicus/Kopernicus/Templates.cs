@@ -75,6 +75,9 @@ namespace Kopernicus
 
         // Orbit patcher
         public static Dictionary<string, ConfigNode> orbitPatches { get; set; }
+        
+        // Max Zoom in TrackingStation and MapView
+        public static Dictionary<string, float> maxZoom = new Dictionary<string, float>();
 
         // Initialisation
         static Templates()

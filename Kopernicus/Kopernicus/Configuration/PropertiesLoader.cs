@@ -286,7 +286,21 @@ namespace Kopernicus
                 NOICON,
                 HIDDEN
             }
-
+            
+            // Max Zoom limit for TrackingStation and MapView
+            // set the number of meters that can fit in the full height of the screen
+            [ParserTarget("maxZoom")]
+            public NumericParser<float> minDistance
+            {
+                set
+                {
+                    if (Templates.maxZoom.ContainsKey(celestialBody.transform.name))
+                        Templates.maxZoom[celestialBody.transform.name] = value / 6000f;
+                    else
+                        Templates.maxZoom.Add(celestialBody.transform.name, value / 6000f);
+                }
+            }
+            
             // Apply Event
             void IParserEventSubscriber.Apply (ConfigNode node)
             {
