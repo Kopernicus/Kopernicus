@@ -134,6 +134,7 @@
     <Compile Include="Injector.cs" />
     <Compile Include="RuntimeUtility\DiscoverableObjects.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
+    <Compile Include="Storage.cs" />
     <Compile Include="Templates.cs" />
     <Compile Include="Configuration\Loader.cs" />
     <Compile Include="Configuration\Body.cs" />

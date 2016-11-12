@@ -29,41 +29,59 @@
 
 using System;
 using System.Collections.Generic;
-using Kopernicus.Configuration;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Kopernicus
 {
-    // Globally used values
-    public class Templates
+    /// <summary>
+    /// A component that stores data in a planet
+    /// </summary>
+    public class StorageComponent : MonoBehaviour
     {
-        // The reference mesh for ScaledSpace (Jools Mesh)
-        public static Mesh ReferenceGeosphere { get; set; }
+        /// <summary>
+        /// The data stored by the component
+        /// </summary>
+        private static Dictionary<String, Dictionary<String, System.Object>> data { get; set; }
 
-        // Finalize Orbits stuff
-        public static double SOIMinRadiusMult = 2.0d;
-        public static double SOIMinAltitude = 40000d;
-
-        // Max view distance
-        public static double maxViewDistance = -1d;
-
-        // Global base epoch
-        public static double epoch { get; set; }
-
-        // The body that should appear in MainMenu
-        public static string menuBody { get; set; }
-
-        // Initialisation
-        static Templates()
+        static StorageComponent()
         {
-            // We need to get the body for Jool (to steal it's mesh)
-            PSystemBody Jool = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Jool");
+            data = new Dictionary<String, Dictionary<String, Object>>();
+        }
 
-            // Return it's mesh
-            ReferenceGeosphere = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+        void Awake()
+        {
+            if (!data.ContainsKey(name))
+                data.Add(name, new Dictionary<String, Object>());
+        }
 
-            // Main Menu body
-            menuBody = "Kerbin";
+        /// <summary>
+        /// Gets data from the storage
+        /// </summary>
+        public T Get<T>(String id)
+        {
+            if (data.ContainsKey(id))
+                return (T) data[name][id];
+            throw new IndexOutOfRangeException();
+        }
+
+        /// <summary>
+        /// Whether the storage contains this key
+        /// </summary>
+        public Boolean Has(String id)
+        {
+            return data[name].ContainsKey(id);
+        }
+
+        /// <summary>
+        /// Writes data into the storage
+        /// </summary>
+        public void Set<T>(String id, T value)
+        {
+            if (data.ContainsKey(id))
+                data[name][id] = value;
+            else
+                data[name].Add(id, value);
         }
     }
 }

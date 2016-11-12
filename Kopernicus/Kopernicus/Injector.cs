@@ -141,19 +141,19 @@ namespace Kopernicus
                 body.flightGlobalsIndex = counter++;
 
                 // Finalize the Orbit
-                if (Templates.finalizeBodies.Contains(body.transform.name))
+                if (body.Has("finalizeBody"))
                     OrbitLoader.FinalizeOrbit(body);
 
                 // Patch the SOI
-                if (Templates.sphereOfInfluence.ContainsKey(body.transform.name))
-                    body.sphereOfInfluence = Templates.sphereOfInfluence[body.transform.name];
+                if (body.Has("sphereOfInfluence"))
+                    body.sphereOfInfluence = body.Get<double>("sphereOfInfluence");
 
                 // Patch the Hill Sphere
-                if (Templates.hillSphere.ContainsKey(body.transform.name))
-                    body.hillSphere = Templates.hillSphere[body.transform.name];
+                if (body.Has("hillSphere"))
+                    body.hillSphere = body.Get<double>("hillSphere");
 
                 // Make the Body a barycenter
-                if (Templates.barycenters.Contains(body.transform.name))
+                if (body.Has("barycenter"))
                     body.scaledBody.SetActive(false);
 
                 Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);

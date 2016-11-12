@@ -101,7 +101,7 @@ namespace Kopernicus
         {
             previous = PlanetariumCamera.fetch.initialTarget;
             PlanetariumCamera.fetch.targets
-                .Where(m => Templates.barycenters.Contains(m.celestialBody?.transform.name) || Templates.notSelectable.Contains(m.celestialBody?.transform.name))
+                .Where(m => m.celestialBody != null && (m.celestialBody.Has("barycenter") || m.celestialBody.Has("notSelectable")))
                 .ToList()
                 .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
 
@@ -133,9 +133,9 @@ namespace Kopernicus
                 }
 
                 // Post spawn patcher
-                if (Templates.orbitPatches.ContainsKey(body.transform.name))
+                if (body.Has("orbitPatches"))
                 {
-                    ConfigNode orbitNode = Templates.orbitPatches[body.transform.name];
+                    ConfigNode orbitNode = body.Get<ConfigNode>("orbitPatches");
                     OrbitLoader loader = new OrbitLoader(body);
                     Parser.LoadObjectFromConfigurationNode(loader, orbitNode);
                     body.orbitDriver.orbit = loader.orbit;
@@ -170,12 +170,11 @@ namespace Kopernicus
             PlanetariumCamera.fetch.targets.AddRange(trackingstation);
 
             // Undo stuff
-            foreach (String key in Templates.orbitPatches.Keys)
+            foreach (CelestialBody b in PSystemManager.Instance.localBodies.Where(b_ => b_.Has("orbitPatches")))
             {
-                CelestialBody b = PSystemManager.Instance.localBodies.Find(b2 => b2.transform.name == key);
-                fixes[key].Value.orbitingBodies.Remove(b);
-                fixes[key].Key.orbitingBodies.Add(b);
-                fixes[key].Key.orbitingBodies = fixes[key].Key.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
+                fixes[b.transform.name].Value.orbitingBodies.Remove(b);
+                fixes[b.transform.name].Key.orbitingBodies.Add(b);
+                fixes[b.transform.name].Key.orbitingBodies = fixes[b.transform.name].Key.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
             }
             UpdateMenu();
         }
@@ -210,7 +209,7 @@ namespace Kopernicus
                     {
                         OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
                         CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or.discoveryInfo.name.Value);
-                        if (Templates.barycenters.Contains(body.transform.name) || Templates.notSelectable.Contains(body.transform.name))
+                        if (body.Has("barycenter") || body.Has("notSelectable"))
                         {
                             MapContextMenu context = MapContextMenu.Create(body.name, new Rect(0.5f, 0.5f, 300f, 50f), cast, () =>
                             {
@@ -256,15 +255,12 @@ namespace Kopernicus
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || MapView.MapIsEnabled)
             {
                 MapObject target = PlanetariumCamera.fetch.target;
-                if (target != null && target.celestialBody != null)
+                if (target?.celestialBody != null)
                 {
-                    string name = target.celestialBody.transform.name;
-                    if (Templates.maxZoom.ContainsKey(name))
-                    {
-                        if (Templates.maxZoom[name] != PlanetariumCamera.fetch.minDistance)
-                            PlanetariumCamera.fetch.minDistance = Templates.maxZoom[name];
-                    }
-                    else if (PlanetariumCamera.fetch.minDistance != 10)
+                    CelestialBody body = target.celestialBody;
+                    if (body.Has("maxZoom"))
+                        PlanetariumCamera.fetch.minDistance = body.Get<float>("maxZoom");
+                    else 
                         PlanetariumCamera.fetch.minDistance = 10;
                 }
             }
@@ -285,12 +281,12 @@ namespace Kopernicus
                         return;
 
                     // Apply Orbit mode changes
-                    if (Templates.drawMode.ContainsKey(body.transform.name))
-                        body.orbitDriver.Renderer.drawMode = Templates.drawMode[body.transform.name];
+                    if (body.Has("drawMode"))
+                        body.orbitDriver.Renderer.drawMode = body.Get<OrbitRenderer.DrawMode>("drawMode");
 
                     // Apply Orbit icon changes
-                    if (Templates.drawIcons.ContainsKey(body.transform.name))
-                        body.orbitDriver.Renderer.drawIcons = Templates.drawIcons[body.transform.name];
+                    if (body.Has("drawIcons"))
+                        body.orbitDriver.Renderer.drawIcons = body.Get<OrbitRenderer.DrawIcons>("drawIcons");
                 }
             }
         }

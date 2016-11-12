@@ -167,16 +167,16 @@ namespace Kopernicus
             [ParserTarget("sphereOfInfluence")]
             public NumericParser<double> sphereOfInfluence
             {
-                get { return celestialBody.sphereOfInfluence; }
-                set { Templates.sphereOfInfluence.Add(celestialBody.name, value); }
+                get { return celestialBody.Has("sphereOfInfluence") ? celestialBody.Get<double>("sphereOfInfluence") : celestialBody.sphereOfInfluence; }
+                set { celestialBody.sphereOfInfluence = value; celestialBody.Set("sphereOfInfluence", value); }
             }
 
             // Hill Sphere
             [ParserTarget("hillSphere")]
             public NumericParser<double> hillSphere
             {
-                get { return celestialBody.hillSphere; }
-                set { Templates.hillSphere.Add(celestialBody.bodyTransform.name, value); }
+                get { return celestialBody.Has("hillSphere") ? celestialBody.Get<double>("hillSphere") : celestialBody.hillSphere; }
+                set { celestialBody.hillSphere = value; celestialBody.Set("hillSphere", value); }
             }
 
             // solarRotationPeriod
@@ -256,8 +256,8 @@ namespace Kopernicus
             [ParserTarget("selectable")]
             public NumericParser<bool> selectable
             {
-                get { return !Templates.notSelectable.Contains(celestialBody.transform.name); }
-                set { if (!value.value) Templates.notSelectable.Add(celestialBody.transform.name); }
+                get { return !celestialBody.Has("notSelectable"); }
+                set { if (!value.value) celestialBody.Set("notSelectable", true); }
             }
 
             // If the body should be hidden in RnD
@@ -266,17 +266,11 @@ namespace Kopernicus
             {
                 get
                 {
-                    if (Templates.hiddenRnD.ContainsKey(celestialBody.transform.name))
-                        return Templates.hiddenRnD[celestialBody.transform.name];
+                    if (celestialBody.Has("hiddenRnD"))
+                        return celestialBody.Get<RDVisibility>("hiddenRnD");
                     return RDVisibility.VISIBLE;
                 }
-                set
-                {
-                    if (Templates.hiddenRnD.ContainsKey(celestialBody.transform.name))
-                        Templates.hiddenRnD[celestialBody.transform.name] = value;
-                    else
-                        Templates.hiddenRnD.Add(celestialBody.transform.name, value);
-                }
+                set { celestialBody.Set("hiddenRnD", value); }
             }
 
             // How visible should the planet be in the science archives
@@ -293,13 +287,8 @@ namespace Kopernicus
             [ParserTarget("maxZoom")]
             public NumericParser<float> minDistance
             {
-                set
-                {
-                    if (Templates.maxZoom.ContainsKey(celestialBody.transform.name))
-                        Templates.maxZoom[celestialBody.transform.name] = value / 6000f;
-                    else
-                        Templates.maxZoom.Add(celestialBody.transform.name, value / 6000f);
-                }
+                get { return celestialBody.Has("maxZool") ? celestialBody.Get<float>("maxZoom") : 10 * 6000f; }
+                set { celestialBody.Set("maxZoom", value / 6000f); }
             }
             
             // Apply Event

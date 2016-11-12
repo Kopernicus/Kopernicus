@@ -91,8 +91,8 @@ namespace Kopernicus
             [ParserTarget("finalizeOrbit")]
             public NumericParser<bool> finalizeOrbit
             {
-                get { return Templates.finalizeBodies.Contains(generatedBody.name); }
-                set { if (value) Templates.finalizeBodies.Add(generatedBody.name); }
+                get { return generatedBody.Has("finalizeBody"); }
+                set { if (value) generatedBody.Set("finalizeBody", true); }
             }
 
             // Whether this body should be taken into account for the main menu body stuff
@@ -152,7 +152,7 @@ namespace Kopernicus
             [ParserTarget("PostSpawnOrbit")]
             public ConfigNode postspawn
             {
-                set { Templates.orbitPatches.Add(generatedBody.name, value); }
+                set { generatedBody.Set("orbitPatches", value); }
             }
 
             // Parser Apply Event
@@ -231,7 +231,7 @@ namespace Kopernicus
                 if (barycenter.value)
                 {
                     // Register the body for post-spawn patching
-                    Templates.barycenters.Add(generatedBody.name);
+                    generatedBody.Set("barycenter", true);
 
                     // Nuke the PQS
                     if (generatedBody.pqsVersion != null)

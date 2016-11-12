@@ -45,28 +45,27 @@ namespace Kopernicus
     {
         void Start()
         {
-
-            ///  FIX BODIES MOVED POSTSPAWN  ///
-            
+            //  FIX BODIES MOVED POSTSPAWN  //
             bool postSpawnChanges = false;
-            foreach (string name in Templates.orbitPatches.Keys)
+            foreach (CelestialBody cb in PSystemManager.Instance.localBodies.Where(b => b.Has("orbitPatches")))
             {
                 // Fix position if the body gets moved PostSpawn
-                if (Templates.orbitPatches[name].GetValue("referenceBody") != null || Templates.orbitPatches[name].GetValue("semiMajorAxis") != null)
+                ConfigNode patch = cb.Get<ConfigNode>("orbitPatches");
+                if (patch.GetValue("referenceBody") != null || patch.GetValue("semiMajorAxis") != null)
                 {
                     // Get the body, the old parent and the new parent
                     PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == name);
                     PSystemBody oldParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(body));
                     PSystemBody newParent = oldParent;
-                    if (Templates.orbitPatches[name].GetValue("referenceBody") != null)
-                        newParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == Templates.orbitPatches[name].GetValue("referenceBody"));
+                    if (patch.GetValue("referenceBody") != null)
+                        newParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == patch.GetValue("referenceBody"));
 
                     if (body != null && oldParent != null)
                     {
                         // If there is no new SMA it means only the parent changed
                         NumericParser<double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
-                        if (Templates.orbitPatches[name].GetValue("semiMajorAxis") != null)
-                            newSMA.SetFromString(Templates.orbitPatches[name].GetValue("semiMajorAxis"));
+                        if (patch.GetValue("semiMajorAxis") != null)
+                            newSMA.SetFromString(patch.GetValue("semiMajorAxis"));
                         
                         // Count how many children comes before our body in the newParent.child list
                         int index = 0;
@@ -94,24 +93,23 @@ namespace Kopernicus
 
 
 
-            ///  RDVisibility = SKIP  ///
-
+            //  RDVisibility = SKIP  //
             List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
             // Create a list with body to hide and their parent
-            foreach (string name in Templates.hiddenRnD.Keys)
-            {
-                if (Templates.hiddenRnD[name] == PropertiesLoader.RDVisibility.SKIP)
+            PSystemBody[] bodies = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true);
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.Has("hiddenRnD")))
+            { 
+                if (body.Get<PropertiesLoader.RDVisibility>("hiddenRnD") == PropertiesLoader.RDVisibility.SKIP)
                 {
-                    PSystemBody hidden = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == name);
-
+                    PSystemBody hidden = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, name);
                     if (hidden.children.Count == 0)
                     {
-                        Templates.hiddenRnD[name] = PropertiesLoader.RDVisibility.HIDDEN;
+                        body.Set("hiddenRnd", PropertiesLoader.RDVisibility.HIDDEN);
                     }
                     else
                     {
-                        PSystemBody parent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(hidden));
+                        PSystemBody parent = bodies.First(b => b.children.Contains(hidden));
                         if (parent != null)
                         {
                             if (skipList.Any(b => b.Key == parent))
@@ -148,16 +146,12 @@ namespace Kopernicus
                 AddPlanets();
 
                 // Undo the changes to the PSystem
-
                 for (int i = skipList.Count; i > 0; i = i - 1)
                 {
                     PSystemBody hidden = skipList.ElementAt(i).Key;
                     PSystemBody parent = skipList.ElementAt(i).Value;
-
                     int oldIndex = parent.children.IndexOf(hidden.children.First());
-
                     parent.children.Insert(oldIndex, hidden);
-
                     foreach (PSystemBody child in hidden.children)
                     {
                         if (parent.children.Contains(child))
@@ -168,26 +162,26 @@ namespace Kopernicus
 
 
 
-            ///  RDVisibility = HIDDEN  ///  RDVisibility = NOICON  ///
-
+            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //
             // Loop through the Container
             foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
             {
                 // Barycenter
-                if (Templates.barycenters.Contains(planetItem.label_planetName.text) || Templates.notSelectable.Contains(planetItem.label_planetName.text))
+                CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.transform.name == planetItem.label_planetName.text);
+                if (body.Has("barycenter") || body.Has("notSelectable"))
                 {
                     planetItem.planet.SetActive(false);
-                    planetItem.label_planetName.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
+                    planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineLeft;
                 }
 
                 // RD Visibility
-                if (Templates.hiddenRnD.ContainsKey(planetItem.label_planetName.text))
+                if (body.Has("hiddenRnD"))
                 {
-                    PropertiesLoader.RDVisibility visibility = Templates.hiddenRnD[planetItem.label_planetName.text];
+                    PropertiesLoader.RDVisibility visibility = body.Get<PropertiesLoader.RDVisibility>("hiddenRnD");
                     if (visibility == PropertiesLoader.RDVisibility.NOICON)
                     {
                         planetItem.planet.SetActive(false);
-                        planetItem.label_planetName.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
+                        planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineLeft;
                     }
                     else if (visibility == PropertiesLoader.RDVisibility.HIDDEN)
                     {
