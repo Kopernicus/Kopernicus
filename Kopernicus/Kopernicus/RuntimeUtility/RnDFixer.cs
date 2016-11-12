@@ -26,13 +26,15 @@
  * 
  * https://kerbalspaceprogram.com
  */
- 
+
 using System.Linq;
 using UnityEngine;
 using KSP.UI.Screens;
 using Kopernicus.Components;
 using Kopernicus.Configuration;
 using TMPro;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace Kopernicus
 {
@@ -43,6 +45,131 @@ namespace Kopernicus
     {
         void Start()
         {
+
+            ///  FIX BODIES MOVED POSTSPAWN  ///
+            
+            bool postSpawnChanges = false;
+            foreach (string name in Templates.orbitPatches.Keys)
+            {
+                // Fix position if the body gets moved PostSpawn
+                if (Templates.orbitPatches[name].GetValue("referenceBody") != null || Templates.orbitPatches[name].GetValue("semiMajorAxis") != null)
+                {
+                    // Get the body, the old parent and the new parent
+                    PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == name);
+                    PSystemBody oldParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(body));
+                    PSystemBody newParent = oldParent;
+                    if (Templates.orbitPatches[name].GetValue("referenceBody") != null)
+                        newParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == Templates.orbitPatches[name].GetValue("referenceBody"));
+
+                    if (body != null && oldParent != null)
+                    {
+                        // If there is no new SMA it means only the parent changed
+                        NumericParser<double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
+                        if (Templates.orbitPatches[name].GetValue("semiMajorAxis") != null)
+                            newSMA.SetFromString(Templates.orbitPatches[name].GetValue("semiMajorAxis"));
+                        
+                        // Count how many children comes before our body in the newParent.child list
+                        int index = 0;
+                        foreach (PSystemBody child in newParent.children)
+                        {
+                            if (child.orbitDriver.orbit.semiMajorAxis < newSMA.value)
+                                index++;
+                        }
+                        
+                        // Add the body as child for the new parent and remove it for the old parent
+                        if (index > newParent.children.Count)
+                            newParent.children.Add(body);
+                        else
+                            newParent.children.Insert(index, body);
+                        
+                        oldParent.children.Remove(body);
+                        postSpawnChanges = true;
+                    }
+                }
+            }
+
+            // Rebuild Archives
+            if (postSpawnChanges)
+                AddPlanets();
+
+
+
+            ///  RDVisibility = SKIP  ///
+
+            List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
+
+            // Create a list with body to hide and their parent
+            foreach (string name in Templates.hiddenRnD.Keys)
+            {
+                if (Templates.hiddenRnD[name] == PropertiesLoader.RDVisibility.SKIP)
+                {
+                    PSystemBody hidden = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.name == name);
+
+                    if (hidden.children.Count == 0)
+                    {
+                        Templates.hiddenRnD[name] = PropertiesLoader.RDVisibility.HIDDEN;
+                    }
+                    else
+                    {
+                        PSystemBody parent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).First(b => b.children.Contains(hidden));
+                        if (parent != null)
+                        {
+                            if (skipList.Any(b => b.Key == parent))
+                            {
+                                int index = skipList.IndexOf(skipList.First(b => b.Key == parent));
+                                skipList.Insert(index, new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
+                            }
+                            else
+                                skipList.Add(new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
+                        }
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<PSystemBody, PSystemBody> pair in skipList)
+            {
+                // Get hidden body and parent
+                PSystemBody hidden = pair.Key;
+                PSystemBody parent = pair.Value;
+
+                // Find where the hidden body is
+                int index = parent.children.IndexOf(hidden);
+
+                // Put its children in its place
+                parent.children.InsertRange(index, hidden.children);
+
+                // Remove the hidden body from its parent's children list so it won't show up when clicking the parent
+                parent.children.Remove(hidden);
+            }
+
+            if (skipList.Count > 0)
+            {
+                // Rebuild Archives
+                AddPlanets();
+
+                // Undo the changes to the PSystem
+
+                for (int i = skipList.Count; i > 0; i = i - 1)
+                {
+                    PSystemBody hidden = skipList.ElementAt(i).Key;
+                    PSystemBody parent = skipList.ElementAt(i).Value;
+
+                    int oldIndex = parent.children.IndexOf(hidden.children.First());
+
+                    parent.children.Insert(oldIndex, hidden);
+
+                    foreach (PSystemBody child in hidden.children)
+                    {
+                        if (parent.children.Contains(child))
+                            parent.children.Remove(child);
+                    }
+                }
+            }
+
+
+
+            ///  RDVisibility = HIDDEN  ///  RDVisibility = NOICON  ///
+
             // Loop through the Container
             foreach (RDPlanetListItemContainer planetItem in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>())
             {
@@ -64,6 +191,7 @@ namespace Kopernicus
                     }
                     else if (visibility == PropertiesLoader.RDVisibility.HIDDEN)
                     {
+                        planetItem.gameObject.SetActive(false);
                         planetItem.Hide();
                         planetItem.HideChildren();
                     }
@@ -82,6 +210,21 @@ namespace Kopernicus
                     planetItem.label_planetName.name += "NAMECHANGER";
                 }
             }
+        }
+
+
+        void AddPlanets()
+        {
+            // Stuff needed for AddPlanets
+            FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).First();
+            MethodInfo add = typeof(RDArchivesController).GetMethod("AddPlanets");
+            var RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().First();
+
+            // AddPlanets requires this list to be empty when triggered
+            list.SetValue(RDAC, new Dictionary<string, List<RDArchivesController.Filter>>());
+
+            // AddPlanets!
+            add.Invoke(RDAC, null);
         }
     }
 }

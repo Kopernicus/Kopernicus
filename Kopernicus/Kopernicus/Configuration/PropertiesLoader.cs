@@ -284,7 +284,8 @@ namespace Kopernicus
             {
                 VISIBLE,
                 NOICON,
-                HIDDEN
+                HIDDEN,
+                SKIP
             }
             
             // Max Zoom limit for TrackingStation and MapView
