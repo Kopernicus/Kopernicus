@@ -204,6 +204,8 @@ namespace Kopernicus
                 if (FlightGlobals.ActiveVessel != null)
                 {
                     OrbitTargeter targeter = FlightGlobals.ActiveVessel.orbitTargeter;
+                    if (targeter == null)
+                        return;
                     Int32 mode = (Int32) fields[0].GetValue(targeter);
                     if (mode == 2)
                     {
