@@ -287,7 +287,7 @@ namespace Kopernicus
             [ParserTarget("maxZoom")]
             public NumericParser<float> minDistance
             {
-                get { return celestialBody.Has("maxZool") ? celestialBody.Get<float>("maxZoom") : 10 * 6000f; }
+                get { return celestialBody.Has("maxZoom") ? celestialBody.Get<float>("maxZoom") : 10 * 6000f; }
                 set { celestialBody.Set("maxZoom", value / 6000f); }
             }
             
