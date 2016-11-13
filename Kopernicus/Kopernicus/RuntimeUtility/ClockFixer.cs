@@ -27,10 +27,10 @@
  * https://kerbalspaceprogram.com
  */
 
-using UnityEngine;
 using System;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -40,7 +40,7 @@ namespace Kopernicus
         public void Start()
         {
             // Find the home planet
-            CelestialBody homePlanet = FlightGlobals.Bodies.First(b => b.transform.name == "Kerbin");
+            CelestialBody homePlanet = FlightGlobals.Bodies.First(b => b.isHomeWorld);
 
             // Get custom year and day duration
             ClockFormatter.year = homePlanet.orbitDriver.orbit.period;
@@ -72,8 +72,8 @@ namespace Kopernicus
     {
         public static KSPUtil.DefaultDateTimeFormatter DTF = new KSPUtil.DefaultDateTimeFormatter();
 
-        public static double day = new double();
-        public static double year = new double();
+        public static double day;
+        public static double year;
         public static int[] num = new int[6];
 
         public string PrintTimeLong(double time)
@@ -99,7 +99,7 @@ namespace Kopernicus
                 return text;
 
             GetTime(time);
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
 
             if (years)
                 stringBuilder.Append("Year ").Append(num[1]).Append(", ");
@@ -143,14 +143,14 @@ namespace Kopernicus
 
             bool flag = time < 0.0;
             GetTime(time);
-            string[] array = new string[] { "s", "m", "h", "d", "y" };
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            string[] array = { "s", "m", "h", "d", "y" };
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             if (flag)
                 stringBuilder.Append("- ");
             else if (explicitPositive)
                 stringBuilder.Append("+ ");
 
-            int[] list = new int[] { num[2], num[3], num[4], num[5], num[1] };
+            int[] list = { num[2], num[3], num[4], num[5], num[1] };
             int num0 = list.Length;
             while (num0-- > 0)
             {
@@ -176,7 +176,7 @@ namespace Kopernicus
 
             bool flag = time < 0.0;
             GetTime(time);
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             if (flag)
                 stringBuilder.Append("T- ");
             else if (explicitPositive)
@@ -197,7 +197,7 @@ namespace Kopernicus
             if (useAbs && time < 0.0)
                 time = -time;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetTime(time);
 
             if (num[1] > 1)
@@ -274,7 +274,7 @@ namespace Kopernicus
             if (useAbs && time < 0.0)
                 time = -time;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetTime(time);
             if (num[1] > 0)
                 stringBuilder.Append(num[1]).Append("y");
@@ -319,7 +319,7 @@ namespace Kopernicus
                 return text;
 
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetDate(time);
 
             stringBuilder.Append("Year ").Append(num[1] + 1).Append(", Day ").Append(num[5] + 1);
@@ -335,7 +335,7 @@ namespace Kopernicus
             if (text != null)
                 return text;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetDate(time);
             stringBuilder.Append("Year ").Append(num[1] + 1).Append(", Day ").Append(num[5] + 1);
             if (includeTime)
@@ -381,27 +381,25 @@ namespace Kopernicus
             // Day 0 will last untill Day 365 would have ended, then Day 1 will start.
             // This way the time shown by the clock will always be consistent with the position of the sun in the sky
 
-            Debug.Log("SigmaLog: time = " + time);
             // Number of seconds in this day
             int num0 = (int)(time % day);
-            Debug.Log("SigmaLog: num0 = " + num0);
+
             // Number of years in this time
             int num1 = (int)(time / year);
-            Debug.Log("SigmaLog: num1 = " + num1);
+
             // Number of seconds in this minute
             int num2 = num0 % 60;
-            Debug.Log("SigmaLog: num2 = " + num2);
+
             // Number of minutes in this hour
             int num3 = num0 / 60 % 60;
-            Debug.Log("SigmaLog: num3 = " + num3);
+
             // Number of hours in this day
             int num4 = num0 / 3600;
-            Debug.Log("SigmaLog: num4 = " + num4);
+
             // Number of days in this year
             int num5 = (int)(time / day) - (int)(Math.Round(year / day, 0, MidpointRounding.AwayFromZero) * num1);
 
-            Debug.Log("SigmaLog: num5 = " + num5);
-            num = new int[] { num0, num1, num2, num3, num4, num5 };
+            num = new[] { num0, num1, num2, num3, num4, num5 };
         }
 
         public void GetTime(double time)
@@ -418,40 +416,24 @@ namespace Kopernicus
             int num5 = (int)(num2 / year);
             num2 = num2 % 60;
 
-            num = new int[] { 0, num1, num2, num3, num4, num5 };
+            num = new[] { 0, num1, num2, num3, num4, num5 };
         }
 
         public int Minute
         {
-            get
-            {
-                return 60;
-            }
+            get { return 60; }
         }
         public int Hour
         {
-            get
-            {
-                return 3600;
-            }
+            get { return Minute * 60; }
         }
         public int Day
         {
-            get
-            {
-                return 21600;
-            }
+            get {  return Hour * 6; }
         }
         public int Year
         {
-            get
-            {
-                return 9201600;
-            }
-        }
-
-        public ClockFormatter()
-        {
+            get { return Day * 426; }
         }
     }
 }
