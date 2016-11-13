@@ -210,9 +210,11 @@ namespace Kopernicus
                     if (mode == 2)
                     {
                         OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
-                        CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or.discoveryInfo.name.Value);
+                        CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or?.discoveryInfo?.name?.Value);
+                        if (body == null) return;
                         if (body.Has("barycenter") || body.Has("notSelectable"))
                         {
+                            if (cast.driver?.Targetable == null) return;
                             MapContextMenu context = MapContextMenu.Create(body.name, new Rect(0.5f, 0.5f, 300f, 50f), cast, () =>
                             {
                                 fields[0].SetValue(targeter, 0);
