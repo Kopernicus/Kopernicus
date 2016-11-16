@@ -128,7 +128,7 @@ namespace Kopernicus
                 return text;
 
             GetTime(time);
-            StringBuilder sb = StringBuilderCache.Acquire(256);
+            StringBuilder sb = StringBuilderCache.Acquire();
             sb.Append(num[1]).Append(num[1] == 1 ? Y.singular : Y.plural).Append(", ");
             sb.Append(num[5]).Append(num[5] == 1 ? D.singular : D.plural).Append(", ");
             sb.Append(num[4]).Append(num[4] == 1 ? H.singular : H.plural).Append(", ");
@@ -144,7 +144,7 @@ namespace Kopernicus
                 return text;
 
             GetTime(time);
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
 
             if (years)
                 stringBuilder.Append(Y.singular + " ").Append(num[1]).Append(", ");
@@ -166,7 +166,7 @@ namespace Kopernicus
                 return text;
 
             GetTime(time);
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             if (years)
                 stringBuilder.Append(num[1]).Append(Y.symbol + ", ");
 
@@ -189,7 +189,7 @@ namespace Kopernicus
             bool flag = time < 0.0;
             GetTime(time);
             string[] array = new string[] { S.symbol, M.symbol, H.symbol, D.symbol, Y.symbol };
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             if (flag)
                 stringBuilder.Append("- ");
             else if (explicitPositive)
@@ -221,7 +221,7 @@ namespace Kopernicus
 
             bool flag = time < 0.0;
             GetTime(time);
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             if (flag)
                 stringBuilder.Append("T- ");
             else if (explicitPositive)
@@ -242,7 +242,7 @@ namespace Kopernicus
             if (useAbs && time < 0.0)
                 time = -time;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetTime(time);
 
             if (num[1] > 1)
@@ -319,7 +319,7 @@ namespace Kopernicus
             if (useAbs && time < 0.0)
                 time = -time;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetTime(time);
             if (num[1] > 0)
                 stringBuilder.Append(num[1]).Append(Y.symbol);
@@ -364,7 +364,7 @@ namespace Kopernicus
                 return text;
 
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetDate(time);
 
             stringBuilder.Append(Y.singular + " ").Append(num[1] + 1).Append(", " + D.singular + " ").Append(num[5] + 1);
@@ -380,7 +380,7 @@ namespace Kopernicus
             if (text != null)
                 return text;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetDate(time);
             stringBuilder.Append(Y.singular + " ").Append(num[1] + 1).Append(", " + D.singular + " ").Append(num[5] + 1);
             if (includeTime)
@@ -394,7 +394,7 @@ namespace Kopernicus
             if (text != null)
                 return text;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
+            StringBuilder stringBuilder = StringBuilderCache.Acquire();
             GetDate(time);
             stringBuilder.AppendFormat(Y.symbol + "{0}, " + D.symbol + "{1:00}", num[1] + 1, num[5] + 1);
             if (includeTime)
