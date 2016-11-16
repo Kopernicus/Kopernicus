@@ -188,14 +188,14 @@ namespace Kopernicus
 
             bool flag = time < 0.0;
             GetTime(time);
-            string[] array = new string[] { S.symbol, M.symbol, H.symbol, D.symbol, Y.symbol };
+            string[] array = { S.symbol, M.symbol, H.symbol, D.symbol, Y.symbol };
             StringBuilder stringBuilder = StringBuilderCache.Acquire();
             if (flag)
                 stringBuilder.Append("- ");
             else if (explicitPositive)
                 stringBuilder.Append("+ ");
 
-            int[] list = new int[] { num[2], num[3], num[4], num[5], num[1] };
+            int[] list = { num[2], num[3], num[4], num[5], num[1] };
             int num0 = list.Length;
             while (num0-- > 0)
             {
@@ -438,8 +438,7 @@ namespace Kopernicus
             int num4 = (int)(num0 / H.value);
             // Number of days in this year
             int num5 = (int)(time / D.value) - (int)(Math.Round(Y.value / D.value, 0, MidpointRounding.AwayFromZero) * num1);
-
-            Debug.Log("SigmaLog: num5 = " + num5);
+            
             num = new int[] { num0, num1, num2, num3, num4, num5 };
         }
 
