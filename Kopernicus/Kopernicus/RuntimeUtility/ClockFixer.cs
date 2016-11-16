@@ -39,43 +39,88 @@ namespace Kopernicus
     {
         public void Start()
         {
-            // Find the home planet
-            CelestialBody homePlanet = FlightGlobals.Bodies.First(b => b.isHomeWorld);
-
-            // Get custom year and day duration
-            ClockFormatter.year = homePlanet.orbitDriver.orbit.period;
-            ClockFormatter.day = homePlanet.solarDayLength;
-
-            // If tidally locked set day = year
-            if (ClockFormatter.year == homePlanet.rotationPeriod)
-                ClockFormatter.day = ClockFormatter.year;
-
-            // Convert negative numbers to positive
-            if (ClockFormatter.year < 0)
-                ClockFormatter.year = -ClockFormatter.year;
-            if (ClockFormatter.day < 0)
-                ClockFormatter.day = -ClockFormatter.day;
-
-            // If weird number revert to stock values
-            if (double.IsInfinity(ClockFormatter.day) || double.IsNaN(ClockFormatter.day) || double.IsInfinity(ClockFormatter.year) || double.IsNaN(ClockFormatter.year))
+            if (Templates.customClock)
             {
-                ClockFormatter.year = 9201600;
-                ClockFormatter.day = 21600;
-            }
+                // Find the home planet
+                CelestialBody homePlanet = FlightGlobals.Bodies.First(b => b.isHomeWorld);
 
-            // Replace the stock Formatter
-            KSPUtil.dateTimeFormatter = new ClockFormatter();
+                // Get custom year and day duration
+                if (Templates.useKopernicusTime)
+                {
+                    ClockFormatter.Y.value = homePlanet.orbitDriver.orbit.period;
+                    ClockFormatter.D.value = homePlanet.solarDayLength;
+
+                    // If tidally locked set day = year
+                    if (ClockFormatter.Y.value == homePlanet.rotationPeriod)
+                        ClockFormatter.D.value = ClockFormatter.Y.value;
+                }
+
+                // Convert negative numbers to positive
+                if (ClockFormatter.Y.value < 0)
+                    ClockFormatter.Y.value = -ClockFormatter.Y.value;
+                if (ClockFormatter.D.value < 0)
+                    ClockFormatter.D.value = -ClockFormatter.D.value;
+
+                // If weird number revert to stock values
+                if (double.IsInfinity(ClockFormatter.D.value) || double.IsNaN(ClockFormatter.D.value) || double.IsInfinity(ClockFormatter.Y.value) || double.IsNaN(ClockFormatter.Y.value))
+                {
+                    ClockFormatter.D.value = 3600 * (GameSettings.KERBIN_TIME ? 6 : 24);
+                    ClockFormatter.Y.value = 3600 * (GameSettings.KERBIN_TIME ? 6 * 426 : 24 * 365);
+                }
+
+                // Replace the stock Formatter
+                KSPUtil.dateTimeFormatter = new ClockFormatter();
+            }
         }
     }
 
     public class ClockFormatter : IDateTimeFormatter
     {
         public static KSPUtil.DefaultDateTimeFormatter DTF = new KSPUtil.DefaultDateTimeFormatter();
+                
+        public static class S
+        {
+            public static string singular = "Second";
+            public static string plural = "Seconds";
+            public static string symbol = "s";
+            public static double value = 1;
+        }
 
-        public static double day;
-        public static double year;
+        public static class M
+        {
+            public static string singular = "Min";
+            public static string plural = "Mins";
+            public static string symbol = "m";
+            public static double value = 60;
+        }
+
+        public static class H
+        {
+            public static string singular = "Hour";
+            public static string plural = "Hours";
+            public static string symbol = "h";
+            public static double value = 3600;
+        }
+
+        public static class D
+        {
+            public static string singular = "Day";
+            public static string plural = "Days";
+            public static string symbol = "d";
+            public static double value = 3600 * (GameSettings.KERBIN_TIME ? 6 : 24);
+        }
+
+        public static class Y
+        {
+            public static string singular = "Year";
+            public static string plural = "Years";
+            public static string symbol = "y";
+            public static double value = 3600 * (GameSettings.KERBIN_TIME ? 6 * 426 : 24 * 365);
+        }
+
+
         public static int[] num = new int[6];
-
+         
         public string PrintTimeLong(double time)
         {
             string text = CheckNum(time);
@@ -84,11 +129,11 @@ namespace Kopernicus
 
             GetTime(time);
             StringBuilder sb = StringBuilderCache.Acquire(256);
-            sb.Append(num[1]).Append(num[1] == 1 ? "Year" : "Years").Append(", ");
-            sb.Append(num[5]).Append(num[5] == 1 ? "Day" : "Days").Append(", ");
-            sb.Append(num[4]).Append(num[4] == 1 ? "Hour" : "Hours").Append(", ");
-            sb.Append(num[3]).Append(num[3] == 1 ? "Min" : "Mins").Append(", ");
-            sb.Append(num[2]).Append(num[2] == 1 ? "Sec" : "Secs");
+            sb.Append(num[1]).Append(num[1] == 1 ? Y.singular : Y.plural).Append(", ");
+            sb.Append(num[5]).Append(num[5] == 1 ? D.singular : D.plural).Append(", ");
+            sb.Append(num[4]).Append(num[4] == 1 ? H.singular : H.plural).Append(", ");
+            sb.Append(num[3]).Append(num[3] == 1 ? M.singular : M.plural).Append(", ");
+            sb.Append(num[2]).Append(num[2] == 1 ? S.singular : S.plural);
             return sb.ToStringAndRelease();
         }
 
@@ -99,10 +144,10 @@ namespace Kopernicus
                 return text;
 
             GetTime(time);
-            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
 
             if (years)
-                stringBuilder.Append("Year ").Append(num[1]).Append(", ");
+                stringBuilder.Append(Y.singular + " ").Append(num[1]).Append(", ");
             if (days)
                 stringBuilder.Append("Day ").Append(num[5]).Append(" - ");
 
@@ -123,10 +168,10 @@ namespace Kopernicus
             GetTime(time);
             StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             if (years)
-                stringBuilder.Append(num[1]).Append("y, ");
+                stringBuilder.Append(num[1]).Append(Y.symbol + ", ");
 
             if (days)
-                stringBuilder.Append(num[5]).Append("d, ");
+                stringBuilder.Append(num[5]).Append(D.symbol + ", ");
 
             stringBuilder.AppendFormat("{0:00}:{1:00}", num[4], num[3]);
             if (num[1] < 10)
@@ -143,14 +188,14 @@ namespace Kopernicus
 
             bool flag = time < 0.0;
             GetTime(time);
-            string[] array = { "s", "m", "h", "d", "y" };
-            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+            string[] array = new string[] { S.symbol, M.symbol, H.symbol, D.symbol, Y.symbol };
+            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             if (flag)
                 stringBuilder.Append("- ");
             else if (explicitPositive)
                 stringBuilder.Append("+ ");
 
-            int[] list = { num[2], num[3], num[4], num[5], num[1] };
+            int[] list = new int[] { num[2], num[3], num[4], num[5], num[1] };
             int num0 = list.Length;
             while (num0-- > 0)
             {
@@ -176,7 +221,7 @@ namespace Kopernicus
 
             bool flag = time < 0.0;
             GetTime(time);
-            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             if (flag)
                 stringBuilder.Append("T- ");
             else if (explicitPositive)
@@ -197,25 +242,25 @@ namespace Kopernicus
             if (useAbs && time < 0.0)
                 time = -time;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             GetTime(time);
 
             if (num[1] > 1)
-                stringBuilder.Append(num[1]).Append(" years");
+                stringBuilder.Append(num[1]).Append(" " + Y.plural);
             else if (num[1] == 1)
-                stringBuilder.Append(num[1]).Append(" year");
+                stringBuilder.Append(num[1]).Append(" " + Y.singular);
 
             if (num[5] > 1)
             {
                 if (stringBuilder.Length != 0)
                     stringBuilder.Append(", ");
-                stringBuilder.Append(num[5]).Append(" days");
+                stringBuilder.Append(num[5]).Append(" " + D.plural);
             }
             else if (num[5] == 1)
             {
                 if (stringBuilder.Length != 0)
                     stringBuilder.Append(", ");
-                stringBuilder.Append(num[5]).Append(" day");
+                stringBuilder.Append(num[5]).Append(" " + D.singular);
             }
             if (includeTime)
             {
@@ -223,25 +268,25 @@ namespace Kopernicus
                 {
                     if (stringBuilder.Length != 0)
                         stringBuilder.Append(", ");
-                    stringBuilder.Append(num[4]).Append(" hours");
+                    stringBuilder.Append(num[4]).Append(" " + H.plural);
                 }
                 else if (num[4] == 1)
                 {
                     if (stringBuilder.Length != 0)
                         stringBuilder.Append(", ");
-                    stringBuilder.Append(num[4]).Append(" hour");
+                    stringBuilder.Append(num[4]).Append(" " + H.singular);
                 }
                 if (num[3] > 1)
                 {
                     if (stringBuilder.Length != 0)
                         stringBuilder.Append(", ");
-                    stringBuilder.Append(num[3]).Append(" minutes");
+                    stringBuilder.Append(num[3]).Append(" " + M.plural);
                 }
                 else if (num[3] == 1)
                 {
                     if (stringBuilder.Length != 0)
                         stringBuilder.Append(", ");
-                    stringBuilder.Append(num[3]).Append(" minute");
+                    stringBuilder.Append(num[3]).Append(" " + M.singular);
                 }
                 if (includeSeconds)
                 {
@@ -249,18 +294,18 @@ namespace Kopernicus
                     {
                         if (stringBuilder.Length != 0)
                             stringBuilder.Append(", ");
-                        stringBuilder.Append(num[2]).Append(" seconds");
+                        stringBuilder.Append(num[2]).Append(" " + S.plural);
                     }
                     else if (num[2] == 1)
                     {
                         if (stringBuilder.Length != 0)
                             stringBuilder.Append(", ");
-                        stringBuilder.Append(num[2]).Append(" second");
+                        stringBuilder.Append(num[2]).Append(" " + S.singular);
                     }
                 }
             }
             if (stringBuilder.Length == 0)
-                stringBuilder.Append((!includeTime) ? "0 days" : ((!includeSeconds) ? "0 minutes" : "0 seconds"));
+                stringBuilder.Append((!includeTime) ? "0 " + D.plural : ((!includeSeconds) ? "0 " + M.plural : "0 " + S.plural));
 
             return stringBuilder.ToStringAndRelease();
         }
@@ -274,16 +319,16 @@ namespace Kopernicus
             if (useAbs && time < 0.0)
                 time = -time;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             GetTime(time);
             if (num[1] > 0)
-                stringBuilder.Append(num[1]).Append("y");
+                stringBuilder.Append(num[1]).Append(Y.symbol);
 
             if (num[5] > 0)
             {
                 if (stringBuilder.Length != 0)
                     stringBuilder.Append(", ");
-                stringBuilder.Append(num[5]).Append("d");
+                stringBuilder.Append(num[5]).Append(D.symbol);
             }
             if (includeTime)
             {
@@ -291,23 +336,23 @@ namespace Kopernicus
                 {
                     if (stringBuilder.Length != 0)
                         stringBuilder.Append(", ");
-                    stringBuilder.Append(num[4]).Append("h");
+                    stringBuilder.Append(num[4]).Append(H.symbol);
                 }
                 if (num[3] > 0)
                 {
                     if (stringBuilder.Length != 0)
                         stringBuilder.Append(", ");
-                    stringBuilder.Append(num[3]).Append("m");
+                    stringBuilder.Append(num[3]).Append(M.symbol);
                 }
                 if (includeSeconds && num[2] > 0)
                 {
                     if (stringBuilder.Length != 0)
                         stringBuilder.Append(", ");
-                    stringBuilder.Append(num[2]).Append("s");
+                    stringBuilder.Append(num[2]).Append(S.symbol);
                 }
             }
             if (stringBuilder.Length == 0)
-                stringBuilder.Append((!includeTime) ? "0d" : ((!includeSeconds) ? "0m" : "0s"));
+                stringBuilder.Append((!includeTime) ? "0" + D.symbol : ((!includeSeconds) ? "0" + M.symbol : "0" + S.symbol));
             return stringBuilder.ToStringAndRelease();
         }
 
@@ -319,14 +364,14 @@ namespace Kopernicus
                 return text;
 
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             GetDate(time);
 
-            stringBuilder.Append("Year ").Append(num[1] + 1).Append(", Day ").Append(num[5] + 1);
+            stringBuilder.Append(Y.singular + " ").Append(num[1] + 1).Append(", " + D.singular + " ").Append(num[5] + 1);
             if (includeTime)
-                stringBuilder.Append(" - ").Append(num[4]).Append("h, ").Append(num[3]).Append("m");
+                stringBuilder.Append(" - ").Append(num[4]).Append(H.symbol + ", ").Append(num[3]).Append(M.symbol);
             if (includeSeconds)
-                stringBuilder.Append(", ").Append(num[2]).Append("s");
+                stringBuilder.Append(", ").Append(num[2]).Append(S.symbol);
             return stringBuilder.ToStringAndRelease();
         }
         public string PrintDateNew(double time, bool includeTime)
@@ -335,9 +380,9 @@ namespace Kopernicus
             if (text != null)
                 return text;
 
-            StringBuilder stringBuilder = StringBuilderCache.Acquire();
+            StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             GetDate(time);
-            stringBuilder.Append("Year ").Append(num[1] + 1).Append(", Day ").Append(num[5] + 1);
+            stringBuilder.Append(Y.singular + " ").Append(num[1] + 1).Append(", " + D.singular + " ").Append(num[5] + 1);
             if (includeTime)
                 stringBuilder.AppendFormat(" - {0:D2}:{1:D2}:{2:D2}", num[4], num[3], num[2]);
             return stringBuilder.ToStringAndRelease();
@@ -351,7 +396,7 @@ namespace Kopernicus
 
             StringBuilder stringBuilder = StringBuilderCache.Acquire(256);
             GetDate(time);
-            stringBuilder.AppendFormat("Y{0}, D{1:00}", num[1] + 1, num[5] + 1);
+            stringBuilder.AppendFormat(Y.symbol + "{0}, " + D.symbol + "{1:00}", num[1] + 1, num[5] + 1);
             if (includeTime)
                 stringBuilder.AppendFormat(", {0}:{1:00}", num[4], num[3]);
             if (includeSeconds)
@@ -381,25 +426,21 @@ namespace Kopernicus
             // Day 0 will last untill Day 365 would have ended, then Day 1 will start.
             // This way the time shown by the clock will always be consistent with the position of the sun in the sky
 
-            // Number of seconds in this day
-            int num0 = (int)(time % day);
-
+            // Number of IRL seconds in this day
+            int num0 = (int)(time % D.value);
             // Number of years in this time
-            int num1 = (int)(time / year);
-
+            int num1 = (int)(time / Y.value);
             // Number of seconds in this minute
-            int num2 = num0 % 60;
-
+            int num2 = (int)((num0 % M.value) / S.value);
             // Number of minutes in this hour
-            int num3 = num0 / 60 % 60;
-
+            int num3 = (int)((num0 / M.value) % (H.value / M.value));
             // Number of hours in this day
-            int num4 = num0 / 3600;
-
+            int num4 = (int)(num0 / H.value);
             // Number of days in this year
-            int num5 = (int)(time / day) - (int)(Math.Round(year / day, 0, MidpointRounding.AwayFromZero) * num1);
+            int num5 = (int)(time / D.value) - (int)(Math.Round(Y.value / D.value, 0, MidpointRounding.AwayFromZero) * num1);
 
-            num = new[] { num0, num1, num2, num3, num4, num5 };
+            Debug.Log("SigmaLog: num5 = " + num5);
+            num = new int[] { num0, num1, num2, num3, num4, num5 };
         }
 
         public void GetTime(double time)
@@ -409,12 +450,18 @@ namespace Kopernicus
             // 1 Year, 3 days, and whatever hours-minutes-seconds fit in 0.5 days.
             // ( 10.5 + 3 + 0.5 = 14 )
 
-            int num1 = (int)(time / year);
-            int num2 = (int)(time - (num1 * year));
-            int num3 = num2 / 60 % 60;
-            int num4 = num2 / 3600 % ((int)day / 3600);
-            int num5 = (int)(num2 / year);
-            num2 = num2 % 60;
+            // Number of years in this time
+            int num1 = (int)(time / Y.value);
+            // Number of seconds in this year
+            int num2 = (int)(time - (num1 * Y.value));
+            // Number of minutes in this hour
+            int num3 = (int)((num2 / M.value) % (H.value / M.value));
+            // Number of hours in this day
+            int num4 = (int)((num2 / H.value) % (D.value / H.value));
+            // Number of days in this year
+            int num5 = (int)(num2 / D.value);
+            // Number of seconds in this minute
+            num2 = (int)((num2 % M.value) / S.value);
 
             num = new[] { 0, num1, num2, num3, num4, num5 };
         }

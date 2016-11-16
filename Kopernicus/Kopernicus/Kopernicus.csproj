@@ -55,6 +55,7 @@
     <Compile Include="Configuration\Asteroids\Asteroid.cs" />
     <Compile Include="Configuration\Asteroids\Location.cs" />
     <Compile Include="Configuration\AtmosphereFromGroundLoader.cs" />
+    <Compile Include="Configuration\ClockLoader.cs" />
     <Compile Include="Configuration\DebugLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
