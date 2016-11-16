@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -141,19 +141,19 @@ namespace Kopernicus
                 body.flightGlobalsIndex = counter++;
 
                 // Finalize the Orbit
-                if (Templates.finalizeBodies.Contains(body.transform.name))
+                if (body.Has("finalizeBody"))
                     OrbitLoader.FinalizeOrbit(body);
 
                 // Patch the SOI
-                if (Templates.sphereOfInfluence.ContainsKey(body.transform.name))
-                    body.sphereOfInfluence = Templates.sphereOfInfluence[body.transform.name];
+                if (body.Has("sphereOfInfluence"))
+                    body.sphereOfInfluence = body.Get<double>("sphereOfInfluence");
 
                 // Patch the Hill Sphere
-                if (Templates.hillSphere.ContainsKey(body.transform.name))
-                    body.hillSphere = Templates.hillSphere[body.transform.name];
+                if (body.Has("hillSphere"))
+                    body.hillSphere = body.Get<double>("hillSphere");
 
                 // Make the Body a barycenter
-                if (Templates.barycenters.Contains(body.transform.name))
+                if (body.Has("barycenter"))
                     body.scaledBody.SetActive(false);
 
                 Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);

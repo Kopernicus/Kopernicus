@@ -81,6 +81,7 @@
     <Compile Include="NameChanger.cs" />
     <Compile Include="Scatter.cs" />
     <Compile Include="KopernicusStar.cs" />
+    <Compile Include="StorageComponent.cs" />
     <Compile Include="Wiresphere.cs" />
     <Compile Include="PlanetaryParticle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

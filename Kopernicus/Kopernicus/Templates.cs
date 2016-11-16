@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,40 +41,20 @@ namespace Kopernicus
         public static Mesh ReferenceGeosphere { get; set; }
 
         // Finalize Orbits stuff
-        public static double SOIMinRadiusMult /*{ get; set; }*/ = 2.0d;
-        public static double SOIMinAltitude /*{ get; set; }*/ = 40000d;
+        public static double SOIMinRadiusMult = 2.0d;
+        public static double SOIMinAltitude = 40000d;
 
         // Max view distance
         public static double maxViewDistance = -1d;
 
+        // Use Kopernicus Time
+        public static bool useKopernicusTime = false;
+
         // Global base epoch
         public static double epoch { get; set; }
 
-        // Bodies with finalized Orbits
-        public static List<string> finalizeBodies { get; set; }
-
         // The body that should appear in MainMenu
         public static string menuBody { get; set; }
-
-        // SOI's
-        public static Dictionary<string, double> sphereOfInfluence { get; set; }
-        public static Dictionary<string, double> hillSphere { get; set; }
-
-        // Barycenters
-        public static List<string> barycenters { get; set; }
-
-        // Bodies who aren't selectable
-        public static List<string> notSelectable { get; set; }
-
-        // Orbits
-        public static Dictionary<string, OrbitRenderer.DrawIcons> drawIcons { get; set; }
-        public static Dictionary<string, OrbitRenderer.DrawMode> drawMode { get; set; }
-
-        // RnD
-        public static Dictionary<string, PropertiesLoader.RDVisibility> hiddenRnD { get; set; }
-
-        // Orbit patcher
-        public static Dictionary<string, ConfigNode> orbitPatches { get; set; }
 
         // Initialisation
         static Templates()
@@ -84,19 +64,6 @@ namespace Kopernicus
 
             // Return it's mesh
             ReferenceGeosphere = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
-
-            // Create Dictionaries
-            sphereOfInfluence = new Dictionary<string, double>();
-            hillSphere = new Dictionary<string, double>();
-            drawIcons = new Dictionary<string, OrbitRenderer.DrawIcons>();
-            drawMode = new Dictionary<string, OrbitRenderer.DrawMode>();
-            hiddenRnD = new Dictionary<string, PropertiesLoader.RDVisibility>();
-            orbitPatches = new Dictionary<string, ConfigNode>();
-
-            // Create lists
-            barycenters = new List<string>();
-            notSelectable = new List<string>();
-            finalizeBodies = new List<string>();
 
             // Main Menu body
             menuBody = "Kerbin";

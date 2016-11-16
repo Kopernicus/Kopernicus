@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -130,16 +130,16 @@ namespace Kopernicus
             [ParserTarget("mode")]
             public EnumParser<OrbitRenderer.DrawMode> mode
             {
-                //get { return FlightGlobals.getMainBody(orbit.getPositionAtUT(Planetarium.GetUniversalTime())).orbitDriver.Renderer.drawMode; }
-                set { Templates.drawMode.Add(generatedBody.name, value); }
+                get { return body?.orbitDriver?.Renderer?.drawMode; }
+                set { generatedBody.Set("drawMode", value); }
             }
 
             // Orbit Icon Mode
             [ParserTarget("icon")]
             public EnumParser<OrbitRenderer.DrawIcons> icon
             {
-                //get { return FlightGlobals.getMainBody(orbit.getPositionAtUT(Planetarium.GetUniversalTime())).orbitDriver.Renderer.drawIcons; }
-                set { Templates.drawIcons.Add(generatedBody.name, value); }
+                get { return body?.orbitDriver?.Renderer?.drawIcons; }
+                set { generatedBody.Set("drawIcons", value); }
             }
 
             // Orbit rendering bounds
@@ -199,10 +199,10 @@ namespace Kopernicus
                     if (body.referenceBody != null)
                     {
                         // Only recalculate the SOI, if it's not forced
-                        if (!Templates.hillSphere.ContainsKey(body.transform.name))
+                        if (!body.Has("hillSphere"))
                             body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1.0 / 3.0);
 
-                        if (!Templates.sphereOfInfluence.ContainsKey(body.transform.name))
+                        if (!body.Has("sphereOfInfluence"))
                             body.sphereOfInfluence = Math.Max(
                                 body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4),
                                 Math.Max(body.Radius * Templates.SOIMinRadiusMult, body.Radius + Templates.SOIMinAltitude));

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
@@ -28,19 +28,60 @@
  */
 
 using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Object = System.Object;
 
 namespace Kopernicus
 {
-    namespace Configuration
+    /// <summary>
+    /// A component that stores data in a planet
+    /// </summary>
+    public class StorageComponent : MonoBehaviour
     {
-        /**
-         * Interface a class can implment to support conversion from a string
-         **/
-        public interface IParsable
+        /// <summary>
+        /// The data stored by the component
+        /// </summary>
+        private static Dictionary<String, Dictionary<String, System.Object>> data { get; set; }
+
+        static StorageComponent()
         {
-            // Set value from string
-            void SetFromString (string s);
+            data = new Dictionary<String, Dictionary<String, Object>>();
+        }
+
+        void Awake()
+        {
+            if (!data.ContainsKey(name))
+                data.Add(name, new Dictionary<String, Object>());
+        }
+
+        /// <summary>
+        /// Gets data from the storage
+        /// </summary>
+        public T Get<T>(String id)
+        {
+            if (data.ContainsKey(id))
+                return (T) data[name][id];
+            throw new IndexOutOfRangeException();
+        }
+
+        /// <summary>
+        /// Whether the storage contains this key
+        /// </summary>
+        public Boolean Has(String id)
+        {
+            return data[name].ContainsKey(id);
+        }
+
+        /// <summary>
+        /// Writes data into the storage
+        /// </summary>
+        public void Set<T>(String id, T value)
+        {
+            if (data.ContainsKey(id))
+                data[name][id] = value;
+            else
+                data[name].Add(id, value);
         }
     }
 }
-
