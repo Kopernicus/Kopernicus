@@ -39,7 +39,14 @@ namespace Kopernicus
     {
         public void Start()
         {
-            if (Templates.customClock && ClockFormatter.H.value > ClockFormatter.M.value && ClockFormatter.M.value > ClockFormatter.S.value)
+            if  // Make sure the customClock needs to be used, and all values are defined properly
+            (
+                Templates.customClock &&
+                double.PositiveInfinity > ClockFormatter.H.value &&
+                ClockFormatter.H.value > ClockFormatter.M.value &&
+                ClockFormatter.M.value > ClockFormatter.S.value &&
+                ClockFormatter.S.value > 0
+            )
             {
                 // Find the home planet
                 CelestialBody homePlanet = FlightGlobals.Bodies.First(b => b.isHomeWorld);
