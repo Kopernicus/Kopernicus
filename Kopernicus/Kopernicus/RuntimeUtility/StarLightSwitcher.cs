@@ -75,7 +75,7 @@ namespace Kopernicus
                     sp.trackingTransformLocal = celestialBody.transform;
                     if (celestialBody.scaledBody)
                     {
-                        sp.trackingTransformLocal = celestialBody.scaledBody.transform;
+                        sp.trackingTransformScaled = celestialBody.scaledBody.transform;
                     }
                 }
 
@@ -85,7 +85,7 @@ namespace Kopernicus
                     rad.trackingTransformLocal = celestialBody.transform;
                     if (celestialBody.scaledBody)
                     {
-                        rad.trackingTransformLocal = celestialBody.scaledBody.transform;
+                        rad.trackingTransformScaled = celestialBody.scaledBody.transform;
                     }
                 }
             }
