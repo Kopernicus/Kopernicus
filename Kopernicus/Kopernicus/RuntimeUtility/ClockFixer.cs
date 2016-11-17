@@ -39,7 +39,7 @@ namespace Kopernicus
     {
         public void Start()
         {
-            if (Templates.customClock)
+            if (Templates.customClock && ClockFormatter.H.value > ClockFormatter.M.value && ClockFormatter.M.value > ClockFormatter.S.value)
             {
                 // Find the home planet
                 CelestialBody homePlanet = FlightGlobals.Bodies.First(b => b.isHomeWorld);
@@ -426,20 +426,24 @@ namespace Kopernicus
             // Day 0 will last untill Day 365 would have ended, then Day 1 will start.
             // This way the time shown by the clock will always be consistent with the position of the sun in the sky
 
-            // Number of IRL seconds in this day
-            int num0 = (int)(time % D.value);
-            // Number of years in this time
+            // Current Year
             int num1 = (int)(time / Y.value);
-            // Number of seconds in this minute
-            int num2 = (int)((num0 % M.value) / S.value);
-            // Number of minutes in this hour
-            int num3 = (int)((num0 / M.value) % (H.value / M.value));
+            // Current Day
+            int num5 = (int)(time / D.value) - (int)(Math.Round(Y.value / D.value, 0, MidpointRounding.AwayFromZero) * num1);
+            // Time left to count
+            double num0 = time % D.value;
             // Number of hours in this day
             int num4 = (int)(num0 / H.value);
-            // Number of days in this year
-            int num5 = (int)(time / D.value) - (int)(Math.Round(Y.value / D.value, 0, MidpointRounding.AwayFromZero) * num1);
+            // Time left to count
+            num0 = num0 - num4 * H.value;
+            // Number of minutes in this hour
+            int num3 = (int)(num0 / M.value);
+            // Time left to count
+            num0 = num0 - num3 * M.value;
+            // Number of seconds in this minute
+            int num2 = (int)(num0 / S.value);
             
-            num = new int[] { num0, num1, num2, num3, num4, num5 };
+            num = new int[] { 0, num1, num2, num3, num4, num5 };
         }
 
         public void GetTime(double time)
@@ -449,18 +453,24 @@ namespace Kopernicus
             // 1 Year, 3 days, and whatever hours-minutes-seconds fit in 0.5 days.
             // ( 10.5 + 3 + 0.5 = 14 )
 
-            // Number of years in this time
+            // Number of years
             int num1 = (int)(time / Y.value);
-            // Number of seconds in this year
-            int num2 = (int)(time - (num1 * Y.value));
-            // Number of minutes in this hour
-            int num3 = (int)((num2 / M.value) % (H.value / M.value));
-            // Number of hours in this day
-            int num4 = (int)((num2 / H.value) % (D.value / H.value));
-            // Number of days in this year
-            int num5 = (int)(num2 / D.value);
-            // Number of seconds in this minute
-            num2 = (int)((num2 % M.value) / S.value);
+            // Time left to count
+            double num0 = time - num1 * Y.value;
+            // Number of days
+            int num5 = (int)(num0 / D.value);
+            // Time left to count
+            num0 = num0 - num5 * D.value;
+            // Number of hours
+            int num4 = (int)(num0 / H.value);
+            // Time left to count
+            num0 = num0 - num4 * H.value;
+            // Number of minutes
+            int num3 = (int)(num0 / M.value);
+            // Time left to count
+            num0 = num0 - num3 * M.value;
+            // Number of seconds
+            int num2 = (int)(num0 / S.value);
 
             num = new[] { 0, num1, num2, num3, num4, num5 };
         }
