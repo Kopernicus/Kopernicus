@@ -68,15 +68,15 @@ namespace Kopernicus
                 if (ClockFormatter.D.value < 0)
                     ClockFormatter.D.value = -ClockFormatter.D.value;
 
-                // If weird number revert to stock values
+                // If weird numbers, abort
                 if (double.IsInfinity(ClockFormatter.D.value) || double.IsNaN(ClockFormatter.D.value) || double.IsInfinity(ClockFormatter.Y.value) || double.IsNaN(ClockFormatter.Y.value))
                 {
-                    ClockFormatter.D.value = 3600 * (GameSettings.KERBIN_TIME ? 6 : 24);
-                    ClockFormatter.Y.value = 3600 * (GameSettings.KERBIN_TIME ? 6 * 426 : 24 * 365);
+                    Templates.customClock = false;
                 }
 
                 // Replace the stock Formatter
-                KSPUtil.dateTimeFormatter = new ClockFormatter();
+                if (Templates.customClock)
+                    KSPUtil.dateTimeFormatter = new ClockFormatter();
             }
         }
     }
