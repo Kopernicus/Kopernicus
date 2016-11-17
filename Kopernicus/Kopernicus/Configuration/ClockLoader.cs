@@ -27,12 +27,6 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using Kopernicus.Components;
-
 namespace Kopernicus
 {
     namespace Configuration
@@ -43,23 +37,23 @@ namespace Kopernicus
         {
             // Load custom definition of seconds
             [ParserTarget("Second", allowMerge = true)]
-            public Second second { get; set; }
+            public ClockFormatLoader second = new ClockFormatLoader("Second", "Seconds", "s", 1);
 
             // Load custom definition of minute
             [ParserTarget("Minute", allowMerge = true)]
-            public Minute minute { get; set; }
+            public ClockFormatLoader minute = new ClockFormatLoader("Minute", "Minutes", "m", 60);
 
             // Load custom definition of hour
             [ParserTarget("Hour", allowMerge = true)]
-            public Hour hour { get; set; }
+            public ClockFormatLoader hour = new ClockFormatLoader("Hour", "Hours", "h", 3600);
 
             // Load custom definition of day
             [ParserTarget("Day", allowMerge = true)]
-            public Day day { get; set; }
+            public ClockFormatLoader day = new ClockFormatLoader("Day", "Days", "d", 3600 * (GameSettings.KERBIN_TIME ? 6 : 24));
 
             // Load custom definition of year
             [ParserTarget("Year", allowMerge = true)]
-            public Year year { get; set; }
+            public ClockFormatLoader year = new ClockFormatLoader("Year", "Years", "y", 3600 * (GameSettings.KERBIN_TIME ? 6 * 426 : 24 * 365));
 
             // Parser Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)
@@ -70,48 +64,28 @@ namespace Kopernicus
             // Parser Post Apply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                ClockFormatter.S = second;
+                ClockFormatter.M = minute;
+                ClockFormatter.H = hour;
+                ClockFormatter.D = day;
+                ClockFormatter.Y = year;
             }
         }
 
-        // Load Second Definition
         [RequireConfigType(ConfigType.Node)]
-        public class Second : BaseLoader, IParserEventSubscriber
+        public class ClockFormatLoader : BaseLoader, IParserEventSubscriber
         {
-            // Second.singular
             [ParserTarget("singular")]
-            public string singular
-            {
-                get { return ClockFormatter.S.singular; }
-                set
-                {
-                    ClockFormatter.S.singular = value;
-                    ClockFormatter.S.plural = value + "s";
-                }
-            }
+            public string singular;
 
-            // Second.plural
             [ParserTarget("plural")]
-            public string plural
-            {
-                get { return ClockFormatter.S.plural; }
-                set { ClockFormatter.S.plural = value; }
-            }
+            public string plural;
 
-            // Second.symbol
             [ParserTarget("symbol")]
-            public string symbol
-            {
-                get { return ClockFormatter.S.symbol; }
-                set { ClockFormatter.S.symbol = value; }
-            }
+            public string symbol;
 
-            // Second.value
             [ParserTarget("value")]
-            public NumericParser<double> value
-            {
-                get { return ClockFormatter.S.value; }
-                set { ClockFormatter.S.value = value; }
-            }
+            public NumericParser<double> value;
 
             // Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)
@@ -122,209 +96,13 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
             }
-        }
 
-        // Load Minute Definition
-        [RequireConfigType(ConfigType.Node)]
-        public class Minute : BaseLoader, IParserEventSubscriber
-        {
-            // Minute.singular
-            [ParserTarget("singular")]
-            public string singular
+            public ClockFormatLoader(string singular, string plural, string symbol, double value)
             {
-                get { return ClockFormatter.M.singular; }
-                set
-                {
-                    ClockFormatter.M.singular = value;
-                    ClockFormatter.M.plural = value + "s";
-                }
-            }
-
-            // Minute.plural
-            [ParserTarget("plural")]
-            public string plural
-            {
-                get { return ClockFormatter.M.plural; }
-                set { ClockFormatter.M.plural = value; }
-            }
-
-            // Minute.symbol
-            [ParserTarget("symbol")]
-            public string symbol
-            {
-                get { return ClockFormatter.M.symbol; }
-                set { ClockFormatter.M.symbol = value; }
-            }
-
-            // Minute.value
-            [ParserTarget("value")]
-            public NumericParser<double> value
-            {
-                get { return ClockFormatter.M.value; }
-                set { ClockFormatter.M.value = value; }
-            }
-
-            // Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-            }
-
-            // Parser Post Apply Event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-            }
-        }
-
-        // Load Minute Definition
-        [RequireConfigType(ConfigType.Node)]
-        public class Hour : BaseLoader, IParserEventSubscriber
-        {
-            // Hour.singular
-            [ParserTarget("singular")]
-            public string singular
-            {
-                get { return ClockFormatter.H.singular; }
-                set
-                {
-                    ClockFormatter.H.singular = value;
-                    ClockFormatter.H.plural = value + "s";
-                }
-            }
-
-            // Hour.plural
-            [ParserTarget("plural")]
-            public string plural
-            {
-                get { return ClockFormatter.H.plural; }
-                set { ClockFormatter.H.plural = value; }
-            }
-
-            // Hour.symbol
-            [ParserTarget("symbol")]
-            public string symbol
-            {
-                get { return ClockFormatter.H.symbol; }
-                set { ClockFormatter.H.symbol = value; }
-            }
-
-            // Hour.value
-            [ParserTarget("value")]
-            public NumericParser<double> value
-            {
-                get { return ClockFormatter.H.value; }
-                set { ClockFormatter.H.value = value; }
-            }
-
-            // Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-            }
-
-            // Parser Post Apply Event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-            }
-        }
-
-        // Load Minute Definition
-        [RequireConfigType(ConfigType.Node)]
-        public class Day : BaseLoader, IParserEventSubscriber
-        {
-            // Day.singular
-            [ParserTarget("singular")]
-            public string singular
-            {
-                get { return ClockFormatter.D.singular; }
-                set
-                {
-                    ClockFormatter.D.singular = value;
-                    ClockFormatter.D.plural = value + "s";
-                }
-            }
-
-            // Day.plural
-            [ParserTarget("plural")]
-            public string plural
-            {
-                get { return ClockFormatter.D.plural; }
-                set { ClockFormatter.D.plural = value; }
-            }
-
-            // Day.symbol
-            [ParserTarget("symbol")]
-            public string symbol
-            {
-                get { return ClockFormatter.D.symbol; }
-                set { ClockFormatter.D.symbol = value; }
-            }
-
-            // Day.value
-            [ParserTarget("value")]
-            public NumericParser<double> value
-            {
-                get { return ClockFormatter.D.value; }
-                set { ClockFormatter.D.value = value; }
-            }
-
-            // Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-            }
-
-            // Parser Post Apply Event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-            }
-        }
-
-        // Load Year Definition
-        [RequireConfigType(ConfigType.Node)]
-        public class Year : BaseLoader, IParserEventSubscriber
-        {
-            // Year.singular
-            [ParserTarget("singular")]
-            public string singular
-            {
-                get { return ClockFormatter.Y.singular; }
-                set
-                {
-                    ClockFormatter.Y.singular = value;
-                    ClockFormatter.Y.plural = value + "s";
-                }
-            }
-
-            // Year.plural
-            [ParserTarget("plural")]
-            public string plural
-            {
-                get { return ClockFormatter.Y.plural; }
-                set { ClockFormatter.Y.plural = value; }
-            }
-
-            // Year.symbol
-            [ParserTarget("symbol")]
-            public string symbol
-            {
-                get { return ClockFormatter.Y.symbol; }
-                set { ClockFormatter.Y.symbol = value; }
-            }
-
-            // Year.value
-            [ParserTarget("value")]
-            public NumericParser<double> value
-            {
-                get { return ClockFormatter.Y.value; }
-                set { ClockFormatter.Y.value = value; }
-            }
-
-            // Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-            }
-
-            // Parser Post Apply Event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
+                this.singular = singular;
+                this.plural = plural;
+                this.symbol = symbol;
+                this.value = value;
             }
         }
     }

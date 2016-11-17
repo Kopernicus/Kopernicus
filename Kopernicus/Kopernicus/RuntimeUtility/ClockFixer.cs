@@ -31,6 +31,7 @@ using System;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Kopernicus.Configuration;
 
 namespace Kopernicus
 {
@@ -84,50 +85,15 @@ namespace Kopernicus
     public class ClockFormatter : IDateTimeFormatter
     {
         public static KSPUtil.DefaultDateTimeFormatter DTF = new KSPUtil.DefaultDateTimeFormatter();
-                
-        public static class S
-        {
-            public static string singular = "Second";
-            public static string plural = "Seconds";
-            public static string symbol = "s";
-            public static double value = 1;
-        }
 
-        public static class M
-        {
-            public static string singular = "Min";
-            public static string plural = "Mins";
-            public static string symbol = "m";
-            public static double value = 60;
-        }
-
-        public static class H
-        {
-            public static string singular = "Hour";
-            public static string plural = "Hours";
-            public static string symbol = "h";
-            public static double value = 3600;
-        }
-
-        public static class D
-        {
-            public static string singular = "Day";
-            public static string plural = "Days";
-            public static string symbol = "d";
-            public static double value = 3600 * (GameSettings.KERBIN_TIME ? 6 : 24);
-        }
-
-        public static class Y
-        {
-            public static string singular = "Year";
-            public static string plural = "Years";
-            public static string symbol = "y";
-            public static double value = 3600 * (GameSettings.KERBIN_TIME ? 6 * 426 : 24 * 365);
-        }
-
+        public static ClockFormatLoader S;
+        public static ClockFormatLoader M;
+        public static ClockFormatLoader H;
+        public static ClockFormatLoader D;
+        public static ClockFormatLoader Y;
 
         public static int[] num = new int[6];
-         
+
         public string PrintTimeLong(double time)
         {
             string text = CheckNum(time);
@@ -449,7 +415,7 @@ namespace Kopernicus
             num0 = num0 - num3 * M.value;
             // Number of seconds in this minute
             int num2 = (int)(num0 / S.value);
-            
+
             num = new int[] { 0, num1, num2, num3, num4, num5 };
         }
 
@@ -492,7 +458,7 @@ namespace Kopernicus
         }
         public int Day
         {
-            get {  return Hour * 6; }
+            get { return Hour * 6; }
         }
         public int Year
         {
