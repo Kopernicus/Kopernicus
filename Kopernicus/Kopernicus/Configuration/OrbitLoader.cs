@@ -131,7 +131,7 @@ namespace Kopernicus
             public EnumParser<OrbitRenderer.DrawMode> mode
             {
                 get { return body?.orbitDriver?.Renderer?.drawMode; }
-                set { generatedBody.Set("drawMode", value); }
+                set { generatedBody.Set("drawMode", value.value); }
             }
 
             // Orbit Icon Mode
@@ -139,7 +139,7 @@ namespace Kopernicus
             public EnumParser<OrbitRenderer.DrawIcons> icon
             {
                 get { return body?.orbitDriver?.Renderer?.drawIcons; }
-                set { generatedBody.Set("drawIcons", value); }
+                set { generatedBody.Set("drawIcons", value.value); }
             }
 
             // Orbit rendering bounds

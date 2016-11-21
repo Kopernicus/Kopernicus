@@ -28,6 +28,7 @@
  */
 
 using System;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -41,8 +42,8 @@ namespace Kopernicus
         /// </summary>
         public static T Get<T>(this CelestialBody body, String id)
         {
-            StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
-            return c.Get<T>(id);
+            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
+            return c != null ? c.Get<T>(id) : default(T);
         }
 
         /// <summary>
@@ -58,8 +59,8 @@ namespace Kopernicus
         /// </summary>
         public static Boolean Has(this CelestialBody body, String id)
         {
-            StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
-            return c.Has(id);
+            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
+            return c?.Has(id) ?? false;
         }
 
         /// <summary>
@@ -75,8 +76,8 @@ namespace Kopernicus
         /// </summary>
         public static void Set<T>(this CelestialBody body, String id, T value)
         {
-            StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
-            c.Set<T>(id, value);
+            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
+            c?.Set<T>(id, value);
         }
 
         /// <summary>

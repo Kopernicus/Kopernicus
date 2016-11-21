@@ -168,7 +168,7 @@ namespace Kopernicus
             public NumericParser<double> sphereOfInfluence
             {
                 get { return celestialBody.Has("sphereOfInfluence") ? celestialBody.Get<double>("sphereOfInfluence") : celestialBody.sphereOfInfluence; }
-                set { celestialBody.sphereOfInfluence = value; celestialBody.Set("sphereOfInfluence", value); }
+                set { celestialBody.sphereOfInfluence = value; celestialBody.Set("sphereOfInfluence", value.value); }
             }
 
             // Hill Sphere
@@ -176,7 +176,7 @@ namespace Kopernicus
             public NumericParser<double> hillSphere
             {
                 get { return celestialBody.Has("hillSphere") ? celestialBody.Get<double>("hillSphere") : celestialBody.hillSphere; }
-                set { celestialBody.hillSphere = value; celestialBody.Set("hillSphere", value); }
+                set { celestialBody.hillSphere = value; celestialBody.Set("hillSphere", value.value); }
             }
 
             // solarRotationPeriod
@@ -270,7 +270,7 @@ namespace Kopernicus
                         return celestialBody.Get<RDVisibility>("hiddenRnD");
                     return RDVisibility.VISIBLE;
                 }
-                set { celestialBody.Set("hiddenRnD", value); }
+                set { celestialBody.Set("hiddenRnD", value.value); }
             }
 
             // How visible should the planet be in the science archives
@@ -288,7 +288,7 @@ namespace Kopernicus
             public NumericParser<float> minDistance
             {
                 get { return celestialBody.Has("maxZoom") ? celestialBody.Get<float>("maxZoom") : 10 * 6000f; }
-                set { celestialBody.Set("maxZoom", value / 6000f); }
+                set { celestialBody.Set("maxZoom", value.value / 6000f); }
             }
             
             // Apply Event

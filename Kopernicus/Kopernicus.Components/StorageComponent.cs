@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -37,6 +38,7 @@ namespace Kopernicus
     /// <summary>
     /// A component that stores data in a planet
     /// </summary>
+    [RequireComponent(typeof(CelestialBody))]
     public class StorageComponent : MonoBehaviour
     {
         /// <summary>
@@ -49,10 +51,15 @@ namespace Kopernicus
             data = new Dictionary<String, Dictionary<String, Object>>();
         }
 
+        private CelestialBody body
+        {
+            get { return GetComponent<CelestialBody>(); }
+        }
+
         void Awake()
         {
-            if (!data.ContainsKey(name))
-                data.Add(name, new Dictionary<String, Object>());
+            if (!data.ContainsKey(Unify(body.transform.name)))
+                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
         }
 
         /// <summary>
@@ -60,8 +67,10 @@ namespace Kopernicus
         /// </summary>
         public T Get<T>(String id)
         {
-            if (data.ContainsKey(id))
-                return (T) data[name][id];
+            if (!data.ContainsKey(Unify(body.transform.name)))
+                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
+            if (data[Unify(body.transform.name)].ContainsKey(id))
+                return (T) data[Unify(body.transform.name)][id];
             throw new IndexOutOfRangeException();
         }
 
@@ -70,7 +79,9 @@ namespace Kopernicus
         /// </summary>
         public Boolean Has(String id)
         {
-            return data[name].ContainsKey(id);
+            if (!data.ContainsKey(Unify(body.transform.name)))
+                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
+            return data[Unify(body.transform.name)].ContainsKey(id);
         }
 
         /// <summary>
@@ -78,10 +89,17 @@ namespace Kopernicus
         /// </summary>
         public void Set<T>(String id, T value)
         {
-            if (data.ContainsKey(id))
-                data[name][id] = value;
+            if (!data.ContainsKey(Unify(body.transform.name)))
+                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
+            if (data[Unify(body.transform.name)].ContainsKey(id))
+                data[Unify(body.transform.name)][id] = value;
             else
-                data[name].Add(id, value);
+                data[Unify(body.transform.name)].Add(id, value);
+        }
+
+        private String Unify(String id)
+        {
+            return id.Replace("(Clone)", "").Trim();
         }
     }
 }
