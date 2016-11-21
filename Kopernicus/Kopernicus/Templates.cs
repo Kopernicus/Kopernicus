@@ -50,6 +50,9 @@ namespace Kopernicus
         // Use Kopernicus Time
         public static bool useKopernicusTime = false;
 
+        // Use Custom Clock
+        public static bool customClock = false;
+
         // Global base epoch
         public static double epoch { get; set; }
 

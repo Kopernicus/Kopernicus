@@ -146,14 +146,23 @@ namespace Kopernicus
                 set { ScaledSpaceFader.faderMult = value; }
             }
 
-            // If the custom Kopernicus clock is used
+            // If the home planet's time is used
             [ParserTarget("useKopernicusTime")]
             public NumericParser<bool> useKopernicusTime
             {
                 get { return Templates.useKopernicusTime; }
-                set { Templates.useKopernicusTime = value; }
+                set
+                {
+                    Templates.useKopernicusTime = value;
+                    if (value)
+                        Templates.customClock = true;
+                }
             }
-
+            
+            // KopernicusTime
+            [ParserTarget("KopernicusTime", allowMerge = true)]
+            public ClockLoader clockLoader { get; set; }
+            
             // Instance
             public Loader()
             {
