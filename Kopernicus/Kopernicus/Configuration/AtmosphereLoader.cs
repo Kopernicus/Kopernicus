@@ -237,6 +237,10 @@ namespace Kopernicus
                 set { celestialBody.atmosphericAmbientColor = value.value; }
             }
 
+            // AFG
+            [ParserTarget("AtmosphereFromGround", allowMerge = true)]
+            public AtmosphereFromGroundLoader atmosphereFromGround { get; set; }
+
             // light color
             [ParserTarget("lightColor")]
             public ColorParser lightColor 
@@ -244,10 +248,6 @@ namespace Kopernicus
                 get { return atmosphereFromGround.waveLength; }
                 set { atmosphereFromGround.waveLength = value; }
             }
-
-            // AFG
-            [ParserTarget("AtmosphereFromGround", allowMerge = true)]
-            public AtmosphereFromGroundLoader atmosphereFromGround { get; set; }
 
             // Parser apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
