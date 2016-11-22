@@ -6,7 +6,7 @@ November 21th, 2016
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.2.1-2)
+New in this version (1.2.1-3)
 -------------------
 * Added maxZoom setting in Properties, for the Tracking Station
 * RDVisibility.HIDDEN now hides only the tagged body 
