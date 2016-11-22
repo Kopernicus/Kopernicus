@@ -245,8 +245,13 @@ namespace Kopernicus
             [ParserTarget("lightColor")]
             public ColorParser lightColor 
             {
-                get { return atmosphereFromGround.waveLength; }
-                set { atmosphereFromGround.waveLength = value; }
+                get { return atmosphereFromGround?.waveLength; }
+                set
+                {
+                    if (atmosphereFromGround == null)
+                        atmosphereFromGround = new AtmosphereFromGroundLoader();
+                    atmosphereFromGround.waveLength = value;
+                }
             }
 
             // Parser apply event
@@ -278,7 +283,7 @@ namespace Kopernicus
 
                     // Setup known defaults
                     celestialBody.atmospherePressureSeaLevel = 1.0f;
-                }
+                }                    
             }
 
             // Parser post apply event
