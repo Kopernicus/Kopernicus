@@ -139,7 +139,7 @@ namespace Kopernicus
                                 // Load the Loader (lol)
                                 if (loader != null)
                                 {
-                                    Parser.LoadObjectFromConfigurationNode(loader, lcNode);
+                                    Parser.LoadObjectFromConfigurationNode(loader, lcNode, "Kopernicus");
                                     landClasses.Remove(loader);
                                     patchedClasses.Add(loader.landClassNoise);
                                 }
@@ -148,7 +148,7 @@ namespace Kopernicus
                             // If we can't patch a LandClass, create a new one
                             if (loader == null)
                             {
-                                loader = Parser.CreateObjectFromConfigNode<LandClassLoaderNoise>(lcNode);
+                                loader = Parser.CreateObjectFromConfigNode<LandClassLoaderNoise>(lcNode, "Kopernicus");
                             }
 
                             // Add the Loader to the List

@@ -389,21 +389,21 @@ namespace Kopernicus
                         if (existingMod != null)
                         {
                             create.Invoke(loader, new[] { existingMod });
-                            Parser.LoadObjectFromConfigurationNode(loader, mod);
+                            Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
                             patchedMods.Add(existingMod);
                             Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
                         }
                         else
                         {
                             createNew.Invoke(loader, null);
-                            Parser.LoadObjectFromConfigurationNode(loader, mod);
+                            Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
                             Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                         }
                     }
                     else
                     {
                         createNew.Invoke(loader, null);
-                        Parser.LoadObjectFromConfigurationNode(loader, mod);
+                        Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
                         Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
                 }

@@ -74,6 +74,9 @@ namespace Kopernicus
             Logger.Default.SetAsActive();
             Logger.Default.Log("Injector.Awake(): Begin");
 
+            // Parser Config
+            ParserOptions.Register("Kopernicus", new ParserOptions.Data { errorCallback = e => Logger.Active.LogException(e), logCallback = s => Logger.Active.Log(s)});
+
             // Yo garbage collector - we have work to do man
             DontDestroyOnLoad(this);
 
@@ -95,7 +98,7 @@ namespace Kopernicus
             ConfigNode kopernicus = GameDatabase.Instance.GetConfigs(rootNodeName)[0].config;
 
             // THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
-            PSystemManager.Instance.systemPrefab = Parser.CreateObjectFromConfigNode<Loader>(kopernicus).systemPrefab;
+            PSystemManager.Instance.systemPrefab = Parser.CreateObjectFromConfigNode<Loader>(kopernicus, "Kopernicus").systemPrefab;
 
             // Clear space center instance so it will accept nouveau Kerbin
             SpaceCenter.Instance = null;

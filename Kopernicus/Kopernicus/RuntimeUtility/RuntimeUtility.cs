@@ -137,7 +137,7 @@ namespace Kopernicus
                 {
                     ConfigNode orbitNode = body.Get<ConfigNode>("orbitPatches");
                     OrbitLoader loader = new OrbitLoader(body);
-                    Parser.LoadObjectFromConfigurationNode(loader, orbitNode);
+                    Parser.LoadObjectFromConfigurationNode(loader, orbitNode, "Kopernicus");
                     body.orbitDriver.orbit = loader.orbit;
                     CelestialBody oldRef = body.referenceBody;
                     body.referenceBody.orbitingBodies.Remove(body);

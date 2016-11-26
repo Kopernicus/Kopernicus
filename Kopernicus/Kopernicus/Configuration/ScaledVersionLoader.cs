@@ -123,11 +123,11 @@ namespace Kopernicus
                         {
                             newMaterial = new ScaledPlanetRimAerialLoader (material);
                             if(data != null)
-                                Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+                                Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
                         } 
                         else
                         {
-                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data);
+                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
                         if (newMaterial.rimColorRamp != null)
@@ -146,11 +146,11 @@ namespace Kopernicus
                         {
                             newMaterial = new ScaledPlanetSimpleLoader (material);
                             if(data != null)
-                                Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+                                Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
                         } 
                         else
                         {
-                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data);
+                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
                         scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
@@ -179,11 +179,11 @@ namespace Kopernicus
                     {
                         newMaterial = new EmissiveMultiRampSunspotsLoader (material);
                         if(data != null)
-                            Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+                            Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
                     }
                     else
                     {
-                        newMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader> (data);
+                        newMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader> (data, "Kopernicus");
                     }
 
                     newMaterial.name = Guid.NewGuid().ToString();

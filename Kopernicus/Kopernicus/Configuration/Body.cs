@@ -268,7 +268,7 @@ namespace Kopernicus
                     generatedBody.celestialBody.gameObject.AddComponent<Wiresphere>();
 
                 // Loads external parser targets
-                Parser.LoadExternalParserTargets(node);
+                Parser.LoadExternalParserTargets(node, "Kopernicus");
 
                 // Post gen celestial body
                 Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");

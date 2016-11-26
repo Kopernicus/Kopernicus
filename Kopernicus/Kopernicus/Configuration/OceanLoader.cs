@@ -275,21 +275,21 @@ namespace Kopernicus
                         if (existingMod != null)
                         {
                             create.Invoke(loader, new object[] { existingMod, ocean });
-                            Parser.LoadObjectFromConfigurationNode(loader, mod);
+                            Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
                             patchedMods.Add(existingMod);
                             Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
                         }
                         else
                         {
                             createNew.Invoke(loader, new object[] { ocean });
-                            Parser.LoadObjectFromConfigurationNode(loader, mod);
+                            Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
                             Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                         }
                     }
                     else
                     {
                         createNew.Invoke(loader, new object[] { ocean });
-                        Parser.LoadObjectFromConfigurationNode(loader, mod);
+                        Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
                         Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
                 }
