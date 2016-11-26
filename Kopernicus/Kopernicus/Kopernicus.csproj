@@ -129,7 +129,6 @@
     <Compile Include="Constants\Version.cs" />
     <Compile Include="RuntimeUtility\RnDFixer.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
-    <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeUtility\RuntimeUtility.cs" />
     <Compile Include="RuntimeUtility\ClockFixer.cs" />
