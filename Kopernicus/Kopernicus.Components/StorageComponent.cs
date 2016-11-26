@@ -97,6 +97,19 @@ namespace Kopernicus
                 data[Unify(body.transform.name)].Add(id, value);
         }
 
+        /// <summary>
+        /// Removes data from the storage
+        /// </summary>
+        public void Remove(String id)
+        {
+            if (!data.ContainsKey(Unify(body.transform.name)))
+                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
+            if(data[Unify(body.transform.name)].ContainsKey(id))
+                data[Unify(body.transform.name)].Remove(id);
+            else
+                throw new IndexOutOfRangeException();
+        }
+
         private String Unify(String id)
         {
             return id.Replace("(Clone)", "").Trim();

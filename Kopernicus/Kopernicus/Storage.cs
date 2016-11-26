@@ -87,5 +87,22 @@ namespace Kopernicus
         {
             body.celestialBody.Set<T>(id, value);
         }
+
+        /// <summary>
+        /// Removes an element from the internal storage
+        /// </summary>
+        public static void Remove(this CelestialBody body, String id)
+        {
+            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
+            c?.Remove(id);
+        }
+
+        /// <summary>
+        /// Removes an element from the internal storage
+        /// </summary>
+        public static void Remove(this PSystemBody body, String id)
+        {
+            body.celestialBody.Remove(id);
+        }
     }
 }
