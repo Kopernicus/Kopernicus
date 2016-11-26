@@ -38,6 +38,37 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        // Alternative parser for Vector3
+        [RequireConfigType(ConfigType.Node)]
+        public class PositionParser : BaseLoader
+        {
+            // Latitude
+            [ParserTarget("latitude")]
+            public NumericParser<double> latitude { get; set; }
+
+            // Longitude
+            [ParserTarget("longitude")]
+            public NumericParser<double> longitude { get; set; }
+
+            // Altitude
+            [ParserTarget("altitude")]
+            public NumericParser<double> altitude { get; set; }
+
+            // Default Constructor
+            public PositionParser()
+            {
+                latitude = new NumericParser<double>(0);
+                longitude = new NumericParser<double>(0);
+                altitude = new NumericParser<double>(0);
+            }
+
+            // Convert
+            public static implicit operator Vector3(PositionParser parser)
+            {
+                return Utility.LLAtoECEF(parser.latitude, parser.longitude, parser.altitude, generatedBody.celestialBody.Radius);
+            }
+        }
+
         // Parser for Texture2D
         [RequireConfigType(ConfigType.Value)]
         public class Texture2DParser : IParsable
