@@ -3,7 +3,7 @@
  * ====================================
  * Created by: Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P.
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -18,11 +18,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright 2011-2016 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -30,26 +30,27 @@ using System;
 
 namespace Kopernicus
 {
-	namespace Configuration
-	{
-		/**
-		 * Attribute used to tag a class in another library to add it to the ParserTargets for Body
-		 **/
-		[AttributeUsage(AttributeTargets.Class)]
-		public class ExternalParserTarget : Attribute
-		{
-			// Like the ParserTarget, if null, this will be determined via reflection
-			public string configNodeName = null;
+    /// <summary>
+    /// Attribute used to tag a class in another library to add it to the ParserTargets
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ParserTargetExternal : Attribute
+    {
+        /// <summary>
+        /// Like the ParserTarget, if null, this will be determined via reflection
+        /// </summary>
+        public String configNodeName;
 
-			// The parser will look for this in the node with this name
-			public string parentNodeName = "Body";
+        /// <summary>
+        /// The parser will look for this in the node with this name
+        /// </summary>
+        public String parentNodeName;
 
-			// Constructor sets name
-			public ExternalParserTarget(string configNodeName = null)
-			{
-				this.configNodeName = configNodeName;
-			}
-		}
-	}
+        // Constructor sets name
+        public ParserTargetExternal(String parentNodeName, String configNodeName)
+        {
+            this.parentNodeName = parentNodeName;
+            this.configNodeName = configNodeName;
+        }
+    }
 }
-

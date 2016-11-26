@@ -3,7 +3,7 @@
  * ====================================
  * Created by: Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P.
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -18,11 +18,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright 2011-2016 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -30,21 +30,23 @@ using System;
 
 namespace Kopernicus
 {
-    namespace Configuration
+    /// <summary>
+    /// Attribute indicating a target collection
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    public class ParserTargetCollection : ParserTarget
     {
-        /* Attribute indicating a target collection */
-        [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-        public class ParserTargetCollection : ParserTarget
-        {
-            // Node name significance - does the name mean anything
-            public NameSignificance nameSignificance = NameSignificance.None;
+        /// <summary>
+        /// Node name significance - does the name mean anything
+        /// </summary>
+        public NameSignificance nameSignificance = NameSignificance.None;
 
-            // Namespace of any generated classes for NameSignificance.Type
-            public string typePrefix = "";
+        /// <summary>
+        /// Namespace of any generated classes for NameSignificance.Type
+        /// </summary>
+        public String typePrefix = "";
 
-            // Constructor sets name
-            public ParserTargetCollection(string fieldName = null) : base (fieldName) { }
-        }
+        // Constructor sets name
+        public ParserTargetCollection(String fieldName) : base(fieldName) { }
     }
 }
-

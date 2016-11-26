@@ -3,7 +3,7 @@
  * ====================================
  * Created by: Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P.
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -18,28 +18,24 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright 2011-2016 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
-using System;
-
 namespace Kopernicus
 {
-    namespace Configuration
+    /// <summary>
+    /// Interface a class can implment to support conversion from a string
+    /// </summary>
+    public interface IParsable
     {
-        /**
-         * Interface a class can implment to support conversion from a string
-         **/
-        public interface IParsable
-        {
-            // Set value from string
-            void SetFromString (string s);
-        }
+        /// <summary>
+        /// Set value from string
+        /// </summary>
+        void SetFromString(string s);
     }
 }
-

@@ -3,7 +3,7 @@
  * ====================================
  * Created by: Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P.
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -18,11 +18,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright 2011-2016 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -30,18 +30,20 @@ using System;
 
 namespace Kopernicus
 {
-    namespace Configuration
+    /// <summary>
+    /// Attribute indicating the type of config node data this can load from - node or value
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class RequireConfigType : Attribute
     {
-        /* Attribute indicating the type of config node data this can load from - node or value */
-        [AttributeUsage(AttributeTargets.Class)]
-        public class RequireConfigType : Attribute
+        /// <summary>
+        /// The type of config node data the class can be loaded from
+        /// </summary>
+        public ConfigType type { get; set; }
+
+        public RequireConfigType(ConfigType type)
         {
-            public ConfigType type { get; set; }
-            public RequireConfigType (ConfigType type)
-            {
-                this.type = type;
-            }
+            this.type = type;
         }
     }
 }
-
