@@ -441,7 +441,7 @@ namespace Kopernicus
                     if (!node.HasNode(nodeName)) continue;
                     try
                     {
-                        data.logCallback("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + assembly.FullName);
+                        data.logCallback("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + type.Assembly.FullName);
                         ConfigNode nodeToLoad = node.GetNode(nodeName);
                         Object obj = CreateObjectFromConfigNode(type, nodeToLoad, modName, getChilds);
                     }

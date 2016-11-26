@@ -39,18 +39,15 @@ namespace Kopernicus
     {
         public T value;
         public MethodInfo parserMethod;
-
         public void SetFromString(String s)
         {
             value = (T)parserMethod.Invoke(null, new Object[] { s });
         }
-
         public NumericParser()
         {
             // Get the parse method for this object
             parserMethod = (typeof(T)).GetMethod("Parse", new [] { typeof(String) });
         }
-
         public NumericParser(T i) : this()
         {
             value = i;
