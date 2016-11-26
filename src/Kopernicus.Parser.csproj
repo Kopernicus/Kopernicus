@@ -48,11 +48,11 @@
     <Compile Include="Enumerations\NameSignificance.cs" />
     <Compile Include="Exceptions\ParserTargetMissingException.cs" />
     <Compile Include="Exceptions\ParserTargetTypeMismatchException.cs" />
-    <Compile Include="External\ExternalParserTarget.cs" />
-    <Compile Include="External\ExternalParserTargetLoader.cs" />
+    <Compile Include="Attributes\ParserTargetExternal.cs" />
     <Compile Include="Interfaces\IParsable.cs" />
     <Compile Include="Interfaces\IParserEventSubscriber.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="ParserOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
