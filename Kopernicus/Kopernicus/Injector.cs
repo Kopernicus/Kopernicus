@@ -45,15 +45,9 @@ namespace Kopernicus
         public const string rootNodeName = "Kopernicus";
 
         // Custom Assembly query since AppDomain and Assembly loader are not quite what we want in 1.1
-        private static List<Type> _ModTypes;
         public static List<Type> ModTypes
         {
-            get
-            {
-                if (_ModTypes == null)
-                    GetModTypes();
-                return _ModTypes;
-            }
+            get { return Parser.ModTypes; }
         }
 
         // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
@@ -113,19 +107,6 @@ namespace Kopernicus
             TimeSpan duration = (DateTime.Now - start);
             Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
             Logger.Default.Flush ();
-        }
-
-        public static void GetModTypes()
-        {
-            _ModTypes = new List<Type>();
-            List<Assembly> asms = new List<Assembly>();
-            asms.AddRange(AssemblyLoader.loadedAssemblies.Select(la => la.assembly));
-            asms.AddUnique(typeof(PQSMod_VertexSimplexHeightAbsolute).Assembly);
-            asms.AddUnique(typeof(PQSLandControl).Assembly);
-            foreach (Type t in asms.SelectMany(a => a.GetTypes()))
-            {
-                _ModTypes.Add(t);
-            }
         }
 
         // Post spawn fixups (ewwwww........)
