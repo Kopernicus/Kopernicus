@@ -57,6 +57,14 @@ namespace Kopernicus
                     set { mod.modEnabled = value; }
                 }
 
+                // The name of the PQSMod
+                [ParserTarget("name")]
+                public string modName
+                {
+                    get { return mod.name; }
+                    set { mod.name = value; }
+                }
+
                 // Creates the a PQSMod of type T
                 public virtual void Create()
                 {
