@@ -136,9 +136,9 @@ namespace Kopernicus
             foreach (KeyValuePair<bool, MemberInfo> member in postapplyMembers)
             {
                 if (member.Key)
-                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node);
+                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, modName);
                 else
-                    LoadObjectMemberFromConfigurationNode(member.Value, o, node);
+                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, modName);
             }
 
             // Call PostApply
