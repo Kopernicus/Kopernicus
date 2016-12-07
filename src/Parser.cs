@@ -99,8 +99,8 @@ namespace Kopernicus
             IParserEventSubscriber subscriber = o as IParserEventSubscriber;
 
             // Generate two lists -> those tagged preapply and those not
-            Dictionary<Boolean, MemberInfo> preapplyMembers = new Dictionary<Boolean, MemberInfo>();
-            Dictionary<Boolean, MemberInfo> postapplyMembers = new Dictionary<Boolean, MemberInfo>();
+            List<KeyValuePair<Boolean, MemberInfo>> preapplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
+            List<KeyValuePair<Boolean, MemberInfo>> postapplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
 
             // Discover members tagged with parser attributes
             foreach (MemberInfo member in o.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
@@ -114,9 +114,9 @@ namespace Kopernicus
 
                     // If this member has the preapply attribute, we need to process it
                     if (member.GetCustomAttributes((typeof(PreApply)), true).Length > 0)
-                        preapplyMembers.Add(isCollection, member);
+                        preapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
                     else
-                        postapplyMembers.Add(isCollection, member);
+                        postapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
                 }
             }
 
