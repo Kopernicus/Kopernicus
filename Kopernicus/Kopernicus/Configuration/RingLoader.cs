@@ -113,6 +113,8 @@ namespace Kopernicus
             {
                 ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
                 ring.transform.parent = generatedBody.scaledVersion.transform;
+                ring.planetRadius = (float) generatedBody.celestialBody.Radius;
+                ring.ringPlanet = generatedBody.celestialBody;
             }
 
             // Initialize the RingLoader

@@ -32,6 +32,9 @@
       <HintPath>..\..\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="KSPAssets">
+      <HintPath>..\KSPAssets.dll</HintPath>
+    </Reference>
     <Reference Include="ModularFlightIntegrator">
       <HintPath>..\..\ModularFlightIntegrator.dll</HintPath>
       <Private>False</Private>
