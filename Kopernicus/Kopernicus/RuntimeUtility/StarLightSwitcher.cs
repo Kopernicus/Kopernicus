@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,7 +75,7 @@ namespace Kopernicus
                     sp.trackingTransformLocal = celestialBody.transform;
                     if (celestialBody.scaledBody)
                     {
-                        sp.trackingTransformLocal = celestialBody.scaledBody.transform;
+                        sp.trackingTransformScaled = celestialBody.scaledBody.transform;
                     }
                 }
 
@@ -85,7 +85,7 @@ namespace Kopernicus
                     rad.trackingTransformLocal = celestialBody.transform;
                     if (celestialBody.scaledBody)
                     {
-                        rad.trackingTransformLocal = celestialBody.scaledBody.transform;
+                        rad.trackingTransformScaled = celestialBody.scaledBody.transform;
                     }
                 }
             }

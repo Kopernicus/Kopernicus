@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -123,11 +123,11 @@ namespace Kopernicus
                         {
                             newMaterial = new ScaledPlanetRimAerialLoader (material);
                             if(data != null)
-                                Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+                                Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
                         } 
                         else
                         {
-                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data);
+                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
                         if (newMaterial.rimColorRamp != null)
@@ -146,11 +146,11 @@ namespace Kopernicus
                         {
                             newMaterial = new ScaledPlanetSimpleLoader (material);
                             if(data != null)
-                                Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+                                Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
                         } 
                         else
                         {
-                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data);
+                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
                         scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
@@ -179,11 +179,11 @@ namespace Kopernicus
                     {
                         newMaterial = new EmissiveMultiRampSunspotsLoader (material);
                         if(data != null)
-                            Parser.LoadObjectFromConfigurationNode (newMaterial, data);
+                            Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
                     }
                     else
                     {
-                        newMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader> (data);
+                        newMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader> (data, "Kopernicus");
                     }
 
                     newMaterial.name = Guid.NewGuid().ToString();

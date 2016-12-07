@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,12 +34,15 @@ namespace Kopernicus
     namespace Configuration
     {
         /**
-         * Interface a class can implment to support conversion from a string
-         **/
-        public interface IParsable
+         * Attribute used to tag a class in another library to add it to the ParserTargets for Body
+        **/
+        [AttributeUsage(AttributeTargets.Class)]
+        [Obsolete("Please use ParserTargetExternal from Kopernicus.Parser instead.")]
+        public class ExternalParserTarget : ParserTargetExternal
         {
-            // Set value from string
-            void SetFromString (string s);
+            public ExternalParserTarget(string configNodeName = null) : base("Body", configNodeName)
+            {
+            }
         }
     }
 }

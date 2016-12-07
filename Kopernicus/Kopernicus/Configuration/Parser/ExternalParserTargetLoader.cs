@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,11 +34,12 @@ namespace Kopernicus
     namespace Configuration
     {
         /**
-         * Exception representing a field having the wrong storage type (i.e. string field is set to node)
-         **/
-        public class ParserTargetTypeMismatchException : Exception
+         * Class all ExternalParserTargets must extend
+        **/
+        [Obsolete("Please use BaseLoader if you need access to the currently loaded body.")]
+        public class ExternalParserTargetLoader : BaseLoader
         {
-            public ParserTargetTypeMismatchException (string message) : base(message) { }
         }
     }
 }
+

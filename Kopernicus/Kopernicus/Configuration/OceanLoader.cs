@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,8 @@ namespace Kopernicus
         {
             // PQS we're editing
             public PQS ocean { get; set; }
+            public PQS pqsVersion { get; set; }
+            public CelestialBody body { get; set; }
             public GameObject gameObject { get; set; }
             public PQSMod_UVPlanetRelativePosition uvs;
 
@@ -50,32 +52,32 @@ namespace Kopernicus
             [ParserTarget("ocean")]
             public NumericParser<bool> mapOcean
             {
-                get { return generatedBody.pqsVersion.mapOcean && generatedBody.celestialBody.ocean; }
-                set { generatedBody.pqsVersion.mapOcean = generatedBody.celestialBody.ocean = value; }
+                get { return pqsVersion.mapOcean && body.ocean; }
+                set { pqsVersion.mapOcean = body.ocean = value; }
             }
 
             // Color of the ocean on the map
             [ParserTarget("oceanColor")]
             public ColorParser oceanColor
             {
-                get { return generatedBody.pqsVersion.mapOceanColor; }
-                set { generatedBody.pqsVersion.mapOceanColor = value; }
+                get { return pqsVersion.mapOceanColor; }
+                set { pqsVersion.mapOceanColor = value; }
             }
 
             // Height of the Ocean
             [ParserTarget("oceanHeight")]
             public NumericParser<double> oceanHeight
             {
-                get { return generatedBody.pqsVersion.mapOceanHeight; }
-                set { generatedBody.pqsVersion.mapOceanHeight = value; }
+                get { return pqsVersion.mapOceanHeight; }
+                set { pqsVersion.mapOceanHeight = value; }
             }
 
             // Density of the Ocean
             [ParserTarget("density")]
             public NumericParser<double> density
             {
-                get { return generatedBody.celestialBody.oceanDensity; }
-                set { generatedBody.celestialBody.oceanDensity = value; }
+                get { return body.oceanDensity; }
+                set { body.oceanDensity = value; }
             }
 
             // PQS level of detail settings
@@ -127,6 +129,8 @@ namespace Kopernicus
             public OceanLoader(PQS ocean)
             {
                 this.ocean = ocean;
+                this.body = Part.GetComponentUpwards<CelestialBody>(ocean.gameObject);
+                pqsVersion = body.pqsController;
 
                 ocean.surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
                 surfaceMaterial = ocean.surfaceMaterial;
@@ -144,7 +148,9 @@ namespace Kopernicus
                 if (generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
                 {
                     ocean = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
+                    pqsVersion = generatedBody.pqsVersion;
                     gameObject = ocean.gameObject;
+                    body = generatedBody.celestialBody;
 
                     ocean.surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
                     surfaceMaterial = ocean.surfaceMaterial;
@@ -160,6 +166,8 @@ namespace Kopernicus
                 gameObject = new GameObject("Ocean");
                 gameObject.layer = Constants.GameLayers.LocalSpace;
                 ocean = gameObject.AddComponent<PQS>();
+                pqsVersion = generatedBody.pqsVersion;
+                body = generatedBody.celestialBody;
 
                 // Setup materials
                 PSystemBody Body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
@@ -226,11 +234,11 @@ namespace Kopernicus
                 ocean.transform.name = generatedBody.pqsVersion.name + "Ocean";
 
                 // Set up the ocean PQS
-                ocean.parentSphere = generatedBody.pqsVersion;
+                pqsVersion = generatedBody.pqsVersion;
 
                 // Load mods
                 if (!node.HasNode("Mods"))
-                    goto Debug;
+                    return;
                 List<PQSMod> patchedMods = new List<PQSMod>();
 
                 // Get all loaded types
@@ -269,29 +277,24 @@ namespace Kopernicus
                         if (existingMod != null)
                         {
                             create.Invoke(loader, new object[] { existingMod, ocean });
-                            Parser.LoadObjectFromConfigurationNode(loader, mod);
+                            Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
                             patchedMods.Add(existingMod);
-                            Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
+                            Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Patched PQS Mod => " + modType);
                         }
                         else
                         {
                             createNew.Invoke(loader, new object[] { ocean });
-                            Parser.LoadObjectFromConfigurationNode(loader, mod);
-                            Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
+                            Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
+                            Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                         }
                     }
                     else
                     {
                         createNew.Invoke(loader, new object[] { ocean });
-                        Parser.LoadObjectFromConfigurationNode(loader, mod);
-                        Logger.Active.Log("PQSLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
+                        Parser.LoadObjectFromConfigurationNode(loader, mod, "Kopernicus");
+                        Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
                 }
-
-                Debug:
-                // == DUMP OCEAN MATERIALS == //
-                Utility.DumpObjectProperties(ocean.surfaceMaterial, " ---- Ocean Material (Post Ocean Loader) ---- ");
-                Utility.GameObjectWalk(ocean.gameObject);
             }
         }
     }

@@ -1,15 +1,17 @@
 Kopernicus
 ==============================
-November 3rd, 2016
+December 7th, 2016
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Majiir (CompatibilityChecker)
+* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.2.1-1)
+New in this version (1.2.2-1)
 -------------------
-* Updated to KSP 1.2.1
-* Added [monkeys](https://github.com/Kopernicus/Kopernicus/commit/ead8a66553d3dae1672f7e5049252f69cd68a5b6)
+* Added Remove Function to the storage API
+* Seperated the Kopernicus Parser into its own assembly
+* Recompiled against 1.2.2-1
+* Updated ModuleManager
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 

@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -167,16 +167,16 @@ namespace Kopernicus
             [ParserTarget("sphereOfInfluence")]
             public NumericParser<double> sphereOfInfluence
             {
-                get { return celestialBody.sphereOfInfluence; }
-                set { Templates.sphereOfInfluence.Add(celestialBody.name, value); }
+                get { return celestialBody.Has("sphereOfInfluence") ? celestialBody.Get<double>("sphereOfInfluence") : celestialBody.sphereOfInfluence; }
+                set { celestialBody.sphereOfInfluence = value; celestialBody.Set("sphereOfInfluence", value.value); }
             }
 
             // Hill Sphere
             [ParserTarget("hillSphere")]
             public NumericParser<double> hillSphere
             {
-                get { return celestialBody.hillSphere; }
-                set { Templates.hillSphere.Add(celestialBody.bodyTransform.name, value); }
+                get { return celestialBody.Has("hillSphere") ? celestialBody.Get<double>("hillSphere") : celestialBody.hillSphere; }
+                set { celestialBody.hillSphere = value; celestialBody.Set("hillSphere", value.value); }
             }
 
             // solarRotationPeriod
@@ -256,8 +256,8 @@ namespace Kopernicus
             [ParserTarget("selectable")]
             public NumericParser<bool> selectable
             {
-                get { return !Templates.notSelectable.Contains(celestialBody.transform.name); }
-                set { if (!value.value) Templates.notSelectable.Add(celestialBody.transform.name); }
+                get { return !celestialBody.Has("notSelectable"); }
+                set { if (!value.value) celestialBody.Set("notSelectable", true); }
             }
 
             // If the body should be hidden in RnD
@@ -266,17 +266,11 @@ namespace Kopernicus
             {
                 get
                 {
-                    if (Templates.hiddenRnD.ContainsKey(celestialBody.transform.name))
-                        return Templates.hiddenRnD[celestialBody.transform.name];
+                    if (celestialBody.Has("hiddenRnD"))
+                        return celestialBody.Get<RDVisibility>("hiddenRnD");
                     return RDVisibility.VISIBLE;
                 }
-                set
-                {
-                    if (Templates.hiddenRnD.ContainsKey(celestialBody.transform.name))
-                        Templates.hiddenRnD[celestialBody.transform.name] = value;
-                    else
-                        Templates.hiddenRnD.Add(celestialBody.transform.name, value);
-                }
+                set { celestialBody.Set("hiddenRnD", value.value); }
             }
 
             // How visible should the planet be in the science archives
@@ -284,9 +278,19 @@ namespace Kopernicus
             {
                 VISIBLE,
                 NOICON,
-                HIDDEN
+                HIDDEN,
+                SKIP
             }
-
+            
+            // Max Zoom limit for TrackingStation and MapView
+            // set the number of meters that can fit in the full height of the screen
+            [ParserTarget("maxZoom")]
+            public NumericParser<float> minDistance
+            {
+                get { return celestialBody.Has("maxZoom") ? celestialBody.Get<float>("maxZoom") : 10 * 6000f; }
+                set { celestialBody.Set("maxZoom", value.value / 6000f); }
+            }
+            
             // Apply Event
             void IParserEventSubscriber.Apply (ConfigNode node)
             {

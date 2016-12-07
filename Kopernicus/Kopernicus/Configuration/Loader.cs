@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -145,7 +145,24 @@ namespace Kopernicus
                 get { return ScaledSpaceFader.faderMult; }
                 set { ScaledSpaceFader.faderMult = value; }
             }
-           
+
+            // If the home planet's time is used
+            [ParserTarget("useKopernicusTime")]
+            public NumericParser<bool> useKopernicusTime
+            {
+                get { return Templates.useKopernicusTime; }
+                set
+                {
+                    Templates.useKopernicusTime = value;
+                    if (value)
+                        Templates.customClock = true;
+                }
+            }
+            
+            // KopernicusTime
+            [ParserTarget("KopernicusTime", allowMerge = true)]
+            public ClockLoader clockLoader { get; set; }
+            
             // Instance
             public Loader()
             {
@@ -188,7 +205,7 @@ namespace Kopernicus
                     try
                     {
                         currentBody = new Body();
-                        Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode);
+                        Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode, "Kopernicus");
                         bodies.Add(currentBody.name, currentBody);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.name);
                     } 
@@ -213,7 +230,7 @@ namespace Kopernicus
                     // Attempt to create the Asteroid
                     try
                     {
-                        Asteroid asteroid = Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode);
+                        Asteroid asteroid = Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus");
                         DiscoverableObjects.asteroids.Add(asteroid);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.name);
                     }

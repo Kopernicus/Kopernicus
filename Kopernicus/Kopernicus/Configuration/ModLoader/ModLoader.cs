@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,6 +55,14 @@ namespace Kopernicus
                 {
                     get { return mod.modEnabled; }
                     set { mod.modEnabled = value; }
+                }
+
+                // The name of the PQSMod
+                [ParserTarget("name")]
+                public string modName
+                {
+                    get { return mod.name; }
+                    set { mod.name = value; }
                 }
 
                 // Creates the a PQSMod of type T

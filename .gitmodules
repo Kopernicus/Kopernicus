@@ -1,0 +1,3 @@
+[submodule "Kopernicus/external/config-parser"]
+	path = Kopernicus/external/config-parser
+	url = https://github.com/Kopernicus/config-parser.git

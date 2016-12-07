@@ -58,6 +58,7 @@
     <Compile Include="Configuration\Asteroids\Asteroid.cs" />
     <Compile Include="Configuration\Asteroids\Location.cs" />
     <Compile Include="Configuration\AtmosphereFromGroundLoader.cs" />
+    <Compile Include="Configuration\ClockLoader.cs" />
     <Compile Include="Configuration\DebugLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
@@ -102,8 +103,8 @@
     <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
     <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
     <Compile Include="Configuration\ModLoader\VoronoiCraters.cs" />
-    <Compile Include="Configuration\Parser\External\ExternalParserTarget.cs" />
-    <Compile Include="Configuration\Parser\External\ExternalParserTargetLoader.cs" />
+    <Compile Include="Configuration\Parser\ExternalParserTarget.cs" />
+    <Compile Include="Configuration\Parser\ExternalParserTargetLoader.cs" />
     <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
@@ -131,12 +132,13 @@
     <Compile Include="Constants\Version.cs" />
     <Compile Include="RuntimeUtility\RnDFixer.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
-    <Compile Include="PostInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeUtility\RuntimeUtility.cs" />
+    <Compile Include="RuntimeUtility\ClockFixer.cs" />
     <Compile Include="Injector.cs" />
     <Compile Include="RuntimeUtility\DiscoverableObjects.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
+    <Compile Include="Storage.cs" />
     <Compile Include="Templates.cs" />
     <Compile Include="Configuration\Loader.cs" />
     <Compile Include="Configuration\Body.cs" />
@@ -144,18 +146,7 @@
     <Compile Include="Configuration\TemplateLoader.cs" />
     <Compile Include="Configuration\OrbitLoader.cs" />
     <Compile Include="Configuration\ScienceValuesLoader.cs" />
-    <Compile Include="Configuration\Parser\Parser.cs" />
     <Compile Include="Configuration\BiomeLoader.cs" />
-    <Compile Include="Configuration\Parser\Attributes\ParserTarget.cs" />
-    <Compile Include="Configuration\Parser\Attributes\PreApply.cs" />
-    <Compile Include="Configuration\Parser\Attributes\ParserTargetCollection.cs" />
-    <Compile Include="Configuration\Parser\Attributes\RequireConfigType.cs" />
-    <Compile Include="Configuration\Parser\Enumerations\ConfigType.cs" />
-    <Compile Include="Configuration\Parser\Enumerations\NameSignificance.cs" />
-    <Compile Include="Configuration\Parser\Interfaces\IParsable.cs" />
-    <Compile Include="Configuration\Parser\Interfaces\IParserEventSubscriber.cs" />
-    <Compile Include="Configuration\Parser\Exceptions\ParserTargetTypeMismatchException.cs" />
-    <Compile Include="Configuration\Parser\Exceptions\ParserTargetMissingException.cs" />
     <Compile Include="Configuration\Parser\BuiltinTypeParsers.cs" />
     <Compile Include="Configuration\ScaledVersionLoader.cs" />
     <Compile Include="Constants\GameLayers.cs" />
@@ -182,6 +173,10 @@
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\external\config-parser\src\Kopernicus.Parser.csproj">
+      <Project>{f9968d87-83da-453c-8e28-b632367eacd3}</Project>
+      <Name>Kopernicus.Parser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Kopernicus.Components\Kopernicus.Components.csproj">
       <Project>{19117d57-f9d4-4a88-9bb9-ac95549a25a8}</Project>
       <Name>Kopernicus.Components</Name>

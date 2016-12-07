@@ -3,7 +3,7 @@
  * ====================================
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+ * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -237,17 +237,22 @@ namespace Kopernicus
                 set { celestialBody.atmosphericAmbientColor = value.value; }
             }
 
+            // AFG
+            [ParserTarget("AtmosphereFromGround", allowMerge = true)]
+            public AtmosphereFromGroundLoader atmosphereFromGround { get; set; }
+
             // light color
             [ParserTarget("lightColor")]
             public ColorParser lightColor 
             {
-                get { return scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0].waveLength; }
-                set { scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true) [0].waveLength = value.value; }
+                get { return atmosphereFromGround?.waveLength; }
+                set
+                {
+                    if (atmosphereFromGround == null)
+                        atmosphereFromGround = new AtmosphereFromGroundLoader();
+                    atmosphereFromGround.waveLength = value;
+                }
             }
-
-            // AFG
-            [ParserTarget("AtmosphereFromGround", allowMerge = true)]
-            public AtmosphereFromGroundLoader atmosphereFromGround { get; set; }
 
             // Parser apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
@@ -278,7 +283,7 @@ namespace Kopernicus
 
                     // Setup known defaults
                     celestialBody.atmospherePressureSeaLevel = 1.0f;
-                }
+                }                    
             }
 
             // Parser post apply event
