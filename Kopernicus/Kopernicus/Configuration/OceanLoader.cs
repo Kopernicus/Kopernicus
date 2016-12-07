@@ -43,6 +43,7 @@ namespace Kopernicus
         {
             // PQS we're editing
             public PQS ocean { get; set; }
+            public PQS pqsVersion { get; set; }
             public CelestialBody body { get; set; }
             public GameObject gameObject { get; set; }
             public PQSMod_UVPlanetRelativePosition uvs;
@@ -51,24 +52,24 @@ namespace Kopernicus
             [ParserTarget("ocean")]
             public NumericParser<bool> mapOcean
             {
-                get { return ocean.parentSphere.mapOcean && body.ocean; }
-                set { ocean.parentSphere.mapOcean = body.ocean = value; }
+                get { return pqsVersion.mapOcean && body.ocean; }
+                set { pqsVersion.mapOcean = body.ocean = value; }
             }
 
             // Color of the ocean on the map
             [ParserTarget("oceanColor")]
             public ColorParser oceanColor
             {
-                get { return ocean.parentSphere.mapOceanColor; }
-                set { ocean.parentSphere.mapOceanColor = value; }
+                get { return pqsVersion.mapOceanColor; }
+                set { pqsVersion.mapOceanColor = value; }
             }
 
             // Height of the Ocean
             [ParserTarget("oceanHeight")]
             public NumericParser<double> oceanHeight
             {
-                get { return ocean.parentSphere.mapOceanHeight; }
-                set { ocean.parentSphere.mapOceanHeight = value; }
+                get { return pqsVersion.mapOceanHeight; }
+                set { pqsVersion.mapOceanHeight = value; }
             }
 
             // Density of the Ocean
@@ -129,6 +130,7 @@ namespace Kopernicus
             {
                 this.ocean = ocean;
                 this.body = Part.GetComponentUpwards<CelestialBody>(ocean.gameObject);
+                pqsVersion = body.pqsController;
 
                 ocean.surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
                 surfaceMaterial = ocean.surfaceMaterial;
@@ -146,7 +148,7 @@ namespace Kopernicus
                 if (generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
                 {
                     ocean = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
-                    ocean.parentSphere = generatedBody.pqsVersion;
+                    pqsVersion = generatedBody.pqsVersion;
                     gameObject = ocean.gameObject;
                     body = generatedBody.celestialBody;
 
@@ -164,7 +166,7 @@ namespace Kopernicus
                 gameObject = new GameObject("Ocean");
                 gameObject.layer = Constants.GameLayers.LocalSpace;
                 ocean = gameObject.AddComponent<PQS>();
-                ocean.parentSphere = generatedBody.pqsVersion;
+                pqsVersion = generatedBody.pqsVersion;
                 body = generatedBody.celestialBody;
 
                 // Setup materials
@@ -232,7 +234,7 @@ namespace Kopernicus
                 ocean.transform.name = generatedBody.pqsVersion.name + "Ocean";
 
                 // Set up the ocean PQS
-                ocean.parentSphere = generatedBody.pqsVersion;
+                pqsVersion = generatedBody.pqsVersion;
 
                 // Load mods
                 if (!node.HasNode("Mods"))
