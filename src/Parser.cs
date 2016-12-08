@@ -428,32 +428,39 @@ namespace Kopernicus
             {
                 foreach (Type type in ModTypes)
                 {
-                    ParserTargetExternal[] attributes = (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
-                    if (attributes.Length == 0) continue;
-                    ParserTargetExternal external = attributes[0];
-                    if (node.name != external.parentNodeName)
-                        continue;
-                    String nodeName = external.configNodeName ?? type.Name;
-
-                    // Get settings data
-                    ParserOptions.Data data = ParserOptions.options[modName];
-
-                    if (!node.HasNode(nodeName)) continue;
                     try
                     {
-                        data.logCallback("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + type.Assembly.FullName);
-                        ConfigNode nodeToLoad = node.GetNode(nodeName);
-                        Object obj = CreateObjectFromConfigNode(type, nodeToLoad, modName, getChilds);
+                        ParserTargetExternal[] attributes = (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
+                        if (attributes.Length == 0) continue;
+                        ParserTargetExternal external = attributes[0];
+                        if (node.name != external.parentNodeName)
+                            continue;
+                        String nodeName = external.configNodeName ?? type.Name;
+
+                        // Get settings data
+                        ParserOptions.Data data = ParserOptions.options[modName];
+
+                        if (!node.HasNode(nodeName)) continue;
+                        try
+                        {
+                            data.logCallback("Parsing ParserTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + type.Assembly.FullName);
+                            ConfigNode nodeToLoad = node.GetNode(nodeName);
+                            Object obj = CreateObjectFromConfigNode(type, nodeToLoad, modName, getChilds);
+                        }
+                        catch (MissingMethodException missingMethod)
+                        {
+                            data.logCallback("Failed to load ParserTargetExternal " + nodeName + " because it does not have a parameterless constructor");
+                            data.errorCallback(missingMethod);
+                        }
+                        catch (Exception exception)
+                        {
+                            data.logCallback("Failed to load ParserTargetExternal " + nodeName + " from node " + external.parentNodeName);
+                            data.errorCallback(exception);
+                        }
                     }
-                    catch (MissingMethodException missingMethod)
+                    catch (TypeLoadException)
                     {
-                        data.logCallback("Failed to load ExternalParserTarget " + nodeName + " because it does not have a parameterless constructor");
-                        data.errorCallback(missingMethod);
-                    }
-                    catch (Exception exception)
-                    {
-                        data.logCallback("Failed to load ExternalParserTarget " + nodeName + " from node " + external.parentNodeName);
-                        data.errorCallback(exception);
+                        // ignored
                     }
                 }
             }
