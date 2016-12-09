@@ -30,16 +30,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using System;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Reflection;
-using System.Runtime;
-using KSP;
-using KSP.IO;
-
 namespace Kopernicus
 {
     namespace Components
@@ -58,10 +48,12 @@ namespace Kopernicus
             public Color color;
             public bool lockRotation;
             public bool unlit;
+            public bool useNewShader;
             public int steps = 128;
+            public float penumbraMultiplier = 10f; //for new shader, makes planet shadow softer (values larger than one) or less soft (smaller than one)
+                                                   //softness still depends on distance from sun, distance from planet and radius of sun and planet
 
             public MeshRenderer ringMR;
-            public CelestialBody ringPlanet;
 
             /// <summary>
             /// Create the Ring Mesh
@@ -163,25 +155,29 @@ namespace Kopernicus
                 // Set texture
                 ringMR = gameObject.AddComponent<MeshRenderer>();
                 Renderer parentRenderer = parent.GetComponent<Renderer>();
-                if (unlit)
+
+                if (useNewShader)
+                    ringMR.material = new Material(ShaderLoader.GetShader("Kopernicus/Rings"));
+                else if (unlit)
                     ringMR.material = new Material(Shader.Find("Unlit/Transparent"));
                 else
-                    ringMR.material = new Material(ShaderLoader.GetShader("Kopernicus/Rings"));
+                    ringMR.material = new Material(Shader.Find("Transparent/Diffuse"));
 
-                ringMR.material.mainTexture = texture;
+
+                ringMR.material.SetTexture("_MainTex", texture);
 
                 ringMR.material.SetFloat("innerRadius", innerRadius);
                 ringMR.material.SetFloat("outerRadius", outerRadius);
 
-                ringMR.material.SetFloat("sunRadius", (float) Sun.Instance.sun.Radius); //not sure if this would stay correct with all the Kopernicus trickery
-
-                ringMR.material.SetFloat("planetRadius", planetRadius);
-
-                ringMR.material.SetFloat("penumbraMultiplier", 1f); //1f for now
+                if (useNewShader)
+                { 
+                    ringMR.material.SetFloat("planetRadius", planetRadius);
+                    ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
+                }
 
                 ringMR.material.color = color;
-                ringMR.material.renderQueue = parentRenderer.material.renderQueue;
-                parentRenderer.material.renderQueue--;
+
+                ringMR.material.renderQueue = 3003;
             }
 
             /// <summary>
@@ -189,12 +185,17 @@ namespace Kopernicus
             /// </summary>
             void Update()
             {
+
                 transform.localScale = transform.parent.localScale;
-                Debug.Log("transform local scale: " + transform.localScale.ToString());
                 if (lockRotation) transform.rotation = rotation;
 
-                ringMR.material.SetVector("sunPosition", KopernicusStar.Current.sun.transform.position);
-                ringMR.material.SetVector("planetPositionScaled", ringPlanet.transform.position);
+                if (useNewShader)
+                {
+                    ringMR.material.SetFloat("sunRadius", (float)KopernicusStar.Current.sun.Radius);
+                    Vector3 sunPosRelativeToPlanet = KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position);
+                    ringMR.material.SetVector("sunPosRelativeToPlanet", sunPosRelativeToPlanet);
+                }
+
             }
 
             /// <summary>

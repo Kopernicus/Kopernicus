@@ -36,7 +36,6 @@ using System.Text.RegularExpressions;
 using System.IO;
 
 using UnityEngine;
-using KSPAssets.Loaders;
 
 
 namespace Kopernicus
