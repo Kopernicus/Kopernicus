@@ -100,6 +100,22 @@ namespace Kopernicus
                 set { ring.unlit = value; }
             }
 
+            // Use new shader with mie scattering and planet shadow?
+            [ParserTarget("useNewShader")]
+            public NumericParser<bool> useNewShader
+            {
+                get { return ring.useNewShader; }
+                set { ring.useNewShader = value; }
+            }
+
+            // Penumbra multiplier for new shader
+            [ParserTarget("penumbraMultiplier")]
+            public NumericParser<float> penumbraMultiplier
+            {
+                get { return ring.penumbraMultiplier; }
+                set { ring.penumbraMultiplier = value; }
+            }
+
             // Amount of vertices arount the ring
             [ParserTarget("steps")]
             public NumericParser<int> steps
@@ -113,6 +129,7 @@ namespace Kopernicus
             {
                 ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
                 ring.transform.parent = generatedBody.scaledVersion.transform;
+                ring.planetRadius = (float) generatedBody.celestialBody.Radius;
             }
 
             // Initialize the RingLoader
