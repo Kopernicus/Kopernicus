@@ -148,12 +148,12 @@ namespace Kopernicus
                 // Get Body flux
                 fi.solarFlux = 0;
                 fi.sunDot = Vector3d.Dot(fi.sunVector, fi.Vessel.upAxis);
-                fi.CurrentMainBody.GetAtmoThermalStats(true, FlightIntegrator.sunBody, fi.sunVector, fi.sunDot, fi.Vessel.upAxis, fi.altitude, out fi.atmosphereTemperatureOffset, out fi.bodyEmissiveFlux, out fi.bodyAlbedoFlux);
+                fi.CurrentMainBody.GetAtmoThermalStats(true, star.sun, fi.sunVector, fi.sunDot, fi.Vessel.upAxis, fi.altitude, out fi.atmosphereTemperatureOffset, out fi.bodyEmissiveFlux, out fi.bodyAlbedoFlux);
                 Vector3d scaleFactor = ((Vector3d)star.sun.scaledBody.transform.position - fi.CurrentMainBody.scaledBody.transform.position) * (double)ScaledSpace.ScaleFactor;
 
                 // Get Solar Flux
                 double realDistanceToSun = 0;
-                if (!Physics.Raycast(ray, out raycastHit, Single.MaxValue, ModularFI.ModularFlightIntegrator.SunLayerMask))
+                if (!Physics.Raycast(ray, out raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
                 {
                     fi.Vessel.directSunlight = true;
                     realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
