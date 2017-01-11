@@ -88,7 +88,7 @@ namespace Kopernicus
                 double bodyAlbedoFlux = flightIntegrator.bodyAlbedoFlux;
 
                 // Calculate the values for all bodies
-                foreach (KopernicusStar star in Stars.Where(s => s.sun != FlightIntegrator.sunBody))
+                foreach (KopernicusStar star in Stars.Where(s => s.sun != Current.sun))
                 {
                     // Set Physics
                     PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
