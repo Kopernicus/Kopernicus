@@ -5,6 +5,13 @@
 CS := csc
 MONO_ASSEMBLIES := /usr/lib/mono/2.0
 
+# Build config
+MODE := DEBUG
+PARAMS := /debug+ /debug:portable /define:DEBUG
+ifeq ($(MODE), RELEASE)
+	PARAMS = /define:RELEASE
+endif
+
 # Build Outputs
 CURRENT_DIR := $(shell pwd)
 PLUGIN_DIR := $(CURRENT_DIR)/Distribution/Development
@@ -39,13 +46,13 @@ plugin: core copy_plugin_files
 	
 ### LIBRARIES ###
 $(CORE): generate_dirs
-	$(CS) /debug+ /debug:portable /define:DEBUG /out:$(CORE) /nostdlib+ /target:library /platform:anycpu /recurse:$(CORE_CODE)/*.cs /reference:$(REFS),$(COMPONENTS),$(ONDEMAND),$(PARSER)
+	$(CS) $(PARAMS) /out:$(CORE) /nostdlib+ /target:library /platform:anycpu /recurse:$(CORE_CODE)/*.cs /reference:$(REFS),$(COMPONENTS),$(ONDEMAND),$(PARSER)
 $(COMPONENTS): generate_dirs
-	$(CS) /debug+ /debug:portable /define:DEBUG /out:$(COMPONENTS) /nostdlib+ /target:library /platform:anycpu /resource:$(COMPONENT_CODE)/Assets/WorldParticleCollider.unity3d,Kopernicus.Components.Assets.WorldParticleCollider.unity3d /recurse:$(COMPONENT_CODE)/*.cs /reference:$(REFS)
+	$(CS) $(PARAMS) /out:$(COMPONENTS) /nostdlib+ /target:library /platform:anycpu /resource:$(COMPONENT_CODE)/Assets/WorldParticleCollider.unity3d,Kopernicus.Components.Assets.WorldParticleCollider.unity3d /recurse:$(COMPONENT_CODE)/*.cs /reference:$(REFS)
 $(ONDEMAND): generate_dirs
-	$(CS) /debug+ /debug:portable /define:DEBUG /out:$(ONDEMAND) /nostdlib+ /target:library /platform:anycpu /unsafe+ /recurse:$(ONDEMAND_CODE)/*.cs /reference:$(REFS)
+	$(CS) $(PARAMS) /out:$(ONDEMAND) /nostdlib+ /target:library /platform:anycpu /unsafe+ /recurse:$(ONDEMAND_CODE)/*.cs /reference:$(REFS)
 $(PARSER): generate_dirs
-	$(CS) /debug+ /debug:portable /define:DEBUG /out:$(PARSER) /nostdlib+ /target:library /platform:anycpu /unsafe+ /recurse:$(PARSER_CODE)/*.cs /reference:$(REFS)
+	$(CS) $(PARAMS) /out:$(PARSER) /nostdlib+ /target:library /platform:anycpu /unsafe+ /recurse:$(PARSER_CODE)/*.cs /reference:$(REFS)
 
 ### UTILS ###
 generate_dirs:
