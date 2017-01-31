@@ -99,8 +99,8 @@ namespace Kopernicus
             IParserEventSubscriber subscriber = o as IParserEventSubscriber;
 
             // Generate two lists -> those tagged preapply and those not
-            Dictionary<Boolean, MemberInfo> preapplyMembers = new Dictionary<Boolean, MemberInfo>();
-            Dictionary<Boolean, MemberInfo> postapplyMembers = new Dictionary<Boolean, MemberInfo>();
+            List<KeyValuePair<Boolean, MemberInfo>> preapplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
+            List<KeyValuePair<Boolean, MemberInfo>> postapplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
 
             // Discover members tagged with parser attributes
             foreach (MemberInfo member in o.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
@@ -114,9 +114,9 @@ namespace Kopernicus
 
                     // If this member has the preapply attribute, we need to process it
                     if (member.GetCustomAttributes((typeof(PreApply)), true).Length > 0)
-                        preapplyMembers.Add(isCollection, member);
+                        preapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
                     else
-                        postapplyMembers.Add(isCollection, member);
+                        postapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
                 }
             }
 
@@ -136,9 +136,9 @@ namespace Kopernicus
             foreach (KeyValuePair<bool, MemberInfo> member in postapplyMembers)
             {
                 if (member.Key)
-                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node);
+                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, modName);
                 else
-                    LoadObjectMemberFromConfigurationNode(member.Value, o, node);
+                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, modName);
             }
 
             // Call PostApply
@@ -428,32 +428,39 @@ namespace Kopernicus
             {
                 foreach (Type type in ModTypes)
                 {
-                    ParserTargetExternal[] attributes = (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
-                    if (attributes.Length == 0) continue;
-                    ParserTargetExternal external = attributes[0];
-                    if (node.name != external.parentNodeName)
-                        continue;
-                    String nodeName = external.configNodeName ?? type.Name;
-
-                    // Get settings data
-                    ParserOptions.Data data = ParserOptions.options[modName];
-
-                    if (!node.HasNode(nodeName)) continue;
                     try
                     {
-                        data.logCallback("Parsing ExternalTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + type.Assembly.FullName);
-                        ConfigNode nodeToLoad = node.GetNode(nodeName);
-                        Object obj = CreateObjectFromConfigNode(type, nodeToLoad, modName, getChilds);
+                        ParserTargetExternal[] attributes = (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
+                        if (attributes.Length == 0) continue;
+                        ParserTargetExternal external = attributes[0];
+                        if (node.name != external.parentNodeName)
+                            continue;
+                        String nodeName = external.configNodeName ?? type.Name;
+
+                        // Get settings data
+                        ParserOptions.Data data = ParserOptions.options[modName];
+
+                        if (!node.HasNode(nodeName)) continue;
+                        try
+                        {
+                            data.logCallback("Parsing ParserTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + type.Assembly.FullName);
+                            ConfigNode nodeToLoad = node.GetNode(nodeName);
+                            Object obj = CreateObjectFromConfigNode(type, nodeToLoad, modName, getChilds);
+                        }
+                        catch (MissingMethodException missingMethod)
+                        {
+                            data.logCallback("Failed to load ParserTargetExternal " + nodeName + " because it does not have a parameterless constructor");
+                            data.errorCallback(missingMethod);
+                        }
+                        catch (Exception exception)
+                        {
+                            data.logCallback("Failed to load ParserTargetExternal " + nodeName + " from node " + external.parentNodeName);
+                            data.errorCallback(exception);
+                        }
                     }
-                    catch (MissingMethodException missingMethod)
+                    catch (TypeLoadException)
                     {
-                        data.logCallback("Failed to load ExternalParserTarget " + nodeName + " because it does not have a parameterless constructor");
-                        data.errorCallback(missingMethod);
-                    }
-                    catch (Exception exception)
-                    {
-                        data.logCallback("Failed to load ExternalParserTarget " + nodeName + " from node " + external.parentNodeName);
-                        data.errorCallback(exception);
+                        // ignored
                     }
                 }
             }
