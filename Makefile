@@ -3,7 +3,7 @@
 
 # We only support roslyn compiler at the moment
 CS := csc
-MONO_ASSEMBLIES := /usr/lib/mono/2.0
+MONO_ASSEMBLIES := /usr/lib/mono/2.0-api
 
 # Build config
 MODE := DEBUG
