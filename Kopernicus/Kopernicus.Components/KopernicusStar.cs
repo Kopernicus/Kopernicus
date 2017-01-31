@@ -111,6 +111,11 @@ namespace Kopernicus
                 flightIntegrator.solarFlux = solarFlux;
                 flightIntegrator.bodyEmissiveFlux = bodyEmissiveFlux;
                 flightIntegrator.bodyAlbedoFlux = bodyAlbedoFlux;
+
+                // Set Physics
+                PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
+                PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
+                CalculatePhysics(); 
             }
 
             /// <summary>
