@@ -49,6 +49,11 @@ namespace Kopernicus
             public static List<KopernicusStar> Stars;
 
             /// <summary>
+            /// The results of the latest flux calculation for each star
+            /// </summary>
+            public static Dictionary<string, double> SolarFlux;
+
+            /// <summary>
             /// The currently active star, for stuff we cant patch
             /// </summary>
             public static KopernicusStar Current;
@@ -86,9 +91,13 @@ namespace Kopernicus
                 double solarFlux = flightIntegrator.solarFlux;
                 double bodyEmissiveFlux = flightIntegrator.bodyEmissiveFlux;
                 double bodyAlbedoFlux = flightIntegrator.bodyAlbedoFlux;
+                if (!SolarFlux.ContainsKey(Current.name))
+                    SolarFlux.Add(Current.name, solarFlux);
+                else
+                    SolarFlux[Current.name] = solarFlux;
 
                 // Calculate the values for all bodies
-                foreach (KopernicusStar star in Stars.Where(s => s.sun != Current.sun))
+                foreach (KopernicusStar star in Stars.Where(s => s.sun != FlightIntegrator.sunBody))
                 {
                     // Set Physics
                     PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
@@ -104,6 +113,10 @@ namespace Kopernicus
                     solarFlux += flightIntegrator.solarFlux;
                     bodyEmissiveFlux += flightIntegrator.bodyEmissiveFlux;
                     bodyAlbedoFlux += flightIntegrator.bodyAlbedoFlux;
+                    if (!SolarFlux.ContainsKey(star.name))
+                        SolarFlux.Add(star.name, solarFlux);
+                    else
+                        SolarFlux[star.name] = solarFlux;
                 }
 
                 // Reapply
@@ -153,7 +166,7 @@ namespace Kopernicus
                 // Get Body flux
                 fi.solarFlux = 0;
                 fi.sunDot = Vector3d.Dot(fi.sunVector, fi.Vessel.upAxis);
-                fi.CurrentMainBody.GetAtmoThermalStats(true, star.sun, fi.sunVector, fi.sunDot, fi.Vessel.upAxis, fi.altitude, out fi.atmosphereTemperatureOffset, out fi.bodyEmissiveFlux, out fi.bodyAlbedoFlux);
+                fi.CurrentMainBody.GetAtmoThermalStats(true, FlightIntegrator.sunBody, fi.sunVector, fi.sunDot, fi.Vessel.upAxis, fi.altitude, out fi.atmosphereTemperatureOffset, out fi.bodyEmissiveFlux, out fi.bodyAlbedoFlux);
                 Vector3d scaleFactor = ((Vector3d)star.sun.scaledBody.transform.position - fi.CurrentMainBody.scaledBody.transform.position) * (double)ScaledSpace.ScaleFactor;
 
                 // Get Solar Flux
@@ -192,6 +205,8 @@ namespace Kopernicus
             {
                 if (Stars == null)
                     Stars = new List<KopernicusStar>();
+                if (SolarFlux == null)
+                    SolarFlux = new Dictionary<string, double>();
                 Stars.Add(this);
                 DontDestroyOnLoad(this);
                 light = gameObject.GetComponent<Light>();
