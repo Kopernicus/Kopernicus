@@ -7,10 +7,8 @@ MONO_ASSEMBLIES := /usr/lib/mono/2.0-api
 
 # Build config
 MODE := DEBUG
-PARAMS := /debug+ /debug:portable /define:DEBUG
-ifeq ($(MODE), RELEASE)
-	PARAMS = /define:RELEASE
-endif
+PARAMS_DEBUG := /debug+ /debug:portable /define:DEBUG
+PARAMS_RELEASE := /define:RELEASE
 
 # Build Outputs
 CURRENT_DIR := $(shell pwd)
@@ -36,7 +34,11 @@ REFS := $(CORLIB),Assembly-CSharp.dll,UnityEngine.dll,UnityEngine.UI.dll,Modular
 ZIP_NAME := Kopernicus-$(shell git describe --tags)-$(shell date "+%Y-%m-%d").zip
 
 ### BUILD TARGETS ###
-all: plugin
+all: debug
+debug: PARAMS=$(PARAMS_DEBUG)
+debug: plugin
+release: PARAMS=$(PARAMS_RELEASE)
+release: plugin
 core: $(PARSER) $(ONDEMAND) $(COMPONENTS) $(CORE)
 components: $(COMPONENTS)
 ondemand: $(ONDEMAND)
