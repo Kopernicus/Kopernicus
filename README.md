@@ -1,17 +1,16 @@
-Kopernicus
+﻿Kopernicus
 ==============================
-December 7th, 2016
+February 02, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.2.2-1)
+New in this version (1.2.2-3)
 -------------------
-* Added Remove Function to the storage API
-* Seperated the Kopernicus Parser into its own assembly
-* Recompiled against 1.2.2-1
-* Updated ModuleManager
+- New ring shaders by blackrack
+- Fixed an issue with solar luminosity and flux calculation
+- Fixed an issue with the custom kopernicus clock
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
