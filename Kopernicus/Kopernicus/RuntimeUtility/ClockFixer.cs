@@ -86,11 +86,11 @@ namespace Kopernicus
     {
         public static KSPUtil.DefaultDateTimeFormatter DTF = new KSPUtil.DefaultDateTimeFormatter();
 
-        public static ClockFormatLoader S;
-        public static ClockFormatLoader M;
-        public static ClockFormatLoader H;
-        public static ClockFormatLoader D;
-        public static ClockFormatLoader Y;
+        public static ClockFormatLoader S = new ClockFormatLoader("Second", "Seconds", "s", 1);
+        public static ClockFormatLoader M = new ClockFormatLoader("Minute", "Minutes", "m", 60);
+        public static ClockFormatLoader H = new ClockFormatLoader("Hour", "Hours", "h", 3600);
+        public static ClockFormatLoader D = new ClockFormatLoader("Day", "Days", "d", 3600 * (GameSettings.KERBIN_TIME ? 6 : 24));
+        public static ClockFormatLoader Y = new ClockFormatLoader("Year", "Years", "y", 3600 * (GameSettings.KERBIN_TIME ? 6 * 426 : 24 * 365));
 
         public static int[] num = new int[6];
 
