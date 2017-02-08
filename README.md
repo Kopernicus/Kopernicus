@@ -1,16 +1,14 @@
 ﻿Kopernicus
 ==============================
-February 02, 2017
+February 08, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.2.2-3)
+New in this version (1.2.2-4)
 -------------------
-- New ring shaders by blackrack
-- Fixed an issue with solar luminosity and flux calculation
-- Fixed an issue with the custom kopernicus clock
+- Reapplied a fix for the calculation of solarLuminosity that was removed accidentally in 1.2.2-3
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
