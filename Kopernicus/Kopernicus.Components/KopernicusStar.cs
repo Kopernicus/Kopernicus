@@ -133,6 +133,8 @@ namespace Kopernicus
 
             /// <summary>
             /// Fixes the Calculation for Luminosity
+            /// NEVER REMOVE THIS AGAIN!
+            /// EVEN IF SQUAD MAKES EVERY FIELD PUBLIC AND OPENSOURCE AND WHATNOT
             /// </summary>
             public static void CalculatePhysics()
             {
