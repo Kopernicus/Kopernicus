@@ -81,7 +81,7 @@ namespace Kopernicus
                 // Set Physics
                 PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
                 PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
-                PhysicsGlobals.Instance.CalculateValues();
+                CalculatePhysics();
 
                 // Get "Correct" values
                 flightIntegrator.BaseFICalculateSunBodyFlux();
@@ -102,7 +102,7 @@ namespace Kopernicus
                     // Set Physics
                     PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
                     PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
-                    PhysicsGlobals.Instance.CalculateValues();
+                    CalculatePhysics();
 
                     // Calculate Flux
                     Flux(flightIntegrator, star);
@@ -128,7 +128,20 @@ namespace Kopernicus
                 // Set Physics
                 PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
                 PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
-                PhysicsGlobals.Instance.CalculateValues();
+                CalculatePhysics(); 
+            }
+
+            /// <summary>
+            /// Fixes the Calculation for Luminosity
+            /// </summary>
+            public static void CalculatePhysics()
+            {
+                if (!FlightGlobals.ready) return;
+                CelestialBody homeBody = FlightGlobals.GetHomeBody();
+                if (homeBody == null) return;
+                while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+                    homeBody = homeBody.referenceBody;
+                typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(double)).Skip(2).First().SetValue(PhysicsGlobals.Instance, Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 * PhysicsGlobals.SolarLuminosityAtHome);
             }
 
             /// <summary>
