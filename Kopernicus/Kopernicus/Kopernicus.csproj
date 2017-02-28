@@ -66,6 +66,7 @@
     <Compile Include="Configuration\MaterialLoader\PQSMainExtrasLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
     <Compile Include="Configuration\ModLoader\City.cs" />
+    <Compile Include="Configuration\ModLoader\MeshScatter.cs" />
     <Compile Include="Configuration\ModLoader\LandControl.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitudeDouble.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitude.cs" />
