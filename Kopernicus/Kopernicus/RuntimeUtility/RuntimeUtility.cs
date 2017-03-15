@@ -480,6 +480,11 @@ namespace Kopernicus
                 // Waaah
                 foreach (RDArchivesController controller in Resources.FindObjectsOfTypeAll<RDArchivesController>())
                     controller.gameObject.AddOrGetComponent<RnDFixer>();
+                isDone2 = true;
+            }
+            else
+            {
+                isDone2 = false;
             }
         }
 
