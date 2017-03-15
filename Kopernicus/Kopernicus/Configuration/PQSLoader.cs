@@ -364,11 +364,10 @@ namespace Kopernicus
                     if (types.Count(t => t.Name == mod.name) == 0)
                         continue;
                     Type loaderType = types.FirstOrDefault(t => t.Name == mod.name);
-                    string testName = mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl";
-                    Type modType = types.FirstOrDefault(t => t.Name == testName);
+                    Type modType = loaderType.BaseType.GetGenericArguments()[0];
                     if (loaderType == null || modType == null)
                     {
-                        Debug.LogError("MOD NULL: Loadertype " + mod.name + " with mod type " + testName + " and null? " + (loaderType == null) + (modType == null));
+                        Debug.LogError("MOD NULL: Loadertype " + mod.name + " with mod type " + modType.Name + " and null? " + (loaderType == null) + (modType == null));
                         continue;
                     }
                     // Do any PQS Mods already exist on this PQS matching this mod?
