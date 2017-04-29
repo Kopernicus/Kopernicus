@@ -72,21 +72,25 @@ namespace Kopernicus
                 // SolarPanels
                 foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
                 {
+                    sp.trackingBody = celestialBody;
                     sp.trackingTransformLocal = celestialBody.transform;
                     if (celestialBody.scaledBody)
                     {
                         sp.trackingTransformScaled = celestialBody.scaledBody.transform;
                     }
+                    sp.GetTrackingBodyTransforms();
                 }
 
                 // Radiators
                 foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
                 {
+                    rad.trackingBody = celestialBody;
                     rad.trackingTransformLocal = celestialBody.transform;
                     if (celestialBody.scaledBody)
                     {
                         rad.trackingTransformScaled = celestialBody.scaledBody.transform;
                     }
+                    rad.GetTrackingBodyTransforms();
                 }
             }
 
@@ -136,7 +140,7 @@ namespace Kopernicus
             Logger.Default.Flush ();
 
             // GameScenes
-            GameEvents.onLevelWasLoaded.Add(scene => HomeStar().SetAsActive());
+            GameEvents.onLevelWasLoadedGUIReady.Add(scene => HomeStar().SetAsActive());
         }
 
         void Update()
