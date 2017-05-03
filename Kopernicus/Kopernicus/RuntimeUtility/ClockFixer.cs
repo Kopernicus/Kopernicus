@@ -448,21 +448,25 @@ namespace Kopernicus
             num = new[] { 0, num1, num2, num3, num4, num5 };
         }
 
+        public int Second
+        {
+            get { return S.value; }
+        }
         public int Minute
         {
-            get { return 60; }
+            get { return M.value; }
         }
         public int Hour
         {
-            get { return Minute * 60; }
+            get { return H.value; }
         }
         public int Day
         {
-            get { return Hour * 6; }
+            get { return D.value; }
         }
         public int Year
         {
-            get { return Day * 426; }
+            get { return Y.value; }
         }
     }
 }
