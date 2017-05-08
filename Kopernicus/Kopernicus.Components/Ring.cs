@@ -177,7 +177,8 @@ namespace Kopernicus
 
                 ringMR.material.color = color;
 
-                ringMR.material.renderQueue = 3003;
+                ringMR.material.renderQueue = parentRenderer.material.renderQueue;
+                parentRenderer.material.renderQueue--;
             }
 
             /// <summary>
