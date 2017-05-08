@@ -149,8 +149,10 @@ namespace Kopernicus
                     body.orbitDriver.UpdateOrbit();
 
                     // Calculations
-                    body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
-                    body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
+                    if (!body.Has("sphereOfInfluence"))
+                        body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
+                    if (!body.Has("hillSphere"))
+                        body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
                     if (body.solarRotationPeriod)
                     {
                         double rotPeriod = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody.rotationPeriod;

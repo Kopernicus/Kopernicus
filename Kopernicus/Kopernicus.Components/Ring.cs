@@ -166,8 +166,8 @@ namespace Kopernicus
 
                 ringMR.material.SetTexture("_MainTex", texture);
 
-                ringMR.material.SetFloat("innerRadius", innerRadius);
-                ringMR.material.SetFloat("outerRadius", outerRadius);
+                ringMR.material.SetFloat("innerRadius", innerRadius * parent.transform.localScale.x);
+                ringMR.material.SetFloat("outerRadius", outerRadius * parent.transform.localScale.x);
 
                 if (useNewShader)
                 { 
