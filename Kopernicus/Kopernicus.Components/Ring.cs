@@ -83,12 +83,12 @@ namespace Kopernicus
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
 
                     // Inner Radius
-                    vertices.Add(eVert * (innerRadius * (1f / parent.transform.localScale.x)));
+                    vertices.Add(eVert * (innerRadius / parent.transform.localScale.x));
                     Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.one);
 
                     // Outer Radius
-                    vertices.Add(eVert * (outerRadius * (1f / parent.transform.localScale.x)));
+                    vertices.Add(eVert * (outerRadius / parent.transform.localScale.x));
                     Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.zero);
                 }
@@ -98,12 +98,12 @@ namespace Kopernicus
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
 
                     // Inner Radius
-                    vertices.Add(eVert * (innerRadius * (1f / parent.transform.localScale.x)));
+                    vertices.Add(eVert * (innerRadius / parent.transform.localScale.x));
                     Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.one);
 
                     // Outer Radius
-                    vertices.Add(eVert * (outerRadius * (1f / parent.transform.localScale.x)));
+                    vertices.Add(eVert * (outerRadius / parent.transform.localScale.x));
                     Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.zero);
                 }
@@ -166,8 +166,8 @@ namespace Kopernicus
 
                 ringMR.material.SetTexture("_MainTex", texture);
 
-                ringMR.material.SetFloat("innerRadius", innerRadius * parent.transform.localScale.x);
-                ringMR.material.SetFloat("outerRadius", outerRadius * parent.transform.localScale.x);
+                ringMR.material.SetFloat("innerRadius", innerRadius / parent.transform.localScale.x);
+                ringMR.material.SetFloat("outerRadius", outerRadius / parent.transform.localScale.x);
 
                 if (useNewShader)
                 { 
