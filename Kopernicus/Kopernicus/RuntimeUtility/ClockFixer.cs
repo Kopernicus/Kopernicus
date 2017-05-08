@@ -402,7 +402,7 @@ namespace Kopernicus
             // Current Year
             int num1 = (int)(time / Y.value);
             // Current Day
-            int num5 = (int)(time / D.value) - Math.Round(num1 * Y.value / D.value, 0, MidpointRounding.AwayFromZero);
+            int num5 = (int) ((time / D.value) - Math.Round(num1 * Y.value / D.value, 0, MidpointRounding.AwayFromZero));
             // Time left to count
             double num0 = time % D.value;
             // Number of hours in this day
@@ -450,23 +450,23 @@ namespace Kopernicus
 
         public int Second
         {
-            get { return S.value; }
+            get { return (int)S.value; }
         }
         public int Minute
         {
-            get { return M.value; }
+            get { return (int)M.value; }
         }
         public int Hour
         {
-            get { return H.value; }
+            get { return (int)H.value; }
         }
         public int Day
         {
-            get { return D.value; }
+            get { return (int)D.value; }
         }
         public int Year
         {
-            get { return Y.value; }
+            get { return (int)Y.value; }
         }
     }
 }
