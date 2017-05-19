@@ -53,15 +53,13 @@ namespace Kopernicus
         /// <summary>
         /// The data for each mod
         /// </summary>
-        internal static Dictionary<String, Data> options;
+        internal static Dictionary<String, Data> options = new Dictionary<String, Data> { { "Default", new Data() } };
 
         /// <summary>
         /// Registers the settings for a mod
         /// </summary>
         public static void Register(String modName, Data data)
         {
-            if (options == null)
-                options = new Dictionary<String, Data>() { { "Default", new Data()} };
             if (options.ContainsKey(modName))
                 options[modName] = data;
             else
