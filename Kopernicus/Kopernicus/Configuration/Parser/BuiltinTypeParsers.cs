@@ -28,6 +28,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -417,6 +418,8 @@ namespace Kopernicus
             // The loaded value
             public T value;
 
+            private static Dictionary<String, AssetBundle> bundles = new Dictionary<String, AssetBundle>();
+
             // Load the AssetBundle with the object
             public void SetFromString(string s)
             {
@@ -426,7 +429,16 @@ namespace Kopernicus
                     Logger.Active.Log("Couldn't find asset file at path: " + KSPUtil.ApplicationRootPath + "GameData/" + split[0]);
                     return;
                 }
-                AssetBundle bundle = AssetBundle.LoadFromMemory(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + split[0]));
+                AssetBundle bundle = null;
+                if (!bundles.ContainsKey(split[0]))
+                {
+                    bundle = AssetBundle.LoadFromMemory(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + split[0]));
+                    bundles.Add(split[0], bundle);
+                }
+                else
+                {
+                    bundle = bundles[split[0]];
+                }
                 value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
                 UnityEngine.Object.DontDestroyOnLoad(value);
                 //bundle.Unload(false);
