@@ -376,12 +376,12 @@ namespace Kopernicus
                 if (s.StartsWith ("BUILTIN/")) 
                 {
                     string meshName = Regex.Replace (s, "BUILTIN/", "");
-                    value = UnityEngine.Resources.FindObjectsOfTypeAll<Mesh> ().Where (mesh => mesh.name == meshName).First ();
+                    value = Resources.FindObjectsOfTypeAll<Mesh> ().First (mesh => mesh.name == meshName);
                     return;
                 }
 
                 String path = KSPUtil.ApplicationRootPath + "GameData/" + s;
-                if (System.IO.File.Exists(path))
+                if (File.Exists(path))
                 {
                     value = ObjImporter.ImportFile(path);
                     value.name = Path.GetFileNameWithoutExtension(path);
@@ -429,7 +429,7 @@ namespace Kopernicus
                 AssetBundle bundle = AssetBundle.LoadFromMemory(File.ReadAllBytes(KSPUtil.ApplicationRootPath + "GameData/" + split[0]));
                 value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
                 UnityEngine.Object.DontDestroyOnLoad(value);
-                bundle.Unload(false);
+                //bundle.Unload(false);
             }
             public AssetParser()
             {
