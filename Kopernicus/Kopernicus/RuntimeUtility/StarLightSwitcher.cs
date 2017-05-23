@@ -69,6 +69,7 @@ namespace Kopernicus
             // Set custom powerCurve for solar panels and reset Radiators
             if (FlightGlobals.ActiveVessel != null)
             {
+                /*
                 // SolarPanels
                 foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
                 {
@@ -79,7 +80,7 @@ namespace Kopernicus
                         sp.trackingTransformScaled = celestialBody.scaledBody.transform;
                     }
                     sp.GetTrackingBodyTransforms();
-                }
+                }*/
 
                 // Radiators
                 foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())

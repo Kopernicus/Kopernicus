@@ -58,6 +58,81 @@ namespace Kopernicus
                 base.PostCalculateTracking(trackingLOS, trackingDirection);
                 useCurve = oldUseCurve;
             }
+
+            public override void CalculateTracking()
+            {
+                // Maximum values
+                Single maxAOA = 0;
+                KopernicusStar maxStar = null;
+
+                // Go through all stars
+                foreach (KopernicusStar star in KopernicusStar.Stars)
+                {
+
+                    // Set the body as active
+                    trackingBody = star.sun;
+                    trackingTransformLocal = star.sun.transform;
+                    if (star.sun.scaledBody)
+                    {
+                        trackingTransformScaled = star.sun.scaledBody.transform;
+                    }
+                    GetTrackingBodyTransforms();
+
+                    // Calculate SunAOA
+                    Single _sunAOA = 0;
+                    Vector3 direction = (trackingTransformLocal.position - panelRotationTransform.position).normalized;
+                    trackingLOS = CalculateTrackingLOS(direction, ref blockingObject);
+                    if (!trackingLOS)
+                    {
+                        _sunAOA = 0f;
+                    }
+                    else
+                    {
+                        if (panelType == PanelType.FLAT)
+                        {
+                            _sunAOA = Mathf.Clamp(Vector3.Dot(trackingDotTransform.forward, direction), 0f, 1f);
+                        }
+                        else if (this.panelType != ModuleDeployableSolarPanel.PanelType.CYLINDRICAL)
+                        {
+                            _sunAOA = 0.25f;
+                        }
+                        else
+                        {
+                            Vector3 direction2;
+                            if (alignType == PanelAlignType.PIVOT)
+                            {
+                                direction2 = trackingDotTransform.forward;
+                            }
+                            else if (alignType != PanelAlignType.X)
+                            {
+                                direction2 = (alignType != PanelAlignType.Y ? part.partTransform.forward : part.partTransform.up);
+                            }
+                            else
+                            {
+                                direction2 = part.partTransform.right;
+                            }
+                            _sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction2, direction))) * 0.318309873f;
+                        }
+                    }
+
+                    // Check if we have a new maximum
+                    if (_sunAOA > maxAOA)
+                    {
+                        maxAOA = _sunAOA;
+                        maxStar = star;
+                    }
+                }
+
+                // We got the best star to use
+                trackingBody = maxStar.sun;
+                trackingTransformLocal = maxStar.sun.transform;
+                if (maxStar.sun.scaledBody)
+                {
+                    trackingTransformScaled = maxStar.sun.scaledBody.transform;
+                }
+                GetTrackingBodyTransforms();
+                base.CalculateTracking();
+            }
         }
     }
 }
