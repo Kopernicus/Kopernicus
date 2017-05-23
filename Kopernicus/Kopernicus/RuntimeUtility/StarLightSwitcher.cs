@@ -44,7 +44,7 @@ namespace Kopernicus
         public CelestialBody celestialBody { get; set; }
 
         // We need to patch the sun Transform of the Radiators
-        private static FieldInfo radiatorSun { get; }
+        private static FieldInfo radiatorSun { get; set; }
 
         // get the FieldInfo
         static StarComponent()
