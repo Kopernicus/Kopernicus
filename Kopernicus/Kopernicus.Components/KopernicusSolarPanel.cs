@@ -30,6 +30,7 @@
 using UnityEngine;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Kopernicus
 {
@@ -40,6 +41,19 @@ namespace Kopernicus
         /// </summary>
         public class KopernicusSolarPanel : ModuleDeployableSolarPanel
         {
+            public static Double stockLuminosity;
+
+            static KopernicusSolarPanel()
+            {
+                String filename = (String) typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(String)).GetValue(PhysicsGlobals.Instance);
+                ConfigNode node = ConfigNode.Load(filename);
+                String value = node.GetValue("solarLuminosityAtHome");
+                if (value != null)
+                {
+                    stockLuminosity = Double.Parse(value);
+                }
+            }
+
             public override void PostCalculateTracking(Boolean trackingLOS, Vector3 trackingDirection)
             {
                 // Ugly hack ahead
@@ -50,7 +64,7 @@ namespace Kopernicus
                     foreach (KopernicusStar star in KopernicusStar.Stars)
                     {
                         if (KopernicusStar.SolarFlux.ContainsKey(star.name))
-                            distMult += (Single)(KopernicusStar.SolarFlux[star.name] / star.shifter.solarLuminosity);
+                            distMult += (Single)(KopernicusStar.SolarFlux[star.name] / stockLuminosity);
                     }
                     powerCurve = new FloatCurve(new [] { new Keyframe(0, distMult), new Keyframe(1, distMult) });
                     useCurve = true;
