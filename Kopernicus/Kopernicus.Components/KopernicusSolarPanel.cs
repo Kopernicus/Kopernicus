@@ -31,6 +31,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Reflection;
+using ModularFI;
 
 namespace Kopernicus
 {
@@ -56,50 +57,43 @@ namespace Kopernicus
 
             public override void PostCalculateTracking(Boolean trackingLOS, Vector3 trackingDirection)
             {
-                // Ugly hack ahead
-                Boolean oldUseCurve = useCurve;
-                if (!useCurve)
-                {
-                    Single distMult = 0;
-                    foreach (KopernicusStar star in KopernicusStar.Stars)
-                    {
-                        if (KopernicusStar.SolarFlux.ContainsKey(star.name))
-                            distMult += (Single)(KopernicusStar.SolarFlux[star.name] / stockLuminosity);
-                    }
-                    powerCurve = new FloatCurve(new [] { new Keyframe(0, distMult), new Keyframe(1, distMult) });
-                    useCurve = true;
-                }
-                base.PostCalculateTracking(trackingLOS, trackingDirection);
-                useCurve = oldUseCurve;
-                
                 // Maximum values
                 Single maxAOA = 0;
                 KopernicusStar maxStar = null;
 
+                // Override layer mask
+                planetLayerMask = ModularFlightIntegrator.SunLayerMask;
+
+                // Efficiency modifier
+                _efficMult = (temperatureEfficCurve.Evaluate((Single)part.skinTemperature) * timeEfficCurve.Evaluate((Single)((Planetarium.GetUniversalTime() - launchUT) * 1.15740740740741E-05)) * efficiencyMult);
+                _flowRate = 0;
+                sunAOA = 0;
+
                 // Go through all stars
                 foreach (KopernicusStar star in KopernicusStar.Stars)
                 {
-                    // Set the body as active
-                    trackingBody = star.sun;
+                    // Calculate stuff
+                    Vector3 trackDir = (star.sun.transform.position - panelRotationTransform.position).normalized;
+                    CelestialBody old = trackingBody;
                     trackingTransformLocal = star.sun.transform;
-                    if (star.sun.scaledBody)
-                    {
-                        trackingTransformScaled = star.sun.scaledBody.transform;
-                    }
-                    GetTrackingBodyTransforms();
+                    trackingTransformScaled = star.sun.scaledBody.transform;
+                    trackingLOS = CalculateTrackingLOS(trackDir, ref blockingObject);
+                    trackingTransformLocal = old.transform;
+                    trackingTransformScaled = old.scaledBody.transform;
 
                     // Calculate sun AOA
                     Single _sunAOA = 0f;
                     if (!trackingLOS)
                     {
-                        sunAOA = 0f;
+                        _sunAOA = 0f;
+                        status = "Blocked by " + blockingObject;
                     }
                     else
                     {
                         status = "Direct Sunlight";
                         if (panelType == PanelType.FLAT)
                         {
-                            _sunAOA = Mathf.Clamp(Vector3.Dot(trackingDotTransform.forward, trackingDirection), 0f, 1f);
+                            _sunAOA = Mathf.Clamp(Vector3.Dot(trackingDotTransform.forward, trackDir), 0f, 1f);
                         }
                         else if (panelType != PanelType.CYLINDRICAL)
                         {
@@ -120,23 +114,25 @@ namespace Kopernicus
                             {
                                 direction = part.partTransform.right;
                             }
-                            _sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction, trackingDirection))) * 0.318309873f;
+                            _sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
                         }
                     }
+                    sunAOA += _sunAOA;
 
                     // Calculate distance multiplier
                     Double __distMult = 1;
                     if (!useCurve)
                     {
+                        if (!KopernicusStar.SolarFlux.ContainsKey(star.name))
+                            continue;
                         __distMult = (Single)(KopernicusStar.SolarFlux[star.name] / stockLuminosity);
                     }
                     else
                     {
-                        __distMult = powerCurve.Evaluate((trackingTransformLocal.position - panelRotationTransform.position).magnitude);
+                        __distMult = powerCurve.Evaluate((star.sun.transform.position - panelRotationTransform.position).magnitude);
                     }
 
                     // Calculate flow rate
-                    _efficMult = (temperatureEfficCurve.Evaluate((Single) part.skinTemperature) * timeEfficCurve.Evaluate((Single) ((Planetarium.GetUniversalTime() - launchUT) * 1.15740740740741E-05)) * efficiencyMult);
                     Double __flowRate = _sunAOA * _efficMult * __distMult;
                     if (part.submergedPortion > 0)
                     {
@@ -169,14 +165,15 @@ namespace Kopernicus
                     }
                 }
 
+                // Sun AOA
+                sunAOA /= KopernicusStar.SolarFlux.Count + 1;
+
                 // We got the best star to use
-                trackingBody = maxStar.sun;
-                trackingTransformLocal = maxStar.sun.transform;
-                if (maxStar.sun.scaledBody)
+                if (maxStar != null && maxStar.sun != trackingBody)
                 {
-                    trackingTransformScaled = maxStar.sun.scaledBody.transform;
+                    trackingBody = maxStar.sun;
+                    GetTrackingBodyTransforms();
                 }
-                GetTrackingBodyTransforms();
 
                 // Use the flow rate
                 flowRate = (Single)(resHandler.UpdateModuleResourceOutputs(_flowRate) * flowMult);
