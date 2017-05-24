@@ -59,6 +59,7 @@ namespace Kopernicus
             {
                 // Maximum values
                 Single maxAOA = 0;
+                Double maxFlowRate = 0;
                 KopernicusStar maxStar = null;
 
                 // Override layer mask
@@ -117,7 +118,6 @@ namespace Kopernicus
                             _sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
                         }
                     }
-                    sunAOA += _sunAOA;
 
                     // Calculate distance multiplier
                     Double __distMult = 1;
@@ -153,6 +153,11 @@ namespace Kopernicus
                         }
                         status += ", Underwater";
                     }
+                    sunAOA += (Single)__flowRate * _sunAOA;
+                    if (__flowRate > maxFlowRate)
+                    {
+                        maxFlowRate = __flowRate;
+                    }
 
                     // Apply the flow rate
                     _flowRate += __flowRate;
@@ -166,7 +171,7 @@ namespace Kopernicus
                 }
 
                 // Sun AOA
-                sunAOA /= KopernicusStar.SolarFlux.Count + 1;
+                sunAOA /= (Single)maxFlowRate;
 
                 // We got the best star to use
                 if (maxStar != null && maxStar.sun != trackingBody)
