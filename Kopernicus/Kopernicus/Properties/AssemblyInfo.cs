@@ -11,6 +11,7 @@ using System.Reflection;
 [assembly: KSPAssembly("Kopernicus", 1, 0)]
 [assembly: KSPAssemblyDependency("Kopernicus.OnDemand", 1, 0)]
 [assembly: KSPAssemblyDependency("Kopernicus.Components", 1, 0)]
+[assembly: KSPAssemblyDependency("Kopernicus.Parser", 0, 0)]
 [assembly: KSPAssemblyDependency("ModularFlightIntegrator", 1, 0)]
 [assembly: AssemblyVersion("1.0.0")]
 
