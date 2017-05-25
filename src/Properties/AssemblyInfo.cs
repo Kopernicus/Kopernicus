@@ -9,3 +9,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("f9968d87-83da-453c-8e28-b632367eacd3")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: KSPAssembly("Kopernicus.Parser", 1, 0)]
