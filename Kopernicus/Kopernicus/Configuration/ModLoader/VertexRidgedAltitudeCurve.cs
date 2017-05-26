@@ -28,6 +28,7 @@
  */
 
 using System;
+using LibNoise;
 using UnityEngine;
 
 namespace Kopernicus
@@ -89,7 +90,7 @@ namespace Kopernicus
                 
                 // ridgedMode
                 [ParserTarget("ridgedMode")]
-                public EnumParser<LibNoise.Unity.QualityMode> ridgedMode
+                public EnumParser<NoiseQuality> ridgedMode
                 {
                     get { return mod.ridgedMode; }
                     set { mod.ridgedMode = value; }

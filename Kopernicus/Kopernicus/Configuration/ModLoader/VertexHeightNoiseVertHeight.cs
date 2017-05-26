@@ -28,6 +28,7 @@
  */
 
 using System;
+using LibNoise;
 using UnityEngine;
 
 namespace Kopernicus
@@ -97,7 +98,7 @@ namespace Kopernicus
 
                 // Quality mode for the noise
                 [ParserTarget("mode")]
-                public EnumParser<LibNoise.Unity.QualityMode> mode
+                public EnumParser<NoiseQuality> mode
                 {
                     get { return mod.mode; }
                     set { mod.mode = value; }

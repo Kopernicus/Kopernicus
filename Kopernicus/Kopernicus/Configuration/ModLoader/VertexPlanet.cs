@@ -27,7 +27,7 @@
  * https://kerbalspaceprogram.com
  */
 
-using LibNoise.Unity.Generator;
+using LibNoise;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,7 +116,7 @@ namespace Kopernicus
                     public class RiggedParser
                     {
                         // Noise
-                        public RiggedMultifractal noise;
+                        public RidgedMultifractal noise;
 
                         // frequency
                         [ParserTarget("frequency")]
@@ -144,10 +144,10 @@ namespace Kopernicus
 
                         // quality
                         [ParserTarget("quality")]
-                        public EnumParser<LibNoise.Unity.QualityMode> quality
+                        public EnumParser<NoiseQuality> quality
                         {
-                            get { return noise.Quality; }
-                            set { noise.Quality = value; }
+                            get { return noise.NoiseQuality; }
+                            set { noise.NoiseQuality = value; }
                         }
 
                         // seed
@@ -161,11 +161,11 @@ namespace Kopernicus
                         // Default Constructor
                         public RiggedParser()
                         {
-                            noise = new RiggedMultifractal();
+                            noise = new RidgedMultifractal();
                         }
 
                         // Runtime Constructor
-                        public RiggedParser(RiggedMultifractal rigged)
+                        public RiggedParser(RidgedMultifractal rigged)
                         {
                             noise = rigged;
                         }
@@ -219,8 +219,8 @@ namespace Kopernicus
                     // Apply Event
                     void IParserEventSubscriber.Apply(ConfigNode node)
                     {
-                        if (wrapper.noise is RiggedMultifractal)
-                            riggedNoise = new RiggedParser((RiggedMultifractal)wrapper.noise);
+                        if (wrapper.noise is RidgedMultifractal)
+                            riggedNoise = new RiggedParser((RidgedMultifractal)wrapper.noise);
                     }
 
                     // Post Apply Event

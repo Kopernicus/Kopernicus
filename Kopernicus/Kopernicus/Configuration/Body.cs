@@ -64,7 +64,7 @@ namespace Kopernicus
                 {
                     if (generatedBody.celestialBody.GetComponent<NameChanger>())
                         return generatedBody.celestialBody.GetComponent<NameChanger>().newName;
-                    else return "";
+                    return "";
                 }
                 set
                 {
@@ -181,7 +181,7 @@ namespace Kopernicus
                     // If we've changed the name, reset use_The_InName
                     if (generatedBody.name != template.body.name)
                     {
-                        generatedBody.celestialBody.use_The_InName = false;
+                        generatedBody.celestialBody.bodyDisplayName = generatedBody.celestialBody.bodyName;
                     }
                 }
 
@@ -202,6 +202,7 @@ namespace Kopernicus
 
                     // Sensible defaults 
                     generatedBody.celestialBody.bodyName = name;
+                    generatedBody.celestialBody.bodyDisplayName = name;
                     generatedBody.celestialBody.atmosphere = false;
                     generatedBody.celestialBody.ocean = false;
 

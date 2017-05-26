@@ -28,6 +28,7 @@
  */
 
 using System;
+using LibNoise;
 using UnityEngine;
 
 namespace Kopernicus
@@ -169,7 +170,7 @@ namespace Kopernicus
 
                 // The quality of the additive noise
                 [ParserTarget("ridgedAddQuality")]
-                public EnumParser<LibNoise.Unity.QualityMode> ridgedAddQuality
+                public EnumParser<NoiseQuality> ridgedAddQuality
                 {
                     get { return mod.ridgedAdd.quality; }
                     set { mod.ridgedAdd.quality = value; }
@@ -209,7 +210,7 @@ namespace Kopernicus
 
                 // The quality of the subtractive noise
                 [ParserTarget("ridgedSubQuality")]
-                public EnumParser<LibNoise.Unity.QualityMode> ridgedSubQuality
+                public EnumParser<NoiseQuality> ridgedSubQuality
                 {
                     get { return mod.ridgedSub.quality; }
                     set { mod.ridgedSub.quality = value; }
