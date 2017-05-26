@@ -250,7 +250,7 @@ namespace Kopernicus
             public NumericParser<bool> useTheInName
             {
                 get { return celestialBody.bodyDisplayName.StartsWith("The", StringComparison.InvariantCultureIgnoreCase); }
-                set { celestialBody.bodyDisplayName = "The" + celestialBody.bodyName; }
+                set { celestialBody.bodyDisplayName = "The " + celestialBody.bodyName; }
             }
 
             [ParserTarget("displayName")]
