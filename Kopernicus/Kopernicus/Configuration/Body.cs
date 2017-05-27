@@ -166,7 +166,6 @@ namespace Kopernicus
                     // Patch the game object names in the template
                     generatedBody.name = name;
                     generatedBody.celestialBody.bodyName = name;
-                    generatedBody.celestialBody.bodyDisplayName = name;
                     generatedBody.celestialBody.transform.name = name;
                     generatedBody.celestialBody.bodyTransform.name = name;
                     generatedBody.scaledVersion.name = name;
@@ -180,7 +179,7 @@ namespace Kopernicus
                     }
 
                     // If we've changed the name, reset use_The_InName
-                    if (generatedBody.name != template.body.name)
+                    if (generatedBody.name != template.originalBody.celestialBody.bodyName)
                     {
                         generatedBody.celestialBody.bodyDisplayName = generatedBody.celestialBody.bodyName;
                     }
