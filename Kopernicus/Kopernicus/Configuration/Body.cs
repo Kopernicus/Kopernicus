@@ -60,23 +60,8 @@ namespace Kopernicus
             [ParserTarget("cbNameLater")]
             public string cbNameLater
             {
-                get
-                {
-                    if (generatedBody.celestialBody.GetComponent<NameChanger>())
-                        return generatedBody.celestialBody.GetComponent<NameChanger>().newName;
-                    return "";
-                }
-                set
-                {
-                    if (!generatedBody.celestialBody.GetComponent<NameChanger>())
-                    {
-                        NameChanger changer = generatedBody.celestialBody.gameObject.AddComponent<NameChanger>();
-                        changer.oldName = name;
-                        changer.newName = value;
-                    }
-                    else
-                        generatedBody.celestialBody.gameObject.GetComponent<NameChanger>().newName = cbNameLater;
-                }
+                get { return generatedBody.celestialBody.bodyDisplayName; }
+                set { generatedBody.celestialBody.bodyDisplayName = value; }
             }
             
             // Flight globals index of this body - for computing reference id

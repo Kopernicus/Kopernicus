@@ -195,14 +195,6 @@ namespace Kopernicus
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
                     }
                 }
-
-                // namechanges
-                if (FindObjectsOfType<NameChanger>().Count(n => n.oldName == planetItem.label_planetName.text) != 0 && !planetItem.label_planetName.name.EndsWith("NAMECHANGER"))
-                {
-                    NameChanger changer = FindObjectsOfType<NameChanger>().First(n => n.oldName == planetItem.label_planetName.text);
-                    planetItem.label_planetName.text = changer.newName;
-                    planetItem.label_planetName.name += "NAMECHANGER";
-                }
             }
         }
 
