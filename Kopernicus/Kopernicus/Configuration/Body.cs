@@ -179,9 +179,9 @@ namespace Kopernicus
                     }
 
                     // If we've changed the name, reset use_The_InName
-                    if (generatedBody.name != template.originalBody.celestialBody.bodyName)
+                    if (generatedBody.name != template.body.name)
                     {
-                        generatedBody.celestialBody.bodyDisplayName = generatedBody.celestialBody.bodyName;
+                        generatedBody.celestialBody.use_The_InName = false;
                     }
                 }
 
@@ -202,7 +202,6 @@ namespace Kopernicus
 
                     // Sensible defaults 
                     generatedBody.celestialBody.bodyName = name;
-                    generatedBody.celestialBody.bodyDisplayName = name;
                     generatedBody.celestialBody.atmosphere = false;
                     generatedBody.celestialBody.ocean = false;
 

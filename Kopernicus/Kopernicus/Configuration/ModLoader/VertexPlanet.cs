@@ -31,6 +31,8 @@ using LibNoise;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LibNoise.Unity;
+using LibNoise.Unity.Generator;
 using UnityEngine;
 
 namespace Kopernicus
@@ -116,7 +118,7 @@ namespace Kopernicus
                     public class RiggedParser
                     {
                         // Noise
-                        public RidgedMultifractal noise;
+                        public RiggedMultifractal noise;
 
                         // frequency
                         [ParserTarget("frequency")]
@@ -139,15 +141,15 @@ namespace Kopernicus
                         public NumericParser<int> octaveCount
                         {
                             get { return noise.OctaveCount; }
-                            set { noise.OctaveCount = Mathf.Clamp(value, 1, 30); }
+                            set { noise.OctaveCount = value; }
                         }
 
                         // quality
                         [ParserTarget("quality")]
                         public EnumParser<KopernicusNoiseQuality> quality
                         {
-                            get { return (KopernicusNoiseQuality) (int) noise.NoiseQuality; }
-                            set { noise.NoiseQuality = (NoiseQuality) (int) value.value; }
+                            get { return (KopernicusNoiseQuality) (int) noise.Quality; }
+                            set { noise.Quality = (QualityMode) (int) value.value; }
                         }
 
                         // seed
@@ -161,11 +163,11 @@ namespace Kopernicus
                         // Default Constructor
                         public RiggedParser()
                         {
-                            noise = new RidgedMultifractal();
+                            noise = new RiggedMultifractal();
                         }
 
                         // Runtime Constructor
-                        public RiggedParser(RidgedMultifractal rigged)
+                        public RiggedParser(RiggedMultifractal rigged)
                         {
                             noise = rigged;
                         }
@@ -193,7 +195,7 @@ namespace Kopernicus
                     public NumericParser<int> octaves
                     {
                         get { return wrapper.octaves; }
-                        set { wrapper.octaves = Mathf.Clamp(value, 1, 30); }
+                        set { wrapper.octaves = value; }
                     }
 
                     // persistance
@@ -219,8 +221,8 @@ namespace Kopernicus
                     // Apply Event
                     void IParserEventSubscriber.Apply(ConfigNode node)
                     {
-                        if (wrapper.noise is RidgedMultifractal)
-                            riggedNoise = new RiggedParser((RidgedMultifractal)wrapper.noise);
+                        if (wrapper.noise is RiggedMultifractal)
+                            riggedNoise = new RiggedParser((RiggedMultifractal)wrapper.noise);
                     }
 
                     // Post Apply Event
