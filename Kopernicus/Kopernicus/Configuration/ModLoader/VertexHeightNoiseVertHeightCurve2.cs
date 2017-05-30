@@ -29,6 +29,7 @@
 
 using System;
 using LibNoise;
+using LibNoise.Unity;
 using UnityEngine;
 
 namespace Kopernicus
@@ -69,7 +70,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedAddOctaves
                 {
                     get { return mod.ridgedAddOctaves; }
-                    set { mod.ridgedAddOctaves = Mathf.Clamp(value, 1, 30); }
+                    set { mod.ridgedAddOctaves = value; }
                 }
 
                 // ridgedAddOctaves
@@ -85,7 +86,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> ridgedMode
                 {
                     get { return (KopernicusNoiseQuality) (int) mod.ridgedMode; }
-                    set { mod.ridgedMode = (NoiseQuality) (int) value.value; }
+                    set { mod.ridgedMode = (QualityMode) (int) value.value; }
                 }
 
                 // ridgedSubFrequency
@@ -109,7 +110,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedSubOctaves
                 {
                     get { return mod.ridgedSubOctaves; }
-                    set { mod.ridgedSubOctaves = Mathf.Clamp(value, 1, 30); }
+                    set { mod.ridgedSubOctaves = value; }
                 }
 
                 // ridgedSubSeed

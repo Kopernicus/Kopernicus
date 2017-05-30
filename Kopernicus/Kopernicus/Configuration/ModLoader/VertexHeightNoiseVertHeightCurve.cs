@@ -29,6 +29,7 @@
 
 using System;
 using LibNoise;
+using LibNoise.Unity;
 using UnityEngine;
 
 namespace Kopernicus
@@ -85,7 +86,7 @@ namespace Kopernicus
                 public NumericParser<int> octaves
                 {
                     get { return mod.octaves; }
-                    set { mod.octaves = Mathf.Clamp(value, 1, 30); }
+                    set { mod.octaves = value; }
                 }
 
                 // Persistence of the simplex height
@@ -117,12 +118,11 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> mode
                 {
                     get { return (KopernicusNoiseQuality) (int) mod.mode; }
-                    set { mod.mode = (NoiseQuality) (int) value.value; }
+                    set { mod.mode = (QualityMode) (int) value.value; }
                 }
 
                 // mode
                 [ParserTarget("noiseType")]
-
                 public EnumParser<KopernicusNoiseType> noiseType
                 {
                     get { return (KopernicusNoiseType) (int) mod.noiseType; }
