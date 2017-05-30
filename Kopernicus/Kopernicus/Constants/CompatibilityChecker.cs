@@ -48,9 +48,9 @@ namespace Kopernicus
     {
         // Compatible version
         internal const int version_major = 1;
-        internal const int version_minor = 3;
-        internal const int Revision = 0;
-        internal const int Kopernicus = 5;
+        internal const int version_minor = 2;
+        internal const int Revision = 2;
+        internal const int Kopernicus = 7;
 
         public static bool IsCompatible()
         {
@@ -197,7 +197,7 @@ namespace Kopernicus
 
             if ((incompatible.Length > 0) || (incompatibleUnity.Length > 0) /*|| IsWin64()*/)
             {
-                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "CompatibilityChecker", "Incompatible Mods Detected", message, "OK", true, UISkinManager.defaultSkin);
+                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Incompatible Mods Detected", message, "OK", true, UISkinManager.defaultSkin);
             }
         }
 
