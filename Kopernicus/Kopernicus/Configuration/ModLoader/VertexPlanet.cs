@@ -139,7 +139,7 @@ namespace Kopernicus
                         public NumericParser<int> octaveCount
                         {
                             get { return noise.OctaveCount; }
-                            set { noise.OctaveCount = value; }
+                            set { noise.OctaveCount = Mathf.Clamp(value, 1, 30); }
                         }
 
                         // quality
@@ -193,7 +193,7 @@ namespace Kopernicus
                     public NumericParser<int> octaves
                     {
                         get { return wrapper.octaves; }
-                        set { wrapper.octaves = value; }
+                        set { wrapper.octaves = Mathf.Clamp(value, 1, 30); }
                     }
 
                     // persistance

@@ -165,7 +165,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedAddOctaves
                 {
                     get { return mod.ridgedAdd.octaves; }
-                    set { mod.ridgedAdd.octaves = value; }
+                    set { mod.ridgedAdd.octaves = Mathf.Clamp(value, 1, 30); }
                 }
 
                 // The quality of the additive noise
@@ -205,7 +205,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedSubOctaves
                 {
                     get { return mod.ridgedSub.octaves; }
-                    set { mod.ridgedSub.octaves = value; }
+                    set { mod.ridgedSub.octaves = Mathf.Clamp(value, 1, 30); }
                 }
 
                 // The quality of the subtractive noise

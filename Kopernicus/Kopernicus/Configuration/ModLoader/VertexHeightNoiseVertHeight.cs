@@ -77,7 +77,7 @@ namespace Kopernicus
                 public NumericParser<int> octaves
                 {
                     get { return mod.octaves; }
-                    set { mod.octaves = value; }
+                    set { mod.octaves = vMathf.Clamp(value, 1, 30)alue; }
                 }
 
                 // Persistence of the simplex height

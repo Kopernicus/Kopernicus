@@ -85,7 +85,7 @@ namespace Kopernicus
                 public NumericParser<int> octaves
                 {
                     get { return mod.octaves; }
-                    set { mod.octaves = value; }
+                    set { mod.octaves = Mathf.Clamp(value, 1, 30); }
                 }
 
                 // Persistance of the noise

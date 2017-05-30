@@ -69,7 +69,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedAddOctaves
                 {
                     get { return mod.ridgedAddOctaves; }
-                    set { mod.ridgedAddOctaves = value; }
+                    set { mod.ridgedAddOctaves = Mathf.Clamp(value, 1, 30); }
                 }
 
                 // ridgedAddOctaves
@@ -109,7 +109,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedSubOctaves
                 {
                     get { return mod.ridgedSubOctaves; }
-                    set { mod.ridgedSubOctaves = value; }
+                    set { mod.ridgedSubOctaves = Mathf.Clamp(value, 1, 30); }
                 }
 
                 // ridgedSubSeed
