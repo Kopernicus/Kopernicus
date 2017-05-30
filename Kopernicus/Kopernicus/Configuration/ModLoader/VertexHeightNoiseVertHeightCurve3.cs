@@ -29,6 +29,7 @@
 
 using System;
 using LibNoise;
+using LibNoise.Unity;
 using UnityEngine;
 
 namespace Kopernicus
@@ -165,7 +166,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedAddOctaves
                 {
                     get { return mod.ridgedAdd.octaves; }
-                    set { mod.ridgedAdd.octaves = Mathf.Clamp(value, 1, 30); }
+                    set { mod.ridgedAdd.octaves = value; }
                 }
 
                 // The quality of the additive noise
@@ -173,7 +174,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> ridgedAddQuality
                 {
                     get { return (KopernicusNoiseQuality) (int) mod.ridgedAdd.quality; }
-                    set { mod.ridgedAdd.quality = (NoiseQuality) (int) value.value; }
+                    set { mod.ridgedAdd.quality = (QualityMode) (int) value.value; }
                 }
 
                 // The seed of the additive noise
@@ -205,7 +206,7 @@ namespace Kopernicus
                 public NumericParser<int> ridgedSubOctaves
                 {
                     get { return mod.ridgedSub.octaves; }
-                    set { mod.ridgedSub.octaves = Mathf.Clamp(value, 1, 30); }
+                    set { mod.ridgedSub.octaves = value; }
                 }
 
                 // The quality of the subtractive noise
@@ -213,7 +214,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> ridgedSubQuality
                 {
                     get { return (KopernicusNoiseQuality) (int) mod.ridgedSub.quality; }
-                    set { mod.ridgedSub.quality = (NoiseQuality) (int) value.value; }
+                    set { mod.ridgedSub.quality = (QualityMode) (int) value.value; }
                 }
 
                 // The seed of the subtractive noise
