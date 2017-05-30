@@ -1,20 +1,14 @@
 ﻿Kopernicus
 ==============================
-May 27, 2017
+May 30, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.0-1)
+New in this version (1.2.7-7)
 -------------------
-- Updated to 1.3.0
-- Added a config loader for displayName (the name that is displayed in the UI). useTheInName and cbNameLater still exist, but they were deprecated in favor of Properties\displayName
-- Updated dependencies
-- Fix a scale issue with the rings
-- Fix the solar flux mechanic, it now works like it is supposed to
-- Replaced the stock solar panel module with a custom version to handle multiple stars properly
-- Added a KSP-AVC version file
+- Backported the changes from 1.3.0-1 to KSP 1.2.2
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 

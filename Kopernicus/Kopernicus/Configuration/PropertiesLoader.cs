@@ -249,15 +249,8 @@ namespace Kopernicus
             [ParserTarget("useTheInName")]
             public NumericParser<bool> useTheInName
             {
-                get { return celestialBody.bodyDisplayName.StartsWith("The", StringComparison.InvariantCultureIgnoreCase); }
-                set { celestialBody.bodyDisplayName = "The " + celestialBody.bodyName; }
-            }
-
-            [ParserTarget("displayName")]
-            public string displayName
-            {
-                get { return celestialBody.bodyDisplayName; }
-                set { celestialBody.bodyDisplayName = value; }
+                get { return celestialBody.use_The_InName; }
+                set { celestialBody.use_The_InName = value; }
             }
 
             // If the body should be unselectable
