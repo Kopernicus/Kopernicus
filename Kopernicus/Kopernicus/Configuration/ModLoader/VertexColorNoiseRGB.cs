@@ -90,18 +90,18 @@ namespace Kopernicus
 
                 // Noise quality
                 [ParserTarget("mode")]
-                public EnumParser<NoiseQuality> mode
+                public EnumParser<KopernicusNoiseQuality> mode
                 {
-                    get { return mod.mode; }
-                    set { mod.mode = value; }
+                    get { return (KopernicusNoiseQuality) (int) mod.mode; }
+                    set { mod.mode = (NoiseQuality) (int) value.value; }
                 }
 
                 // Noise algorithm
                 [ParserTarget("noiseType")]
-                public EnumParser<PQSMod_VertexColorNoiseRGB.NoiseType> noiseType
+                public EnumParser<KopernicusNoiseType> noiseType
                 {
-                    get { return mod.noiseType; }
-                    set { mod.noiseType = value; }
+                    get { return (KopernicusNoiseType) (int) mod.noiseType; }
+                    set { mod.noiseType = (PQSMod_VertexColorNoiseRGB.NoiseType) (int) value.value; }
                 }
 
                 // Octaves of the noise

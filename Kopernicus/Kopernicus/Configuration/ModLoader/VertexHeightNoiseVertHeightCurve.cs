@@ -114,18 +114,19 @@ namespace Kopernicus
 
                 // mode
                 [ParserTarget("mode")]
-                public EnumParser<NoiseQuality> mode
+                public EnumParser<KopernicusNoiseQuality> mode
                 {
-                    get { return mod.mode; }
-                    set { mod.mode = value; }
+                    get { return (KopernicusNoiseQuality) (int) mod.mode; }
+                    set { mod.mode = (NoiseQuality) (int) value.value; }
                 }
 
                 // mode
                 [ParserTarget("noiseType")]
-                public EnumParser<PQSMod_VertexHeightNoiseVertHeightCurve.NoiseType> noiseType
+
+                public EnumParser<KopernicusNoiseType> noiseType
                 {
-                    get { return mod.noiseType; }
-                    set { mod.noiseType = value; }
+                    get { return (KopernicusNoiseType) (int) mod.noiseType; }
+                    set { mod.noiseType = (PQSMod_VertexHeightNoiseVertHeightCurve.NoiseType) (int) value.value; }
                 }
             }
         }

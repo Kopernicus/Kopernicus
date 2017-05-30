@@ -170,10 +170,10 @@ namespace Kopernicus
 
                 // The quality of the additive noise
                 [ParserTarget("ridgedAddQuality")]
-                public EnumParser<NoiseQuality> ridgedAddQuality
+                public EnumParser<KopernicusNoiseQuality> ridgedAddQuality
                 {
-                    get { return mod.ridgedAdd.quality; }
-                    set { mod.ridgedAdd.quality = value; }
+                    get { return (KopernicusNoiseQuality) (int) mod.ridgedAdd.quality; }
+                    set { mod.ridgedAdd.quality = (NoiseQuality) (int) value.value; }
                 }
 
                 // The seed of the additive noise
@@ -210,10 +210,10 @@ namespace Kopernicus
 
                 // The quality of the subtractive noise
                 [ParserTarget("ridgedSubQuality")]
-                public EnumParser<NoiseQuality> ridgedSubQuality
+                public EnumParser<KopernicusNoiseQuality> ridgedSubQuality
                 {
-                    get { return mod.ridgedSub.quality; }
-                    set { mod.ridgedSub.quality = value; }
+                    get { return (KopernicusNoiseQuality) (int) mod.ridgedSub.quality; }
+                    set { mod.ridgedSub.quality = (NoiseQuality) (int) value.value; }
                 }
 
                 // The seed of the subtractive noise

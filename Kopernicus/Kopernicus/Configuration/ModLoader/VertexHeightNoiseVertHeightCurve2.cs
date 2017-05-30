@@ -82,10 +82,10 @@ namespace Kopernicus
 
                 // ridgedMode
                 [ParserTarget("ridgedMode")]
-                public EnumParser<NoiseQuality> ridgedMode
+                public EnumParser<KopernicusNoiseQuality> ridgedMode
                 {
-                    get { return mod.ridgedMode; }
-                    set { mod.ridgedMode = value; }
+                    get { return (KopernicusNoiseQuality) (int) mod.ridgedMode; }
+                    set { mod.ridgedMode = (NoiseQuality) (int) value.value; }
                 }
 
                 // ridgedSubFrequency
