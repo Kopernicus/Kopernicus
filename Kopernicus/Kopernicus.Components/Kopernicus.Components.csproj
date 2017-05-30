@@ -79,7 +79,6 @@
     <Compile Include="MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
     <Compile Include="MaterialWrapper\ScaledPlanetRimAerial.cs" />
     <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
-    <Compile Include="NameChanger.cs" />
     <Compile Include="ShaderLoader.cs" />
     <Compile Include="Scatter.cs" />
     <Compile Include="KopernicusStar.cs" />
