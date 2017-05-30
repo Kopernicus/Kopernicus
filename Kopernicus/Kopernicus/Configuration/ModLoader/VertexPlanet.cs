@@ -144,7 +144,7 @@ namespace Kopernicus
 
                         // quality
                         [ParserTarget("quality")]
-                        public EnumParser<KopernicusNoiseQuality> mode
+                        public EnumParser<KopernicusNoiseQuality> quality
                         {
                             get { return (KopernicusNoiseQuality) (int) noise.NoiseQuality; }
                             set { noise.NoiseQuality = (NoiseQuality) (int) value.value; }
