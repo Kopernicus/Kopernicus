@@ -239,9 +239,10 @@ namespace Kopernicus
                             }
                         }
                         attributes = (RequireConfigType[])genericTypeB.GetCustomAttributes(typeof(RequireConfigType), true);
-                        if (attributes.Length > 0)
+                        if (attributes.Length > 0 || genericTypeB == typeof(String))
                         {
-                            if (attributes[0].type == ConfigType.Node)
+                            ConfigType type = genericTypeB == typeof(String) ? ConfigType.Value : attributes[0].type;
+                            if (type == ConfigType.Node)
                             {
                                 // Iterate over all of the nodes in this node
                                 foreach (ConfigNode subnode in _node.nodes)
@@ -321,9 +322,10 @@ namespace Kopernicus
 
                         // Check the config type
                         RequireConfigType[] attributes = (RequireConfigType[])genericType.GetCustomAttributes(typeof(RequireConfigType), true);
-                        if (attributes.Length > 0)
+                        if (attributes.Length > 0 || genericType == typeof(String))
                         {
-                            if (attributes[0].type == ConfigType.Node)
+                            ConfigType type = genericType == typeof(String) ? ConfigType.Value : attributes[0].type;
+                            if (type == ConfigType.Node)
                             {
                                 // Iterate over all of the nodes in this node
                                 foreach (ConfigNode subnode in _node.nodes)
