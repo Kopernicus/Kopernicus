@@ -34,7 +34,7 @@ namespace Kopernicus
     /// None - parser infers type from generic in ICollection
     /// Type - parser infers type from node name, if collection is generic, Type
     /// must be a subclass of the generic.Otherwise, it doesn't mater
-    /// Key  - name is the key in key value pair
+    /// Key  - only nodes with a certain name will get loaded
     /// </summary>
     public enum NameSignificance
     {

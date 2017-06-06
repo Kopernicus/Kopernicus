@@ -42,9 +42,9 @@ namespace Kopernicus
         public NameSignificance nameSignificance = NameSignificance.None;
 
         /// <summary>
-        /// Namespace of any generated classes for NameSignificance.Type
+        /// Name of the acceptable values for NameSigificance.Key
         /// </summary>
-        public String typePrefix = "";
+        public String key = "";
 
         // Constructor sets name
         public ParserTargetCollection(String fieldName) : base(fieldName) { }

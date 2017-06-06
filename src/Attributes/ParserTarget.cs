@@ -58,11 +58,6 @@ namespace Kopernicus
         /// </summary>
         public Boolean getChild = true;
 
-        /// <summary>
-        /// Whether the parser should merge all values in the config node into one
-        /// </summary>
-        public String getAll = null;
-
         // Constructor sets name
         public ParserTarget(String fieldName)
         {

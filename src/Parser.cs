@@ -155,122 +155,259 @@ namespace Kopernicus
         /// <param name="getChilds">Whether getters on the object should get called</param>
         public static void LoadCollectionMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node, String modName = "Default", Boolean getChilds = true)
         {
-            // Get the target attribute
-            ParserTargetCollection target = ((ParserTargetCollection[]) member.GetCustomAttributes(typeof(ParserTargetCollection), true))[0];
+            // Get the target attributes
+            ParserTargetCollection[] targets = ((ParserTargetCollection[]) member.GetCustomAttributes(typeof(ParserTargetCollection), true));
 
-            // Figure out if this field exists and if we care
-            Boolean isNode = node.HasNode(target.fieldName);
-            Boolean isValue = node.HasValue(target.fieldName);
-
-            // Obtain the type the member is (can only be field or property)
-            Type targetType;
-            Object targetValue = null;
-            if (member.MemberType == MemberTypes.Field)
+            // Process the target attributes
+            foreach (ParserTargetCollection target in targets)
             {
-                targetType = ((FieldInfo) member).FieldType;
-                targetValue = getChilds ? ((FieldInfo) member).GetValue(o) : null;
-            }
-            else
-            {
-                targetType = ((PropertyInfo) member).PropertyType;
-                try
-                {
-                    if (((PropertyInfo) member).CanRead && getChilds)
-                        targetValue = ((PropertyInfo) member).GetValue(o, null);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
+                // Figure out if this field exists and if we care
+                Boolean isNode = node.HasNode(target.fieldName);
+                Boolean isValue = node.HasValue(target.fieldName);
 
-            // If there was no data found for this node
-            if (!isNode && !isValue)
-            {
-                if (!target.optional && !(target.allowMerge && targetValue != null))
+                // Obtain the type the member is (can only be field or property)
+                Type targetType;
+                Object targetValue = null;
+                if (member.MemberType == MemberTypes.Field)
                 {
-                    // Error - non optional field is missing
-                    throw new ParserTargetMissingException("Missing non-optional field: " + o.GetType() + "." + target.fieldName);
+                    targetType = ((FieldInfo)member).FieldType;
+                    targetValue = getChilds ? ((FieldInfo)member).GetValue(o) : null;
                 }
-
-                // Nothing to do, so return
-                return;
-            }
-
-            // If we are dealing with a generic collection
-            if (targetType.IsGenericType)
-            {
-                // If the target is a generic dictionary
-                if (typeof(IDictionary).IsAssignableFrom(targetType))
+                else
                 {
-                    throw new Exception("Generic dictionaries are unsupported at this time");
-                }
-
-                // If the target is a generic collection
-                else if (typeof(IList).IsAssignableFrom(targetType))
-                {
-                    // We need a node for this decoding
-                    if (!isNode)
+                    targetType = ((PropertyInfo)member).PropertyType;
+                    try
                     {
-                        throw new Exception("Loading a generic list requires sources to be nodes");
+                        if (((PropertyInfo)member).CanRead && getChilds)
+                            targetValue = ((PropertyInfo)member).GetValue(o, null);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                // If there was no data found for this node
+                if (!isNode && !isValue)
+                {
+                    if (!target.optional && !(target.allowMerge && targetValue != null))
+                    {
+                        // Error - non optional field is missing
+                        throw new ParserTargetMissingException("Missing non-optional field: " + o.GetType() + "." + target.fieldName);
                     }
 
-                    // Get the target value as a collection
-                    IList collection = targetValue as IList;
+                    // Nothing to do, so return
+                    return;
+                }
 
-                    // Get the internal type of this collection
-                    Type genericType = targetType.GetGenericArguments()[0];
-
-                    // Create a new collection if merge is disallowed or if the collection is null
-                    if (collection == null || !target.allowMerge)
+                // If we are dealing with a generic collection
+                if (targetType.IsGenericType)
+                {
+                    // If the target is a generic dictionary
+                    if (typeof(IDictionary).IsAssignableFrom(targetType))
                     {
-                        collection = Activator.CreateInstance(targetType) as IList;
-                        targetValue = collection;
-                    }
-
-                    // Iterate over all of the nodes in this node
-                    foreach (ConfigNode subnode in node.GetNode(target.fieldName).nodes)
-                    {
-                        // Check for the name significance
-                        if (target.nameSignificance == NameSignificance.None)
+                        // We need a node for this decoding
+                        if (!isNode)
                         {
-                            // Just processes the contents of the node
-                            collection?.Add(CreateObjectFromConfigNode(genericType, subnode, modName, target.getChild));
+                            throw new Exception("Loading a generic dictionary requires sources to be nodes");
                         }
 
-                        // Otherwise throw an exception because we don't support named ones yet
-                        else if (target.nameSignificance == NameSignificance.Type)
-                        {
-                            // Generate the type from the name
-                            Type elementType = ModTypes.FirstOrDefault(t => t.Name == subnode.name);
+                        // Get the target value as a dictionary
+                        IDictionary collection = targetValue as IDictionary;
 
-                            // Add the object to the collection
-                            collection?.Add(CreateObjectFromConfigNode(elementType, subnode, modName, target.getChild));
+                        // Get the internal type of this collection
+                        Type genericTypeA = targetType.GetGenericArguments()[0];
+                        Type genericTypeB = targetType.GetGenericArguments()[1];
+
+                        // Create a new collection if merge is disallowed or if the collection is null
+                        if (collection == null || !target.allowMerge)
+                        {
+                            collection = Activator.CreateInstance(targetType) as IDictionary;
+                            targetValue = collection;
+                        }
+
+                        // Process the node
+                        ConfigNode _node = target.fieldName == "self" ? node : node.GetNode(target.fieldName);
+
+                        // Check the config type
+                        RequireConfigType[] attributes = (RequireConfigType[])genericTypeA.GetCustomAttributes(typeof(RequireConfigType), true);
+                        if (attributes.Length > 0)
+                        {
+                            if (attributes[0].type == ConfigType.Node)
+                            {
+                                throw new ParserTargetTypeMismatchException("The key value of a generic dictionary must be a Value");
+                            }
+                        }
+                        attributes = (RequireConfigType[])genericTypeB.GetCustomAttributes(typeof(RequireConfigType), true);
+                        if (attributes.Length > 0)
+                        {
+                            if (attributes[0].type == ConfigType.Node)
+                            {
+                                // Iterate over all of the nodes in this node
+                                foreach (ConfigNode subnode in _node.nodes)
+                                {
+                                    // Check for the name significance
+                                    if (target.nameSignificance == NameSignificance.None)
+                                    {
+                                        // Just processes the contents of the node
+                                        collection?.Add(ProcessValue(genericTypeA, subnode.name), CreateObjectFromConfigNode(genericTypeB, subnode, modName, target.getChild));
+                                    }
+
+                                    // Otherwise throw an exception because we don't support named ones
+                                    else if (target.nameSignificance == NameSignificance.Type)
+                                    {
+                                        throw new Exception("NameSignificance.Type isn't supported on generic dictionaries.");
+                                    }
+
+                                    // We dont support key specific ones either (makes no sense)
+                                    else if (target.nameSignificance == NameSignificance.Key)
+                                    {
+                                        throw new Exception("NameSignificance.Key isn't supported on generic dictionaries");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // Iterate over all of the values in this node
+                                foreach (ConfigNode.Value value in _node.values)
+                                {
+                                    // Check for the name significance
+                                    if (target.nameSignificance == NameSignificance.None)
+                                    {
+                                        // Just processes the contents of the node
+                                        collection?.Add(ProcessValue(genericTypeA, value.name), ProcessValue(genericTypeB, value.value));
+                                    }
+
+                                    // Otherwise throw an exception because we don't support named ones
+                                    else if (target.nameSignificance == NameSignificance.Type)
+                                    {
+                                        throw new Exception("NameSignificance.Type isn't supported on generic dictionaries.");
+                                    }
+
+                                    // We dont support key specific ones either (makes no sense)
+                                    else if (target.nameSignificance == NameSignificance.Key)
+                                    {
+                                        throw new Exception("NameSignificance.Key isn't supported on generic dictionaries");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // If the target is a generic collection
+                    else if (typeof(IList).IsAssignableFrom(targetType))
+                    {
+                        // We need a node for this decoding
+                        if (!isNode)
+                        {
+                            throw new Exception("Loading a generic list requires sources to be nodes");
+                        }
+
+                        // Get the target value as a collection
+                        IList collection = targetValue as IList;
+
+                        // Get the internal type of this collection
+                        Type genericType = targetType.GetGenericArguments()[0];
+
+                        // Create a new collection if merge is disallowed or if the collection is null
+                        if (collection == null || !target.allowMerge)
+                        {
+                            collection = Activator.CreateInstance(targetType) as IList;
+                            targetValue = collection;
+                        }
+
+                        // Process the node
+                        ConfigNode _node = target.fieldName == "self" ? node : node.GetNode(target.fieldName);
+
+                        // Check the config type
+                        RequireConfigType[] attributes = (RequireConfigType[])genericType.GetCustomAttributes(typeof(RequireConfigType), true);
+                        if (attributes.Length > 0)
+                        {
+                            if (attributes[0].type == ConfigType.Node)
+                            {
+                                // Iterate over all of the nodes in this node
+                                foreach (ConfigNode subnode in _node.nodes)
+                                {
+                                    // Check for the name significance
+                                    if (target.nameSignificance == NameSignificance.None)
+                                    {
+                                        // Just processes the contents of the node
+                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, modName, target.getChild));
+                                    }
+
+                                    // Otherwise throw an exception because we don't support named ones yet
+                                    else if (target.nameSignificance == NameSignificance.Type)
+                                    {
+                                        // Generate the type from the name
+                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == subnode.name);
+
+                                        // Add the object to the collection
+                                        collection?.Add(CreateObjectFromConfigNode(elementType, subnode, modName, target.getChild));
+                                    }
+
+                                    // Select only the nodes with an acceptable name
+                                    else if (target.nameSignificance == NameSignificance.Key && subnode.name == target.key)
+                                    {
+                                        // Just processes the contents of the node
+                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, modName, target.getChild));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // Iterate over all of the nodes in this node
+                                foreach (ConfigNode.Value value in _node.values)
+                                {
+                                    // Check for the name significance
+                                    if (target.nameSignificance == NameSignificance.None)
+                                    {
+                                        // Just processes the contents of the node
+                                        collection?.Add(ProcessValue(genericType, value.value));
+                                    }
+
+                                    // Otherwise throw an exception because we don't support named ones yet
+                                    else if (target.nameSignificance == NameSignificance.Type)
+                                    {
+                                        // Generate the type from the name
+                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == value.name);
+
+                                        // Add the object to the collection
+                                        collection?.Add(ProcessValue(elementType, value.value));
+                                    }
+
+                                    // Select only the nodes with an acceptable name
+                                    else if (target.nameSignificance == NameSignificance.Key && value.name == target.key)
+                                    {
+                                        // Just processes the contents of the node
+                                        collection?.Add(ProcessValue(genericType, value.value));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            // If we are dealing with a non generic collection
-            else
-            {
-                // Check for invalid scenarios
-                if (target.nameSignificance == NameSignificance.None)
+                // If we are dealing with a non generic collection
+                else
                 {
-                    throw new Exception("Can not infer type from non generic target; can not infer type from zero name significance");
+                    // Check for invalid scenarios
+                    if (target.nameSignificance == NameSignificance.None)
+                    {
+                        throw new Exception("Can not infer type from non generic target; can not infer type from zero name significance");
+                    }
                 }
-            }
 
-            // If the member type is a field, set the value
-            if (member.MemberType == MemberTypes.Field)
-            {
-                ((FieldInfo) member).SetValue(o, targetValue);
-            }
+                // If the member type is a field, set the value
+                if (member.MemberType == MemberTypes.Field)
+                {
+                    ((FieldInfo)member).SetValue(o, targetValue);
+                }
 
-            // If the member wasn't a field, it must be a property.  If the property is writable, set it.
-            else if (((PropertyInfo) member).CanWrite)
-            {
-                ((PropertyInfo) member).SetValue(o, targetValue, null);
+                // If the member wasn't a field, it must be a property.  If the property is writable, set it.
+                else if (((PropertyInfo)member).CanWrite)
+                {
+                    ((PropertyInfo)member).SetValue(o, targetValue, null);
+                }
             }
         }
 
@@ -283,129 +420,140 @@ namespace Kopernicus
         /// <param name="getChilds">Whether getters on the object should get called</param>
         public static void LoadObjectMemberFromConfigurationNode(MemberInfo member, object o, ConfigNode node, String modName = "Default", Boolean getChilds = true)
         {
-            // Get the parser target, only one is allowed so it will be first
-            ParserTarget target = ((ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true))[0];
+            // Get the parser targets
+            ParserTarget[] targets = ((ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true));
 
-            // Figure out if this field exists and if we care
-            Boolean isNode = node.HasNode(target.fieldName);
-            Boolean isValue = node.HasValue(target.fieldName);
-
-            // Obtain the type the member is (can only be field or property)
-            Type targetType;
-            Object targetValue = null;
-            if (member.MemberType == MemberTypes.Field)
+            // Process the targets
+            foreach (ParserTarget target in targets)
             {
-                targetType = ((FieldInfo) member).FieldType;
-                targetValue = getChilds ? ((FieldInfo) member).GetValue(o) : null;
-            }
-            else
-            {
-                targetType = ((PropertyInfo) member).PropertyType;
-                try
+                // Figure out if this field exists and if we care
+                Boolean isNode = node.HasNode(target.fieldName);
+                Boolean isValue = node.HasValue(target.fieldName);
+
+                // Obtain the type the member is (can only be field or property)
+                Type targetType;
+                Object targetValue = null;
+                if (member.MemberType == MemberTypes.Field)
                 {
-                    if (((PropertyInfo) member).CanRead && getChilds)
-                        targetValue = ((PropertyInfo) member).GetValue(o, null);
+                    targetType = ((FieldInfo)member).FieldType;
+                    targetValue = getChilds ? ((FieldInfo)member).GetValue(o) : null;
                 }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-
-            // Get settings data
-            ParserOptions.Data data = ParserOptions.options[modName];
-
-            // Log
-            data.logCallback("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
-
-            // If there was no data found for this node
-            if (!isNode && !isValue)
-            {
-                if (!target.optional && !(target.allowMerge && targetValue != null))
-                {
-                    // Error - non optional field is missing
-                    throw new ParserTargetMissingException("Missing non-optional field: " + o.GetType() + "." + target.fieldName);
-                }
-
-                // Nothing to do, so DONT return!
-                return;
-            }
-
-            // Does this node have a required config source type (and if so, check if valid)
-            RequireConfigType[] attributes = (RequireConfigType[]) member.GetCustomAttributes(typeof(RequireConfigType), true);
-            if (attributes.Length > 0)
-            {
-                if ((attributes[0].type == ConfigType.Node && !isNode) || (attributes[0].type == ConfigType.Value && !isValue))
-                {
-                    throw new ParserTargetTypeMismatchException(target.fieldName + " requires config value of " + attributes[0].type);
-                }
-            }
-
-            // If this object is a value (attempt no merge here)
-            if (isValue)
-            {
-                // The node value
-                String nodeValue = node.GetValue(target.fieldName);
-
-                // Merge all values of the node
-                if (target.getAll != null)
-                {
-                    nodeValue = String.Join(target.getAll, node.GetValues(target.fieldName));
-                }
-
-                // If the target is a string, it works natively
-                if (targetType == typeof(String))
-                {
-                    targetValue = nodeValue;
-                }
-
-                // Figure out if this object is a parsable type
-                else if (typeof(IParsable).IsAssignableFrom(targetType))
-                {
-                    // Create a new object
-                    IParsable targetParsable = (IParsable)Activator.CreateInstance(targetType);
-                    targetParsable.SetFromString(nodeValue);
-                    targetValue = targetParsable;
-                }
-
-                // Throw exception or print error
                 else
                 {
-                    data.logCallback("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
+                    targetType = ((PropertyInfo)member).PropertyType;
+                    try
+                    {
+                        if (((PropertyInfo)member).CanRead && getChilds)
+                            targetValue = ((PropertyInfo)member).GetValue(o, null);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                // Get settings data
+                ParserOptions.Data data = ParserOptions.options[modName];
+
+                // Log
+                data.logCallback("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
+
+                // If there was no data found for this node
+                if (!isNode && !isValue)
+                {
+                    if (!target.optional && !(target.allowMerge && targetValue != null))
+                    {
+                        // Error - non optional field is missing
+                        throw new ParserTargetMissingException("Missing non-optional field: " + o.GetType() + "." + target.fieldName);
+                    }
+
+                    // Nothing to do, so DONT return!
                     return;
                 }
-            }
 
-            // If this object is a node (potentially merge)
-            else
-            {
-                // If the target type is a ConfigNode, this works natively
-                if (targetType == typeof(ConfigNode))
-                    targetValue = node.GetNode(target.fieldName);
+                // Does this node have a required config source type (and if so, check if valid)
+                RequireConfigType[] attributes = (RequireConfigType[])member.GetCustomAttributes(typeof(RequireConfigType), true);
+                if (attributes.Length > 0)
+                {
+                    if ((attributes[0].type == ConfigType.Node && !isNode) || (attributes[0].type == ConfigType.Value && !isValue))
+                    {
+                        throw new ParserTargetTypeMismatchException(target.fieldName + " requires config value of " + attributes[0].type);
+                    }
+                }
 
-                // We need to get an instance of the object we are trying to populate
-                // If we are not allowed to merge, or the object does not exist, make a new instance
-                else if (targetValue == null || !target.allowMerge)
-                    targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName), modName, target.getChild);
+                // If this object is a value (attempt no merge here)
+                if (isValue)
+                {
+                    // Process the value
+                    Object val = ProcessValue(targetType, node.GetValue(target.fieldName));
 
-                // Otherwise we can merge this value
+                    // Throw exception or print error
+                    if (val == null)
+                    {
+                        data.logCallback("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
+                        return;
+                    }
+                    else
+                    {
+                        targetValue = val;
+                    }
+                }
+
+                // If this object is a node (potentially merge)
                 else
-                    LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), modName, target.getChild);
-            }
+                {
+                    // If the target type is a ConfigNode, this works natively
+                    if (targetType == typeof(ConfigNode))
+                        targetValue = node.GetNode(target.fieldName);
 
-            // If the member type is a field, set the value
-            if (member.MemberType == MemberTypes.Field)
-            {
-                ((FieldInfo) member).SetValue(o, targetValue);
-            }
+                    // We need to get an instance of the object we are trying to populate
+                    // If we are not allowed to merge, or the object does not exist, make a new instance
+                    else if (targetValue == null || !target.allowMerge)
+                        targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName), modName, target.getChild);
 
-            // If the member wasn't a field, it must be a property.  If the property is writable, set it.
-            else if (((PropertyInfo) member).CanWrite)
-            {
-                ((PropertyInfo) member).SetValue(o, targetValue, null);
+                    // Otherwise we can merge this value
+                    else
+                        LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), modName, target.getChild);
+                }
+
+                // If the member type is a field, set the value
+                if (member.MemberType == MemberTypes.Field)
+                {
+                    ((FieldInfo)member).SetValue(o, targetValue);
+                }
+
+                // If the member wasn't a field, it must be a property.  If the property is writable, set it.
+                else if (((PropertyInfo)member).CanWrite)
+                {
+                    ((PropertyInfo)member).SetValue(o, targetValue, null);
+                }
             }
         }
+        
+        /// <summary>
+        /// Processes a value from a config
+        /// </summary>
+        /// <returns></returns>
+        private static Object ProcessValue(Type targetType, String nodeValue)
+        {
+            // If the target is a string, it works natively
+            if (targetType == typeof(String))
+            {
+                return nodeValue;
+            }
 
+            // Figure out if this object is a parsable type
+            else if (typeof(IParsable).IsAssignableFrom(targetType))
+            {
+                // Create a new object
+                IParsable targetParsable = (IParsable)Activator.CreateInstance(targetType);
+                targetParsable.SetFromString(nodeValue);
+                return targetParsable;
+            }
+
+            return null;
+        }
+        
         /// <summary>
         /// Loads ParserTargets from other assemblies in GameData/
         /// </summary>
