@@ -39,15 +39,23 @@ namespace Kopernicus
     {
         public class ShaderLoader
         {
-            static Dictionary<string, Shader> shaderDictionary = null;
+            /// <summary>
+            /// A collection of all shaders
+            /// </summary>
+            private static Dictionary<string, Shader> shaderDictionary = new Dictionary<string, Shader>();
 
+            /// <summary>
+            /// Requests a Shader
+            /// </summary>
+            /// <param name="shaderName"></param>
+            /// <returns></returns>
             public static Shader GetShader(String shaderName)
             {
-                Debug.Log("[Kopernicus] shader loader GetShader " + shaderName);
+                Debug.Log("[Kopernicus] ShaderLoader: GetShader " + shaderName);
 
-                if (shaderDictionary == null)
+                if (shaderDictionary.Count == 0)
                 {
-                    LoadAssetBundle();
+                    LoadAssetBundle("Kopernicus/Shaders", "kopernicusshaders");
                 }
 
                 if (shaderDictionary.ContainsKey(shaderName))
@@ -58,32 +66,25 @@ namespace Kopernicus
                 return null;
             }
 
-            public static void LoadAssetBundle()
+            /// <summary>
+            /// Manually load Shader Asset bundles.
+            /// </summary>
+            public static void LoadAssetBundle(String path, String bundleName)
             {
-                //not the best way to do it but the KSP assetLoader is so messed up I'd rather do like this
+                // GameData
+                path = Path.Combine(KSPUtil.ApplicationRootPath + "GameData/", path);
 
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                UriBuilder uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                path = Path.GetDirectoryName(path);
-
-                //remove "Plugins" from path
-                int index = path.LastIndexOf("/Plugins");
-                path = (index < 0) ? path : path.Remove(index, path.Length-index);
-
-                //pick correct bundle for platform
+                // Pick correct bundle for platform
                 if (Application.platform == RuntimePlatform.WindowsPlayer && SystemInfo.graphicsDeviceVersion.StartsWith("OpenGL"))
-                    path = path + "/Shaders/kopernicusshaders-linux";   //fixes OpenGL on windows
+                    path = Path.Combine(path, bundleName + "-linux.unity3d");   // fixes OpenGL on windows
                 else if (Application.platform == RuntimePlatform.WindowsPlayer)
-                    path = path + "/Shaders/kopernicusshaders-windows";
+                    path = Path.Combine(path, bundleName + "-windows.unity3d"); 
                 else if (Application.platform == RuntimePlatform.LinuxPlayer)
-                    path = path + "/Shaders/kopernicusshaders-linux";
+                    path = Path.Combine(path, bundleName + "-linux.unity3d"); 
                 else
-                    path = path + "/Shaders/kopernicusshaders-macosx";
+                    path = Path.Combine(path, bundleName + "-macosx.unity3d");
 
-                Debug.Log("[Kopernicus] shader loader path " + path);
-
-                shaderDictionary = new Dictionary<string, Shader>();
+                Debug.Log("[Kopernicus] ShaderLoader: Loading asset bundle at path " + path);
 
                 using (WWW www = new WWW("file://" + path))
                 {
@@ -92,12 +93,11 @@ namespace Kopernicus
 
                     foreach (Shader shader in shaders)
                     {
-                        Debug.Log("[Kopernicus] shader loader adding " + shader.name);
+                        Debug.Log("[Kopernicus] ShaderLoader: adding " + shader.name);
                         shaderDictionary.Add(shader.name, shader);
                     }
 
                     bundle.Unload(false); // unload the raw asset bundle
-                    www.Dispose();
                 }
             }
         }
