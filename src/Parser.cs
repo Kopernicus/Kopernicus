@@ -162,7 +162,7 @@ namespace Kopernicus
             foreach (ParserTargetCollection target in targets)
             {
                 // Figure out if this field exists and if we care
-                Boolean isNode = node.HasNode(target.fieldName);
+                Boolean isNode = node.HasNode(target.fieldName) || target.fieldName == "self";
                 Boolean isValue = node.HasValue(target.fieldName);
 
                 // Obtain the type the member is (can only be field or property)
