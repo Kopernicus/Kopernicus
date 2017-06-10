@@ -172,6 +172,7 @@ namespace Kopernicus
 
                 // Sun AOA
                 sunAOA /= (Single)maxFlowRate;
+                _distMult = _flowRate / _efficMult / sunAOA;
 
                 // We got the best star to use
                 if (maxStar != null && maxStar.sun != trackingBody)
