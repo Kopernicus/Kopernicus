@@ -40,7 +40,7 @@ namespace Kopernicus
         [Obsolete("Please use ParserTargetExternal from Kopernicus.Parser instead.")]
         public class ExternalParserTarget : ParserTargetExternal
         {
-            public ExternalParserTarget(string configNodeName = null) : base("Body", configNodeName)
+            public ExternalParserTarget(string configNodeName = null) : base("Body", configNodeName, "Kopernicus")
             {
             }
         }
