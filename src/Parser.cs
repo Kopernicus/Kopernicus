@@ -48,10 +48,10 @@ namespace Kopernicus
         /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
         /// <returns></returns>
-        public static T CreateObjectFromConfigNode<T>(ConfigNode node, String modName = "Default", Boolean getChilds = true) where T : class, new()
+        public static T CreateObjectFromConfigNode<T>(ConfigNode node, String configName = "Default", Boolean getChilds = true) where T : class, new()
         {
             T o = new T();
-            LoadObjectFromConfigurationNode(o, node, modName, getChilds);
+            LoadObjectFromConfigurationNode(o, node, configName, getChilds);
             return o;
         }
 
@@ -63,10 +63,10 @@ namespace Kopernicus
         /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
         /// <returns></returns>
-        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, String modName = "Default", Boolean getChilds = true)
+        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, String configName = "Default", Boolean getChilds = true)
         {
             Object o = Activator.CreateInstance(type);
-            LoadObjectFromConfigurationNode(o, node, modName, getChilds);
+            LoadObjectFromConfigurationNode(o, node, configName, getChilds);
             return o;
         }
 
@@ -79,10 +79,10 @@ namespace Kopernicus
         /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
         /// <returns></returns>
-        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, Object[] arguments, String modName = "Default", Boolean getChilds = true)
+        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, Object[] arguments, String configName = "Default", Boolean getChilds = true)
         {
             Object o = Activator.CreateInstance(type, arguments);
-            LoadObjectFromConfigurationNode(o, node, modName, getChilds);
+            LoadObjectFromConfigurationNode(o, node, configName, getChilds);
             return o;
         }
 
@@ -93,7 +93,7 @@ namespace Kopernicus
         /// <param name="node">Configuration node from which to load data</param>
         /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
-        public static void LoadObjectFromConfigurationNode(Object o, ConfigNode node, String modName = "Default", Boolean getChilds = true)
+        public static void LoadObjectFromConfigurationNode(Object o, ConfigNode node, String configName = "Default", Boolean getChilds = true)
         {
             // Get the object as a parser event subscriber (will be null if 'o' does not conform)
             IParserEventSubscriber subscriber = o as IParserEventSubscriber;
@@ -124,9 +124,9 @@ namespace Kopernicus
             foreach (KeyValuePair<bool, MemberInfo> member in preapplyMembers)
             {
                 if (member.Key)
-                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, modName, getChilds);
+                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName, getChilds);
                 else
-                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, modName, getChilds);
+                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, configName, getChilds);
             }
 
             // Call Apply
@@ -136,9 +136,9 @@ namespace Kopernicus
             foreach (KeyValuePair<bool, MemberInfo> member in postapplyMembers)
             {
                 if (member.Key)
-                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, modName);
+                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName);
                 else
-                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, modName);
+                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, configName);
             }
 
             // Call PostApply
@@ -153,7 +153,7 @@ namespace Kopernicus
         /// <param name="node">Configuration node from which to load data</param>
         /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
-        public static void LoadCollectionMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node, String modName = "Default", Boolean getChilds = true)
+        public static void LoadCollectionMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node, String configName = "Default", Boolean getChilds = true)
         {
             // Get the target attributes
             ParserTargetCollection[] targets = ((ParserTargetCollection[]) member.GetCustomAttributes(typeof(ParserTargetCollection), true));
@@ -251,7 +251,7 @@ namespace Kopernicus
                                     if (target.nameSignificance == NameSignificance.None)
                                     {
                                         // Just processes the contents of the node
-                                        collection?.Add(ProcessValue(genericTypeA, subnode.name), CreateObjectFromConfigNode(genericTypeB, subnode, modName, target.getChild));
+                                        collection?.Add(ProcessValue(genericTypeA, subnode.name), CreateObjectFromConfigNode(genericTypeB, subnode, configName, target.getChild));
                                     }
 
                                     // Otherwise throw an exception because we don't support named ones
@@ -334,7 +334,7 @@ namespace Kopernicus
                                     if (target.nameSignificance == NameSignificance.None)
                                     {
                                         // Just processes the contents of the node
-                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, modName, target.getChild));
+                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName, target.getChild));
                                     }
 
                                     // Otherwise throw an exception because we don't support named ones yet
@@ -344,14 +344,14 @@ namespace Kopernicus
                                         Type elementType = ModTypes.FirstOrDefault(t => t.Name == subnode.name);
 
                                         // Add the object to the collection
-                                        collection?.Add(CreateObjectFromConfigNode(elementType, subnode, modName, target.getChild));
+                                        collection?.Add(CreateObjectFromConfigNode(elementType, subnode, configName, target.getChild));
                                     }
 
                                     // Select only the nodes with an acceptable name
                                     else if (target.nameSignificance == NameSignificance.Key && subnode.name == target.key)
                                     {
                                         // Just processes the contents of the node
-                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, modName, target.getChild));
+                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName, target.getChild));
                                     }
                                 }
                             }
@@ -420,7 +420,7 @@ namespace Kopernicus
         /// <param name="o">Instance of the object which owns member</param>
         /// <param name="node">Configuration node from which to load data</param>        /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
-        public static void LoadObjectMemberFromConfigurationNode(MemberInfo member, object o, ConfigNode node, String modName = "Default", Boolean getChilds = true)
+        public static void LoadObjectMemberFromConfigurationNode(MemberInfo member, object o, ConfigNode node, String configName = "Default", Boolean getChilds = true)
         {
             // Get the parser targets
             ParserTarget[] targets = ((ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true));
@@ -455,7 +455,7 @@ namespace Kopernicus
                 }
 
                 // Get settings data
-                ParserOptions.Data data = ParserOptions.options[modName];
+                ParserOptions.Data data = ParserOptions.options[configName];
 
                 // Log
                 data.logCallback("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
@@ -511,11 +511,11 @@ namespace Kopernicus
                     // We need to get an instance of the object we are trying to populate
                     // If we are not allowed to merge, or the object does not exist, make a new instance
                     else if (targetValue == null || !target.allowMerge)
-                        targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName), modName, target.getChild);
+                        targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName), configName, target.getChild);
 
                     // Otherwise we can merge this value
                     else
-                        LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), modName, target.getChild);
+                        LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), configName, target.getChild);
                 }
 
                 // If the member type is a field, set the value
@@ -559,19 +559,19 @@ namespace Kopernicus
         /// <summary>
         /// Loads ParserTargets from other assemblies in GameData/
         /// </summary>
-        public static void LoadParserTargetsExternal(ConfigNode node, String modName = "Default", Boolean getChilds = true)
+        public static void LoadParserTargetsExternal(ConfigNode node, String configName = "Default", Boolean getChilds = true)
         {
-            LoadExternalParserTargets(node, modName, getChilds);
+            LoadExternalParserTargets(node, Assembly.GetCallingAssembly(), configName, getChilds);
             foreach (ConfigNode childNode in node.GetNodes())
             {
-                LoadParserTargetsExternal(childNode, modName, getChilds);
+                LoadParserTargetsExternal(childNode, configName, getChilds);
             }
         }
 
         /// <summary>
         /// Loads ParserTargets from other assemblies in GameData/
         /// </summary>
-        public static void LoadExternalParserTargets(ConfigNode node, String modName = "Default", Boolean getChilds = true)
+        private static void LoadExternalParserTargets(ConfigNode node, Assembly calling, String configName = "Default", Boolean getChilds = true)
         {
             // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
             try
@@ -585,17 +585,19 @@ namespace Kopernicus
                         ParserTargetExternal external = attributes[0];
                         if (node.name != external.parentNodeName)
                             continue;
+                        if (calling.GetName().Name != external.modName)
+                            continue;
                         String nodeName = external.configNodeName ?? type.Name;
 
                         // Get settings data
-                        ParserOptions.Data data = ParserOptions.options[modName];
+                        ParserOptions.Data data = ParserOptions.options[configName];
 
                         if (!node.HasNode(nodeName)) continue;
                         try
                         {
                             data.logCallback("Parsing ParserTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + type.Assembly.FullName);
                             ConfigNode nodeToLoad = node.GetNode(nodeName);
-                            Object obj = CreateObjectFromConfigNode(type, nodeToLoad, modName, getChilds);
+                            Object obj = CreateObjectFromConfigNode(type, nodeToLoad, configName, getChilds);
                         }
                         catch (MissingMethodException missingMethod)
                         {

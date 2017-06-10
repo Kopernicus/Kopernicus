@@ -46,11 +46,17 @@ namespace Kopernicus
         /// </summary>
         public String parentNodeName;
 
+        /// <summary>
+        /// The name of the mod calling the external target
+        /// </summary>
+        public String modName;
+
         // Constructor sets name
-        public ParserTargetExternal(String parentNodeName, String configNodeName)
+        public ParserTargetExternal(String parentNodeName, String configNodeName, String modName)
         {
             this.parentNodeName = parentNodeName;
             this.configNodeName = configNodeName;
+            this.modName = modName;
         }
     }
 }
