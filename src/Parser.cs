@@ -341,7 +341,7 @@ namespace Kopernicus
                                     else if (target.nameSignificance == NameSignificance.Type)
                                     {
                                         // Generate the type from the name
-                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == subnode.name);
+                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == subnode.name && t.Assembly != typeof(HighLogic).Assembly);
 
                                         // Add the object to the collection
                                         collection?.Add(CreateObjectFromConfigNode(elementType, subnode, configName, target.getChild));
@@ -371,7 +371,7 @@ namespace Kopernicus
                                     else if (target.nameSignificance == NameSignificance.Type)
                                     {
                                         // Generate the type from the name
-                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == value.name);
+                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == value.name && t.Assembly != typeof(HighLogic).Assembly);
 
                                         // Add the object to the collection
                                         collection?.Add(ProcessValue(elementType, value.value));
@@ -429,7 +429,7 @@ namespace Kopernicus
             foreach (ParserTarget target in targets)
             {
                 // Figure out if this field exists and if we care
-                Boolean isNode = node.HasNode(target.fieldName);
+                Boolean isNode = node.GetNodes().Any(n => n.name.StartsWith(target.fieldName));
                 Boolean isValue = node.HasValue(target.fieldName);
 
                 // Obtain the type the member is (can only be field or property)
@@ -510,12 +510,34 @@ namespace Kopernicus
 
                     // We need to get an instance of the object we are trying to populate
                     // If we are not allowed to merge, or the object does not exist, make a new instance
-                    else if (targetValue == null || !target.allowMerge)
-                        targetValue = CreateObjectFromConfigNode(targetType, node.GetNode(target.fieldName), configName, target.getChild);
-
                     // Otherwise we can merge this value
-                    else
+                    else if (targetValue == null || !target.allowMerge)
+                    {
+                        targetValue = Activator.CreateInstance(targetType);
+                    }
+
+                    // Check for the name significance
+                    if (target.nameSignificance == NameSignificance.None)
+                    {
+                        // Just processes the contents of the node
                         LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), configName, target.getChild);
+                    }
+
+                    // Otherwise throw an exception because we don't support named ones yet
+                    else if (target.nameSignificance == NameSignificance.Type)
+                    {
+                        // Generate the type from the name
+                        ConfigNode subnode = node.GetNodes().First(n => n.name.StartsWith(target.fieldName));
+                        String[] split = subnode.name.Split(':');
+                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == split[1] && t.Assembly != typeof(HighLogic).Assembly);
+
+                        // Add the object to the collection
+                        targetValue = CreateObjectFromConfigNode(elementType, subnode, configName, target.getChild);
+                    }
+                    else if (target.nameSignificance == NameSignificance.Key)
+                    {
+                        throw new Exception("NameSignificance.Key is not supported on ParserTargets");
+                    }
                 }
 
                 // If the member type is a field, set the value

@@ -36,16 +36,6 @@ namespace Kopernicus
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class ParserTargetCollection : ParserTarget
     {
-        /// <summary>
-        /// Node name significance - does the name mean anything
-        /// </summary>
-        public NameSignificance nameSignificance = NameSignificance.None;
-
-        /// <summary>
-        /// Name of the acceptable values for NameSigificance.Key
-        /// </summary>
-        public String key = "";
-
         // Constructor sets name
         public ParserTargetCollection(String fieldName) : base(fieldName) { }
     }
