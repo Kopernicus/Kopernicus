@@ -6,9 +6,9 @@ May 30, 2017
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.2.7-7)
+New in this version (1.2.2-8)
 -------------------
-- Backported the changes from 1.3.0-1 to KSP 1.2.2
+- Backported the changes from 1.3.0-3 to KSP 1.2.2
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
