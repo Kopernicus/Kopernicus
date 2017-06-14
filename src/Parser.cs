@@ -581,19 +581,19 @@ namespace Kopernicus
         /// <summary>
         /// Loads ParserTargets from other assemblies in GameData/
         /// </summary>
-        public static void LoadParserTargetsExternal(ConfigNode node, String configName = "Default", Boolean getChilds = true)
+        public static void LoadParserTargetsExternal(ConfigNode node, String modName, String configName = "Default", Boolean getChilds = true)
         {
-            LoadExternalParserTargets(node, Assembly.GetCallingAssembly(), configName, getChilds);
+            LoadExternalParserTargets(node, modName, configName, getChilds);
             foreach (ConfigNode childNode in node.GetNodes())
             {
-                LoadParserTargetsExternal(childNode, configName, getChilds);
+                LoadParserTargetsExternal(childNode, configName, modName, getChilds);
             }
         }
 
         /// <summary>
         /// Loads ParserTargets from other assemblies in GameData/
         /// </summary>
-        private static void LoadExternalParserTargets(ConfigNode node, Assembly calling, String configName = "Default", Boolean getChilds = true)
+        private static void LoadExternalParserTargets(ConfigNode node, String calling, String configName = "Default", Boolean getChilds = true)
         {
             // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
             try
@@ -607,7 +607,7 @@ namespace Kopernicus
                         ParserTargetExternal external = attributes[0];
                         if (node.name != external.parentNodeName)
                             continue;
-                        if (calling.GetName().Name != external.modName)
+                        if (calling != external.modName)
                             continue;
                         String nodeName = external.configNodeName ?? type.Name;
 
