@@ -1,17 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 13, 2017
+June 15, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.0-3)
+New in this version (1.3.0-4)
 -------------------
-- Cleanup of the shader loading code
-- Added various features to the parser
-- Set _distMult in solar panels
-- Fix Null Reference Exceptions on Linux
+- Fix an issue with the loading of the ring shader
+- Fix another issue with the parser
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
