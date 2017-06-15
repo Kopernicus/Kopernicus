@@ -32,6 +32,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Kopernicus.Configuration.Asteroids;
+using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -169,6 +170,9 @@ namespace Kopernicus
                 systemPrefab.systemTimeScale = 1.0;
                 systemPrefab.systemScale = 1.0;
                 systemPrefab.mainToolbarSelected = 2;   // initial value in stock systemPrefab. Unknown significance.
+
+                // Load the ring shader
+                ShaderLoader.LoadAssetBundle("Kopernicus/Shaders", "kopernicusshaders");
             }
 
             // Generates the system prefab from the configuration 
