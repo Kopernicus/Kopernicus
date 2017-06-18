@@ -209,7 +209,7 @@ namespace Kopernicus
 
             // Biomes of this body
             [PreApply]
-            [ParserTargetCollection("Biomes", nameSignificance = NameSignificance.None)]
+            [ParserTargetCollection("Biomes", nameSignificance = NameSignificance.Key, key = "Biome")]
             public List<BiomeLoader> biomes = new List<BiomeLoader>();
 
             // Biome definition via MapSO parser
