@@ -45,7 +45,7 @@ namespace Kopernicus
                 set
                 {
                     attribute.name = value;
-                    attribute.displayName = value;
+                    attribute.displayname = value;
                 }
             }
 
@@ -53,8 +53,8 @@ namespace Kopernicus
             [ParserTarget("displayName")]
             public string displayName 
             {
-                get { return attribute.displayName; }
-                set { attribute.displayName = value; }
+                get { return attribute.displayname; } // This is not displayName because of reasons
+                set { attribute.displayname = value; }
             }
 
             // The science multiplier for this biome
