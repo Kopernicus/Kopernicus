@@ -49,6 +49,9 @@ namespace Kopernicus
             public bool givesOffLight;
             public double AU;
             public FloatCurve brightnessCurve;
+            public FloatCurve intensityCurve;
+            public FloatCurve scaledIntensityCurve;
+            public FloatCurve ivaIntensityCurve;
             public double solarInsolation;
             public double solarLuminosity;
             public double radiationFactor;
@@ -85,36 +88,25 @@ namespace Kopernicus
                     prefab.solarLuminosity = PhysicsGlobals.SolarLuminosityAtHome;
                     prefab.radiationFactor = PhysicsGlobals.RadiationFactor;
                     prefab.sunFlare = null;
+                    prefab.intensityCurve = new FloatCurve(new Keyframe[]
+                    {
+                        new Keyframe(0, prefab.sunlightIntensity),
+                        new Keyframe(1, prefab.sunlightIntensity)
+                    });
+                    prefab.scaledIntensityCurve = new FloatCurve(new Keyframe[]
+                    {
+                        new Keyframe(0, prefab.scaledSunlightIntensity),
+                        new Keyframe(1, prefab.scaledSunlightIntensity)
+                    });
+                    prefab.ivaIntensityCurve = new FloatCurve(new Keyframe[]
+                    {
+                        new Keyframe(0, prefab.IVASunIntensity),
+                        new Keyframe(1, prefab.IVASunIntensity)
+                    });
 
                     // Return the prefab
                     return prefab;
                 }
-            }
-
-            // Patches all light sources
-            public void Apply(Light light, Light scaledLight, Light ivaLight)
-            {
-                // Patch the local space light
-                if (light)
-                {
-                    light.color = sunlightColor;
-                    light.intensity = sunlightIntensity;
-                    light.shadowStrength = sunlightShadowStrength;
-                }
-
-                // Patch the ScaledSpace light
-                if (scaledLight)
-                {
-                    scaledLight.color = scaledSunlightColor;
-                    scaledLight.intensity = scaledSunlightIntensity;
-                }
-
-                if (HighLogic.LoadedSceneIsFlight && ivaLight)
-                {
-                    ivaLight.color = IVASunColor;
-                    ivaLight.intensity = IVASunIntensity;
-                }
-
             }
 
             /// <summary>

@@ -266,7 +266,25 @@ namespace Kopernicus
             void LateUpdate()
             {
                 // Apply light settings
-                shifter.Apply(light, scaledSunLight, iva?.GetComponent<Light>());
+                if (light)
+                {
+                    light.color = shifter.sunlightColor;
+                    light.intensity = shifter.intensityCurve.Evaluate((float)Vector3d.Distance(sun.position, target.position));
+                    light.shadowStrength = shifter.sunlightShadowStrength;
+                }
+
+                // Patch the ScaledSpace light
+                if (scaledSunLight)
+                {
+                    scaledSunLight.color = shifter.scaledSunlightColor;
+                    scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate((float)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));
+                }
+
+                if (HighLogic.LoadedSceneIsFlight && iva?.GetComponent<Light>())
+                {
+                    iva.GetComponent<Light>().color = shifter.IVASunColor;
+                    iva.GetComponent<Light>().intensity = shifter.IVASunIntensity;
+                }
 
                 // Set SunFlare color
                 sunFlare.color = shifter.sunLensFlareColor;
