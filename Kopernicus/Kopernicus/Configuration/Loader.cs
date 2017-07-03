@@ -262,7 +262,7 @@ namespace Kopernicus
                 RecursivelySortBodies (systemPrefab.rootBody);
 
                 // Fix doubled flightGlobals
-                List<int> numbers = new List<int>() { 0 };
+                List<int> numbers = new List<int>() { 0, 1 };
                 int index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
                 PatchFGI(ref numbers, ref index, systemPrefab.rootBody);
 
@@ -291,6 +291,8 @@ namespace Kopernicus
                 {
                     if (numbers.Contains(body.flightGlobalsIndex))
                         body.flightGlobalsIndex = index++;
+                    if (body.celestialBody.isHomeWorld)
+                        body.flightGlobalsIndex = 1; // Kerbin
                     numbers.Add(body.flightGlobalsIndex);
                     PatchFGI(ref numbers, ref index, body);
                 }
