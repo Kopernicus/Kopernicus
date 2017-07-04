@@ -886,11 +886,9 @@ namespace Kopernicus
 
         public static T FindMapSO<T>(string url) where T : MapSO
         {
-            string name = url.Replace("BUILTIN/", "");
-            T retVal = Resources.FindObjectsOfTypeAll<T>().First(m => m.name == name);
+            T retVal = Resources.FindObjectsOfTypeAll<T>().FirstOrDefault(m => m.name == url);
             if (retVal != null)
             {
-                retVal.name = url;
                 return retVal;
             }
             bool modFound = false;
