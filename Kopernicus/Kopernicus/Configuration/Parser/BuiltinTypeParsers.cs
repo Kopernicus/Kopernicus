@@ -142,7 +142,7 @@ namespace Kopernicus
 
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    s = s.Length == 8 ? "" : s.Substring(8);
+                    s = s.Substring(8);
                     value = Utility.FindMapSO<T>(s);
                 }
                 else
@@ -227,7 +227,7 @@ namespace Kopernicus
 
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    s = s.Length == 8 ? "" : s.Substring(8);
+                    s = s.Substring(8);
                     value = Utility.FindMapSO<T>(s);
                 }
                 else
