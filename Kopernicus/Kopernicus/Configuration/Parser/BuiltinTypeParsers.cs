@@ -142,7 +142,7 @@ namespace Kopernicus
 
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    s = s.Substring(8);
+                    s.Replace("BUILTIN/", "");
                     value = Utility.FindMapSO<T>(s);
                 }
                 else
@@ -227,7 +227,7 @@ namespace Kopernicus
 
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    s.Substring(8);
+                    s.Replace("BUILTIN/", "");
                     value = Utility.FindMapSO<T>(s);
                 }
                 else
