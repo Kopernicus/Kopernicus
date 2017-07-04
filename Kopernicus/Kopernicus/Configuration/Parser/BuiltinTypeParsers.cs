@@ -227,6 +227,7 @@ namespace Kopernicus
 
                 if (s.StartsWith("BUILTIN/"))
                 {
+                    s.Substring(8);
                     value = Utility.FindMapSO<T>(s);
                 }
                 else
