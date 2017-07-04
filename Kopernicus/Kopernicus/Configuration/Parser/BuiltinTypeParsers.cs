@@ -75,12 +75,12 @@ namespace Kopernicus
         public class Texture2DParser : IParsable
         {
             public Texture2D value;
-            public void SetFromString (string s)
+            public void SetFromString(string s)
             {
                 // Check if we are attempting to load a builtin texture
-                if (s.StartsWith ("BUILTIN/")) 
+                if (s.StartsWith("BUILTIN/"))
                 {
-                    string textureName = Regex.Replace (s, "BUILTIN/", "");
+                    string textureName = Regex.Replace(s, "BUILTIN/", "");
                     value = Resources.FindObjectsOfTypeAll<Texture>().FirstOrDefault(tex => tex.name == textureName) as Texture2D;
                     if (value == null)
                     {
@@ -91,7 +91,7 @@ namespace Kopernicus
                 }
 
                 // Otherwise search the game database for one loaded from GameData/
-                else if (GameDatabase.Instance.ExistsTexture (s)) 
+                else if (GameDatabase.Instance.ExistsTexture(s))
                 {
                     // Get the texture URL
                     value = GameDatabase.Instance.GetTexture(s, false);
@@ -108,11 +108,11 @@ namespace Kopernicus
                 // Texture was not found
                 value = null;
             }
-            public Texture2DParser ()
+            public Texture2DParser()
             {
-                
+
             }
-            public Texture2DParser (Texture2D value)
+            public Texture2DParser(Texture2D value)
             {
                 this.value = value;
             }
@@ -326,15 +326,15 @@ namespace Kopernicus
             {
                 get { return material.bounciness; }
                 set { material.bounciness = value; }
-            }           
-            
+            }
+
             [ParserTarget("staticFriction")]
             public NumericParser<float> staticFriction
-            { 
+            {
                 get { return material.staticFriction; }
                 set { material.staticFriction = value; }
             }
-            
+
             [ParserTarget("dynamicFriction")]
             public NumericParser<float> dynamicFriction
             {
@@ -373,13 +373,13 @@ namespace Kopernicus
         public class MeshParser : IParsable
         {
             public Mesh value;
-            public void SetFromString (string s)
+            public void SetFromString(string s)
             {
                 // Check if we are attempting to load a builtin mesh
-                if (s.StartsWith ("BUILTIN/")) 
+                if (s.StartsWith("BUILTIN/"))
                 {
-                    string meshName = Regex.Replace (s, "BUILTIN/", "");
-                    value = Resources.FindObjectsOfTypeAll<Mesh> ().First (mesh => mesh.name == meshName);
+                    string meshName = Regex.Replace(s, "BUILTIN/", "");
+                    value = Resources.FindObjectsOfTypeAll<Mesh>().First(mesh => mesh.name == meshName);
                     return;
                 }
 
@@ -394,11 +394,11 @@ namespace Kopernicus
                 // Mesh was not found
                 value = null;
             }
-            public MeshParser ()
+            public MeshParser()
             {
-                
+
             }
-            public MeshParser (Mesh value)
+            public MeshParser(Mesh value)
             {
                 this.value = value;
             }
@@ -466,34 +466,34 @@ namespace Kopernicus
         }
 
         // parser for .mu
-		[RequireConfigType(ConfigType.Value)]
-		public class MuParser : IParsable
-		{
-			public GameObject value;
+        [RequireConfigType(ConfigType.Value)]
+        public class MuParser : IParsable
+        {
+            public GameObject value;
 
-			public void SetFromString (string s)
-			{
-				// If there's a model, import it
-				if (GameDatabase.Instance.ExistsModel (s))
-				{
-					value = GameDatabase.Instance.GetModel (s);
-					return;
-				}
+            public void SetFromString(string s)
+            {
+                // If there's a model, import it
+                if (GameDatabase.Instance.ExistsModel(s))
+                {
+                    value = GameDatabase.Instance.GetModel(s);
+                    return;
+                }
 
-				// Otherwise, set the value to null
-				value = null;
-			}
+                // Otherwise, set the value to null
+                value = null;
+            }
 
-			// Default constructor
-			public MuParser()
-			{
-			}
+            // Default constructor
+            public MuParser()
+            {
+            }
 
-			// Initializing constructor
-			public MuParser(GameObject value)
-			{
-				this.value = value;
-			}
-		}
+            // Initializing constructor
+            public MuParser(GameObject value)
+            {
+                this.value = value;
+            }
+        }
     }
 }
