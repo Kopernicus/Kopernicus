@@ -497,6 +497,7 @@ namespace Kopernicus
 
             // Constructors
             public PQSProjectionAerialQuadRelativeLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public PQSProjectionAerialQuadRelativeLoader (string contents) : base (contents) { }
             public PQSProjectionAerialQuadRelativeLoader (Material material) : base(material) { }
         }

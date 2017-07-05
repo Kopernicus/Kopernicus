@@ -83,6 +83,7 @@ namespace Kopernicus
 
             // Constructors
             public AerialTransCutoutLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public AerialTransCutoutLoader (string contents) : base (contents) { }
             public AerialTransCutoutLoader (Material material) : base(material) { }
         }

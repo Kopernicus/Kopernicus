@@ -451,6 +451,7 @@ namespace Kopernicus
 
             // Constructors
             public PQSMainShaderLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public PQSMainShaderLoader (string contents) : base (contents) { }
             public PQSMainShaderLoader (Material material) : base(material) { }
         }

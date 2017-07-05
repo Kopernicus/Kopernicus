@@ -51,6 +51,7 @@ namespace Kopernicus
 
             // Constructors
             public DiffuseWrapLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public DiffuseWrapLoader (string contents) : base (contents) { }
             public DiffuseWrapLoader (Material material) : base(material) { }
         }

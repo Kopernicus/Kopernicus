@@ -443,6 +443,7 @@ namespace Kopernicus
 
             // Constructors
             public PQSProjectionSurfaceQuadLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public PQSProjectionSurfaceQuadLoader (string contents) : base (contents) { }
             public PQSProjectionSurfaceQuadLoader (Material material) : base(material) { }
         }

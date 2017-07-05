@@ -184,11 +184,6 @@ namespace Kopernicus
             public static KopernicusStar GetNearest(CelestialBody body)
             {
                 return Stars.OrderBy(s => Vector3.Distance(body.position, s.sun.position)).First();
-
-                CelestialBody homeBody = body;
-                while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
-                    homeBody = homeBody.referenceBody;
-                return Stars.Find(s => s.sun == homeBody.referenceBody);
             }
 
             /// <summary>
@@ -333,7 +328,9 @@ namespace Kopernicus
             {
                 Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
                 Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
+#pragma warning disable CS0618
                 double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) * Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
+#pragma warning restore CS0618
                 if (angle > Math.PI * 2)
                     angle -= Math.PI * 2;
                 return angle;

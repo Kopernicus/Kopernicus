@@ -115,6 +115,7 @@ namespace Kopernicus
 
             // Constructors
             public PQSProjectionFallbackLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public PQSProjectionFallbackLoader (string contents) : base (contents) { }
             public PQSProjectionFallbackLoader (Material material) : base(material) { }
         }

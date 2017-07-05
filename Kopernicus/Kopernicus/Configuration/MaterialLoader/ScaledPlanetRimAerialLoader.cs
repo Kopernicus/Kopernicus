@@ -193,6 +193,7 @@ namespace Kopernicus
 
             // Constructors
             public ScaledPlanetRimAerialLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public ScaledPlanetRimAerialLoader (string contents) : base (contents) { }
             public ScaledPlanetRimAerialLoader (Material material) : base(material) { }
         }

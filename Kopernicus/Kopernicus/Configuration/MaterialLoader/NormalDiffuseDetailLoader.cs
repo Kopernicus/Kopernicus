@@ -65,6 +65,7 @@ namespace Kopernicus
 
             // Constructors
             public NormalDiffuseDetailLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public NormalDiffuseDetailLoader (string contents) : base (contents) { }
             public NormalDiffuseDetailLoader (Material material) : base(material) { }
         }

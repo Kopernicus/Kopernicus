@@ -51,6 +51,7 @@ namespace Kopernicus
 
             // Constructors
             public AlphaTestDiffuseLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public AlphaTestDiffuseLoader (string contents) : base (contents) { }
             public AlphaTestDiffuseLoader (Material material) : base(material) { }
         }

@@ -135,6 +135,7 @@ namespace Kopernicus
 
             // Constructors
             public EmissiveMultiRampSunspotsLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public EmissiveMultiRampSunspotsLoader (string contents) : base (contents) { }
             public EmissiveMultiRampSunspotsLoader (Material material) : base(material) { }
         }

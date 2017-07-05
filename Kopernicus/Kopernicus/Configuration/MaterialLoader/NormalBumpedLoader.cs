@@ -65,6 +65,7 @@ namespace Kopernicus
 
             // Constructors
             public NormalBumpedLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public NormalBumpedLoader (string contents) : base (contents) { }
             public NormalBumpedLoader (Material material) : base(material) { }
         }

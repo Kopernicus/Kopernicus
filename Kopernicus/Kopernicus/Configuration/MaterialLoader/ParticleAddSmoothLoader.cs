@@ -43,6 +43,7 @@ namespace Kopernicus
 
             // Constructors
             public ParticleAddSmoothLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public ParticleAddSmoothLoader (string contents) : base (contents) { }
             public ParticleAddSmoothLoader (Material material) : base(material) { }
         }

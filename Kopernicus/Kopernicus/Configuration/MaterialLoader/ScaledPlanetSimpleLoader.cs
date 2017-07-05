@@ -125,6 +125,7 @@ namespace Kopernicus
 
             // Constructors
             public ScaledPlanetSimpleLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public ScaledPlanetSimpleLoader (string contents) : base (contents) { }
             public ScaledPlanetSimpleLoader (Material material) : base(material) { }
         }

@@ -285,6 +285,7 @@ namespace Kopernicus
 
             // Constructors
             public PQSOceanSurfaceQuadLoader () : base() { }
+            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public PQSOceanSurfaceQuadLoader (string contents) : base (contents) { }
             public PQSOceanSurfaceQuadLoader (Material material) : base(material) { }
         }
