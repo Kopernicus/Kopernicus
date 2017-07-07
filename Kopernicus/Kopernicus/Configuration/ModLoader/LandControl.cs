@@ -470,7 +470,7 @@ namespace Kopernicus
 
                     // Should we delete the LandClass?
                     [ParserTarget("delete")]
-                    public NumericParser<bool> delete = new NumericParser<bool>(false);
+                    public NumericParser<bool> delete = false;
 
                     // alterApparentHeight
                     [ParserTarget("alterApparentHeight")]
@@ -490,7 +490,11 @@ namespace Kopernicus
 
                     // altitudeRange
                     [ParserTarget("altitudeRange", allowMerge = true)]
-                    public LerpRangeLoader altitudeRange { get; set; }
+                    public LerpRangeLoader altitudeRange
+                    {
+                        get { return new LerpRangeLoader(landClass.altitudeRange); }
+                        set { landClass.altitudeRange = value.lerpRange; }
+                    }
 
                     // color
                     [ParserTarget("color")]
@@ -542,7 +546,11 @@ namespace Kopernicus
 
                     // coverageSimplex
                     [ParserTarget("coverageSimplex", allowMerge = true)]
-                    public SimplexLoader coverageSimplex { get; set; }
+                    public SimplexLoader coverageSimplex
+                    {
+                        get { return new SimplexLoader(landClass.coverageSimplex); }
+                        set { landClass.coverageSimplex = value.simplex; }
+                    }
 
                     // The name of the landclass
                     [ParserTarget("name")]
@@ -570,11 +578,19 @@ namespace Kopernicus
 
                     // latitudeDoubleRange
                     [ParserTarget("latitudeDoubleRange", allowMerge = true)]
-                    public LerpRangeLoader latitudeDoubleRange { get; set; }
+                    public LerpRangeLoader latitudeDoubleRange
+                    {
+                        get { return new LerpRangeLoader(landClass.latitudeDoubleRange); }
+                        set { landClass.latitudeDoubleRange = value.lerpRange; }
+                    }
 
                     // latitudeRange
                     [ParserTarget("latitudeRange", allowMerge = true)]
-                    public LerpRangeLoader latitudeRange { get; set; }
+                    public LerpRangeLoader latitudeRange
+                    {
+                        get { return new LerpRangeLoader(landClass.latitudeRange); }
+                        set { landClass.latitudeRange = value.lerpRange; }
+                    }
 
                     // lonDelta
                     [ParserTarget("lonDelta")]
@@ -586,7 +602,11 @@ namespace Kopernicus
 
                     // longitudeRange
                     [ParserTarget("longitudeRange", allowMerge = true)]
-                    public LerpRangeLoader longitudeRange { get; set; }
+                    public LerpRangeLoader longitudeRange
+                    {
+                        get { return new LerpRangeLoader(landClass.longitudeRange); }
+                        set { landClass.longitudeRange = value.lerpRange; }
+                    }
 
                     // minimumRealHeight
                     [ParserTarget("minimumRealHeight")]
@@ -646,7 +666,11 @@ namespace Kopernicus
 
                     // noiseSimplex
                     [ParserTarget("noiseSimplex", allowMerge = true)]
-                    public SimplexLoader noiseSimplex { get; set; }
+                    public SimplexLoader noiseSimplex
+                    {
+                        get { return new SimplexLoader(landClass.noiseSimplex); }
+                        set { landClass.noiseSimplex = value.simplex; }
+                    }
 
                     // List of scatters used
                     [ParserTargetCollection("scatters", nameSignificance = NameSignificance.None)]
@@ -658,13 +682,8 @@ namespace Kopernicus
                     // Post Apply Event
                     void IParserEventSubscriber.PostApply(ConfigNode node)
                     {
-                        landClass.scatter = scatter.Select(s => s.scatterAmount).ToArray();
-                        landClass.coverageSimplex = coverageSimplex.simplex;
-                        landClass.noiseSimplex = noiseSimplex.simplex;
-                        landClass.altitudeRange = altitudeRange.lerpRange;
-                        landClass.latitudeDoubleRange = latitudeDoubleRange.lerpRange;
-                        landClass.latitudeRange = latitudeRange.lerpRange;
-                        landClass.longitudeRange = longitudeRange.lerpRange;
+                        if (scatter.Any())
+                            landClass.scatter = scatter.Select(s => s.scatterAmount).ToArray();
                     }
 
                     // Default constructor
@@ -722,12 +741,6 @@ namespace Kopernicus
                     public LandClassLoader(PQSLandControl.LandClass landClass)
                     {
                         this.landClass = landClass;
-                        altitudeRange = new LerpRangeLoader(landClass.altitudeRange);
-                        latitudeDoubleRange = new LerpRangeLoader(landClass.latitudeDoubleRange);
-                        latitudeRange = new LerpRangeLoader(landClass.latitudeRange);
-                        longitudeRange = new LerpRangeLoader(landClass.longitudeRange);
-                        coverageSimplex = new SimplexLoader(landClass.coverageSimplex);
-                        noiseSimplex = new SimplexLoader(landClass.noiseSimplex);
                     }
                 }
 
@@ -773,7 +786,11 @@ namespace Kopernicus
 
                 // altitudeSimplex
                 [ParserTarget("altitudeSimplex")]
-                public SimplexLoader altitudeSimplex { get; set; }
+                public SimplexLoader altitudeSimplex
+                {
+                    get { return new SimplexLoader(mod.altitudeSimplex); }
+                    set { mod.altitudeSimplex = value.simplex; }
+                }
 
                 // createColors
                 [ParserTarget("createColors")]
@@ -841,7 +858,11 @@ namespace Kopernicus
 
                 // latitudeSimplex
                 [ParserTarget("latitudeSimplex")]
-                public SimplexLoader latitudeSimplex { get; set; }
+                public SimplexLoader latitudeSimplex
+                {
+                    get { return new SimplexLoader(mod.latitudeSimplex); }
+                    set { mod.latitudeSimplex = value.simplex; }
+                }
 
                 // longitudeBlend
                 [ParserTarget("longitudeBlend")]
@@ -885,7 +906,11 @@ namespace Kopernicus
 
                 // longitudeSimplex
                 [ParserTarget("longitudeSimplex")]
-                public SimplexLoader longitudeSimplex { get; set; }
+                public SimplexLoader longitudeSimplex
+                {
+                    get { return new SimplexLoader(mod.longitudeSimplex); }
+                    set { mod.longitudeSimplex = value.simplex; }
+                }
 
                 // useHeightMap
                 [ParserTarget("useHeightMap")]
@@ -910,21 +935,11 @@ namespace Kopernicus
                 public List<LandClassLoader> landClasses = new List<LandClassLoader>();
 
                 // Apply event
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-                    altitudeSimplex = new SimplexLoader(mod.altitudeSimplex);
-                    latitudeSimplex = new SimplexLoader(mod.latitudeSimplex);
-                    longitudeSimplex = new SimplexLoader(mod.longitudeSimplex);
-                }
+                void IParserEventSubscriber.Apply(ConfigNode node) { }
 
                 // Post Apply Event
                 void IParserEventSubscriber.PostApply(ConfigNode node)
                 {
-                    // Get the SimplexLoaders etc.
-                    mod.altitudeSimplex = altitudeSimplex.simplex;
-                    mod.latitudeSimplex = latitudeSimplex.simplex;
-                    mod.longitudeSimplex = longitudeSimplex.simplex;
-
                     // Load the LandClasses manually, to support patching
                     if (mod.landClasses != null) mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
                     if (node.HasNode("landClasses"))
