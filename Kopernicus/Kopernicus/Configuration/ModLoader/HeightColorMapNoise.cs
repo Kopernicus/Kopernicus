@@ -41,6 +41,7 @@ namespace Kopernicus
             public class HeightColorMapNoise : ModLoader<PQSMod_HeightColorMapNoise>, IParserEventSubscriber
             {
                 // Land class loader 
+                [RequireConfigType(ConfigType.Node)]
                 public class LandClassLoaderNoise
                 {
                     // Land class object

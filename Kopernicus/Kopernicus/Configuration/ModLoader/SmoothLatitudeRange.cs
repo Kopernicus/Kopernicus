@@ -37,11 +37,15 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class SmoothLatitudeRange : ModLoader<PQSMod_SmoothLatitudeRange>, IParserEventSubscriber
+            public class SmoothLatitudeRange : ModLoader<PQSMod_SmoothLatitudeRange>
             {
                 // latitudeRange
                 [ParserTarget("LatitudeRange", allowMerge = true)]
-                public LandControl.LerpRangeLoader latitudeRange { get; set; }
+                public LandControl.LerpRangeLoader latitudeRange
+                {
+                    get { return new LandControl.LerpRangeLoader(mod.latitudeRange); }
+                    set { mod.latitudeRange = value.lerpRange; }
+                }
 
                 // smoothToAltitude
                 [ParserTarget("smoothToAltitude")]
@@ -49,21 +53,6 @@ namespace Kopernicus
                 {
                     get { return mod.smoothToAltitude; }
                     set { mod.smoothToAltitude = value; }
-                }
-
-                void IParserEventSubscriber.Apply(ConfigNode node) { }
-
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-                    mod.latitudeRange = latitudeRange.lerpRange;
-                }
-
-                public override void Create(PQSMod_SmoothLatitudeRange _mod)
-                {
-                    base.Create(_mod);
-
-                    // create a patcher for the LerpRange
-                    latitudeRange = new LandControl.LerpRangeLoader(mod.latitudeRange);
                 }
             }
         }

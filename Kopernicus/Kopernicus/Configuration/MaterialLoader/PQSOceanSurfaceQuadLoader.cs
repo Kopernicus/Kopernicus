@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class PQSOceanSurfaceQuadLoader : PQSOceanSurfaceQuad
         {
             // Main Color, default = (1,1,1,1)

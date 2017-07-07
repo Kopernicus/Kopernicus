@@ -39,6 +39,7 @@ namespace Kopernicus
     namespace Configuration
     {
         // Class to manage and load configurations for Kopernicus
+        [RequireConfigType(ConfigType.Node)]
         public class Loader : IParserEventSubscriber
         {
             // Name of the config type which holds the body definition

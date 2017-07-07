@@ -41,6 +41,7 @@ namespace Kopernicus
             public class HeightColorMap2 : ModLoader<PQSMod_HeightColorMap2>, IParserEventSubscriber
             {
                 // Land class loader 
+                [RequireConfigType(ConfigType.Node)]
                 public class LandClassLoader2
                 {
                     // Land class object

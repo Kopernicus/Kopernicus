@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class NormalBumpedLoader : NormalBumped
         {
             // Main Color, default = (1,1,1,1)

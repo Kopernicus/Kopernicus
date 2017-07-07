@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class PQSProjectionSurfaceQuadLoader : PQSProjectionSurfaceQuad
         {
             // Saturation, default = 1

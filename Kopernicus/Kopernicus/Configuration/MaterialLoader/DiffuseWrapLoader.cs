@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class DiffuseWrapLoader : DiffuseWrap
         {
             // Texture, default = "white" { }

@@ -45,6 +45,7 @@ namespace Kopernicus
             public class LandControl : ModLoader<PQSLandControl>, IParserEventSubscriber
             {
                 // Loader for a Simplex object
+                [RequireConfigType(ConfigType.Node)]
                 public class SimplexLoader
                 {
                     // The edited object
@@ -98,6 +99,7 @@ namespace Kopernicus
                 }
 
                 // Loader for a Ground Scatter
+                [RequireConfigType(ConfigType.Node)]
                 public class LandClassScatterLoader : IParserEventSubscriber
                 {
                     public enum ScatterMaterialType
@@ -374,6 +376,7 @@ namespace Kopernicus
                 }
 
                 // Loader for the Amount of a Scatter on a body
+                [RequireConfigType(ConfigType.Node)]
                 public class LandClassScatterAmountLoader
                 {
                     public PQSLandControl.LandClassScatterAmount scatterAmount;
@@ -411,6 +414,7 @@ namespace Kopernicus
                 }
 
                 // Loader for LerpRange
+                [RequireConfigType(ConfigType.Node)]
                 public class LerpRangeLoader
                 {
                     public PQSLandControl.LerpRange lerpRange;
@@ -464,6 +468,7 @@ namespace Kopernicus
                 }
 
                 // Loader for LandClass
+                [RequireConfigType(ConfigType.Node)]
                 public class LandClassLoader : IParserEventSubscriber
                 {
                     public PQSLandControl.LandClass landClass;

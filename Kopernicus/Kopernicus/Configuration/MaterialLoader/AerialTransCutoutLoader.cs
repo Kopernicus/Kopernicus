@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class AerialTransCutoutLoader : AerialTransCutout
         {
             // Main Color, default = (1,1,1,1)

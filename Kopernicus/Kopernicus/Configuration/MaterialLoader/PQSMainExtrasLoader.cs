@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class PQSMainExtrasLoader : PQSMainExtras
         {
             // Saturation, default = 1

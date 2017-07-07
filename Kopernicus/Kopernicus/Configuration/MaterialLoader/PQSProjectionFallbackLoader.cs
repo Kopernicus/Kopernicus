@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class PQSProjectionFallbackLoader : PQSProjectionFallback
         {
             // Saturation, default = 1

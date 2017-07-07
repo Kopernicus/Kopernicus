@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class PQSProjectionAerialQuadRelativeLoader : PQSProjectionAerialQuadRelative
         {
             // Saturation, default = 1

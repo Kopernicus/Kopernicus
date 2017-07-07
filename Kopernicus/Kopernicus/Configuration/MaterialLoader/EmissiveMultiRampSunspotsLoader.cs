@@ -9,6 +9,7 @@ namespace Kopernicus
 {
     namespace Configuration
     {
+        [RequireConfigType(ConfigType.Node)]
         public class EmissiveMultiRampSunspotsLoader : EmissiveMultiRampSunspots
         {
             // Ramp Map (RGBA), default = "white" { }
