@@ -687,7 +687,7 @@ namespace Kopernicus
                     // Post Apply Event
                     void IParserEventSubscriber.PostApply(ConfigNode node)
                     {
-                        if (scatter.Any())
+                        if (scatter.Any() || landClass.scatter == null)
                             landClass.scatter = scatter.Select(s => s.scatterAmount).ToArray();
                     }
 
