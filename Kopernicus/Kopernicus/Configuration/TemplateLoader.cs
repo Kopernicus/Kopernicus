@@ -99,6 +99,9 @@ namespace Kopernicus
             // Apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
             {
+                // Waaaah
+                SpaceCenter.Instance = null;
+
                 // Instantiate (clone) the template body
                 GameObject bodyGameObject = UnityEngine.Object.Instantiate (originalBody.gameObject) as GameObject;
                 bodyGameObject.name = originalBody.name;
