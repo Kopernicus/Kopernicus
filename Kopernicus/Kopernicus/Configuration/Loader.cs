@@ -254,6 +254,12 @@ namespace Kopernicus
 
                     // Parent the generated body to the PSystem
                     body.Value.generatedBody.transform.parent = systemPrefab.transform;
+
+                    // Delete ghost space centers
+                    if (!body.Value.generatedBody.celestialBody.isHomeWorld)
+                    {
+                        UnityEngine.Object.Destroy(body.Value.generatedBody.pqsVersion.GetComponentInChildren<SpaceCenter>());
+                    }
                 }
 
                 // Elect root body
