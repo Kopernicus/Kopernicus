@@ -168,34 +168,10 @@ namespace Kopernicus
                 set { lsc.radiationFactor = value; }
             }
 
-            // intensityCurve
-            [ParserTarget("IntensityCurve")]
-            public FloatCurveParser intensityCurve
-            {
-                get { return lsc.intensityCurve; }
-                set { lsc.intensityCurve = value; }
-            }
-
-            // scaledIntensityCurve
-            [ParserTarget("ScaledIntensityCurve")]
-            public FloatCurveParser scaledIntensityCurve
-            {
-                get { return lsc.scaledIntensityCurve; }
-                set { lsc.scaledIntensityCurve = value; }
-            }
-
-            // intensityCurve
-            [ParserTarget("IVAIntensityCurve")]
-            public FloatCurveParser ivaIntensityCurve
-            {
-                get { return lsc.ivaIntensityCurve; }
-                set { lsc.ivaIntensityCurve = value; }
-            }
-
             // Default constructor
             public LightShifterLoader()
             {
-                lsc = LightShifter.prefab;
+                lsc = Object.Instantiate(LightShifter.prefab) as LightShifter;
                 lsc.transform.parent = generatedBody.scaledVersion.transform;
                 lsc.name = generatedBody.name;
             }
