@@ -53,6 +53,11 @@ namespace Kopernicus
             {
                 Debug.Log("[Kopernicus] ShaderLoader: GetShader " + shaderName);
 
+                if (shaderDictionary.Count == 0)
+                {
+                    LoadAssetBundle("Kopernicus/Shaders", "kopernicusshaders");
+                }
+
                 if (shaderDictionary.ContainsKey(shaderName))
                 {
                     return shaderDictionary[shaderName];
