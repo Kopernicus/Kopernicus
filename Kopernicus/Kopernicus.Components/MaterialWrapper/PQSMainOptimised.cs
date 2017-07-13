@@ -528,7 +528,6 @@ namespace Kopernicus
             {
             }
 
-            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public PQSMainOptimised(string contents) : base(contents)
             {
                 base.shader = Properties.shader;

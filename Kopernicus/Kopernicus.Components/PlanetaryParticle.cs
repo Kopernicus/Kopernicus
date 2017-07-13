@@ -27,8 +27,6 @@
  * https://kerbalspaceprogram.com
  */
 
-#pragma warning disable CS0618 // Disable warnings about the deprecated particle system
-
 using UnityEngine;
 using System.Reflection;
 using System.IO;
@@ -201,4 +199,3 @@ namespace Kopernicus
         }
     }
 }
-#pragma warning restore CS0618
