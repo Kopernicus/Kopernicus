@@ -136,6 +136,12 @@ namespace Kopernicus
         double timeCounter = 0d;
         void Awake()
         {
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
+                    RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
+            }
+
             if (!CompatibilityChecker.IsCompatible())
             {
                 Destroy(this);
