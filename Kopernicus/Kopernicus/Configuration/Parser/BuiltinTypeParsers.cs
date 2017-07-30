@@ -191,7 +191,6 @@ namespace Kopernicus
                         }
                     }
                 }
-                value.name = s;
             }
             public MapSOParser_GreyScale()
             {
@@ -277,7 +276,6 @@ namespace Kopernicus
                         }
                     }
                 }
-                value.name = s;
             }
             public MapSOParser_RGB()
             {

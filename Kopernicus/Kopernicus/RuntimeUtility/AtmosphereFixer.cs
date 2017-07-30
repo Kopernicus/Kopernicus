@@ -130,12 +130,19 @@ namespace Kopernicus
             afg.SetMaterial(true);
         }
     }
+
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereFixer : MonoBehaviour
     {
         double timeCounter = 0d;
         void Awake()
         {
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER) // || HighLogic.LoadedScene == GameScenes.EDITOR)
+            {
+                if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
+                    RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
+            }
+
             if (!CompatibilityChecker.IsCompatible())
             {
                 Destroy(this);
