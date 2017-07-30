@@ -30,7 +30,7 @@
  *
  * https://kerbalspaceprogram.com
  */
- 
+
 using Kopernicus.Components;
 using UnityEngine;
 
@@ -58,6 +58,15 @@ namespace Kopernicus
             {
                 get { return ring.outerRadius; }
                 set { ring.outerRadius = value; }
+            }
+
+            /// <summary>
+            /// Distance between the top and bottom faces in milliradii
+            /// </summary>
+            [ParserTarget("thickness")]
+            public NumericParser<float> thickness {
+                get { return ring.thickness;  }
+                set { ring.thickness = value; }
             }
 
             // Axis angle of our ring
@@ -122,6 +131,18 @@ namespace Kopernicus
             {
                 get { return ring.steps; }
                 set { ring.steps = value; }
+            }
+
+            /// <summary>
+            /// Number of times the texture should be tiled around the cylinder
+            /// If zero, use the old behavior of sampling a thin diagonal strip
+            /// from (0,0) to (1,1).
+            /// </summary>
+            [ParserTarget("tiles")]
+            public NumericParser<int> tiles
+            {
+                get { return ring.tiles; }
+                set { ring.tiles = value; }
             }
 
             // Initialize the RingLoader
