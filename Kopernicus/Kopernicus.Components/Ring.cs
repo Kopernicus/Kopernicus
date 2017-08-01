@@ -74,7 +74,6 @@ namespace Kopernicus
                 List<Vector3> vertices = new List<Vector3>();
                 List<Vector2> Uvs = new List<Vector2>();
                 List<int> Tris = new List<int>();
-                List<Vector3> Normals = new List<Vector3>();
 
                 // Mesh wrapping
                 for (float i = 0f; i < 360f; i += (360f / steps))
@@ -84,12 +83,10 @@ namespace Kopernicus
 
                     // Inner Radius
                     vertices.Add(eVert * (innerRadius / parent.transform.localScale.x));
-                    Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.one);
 
                     // Outer Radius
                     vertices.Add(eVert * (outerRadius / parent.transform.localScale.x));
-                    Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.zero);
                 }
                 for (float i = 0f; i < 360f; i += (360f / steps))
@@ -99,12 +96,10 @@ namespace Kopernicus
 
                     // Inner Radius
                     vertices.Add(eVert * (innerRadius / parent.transform.localScale.x));
-                    Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.one);
 
                     // Outer Radius
                     vertices.Add(eVert * (outerRadius / parent.transform.localScale.x));
-                    Normals.Add(Vector3.left);
                     Uvs.Add(Vector2.zero);
                 }
 
