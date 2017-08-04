@@ -101,6 +101,18 @@ namespace Kopernicus
                 set { ring.lockRotation = value; }
             }
 
+            /// <summary>
+            /// Number of seconds for the ring to complete one rotation.
+            /// If zero, fall back to matching parent body if lockRotation=false,
+            /// and standing perfectly still if it's true.
+            /// </summary>
+            [ParserTarget("rotationPeriod")]
+            public NumericParser<float> rotationPeriod
+            {
+                get { return ring.rotationPeriod;  }
+                set { ring.rotationPeriod = value; }
+            }
+
             // Unlit our ring?
             [ParserTarget("unlit")]
             public NumericParser<bool> unlit

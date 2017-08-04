@@ -51,6 +51,12 @@ namespace Kopernicus
             public Texture2D texture;
             public Color color;
             public bool lockRotation;
+            /// <summary>
+            /// Number of seconds for the ring to complete one rotation.
+            /// If zero, fall back to matching parent body if lockRotation=false,
+            /// and standing perfectly still if it's true.
+            /// </summary>
+            public float rotationPeriod;
             public bool unlit;
             public bool useNewShader;
             public int steps = 128;
@@ -414,9 +420,8 @@ namespace Kopernicus
             /// </summary>
             void Update()
             {
-
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.rotation = rotation;
+                setRotation();
 
                 if (useNewShader)
                 {
@@ -424,7 +429,6 @@ namespace Kopernicus
                     Vector3 sunPosRelativeToPlanet = KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position);
                     ringMR.material.SetVector("sunPosRelativeToPlanet", sunPosRelativeToPlanet);
                 }
-
             }
 
             /// <summary>
@@ -433,7 +437,7 @@ namespace Kopernicus
             void FixedUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.rotation = rotation;
+                setRotation();
             }
 
             /// <summary>
@@ -442,7 +446,23 @@ namespace Kopernicus
             void LateUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.rotation = rotation;
+                setRotation();
+            }
+
+            /// <summary>
+            /// Populate our transform's rotation quaternion
+            /// </summary>
+            private void setRotation()
+            {
+                if (rotationPeriod != 0f) {
+                    float degreesPerSecond = -360f / rotationPeriod;
+                    transform.rotation = rotation * Quaternion.Euler(
+                        0,
+                        (float)Planetarium.GetUniversalTime() * degreesPerSecond,
+                        0
+                    );
+                } else if (lockRotation)
+                    transform.rotation = rotation;
             }
         }
     }
