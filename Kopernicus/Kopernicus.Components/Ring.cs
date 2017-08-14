@@ -57,6 +57,11 @@ namespace Kopernicus
             /// and standing perfectly still if it's true.
             /// </summary>
             public float rotationPeriod;
+            /// <summary>
+            /// Angle between the absolute reference direction and the ascending node.
+            /// Works just like the corresponding property on celestial bodies.
+            /// </summary>
+            public float longitudeOfAscendingNode;
             public bool unlit;
             public bool useNewShader;
             public int steps = 128;
@@ -66,8 +71,17 @@ namespace Kopernicus
             /// from (0,0) to (1,1).
             /// </summary>
             public int tiles = 0;
-            public float penumbraMultiplier = 10f; //for new shader, makes planet shadow softer (values larger than one) or less soft (smaller than one)
-                                                   //softness still depends on distance from sun, distance from planet and radius of sun and planet
+            /// <summary>
+            /// For new shader, makes planet shadow softer (values larger than one) or less soft (smaller than one)
+            /// softness still depends on distance from sun, distance from planet and radius of sun and planet
+            /// </summary>
+            public float penumbraMultiplier = 10f;
+
+            /// <summary>
+            /// The body around which this ring is located.
+            /// Used to get rotation data to set the LAN.
+            /// </summary>
+            public CelestialBody referenceBody;
 
             public MeshRenderer ringMR;
 
@@ -454,16 +468,30 @@ namespace Kopernicus
             /// </summary>
             private void setRotation()
             {
-                if (rotationPeriod != 0f) {
-                    float degreesPerSecond = -360f / rotationPeriod;
-                    transform.rotation = rotation * Quaternion.Euler(
-                        0,
-                        (float)Planetarium.GetUniversalTime() * degreesPerSecond,
-                        0
-                    );
-                } else if (lockRotation)
-                    transform.rotation = rotation;
+                if (lockRotation && referenceBody != null) {
+                    // Setting transform.rotation does NOT give us a consistent
+                    // absolute orientation as you would expect from the documentation.
+                    // "World" coordinates seem to be set differently each time the
+                    // game is loaded. Instead, we use localRotation to orient the ring
+                    // relative to its parent body, subtract off the parent body's
+                    // rotation at the current moment in time, then add the LAN.
+                    // Note that eastward (prograde) rotation is negative in trigonometry.
+                    if (rotationPeriod != 0f) {
+                        float degreesPerSecond = -360f / rotationPeriod;
+                        float parentRotation = (float) (referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod);
+                        transform.localRotation =
+                            Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
+                            * rotation
+                            * Quaternion.Euler(0, (float)Planetarium.GetUniversalTime() * degreesPerSecond, 0);
+                    } else {
+                        float parentRotation = (float) (referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod);
+                        transform.localRotation =
+                            Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
+                            * rotation;
+                    }
+                }
             }
+
         }
     }
 }
