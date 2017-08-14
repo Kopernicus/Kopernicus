@@ -2,10 +2,10 @@
  * Kopernicus Planetary System Modifier
  * ====================================
  * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ *             - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  *
  * Maintained by: - Thomas P.
- * 				  - NathanKell
+ *                - NathanKell
  *
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * -------------------------------------------------------------
@@ -30,7 +30,7 @@
  *
  * https://kerbalspaceprogram.com
  */
- 
+
 using Kopernicus.Components;
 using UnityEngine;
 
@@ -60,12 +60,32 @@ namespace Kopernicus
                 set { ring.outerRadius = value; }
             }
 
-            // Axis angle of our ring
+            /// <summary>
+            /// Distance between the top and bottom faces in milliradii
+            /// </summary>
+            [ParserTarget("thickness")]
+            public NumericParser<float> thickness {
+                get { return ring.thickness;  }
+                set { ring.thickness = value; }
+            }
+
+            // Axis angle (inclination) of our ring
             [ParserTarget("angle")]
             public NumericParser<float> angle
             {
-                get { return ring.rotation.eulerAngles.x; }
-                set { ring.rotation = Quaternion.Euler(value, 0, 0); }
+                get { return -ring.rotation.eulerAngles.x; }
+                set { ring.rotation = Quaternion.Euler(-value, 0, 0); }
+            }
+
+            /// <summary>
+            /// Angle between the absolute reference direction and the ascending node.
+            /// Works just like the corresponding property on celestial bodies.
+            /// </summary>
+            [ParserTarget("longitudeOfAscendingNode")]
+            public NumericParser<float> longitudeOfAscendingNode
+            {
+                get { return ring.longitudeOfAscendingNode;  }
+                set { ring.longitudeOfAscendingNode = value; }
             }
 
             // Texture of our ring
@@ -90,6 +110,18 @@ namespace Kopernicus
             {
                 get { return ring.lockRotation; }
                 set { ring.lockRotation = value; }
+            }
+
+            /// <summary>
+            /// Number of seconds for the ring to complete one rotation.
+            /// If zero, fall back to matching parent body if lockRotation=false,
+            /// and standing perfectly still if it's true.
+            /// </summary>
+            [ParserTarget("rotationPeriod")]
+            public NumericParser<float> rotationPeriod
+            {
+                get { return ring.rotationPeriod;  }
+                set { ring.rotationPeriod = value; }
             }
 
             // Unlit our ring?
@@ -124,12 +156,27 @@ namespace Kopernicus
                 set { ring.steps = value; }
             }
 
+            /// <summary>
+            /// Number of times the texture should be tiled around the cylinder
+            /// If zero, use the old behavior of sampling a thin diagonal strip
+            /// from (0,0) to (1,1).
+            /// </summary>
+            [ParserTarget("tiles")]
+            public NumericParser<int> tiles
+            {
+                get { return ring.tiles; }
+                set { ring.tiles = value; }
+            }
+
             // Initialize the RingLoader
             public RingLoader()
             {
                 ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
                 ring.transform.parent = generatedBody.scaledVersion.transform;
                 ring.planetRadius = (float) generatedBody.celestialBody.Radius;
+
+                // Need to check the parent body's rotation to orient the LAN properly
+                ring.referenceBody = generatedBody.celestialBody;
             }
 
             // Initialize the RingLoader
