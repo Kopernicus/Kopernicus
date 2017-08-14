@@ -2,10 +2,10 @@
  * Kopernicus Planetary System Modifier
  * ====================================
  * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- * 			   - Nathaniel R. Lewis (linux.robotdude@gmail.com)
+ *             - Nathaniel R. Lewis (linux.robotdude@gmail.com)
  *
  * Maintained by: - Thomas P.
- * 				  - NathanKell
+ *                - NathanKell
  *
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
  * -------------------------------------------------------------
@@ -30,7 +30,7 @@
  *
  * https://kerbalspaceprogram.com
  */
- 
+
 using Kopernicus.Components;
 using UnityEngine;
 
@@ -60,12 +60,23 @@ namespace Kopernicus
                 set { ring.outerRadius = value; }
             }
 
-            // Axis angle of our ring
+            // Axis angle (inclination) of our ring
             [ParserTarget("angle")]
             public NumericParser<float> angle
             {
-                get { return ring.rotation.eulerAngles.x; }
-                set { ring.rotation = Quaternion.Euler(value, 0, 0); }
+                get { return -ring.rotation.eulerAngles.x; }
+                set { ring.rotation = Quaternion.Euler(-value, 0, 0); }
+            }
+
+            /// <summary>
+            /// Angle between the absolute reference direction and the ascending node.
+            /// Works just like the corresponding property on celestial bodies.
+            /// </summary>
+            [ParserTarget("longitudeOfAscendingNode")]
+            public NumericParser<float> longitudeOfAscendingNode
+            {
+                get { return ring.longitudeOfAscendingNode;  }
+                set { ring.longitudeOfAscendingNode = value; }
             }
 
             // Texture of our ring
@@ -130,6 +141,9 @@ namespace Kopernicus
                 ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
                 ring.transform.parent = generatedBody.scaledVersion.transform;
                 ring.planetRadius = (float) generatedBody.celestialBody.Radius;
+
+                // Need to check the parent body's rotation to orient the LAN properly
+                ring.referenceBody = generatedBody.celestialBody;
             }
 
             // Initialize the RingLoader

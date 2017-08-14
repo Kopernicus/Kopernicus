@@ -4,7 +4,7 @@
  * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
  * Maintained by: Thomas P., NathanKell and KillAshley
  * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,11 +19,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -47,11 +47,25 @@ namespace Kopernicus
             public Texture2D texture;
             public Color color;
             public bool lockRotation;
+            /// <summary>
+            /// Angle between the absolute reference direction and the ascending node.
+            /// Works just like the corresponding property on celestial bodies.
+            /// </summary>
+            public float longitudeOfAscendingNode;
             public bool unlit;
             public bool useNewShader;
             public int steps = 128;
-            public float penumbraMultiplier = 10f; //for new shader, makes planet shadow softer (values larger than one) or less soft (smaller than one)
-                                                   //softness still depends on distance from sun, distance from planet and radius of sun and planet
+            /// <summary>
+            /// For new shader, makes planet shadow softer (values larger than one) or less soft (smaller than one)
+            /// softness still depends on distance from sun, distance from planet and radius of sun and planet
+            /// </summary>
+            public float penumbraMultiplier = 10f;
+
+            /// <summary>
+            /// The body around which this ring is located.
+            /// Used to get rotation data to set the LAN.
+            /// </summary>
+            public CelestialBody referenceBody;
 
             public MeshRenderer ringMR;
 
@@ -165,7 +179,7 @@ namespace Kopernicus
                 ringMR.material.SetFloat("outerRadius", outerRadius * parent.transform.localScale.x);
 
                 if (useNewShader)
-                { 
+                {
                     ringMR.material.SetFloat("planetRadius", planetRadius);
                     ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
                 }
@@ -183,7 +197,7 @@ namespace Kopernicus
             {
 
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.rotation = rotation;
+                setRotation();
 
                 if (useNewShader)
                 {
@@ -200,7 +214,7 @@ namespace Kopernicus
             void FixedUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.rotation = rotation;
+                setRotation();
             }
 
             /// <summary>
@@ -209,8 +223,24 @@ namespace Kopernicus
             void LateUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                if (lockRotation) transform.rotation = rotation;
+                setRotation();
             }
+
+            private void setRotation()
+            {
+                if (lockRotation && referenceBody != null) {
+                    // Setting transform.rotation does NOT give us a consistent
+                    // absolute orientation as you would expect from the documentation.
+                    // "World" coordinates seem to be set differently each time the
+                    // game is loaded. Instead, we use localRotation to orient the ring
+                    // relative to its parent body, subtract off the parent body's
+                    // rotation at the current moment in time, then add the LAN.
+                    // Note that eastward (prograde) rotation is negative in trigonometry.
+                    float parentRotation = (float) (referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod);
+                    transform.localRotation = Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0) * rotation;
+                }
+            }
+
         }
     }
 }
