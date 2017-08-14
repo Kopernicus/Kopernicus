@@ -180,7 +180,7 @@ namespace Kopernicus
             }
 
             // Main Color, default = (1,1,1,1)
-            public new Color color
+            public Color color
             {
                 get { return GetColor (Properties.Instance.colorID); }
                 set { SetColor (Properties.Instance.colorID, value); }
@@ -420,7 +420,6 @@ namespace Kopernicus
             {
             }
 
-            [Obsolete("Creating materials from shader source string is no longer supported. Use Shader assets instead.")]
             public PQSOceanSurfaceQuad(string contents) : base(contents)
             {
                 base.shader = Properties.shader;

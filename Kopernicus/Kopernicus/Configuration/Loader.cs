@@ -254,12 +254,6 @@ namespace Kopernicus
 
                     // Parent the generated body to the PSystem
                     body.Value.generatedBody.transform.parent = systemPrefab.transform;
-
-                    // Delete ghost space centers
-                    if (!body.Value.generatedBody.celestialBody.isHomeWorld)
-                    {
-                        UnityEngine.Object.Destroy(body.Value.generatedBody.pqsVersion.GetComponentInChildren<SpaceCenter>());
-                    }
                 }
 
                 // Elect root body
@@ -269,7 +263,7 @@ namespace Kopernicus
                 RecursivelySortBodies (systemPrefab.rootBody);
 
                 // Fix doubled flightGlobals
-                List<int> numbers = new List<int>() { 0, 1 };
+                List<int> numbers = new List<int>() { 0 };
                 int index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
                 PatchFGI(ref numbers, ref index, systemPrefab.rootBody);
 
@@ -298,8 +292,6 @@ namespace Kopernicus
                 {
                     if (numbers.Contains(body.flightGlobalsIndex))
                         body.flightGlobalsIndex = index++;
-                    if (body.celestialBody.isHomeWorld)
-                        body.flightGlobalsIndex = 1; // Kerbin
                     numbers.Add(body.flightGlobalsIndex);
                     PatchFGI(ref numbers, ref index, body);
                 }

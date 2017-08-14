@@ -246,7 +246,7 @@ namespace Kopernicus
 
                 // Land class loader 
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassLoader
+                public class LandClassLoader : IParserEventSubscriber
                 {
                     // Land class object
                     public PQSMod_VertexPlanet.LandClass landClass;
@@ -289,11 +289,7 @@ namespace Kopernicus
 
                     // colorNoiseMap
                     [ParserTarget("SimplexNoiseMap", allowMerge = true)]
-                    public SimplexWrapper colorNoiseMap
-                    {
-                        get { return new SimplexWrapper(landClass.colorNoiseMap); }
-                        set { landClass.colorNoiseMap = value.wrapper; }
-                    }
+                    public SimplexWrapper colorNoiseMap { get; set; }
 
                     // fractalEnd
                     [ParserTarget("fractalEnd")]
@@ -342,7 +338,16 @@ namespace Kopernicus
                         get { return landClass.startHeight; }
                         set { landClass.startHeight = value; }
                     }
-                    
+
+                    // Apply Event
+                    void IParserEventSubscriber.Apply(ConfigNode node) { }
+
+                    // Post Apply Event
+                    void IParserEventSubscriber.PostApply(ConfigNode node)
+                    {
+                        landClass.colorNoiseMap = colorNoiseMap.wrapper;
+                    }
+
                     // Default constructor
                     public LandClassLoader()
                     {
@@ -375,35 +380,19 @@ namespace Kopernicus
 
                 // continental
                 [ParserTarget("ContinentalSimplex", allowMerge = true)]
-                public SimplexWrapper continental
-                {
-                    get { return new SimplexWrapper(mod.continental); }
-                    set { mod.continental = value.wrapper; }
-                }
+                public SimplexWrapper continental { get; set; }
 
                 // continentalRuggedness
                 [ParserTarget("RuggednessSimplex", allowMerge = true)]
-                public SimplexWrapper continentalRuggedness
-                {
-                    get { return new SimplexWrapper(mod.continentalRuggedness); }
-                    set { mod.continentalRuggedness = value.wrapper; }
-                }
+                public SimplexWrapper continentalRuggedness { get; set; }
 
                 // continentalSharpness
                 [ParserTarget("SharpnessNoise", allowMerge = true)]
-                public NoiseModWrapper continentalSharpness
-                {
-                    get { return new NoiseModWrapper(mod.continentalSharpness); }
-                    set { mod.continentalSharpness = value.wrapper; }
-                }
+                public NoiseModWrapper continentalSharpness { get; set; }
 
                 // continentalSharpnessMap
                 [ParserTarget("SharpnessSimplexMap", allowMerge = true)]
-                public SimplexWrapper continentalSharpnessMap
-                {
-                    get { return new SimplexWrapper(mod.continentalSharpnessMap); }
-                    set { mod.continentalSharpnessMap = value.wrapper; }
-                }
+                public SimplexWrapper continentalSharpnessMap { get; set; }
 
                 // deformity
                 [ParserTarget("deformity")]
@@ -506,11 +495,7 @@ namespace Kopernicus
 
                 // terrainType
                 [ParserTarget("TerrainTypeSimplex", allowMerge = true)]
-                public SimplexWrapper terrainType
-                {
-                    get { return new SimplexWrapper(mod.terrainType); }
-                    set { mod.terrainType = value.wrapper; }
-                }
+                public SimplexWrapper terrainType { get; set; }
                 
                 // Apply Event
                 void IParserEventSubscriber.Apply(ConfigNode node) { }
@@ -518,6 +503,13 @@ namespace Kopernicus
                 // Post Apply Event
                 void IParserEventSubscriber.PostApply(ConfigNode node)
                 {
+                    // Apply Simplex and NoiseMod
+                    mod.continental = continental.wrapper;
+                    mod.continentalRuggedness = continentalRuggedness.wrapper;
+                    mod.continentalSharpness = continentalSharpness.wrapper;
+                    mod.continentalSharpnessMap = continentalSharpnessMap.wrapper;
+                    mod.terrainType = terrainType.wrapper;
+
                     // Load the LandClasses manually, to support patching
                     if (!node.HasNode("LandClasses"))
                         return;
@@ -562,6 +554,19 @@ namespace Kopernicus
 
                     // Apply the landclasses
                     mod.landClasses = landClasses.Select(l => l.landClass).ToArray();
+                }
+
+                // Create the mod
+                public override void Create(PQSMod_VertexPlanet _mod)
+                {
+                    base.Create(_mod);
+
+                    // Create base types
+                    continental = new SimplexWrapper(mod.continental);
+                    continentalRuggedness = new SimplexWrapper(mod.continentalRuggedness);
+                    continentalSharpness = new NoiseModWrapper(mod.continentalSharpness);
+                    continentalSharpnessMap = new SimplexWrapper(mod.continentalSharpnessMap);
+                    terrainType = new SimplexWrapper(mod.terrainType);
                 }
             }
         }
