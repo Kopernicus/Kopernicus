@@ -118,7 +118,7 @@ namespace Kopernicus
             Debug.Log("[Kopernicus]: Post-Spawn");
 
             // Fix the SpaceCenter
-            SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.isHomeWorld).GetComponentInChildren<SpaceCenter>();
+            SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.isHomeWorld).GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
             SpaceCenter.Instance.Start();
 
             // Fix the flight globals index of each body and patch it's SOI

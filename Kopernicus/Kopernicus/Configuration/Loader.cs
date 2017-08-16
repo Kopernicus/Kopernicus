@@ -256,9 +256,16 @@ namespace Kopernicus
                     body.Value.generatedBody.transform.parent = systemPrefab.transform;
 
                     // Delete ghost space centers
-                    if (!body.Value.generatedBody.celestialBody.isHomeWorld)
+                    if (!body.Value.generatedBody.celestialBody.isHomeWorld && body.Value.generatedBody.pqsVersion != null)
                     {
-                        UnityEngine.Object.Destroy(body.Value.generatedBody.pqsVersion.GetComponentInChildren<SpaceCenter>());
+                        SpaceCenter[] centers = body.Value.generatedBody.pqsVersion.GetComponentsInChildren<SpaceCenter>(true);
+                        if (centers != null)
+                        {
+                            foreach (SpaceCenter c in centers)
+                            {
+                                UnityEngine.Object.Destroy(c);
+                            }
+                        }
                     }
                 }
 
