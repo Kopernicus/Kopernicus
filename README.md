@@ -1,14 +1,14 @@
 ﻿Kopernicus
 ==============================
-May 30, 2017
+Aug. 17, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.2.2-9)
+New in this version (1.2.2-10)
 -------------------
-- Backported the changes from 1.3.0-4 to KSP 1.2.2
+- Backported the changes from 1.3.0-5 to KSP 1.2.2
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
