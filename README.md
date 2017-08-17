@@ -1,15 +1,19 @@
 ﻿Kopernicus
 ==============================
-June 15, 2017
+August 17, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.0-4)
+New in this version (1.3.0-5)
 -------------------
-- Fix an issue with the loading of the ring shader
-- Fix another issue with the parser
+- Fixed an issue with LandClass loading
+- Added displayName property for Biomes
+- Added distance based intensity for starlight (intensity curves)
+- Removed the limitation of only one active star
+- Fixed BUILTIN textures
+- Ring changed by HerbaruSan (thick rings, configurable LAN)
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
