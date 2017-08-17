@@ -416,7 +416,11 @@ namespace Kopernicus
                         Tris.Add(firstTop + Wrapping+2 + (i    ));
                         Tris.Add(firstTop +              (i + 2));
                         Tris.Add(firstTop + Wrapping+2 + (i + 2));
-
+                    }
+                    // Outer faces should always draw after inner to
+                    // make the overlaps render correctly
+                    for (int i = 0; i < Wrapping; i += 2)
+                    {
                         // Outer faces
                         Tris.Add(firstTop +              (i + 1));
                         Tris.Add(firstTop + Wrapping+2 + (i + 1));
