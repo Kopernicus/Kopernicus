@@ -42,19 +42,7 @@ namespace Kopernicus
             public string name 
             {
                 get { return attribute.name; }
-                set
-                {
-                    attribute.name = value;
-                    attribute.displayname = value;
-                }
-            }
-
-            // The displayName of this biome
-            [ParserTarget("displayName")]
-            public string displayName 
-            {
-                get { return attribute.displayname; } // This is not displayName because of reasons
-                set { attribute.displayname = value; }
+                set { attribute.name = value; }
             }
 
             // The science multiplier for this biome
