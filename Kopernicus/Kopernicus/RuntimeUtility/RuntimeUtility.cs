@@ -328,6 +328,9 @@ namespace Kopernicus
                 return;
             }
 
+            // Load Textures
+            OnDemand.OnDemandStorage.EnableBody(Templates.menuBody);
+
             // Get the MainMenu-Logic
             MainMenu main = FindObjectOfType<MainMenu>();
             if (main == null)
