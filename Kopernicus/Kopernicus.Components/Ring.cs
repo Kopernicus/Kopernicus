@@ -152,6 +152,7 @@ namespace Kopernicus
                 {
                     ringMR.material.SetFloat("planetRadius",       planetRadius);
                     ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
+                    ringMR.material.SetFloat("sunRadius",          (float) KopernicusStar.Current.sun.Radius);
                 }
 
                 ringMR.material.color = color;
@@ -443,9 +444,8 @@ namespace Kopernicus
 
                 if (useNewShader)
                 {
-                    ringMR.material.SetFloat("sunRadius", (float)KopernicusStar.Current.sun.Radius);
-                    Vector3 sunPosRelativeToPlanet = KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position);
-                    ringMR.material.SetVector("sunPosRelativeToPlanet", sunPosRelativeToPlanet);
+                    ringMR.material.SetVector("sunPosRelativeToPlanet",
+                        (Vector3) (KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position)));
                 }
             }
 
