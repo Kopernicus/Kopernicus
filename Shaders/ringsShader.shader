@@ -15,7 +15,7 @@ Shader "Kopernicus/Rings"
     Pass
     {
       ZWrite On
-      Cull Off
+      Cull Back
       // Alpha blend
       Blend SrcAlpha OneMinusSrcAlpha
 
@@ -43,6 +43,11 @@ Shader "Kopernicus/Rings"
 
       // Unity will set this to the material color automatically
       uniform float4 _Color;
+
+      // Properties to simulate a shade moving past the inner surface of the ring
+      uniform sampler2D _InnerShadeTexture;
+      uniform int       innerShadeTiles;
+      uniform float     innerShadeOffset;
 
       #define M_PI 3.1415926535897932384626
 
@@ -99,6 +104,37 @@ Shader "Kopernicus/Rings"
         return (1 - w);
       }
 
+      // Check whether our shadow squares cover this pixel
+      float getInnerShadeShadow(v2f i)
+      {
+        // The shade only slides around the ring, so we use the X tex coord.
+        float2 shadeTexCoord = float2(
+          i.texCoord.x,
+          i.texCoord.y / innerShadeTiles + innerShadeOffset
+        );
+        // Check the pixel currently above the one we're rendering.
+        float4 shadeColor = tex2D(_InnerShadeTexture, shadeTexCoord);
+        // If the shade is solid, then it blocks the light.
+        // If it's transparent, then the light goes through.
+        return 1 - 0.8 * shadeColor.a;
+      }
+
+      // Either we're a sun with a ringworld and shadow squares,
+      // or we're a planet orbiting a sun and casting shadows.
+      // There's no middle ground. So if shadow squares are turned on,
+      // disable eclipse shadows.
+      float getShadow(v2f i)
+      {
+        if (innerShadeTiles > 0) {
+          return getInnerShadeShadow(i);
+        } else {
+          // Do everything relative to planet position
+          // *6000 to convert to local space, might be simpler in scaled?
+          float3 worldPosRelPlanet = i.worldPos - i.planetOrigin;
+          return getEclipseShadow(worldPosRelPlanet * 6000, sunPosRelativeToPlanet, 0, planetRadius, sunRadius * penumbraMultiplier);
+        }
+      }
+
       // Choose a color to use for the pixel represented by 'i'
       float4 frag(v2f i): COLOR
       {
@@ -119,11 +155,8 @@ Shader "Kopernicus/Rings"
         // Result too bright for some reason, the 0.03 fixes it
         float mieScattering = 0.03 * PhaseFunctionM(mu, mieG);
 
-        // Planet shadow on ring
-        // Do everything relative to planet position
-        // *6000 to convert to local space, might be simpler in scaled?
-        float3 worldPosRelPlanet = i.worldPos - i.planetOrigin;
-        float shadow = getEclipseShadow(worldPosRelPlanet * 6000, sunPosRelativeToPlanet, 0, planetRadius, sunRadius * penumbraMultiplier);
+        // Planet shadow on ring, or inner shade shadow on inner face
+        float shadow = getShadow(i);
 
         //TODO: Fade in some noise here when getting close to the rings
         //      Make it procedural noise?

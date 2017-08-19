@@ -78,6 +78,23 @@ namespace Kopernicus
             public float penumbraMultiplier = 10f;
 
             /// <summary>
+            /// This texture's opaque pixels cast shadows on our inner surface
+            /// </summary>
+            public  Texture2D innerShadeTexture        = null;
+            /// <summary>
+            /// The inner shade texture repeats this many times over the inner surface
+            /// </summary>
+            public  int       innerShadeTiles          = 0;
+            /// <summary>
+            /// Number of seconds the inner shade texture takes to complete one rotation
+            /// </summary>
+            public  float     innerShadeRotationPeriod = 0;
+            /// <summary>
+            /// Multiply the time by this to get the offset of the inner shade texture
+            /// </summary>
+            private float     innerShadeOffsetRate     = 0;
+
+            /// <summary>
             /// The body around which this ring is located.
             /// Used to get rotation data to set the LAN.
             /// </summary>
@@ -152,7 +169,18 @@ namespace Kopernicus
                 {
                     ringMR.material.SetFloat("planetRadius",       planetRadius);
                     ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
-                    ringMR.material.SetFloat("sunRadius",          (float) KopernicusStar.Current.sun.Radius);
+
+                    if (innerShadeTexture != null) {
+                        ringMR.material.SetTexture("_InnerShadeTexture", innerShadeTexture);
+                    }
+                    if (innerShadeTiles > 0) {
+                        ringMR.material.SetFloat("innerShadeTiles", tiles / innerShadeTiles);
+                    }
+                    if (innerShadeRotationPeriod > 0 && rotationPeriod > 0) {
+                        innerShadeOffsetRate = innerShadeTiles * (
+                              1 / innerShadeRotationPeriod
+                            - 1 / rotationPeriod);
+                    }
                 }
 
                 ringMR.material.color = color;
@@ -439,13 +467,20 @@ namespace Kopernicus
             /// </summary>
             void Update()
             {
-                transform.localScale = transform.parent.localScale;
-                setRotation();
+                if (transform?.parent != null) {
+                    transform.localScale = transform.parent.localScale;
+                    setRotation();
+                }
 
-                if (useNewShader)
+                if (useNewShader && ringMR?.material != null
+                        && KopernicusStar?.Current?.sun?.transform != null)
                 {
+                    ringMR.material.SetFloat("sunRadius",
+                        (float) KopernicusStar.Current.sun.Radius);
                     ringMR.material.SetVector("sunPosRelativeToPlanet",
                         (Vector3) (KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position)));
+                    ringMR.material.SetFloat("innerShadeOffset",
+                        (float) (Planetarium.GetUniversalTime() * innerShadeOffsetRate));
                 }
             }
 
