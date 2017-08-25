@@ -31,8 +31,6 @@ using LibNoise;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LibNoise.Unity;
-using LibNoise.Unity.Generator;
 using UnityEngine;
 
 namespace Kopernicus
@@ -107,16 +105,6 @@ namespace Kopernicus
                     {
                         wrapper = simplex;
                     }
-
-                    // Convert
-                    public static implicit operator PQSMod_VertexPlanet.SimplexWrapper(SimplexWrapper parser)
-                    {
-                        return parser?.wrapper;
-                    }
-                    public static implicit operator SimplexWrapper(PQSMod_VertexPlanet.SimplexWrapper value)
-                    {
-                        return value == null ? null : new SimplexWrapper(value);
-                    }
                 }
 
                 // Loader for Noise
@@ -130,7 +118,7 @@ namespace Kopernicus
                     public class RiggedParser
                     {
                         // Noise
-                        public RiggedMultifractal noise;
+                        public RidgedMultifractal noise;
 
                         // frequency
                         [ParserTarget("frequency")]
@@ -153,15 +141,15 @@ namespace Kopernicus
                         public NumericParser<int> octaveCount
                         {
                             get { return noise.OctaveCount; }
-                            set { noise.OctaveCount = value; }
+                            set { noise.OctaveCount = Mathf.Clamp(value, 1, 30); }
                         }
 
                         // quality
                         [ParserTarget("quality")]
                         public EnumParser<KopernicusNoiseQuality> quality
                         {
-                            get { return (KopernicusNoiseQuality)(int)noise.Quality; }
-                            set { noise.Quality = (QualityMode)(int)value.value; }
+                            get { return (KopernicusNoiseQuality) (int) noise.NoiseQuality; }
+                            set { noise.NoiseQuality = (NoiseQuality) (int) value.value; }
                         }
 
                         // seed
@@ -175,15 +163,15 @@ namespace Kopernicus
                         // Default Constructor
                         public RiggedParser()
                         {
-                            noise = new RiggedMultifractal();
+                            noise = new RidgedMultifractal();
                         }
 
                         // Runtime Constructor
-                        public RiggedParser(RiggedMultifractal rigged)
+                        public RiggedParser(RidgedMultifractal rigged)
                         {
                             noise = rigged;
                         }
-
+                        
                     }
 
                     // deformity
@@ -207,7 +195,7 @@ namespace Kopernicus
                     public NumericParser<int> octaves
                     {
                         get { return wrapper.octaves; }
-                        set { wrapper.octaves = value; }
+                        set { wrapper.octaves = Mathf.Clamp(value, 1, 30); }
                     }
 
                     // persistance
@@ -233,8 +221,8 @@ namespace Kopernicus
                     // Apply Event
                     void IParserEventSubscriber.Apply(ConfigNode node)
                     {
-                        if (wrapper.noise is RiggedMultifractal)
-                            riggedNoise = new RiggedParser((RiggedMultifractal)wrapper.noise);
+                        if (wrapper.noise is RidgedMultifractal)
+                            riggedNoise = new RiggedParser((RidgedMultifractal)wrapper.noise);
                     }
 
                     // Post Apply Event
@@ -253,16 +241,6 @@ namespace Kopernicus
                     public NoiseModWrapper(PQSMod_VertexPlanet.NoiseModWrapper noise)
                     {
                         wrapper = noise;
-                    }
-
-                    // Convert
-                    public static implicit operator PQSMod_VertexPlanet.NoiseModWrapper(NoiseModWrapper parser)
-                    {
-                        return parser?.wrapper;
-                    }
-                    public static implicit operator NoiseModWrapper(PQSMod_VertexPlanet.NoiseModWrapper value)
-                    {
-                        return value == null ? null : new NoiseModWrapper(value);
                     }
                 }
 
@@ -313,7 +291,7 @@ namespace Kopernicus
                     [ParserTarget("SimplexNoiseMap", allowMerge = true)]
                     public SimplexWrapper colorNoiseMap
                     {
-                        get { return landClass.colorNoiseMap; }
+                        get { return new SimplexWrapper(landClass.colorNoiseMap); }
                         set { landClass.colorNoiseMap = value.wrapper; }
                     }
 
@@ -364,7 +342,7 @@ namespace Kopernicus
                         get { return landClass.startHeight; }
                         set { landClass.startHeight = value; }
                     }
-
+                    
                     // Default constructor
                     public LandClassLoader()
                     {
@@ -375,22 +353,13 @@ namespace Kopernicus
                     public LandClassLoader(PQSMod_VertexPlanet.LandClass land)
                     {
                         landClass = land;
-                    }
-
-                    // Convert
-                    public static implicit operator PQSMod_VertexPlanet.LandClass(LandClassLoader parser)
-                    {
-                        return parser?.landClass;
-                    }
-                    public static implicit operator LandClassLoader(PQSMod_VertexPlanet.LandClass value)
-                    {
-                        return value == null ? null : new LandClassLoader(value);
+                        colorNoiseMap = new SimplexWrapper(landClass.colorNoiseMap);
                     }
                 }
 
                 // buildHeightColors
                 [ParserTarget("buildHeightColors")]
-                public NumericParser<bool> buildHeightColors
+                public NumericParser<bool> buildHeightColors 
                 {
                     get { return mod.buildHeightColors; }
                     set { mod.buildHeightColors = value; }
@@ -408,7 +377,7 @@ namespace Kopernicus
                 [ParserTarget("ContinentalSimplex", allowMerge = true)]
                 public SimplexWrapper continental
                 {
-                    get { return mod.continental; }
+                    get { return new SimplexWrapper(mod.continental); }
                     set { mod.continental = value.wrapper; }
                 }
 
@@ -416,7 +385,7 @@ namespace Kopernicus
                 [ParserTarget("RuggednessSimplex", allowMerge = true)]
                 public SimplexWrapper continentalRuggedness
                 {
-                    get { return mod.continentalRuggedness; }
+                    get { return new SimplexWrapper(mod.continentalRuggedness); }
                     set { mod.continentalRuggedness = value.wrapper; }
                 }
 
@@ -424,7 +393,7 @@ namespace Kopernicus
                 [ParserTarget("SharpnessNoise", allowMerge = true)]
                 public NoiseModWrapper continentalSharpness
                 {
-                    get { return mod.continentalSharpness; }
+                    get { return new NoiseModWrapper(mod.continentalSharpness); }
                     set { mod.continentalSharpness = value.wrapper; }
                 }
 
@@ -432,7 +401,7 @@ namespace Kopernicus
                 [ParserTarget("SharpnessSimplexMap", allowMerge = true)]
                 public SimplexWrapper continentalSharpnessMap
                 {
-                    get { return mod.continentalSharpnessMap; }
+                    get { return new SimplexWrapper(mod.continentalSharpnessMap); }
                     set { mod.continentalSharpnessMap = value.wrapper; }
                 }
 
@@ -539,10 +508,10 @@ namespace Kopernicus
                 [ParserTarget("TerrainTypeSimplex", allowMerge = true)]
                 public SimplexWrapper terrainType
                 {
-                    get { return mod.terrainType; }
+                    get { return new SimplexWrapper(mod.terrainType); }
                     set { mod.terrainType = value.wrapper; }
                 }
-
+                
                 // Apply Event
                 void IParserEventSubscriber.Apply(ConfigNode node) { }
 

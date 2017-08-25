@@ -43,7 +43,7 @@ namespace Kopernicus
                 [ParserTarget("LatitudeRange", allowMerge = true)]
                 public LandControl.LerpRangeLoader latitudeRange
                 {
-                    get { return mod.latitudeRange == null ? null : new LandControl.LerpRangeLoader(mod.latitudeRange); }
+                    get { return new LandControl.LerpRangeLoader(mod.latitudeRange); }
                     set { mod.latitudeRange = value.lerpRange; }
                 }
 
