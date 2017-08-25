@@ -105,6 +105,16 @@ namespace Kopernicus
                     {
                         wrapper = simplex;
                     }
+
+                    // Convert
+                    public static implicit operator PQSMod_VertexPlanet.SimplexWrapper(SimplexWrapper parser)
+                    {
+                        return parser?.wrapper;
+                    }
+                    public static implicit operator SimplexWrapper(PQSMod_VertexPlanet.SimplexWrapper value)
+                    {
+                        return value == null ? null : new SimplexWrapper(value);
+                    }
                 }
 
                 // Loader for Noise
@@ -242,6 +252,16 @@ namespace Kopernicus
                     {
                         wrapper = noise;
                     }
+
+                    // Convert
+                    public static implicit operator PQSMod_VertexPlanet.NoiseModWrapper(NoiseModWrapper parser)
+                    {
+                        return parser?.wrapper;
+                    }
+                    public static implicit operator NoiseModWrapper(PQSMod_VertexPlanet.NoiseModWrapper value)
+                    {
+                        return value == null ? null : new NoiseModWrapper(value);
+                    }
                 }
 
                 // Land class loader 
@@ -291,7 +311,7 @@ namespace Kopernicus
                     [ParserTarget("SimplexNoiseMap", allowMerge = true)]
                     public SimplexWrapper colorNoiseMap
                     {
-                        get { return new SimplexWrapper(landClass.colorNoiseMap); }
+                        get { return landClass.colorNoiseMap; }
                         set { landClass.colorNoiseMap = value.wrapper; }
                     }
 
@@ -353,7 +373,16 @@ namespace Kopernicus
                     public LandClassLoader(PQSMod_VertexPlanet.LandClass land)
                     {
                         landClass = land;
-                        colorNoiseMap = new SimplexWrapper(landClass.colorNoiseMap);
+                    }
+
+                    // Convert
+                    public static implicit operator PQSMod_VertexPlanet.LandClass(LandClassLoader parser)
+                    {
+                        return parser?.landClass;
+                    }
+                    public static implicit operator LandClassLoader(PQSMod_VertexPlanet.LandClass value)
+                    {
+                        return value == null ? null : new LandClassLoader(value);
                     }
                 }
 
@@ -377,7 +406,7 @@ namespace Kopernicus
                 [ParserTarget("ContinentalSimplex", allowMerge = true)]
                 public SimplexWrapper continental
                 {
-                    get { return new SimplexWrapper(mod.continental); }
+                    get { return mod.continental; }
                     set { mod.continental = value.wrapper; }
                 }
 
@@ -385,7 +414,7 @@ namespace Kopernicus
                 [ParserTarget("RuggednessSimplex", allowMerge = true)]
                 public SimplexWrapper continentalRuggedness
                 {
-                    get { return new SimplexWrapper(mod.continentalRuggedness); }
+                    get { return mod.continentalRuggedness; }
                     set { mod.continentalRuggedness = value.wrapper; }
                 }
 
@@ -393,7 +422,7 @@ namespace Kopernicus
                 [ParserTarget("SharpnessNoise", allowMerge = true)]
                 public NoiseModWrapper continentalSharpness
                 {
-                    get { return new NoiseModWrapper(mod.continentalSharpness); }
+                    get { return mod.continentalSharpness; }
                     set { mod.continentalSharpness = value.wrapper; }
                 }
 
@@ -401,7 +430,7 @@ namespace Kopernicus
                 [ParserTarget("SharpnessSimplexMap", allowMerge = true)]
                 public SimplexWrapper continentalSharpnessMap
                 {
-                    get { return new SimplexWrapper(mod.continentalSharpnessMap); }
+                    get { return mod.continentalSharpnessMap; }
                     set { mod.continentalSharpnessMap = value.wrapper; }
                 }
 
@@ -508,7 +537,7 @@ namespace Kopernicus
                 [ParserTarget("TerrainTypeSimplex", allowMerge = true)]
                 public SimplexWrapper terrainType
                 {
-                    get { return new SimplexWrapper(mod.terrainType); }
+                    get { return mod.terrainType; }
                     set { mod.terrainType = value.wrapper; }
                 }
                 
