@@ -1,19 +1,15 @@
 ﻿Kopernicus
 ==============================
-August 17, 2017
+August 25, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.0-5)
+New in this version (1.3.0-6)
 -------------------
-- Fixed an issue with LandClass loading
-- Added displayName property for Biomes
-- Added distance based intensity for starlight (intensity curves)
-- Removed the limitation of only one active star
-- Fixed BUILTIN textures
-- Ring changed by HerbaruSan (thick rings, configurable LAN)
+- Fixed an issue with VertexPlanet
+- Updated ModuleManager to 2.8.1
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
