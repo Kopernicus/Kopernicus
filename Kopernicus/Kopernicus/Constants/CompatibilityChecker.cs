@@ -50,7 +50,7 @@ namespace Kopernicus
         internal const int version_major = 1;
         internal const int version_minor = 2;
         internal const int Revision = 2;
-        internal const int Kopernicus = 10;
+        internal const int Kopernicus = 11;
 
         public static bool IsCompatible()
         {
