@@ -168,6 +168,36 @@ namespace Kopernicus
                 set { ring.tiles = value; }
             }
 
+            /// <summary>
+            /// This texture's opaque pixels cast shadows on our inner surface
+            /// </summary>
+            [ParserTarget("innerShadeTexture")]
+            public Texture2DParser innerShadeTexture
+            {
+                get { return ring.innerShadeTexture;  }
+                set { ring.innerShadeTexture = value; }
+            }
+
+            /// <summary>
+            /// The inner shade texture repeats this many times over the inner surface
+            /// </summary>
+            [ParserTarget("innerShadeTiles")]
+            public NumericParser<int> innerShadeTiles
+            {
+                get { return ring.innerShadeTiles;  }
+                set { ring.innerShadeTiles = value; }
+            }
+
+            /// <summary>
+            /// Number of seconds the inner shade texture takes to complete one rotation
+            /// </summary>
+            [ParserTarget("innerShadeRotationPeriod")]
+            public NumericParser<float> innerShadeRotationPeriod
+            {
+                get { return ring.innerShadeRotationPeriod;  }
+                set { ring.innerShadeRotationPeriod = value; }
+            }
+
             // Initialize the RingLoader
             public RingLoader()
             {
