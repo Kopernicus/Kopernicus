@@ -473,7 +473,7 @@ namespace Kopernicus
                 }
 
                 if (useNewShader && ringMR?.material != null
-                        && KopernicusStar?.Current?.sun?.transform != null)
+                        && KopernicusStar.Current?.sun?.transform != null)
                 {
                     ringMR.material.SetFloat("sunRadius",
                         (float) KopernicusStar.Current.sun.Radius);
