@@ -55,7 +55,7 @@ namespace Kopernicus
             public string cacheFile { get; set; }
 
             [ParserTarget("barycenter")]
-            public NumericParser<bool> barycenter = new NumericParser<bool>(false);
+            public NumericParser<bool> barycenter = false;
 
             [ParserTarget("cbNameLater")]
             public string cbNameLater
@@ -101,6 +101,14 @@ namespace Kopernicus
             {
                 get { return Loader.Instance?.randomMainMenuBodies.Contains(name); }
                 set { if (value) Loader.Instance.randomMainMenuBodies.Add(name); }
+            }
+
+            // Describes how often contracts should be generated for a body
+            [ParserTarget("contractWeight")]
+            public NumericParser<int> contractWeight
+            {
+                get { return generatedBody.Has("contractWeight") ? generatedBody.Get<int>("contractWeight") : 30; }
+                set { generatedBody.Set("contractWeight", value); }
             }
 
             // Template property of a body - responsible for generating a PSystemBody from an existing one

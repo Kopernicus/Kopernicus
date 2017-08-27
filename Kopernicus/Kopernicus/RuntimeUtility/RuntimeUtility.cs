@@ -39,6 +39,7 @@ using KSP.UI.Screens;
 using KSP.UI.Screens.Mapview;
 using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using ModularFI;
+using Contracts;
 
 namespace Kopernicus
 {
@@ -82,6 +83,22 @@ namespace Kopernicus
                         body.scaledBody.GetComponent<MaterialSetDirection>().target = star_.transform;
                     foreach (PQSMod_MaterialSetDirection msd in body.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true))
                         msd.target = star_.transform;
+
+                    // Contract Weight
+                    if (ContractSystem.ContractWeights != null)
+                    {
+                        if (body.Has("contractWeight"))
+                        {
+                            if (ContractSystem.ContractWeights.ContainsKey(body.name))
+                            {
+                                ContractSystem.ContractWeights[body.name] = body.Get<int>("contractWeight");
+                            }
+                            else
+                            {
+                                ContractSystem.ContractWeights.Add(body.name, body.Get<int>("contractWeight"));
+                            }                            
+                        }
+                    }
                 }
                 foreach (TimeOfDayAnimation anim in Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>())
                     anim.target = KopernicusStar.GetNearest(FlightGlobals.GetHomeBody()).gameObject.transform;
