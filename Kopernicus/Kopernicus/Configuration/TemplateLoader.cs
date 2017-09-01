@@ -199,14 +199,14 @@ namespace Kopernicus
                             if (name == "")
                             {
                                 //mods.Add(Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
-                                Type t = Injector.ModTypes.Find(m => m.Name == modName);
+                                Type t = Parser.ModTypes.Find(m => m.Name == modName);
                                 if (t != null)
                                     mods.Add(t);
                             }
                             else
                             {
                                 //modsPerName.Add(name, Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
-                                Type t = Injector.ModTypes.Find(m => m.Name == modName);
+                                Type t = Parser.ModTypes.Find(m => m.Name == modName);
                                 if (t != null)
                                     modsPerName.Add(name, t);
                             }

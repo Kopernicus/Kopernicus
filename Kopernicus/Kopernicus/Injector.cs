@@ -45,6 +45,7 @@ namespace Kopernicus
         public const string rootNodeName = "Kopernicus";
 
         // Custom Assembly query since AppDomain and Assembly loader are not quite what we want in 1.1
+        [Obsolete("Please use Parser.ModTypes", true)]
         public static List<Type> ModTypes
         {
             get { return Parser.ModTypes; }

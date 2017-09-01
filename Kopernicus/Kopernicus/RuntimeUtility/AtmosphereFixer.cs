@@ -36,8 +36,7 @@ namespace Kopernicus
     public class AFGInfo
     {
         public static Dictionary<string, AFGInfo> atmospheres = new Dictionary<string, AFGInfo>();
-
-
+        
         bool DEBUG_alwaysUpdateAll;
         bool doScale;
         float outerRadius;
@@ -109,6 +108,7 @@ namespace Kopernicus
             outerRadius = afg.outerRadius;
             innerRadius = afg.innerRadius;
         }
+
         public void Apply(AtmosphereFromGround afg)
         {
             afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
@@ -130,33 +130,36 @@ namespace Kopernicus
             afg.SetMaterial(true);
         }
     }
+
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereFixer : MonoBehaviour
     {
         double timeCounter = 0d;
         void Awake()
         {
-            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
-            {
-                if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
-                    RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
-            }
-
             if (!CompatibilityChecker.IsCompatible())
             {
                 Destroy(this);
                 return;
             }
+
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
+                    RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
+            }
         }
-        public void Start()
+
+        void Start()
         {
             if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 return;
             }
-            UnityEngine.Object.Destroy(this); // don't hang around.
+            Destroy(this); // don't hang around.
         }
-        public void Update()
+
+        void Update()
         {
             if (timeCounter < 0.5d)
             {

@@ -105,7 +105,7 @@ namespace Kopernicus
         {
             // Checkers are identified by the type name and version field name.
             FieldInfo[] fields =
-                Injector.ModTypes
+                Parser.ModTypes
                 .Where(t => t.Name == "CompatibilityChecker")
                 .Select(t => t.GetField("_version", BindingFlags.Static | BindingFlags.NonPublic))
                 .Where(f => f != null)

@@ -111,11 +111,19 @@ namespace Kopernicus
 
             // Surface Material of the PQS
             [ParserTarget("Material", allowMerge = true, getChild = false)]
-            public Material surfaceMaterial;
+            public Material surfaceMaterial
+            {
+                get { return pqsVersion.surfaceMaterial; }
+                set { pqsVersion.surfaceMaterial = value; }
+            }
 
             // Fallback Material of the PQS (its always the same material)
             [ParserTarget("FallbackMaterial", allowMerge = true)]
-            public PQSOceanSurfaceQuadFallbackLoader fallbackMaterial;
+            public Material fallbackMaterial
+            {
+                get { return pqsVersion.fallbackMaterial; }
+                set { pqsVersion.fallbackMaterial = value; }
+            }
 
             // Killer-Ocean
             [ParserTarget("HazardousOcean", allowMerge = true)]
@@ -129,15 +137,13 @@ namespace Kopernicus
             public OceanLoader(PQS ocean)
             {
                 this.ocean = ocean;
-                this.body = Part.GetComponentUpwards<CelestialBody>(ocean.gameObject);
+                body = Part.GetComponentUpwards<CelestialBody>(ocean.gameObject);
                 pqsVersion = body.pqsController;
 
-                ocean.surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
-                surfaceMaterial = ocean.surfaceMaterial;
+                surfaceMaterial = new PQSOceanSurfaceQuadLoader(surfaceMaterial);
                 surfaceMaterial.name = Guid.NewGuid().ToString();
 
-                fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(ocean.fallbackMaterial);
-                ocean.fallbackMaterial = fallbackMaterial;
+                fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(fallbackMaterial);
                 fallbackMaterial.name = Guid.NewGuid().ToString();
             }
 
@@ -152,12 +158,10 @@ namespace Kopernicus
                     gameObject = ocean.gameObject;
                     body = generatedBody.celestialBody;
 
-                    ocean.surfaceMaterial = new PQSOceanSurfaceQuadLoader(ocean.surfaceMaterial);
-                    surfaceMaterial = ocean.surfaceMaterial;
+                    surfaceMaterial = new PQSOceanSurfaceQuadLoader(surfaceMaterial);
                     surfaceMaterial.name = Guid.NewGuid().ToString();
 
-                    fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(ocean.fallbackMaterial);
-                    ocean.fallbackMaterial = fallbackMaterial;
+                    fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(fallbackMaterial);
                     fallbackMaterial.name = Guid.NewGuid().ToString();
                     return;
                 }
@@ -188,11 +192,9 @@ namespace Kopernicus
                 }
 
                 // Load our new Material into the PQS
-                ocean.surfaceMaterial = surfaceMaterial;
                 surfaceMaterial.name = Guid.NewGuid().ToString();
 
                 // Load fallback material into the PQS            
-                ocean.fallbackMaterial = fallbackMaterial;
                 fallbackMaterial.name = Guid.NewGuid().ToString();
 
                 // Create the UV planet relative position
@@ -242,7 +244,7 @@ namespace Kopernicus
                 List<PQSMod> patchedMods = new List<PQSMod>();
 
                 // Get all loaded types
-                List<Type> types = Injector.ModTypes;
+                List<Type> types = Parser.ModTypes;
 
                 // Load mods manually because of patching
                 foreach (ConfigNode mod in node.GetNode("Mods").nodes)
