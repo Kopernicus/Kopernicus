@@ -153,17 +153,11 @@ namespace Kopernicus
                     if (__flowRate > maxFlowRate)
                     {
                         maxFlowRate = __flowRate;
+                        maxStar = star;
                     }
 
                     // Apply the flow rate
                     _flowRate += __flowRate;
-
-                    // Check if we have a new maximum
-                    if (_sunAOA > maxAOA)
-                    {
-                        maxAOA = _sunAOA;
-                        maxStar = star;
-                    }
                 }
 
                 // Sun AOA
