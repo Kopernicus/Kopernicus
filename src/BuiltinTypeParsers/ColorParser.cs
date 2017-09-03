@@ -46,7 +46,7 @@ namespace Kopernicus
                 str = str.Replace("RGBA(", "");
                 str = str.Replace(")", "");
                 str = str.Replace(" ", "");
-                string[] colorArray = str.Split(',');
+                String[] colorArray = str.Split(',');
 
                 value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, Single.Parse(colorArray[3]) / 255);
             }
@@ -55,7 +55,7 @@ namespace Kopernicus
                 str = str.Replace("RGB(", "");
                 str = str.Replace(")", "");
                 str = str.Replace(" ", "");
-                string[] colorArray = str.Split(',');
+                String[] colorArray = str.Split(',');
 
                 value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, 1);
             }

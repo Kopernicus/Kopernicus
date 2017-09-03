@@ -29,7 +29,7 @@
 namespace Kopernicus
 {
     /// <summary>
-    /// Parser for a float curve
+    /// Parser for a Single curve
     /// </summary>
     [RequireConfigType(ConfigType.Node)]
     public class FloatCurveParser : IParserEventSubscriber

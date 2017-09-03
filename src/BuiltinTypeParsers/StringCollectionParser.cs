@@ -33,13 +33,13 @@ using System.Linq;
 namespace Kopernicus
 {
     /// <summary>
-    /// Simple parser for string arrays
+    /// Simple parser for String arrays
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
     public class StringCollectionParser : IParsable
     {
-        public IList<string> value;
-        public void SetFromString(string s)
+        public IList<String> value;
+        public void SetFromString(String s)
         {
             // Need a new list
             value = new List<String>(s.Split(',').Select(a => a.Trim()));
@@ -58,7 +58,7 @@ namespace Kopernicus
         }
 
         // Convert
-        public static implicit operator string[] (StringCollectionParser parser)
+        public static implicit operator String[] (StringCollectionParser parser)
         {
             return parser.value.ToArray();
         }

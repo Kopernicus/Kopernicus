@@ -26,16 +26,18 @@
  * https://kerbalspaceprogram.com
  */
 
+using System;
+
 namespace Kopernicus
 {
     /// <summary>
-    /// Interface a class can implment to support conversion from a string
+    /// Interface a class can implment to support conversion from a String
     /// </summary>
     public interface IParsable
     {
         /// <summary>
-        /// Set value from string
+        /// Set value from String
         /// </summary>
-        void SetFromString(string s);
+        void SetFromString(String s);
     }
 }

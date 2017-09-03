@@ -35,7 +35,7 @@ namespace Kopernicus
     /// </summary>
     public class ParserTargetMissingException : Exception
     {
-        public ParserTargetMissingException(string message) : base(message)
+        public ParserTargetMissingException(String message) : base(message)
         {
         }
     }

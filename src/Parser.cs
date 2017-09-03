@@ -121,7 +121,7 @@ namespace Kopernicus
             }
 
             // Process the preapply members
-            foreach (KeyValuePair<bool, MemberInfo> member in preapplyMembers)
+            foreach (KeyValuePair<Boolean, MemberInfo> member in preapplyMembers)
             {
                 if (member.Key)
                     LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName, getChilds);
@@ -133,7 +133,7 @@ namespace Kopernicus
             subscriber?.Apply(node);
 
             // Process the postapply members
-            foreach (KeyValuePair<bool, MemberInfo> member in postapplyMembers)
+            foreach (KeyValuePair<Boolean, MemberInfo> member in postapplyMembers)
             {
                 if (member.Key)
                     LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName);
@@ -560,7 +560,7 @@ namespace Kopernicus
         /// <returns></returns>
         private static Object ProcessValue(Type targetType, String nodeValue)
         {
-            // If the target is a string, it works natively
+            // If the target is a String, it works natively
             if (targetType == typeof(String))
             {
                 return nodeValue;

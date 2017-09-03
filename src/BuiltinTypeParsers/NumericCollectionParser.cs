@@ -45,7 +45,7 @@ namespace Kopernicus
             // Need a new list
             value = new List<T>();
 
-            // Get the tokens of this string
+            // Get the tokens of this String
             foreach (String e in s.Split(' '))
             {
                 value.Add((T)parserMethod.Invoke(null, new Object[] { e }));

@@ -31,11 +31,11 @@ using System;
 namespace Kopernicus
 {
     /// <summary>
-    /// Exception representing a field having the wrong storage type (i.e. string field is set to node)
+    /// Exception representing a field having the wrong storage type (i.e. String field is set to node)
     /// </summary>
     public class ParserTargetTypeMismatchException : Exception
     {
-        public ParserTargetTypeMismatchException(string message) : base(message)
+        public ParserTargetTypeMismatchException(String message) : base(message)
         {
         }
     }
