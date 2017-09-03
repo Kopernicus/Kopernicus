@@ -201,6 +201,7 @@ namespace Kopernicus
                     {
                         bodyLogger.LogException(e);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue("name"));
+                        throw new Exception("Failed to load Body: " + bodyNode.GetValue("name"));
                     }
 
                     // Restore default logger
@@ -227,6 +228,7 @@ namespace Kopernicus
                     {
                         logger.LogException(e);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Asteroid: " + asteroidNode.GetValue("name"));
+                        throw new Exception("Failed to load Asteroid: " + asteroidNode.GetValue("name"));
                     }
 
                     // Restore default logger
