@@ -40,243 +40,243 @@ namespace Kopernicus
     public class Events : MonoBehaviour
     {
         [Description("Injector.PreLoad")]
-        public static EventVoid OnPreLoad { get; }
+        public static EventVoid OnPreLoad { get; private set; }
         [Description("Injector.PostLoad")]
-        public static EventData<PSystem> OnPostLoad { get; }
+        public static EventData<PSystem> OnPostLoad { get; private set; }
         [Description("Injector.PreFixing")]
-        public static EventVoid OnPreFixing { get; }
+        public static EventVoid OnPreFixing { get; private set; }
         [Description("Injector.PreBodyFixing")]
-        public static EventData<CelestialBody> OnPreBodyFixing { get; }
+        public static EventData<CelestialBody> OnPreBodyFixing { get; private set; }
         [Description("Injector.PostBodyFixing")]
-        public static EventData<CelestialBody> OnPostBodyFixing { get; }
+        public static EventData<CelestialBody> OnPostBodyFixing { get; private set; }
         [Description("Injector.PostFixing")]
-        public static EventVoid OnPostFixing { get; }
+        public static EventVoid OnPostFixing { get; private set; }
 
         [Description("AtmosphereFromGroundLoader.Apply")]
-        public static EventData<AtmosphereFromGroundLoader, ConfigNode> OnAFGLoaderApply { get; }
+        public static EventData<AtmosphereFromGroundLoader, ConfigNode> OnAFGLoaderApply { get; private set; }
         [Description("AtmosphereFromGroundLoader.PostApply")]
-        public static EventData<AtmosphereFromGroundLoader, ConfigNode> OnAFGLoaderPostApply { get; }
+        public static EventData<AtmosphereFromGroundLoader, ConfigNode> OnAFGLoaderPostApply { get; private set; }
 
         [Description("AtmosphereFromGroundLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnAFGLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnAFGLoaderApplyNR { get; set; }
         [Description("AtmosphereFromGroundLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnAFGLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnAFGLoaderPostApplyNR { get; set; }
 
         [Description("AtmosphereLoader.Apply")]
-        public static EventData<AtmosphereLoader, ConfigNode> OnAtmosphereLoaderApply { get; }
+        public static EventData<AtmosphereLoader, ConfigNode> OnAtmosphereLoaderApply { get; private set; }
         [Description("AtmosphereLoader.PostApply")]
-        public static EventData<AtmosphereLoader, ConfigNode> OnAtmosphereLoaderPostApply { get; }
+        public static EventData<AtmosphereLoader, ConfigNode> OnAtmosphereLoaderPostApply { get; private set; }
 
         [Description("AtmosphereLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnAtmosphereLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnAtmosphereLoaderApplyNR { get; set; }
         [Description("AtmosphereLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnAtmosphereLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnAtmosphereLoaderPostApplyNR { get; set; }
 
         [Description("BiomeLoader.Apply")]
-        public static EventData<BiomeLoader, ConfigNode> OnBiomeLoaderApply { get; }
+        public static EventData<BiomeLoader, ConfigNode> OnBiomeLoaderApply { get; private set; }
         [Description("BiomeLoader.PostApply")]
-        public static EventData<BiomeLoader, ConfigNode> OnBiomeLoaderPostApply { get; }
+        public static EventData<BiomeLoader, ConfigNode> OnBiomeLoaderPostApply { get; private set; }
 
         [Description("BiomeLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnBiomeLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnBiomeLoaderApplyNR { get; set; }
         [Description("BiomeLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnBiomeLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnBiomeLoaderPostApplyNR { get; set; }
 
         [Description("CoronaLoader.Apply")]
-        public static EventData<CoronaLoader, ConfigNode> OnCoronaLoaderApply { get; }
+        public static EventData<CoronaLoader, ConfigNode> OnCoronaLoaderApply { get; private set; }
         [Description("CoronaLoader.PostApply")]
-        public static EventData<CoronaLoader, ConfigNode> OnCoronaLoaderPostApply { get; }
+        public static EventData<CoronaLoader, ConfigNode> OnCoronaLoaderPostApply { get; private set; }
 
         [Description("CoronaLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnCoronaLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnCoronaLoaderApplyNR { get; set; }
         [Description("CoronaLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnCoronaLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnCoronaLoaderPostApplyNR { get; set; }
 
         [Description("DebugLoader.Apply")]
-        public static EventData<DebugLoader, ConfigNode> OnDebugLoaderApply { get; }
+        public static EventData<DebugLoader, ConfigNode> OnDebugLoaderApply { get; private set; }
         [Description("DebugLoader.PostApply")]
-        public static EventData<DebugLoader, ConfigNode> OnDebugLoaderPostApply { get; }
+        public static EventData<DebugLoader, ConfigNode> OnDebugLoaderPostApply { get; private set; }
 
         [Description("DebugLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnDebugLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnDebugLoaderApplyNR { get; set; }
         [Description("DebugLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnDebugLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnDebugLoaderPostApplyNR { get; set; }
 
         [Description("FogLoader.Apply")]
-        public static EventData<FogLoader, ConfigNode> OnFogLoaderApply { get; }
+        public static EventData<FogLoader, ConfigNode> OnFogLoaderApply { get; private set; }
         [Description("FogLoader.PostApply")]
-        public static EventData<FogLoader, ConfigNode> OnFogLoaderPostApply { get; }
+        public static EventData<FogLoader, ConfigNode> OnFogLoaderPostApply { get; private set; }
 
         [Description("FogLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnFogLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnFogLoaderApplyNR { get; set; }
         [Description("FogLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnFogLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnFogLoaderPostApplyNR { get; set; }
 
         [Description("LightShifterLoader.Apply")]
-        public static EventData<LightShifterLoader, ConfigNode> OnLightShifterLoaderApply { get; }
+        public static EventData<LightShifterLoader, ConfigNode> OnLightShifterLoaderApply { get; private set; }
         [Description("LightShifterLoader.PostApply")]
-        public static EventData<LightShifterLoader, ConfigNode> OnLightShifterLoaderPostApply { get; }
+        public static EventData<LightShifterLoader, ConfigNode> OnLightShifterLoaderPostApply { get; private set; }
 
         [Description("LightShifterLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnLightShifterLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnLightShifterLoaderApplyNR { get; set; }
         [Description("LightShifterLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnLightShifterLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnLightShifterLoaderPostApplyNR { get; set; }
 
         [Description("OceanLoader.Apply")]
-        public static EventData<OceanLoader, ConfigNode> OnOceanLoaderApply { get; }
+        public static EventData<OceanLoader, ConfigNode> OnOceanLoaderApply { get; private set; }
         [Description("OceanLoader.PostApply")]
-        public static EventData<OceanLoader, ConfigNode> OnOceanLoaderPostApply { get; }
+        public static EventData<OceanLoader, ConfigNode> OnOceanLoaderPostApply { get; private set; }
 
         [Description("OceanLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnOceanLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnOceanLoaderApplyNR { get; set; }
         [Description("OceanLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnOceanLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnOceanLoaderPostApplyNR { get; set; }
 
         [Description("OrbitLoader.Apply")]
-        public static EventData<OrbitLoader, ConfigNode> OnOrbitLoaderApply { get; }
+        public static EventData<OrbitLoader, ConfigNode> OnOrbitLoaderApply { get; private set; }
         [Description("OrbitLoader.PostApply")]
-        public static EventData<OrbitLoader, ConfigNode> OnOrbitLoaderPostApply { get; }
+        public static EventData<OrbitLoader, ConfigNode> OnOrbitLoaderPostApply { get; private set; }
 
         [Description("OrbitLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnOrbitLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnOrbitLoaderApplyNR { get; set; }
         [Description("OrbitLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnOrbitLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnOrbitLoaderPostApplyNR { get; set; }
 
         [Description("ParticleLoader.Apply")]
-        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderApply { get; }
+        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderApply { get; private set; }
         [Description("ParticleLoader.PostApply")]
-        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderPostApply { get; }
+        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderPostApply { get; private set; }
 
         [Description("ParticleLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnParticleLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnParticleLoaderApplyNR { get; set; }
         [Description("ParticleLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnParticleLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnParticleLoaderPostApplyNR { get; set; }
 
         [Description("PQSLoader.Apply")]
-        public static EventData<PQSLoader, ConfigNode> OnPQSLoaderApply { get; }
+        public static EventData<PQSLoader, ConfigNode> OnPQSLoaderApply { get; private set; }
         [Description("PQSLoader.PostApply")]
-        public static EventData<PQSLoader, ConfigNode> OnPQSLoaderPostApply { get; }
+        public static EventData<PQSLoader, ConfigNode> OnPQSLoaderPostApply { get; private set; }
 
         [Description("PQSLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnPQSLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnPQSLoaderApplyNR { get; set; }
         [Description("PQSLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnPQSLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnPQSLoaderPostApplyNR { get; set; }
 
         [Description("PropertiesLoader.Apply")]
-        public static EventData<PropertiesLoader, ConfigNode> OnPropertiesLoaderApply { get; }
+        public static EventData<PropertiesLoader, ConfigNode> OnPropertiesLoaderApply { get; private set; }
         [Description("PropertiesLoader.PostApply")]
-        public static EventData<PropertiesLoader, ConfigNode> OnPropertiesLoaderPostApply { get; }
+        public static EventData<PropertiesLoader, ConfigNode> OnPropertiesLoaderPostApply { get; private set; }
 
         [Description("PropertiesLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnPropertiesLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnPropertiesLoaderApplyNR { get; set; }
         [Description("PropertiesLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnPropertiesLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnPropertiesLoaderPostApplyNR { get; set; }
 
         [Description("RingLoader.Apply")]
-        public static EventData<RingLoader, ConfigNode> OnRingLoaderApply { get; }
+        public static EventData<RingLoader, ConfigNode> OnRingLoaderApply { get; private set; }
         [Description("RingLoader.PostApply")]
-        public static EventData<RingLoader, ConfigNode> OnRingLoaderPostApply { get; }
+        public static EventData<RingLoader, ConfigNode> OnRingLoaderPostApply { get; private set; }
 
         [Description("RingLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnRingLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnRingLoaderApplyNR { get; set; }
         [Description("RingLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnRingLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnRingLoaderPostApplyNR { get; set; }
 
         [Description("ScaledVersionLoader.Apply")]
-        public static EventData<ScaledVersionLoader, ConfigNode> OnScaledVersionLoaderApply { get; }
+        public static EventData<ScaledVersionLoader, ConfigNode> OnScaledVersionLoaderApply { get; private set; }
         [Description("ScaledVersionLoader.PostApply")]
-        public static EventData<ScaledVersionLoader, ConfigNode> OnScaledVersionLoaderPostApply { get; }
+        public static EventData<ScaledVersionLoader, ConfigNode> OnScaledVersionLoaderPostApply { get; private set; }
 
         [Description("ScaledVersionLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnScaledVersionLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnScaledVersionLoaderApplyNR { get; set; }
         [Description("ScaledVersionLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnScaledVersionLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnScaledVersionLoaderPostApplyNR { get; set; }
 
         [Description("ScienceValuesLoader.Apply")]
-        public static EventData<ScienceValuesLoader, ConfigNode> OnScienceValuesLoaderApply { get; }
+        public static EventData<ScienceValuesLoader, ConfigNode> OnScienceValuesLoaderApply { get; private set; }
         [Description("ScienceValuesLoader.PostApply")]
-        public static EventData<ScienceValuesLoader, ConfigNode> OnScienceValuesLoaderPostApply { get; }
+        public static EventData<ScienceValuesLoader, ConfigNode> OnScienceValuesLoaderPostApply { get; private set; }
 
         [Description("ScienceValuesLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnScienceValuesLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnScienceValuesLoaderApplyNR { get; set; }
         [Description("ScienceValuesLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnScienceValuesLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnScienceValuesLoaderPostApplyNR { get; set; }
 
         [Description("SpaceCenterLoader.Apply")]
-        public static EventData<SpaceCenterLoader, ConfigNode> OnSpaceCenterLoaderApply { get; }
+        public static EventData<SpaceCenterLoader, ConfigNode> OnSpaceCenterLoaderApply { get; private set; }
         [Description("SpaceCenterLoader.PostApply")]
-        public static EventData<SpaceCenterLoader, ConfigNode> OnSpaceCenterLoaderPostApply { get; }
+        public static EventData<SpaceCenterLoader, ConfigNode> OnSpaceCenterLoaderPostApply { get; private set; }
 
         [Description("SpaceCenterLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnSpaceCenterLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnSpaceCenterLoaderApplyNR { get; set; }
         [Description("SpaceCenterLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnSpaceCenterLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnSpaceCenterLoaderPostApplyNR { get; set; }
 
         [Description("TemplateLoader.Apply")]
-        public static EventData<TemplateLoader, ConfigNode> OnTemplateLoaderApply { get; }
+        public static EventData<TemplateLoader, ConfigNode> OnTemplateLoaderApply { get; private set; }
         [Description("TemplateLoader.PostApply")]
-        public static EventData<TemplateLoader, ConfigNode> OnTemplateLoaderPostApply { get; }
+        public static EventData<TemplateLoader, ConfigNode> OnTemplateLoaderPostApply { get; private set; }
 
         [Description("TemplateLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnTemplateLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnTemplateLoaderApplyNR { get; set; }
         [Description("TemplateLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnTemplateLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnTemplateLoaderPostApplyNR { get; set; }
 
         [Description("Loader.Apply")]
-        public static EventData<Loader, ConfigNode> OnLoaderApply { get; }
+        public static EventData<Loader, ConfigNode> OnLoaderApply { get; private set; }
         [Description("Loader.PostApply")]
-        public static EventData<Loader, ConfigNode> OnLoaderPostApply { get; }
+        public static EventData<Loader, ConfigNode> OnLoaderPostApply { get; private set; }
         [Description("Loader.LoadBody")]
-        public static EventData<Body, ConfigNode> OnLoaderLoadBody { get; }
+        public static EventData<Body, ConfigNode> OnLoaderLoadBody { get; private set; }
         [Description("Loader.LoadAsteroid")]
-        public static EventData<Asteroid, ConfigNode> OnLoaderLoadAsteroid { get; }
+        public static EventData<Asteroid, ConfigNode> OnLoaderLoadAsteroid { get; private set; }
         [Description("Loader.FinalizeBody")]
-        public static EventData<Body> OnLoaderFinalizeBody { get; }
+        public static EventData<Body> OnLoaderFinalizeBody { get; private set; }
 
         [Description("Loader.Apply.NR")]
-        private static EventData<ConfigNode> OnLoaderApplyNR { get; }
+        private static EventData<ConfigNode> OnLoaderApplyNR { get; set; }
         [Description("Loader.PostApply.NR")]
-        private static EventData<ConfigNode> OnLoaderPostApplyNR { get; }
+        private static EventData<ConfigNode> OnLoaderPostApplyNR { get; set; }
         [Description("Loader.LoadBody.NR")]
-        private static EventData<ConfigNode> OnLoaderLoadBodyNR { get; }
+        private static EventData<ConfigNode> OnLoaderLoadBodyNR { get; set; }
         [Description("Loader.LoadAsteroid.NR")]
-        private static EventData<ConfigNode> OnLoaderLoadAsteroidNR { get; }
+        private static EventData<ConfigNode> OnLoaderLoadAsteroidNR { get; set; }
         [Description("Loader.FinalizeBody.NR")]
-        private static EventVoid OnLoaderFinalizeBodyNR { get; }
+        private static EventVoid OnLoaderFinalizeBodyNR { get; set; }
 
         [Description("Body.Apply")]
-        public static EventData<Body, ConfigNode> OnBodyApply { get; }
+        public static EventData<Body, ConfigNode> OnBodyApply { get; private set; }
         [Description("Body.PostApply")]
-        public static EventData<Body, ConfigNode> OnBodyPostApply { get; }
+        public static EventData<Body, ConfigNode> OnBodyPostApply { get; private set; }
         [Description("Body.GenerateScaledSpace")]
-        public static EventData<Body, ConfigNode> OnBodyGenerateScaledSpace { get; }
+        public static EventData<Body, ConfigNode> OnBodyGenerateScaledSpace { get; private set; }
 
         [Description("Body.Apply.NR")]
-        private static EventData<ConfigNode> OnBodyApplyNR { get; }
+        private static EventData<ConfigNode> OnBodyApplyNR { get; set; }
         [Description("Body.PostApply.NR")]
-        private static EventData<ConfigNode> OnBodyPostApplyNR { get; }
+        private static EventData<ConfigNode> OnBodyPostApplyNR { get; set; }
         [Description("Body.GenerateScaledSpace.NR")]
-        private static EventData<ConfigNode> OnBodyGenerateScaledSpaceNR { get; }
+        private static EventData<ConfigNode> OnBodyGenerateScaledSpaceNR { get; set; }
         
         [Description("RuntimeUtility.PatchAFG")]
-        public static EventData<AtmosphereFromGround> OnRuntimeUtilityPatchAFG { get; }
+        public static EventData<AtmosphereFromGround> OnRuntimeUtilityPatchAFG { get; private set; }
         [Description("RuntimeUtility.SpawnAsteroid")]
-        public static EventData<Asteroid, ProtoVessel> OnRuntimeUtilitySpawnAsteroid { get; }
+        public static EventData<Asteroid, ProtoVessel> OnRuntimeUtilitySpawnAsteroid { get; private set; }
         [Description("RuntimeUtility.UpdateMenu")]
-        public static EventVoid OnRuntimeUtilityUpdateMenu { get; }
+        public static EventVoid OnRuntimeUtilityUpdateMenu { get; private set; }
         [Description("RuntimeUtility.PatchFI")]
-        public static EventVoid OnRuntimeUtilityPatchFI { get; }
+        public static EventVoid OnRuntimeUtilityPatchFI { get; private set; }
         [Description("RuntimeUtility.SwitchStar")]
-        public static EventData<KopernicusStar> OnRuntimeUtilitySwitchStar { get; }
+        public static EventData<KopernicusStar> OnRuntimeUtilitySwitchStar { get; private set; }
 
         [Description("RuntimeUtility.SpawnAsteroid.NR")]
-        private static EventData<ProtoVessel> OnRuntimeUtilitySpawnAsteroidNR { get; }
+        private static EventData<ProtoVessel> OnRuntimeUtilitySpawnAsteroidNR { get; set; }
         [Description("RuntimeUtility.SwitchStar.NR")]
-        private static EventVoid OnRuntimeUtilitySwitchStarNR { get; }
+        private static EventVoid OnRuntimeUtilitySwitchStarNR { get; set; }
 
         void Awake()
         {
-            PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public);
+            PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             for (Int32 i = 0; i < events.Length; i++)
             {
                 PropertyInfo info = events[i];

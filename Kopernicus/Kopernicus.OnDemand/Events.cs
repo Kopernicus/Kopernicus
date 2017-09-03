@@ -39,43 +39,43 @@ namespace Kopernicus
         public class Events : MonoBehaviour
         {
             [Description("OnDemand.MapSO.Load")]
-            public static EventData<MapSODemand> OnMapSOLoad { get; }
+            public static EventData<MapSODemand> OnMapSOLoad { get; private set; }
             [Description("OnDemand.MapSO.Unload")]
-            public static EventData<MapSODemand> OnMapSOUnload { get; }
+            public static EventData<MapSODemand> OnMapSOUnload { get; private set; }
             
             [Description("OnDemand.CBMapSO.Load")]
-            public static EventData<CBAttributeMapSODemand> OnCBMapSOLoad { get; }
+            public static EventData<CBAttributeMapSODemand> OnCBMapSOLoad { get; private set; }
             [Description("OnDemand.CBMapSO.Unload")]
-            public static EventData<CBAttributeMapSODemand> OnCBMapSOUnload { get; }
+            public static EventData<CBAttributeMapSODemand> OnCBMapSOUnload { get; private set; }
 
             [Description("OnDemand.ScaledSpace.Load")]
-            public static EventData<ScaledSpaceDemand> OnScaledSpaceLoad { get; }
+            public static EventData<ScaledSpaceDemand> OnScaledSpaceLoad { get; private set; }
             [Description("OnDemand.ScaledSpace.Unload")]
-            public static EventData<ScaledSpaceDemand> OnScaledSpaceUnload { get; }
+            public static EventData<ScaledSpaceDemand> OnScaledSpaceUnload { get; private set; }
 
             [Description("OnDemand.Body.Load")]
-            public static EventData<CelestialBody> OnBodyLoad { get; }
+            public static EventData<CelestialBody> OnBodyLoad { get; private set; }
             [Description("OnDemand.Body.Unload")]
-            public static EventData<CelestialBody> OnBodyUnload { get; }
+            public static EventData<CelestialBody> OnBodyUnload { get; private set; }
             
             [Description("OnDemand.MapSO.Load.NR")]
-            private static EventVoid OnMapSOLoadNR { get; }
+            private static EventVoid OnMapSOLoadNR { get; set; }
             [Description("OnDemand.MapSO.Unload.NR")]
-            private static EventVoid OnMapSOUnloadNR { get; }
+            private static EventVoid OnMapSOUnloadNR { get; set; }
 
             [Description("OnDemand.CBMapSO.Load.NR")]
-            private static EventVoid OnCBMapSOLoadNR { get; }
+            private static EventVoid OnCBMapSOLoadNR { get; set; }
             [Description("OnDemand.CBMapSO.Unload.NR")]
-            private static EventVoid OnCBMapSOUnloadNR { get; }
+            private static EventVoid OnCBMapSOUnloadNR { get; set; }
 
             [Description("OnDemand.ScaledSpace.Load.NR")]
-            private static EventVoid OnScaledSpaceLoadNR { get; }
+            private static EventVoid OnScaledSpaceLoadNR { get; set; }
             [Description("OnDemand.ScaledSpace.Unload.NR")]
-            private static EventVoid OnScaledSpaceUnloadNR { get; }
+            private static EventVoid OnScaledSpaceUnloadNR { get; set; }
 
             void Awake()
             {
-                PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public);
+                PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
                 for (Int32 i = 0; i < events.Length; i++)
                 {
                     PropertyInfo info = events[i];

@@ -39,22 +39,22 @@ namespace Kopernicus
         public class Events : MonoBehaviour
         {
             [Description("Components.SwitchKSC")]
-            public static EventData<KSC> OnSwitchKSC { get; }
+            public static EventData<KSC> OnSwitchKSC { get; private set; }
             [Description("Components.ApplyNameChange")]
-            public static EventData<NameChanger, CelestialBody> OnApplyNameChange { get; }
+            public static EventData<NameChanger, CelestialBody> OnApplyNameChange { get; private set; }
             [Description("Components.ParticleCollision")]
-            public static EventData<PlanetParticleEmitter, GameObject> OnParticleCollision { get; }
+            public static EventData<PlanetParticleEmitter, GameObject> OnParticleCollision { get; private set; }
 
             [Description("Components.SwitchKSC.NR")]
-            private static EventVoid OnSwitchKSCNR { get; }
+            private static EventVoid OnSwitchKSCNR { get; set; }
             [Description("Components.ApplyNameChange.NR")]
-            private static EventData<CelestialBody> OnApplyNameChangeNR { get; }
+            private static EventData<CelestialBody> OnApplyNameChangeNR { get; set; }
             [Description("Components.ParticleCollision.NR")]
-            private static EventData<GameObject> OnParticleCollisionNR { get; }
+            private static EventData<GameObject> OnParticleCollisionNR { get; set; }
 
             void Awake()
             {
-                PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public);
+                PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
                 for (Int32 i = 0; i < events.Length; i++)
                 {
                     PropertyInfo info = events[i];
