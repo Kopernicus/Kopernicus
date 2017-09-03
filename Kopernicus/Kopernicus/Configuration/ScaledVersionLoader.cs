@@ -189,6 +189,9 @@ namespace Kopernicus
                     newMaterial.name = Guid.NewGuid().ToString();
                     scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
                 }
+
+                // Event
+                Events.OnScaledVersionLoaderApply.Fire(this, node);
             }
 
             // Post apply event
@@ -244,6 +247,9 @@ namespace Kopernicus
                     if (normals != null)
                         demand.normals = normals.name;
                 }
+
+                // Event
+                Events.OnScaledVersionLoaderPostApply.Fire(this, node);
             }
 
             // Default constructor - takes the scaledVersion game object

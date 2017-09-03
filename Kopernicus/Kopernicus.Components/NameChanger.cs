@@ -52,6 +52,7 @@ namespace Kopernicus
                 {
                     b.bodyName = b.bodyName.Replace(oldName, newName);
                     PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
+                    Events.OnApplyNameChange.Fire(this, b);
                 }
             }
         }

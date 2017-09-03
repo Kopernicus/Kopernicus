@@ -32,7 +32,7 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class FogLoader : BaseLoader
+        public class FogLoader : BaseLoader, IParserEventSubscriber
         {
             // Body we are going to modify
             public CelestialBody body { get; set; }
@@ -179,6 +179,18 @@ namespace Kopernicus
             {
                 get { return body.oceanUseFog; }
                 set { body.oceanUseFog = value; }
+            }
+
+            // Parser apply event
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnFogLoaderApply.Fire(this, node);
+            }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                Events.OnFogLoaderPostApply.Fire(this, node);
             }
 
             // Default constructor

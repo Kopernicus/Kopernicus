@@ -219,6 +219,9 @@ namespace Kopernicus
                     generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
                     generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
                 }
+
+                // Event
+                Events.OnBodyApply.Fire(this, node);
             }
 
             // Parser Post Apply Event
@@ -270,6 +273,7 @@ namespace Kopernicus
                                                 cacheFile,
                                                 debug.exportMesh,
                                                 scaledVersion.sphericalModel);
+                    Events.OnBodyGenerateScaledSpace.Fire(this, node);
                 }
 
                 // Visualize the SOI
@@ -281,6 +285,9 @@ namespace Kopernicus
 
                 // Post gen celestial body
                 Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
+
+                // Events
+                Events.OnBodyPostApply.Fire(this, node);
             }
         }
     }

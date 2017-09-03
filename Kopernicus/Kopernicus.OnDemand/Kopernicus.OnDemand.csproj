@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CBAttributeMapSODemand.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="ILoadOnDemand.cs" />
     <Compile Include="MapSODemand.cs" />
     <Compile Include="OnDemandStorage.cs" />

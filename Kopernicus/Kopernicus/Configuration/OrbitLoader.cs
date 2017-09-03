@@ -166,6 +166,9 @@ namespace Kopernicus
 
                 // Remove null
                 if (orbit == null) orbit = new Orbit();
+
+                // Event
+                Events.OnOrbitLoaderApply.Fire(this, node);
             }
 
             void IParserEventSubscriber.PostApply(ConfigNode node)
@@ -176,6 +179,7 @@ namespace Kopernicus
                 generatedBody.orbitDriver.orbit = orbit;
                 generatedBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
                 generatedBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
+                Events.OnOrbitLoaderPostApply.Fire(this, node);
             }
 
             // Construct an empty orbit

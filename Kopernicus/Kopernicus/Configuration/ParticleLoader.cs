@@ -179,6 +179,7 @@ namespace Kopernicus
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
+                Events.OnParticleLoaderApply.Fire(this, node);
             }
 
             // Post-Apply event
@@ -191,6 +192,7 @@ namespace Kopernicus
                     colors.Add(new Color(c.x, c.y, c.z, c.w));
                 }
                 particle.colorAnimation = colors.ToArray();
+                Events.OnParticleLoaderPostApply.Fire(this, node);
             }
 
         }

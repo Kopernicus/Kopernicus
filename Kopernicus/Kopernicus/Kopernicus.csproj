@@ -129,6 +129,7 @@
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Constants\CompatibilityChecker.cs" />
     <Compile Include="Constants\Version.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="RuntimeUtility\RnDFixer.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

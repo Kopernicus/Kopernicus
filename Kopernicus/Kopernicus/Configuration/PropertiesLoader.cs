@@ -308,6 +308,9 @@ namespace Kopernicus
 
                 // Create the science values cache
                 scienceValues = new ScienceValuesLoader(celestialBody.scienceValues);
+
+                // Event
+                Events.OnPropertiesLoaderApply.Fire(this, node);
             }
 
             // PostApply Event
@@ -337,6 +340,9 @@ namespace Kopernicus
                     celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree (celestialBody);
                     Logger.Active.Log ("Added Progress Tree");
                 }
+
+                // Event
+                Events.OnPropertiesLoaderPostApply.Fire(this, node);
             }
 
             // Properties requires a celestial body referece, as this class is designed to edit the body

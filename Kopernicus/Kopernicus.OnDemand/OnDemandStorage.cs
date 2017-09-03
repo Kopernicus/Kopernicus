@@ -166,6 +166,7 @@ namespace Kopernicus
                 if (maps.ContainsKey(body))
                 {
                     EnableMapList(maps[body]);
+                    Events.OnBodyLoad.Fire(PSystemManager.Instance.localBodies.Find(b => b.transform.name == body));
                     return true;
                 }
                 return false;
@@ -178,6 +179,7 @@ namespace Kopernicus
                 if (maps.ContainsKey(body))
                 {
                     DisableMapList(maps[body]);
+                    Events.OnBodyUnload.Fire(PSystemManager.Instance.localBodies.Find(b => b.transform.name == body));
                     return true;
                 }
                 return false;

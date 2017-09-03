@@ -68,6 +68,7 @@ namespace Kopernicus
                 {
                     CreateMap(Depth, map);
                     IsLoaded = true;
+                    Events.OnMapSOLoad.Fire(this);
                     Debug.Log("[OD] ---> Map " + name + " enabling self. Path = " + Path);
                     return;
                 }
@@ -88,6 +89,9 @@ namespace Kopernicus
 
                 // Set flags
                 IsLoaded = false;
+
+                // Event
+                Events.OnMapSOUnload.Fire(this);
 
                 // Log
                 Debug.Log("[OD] <--- Map " + name + " disabling self. Path = " + Path);

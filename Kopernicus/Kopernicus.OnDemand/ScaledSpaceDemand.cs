@@ -113,6 +113,9 @@ namespace Kopernicus
                     scaledRenderer.material.SetTexture("_BumpMap", OnDemandStorage.LoadTexture(normals, false, true, false));
                 }
 
+                // Events
+                Events.OnScaledSpaceLoad.Fire(this);
+
                 // Flags
                 isLoaded = true;
             }
@@ -131,6 +134,9 @@ namespace Kopernicus
                 {
                     DestroyImmediate(scaledRenderer.material.GetTexture("_BumpMap"));
                 }
+
+                // Events
+                Events.OnScaledSpaceUnload.Fire(this);
 
                 // Flags
                 isLoaded = false;

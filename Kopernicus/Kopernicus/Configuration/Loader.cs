@@ -174,6 +174,9 @@ namespace Kopernicus
 
                 // Load the ring shader
                 ShaderLoader.LoadAssetBundle("Kopernicus/Shaders", "kopernicusshaders");
+
+                // Event
+                Events.OnLoaderApply.Fire(this, node);
             }
 
             // Generates the system prefab from the configuration 
@@ -195,6 +198,7 @@ namespace Kopernicus
                         currentBody = new Body();
                         Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode, "Kopernicus");
                         bodies.Add(currentBody.name, currentBody);
+                        Events.OnLoaderLoadBody.Fire(currentBody, bodyNode);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.name);
                     } 
                     catch (Exception e) 
@@ -220,6 +224,7 @@ namespace Kopernicus
                     {
                         Asteroid asteroid = Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus");
                         DiscoverableObjects.asteroids.Add(asteroid);
+                        Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.name);
                     }
                     catch (Exception e)
@@ -267,6 +272,9 @@ namespace Kopernicus
                             }
                         }
                     }
+
+                    // Event
+                    Events.OnLoaderFinalizeBody.Fire(body.Value);
                 }
 
                 // Elect root body
@@ -286,6 +294,9 @@ namespace Kopernicus
                 
                 // We're done
                 currentBody.generatedBody = null;
+
+                // Event
+                Events.OnLoaderPostApply.Fire(this, node);
             }
 
             // Sort bodies by distance from parent body

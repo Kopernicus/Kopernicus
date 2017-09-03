@@ -183,6 +183,9 @@ namespace Kopernicus
                 Particle partice = emitter.particles.OrderBy(p => Vector3.Distance(other.transform.position, p.position)).First();
                 other.GetComponent<Rigidbody>().AddForceAtPosition(partice.velocity.normalized * partice.energy, partice.position, ForceMode.Impulse);
                 partice.energy = 0;
+
+                // Events
+                Events.OnParticleCollision.Fire(this, other);
             }
 
             /// <summary>

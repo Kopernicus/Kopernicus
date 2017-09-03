@@ -332,6 +332,7 @@ namespace Kopernicus
             // Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
+                Events.OnPQSLoaderApply.Fire(this, node);
             }
 
             // PostApply Event
@@ -405,6 +406,9 @@ namespace Kopernicus
                         }
                     }
                 }
+
+                // Event
+                Events.OnPQSLoaderPostApply.Fire(this, node);
 
                 // ----------- DEBUG -------------
                 // Utility.DumpObjectProperties(pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");

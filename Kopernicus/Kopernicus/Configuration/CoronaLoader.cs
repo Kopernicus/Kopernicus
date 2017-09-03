@@ -36,7 +36,7 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class CoronaLoader : BaseLoader
+        public class CoronaLoader : BaseLoader, IParserEventSubscriber
         {
             // The generated corona
             public SunCoronas coronaComponent;
@@ -90,6 +90,18 @@ namespace Kopernicus
             {
                 get { return new ParticleAddSmoothLoader(coronaComponent.GetComponent<Renderer>().sharedMaterial); }
                 set { coronaComponent.GetComponent<Renderer>().sharedMaterial = new Material(value); }
+            }
+
+            // Parser apply event
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnCoronaLoaderApply.Fire(this, node);
+            }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                Events.OnCoronaLoaderPostApply.Fire(this, node);
             }
 
             // Default constructor

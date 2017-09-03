@@ -30,10 +30,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using Kopernicus.Configuration;
-using KSP.UI.Screens;
 
 namespace Kopernicus 
 {
@@ -92,6 +90,9 @@ namespace Kopernicus
             // Backup the old prefab
             StockSystemPrefab = PSystemManager.Instance.systemPrefab;
 
+            // Fire Pre-Load Event
+            Events.OnPreLoad.Fire();
+
             // Get the current time
             DateTime start = DateTime.Now;
 
@@ -107,6 +108,9 @@ namespace Kopernicus
             // Add a handler so that we can do post spawn fixups.  
             PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
 
+            // Fire Post-Load Event
+            Events.OnPostLoad.Fire(PSystemManager.Instance.systemPrefab);
+
             // Done executing the awake function
             TimeSpan duration = (DateTime.Now - start);
             Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
@@ -118,6 +122,9 @@ namespace Kopernicus
         {
             Debug.Log("[Kopernicus]: Post-Spawn");
 
+            // Fire Event
+            Events.OnPreFixing.Fire();
+
             // Fix the SpaceCenter
             SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.isHomeWorld).GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
             SpaceCenter.Instance.Start();
@@ -126,6 +133,9 @@ namespace Kopernicus
             int counter = 0;
             foreach (CelestialBody body in FlightGlobals.Bodies) 
             {
+                // Event
+                Events.OnPreBodyFixing.Fire(body);
+
                 // Patch the flightGlobalsIndex
                 body.flightGlobalsIndex = counter++;
 
@@ -145,6 +155,10 @@ namespace Kopernicus
                 if (body.Has("barycenter"))
                     body.scaledBody.SetActive(false);
 
+                // Event
+                Events.OnPostBodyFixing.Fire(body);
+
+                // Log
                 Logger.Default.Log ("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
             }
 
@@ -177,6 +191,9 @@ namespace Kopernicus
             else
                 Debug.Log("Found max distance " + maximumDistance);
             PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
+
+            // Call the event
+            Events.OnPostFixing.Fire();
 
             // Flush the logger
             Logger.Default.Flush();

@@ -169,12 +169,16 @@ namespace Kopernicus
             }
 
             // Parser apply event
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnAFGLoaderApply.Fire(this, node);
+            }
 
             // Parser post apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 CalculatedMembers(afg); // with the new values.
+                Events.OnAFGLoaderPostApply.Fire(this, node);
             }
 
             // Default Constructor

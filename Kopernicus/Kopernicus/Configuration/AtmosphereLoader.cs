@@ -256,7 +256,7 @@ namespace Kopernicus
 
             // Parser apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
-            { 
+            {
                 // If we don't want an atmosphere, ignore this step
                 if(!celestialBody.atmosphere || !addAFG)
                     return;
@@ -283,7 +283,10 @@ namespace Kopernicus
 
                     // Setup known defaults
                     celestialBody.atmospherePressureSeaLevel = 1.0f;
-                }                    
+                }
+
+                // Event
+                Events.OnAtmosphereLoaderApply.Fire(this, node);
             }
 
             // Parser post apply event
@@ -291,6 +294,7 @@ namespace Kopernicus
             {
                 if (atmosphereFromGround != null)
                     AFGInfo.StoreAFG(atmosphereFromGround.afg);
+                Events.OnAtmosphereLoaderPostApply.Fire(this, node);
             }
 
             // Default constructor

@@ -103,6 +103,7 @@ namespace Kopernicus
             GalaxyCubeControl.Instance.sunRef = KopernicusStar.Current;
             foreach (SkySphereControl c in Resources.FindObjectsOfTypeAll<SkySphereControl>())
                 c.sunRef = KopernicusStar.Current;
+            Events.OnRuntimeUtilitySwitchStar.Fire(KopernicusStar.Current);
         }
 
         public bool IsActiveStar()

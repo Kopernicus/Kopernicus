@@ -32,7 +32,7 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class ScienceValuesLoader : BaseLoader
+        public class ScienceValuesLoader : BaseLoader, IParserEventSubscriber
         {
             // Science parameters we are going to be modifying
             public CelestialBodyScienceParams scienceParams { get; set; }
@@ -121,6 +121,18 @@ namespace Kopernicus
             public ScienceValuesLoader (CelestialBodyScienceParams scienceParams)
             {
                 this.scienceParams = scienceParams;
+            }
+
+            // Apply event
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnScienceValuesLoaderApply.Fire(this, node);
+            }
+
+            // Post-Apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                Events.OnScienceValuesLoaderPostApply.Fire(this, node);
             }
         }
     }

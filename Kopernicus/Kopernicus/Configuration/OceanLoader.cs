@@ -180,7 +180,7 @@ namespace Kopernicus
                     if (oc.name == "LaytheOcean")
                     {
                         // Copying Laythes Ocean-properties
-                        Utility.CopyObjectFields<PQS>(oc, this.ocean);
+                        Utility.CopyObjectFields(oc, ocean);
 
                         // Load Surface material
                         surfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
@@ -212,6 +212,7 @@ namespace Kopernicus
             {
                 // Make assumptions
                 mapOcean = true;
+                Events.OnOceanLoaderApply.Fire(this, node);
             }
 
             // Post Apply
@@ -297,6 +298,9 @@ namespace Kopernicus
                         Logger.Active.Log("OceanLoader.PostApply(ConfigNode): Added PQS Mod => " + modType);
                     }
                 }
+
+                // Event
+                Events.OnOceanLoaderPostApply.Fire(this, node);
             }
         }
     }

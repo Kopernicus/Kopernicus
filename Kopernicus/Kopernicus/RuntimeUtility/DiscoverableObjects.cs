@@ -218,6 +218,7 @@ namespace Kopernicus
             OverrideNode(ref vessel, asteroid.vessel);
             ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
             if (asteroid.uniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0) return;
+            Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
             protoVessel.Load(HighLogic.CurrentGame.flightState);
             GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");

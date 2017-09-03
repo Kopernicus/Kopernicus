@@ -54,6 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events.cs" />
     <Compile Include="GLTools.cs" />
     <Compile Include="HazardousOcean.cs" />
     <Compile Include="KopernicusBuoyancy.cs" />

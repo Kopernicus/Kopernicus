@@ -166,6 +166,9 @@ namespace Kopernicus
 
                 // Add a material fixer
                 DontDestroyOnLoad(gameObject.AddComponent<MaterialFixer>());
+
+                // Events
+                Events.OnSwitchKSC.Fire(this);
             }
 
             // Convert latitude-longitude-altitude with body radius to a vector.

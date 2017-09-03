@@ -130,6 +130,9 @@ namespace Kopernicus
 
                 // Store the initial radius (so scaled version can be computed)
                 radius = body.celestialBody.Radius;
+
+                // Event
+                Events.OnTemplateLoaderApply.Fire(this, node);
             }
 
             // Post apply event
@@ -255,6 +258,9 @@ namespace Kopernicus
                     foreach (SunCoronas corona in body.scaledVersion.GetComponentsInChildren<SunCoronas>(true))
                         corona.GetComponent<Renderer>().enabled = false; // RnD hard refs Coronas, so we need to disable them
                 }
+
+                // Event
+                Events.OnTemplateLoaderPostApply.Fire(this, node);
             }
 
             // Private exception to throw in the case the template doesn't load

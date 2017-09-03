@@ -128,6 +128,8 @@ namespace Kopernicus
 
             Configuration.AtmosphereFromGroundLoader.CalculatedMembers(afg);
             afg.SetMaterial(true);
+
+            Events.OnRuntimeUtilityPatchAFG.Fire(afg);
         }
     }
 

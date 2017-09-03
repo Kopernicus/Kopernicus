@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
-using JetBrains.Annotations;
 using Kopernicus.Configuration;
 using KSP.UI.Screens;
 using KSP.UI.Screens.Mapview;
@@ -487,6 +486,7 @@ namespace Kopernicus
                     newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
                 }
             }
+            Events.OnRuntimeUtilityUpdateMenu.Fire();
         }
 
         // Remove the thumbnail for Barycenters in the RD and patch name changes
@@ -637,6 +637,7 @@ namespace Kopernicus
         // Patch FlightIntegrator
         void PatchFI()
         {
+            Events.OnRuntimeUtilityPatchFI.Fire();
             ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
         }
 

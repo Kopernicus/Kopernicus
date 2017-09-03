@@ -33,7 +33,7 @@ namespace Kopernicus
     {
         // Loads Debugging properties for a Body
         [RequireConfigType(ConfigType.Node)]
-        public class DebugLoader
+        public class DebugLoader : IParserEventSubscriber
         {
             // If this is set to false, Kopernicus wont save a .bin file with the scaledSpace mesh 
             [ParserTarget("exportMesh")]
@@ -46,6 +46,18 @@ namespace Kopernicus
             // If this is set to true, a wireframe will appear to visualize the SOI
             [ParserTarget("showSOI")]
             public NumericParser<bool> showSOI = new NumericParser<bool>(false);
+
+            // Parser apply event
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnDebugLoaderApply.Fire(this, node);
+            }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                Events.OnDebugLoaderPostApply.Fire(this, node);
+            }
         }
     }
 }

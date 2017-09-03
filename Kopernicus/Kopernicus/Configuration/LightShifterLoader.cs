@@ -192,6 +192,18 @@ namespace Kopernicus
                 set { lsc.ivaIntensityCurve = value; }
             }
 
+            // Parser apply event
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnLightShifterLoaderApply.Fire(this, node);
+            }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                Events.OnLightShifterLoaderPostApply.Fire(this, node);
+            }
+
             // Default constructor
             public LightShifterLoader()
             {
@@ -205,12 +217,6 @@ namespace Kopernicus
             {
                 lsc = body.GetComponentInChildren<LightShifter>();
             }
-
-            // Apply event
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
-
-            // Post apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node) { }
         }
 
     }

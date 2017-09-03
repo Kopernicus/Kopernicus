@@ -32,7 +32,7 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class BiomeLoader
+        public class BiomeLoader : IParserEventSubscriber
         {
             // The map attribute object we are creating
             public CBAttributeMapSO.MapAttribute attribute { get; set; }
@@ -71,6 +71,18 @@ namespace Kopernicus
             {
                 get { return attribute.mapColor; }
                 set { attribute.mapColor = value; }
+            }
+
+            // Parser apply event
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnBiomeLoaderApply.Fire(this, node);
+            }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                Events.OnBiomeLoaderPostApply.Fire(this, node);
             }
 
             // Allocate the biome descriptor

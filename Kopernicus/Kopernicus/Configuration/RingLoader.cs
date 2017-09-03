@@ -216,10 +216,16 @@ namespace Kopernicus
             }
 
             // Apply event
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
+            void IParserEventSubscriber.Apply(ConfigNode node)
+            {
+                Events.OnRingLoaderApply.Fire(this, node);
+            }
 
             // Post-Apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node) { }
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                Events.OnRingLoaderPostApply.Fire(this, node);
+            }
         }
     }
 }
