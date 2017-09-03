@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,18 +17,18 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using Kopernicus.Components;
+using Kopernicus.Configuration.Asteroids;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using Kopernicus.Configuration.Asteroids;
-using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -43,10 +39,10 @@ namespace Kopernicus
         public class Loader : IParserEventSubscriber
         {
             // Name of the config type which holds the body definition
-            public const string bodyNodeName = "Body";
+            public const String bodyNodeName = "Body";
 
             // Name of the config type which holds the asteroid definition
-            public const string asteroidNodeName = "Asteroid";
+            public const String asteroidNodeName = "Asteroid";
 
             // Currently edited body
             public static Body currentBody { get; set; }
@@ -59,7 +55,7 @@ namespace Kopernicus
 
             // The name of the PSystem
             [ParserTarget("name")]
-            public string name
+            public String name
             {
                 get { return systemPrefab.systemName; }
                 set { systemPrefab.systemName = value; }
@@ -67,7 +63,7 @@ namespace Kopernicus
 
             // TimeScale for the planets
             [ParserTarget("timeScale")]
-            public NumericParser<double> systemTimeScale
+            public NumericParser<Double> systemTimeScale
             {
                 get { return systemPrefab.systemTimeScale; }
                 set { systemPrefab.systemTimeScale = value; }
@@ -75,7 +71,7 @@ namespace Kopernicus
 
             // Scale of the System
             [ParserTarget("scale")]
-            public NumericParser<double> systemScale
+            public NumericParser<Double> systemScale
             {
                 get { return systemPrefab.systemScale; }
                 set { systemPrefab.systemScale = value; }
@@ -83,7 +79,7 @@ namespace Kopernicus
 
             // Global Epoch setting
             [ParserTarget("Epoch")]
-            public NumericParser<double> epoch
+            public NumericParser<Double> epoch
             {
                 get { return Templates.epoch; }
                 set { Templates.epoch = value; }
@@ -91,7 +87,7 @@ namespace Kopernicus
 
             // If the OnDemand Systems are enabled
             [ParserTarget("useOnDemand")]
-            public NumericParser<bool> useOnDemand
+            public NumericParser<Boolean> useOnDemand
             {
                 get { return OnDemand.OnDemandStorage.useOnDemand; }
                 set { OnDemand.OnDemandStorage.useOnDemand = value; }
@@ -99,7 +95,7 @@ namespace Kopernicus
 
             // If the OnDemand System should load missing maps
             [ParserTarget("onDemandLoadOnMissing")]
-            public NumericParser<bool> onDemandLoadOnMissing
+            public NumericParser<Boolean> onDemandLoadOnMissing
             {
                 get { return OnDemand.OnDemandStorage.onDemandLoadOnMissing; }
                 set { OnDemand.OnDemandStorage.onDemandLoadOnMissing = value; }
@@ -107,7 +103,7 @@ namespace Kopernicus
 
             // If the OnDemand System should write a debug message when a texture is missing
             [ParserTarget("onDemandLogOnMissing")]
-            public NumericParser<bool> onDemandLogOnMissing
+            public NumericParser<Boolean> onDemandLogOnMissing
             {
                 get { return OnDemand.OnDemandStorage.onDemandLogOnMissing; }
                 set { OnDemand.OnDemandStorage.onDemandLogOnMissing = value; }
@@ -115,7 +111,7 @@ namespace Kopernicus
 
             // Set this to the unload delay in seconds
             [ParserTarget("onDemandUnloadDelay")]
-            public NumericParser<int> onDemandUnloadDelay
+            public NumericParser<Int32> onDemandUnloadDelay
             {
                 get { return OnDemand.OnDemandStorage.onDemandUnloadDelay; }
                 set { OnDemand.OnDemandStorage.onDemandUnloadDelay = value; }
@@ -123,18 +119,18 @@ namespace Kopernicus
 
             // The body that is displayed at main menu
             [ParserTarget("mainMenuBody")]
-            public string mainMenuBody
+            public String mainMenuBody
             {
                 get { return Templates.menuBody; }
                 set { Templates.menuBody = value; }
             }
 
             // Whether the main menu body should be randomized
-            public List<string> randomMainMenuBodies = new List<String>();
+            public List<String> randomMainMenuBodies = new List<String>();
 
             // The maximum viewing distance in tracking station
             [ParserTarget("maxViewingDistance")]
-            public NumericParser<double> maxViewDistance
+            public NumericParser<Double> maxViewDistance
             {
                 get { return Templates.maxViewDistance; }
                 set { Templates.maxViewDistance = value; }
@@ -142,7 +138,7 @@ namespace Kopernicus
 
             // Fade multiplier for tracking station
             [ParserTarget("scaledSpaceFaderMult")]
-            public NumericParser<double> scaledSpaceFaderMult
+            public NumericParser<Double> scaledSpaceFaderMult
             {
                 get { return ScaledSpaceFader.faderMult; }
                 set { ScaledSpaceFader.faderMult = value; }
@@ -183,7 +179,7 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 // Dictionary of bodies generated
-                Dictionary<string, Body> bodies = new Dictionary<string, Body>();
+                Dictionary<String, Body> bodies = new Dictionary<String, Body>();
 
                 // Load all of the bodies
                 foreach (ConfigNode bodyNode in node.GetNodes(bodyNodeName)) 
@@ -239,7 +235,7 @@ namespace Kopernicus
                 }
 
                 // Glue all the orbits together in the defined pattern
-                foreach (KeyValuePair<string, Body> body in bodies) 
+                foreach (KeyValuePair<String, Body> body in bodies) 
                 {
                     // If this body is in orbit around another body
                     if(body.Value.orbit != null)
@@ -284,8 +280,8 @@ namespace Kopernicus
                 RecursivelySortBodies (systemPrefab.rootBody);
 
                 // Fix doubled flightGlobals
-                List<int> numbers = new List<int>() { 0, 1 };
-                int index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
+                List<Int32> numbers = new List<Int32>() { 0, 1 };
+                Int32 index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
                 PatchFGI(ref numbers, ref index, systemPrefab.rootBody);
 
                 // Main Menu bodies
@@ -310,7 +306,7 @@ namespace Kopernicus
             }
 
             // Patch the FlightGlobalsIndex of bodies
-            public static void PatchFGI(ref List<int> numbers, ref int index, PSystemBody rootBody)
+            public static void PatchFGI(ref List<Int32> numbers, ref Int32 index, PSystemBody rootBody)
             {
                 foreach (PSystemBody body in rootBody.children)
                 {

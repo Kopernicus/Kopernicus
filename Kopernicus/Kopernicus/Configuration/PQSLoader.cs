@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis) 
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,14 +10,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -31,8 +27,8 @@ using Kopernicus.MaterialWrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using System.Reflection;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -70,28 +66,28 @@ namespace Kopernicus
 
             // PQS level of detail settings
             [ParserTarget("minLevel")]
-            public NumericParser<int> minLevel 
+            public NumericParser<Int32> minLevel 
             {
                 get { return pqsVersion.minLevel; }
                 set { pqsVersion.minLevel = value; }
             }
 
             [ParserTarget("maxLevel")]
-            public NumericParser<int> maxLevel 
+            public NumericParser<Int32> maxLevel 
             {
                 get { return pqsVersion.maxLevel; }
                 set { pqsVersion.maxLevel = value; }
             }
 
             [ParserTarget("minDetailDistance")]
-            public NumericParser<double> minDetailDistance 
+            public NumericParser<Double> minDetailDistance 
             {
                 get { return pqsVersion.minDetailDistance; }
                 set { pqsVersion.minDetailDistance = value; }
             }
 
             [ParserTarget("maxQuadLengthsPerFrame")]
-            public NumericParser<float> maxQuadLengthsPerFrame 
+            public NumericParser<Single> maxQuadLengthsPerFrame 
             {
                 get { return pqsVersion.maxQuadLenghtsPerFrame; }
                 set { pqsVersion.maxQuadLenghtsPerFrame = value; }
@@ -99,21 +95,21 @@ namespace Kopernicus
 
             // CelestialBodyTransform fades. should more or less line up with ScaledVersion's fadeStart/fadeEnd
             [ParserTarget("fadeStart")]
-            public NumericParser<float> fadeStart
+            public NumericParser<Single> fadeStart
             {
                 get { return transform.planetFade.fadeStart; }
                 set { transform.planetFade.fadeStart = value; }
             }
 
             [ParserTarget("fadeEnd")]
-            public NumericParser<float> fadeEnd
+            public NumericParser<Single> fadeEnd
             {
                 get { return transform.planetFade.fadeEnd; }
                 set { transform.planetFade.fadeEnd = value; }
             }
 
             [ParserTarget("deactivateAltitude")]
-            public NumericParser<double> deactivateAltitude
+            public NumericParser<Double> deactivateAltitude
             {
                 get { return transform.deactivateAltitude; }
                 set { transform.deactivateAltitude = value; }
@@ -121,7 +117,7 @@ namespace Kopernicus
 
             // Map Export Arguments
             [ParserTarget("mapMaxHeight")]
-            public NumericParser<double> mapMaxHeight
+            public NumericParser<Double> mapMaxHeight
             {
                 get { return pqsVersion.mapMaxHeight; }
                 set { pqsVersion.mapMaxHeight = value; }
@@ -182,19 +178,19 @@ namespace Kopernicus
                     if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
                     {
                         PQSMainOptimisedLoader loader = new PQSMainOptimisedLoader(surfaceMaterial);
-                        loader.globalDensity = loader.globalDensity < 2 ? (float)-8E-06 : loader.globalDensity;
+                        loader.globalDensity = loader.globalDensity < 2 ? (Single)(-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
                     else if (PQSMainShader.UsesSameShader(surfaceMaterial))
                     {
                         PQSMainShaderLoader loader = new PQSMainShaderLoader(surfaceMaterial);
-                        loader.globalDensity = loader.globalDensity < 2 ? (float)-8E-06 : loader.globalDensity;
+                        loader.globalDensity = loader.globalDensity < 2 ? (Single)(-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
                     else if (PQSProjectionAerialQuadRelative.UsesSameShader(surfaceMaterial))
                     {
                         PQSProjectionAerialQuadRelativeLoader loader = new PQSProjectionAerialQuadRelativeLoader(surfaceMaterial);
-                        loader.globalDensity = loader.globalDensity < 2 ? (float)-8E-06 : loader.globalDensity;
+                        loader.globalDensity = loader.globalDensity < 2 ? (Single)(-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
                     else if (PQSProjectionSurfaceQuad.UsesSameShader(surfaceMaterial))
@@ -303,19 +299,19 @@ namespace Kopernicus
                 if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
                 {
                     PQSMainOptimisedLoader loader = new PQSMainOptimisedLoader(surfaceMaterial);
-                    loader.globalDensity = loader.globalDensity < 2 ? (float)-8E-06 : loader.globalDensity;
+                    loader.globalDensity = loader.globalDensity < 2 ? (Single)(-8E-06) : loader.globalDensity;
                     surfaceMaterial = loader;
                 }
                 else if (PQSMainShader.UsesSameShader(surfaceMaterial))
                 {
                     PQSMainShaderLoader loader = new PQSMainShaderLoader(surfaceMaterial);
-                    loader.globalDensity = loader.globalDensity < 2 ? (float)-8E-06 : loader.globalDensity;
+                    loader.globalDensity = loader.globalDensity < 2 ? (Single)(-8E-06) : loader.globalDensity;
                     surfaceMaterial = loader;
                 }
                 else if (PQSProjectionAerialQuadRelative.UsesSameShader(surfaceMaterial))
                 {
                     PQSProjectionAerialQuadRelativeLoader loader = new PQSProjectionAerialQuadRelativeLoader(surfaceMaterial);
-                    loader.globalDensity = loader.globalDensity < 2 ? (float)-8E-06 : loader.globalDensity;
+                    loader.globalDensity = loader.globalDensity < 2 ? (Single)(-8E-06) : loader.globalDensity;
                     surfaceMaterial = loader;
                 }
                 else if (PQSProjectionSurfaceQuad.UsesSameShader(surfaceMaterial))

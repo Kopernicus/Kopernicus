@@ -1,9 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * Copyright (C) 2014 Bryce C Schroeder (bryce.schroeder@gmail.com), Nathaniel R. Lewis (linux.robotdude@gmail.com)
- * 
- * http://www.ferazelhosting.net/~bryce/contact.html
- * 
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -20,15 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using System.IO;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -49,7 +44,7 @@ namespace Kopernicus
 
                 // Height map offset
                 [ParserTarget("offset")]
-                public NumericParser<double> heightMapOffset 
+                public NumericParser<Double> heightMapOffset 
                 {
                     get { return mod.heightMapOffset; }
                     set { mod.heightMapOffset = value; }
@@ -57,7 +52,7 @@ namespace Kopernicus
 
                 // Height map offset
                 [ParserTarget("deformity")]
-                public NumericParser<double> heightMapDeformity
+                public NumericParser<Double> heightMapDeformity
                 {
                     get { return mod.heightMapDeformity; }
                     set { mod.heightMapDeformity = value; }
@@ -65,14 +60,14 @@ namespace Kopernicus
 
                 // Height map offset
                 [ParserTarget("scaleDeformityByRadius")]
-                public NumericParser<bool> scaleDeformityByRadius
+                public NumericParser<Boolean> scaleDeformityByRadius
                 {
                     get { return mod.scaleDeformityByRadius; }
                     set { mod.scaleDeformityByRadius = value; }
                 }
 
                 [ParserTarget("coastHeight")]
-                public NumericParser<double> coastHeight
+                public NumericParser<Double> coastHeight
                 {
                     get { return mod.coastHeight; }
                     set { mod.coastHeight = value; }

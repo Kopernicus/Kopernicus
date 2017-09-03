@@ -1,4 +1,28 @@
-using Kopernicus.Components;
+/**
+ * Kopernicus Planetary System Modifier
+ * ------------------------------------------------------------- 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ * 
+ * This library is intended to be used as a plugin for Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * itself is governed by the terms of its EULA, not the license above.
+ * 
+ * https://kerbalspaceprogram.com
+ */
+ 
 using System;
 using UnityEngine;
 
@@ -10,7 +34,7 @@ namespace Kopernicus
         public class AtmosphereFromGroundLoader : BaseLoader, IParserEventSubscriber
         {
             // since ScaledSpace doesn't exist to query.
-            public const float INVSCALEFACTOR = (1f / 6000f);
+            public const Single INVSCALEFACTOR = (1f / 6000f);
 
             // AtmosphereFromGround we're modifying
             public AtmosphereFromGround afg;
@@ -18,7 +42,7 @@ namespace Kopernicus
 
             // DEBUG_alwaysUpdateAll
             [ParserTarget("DEBUG_alwaysUpdateAll")]
-            public NumericParser<bool> DEBUG_alwaysUpdateAll
+            public NumericParser<Boolean> DEBUG_alwaysUpdateAll
             {
                 get { return afg.DEBUG_alwaysUpdateAll; }
                 set { afg.DEBUG_alwaysUpdateAll = value; }
@@ -26,7 +50,7 @@ namespace Kopernicus
 
             // doScale
             [ParserTarget("doScale")]
-            public NumericParser<bool> doScale
+            public NumericParser<Boolean> doScale
             {
                 get { return afg.doScale; }
                 set { afg.doScale = value; }
@@ -34,7 +58,7 @@ namespace Kopernicus
 
             // ESun
             [ParserTarget("ESun")]
-            public NumericParser<float> ESun
+            public NumericParser<Single> ESun
             {
                 get { return afg.ESun; }
                 set { afg.ESun = value; }
@@ -42,7 +66,7 @@ namespace Kopernicus
 
             // g
             [ParserTarget("g")]
-            public NumericParser<float> g
+            public NumericParser<Single> g
             {
                 get { return afg.g; }
                 set { afg.g = value; }
@@ -50,7 +74,7 @@ namespace Kopernicus
 
             // innerRadius
             [ParserTarget("innerRadius")]
-            public NumericParser<float> innerRadius
+            public NumericParser<Single> innerRadius
             {
                 get { return afg.innerRadius / INVSCALEFACTOR; }
                 set { afg.innerRadius = value * INVSCALEFACTOR; }
@@ -64,13 +88,13 @@ namespace Kopernicus
                 set
                 {
                     afg.invWaveLength = value;
-                    afg.waveLength = new Color((float)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[0])), (float)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[1])), (float)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[2])), 0.5f);
+                    afg.waveLength = new Color((Single)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[0])), (Single)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[1])), (Single)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[2])), 0.5f);
                 }
             }
 
             // Km
             [ParserTarget("Km")]
-            public NumericParser<float> Km
+            public NumericParser<Single> Km
             {
                 get { return afg.Km; }
                 set { afg.Km = value; }
@@ -78,7 +102,7 @@ namespace Kopernicus
 
             // Kr
             [ParserTarget("Kr")]
-            public NumericParser<float> Kr
+            public NumericParser<Single> Kr
             {
                 get { return afg.Kr; }
                 set { afg.Kr = value; }
@@ -86,7 +110,7 @@ namespace Kopernicus
 
             // outerRadius
             [ParserTarget("outerRadius")]
-            public NumericParser<float> outerRadius
+            public NumericParser<Single> outerRadius
             {
                 get { return afg.outerRadius / INVSCALEFACTOR; }
                 set { afg.outerRadius = value * INVSCALEFACTOR; }
@@ -94,7 +118,7 @@ namespace Kopernicus
 
             // samples
             [ParserTarget("samples")]
-            public NumericParser<float> samples
+            public NumericParser<Single> samples
             {
                 get { return afg.samples; }
                 set { afg.samples = value; }
@@ -102,7 +126,7 @@ namespace Kopernicus
 
             // scale
             [ParserTarget("scale")]
-            public NumericParser<float> scale
+            public NumericParser<Single> scale
             {
                 get { return afg.scale; }
                 set { afg.scale = value; }
@@ -110,7 +134,7 @@ namespace Kopernicus
 
             // scaleDepth
             [ParserTarget("scaleDepth")]
-            public NumericParser<float> scaleDepth
+            public NumericParser<Single> scaleDepth
             {
                 get { return afg.scaleDepth; }
                 set { afg.scaleDepth = value; }
@@ -131,21 +155,21 @@ namespace Kopernicus
                 set
                 {
                     afg.waveLength = value;
-                    afg.invWaveLength = new Color((float)(1d / Math.Pow(afg.waveLength[0], 4)), (float)(1d / Math.Pow(afg.waveLength[1], 4)), (float)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
+                    afg.invWaveLength = new Color((Single)(1d / Math.Pow(afg.waveLength[0], 4)), (Single)(1d / Math.Pow(afg.waveLength[1], 4)), (Single)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
                 }
             }
 
             // outerRadiusMult
             [ParserTarget("outerRadiusMult")]
-            public NumericParser<float> outerRadiusMult
+            public NumericParser<Single> outerRadiusMult
             {
-                get { return (afg.outerRadius / INVSCALEFACTOR) / (float)body.Radius; }
-                set { afg.outerRadius = (((float)body.Radius) * value) * INVSCALEFACTOR; }
+                get { return (afg.outerRadius / INVSCALEFACTOR) / (Single)body.Radius; }
+                set { afg.outerRadius = (((Single)body.Radius) * value) * INVSCALEFACTOR; }
             }
 
             // innerRadiusMult
             [ParserTarget("innerRadiusMult")]
-            public NumericParser<float> innerRadiusMult
+            public NumericParser<Single> innerRadiusMult
             {
                 get { return afg.innerRadius / afg.outerRadius; }
                 set { afg.innerRadius = afg.outerRadius * value; }
@@ -199,10 +223,10 @@ namespace Kopernicus
                 {
                     afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
                 }
-                afg.outerRadius = (((float)body.Radius) * 1.025f) * INVSCALEFACTOR;
+                afg.outerRadius = (((Single)body.Radius) * 1.025f) * INVSCALEFACTOR;
                 afg.innerRadius = afg.outerRadius * 0.975f;
                 afg.scaleDepth = -0.25f;
-                afg.invWaveLength = new Color((float)(1d / Math.Pow(afg.waveLength[0], 4)), (float)(1d / Math.Pow(afg.waveLength[1], 4)), (float)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
+                afg.invWaveLength = new Color((Single)(1d / Math.Pow(afg.waveLength[0], 4)), (Single)(1d / Math.Pow(afg.waveLength[1], 4)), (Single)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
 
                 CalculatedMembers(afg);
             }
@@ -225,10 +249,10 @@ namespace Kopernicus
                 {
                     afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
                 }
-                afg.outerRadius = (((float)body.Radius) * 1.025f) * INVSCALEFACTOR;
+                afg.outerRadius = (((Single)body.Radius) * 1.025f) * INVSCALEFACTOR;
                 afg.innerRadius = afg.outerRadius * 0.975f;
                 afg.scaleDepth = -0.25f;
-                afg.invWaveLength = new Color((float)(1d / Math.Pow(afg.waveLength[0], 4)), (float)(1d / Math.Pow(afg.waveLength[1], 4)), (float)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
+                afg.invWaveLength = new Color((Single)(1d / Math.Pow(afg.waveLength[0], 4)), (Single)(1d / Math.Pow(afg.waveLength[1], 4)), (Single)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
 
                 CalculatedMembers(afg);
             }

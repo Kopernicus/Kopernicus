@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -49,7 +45,7 @@ namespace Kopernicus
 
                 // Where the heightMap starts
                 [ParserTarget("heightStart")]
-                public NumericParser<float> heightStart
+                public NumericParser<Single> heightStart
                 {
                     get { return mod.heightStart; }
                     set { mod.heightStart = value; }
@@ -57,7 +53,7 @@ namespace Kopernicus
 
                 // Where the heightMap ends
                 [ParserTarget("heightEnd")]
-                public NumericParser<float> heightEnd
+                public NumericParser<Single> heightEnd
                 {
                     get { return mod.heightEnd; }
                     set { mod.heightEnd = value; }
@@ -65,7 +61,7 @@ namespace Kopernicus
 
                 // The deformity of the simplex terrain
                 [ParserTarget("deformity")]
-                public NumericParser<float> deformity
+                public NumericParser<Single> deformity
                 {
                     get { return mod.deformity; }
                     set { mod.deformity = value; }
@@ -73,7 +69,7 @@ namespace Kopernicus
 
                 // The frequency of the simplex terrain
                 [ParserTarget("frequency")]
-                public NumericParser<float> frequency
+                public NumericParser<Single> frequency
                 {
                     get { return mod.frequency; }
                     set { mod.frequency = value; }
@@ -81,7 +77,7 @@ namespace Kopernicus
 
                 // Octaves of the simplex height
                 [ParserTarget("octaves")]
-                public NumericParser<int> octaves
+                public NumericParser<Int32> octaves
                 {
                     get { return mod.octaves; }
                     set { mod.octaves = Mathf.Clamp(value, 1, 30); }
@@ -89,7 +85,7 @@ namespace Kopernicus
 
                 // Persistence of the simplex height
                 [ParserTarget("persistance")]
-                public NumericParser<float> persistance
+                public NumericParser<Single> persistance
                 {
                     get { return mod.persistance; }
                     set { mod.persistance = value; }
@@ -97,7 +93,7 @@ namespace Kopernicus
 
                 // The seed of the simplex height
                 [ParserTarget("seed")]
-                public NumericParser<int> seed
+                public NumericParser<Int32> seed
                 {
                     get { return mod.seed; }
                     set { mod.seed = value; }

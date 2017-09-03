@@ -1,10 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
- * -------------------------------------------------------------
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,13 +15,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- *
+ * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- *
+ * 
  * https://kerbalspaceprogram.com
  */
+
+using System;
 
 namespace Kopernicus
 {
@@ -38,7 +36,7 @@ namespace Kopernicus
             {
                 // inFadeEnd
                 [ParserTarget("inFadeEnd")]
-                public NumericParser<float> inFadeEnd
+                public NumericParser<Single> inFadeEnd
                 {
                     get { return mod.inFadeEnd; }
                     set { mod.inFadeEnd = value; }
@@ -46,7 +44,7 @@ namespace Kopernicus
 
                 // inFadeStart
                 [ParserTarget("inFadeStart")]
-                public NumericParser<float> inFadeStart
+                public NumericParser<Single> inFadeStart
                 {
                     get { return mod.inFadeStart; }
                     set { mod.inFadeStart = value; }
@@ -54,7 +52,7 @@ namespace Kopernicus
 
                 // outFadeEnd
                 [ParserTarget("outFadeEnd")]
-                public NumericParser<float> outFadeEnd
+                public NumericParser<Single> outFadeEnd
                 {
                     get { return mod.outFadeEnd; }
                     set { mod.outFadeEnd = value; }
@@ -62,7 +60,7 @@ namespace Kopernicus
 
                 // outFadeStart
                 [ParserTarget("outFadeStart")]
-                public NumericParser<float> outFadeStart
+                public NumericParser<Single> outFadeStart
                 {
                     get { return mod.outFadeStart; }
                     set { mod.outFadeStart = value; }
@@ -70,7 +68,7 @@ namespace Kopernicus
 
                 // valueEnd
                 [ParserTarget("valueEnd")]
-                public NumericParser<float> valueEnd
+                public NumericParser<Single> valueEnd
                 {
                     get { return mod.valueEnd; }
                     set { mod.valueEnd = value; }
@@ -78,7 +76,7 @@ namespace Kopernicus
 
                 // valueMid
                 [ParserTarget("valueMid")]
-                public NumericParser<float> valueMid
+                public NumericParser<Single> valueMid
                 {
                     get { return mod.valueMid; }
                     set { mod.valueMid = value; }
@@ -86,7 +84,7 @@ namespace Kopernicus
 
                 // valueStart
                 [ParserTarget("valueStart")]
-                public NumericParser<float> valueStart
+                public NumericParser<Single> valueStart
                 {
                     get { return mod.valueStart; }
                     set { mod.valueStart = value; }

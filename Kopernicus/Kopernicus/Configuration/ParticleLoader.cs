@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,15 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
- 
-using System.Collections.Generic;
+
 using Kopernicus.Components;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kopernicus
@@ -44,7 +41,7 @@ namespace Kopernicus
 
             // Target of our particles
             [ParserTarget("target")]
-            public string target
+            public String target
             {
                 get { return particle.target; }
                 set { particle.target = value; }
@@ -52,7 +49,7 @@ namespace Kopernicus
 
             // minEmission of particles
             [ParserTarget("minEmission")]
-            public NumericParser<float> minEmission
+            public NumericParser<Single> minEmission
             {
                 get { return particle.minEmission; }
                 set { particle.minEmission = value; }
@@ -60,7 +57,7 @@ namespace Kopernicus
 
             // maxEmission of particles
             [ParserTarget("maxEmission")]
-            public NumericParser<float> maxEmission
+            public NumericParser<Single> maxEmission
             {
                 get { return particle.maxEmission; }
                 set { particle.maxEmission = value; }
@@ -68,7 +65,7 @@ namespace Kopernicus
 
             // minimum lifespan of particles
             [ParserTarget("lifespanMin")]
-            public NumericParser<float> lifespanMin
+            public NumericParser<Single> lifespanMin
             {
                 get { return particle.minEnergy; }
                 set { particle.minEnergy = value; }
@@ -76,7 +73,7 @@ namespace Kopernicus
 
             // maximum lifespan of particles
             [ParserTarget("lifespanMax")]
-            public NumericParser<float> lifespanMax
+            public NumericParser<Single> lifespanMax
             {
                 get { return particle.maxEnergy; }
                 set { particle.maxEnergy = value; }
@@ -84,7 +81,7 @@ namespace Kopernicus
 
             // minimum size of particles
             [ParserTarget("sizeMin")]
-            public NumericParser<float> sizeMin
+            public NumericParser<Single> sizeMin
             {
                 get { return particle.minSize; }
                 set { particle.minSize = value; }
@@ -92,7 +89,7 @@ namespace Kopernicus
 
             // maximum size of particles
             [ParserTarget("sizeMax")]
-            public NumericParser<float> sizeMax
+            public NumericParser<Single> sizeMax
             {
                 get { return particle.maxSize; }
                 set { particle.maxSize = value; }
@@ -100,7 +97,7 @@ namespace Kopernicus
 
             // speedScale of particles
             [ParserTarget("speedScale")]
-            public NumericParser<float> speedScaleLoader
+            public NumericParser<Single> speedScaleLoader
             {
                 get { return particle.speedScale; }
                 set { particle.speedScale = value; }
@@ -108,7 +105,7 @@ namespace Kopernicus
 
             // grow rate of particles
             [ParserTarget("rate")]
-            public NumericParser<float> rate
+            public NumericParser<Single> rate
             {
                 get { return particle.sizeGrow; }
                 set { particle.sizeGrow = value; }
@@ -148,7 +145,7 @@ namespace Kopernicus
 
             // Whether the particles should collide with stuff
             [ParserTarget("collide")]
-            public NumericParser<bool> collide
+            public NumericParser<Boolean> collide
             {
                 get { return particle.collideable; }
                 set { particle.collideable = value; }
@@ -186,7 +183,7 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 List<Color> colors = new List<Color>();
-                foreach (string color in node.GetNode("Colors").GetValuesStartsWith("color"))
+                foreach (String color in node.GetNode("Colors").GetValuesStartsWith("color"))
                 {
                     Vector4 c = ConfigNode.ParseVector4(color);
                     colors.Add(new Color(c.x, c.y, c.z, c.w));

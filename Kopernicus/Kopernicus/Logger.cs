@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -38,18 +34,18 @@ namespace Kopernicus
     public class Logger
     {
         // Is the logger initialized?
-        private static bool isInitialized = false;
+        private static Boolean isInitialized = false;
 
         // Logger output path
-        public static string LogDirectory
+        public static String LogDirectory
         {
             get { return KSPUtil.ApplicationRootPath + "Logs/" + typeof (Logger).Assembly.GetName().Name + "/"; }
         }
 
         // ==> Implement own version
-        public static string version
+        public static String version
         {
-            get { return Constants.Version.version; }
+            get { return Constants.Version.VersionID; }
         }
 
         // Default logger
@@ -133,7 +129,7 @@ namespace Kopernicus
         }
 
         // Create a logger
-        public Logger([Optional] string LogFileName)
+        public Logger([Optional] String LogFileName)
         {
             if (!isInitialized)
                 return;
@@ -145,15 +141,15 @@ namespace Kopernicus
             {
                 // Open the log file (overwrite existing logs)
                 LogFileName = LogFileName.Replace("/", "").Replace("\\", "");
-                string LogFile = Logger.LogDirectory + LogFileName + ".log";
+                String LogFile = Logger.LogDirectory + LogFileName + ".log";
                 loggerStream = new StreamWriter(LogFile);
 
                 // Write an opening message
-                string logVersion = "//=====  " + version + "  =====//";
+                String logVersion = "//=====  " + version + "  =====//";
 
                 // Create the header this way, because I'm maybe too stupid to find the "fill" function
-                string logHeader = "";
-                for (int i = 0; i < (logVersion.Length - 4); i++)
+                String logHeader = "";
+                for (Int32 i = 0; i < (logVersion.Length - 4); i++)
                 {
                     logHeader += "=";
                 }
@@ -185,7 +181,7 @@ namespace Kopernicus
                     Directory.CreateDirectory(LogDirectory);
 
                 // Clear out the old log files
-                foreach(string file in Directory.GetFiles(LogDirectory))
+                foreach(String file in Directory.GetFiles(LogDirectory))
                 {
                     File.Delete(file);
                 }

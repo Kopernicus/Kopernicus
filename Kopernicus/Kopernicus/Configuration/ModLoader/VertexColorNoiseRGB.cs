@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,14 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using LibNoise;
+using System;
 using UnityEngine;
 
 namespace Kopernicus
@@ -42,7 +38,7 @@ namespace Kopernicus
             {
                 // Amount of color that will be applied
                 [ParserTarget("blend")]
-                public NumericParser<float> blend
+                public NumericParser<Single> blend
                 {
                     get { return mod.blend; }
                     set { mod.blend = value; }
@@ -50,7 +46,7 @@ namespace Kopernicus
 
                 // Amount of red
                 [ParserTarget("rBlend")]
-                public NumericParser<float> rBlend
+                public NumericParser<Single> rBlend
                 {
                     get { return mod.rBlend; }
                     set { mod.rBlend = value; }
@@ -58,7 +54,7 @@ namespace Kopernicus
 
                 // Amount of green
                 [ParserTarget("gBlend")]
-                public NumericParser<float> gBlend
+                public NumericParser<Single> gBlend
                 {
                     get { return mod.gBlend; }
                     set { mod.gBlend = value; }
@@ -66,7 +62,7 @@ namespace Kopernicus
 
                 // Amount of blue
                 [ParserTarget("bBlend")]
-                public NumericParser<float> bBlend
+                public NumericParser<Single> bBlend
                 {
                     get { return mod.bBlend; }
                     set { mod.bBlend = value; }
@@ -74,7 +70,7 @@ namespace Kopernicus
 
                 // The frequency of the noise
                 [ParserTarget("frequency")]
-                public NumericParser<float> frequency
+                public NumericParser<Single> frequency
                 {
                     get { return mod.frequency; }
                     set { mod.frequency = value; }
@@ -82,7 +78,7 @@ namespace Kopernicus
 
                 // Lacunarity of the noise
                 [ParserTarget("lacunarity")]
-                public NumericParser<float> lacunarity
+                public NumericParser<Single> lacunarity
                 {
                     get { return mod.lacunarity; }
                     set { mod.lacunarity = value; }
@@ -92,21 +88,21 @@ namespace Kopernicus
                 [ParserTarget("mode")]
                 public EnumParser<KopernicusNoiseQuality> mode
                 {
-                    get { return (KopernicusNoiseQuality) (int) mod.mode; }
-                    set { mod.mode = (NoiseQuality) (int) value.value; }
+                    get { return (KopernicusNoiseQuality) (Int32) mod.mode; }
+                    set { mod.mode = (NoiseQuality) (Int32) value.value; }
                 }
 
                 // Noise algorithm
                 [ParserTarget("noiseType")]
                 public EnumParser<KopernicusNoiseType> noiseType
                 {
-                    get { return (KopernicusNoiseType) (int) mod.noiseType; }
-                    set { mod.noiseType = (PQSMod_VertexColorNoiseRGB.NoiseType) (int) value.value; }
+                    get { return (KopernicusNoiseType) (Int32) mod.noiseType; }
+                    set { mod.noiseType = (PQSMod_VertexColorNoiseRGB.NoiseType) (Int32) value.value; }
                 }
 
                 // Octaves of the noise
                 [ParserTarget("octaves")]
-                public NumericParser<int> octaves
+                public NumericParser<Int32> octaves
                 {
                     get { return mod.octaves; }
                     set { mod.octaves = Mathf.Clamp(value, 1, 30); }
@@ -114,7 +110,7 @@ namespace Kopernicus
 
                 // Persistance of the noise
                 [ParserTarget("persistance")]
-                public NumericParser<float> persistance
+                public NumericParser<Single> persistance
                 {
                     get { return mod.persistance; }
                     set { mod.persistance = value; }
@@ -122,7 +118,7 @@ namespace Kopernicus
 
                 // The seed of the noise
                 [ParserTarget("seed")]
-                public NumericParser<int> seed
+                public NumericParser<Int32> seed
                 {
                     get { return mod.seed; }
                     set { mod.seed = value; }

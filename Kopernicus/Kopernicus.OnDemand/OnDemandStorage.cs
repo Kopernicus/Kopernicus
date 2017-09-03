@@ -1,40 +1,32 @@
 ﻿/**
-* Kopernicus Planetary System Modifier
-* ====================================
-* Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
-* Maintained by: Thomas P., NathanKell and KillAshley
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
-* ------------------------------------------------------------- 
-* This library is free software; you can redistribute it and/or
-* modify it under the terms of the GNU Lesser General Public
-* License as published by the Free Software Foundation; either
-* version 3 of the License, or (at your option) any later version.
-*
-* This library is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this library; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-* MA 02110-1301  USA
-* 
-* This library is intended to be used as a plugin for Kerbal Space Program
-* which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
-* itself is governed by the terms of its EULA, not the license above.
-* 
-* https://kerbalspaceprogram.com
-*/
+ * Kopernicus Planetary System Modifier
+ * ------------------------------------------------------------- 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ * 
+ * This library is intended to be used as a plugin for Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * itself is governed by the terms of its EULA, not the license above.
+ * 
+ * https://kerbalspaceprogram.com
+ */
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using UnityEngine;
-using System.Threading;
 using System.IO;
-using System.ComponentModel;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -44,21 +36,21 @@ namespace Kopernicus
         public static class OnDemandStorage
         {
             // Lists
-            public static Dictionary<string, List<ILoadOnDemand>> maps = new Dictionary<string, List<ILoadOnDemand>>();
+            public static Dictionary<String, List<ILoadOnDemand>> maps = new Dictionary<String, List<ILoadOnDemand>>();
             public static Dictionary<PQS, PQSMod_OnDemandHandler> handlers = new Dictionary<PQS, PQSMod_OnDemandHandler>();
-            public static string currentBody = "";
+            public static String currentBody = "";
 
             // Whole file buffer management
             private static byte[] wholeFileBuffer = null;
-            private static int sizeWholeFile = 0;
-            private static int arrayLengthOffset = 0;
+            private static Int32 sizeWholeFile = 0;
+            private static Int32 arrayLengthOffset = 0;
 
             // OnDemand flags
-            public static bool useOnDemand = true;
-            public static bool useOnDemandBiomes = true;
-            public static bool onDemandLoadOnMissing = true;
-            public static bool onDemandLogOnMissing = true;
-            public static int onDemandUnloadDelay = 10;
+            public static Boolean useOnDemand = true;
+            public static Boolean useOnDemandBiomes = true;
+            public static Boolean onDemandLoadOnMissing = true;
+            public static Boolean onDemandLogOnMissing = true;
+            public static Int32 onDemandUnloadDelay = 10;
 
             // Add the management handler to the PQS
             public static void AddHandler(PQS pqsVersion)
@@ -72,7 +64,7 @@ namespace Kopernicus
             }
 
             // Add a map to the map-list
-            public static void AddMap(string body, ILoadOnDemand map)
+            public static void AddMap(String body, ILoadOnDemand map)
             {
                 // If the map is null, abort
                 if (map == null)
@@ -96,7 +88,7 @@ namespace Kopernicus
             }
 
             // Remove a map from the list
-            public static void RemoveMap(string body, ILoadOnDemand map)
+            public static void RemoveMap(String body, ILoadOnDemand map)
             {
                 // If the map is null, abort
                 if (map == null)
@@ -132,7 +124,7 @@ namespace Kopernicus
                     exclude = new List<ILoadOnDemand>();
 
                 // Go through all maps
-                for (int i = maps.Count - 1; i >= 0; --i)
+                for (Int32 i = maps.Count - 1; i >= 0; --i)
                 {
                     // If excluded...
                     if (exclude.Contains(maps[i])) continue;
@@ -150,7 +142,7 @@ namespace Kopernicus
                     exclude = new List<ILoadOnDemand>();
 
                 // Go through all maps
-                for (int i = maps.Count - 1; i >= 0; --i)
+                for (Int32 i = maps.Count - 1; i >= 0; --i)
                 {
                     // If excluded...
                     if (exclude.Contains(maps[i])) continue;
@@ -161,7 +153,7 @@ namespace Kopernicus
             }
 
             // Enable all maps of a body
-            public static bool EnableBody(string body)
+            public static Boolean EnableBody(String body)
             {
                 if (maps.ContainsKey(body))
                 {
@@ -174,7 +166,7 @@ namespace Kopernicus
             }
 
             // Unload all maps of a body
-            public static bool DisableBody(string body)
+            public static Boolean DisableBody(String body)
             {
                 if (maps.ContainsKey(body))
                 {
@@ -185,7 +177,7 @@ namespace Kopernicus
                 return false;
             }
 
-            public static byte[] LoadWholeFile(string path)
+            public static byte[] LoadWholeFile(String path)
             {
                 // If we haven't worked out if we can patch array length then do it
                 if (arrayLengthOffset == 0)
@@ -197,10 +189,10 @@ namespace Kopernicus
 
                 // Otherwise we do cunning stuff
                 FileStream file = File.OpenRead(path);
-                if (file.Length > int.MaxValue)
+                if (file.Length > Int32.MaxValue)
                     throw new Exception("File too large");
 
-                int fileBytes = (int)file.Length;
+                Int32 fileBytes = (Int32)file.Length;
 
                 if (wholeFileBuffer == null || fileBytes > sizeWholeFile)
                 {
@@ -216,10 +208,10 @@ namespace Kopernicus
                 }
 
                 // Read all the data from the file
-                int i = 0;
+                Int32 i = 0;
                 while (fileBytes > 0)
                 {
-                    int read = file.Read(wholeFileBuffer, i, (fileBytes > 0x100000) ? 0x100000 : fileBytes);
+                    Int32 read = file.Read(wholeFileBuffer, i, (fileBytes > 0x100000) ? 0x100000 : fileBytes);
                     if (read > 0)
                     {
                         i += read;
@@ -240,15 +232,15 @@ namespace Kopernicus
                     CalculateArrayLengthOffset();
 
                 long chunkBytes = reader.BaseStream.Length - reader.BaseStream.Position;
-                if (chunkBytes > int.MaxValue)
+                if (chunkBytes > Int32.MaxValue)
                     throw new Exception("Chunk too large");
 
                 // If we can't patch array length then just use the normal function
                 if (arrayLengthOffset == 1)
-                    return reader.ReadBytes((int)chunkBytes);
+                    return reader.ReadBytes((Int32)chunkBytes);
 
                 // Otherwise we do cunning stuff
-                int fileBytes = (int)chunkBytes;
+                Int32 fileBytes = (Int32)chunkBytes;
                 if (wholeFileBuffer == null || fileBytes > sizeWholeFile)
                 {
                     // Round it up to a 1MB multiple
@@ -263,10 +255,10 @@ namespace Kopernicus
                 }
 
                 // Read all the data from the file
-                int i = 0;
+                Int32 i = 0;
                 while (fileBytes > 0)
                 {
-                    int read = reader.Read(wholeFileBuffer, i, (fileBytes > 0x100000) ? 0x100000 : fileBytes);
+                    Int32 read = reader.Read(wholeFileBuffer, i, (fileBytes > 0x100000) ? 0x100000 : fileBytes);
                     if (read > 0)
                     {
                         i += read;
@@ -283,11 +275,11 @@ namespace Kopernicus
             unsafe static void CalculateArrayLengthOffset()
             {
                 // Work out the offset by allocating a small array and searching backwards until we find the correct value
-                int[] temp = new int[3];
-                int offset = -4;
-                fixed (int* ptr = &temp[0])
+                Int32[] temp = new Int32[3];
+                Int32 offset = -4;
+                fixed (Int32* ptr = &temp[0])
                 {
-                    int* p = ptr - 1;
+                    Int32* p = ptr - 1;
                     while (*p != 3 && offset > -44)
                     {
                         offset -= 4;
@@ -299,23 +291,23 @@ namespace Kopernicus
                 }
             }
 
-            unsafe static void FudgeByteArrayLength(byte[] array, int len)
+            unsafe static void FudgeByteArrayLength(byte[] array, Int32 len)
             {
                 fixed (byte* ptr = &array[0])
                 {
-                    int* pLen = (int*)(ptr + arrayLengthOffset);
+                    Int32* pLen = (Int32*)(ptr + arrayLengthOffset);
                     *pLen = len;
                 }
             }
 
             // Loads a texture
-            public static Texture2D LoadTexture(string path, bool compress, bool upload, bool unreadable)
+            public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
             {
                 Texture2D map = null;
                 path = Directory.GetCurrentDirectory() + "/GameData/" + path;
                 if (File.Exists(path))
                 {
-                    bool uncaught = true;
+                    Boolean uncaught = true;
                     try
                     {
                         if (path.ToLower().EndsWith(".dds"))
@@ -334,34 +326,34 @@ namespace Kopernicus
                                     new DDSHeaders.DDSHeaderDX10(binaryReader);
                                 }
 
-                                bool alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
-                                bool fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
-                                bool rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
-                                bool alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
-                                bool luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
-                                bool rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
-                                //bool bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
-                                bool rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
-                                bool argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
-                                bool rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
+                                Boolean alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
+                                Boolean fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
+                                Boolean rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
+                                Boolean alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
+                                Boolean luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
+                                Boolean rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
+                                //Boolean bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
+                                Boolean rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
+                                Boolean argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
+                                Boolean rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
 
-                                bool mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
-                                bool isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
+                                Boolean mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
+                                Boolean isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
                                 if (fourcc)
                                 {
                                     if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
                                     {
-                                        map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
                                     {
-                                        map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
                                     {
-                                        map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
@@ -382,7 +374,7 @@ namespace Kopernicus
                                 if (!fourcc)
                                 {
                                     TextureFormat textureFormat = TextureFormat.ARGB32;
-                                    bool ok = true;
+                                    Boolean ok = true;
                                     if (rgb && (rgb888 /*|| bgr888*/))
                                     {
                                         // RGB or RGBA format
@@ -416,7 +408,7 @@ namespace Kopernicus
                                     }
                                     if (ok)
                                     {
-                                        map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
+                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, textureFormat, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
 
@@ -460,7 +452,7 @@ namespace Kopernicus
             }
 
             // Checks if a Texture exists
-            public static bool TextureExists(string path)
+            public static Boolean TextureExists(String path)
             {
                 path = Directory.GetCurrentDirectory() + "/GameData/" + path;
                 return File.Exists(path);

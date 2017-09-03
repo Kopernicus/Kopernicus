@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -29,9 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -48,7 +41,7 @@ namespace Kopernicus
                 {
                     // The body we are passing
                     [ParserTarget("body")]
-                    public string body { get; set; }
+                    public String body { get; set; }
 
                     // eccentricity
                     [ParserTarget("eccentricity")]
@@ -76,11 +69,11 @@ namespace Kopernicus
 
                     // The probability of this Orbit type
                     [ParserTarget("probability")]
-                    public NumericParser<float> probability { get; set; }
+                    public NumericParser<Single> probability { get; set; }
 
                     // Whether the body must be reached
                     [ParserTarget("reached")]
-                    public NumericParser<bool> reached { get; set; }
+                    public NumericParser<Boolean> reached { get; set; }
                 }
 
                 // Loads the flyby-Orbits of this Asteroid
@@ -89,23 +82,23 @@ namespace Kopernicus
                 {
                     // The body we are passing
                     [ParserTarget("body")]
-                    public string body { get; set; }
+                    public String body { get; set; }
 
                     // The minimum amount of days to closest approach
                     [ParserTarget("minDuration")]
-                    public NumericParser<float> minDuration { get; set; }
+                    public NumericParser<Single> minDuration { get; set; }
 
                     // The maximum amount of days to closest approach
                     [ParserTarget("maxDuration")]
-                    public NumericParser<float> maxDuration { get; set; }
+                    public NumericParser<Single> maxDuration { get; set; }
 
                     // The probability of this Orbit type
                     [ParserTarget("probability")]
-                    public NumericParser<float> probability { get; set; }
+                    public NumericParser<Single> probability { get; set; }
 
                     // Whether the body must be reached
                     [ParserTarget("reached")]
-                    public NumericParser<bool> reached { get; set; }
+                    public NumericParser<Boolean> reached { get; set; }
                 }
 
                 // Loads the around-Orbits of this Asteroid
@@ -114,7 +107,7 @@ namespace Kopernicus
                 {
                     // The body we are passing
                     [ParserTarget("body")]
-                    public string body { get; set; }
+                    public String body { get; set; }
 
                     // eccentricity
                     [ParserTarget("eccentricity")]
@@ -146,11 +139,11 @@ namespace Kopernicus
 
                     // The probability of this Orbit type
                     [ParserTarget("probability")]
-                    public NumericParser<float> probability { get; set; }
+                    public NumericParser<Single> probability { get; set; }
 
                     // Whether the body must be reached
                     [ParserTarget("reached")]
-                    public NumericParser<bool> reached { get; set; }
+                    public NumericParser<Boolean> reached { get; set; }
                 }
 
                 // Loads a random range value
@@ -159,14 +152,14 @@ namespace Kopernicus
                 {
                     // The min value
                     [ParserTarget("minValue")]
-                    public NumericParser<float> minValue { get; set; }
+                    public NumericParser<Single> minValue { get; set; }
 
                     // The max value
                     [ParserTarget("maxValue")]
-                    public NumericParser<float> maxValue { get; set; }
+                    public NumericParser<Single> maxValue { get; set; }
 
-                    // Convert this to int, and return a random value
-                    public static implicit operator float(RandomRangeLoader loader)
+                    // Convert this to Int32, and return a random value
+                    public static implicit operator Single(RandomRangeLoader loader)
                     {
                         return UnityEngine.Random.Range(loader.minValue, loader.maxValue);
                     }
@@ -174,12 +167,12 @@ namespace Kopernicus
                     // Create a loader from given values
                     public RandomRangeLoader()
                     {
-                        this.maxValue = 1;
-                        this.minValue = 0;
+                        maxValue = 1;
+                        minValue = 0;
                     }
 
                     // Create a loader from given values
-                    public RandomRangeLoader(float minValue, float maxValue)
+                    public RandomRangeLoader(Single minValue, Single maxValue)
                     {
                         this.maxValue = maxValue;
                         this.minValue = minValue;

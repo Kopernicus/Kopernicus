@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,12 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -41,7 +38,7 @@ namespace Kopernicus
             {
                 // angle
                 [ParserTarget("angle")]
-                public NumericParser<float> angle
+                public NumericParser<Single> angle
                 {
                     get { return mod.angle; }
                     set { mod.angle = value; }
@@ -49,7 +46,7 @@ namespace Kopernicus
 
                 // The deformity of the map for the Quad Remover (?)
                 [ParserTarget("blendA")]
-                public NumericParser<float> blendA
+                public NumericParser<Single> blendA
                 {
                     get { return mod.blendA; }
                     set { mod.blendA = value; }
@@ -57,7 +54,7 @@ namespace Kopernicus
 
                 // blendB
                 [ParserTarget("blendB")]
-                public NumericParser<float> blendB
+                public NumericParser<Single> blendB
                 {
                     get { return mod.blendB; }
                     set { mod.blendB = value; }
@@ -73,7 +70,7 @@ namespace Kopernicus
 
                 // framesPerSecond
                 [ParserTarget("framesPerSecond")]
-                public NumericParser<float> framesPerSecond
+                public NumericParser<Single> framesPerSecond
                 {
                     get { return mod.framesPerSecond; }
                     set { mod.framesPerSecond = value; }
@@ -89,7 +86,7 @@ namespace Kopernicus
 
                 // oceanOpacity
                 [ParserTarget("oceanOpacity")]
-                public NumericParser<float> oceanOpacity
+                public NumericParser<Single> oceanOpacity
                 {
                     get { return mod.oceanOpacity; }
                     set { mod.oceanOpacity = value; }
@@ -105,7 +102,7 @@ namespace Kopernicus
 
                 // spaceAltitude
                 [ParserTarget("spaceAltitude")]
-                public NumericParser<double> spaceAltitude
+                public NumericParser<Double> spaceAltitude
                 {
                     get { return mod.spaceAltitude; }
                     set { mod.spaceAltitude = value; }
@@ -113,7 +110,7 @@ namespace Kopernicus
 
                 // spaceSurfaceBlend
                 [ParserTarget("spaceSurfaceBlend")]
-                public NumericParser<float> spaceSurfaceBlend
+                public NumericParser<Single> spaceSurfaceBlend
                 {
                     get { return mod.spaceSurfaceBlend; }
                     set { mod.spaceSurfaceBlend = value; }
@@ -129,7 +126,7 @@ namespace Kopernicus
 
                 // texBlend
                 [ParserTarget("texBlend")]
-                public NumericParser<float> texBlend
+                public NumericParser<Single> texBlend
                 {
                     get { return mod.texBlend; }
                     set { mod.texBlend = value; }
@@ -137,7 +134,7 @@ namespace Kopernicus
 
                 // txIndex
                 [ParserTarget("txIndex")]
-                public NumericParser<int> txIndex
+                public NumericParser<Int32> txIndex
                 {
                     get { return mod.txIndex; }
                     set { mod.txIndex = value; }
@@ -164,17 +161,17 @@ namespace Kopernicus
                         mod.waterMainLength = value.values.Count;
 
                         // If the array isn't there, recreate it
-                        if (mod.watermain == null) mod.watermain = new Texture2D[(int)mod.waterMainLength];
+                        if (mod.watermain == null) mod.watermain = new Texture2D[(Int32)mod.waterMainLength];
 
                         // If the count doesn't matches, recreate the array
                         if (mod.watermain.Length != mod.waterMainLength)
                         {
-                            mod.watermain = new Texture2D[(int)mod.waterMainLength];
+                            mod.watermain = new Texture2D[(Int32)mod.waterMainLength];
                         }
 
                         // Load the textures
-                        int i = 0;
-                        foreach (string s in value.GetValuesStartsWith("waterTex-"))
+                        Int32 i = 0;
+                        foreach (String s in value.GetValuesStartsWith("waterTex-"))
                         {
                             Texture2DParser texParser = new Texture2DParser();
                             texParser.SetFromString(s);

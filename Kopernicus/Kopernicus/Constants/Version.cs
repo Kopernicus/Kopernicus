@@ -1,10 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
- * -------------------------------------------------------------
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,18 +15,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- *
+ * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- *
+ * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace Kopernicus
 {
@@ -40,38 +36,38 @@ namespace Kopernicus
         public class Version
         {
             // Versioning information
-            public static string versionNumber
+            public static String VersionNumber
             {
                 get { return CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision + "-" + CompatibilityChecker.Kopernicus; }
             }
 
-            // Get a string for the logging
-            public static string version
+            // Get a String for the logging
+            public static String VersionID
             {
                 get
                 {
                     #if DEBUG
-                    const bool developmentBuild = true;
+                    const Boolean developmentBuild = true;
                     #else
-                    const bool developmentBuild = false;
+                    const Boolean developmentBuild = false;
                     #endif
-                    return "Kopernicus " + versionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
+                    return "Kopernicus " + VersionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
             }
 
             // Returns the SHA1 Hash of the assembly
-            public static string AssemblyHandle()
+            public static String AssemblyHandle()
             {
-                string filePath = Assembly.GetCallingAssembly().Location;
+                String filePath = Assembly.GetCallingAssembly().Location;
                 return Convert.ToBase64String(SHA1.Create().ComputeHash(File.ReadAllBytes(filePath)));
             }
 
             // Returns the time when the assembly was built
             public static DateTime BuiltTime()
             {
-                string filePath = Assembly.GetCallingAssembly().Location;
-                const int c_PeHeaderOffset = 60;
-                const int c_LinkerTimestampOffset = 8;
+                String filePath = Assembly.GetCallingAssembly().Location;
+                const Int32 c_PeHeaderOffset = 60;
+                const Int32 c_LinkerTimestampOffset = 8;
                 byte[] b = new byte[2048];
                 Stream s = null;
 
@@ -88,8 +84,8 @@ namespace Kopernicus
                     }
                 }
 
-                int i = BitConverter.ToInt32(b, c_PeHeaderOffset);
-                int secondsSince1970 = BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
+                Int32 i = BitConverter.ToInt32(b, c_PeHeaderOffset);
+                Int32 secondsSince1970 = BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
                 DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 dt = dt.AddSeconds(secondsSince1970);
                 dt = dt.ToLocalTime();

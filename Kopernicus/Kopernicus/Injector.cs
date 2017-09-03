@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,17 +17,17 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using Kopernicus.Configuration;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using Kopernicus.Configuration;
 
 namespace Kopernicus 
 {
@@ -40,7 +36,7 @@ namespace Kopernicus
     public class Injector : MonoBehaviour 
     {
         // Name of the config node group which manages Kopernicus
-        public const string rootNodeName = "Kopernicus";
+        public const String rootNodeName = "Kopernicus";
 
         // Custom Assembly query since AppDomain and Assembly loader are not quite what we want in 1.1
         [Obsolete("Please use Parser.ModTypes", true)]
@@ -59,8 +55,8 @@ namespace Kopernicus
             // Abort, if KSP isn't compatible
             if (!CompatibilityChecker.IsCompatible())
             {
-                string supported = CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision;
-                string current = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
+                String supported = CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision;
+                String current = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
                 Debug.LogWarning("[Kopernicus] Detected incompatible install.\nCurrent version of KSP: " + current + ".\nSupported version of KSP: " + supported + ".\nPlease wait, until Kopernicus gets updated to match your version of KSP.");
                 Debug.Log("[Kopernicus] Aborting...");
 
@@ -130,7 +126,7 @@ namespace Kopernicus
             SpaceCenter.Instance.Start();
 
             // Fix the flight globals index of each body and patch it's SOI
-            int counter = 0;
+            Int32 counter = 0;
             foreach (CelestialBody body in FlightGlobals.Bodies) 
             {
                 // Event
@@ -145,11 +141,11 @@ namespace Kopernicus
 
                 // Patch the SOI
                 if (body.Has("sphereOfInfluence"))
-                    body.sphereOfInfluence = body.Get<double>("sphereOfInfluence");
+                    body.sphereOfInfluence = body.Get<Double>("sphereOfInfluence");
 
                 // Patch the Hill Sphere
                 if (body.Has("hillSphere"))
-                    body.hillSphere = body.Get<double>("hillSphere");
+                    body.hillSphere = body.Get<Double>("hillSphere");
 
                 // Make the Body a barycenter
                 if (body.Has("barycenter"))
@@ -164,7 +160,7 @@ namespace Kopernicus
 
             // Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
             PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
-            double maximumDistance = 1000d; // rootBody.children.Max(b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
+            Double maximumDistance = 1000d; // rootBody.children.Max(b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
             if (rootBody != null)
             {
                 maximumDistance = rootBody.celestialBody.Radius * 100d;
@@ -190,7 +186,7 @@ namespace Kopernicus
             }
             else
                 Debug.Log("Found max distance " + maximumDistance);
-            PlanetariumCamera.fetch.maxDistance = ((float)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
+            PlanetariumCamera.fetch.maxDistance = ((Single)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
 
             // Call the event
             Events.OnPostFixing.Fire();

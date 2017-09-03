@@ -1,10 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
- * -------------------------------------------------------------
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,14 +15,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- *
+ * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- *
+ * 
  * https://kerbalspaceprogram.com
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,60 +36,70 @@ namespace Kopernicus
         /// </summary>
         public class Ring : MonoBehaviour
         {
-            /// Settings
-            public float innerRadius;
-            public float outerRadius;
+            // Settings
+            public Single innerRadius;
+            public Single outerRadius;
+
             /// <summary>
             /// Thickness of ring in milliradii
             /// </summary>
-            public float thickness;
-            public float planetRadius;
+            public Single thickness;
+
+            public Single planetRadius;
             public Quaternion rotation;
             public Texture2D texture;
             public Color color;
-            public bool lockRotation;
+            public Boolean lockRotation;
+
             /// <summary>
             /// Number of seconds for the ring to complete one rotation.
             /// If zero, fall back to matching parent body if lockRotation=false,
             /// and standing perfectly still if it's true.
             /// </summary>
-            public float rotationPeriod;
+            public Single rotationPeriod;
+
             /// <summary>
             /// Angle between the absolute reference direction and the ascending node.
             /// Works just like the corresponding property on celestial bodies.
             /// </summary>
-            public float longitudeOfAscendingNode;
-            public bool unlit;
-            public bool useNewShader;
-            public int steps = 128;
+            public Single longitudeOfAscendingNode;
+
+            public Boolean unlit;
+            public Boolean useNewShader;
+            public Int32 steps = 128;
+
             /// <summary>
             /// Number of times the textures should be tiled around the cylinder
             /// If zero, use the old behavior of sampling a thin diagonal strip
             /// from (0,0) to (1,1).
             /// </summary>
-            public int tiles = 0;
+            public Int32 tiles = 0;
+
             /// <summary>
             /// For new shader, makes planet shadow softer (values larger than one) or less soft (smaller than one)
             /// softness still depends on distance from sun, distance from planet and radius of sun and planet
             /// </summary>
-            public float penumbraMultiplier = 10f;
+            public Single penumbraMultiplier = 10f;
 
             /// <summary>
             /// This texture's opaque pixels cast shadows on our inner surface
             /// </summary>
-            public  Texture2D innerShadeTexture        = null;
+            public Texture2D innerShadeTexture = null;
+
             /// <summary>
             /// The inner shade texture repeats this many times over the inner surface
             /// </summary>
-            public  int       innerShadeTiles          = 0;
+            public Int32 innerShadeTiles = 0;
+
             /// <summary>
             /// Number of seconds the inner shade texture takes to complete one rotation
             /// </summary>
-            public  float     innerShadeRotationPeriod = 0;
+            public Single innerShadeRotationPeriod = 0;
+
             /// <summary>
             /// Multiply the time by this to get the offset of the inner shade texture
             /// </summary>
-            private float     innerShadeOffsetRate     = 0;
+            private Single innerShadeOffsetRate = 0;
 
             /// <summary>
             /// The body around which this ring is located.
@@ -116,15 +123,15 @@ namespace Kopernicus
             /// </summary>
             public void BuildRing()
             {
-                GameObject    parent     = transform.parent.gameObject;
-                List<Vector3> vertices   = new List<Vector3>();
-                List<Vector2> Uvs        = new List<Vector2>();
-                List<int>     Tris       = new List<int>();
+                GameObject parent = transform.parent.gameObject;
+                List<Vector3> vertices = new List<Vector3>();
+                List<Vector2> Uvs = new List<Vector2>();
+                List<Int32> Tris = new List<Int32>();
 
-                // These are invariant, so avoid floating point division in tight loops
-                float         degreeStep = 360f / steps;
-                float         innerScale = innerRadius / parent.transform.localScale.x;
-                float         outerScale = outerRadius / parent.transform.localScale.x;
+                // These are invariant, so avoid Singleing point division in tight loops
+                Single degreeStep = 360f / steps;
+                Single innerScale = innerRadius / parent.transform.localScale.x;
+                Single outerScale = outerRadius / parent.transform.localScale.x;
 
                 if (tiles > 0)
                     MakeTiledMesh(vertices, Uvs, Tris,
@@ -139,8 +146,8 @@ namespace Kopernicus
 
                 // Update Scale and Layer
                 transform.localScale = parent.transform.localScale;
-                transform.position   = parent.transform.localPosition;
-                gameObject.layer     = parent.layer;
+                transform.position = parent.transform.localPosition;
+                gameObject.layer = parent.layer;
 
                 // Create MeshFilter
                 MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
@@ -167,7 +174,7 @@ namespace Kopernicus
 
                 if (useNewShader)
                 {
-                    ringMR.material.SetFloat("planetRadius",       planetRadius);
+                    ringMR.material.SetFloat("planetRadius", planetRadius);
                     ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
 
                     if (innerShadeTexture != null) {
@@ -189,8 +196,8 @@ namespace Kopernicus
                 parentRenderer.material.renderQueue--;
             }
 
-            private const string newShader     = "Kopernicus/Rings",
-                                 unlitShader   = "Unlit/Transparent",
+            private const String newShader = "Kopernicus/Rings",
+                                 unlitShader = "Unlit/Transparent",
                                  diffuseShader = "Transparent/Diffuse";
 
             private Shader getShader()
@@ -222,13 +229,13 @@ namespace Kopernicus
             private void MakeLinearMesh(
                 List<Vector3> vertices,
                 List<Vector2> Uvs,
-                List<int>     Tris,
-                float         degreeStep,
-                float         innerScale,
-                float         outerScale)
+                List<Int32>     Tris,
+                Single         degreeStep,
+                Single         innerScale,
+                Single         outerScale)
             {
                 // Mesh wrapping
-                for (float i = 0f; i < 360f; i += (360f / steps))
+                for (Single i = 0f; i < 360f; i += (360f / steps))
                 {
                     // Rotation
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
@@ -241,7 +248,7 @@ namespace Kopernicus
                     vertices.Add(eVert * outerScale);
                     Uvs.Add(Vector2.zero);
                 }
-                for (float i = 0f; i < 360f; i += (360f / steps))
+                for (Single i = 0f; i < 360f; i += (360f / steps))
                 {
                     // Rotation
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
@@ -256,8 +263,8 @@ namespace Kopernicus
                 }
 
                 // Tri Wrapping
-                int Wrapping = steps * 2;
-                for (int i = 0; i < Wrapping; i += 2)
+                Int32 Wrapping = steps * 2;
+                for (Int32 i = 0; i < Wrapping; i += 2)
                 {
                     Tris.Add((i    ) % Wrapping);
                     Tris.Add((i + 1) % Wrapping);
@@ -267,7 +274,7 @@ namespace Kopernicus
                     Tris.Add((i + 3) % Wrapping);
                     Tris.Add((i + 2) % Wrapping);
                 }
-                for (int i = 0; i < Wrapping; i += 2)
+                for (Int32 i = 0; i < Wrapping; i += 2)
                 {
                     Tris.Add(Wrapping + (i + 2) % Wrapping);
                     Tris.Add(Wrapping + (i + 1) % Wrapping);
@@ -290,7 +297,7 @@ namespace Kopernicus
             /// A vector that can be added to a U-vector to get the full
             /// texture coordinate.
             /// </returns>
-            private static Vector2 textureV(int numTiles, float degrees)
+            private static Vector2 textureV(Int32 numTiles, Single degrees)
             {
                 return numTiles * (degrees / 360f) * Vector2.up;
             }
@@ -314,13 +321,13 @@ namespace Kopernicus
             private void MakeTiledMesh(
                 List<Vector3> vertices,
                 List<Vector2> Uvs,
-                List<int>     Tris,
-                float         degreeStep,
-                float         innerScale,
-                float         outerScale,
+                List<Int32>     Tris,
+                Single         degreeStep,
+                Single         innerScale,
+                Single         outerScale,
                 Vector3       thicknessOffset)
             {
-                const float sideTexW  = 0.2f,
+                const Single sideTexW  = 0.2f,
                             innerTexW = 0.4f,
                             outerTexW = 0.4f;
                 // Define coordinates for 3 textures:
@@ -335,12 +342,12 @@ namespace Kopernicus
                 Vector2 outerBottomU = innerTopU;
                 Vector2 outerTopU    = outerBottomU + outerTexW * Vector2.right;
 
-                int Wrapping = steps * 2;
+                Int32 Wrapping = steps * 2;
                 // Allow inner==outer for thin cylinders w/ only inner/outer faces
                 if (innerRadius < outerRadius)
                 {
                     // Top faces
-                    for (float i = 0f; i < 360f; i += degreeStep)
+                    for (Single i = 0f; i < 360f; i += degreeStep)
                     {
                         // Rotation
                         Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
@@ -355,7 +362,7 @@ namespace Kopernicus
                         Uvs.Add(sideOuterU + texV);
                     }
                     // Bottom faces
-                    for (float i = 0f; i < 360f; i += degreeStep)
+                    for (Single i = 0f; i < 360f; i += degreeStep)
                     {
                         // Rotation
                         Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
@@ -370,19 +377,19 @@ namespace Kopernicus
                         Uvs.Add(sideOuterU + texV);
                     }
                     // Tri Wrapping
-                    for (int i = 0; i < Wrapping; i += 2)
+                    for (Int32 i = 0; i < Wrapping; i += 2)
                     {
-                        Tris.Add(           (i    )           );
-                        Tris.Add(           (i + 1) % Wrapping);
-                        Tris.Add(           (i + 2) % Wrapping);
+                        Tris.Add(i);
+                        Tris.Add((i + 1) % Wrapping);
+                        Tris.Add((i + 2) % Wrapping);
 
-                        Tris.Add(           (i + 1) % Wrapping);
-                        Tris.Add(           (i + 3) % Wrapping);
-                        Tris.Add(           (i + 2) % Wrapping);
+                        Tris.Add((i + 1) % Wrapping);
+                        Tris.Add((i + 3) % Wrapping);
+                        Tris.Add((i + 2) % Wrapping);
 
                         Tris.Add(Wrapping + (i + 2) % Wrapping);
                         Tris.Add(Wrapping + (i + 1) % Wrapping);
-                        Tris.Add(Wrapping + (i    ) % Wrapping);
+                        Tris.Add(Wrapping + i % Wrapping);
 
                         Tris.Add(Wrapping + (i + 2) % Wrapping);
                         Tris.Add(Wrapping + (i + 3) % Wrapping);
@@ -393,14 +400,14 @@ namespace Kopernicus
                 // Inner and outer faces
                 if (thickness > 0)
                 {
-                    int firstTop = vertices.Count;
+                    Int32 firstTop = vertices.Count;
                     // Mesh wrapping - top faces
                     // We need to generate one extra pair of vertices
                     // so the last triangles' texture coordinates don't
                     // go from a high value back to zero.
-                    for (int i = 0; i <= steps; ++i)
+                    for (Int32 i = 0; i <= steps; ++i)
                     {
-                        float f = i * degreeStep;
+                        Single f = i * degreeStep;
 
                         // Rotation
                         Vector3 eVert = Quaternion.Euler(0, f, 0) * Vector3.right;
@@ -415,9 +422,9 @@ namespace Kopernicus
                         Uvs.Add(outerTopU + texV);
                     }
                     // Mesh wrapping - bottom faces
-                    for (int i = 0; i <= steps; ++i)
+                    for (Int32 i = 0; i <= steps; ++i)
                     {
-                        float f = i * degreeStep;
+                        Single f = i * degreeStep;
 
                         // Rotation
                         Vector3 eVert = Quaternion.Euler(0, f, 0) * Vector3.right;
@@ -435,29 +442,29 @@ namespace Kopernicus
                     // No modulus this time because we want to use those
                     // extra vertices instead of having the
                     // texture coordinates loop back around.
-                    for (int i = 0; i < Wrapping; i += 2)
+                    for (Int32 i = 0; i < Wrapping; i += 2)
                     {
                         // Inner faces
-                        Tris.Add(firstTop +              (i    ));
-                        Tris.Add(firstTop +              (i + 2));
-                        Tris.Add(firstTop + Wrapping+2 + (i    ));
+                        Tris.Add(firstTop + i);
+                        Tris.Add(firstTop + (i + 2));
+                        Tris.Add(firstTop + Wrapping + 2 + i);
 
-                        Tris.Add(firstTop + Wrapping+2 + (i    ));
-                        Tris.Add(firstTop +              (i + 2));
-                        Tris.Add(firstTop + Wrapping+2 + (i + 2));
+                        Tris.Add(firstTop + Wrapping + 2 + i);
+                        Tris.Add(firstTop + (i + 2));
+                        Tris.Add(firstTop + Wrapping + 2 + (i + 2));
                     }
                     // Outer faces should always draw after inner to
                     // make the overlaps render correctly
-                    for (int i = 0; i < Wrapping; i += 2)
+                    for (Int32 i = 0; i < Wrapping; i += 2)
                     {
                         // Outer faces
-                        Tris.Add(firstTop +              (i + 1));
-                        Tris.Add(firstTop + Wrapping+2 + (i + 1));
-                        Tris.Add(firstTop +              (i + 3));
+                        Tris.Add(firstTop + (i + 1));
+                        Tris.Add(firstTop + Wrapping + 2 + (i + 1));
+                        Tris.Add(firstTop + (i + 3));
 
-                        Tris.Add(firstTop + Wrapping+2 + (i + 1));
-                        Tris.Add(firstTop + Wrapping+2 + (i + 3));
-                        Tris.Add(firstTop +              (i + 3));
+                        Tris.Add(firstTop + Wrapping + 2 + (i + 1));
+                        Tris.Add(firstTop + Wrapping + 2 + (i + 3));
+                        Tris.Add(firstTop + (i + 3));
                     }
                 }
             }
@@ -469,18 +476,18 @@ namespace Kopernicus
             {
                 if (transform?.parent != null) {
                     transform.localScale = transform.parent.localScale;
-                    setRotation();
+                    SetRotation();
                 }
 
                 if (useNewShader && ringMR?.material != null
                         && KopernicusStar.Current?.sun?.transform != null)
                 {
                     ringMR.material.SetFloat("sunRadius",
-                        (float) KopernicusStar.Current.sun.Radius);
+                        (Single) KopernicusStar.Current.sun.Radius);
                     ringMR.material.SetVector("sunPosRelativeToPlanet",
                         (Vector3) (KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position)));
                     ringMR.material.SetFloat("innerShadeOffset",
-                        (float) (Planetarium.GetUniversalTime() * innerShadeOffsetRate));
+                        (Single) (Planetarium.GetUniversalTime() * innerShadeOffsetRate));
                 }
             }
 
@@ -490,7 +497,7 @@ namespace Kopernicus
             void FixedUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                setRotation();
+                SetRotation();
             }
 
             /// <summary>
@@ -499,13 +506,13 @@ namespace Kopernicus
             void LateUpdate()
             {
                 transform.localScale = transform.parent.localScale;
-                setRotation();
+                SetRotation();
             }
 
             /// <summary>
             /// Populate our transform's rotation quaternion
             /// </summary>
-            private void setRotation()
+            private void SetRotation()
             {
                 if (lockRotation && referenceBody != null) {
                     // Setting transform.rotation does NOT give us a consistent
@@ -516,14 +523,14 @@ namespace Kopernicus
                     // rotation at the current moment in time, then add the LAN.
                     // Note that eastward (prograde) rotation is negative in trigonometry.
                     if (rotationPeriod != 0f) {
-                        float degreesPerSecond = -360f / rotationPeriod;
-                        float parentRotation = (float) (referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod);
+                        Single degreesPerSecond = -360f / rotationPeriod;
+                        Single parentRotation = (Single) (referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod);
                         transform.localRotation =
                             Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
                             * rotation
-                            * Quaternion.Euler(0, (float)Planetarium.GetUniversalTime() * degreesPerSecond, 0);
+                            * Quaternion.Euler(0, (Single)Planetarium.GetUniversalTime() * degreesPerSecond, 0);
                     } else {
-                        float parentRotation = (float) (referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod);
+                        Single parentRotation = (Single) (referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod);
                         transform.localRotation =
                             Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
                             * rotation;

@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -30,6 +26,7 @@
 using System;
 using Kopernicus.MaterialWrapper;
 using UnityEngine;
+
 using static Kopernicus.Configuration.ModLoader.LandControl.LandClassScatterLoader;
 
 namespace Kopernicus
@@ -82,11 +79,11 @@ namespace Kopernicus
 
                 // Should we add colliders to the scatter=
                 [ParserTarget("collide")]
-                public NumericParser<bool> collide = new NumericParser<bool>(false);
+                public NumericParser<Boolean> collide = new NumericParser<Boolean>(false);
 
                 // Should we add Science to the Scatter?
                 [ParserTarget("science")]
-                public NumericParser<bool> science = new NumericParser<bool>(false);
+                public NumericParser<Boolean> science = new NumericParser<Boolean>(false);
 
                 // ConfigNode that stores the Experiment
                 [ParserTarget("Experiment")]
@@ -98,7 +95,7 @@ namespace Kopernicus
 
                 // The name of the scatter
                 [ParserTarget("scatterName")]
-                public string scatterName
+                public String scatterName
                 {
                     get { return mod.scatterName; }
                     set { mod.scatterName = value; }
@@ -106,7 +103,7 @@ namespace Kopernicus
 
                 // The seed that is used to generate the scatters
                 [ParserTarget("seed")]
-                public NumericParser<int> seed
+                public NumericParser<Int32> seed
                 {
                     get { return mod.seed; }
                     set { mod.seed = value; }
@@ -114,7 +111,7 @@ namespace Kopernicus
 
                 // maxCache
                 [ParserTarget("maxCache")]
-                public NumericParser<int> maxCache
+                public NumericParser<Int32> maxCache
                 {
                     get { return mod.maxCache; }
                     set { mod.maxCache = value; }
@@ -122,7 +119,7 @@ namespace Kopernicus
 
                 // Maximum amount of scatters
                 [ParserTarget("maxScatter")]
-                public NumericParser<int> maxScatter
+                public NumericParser<Int32> maxScatter
                 {
                     get { return mod.maxScatter; }
                     set { mod.maxScatter = value; }
@@ -154,7 +151,7 @@ namespace Kopernicus
 
                 // min subdivision
                 [ParserTarget("minSubdivision")]
-                public NumericParser<int> minSubdivision
+                public NumericParser<Int32> minSubdivision
                 {
                     get { return mod.minSubdivision; }
                     set { mod.minSubdivision = value; }
@@ -162,7 +159,7 @@ namespace Kopernicus
 
                 // countPerSqM
                 [ParserTarget("countPerSqM")]
-                public NumericParser<float> countPerSqM
+                public NumericParser<Single> countPerSqM
                 {
                     get { return mod.countPerSqM; }
                     set { mod.countPerSqM = value; }
@@ -170,7 +167,7 @@ namespace Kopernicus
 
                 // verticalOffset
                 [ParserTarget("verticalOffset")]
-                public NumericParser<float> verticalOffset
+                public NumericParser<Single> verticalOffset
                 {
                     get { return mod.verticalOffset; }
                     set { mod.verticalOffset = value; }
@@ -194,7 +191,7 @@ namespace Kopernicus
 
                 // castShadows
                 [ParserTarget("castShadows")]
-                public NumericParser<bool> castShadows
+                public NumericParser<Boolean> castShadows
                 {
                     get { return mod.castShadows; }
                     set { mod.castShadows = value; }
@@ -202,7 +199,7 @@ namespace Kopernicus
 
                 // recieveShadows
                 [ParserTarget("recieveShadows")]
-                public NumericParser<bool> recieveShadows
+                public NumericParser<Boolean> recieveShadows
                 {
                     get { return mod.recieveShadows; }
                     set { mod.recieveShadows = value; }

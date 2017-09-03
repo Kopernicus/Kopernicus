@@ -27,11 +27,11 @@
  * https://kerbalspaceprogram.com
  */
 
+using Kopernicus.Components;
+using Kopernicus.MaterialWrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kopernicus.Components;
-using Kopernicus.MaterialWrapper;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -53,7 +53,7 @@ namespace Kopernicus
 
                     // The frequency of the simplex noise
                     [ParserTarget("frequency")]
-                    public NumericParser<double> frequency
+                    public NumericParser<Double> frequency
                     {
                         get { return simplex.frequency; }
                         set { simplex.frequency = value; }
@@ -61,7 +61,7 @@ namespace Kopernicus
                     
                     // Octaves of the simplex noise
                     [ParserTarget("octaves")]
-                    public NumericParser<double> octaves
+                    public NumericParser<Double> octaves
                     {
                         get { return simplex.octaves; }
                         set { simplex.octaves = value; }
@@ -69,7 +69,7 @@ namespace Kopernicus
 
                     // Persistence of the simplex noise
                     [ParserTarget("persistence")]
-                    public NumericParser<double> persistence
+                    public NumericParser<Double> persistence
                     {
                         get { return simplex.persistence; }
                         set { simplex.persistence = value; }
@@ -77,7 +77,7 @@ namespace Kopernicus
 
                     // The seed of the simplex noise
                     [ParserTarget("seed")]
-                    public NumericParser<int> seed
+                    public NumericParser<Int32> seed
                     {
                         set { simplex.seed = value; }
                     }
@@ -119,9 +119,9 @@ namespace Kopernicus
                     public class StockMaterialParser : IParsable
                     {
                         public Material value;
-                        public void SetFromString(string s)
+                        public void SetFromString(String s)
                         {
-                            string materialName = Regex.Replace(s, "BUILTIN/", "");
+                            String materialName = Regex.Replace(s, "BUILTIN/", "");
                             value = Resources.FindObjectsOfTypeAll<Material>().Where(material => material.name == materialName).FirstOrDefault();
                         }
 
@@ -184,15 +184,15 @@ namespace Kopernicus
 
                     // Should we delete the Scatter?
                     [ParserTarget("delete")]
-                    public NumericParser<bool> delete = new NumericParser<bool>(false);
+                    public NumericParser<Boolean> delete = false;
 
                     // Should we add colliders to the scatter=
                     [ParserTarget("collide")]
-                    public NumericParser<bool> collide = new NumericParser<bool>(false);
+                    public NumericParser<Boolean> collide = false;
 
                     // Should we add Science to the Scatter?
                     [ParserTarget("science")]
-                    public NumericParser<bool> science = new NumericParser<bool>(false);
+                    public NumericParser<Boolean> science = false;
 
                     // ConfigNode that stores the Experiment
                     [ParserTarget("Experiment")]
@@ -212,7 +212,7 @@ namespace Kopernicus
 
                     // castShadows
                     [ParserTarget("castShadows")]
-                    public NumericParser<bool> castShadows
+                    public NumericParser<Boolean> castShadows
                     {
                         get { return scatter.castShadows; }
                         set { scatter.castShadows = value; }
@@ -220,7 +220,7 @@ namespace Kopernicus
 
                     // densityFactor
                     [ParserTarget("densityFactor")]
-                    public NumericParser<double> densityFactor
+                    public NumericParser<Double> densityFactor
                     {
                         get { return scatter.densityFactor; }
                         set { scatter.densityFactor = value; }
@@ -236,7 +236,7 @@ namespace Kopernicus
 
                     // maxCache
                     [ParserTarget("maxCache")]
-                    public NumericParser<int> maxCache
+                    public NumericParser<Int32> maxCache
                     {
                         get { return scatter.maxCache; }
                         set { scatter.maxCache = value; }
@@ -244,7 +244,7 @@ namespace Kopernicus
 
                     // maxCacheDelta
                     [ParserTarget("maxCacheDelta")]
-                    public NumericParser<int> maxCacheDelta
+                    public NumericParser<Int32> maxCacheDelta
                     {
                         get { return scatter.maxCacheDelta; }
                         set { scatter.maxCacheDelta = value; }
@@ -252,7 +252,7 @@ namespace Kopernicus
 
                     // maxLevelOffset
                     [ParserTarget("maxLevelOffset")]
-                    public NumericParser<int> maxLevelOffset
+                    public NumericParser<Int32> maxLevelOffset
                     {
                         get { return scatter.maxLevelOffset; }
                         set { scatter.maxLevelOffset = value; }
@@ -260,7 +260,7 @@ namespace Kopernicus
 
                     // maxScale
                     [ParserTarget("maxScale")]
-                    public NumericParser<float> maxScale
+                    public NumericParser<Single> maxScale
                     {
                         get { return scatter.maxScale; }
                         set { scatter.maxScale = value; }
@@ -268,7 +268,7 @@ namespace Kopernicus
 
                     // maxScatter
                     [ParserTarget("maxScatter")]
-                    public NumericParser<int> maxScatter
+                    public NumericParser<Int32> maxScatter
                     {
                         get { return scatter.maxScatter; }
                         set { scatter.maxScatter = value; }
@@ -276,7 +276,7 @@ namespace Kopernicus
 
                     // maxSpeed
                     [ParserTarget("maxSpeed")]
-                    public NumericParser<double> maxSpeed
+                    public NumericParser<Double> maxSpeed
                     {
                         get { return scatter.maxSpeed; }
                         set { scatter.maxSpeed = value; }
@@ -284,7 +284,7 @@ namespace Kopernicus
 
                     // minScale
                     [ParserTarget("minScale")]
-                    public NumericParser<float> minScale
+                    public NumericParser<Single> minScale
                     {
                         get { return scatter.minScale; }
                         set { scatter.minScale = value; }
@@ -292,7 +292,7 @@ namespace Kopernicus
 
                     // recieveShadows
                     [ParserTarget("recieveShadows")]
-                    public NumericParser<bool> recieveShadows
+                    public NumericParser<Boolean> recieveShadows
                     {
                         get { return scatter.recieveShadows; }
                         set { scatter.recieveShadows = value; }
@@ -300,7 +300,7 @@ namespace Kopernicus
 
                     // Scatter name
                     [ParserTarget("name")]
-                    public string scatterName
+                    public String scatterName
                     {
                         get { return scatter.scatterName; }
                         set { scatter.scatterName = value; }
@@ -308,7 +308,7 @@ namespace Kopernicus
 
                     // Scatter seed
                     [ParserTarget("seed")]
-                    public NumericParser<int> seed
+                    public NumericParser<Int32> seed
                     {
                         get { return scatter.seed; }
                         set { scatter.seed = value; }
@@ -316,7 +316,7 @@ namespace Kopernicus
 
                     // verticalOffset
                     [ParserTarget("verticalOffset")]
-                    public NumericParser<float> verticalOffset
+                    public NumericParser<Single> verticalOffset
                     {
                         get { return scatter.verticalOffset; }
                         set { scatter.verticalOffset = value; }
@@ -383,7 +383,7 @@ namespace Kopernicus
 
                     // density
                     [ParserTarget("density")]
-                    public NumericParser<double> density
+                    public NumericParser<Double> density
                     {
                         get { return scatterAmount.density; }
                         set { scatterAmount.density = value; }
@@ -391,7 +391,7 @@ namespace Kopernicus
 
                     // The name of the scatter used
                     [ParserTarget("scatterName")]
-                    public string scatterName
+                    public String scatterName
                     {
                         get { return scatterAmount.scatterName; }
                         set { scatterAmount.scatterName = value; }
@@ -421,7 +421,7 @@ namespace Kopernicus
 
                     // endEnd
                     [ParserTarget("endEnd")]
-                    public NumericParser<double> endEnd
+                    public NumericParser<Double> endEnd
                     {
                         get { return lerpRange.endEnd; }
                         set { lerpRange.endEnd = value; }
@@ -429,7 +429,7 @@ namespace Kopernicus
 
                     // endStart
                     [ParserTarget("endStart")]
-                    public NumericParser<double> endStart
+                    public NumericParser<Double> endStart
                     {
                         get { return lerpRange.endStart; }
                         set { lerpRange.endStart = value; }
@@ -437,7 +437,7 @@ namespace Kopernicus
 
                     // startEnd
                     [ParserTarget("startEnd")]
-                    public NumericParser<double> startEnd
+                    public NumericParser<Double> startEnd
                     {
                         get { return lerpRange.startEnd; }
                         set { lerpRange.startEnd = value; }
@@ -445,7 +445,7 @@ namespace Kopernicus
 
                     // startStart
                     [ParserTarget("startStart")]
-                    public NumericParser<double> startStart
+                    public NumericParser<Double> startStart
                     {
                         get { return lerpRange.startStart; }
                         set { lerpRange.startStart = value; }
@@ -475,11 +475,11 @@ namespace Kopernicus
 
                     // Should we delete the LandClass?
                     [ParserTarget("delete")]
-                    public NumericParser<bool> delete = false;
+                    public NumericParser<Boolean> delete = false;
 
                     // alterApparentHeight
                     [ParserTarget("alterApparentHeight")]
-                    public NumericParser<float> alterApparentHeight
+                    public NumericParser<Single> alterApparentHeight
                     {
                         get { return landClass.alterApparentHeight; }
                         set { landClass.alterApparentHeight = value; }
@@ -487,7 +487,7 @@ namespace Kopernicus
 
                     // alterRealHeight
                     [ParserTarget("alterRealHeight")]
-                    public NumericParser<double> alterRealHeight
+                    public NumericParser<Double> alterRealHeight
                     {
                         get { return landClass.alterRealHeight; }
                         set { landClass.alterRealHeight = value; }
@@ -511,7 +511,7 @@ namespace Kopernicus
 
                     // coverageBlend
                     [ParserTarget("coverageBlend")]
-                    public NumericParser<float> coverageBlend
+                    public NumericParser<Single> coverageBlend
                     {
                         get { return landClass.coverageBlend; }
                         set { landClass.coverageBlend = value; }
@@ -519,7 +519,7 @@ namespace Kopernicus
 
                     // coverageFrequency
                     [ParserTarget("coverageFrequency")]
-                    public NumericParser<float> coverageFrequency
+                    public NumericParser<Single> coverageFrequency
                     {
                         get { return landClass.coverageFrequency; }
                         set { landClass.coverageFrequency = value; }
@@ -527,7 +527,7 @@ namespace Kopernicus
 
                     // coverageOctaves
                     [ParserTarget("coverageOctaves")]
-                    public NumericParser<int> coverageOctaves
+                    public NumericParser<Int32> coverageOctaves
                     {
                         get { return landClass.coverageOctaves; }
                         set { landClass.coverageOctaves = value; }
@@ -535,7 +535,7 @@ namespace Kopernicus
 
                     // coveragePersistance
                     [ParserTarget("coveragePersistance")]
-                    public NumericParser<float> coveragePersistance
+                    public NumericParser<Single> coveragePersistance
                     {
                         get { return landClass.coveragePersistance; }
                         set { landClass.coveragePersistance = value; }
@@ -543,7 +543,7 @@ namespace Kopernicus
 
                     // coverageSeed
                     [ParserTarget("coverageSeed")]
-                    public NumericParser<int> coverageSeed
+                    public NumericParser<Int32> coverageSeed
                     {
                         get { return landClass.coverageSeed; }
                         set { landClass.coverageSeed = value; }
@@ -559,7 +559,7 @@ namespace Kopernicus
 
                     // The name of the landclass
                     [ParserTarget("name")]
-                    public string landClassName
+                    public String landClassName
                     {
                         get { return landClass.landClassName; }
                         set { landClass.landClassName = value; }
@@ -567,7 +567,7 @@ namespace Kopernicus
 
                     // latDelta
                     [ParserTarget("latDelta")]
-                    public NumericParser<double> latDelta
+                    public NumericParser<Double> latDelta
                     {
                         get { return landClass.latDelta; }
                         set { landClass.latDelta = value; }
@@ -575,7 +575,7 @@ namespace Kopernicus
 
                     // latitudeDouble
                     [ParserTarget("latitudeDouble")]
-                    public NumericParser<bool> latitudeDouble
+                    public NumericParser<Boolean> latitudeDouble
                     {
                         get { return landClass.latitudeDouble; }
                         set { landClass.latitudeDouble = value; }
@@ -599,7 +599,7 @@ namespace Kopernicus
 
                     // lonDelta
                     [ParserTarget("lonDelta")]
-                    public NumericParser<double> lonDelta
+                    public NumericParser<Double> lonDelta
                     {
                         get { return landClass.lonDelta; }
                         set { landClass.lonDelta = value; }
@@ -615,7 +615,7 @@ namespace Kopernicus
 
                     // minimumRealHeight
                     [ParserTarget("minimumRealHeight")]
-                    public NumericParser<double> minimumRealHeight
+                    public NumericParser<Double> minimumRealHeight
                     {
                         get { return landClass.minimumRealHeight; }
                         set { landClass.minimumRealHeight = value; }
@@ -623,7 +623,7 @@ namespace Kopernicus
 
                     // noiseBlend
                     [ParserTarget("noiseBlend")]
-                    public NumericParser<float> noiseBlend
+                    public NumericParser<Single> noiseBlend
                     {
                         get { return landClass.noiseBlend; }
                         set { landClass.noiseBlend = value; }
@@ -639,7 +639,7 @@ namespace Kopernicus
 
                     // noiseFrequency
                     [ParserTarget("noiseFrequency")]
-                    public NumericParser<float> noiseFrequency
+                    public NumericParser<Single> noiseFrequency
                     {
                         get { return landClass.noiseFrequency; }
                         set { landClass.noiseFrequency = value; }
@@ -647,7 +647,7 @@ namespace Kopernicus
 
                     // noiseOctaves
                     [ParserTarget("noiseOctaves")]
-                    public NumericParser<int> noiseOctaves
+                    public NumericParser<Int32> noiseOctaves
                     {
                         get { return landClass.noiseOctaves; }
                         set { landClass.noiseOctaves = value; }
@@ -655,7 +655,7 @@ namespace Kopernicus
 
                     // noisePersistance
                     [ParserTarget("noisePersistance")]
-                    public NumericParser<float> noisePersistance
+                    public NumericParser<Single> noisePersistance
                     {
                         get { return landClass.noisePersistance; }
                         set { landClass.noisePersistance = value; }
@@ -663,7 +663,7 @@ namespace Kopernicus
 
                     // noiseSeed
                     [ParserTarget("noiseSeed")]
-                    public NumericParser<int> noiseSeed
+                    public NumericParser<Int32> noiseSeed
                     {
                         get { return landClass.noiseSeed; }
                         set { landClass.noiseSeed = value; }
@@ -751,7 +751,7 @@ namespace Kopernicus
 
                 // altitudeBlend
                 [ParserTarget("altitudeBlend")]
-                public NumericParser<float> altitudeBlend
+                public NumericParser<Single> altitudeBlend
                 {
                     get { return mod.altitudeBlend; }
                     set { mod.altitudeBlend = value; }
@@ -759,7 +759,7 @@ namespace Kopernicus
 
                 // altitudeFrequency
                 [ParserTarget("altitudeFrequency")]
-                public NumericParser<float> altitudeFrequency
+                public NumericParser<Single> altitudeFrequency
                 {
                     get { return mod.altitudeFrequency; }
                     set { mod.altitudeFrequency = value; }
@@ -767,7 +767,7 @@ namespace Kopernicus
 
                 // altitudeOctaves
                 [ParserTarget("altitudeOctaves")]
-                public NumericParser<int> altitudeOctaves
+                public NumericParser<Int32> altitudeOctaves
                 {
                     get { return mod.altitudeOctaves; }
                     set { mod.altitudeOctaves = value; }
@@ -775,7 +775,7 @@ namespace Kopernicus
 
                 // altitudePersistance
                 [ParserTarget("altitudePersistance")]
-                public NumericParser<float> altitudePersistance
+                public NumericParser<Single> altitudePersistance
                 {
                     get { return mod.altitudePersistance; }
                     set { mod.altitudePersistance = value; }
@@ -783,7 +783,7 @@ namespace Kopernicus
 
                 // altitudeSeed
                 [ParserTarget("altitudeSeed")]
-                public NumericParser<int> altitudeSeed
+                public NumericParser<Int32> altitudeSeed
                 {
                     get { return mod.altitudeSeed; }
                     set { mod.altitudeSeed = value; }
@@ -799,7 +799,7 @@ namespace Kopernicus
 
                 // createColors
                 [ParserTarget("createColors")]
-                public NumericParser<bool> createColors
+                public NumericParser<Boolean> createColors
                 {
                     get { return mod.createColors; }
                     set { mod.createColors = value; }
@@ -807,7 +807,7 @@ namespace Kopernicus
 
                 // createScatter
                 [ParserTarget("createScatter")]
-                public NumericParser<bool> createScatter
+                public NumericParser<Boolean> createScatter
                 {
                     get { return mod.createScatter; }
                     set { mod.createScatter = value; }
@@ -823,7 +823,7 @@ namespace Kopernicus
 
                 // latitudeBlend
                 [ParserTarget("latitudeBlend")]
-                public NumericParser<float> latitudeBlend
+                public NumericParser<Single> latitudeBlend
                 {
                     get { return mod.latitudeBlend; }
                     set { mod.latitudeBlend = value; }
@@ -831,7 +831,7 @@ namespace Kopernicus
 
                 // latitudeFrequency
                 [ParserTarget("latitudeFrequency")]
-                public NumericParser<float> latitudeFrequency
+                public NumericParser<Single> latitudeFrequency
                 {
                     get { return mod.latitudeFrequency; }
                     set { mod.latitudeFrequency = value; }
@@ -839,7 +839,7 @@ namespace Kopernicus
 
                 // latitudeOctaves
                 [ParserTarget("latitudeOctaves")]
-                public NumericParser<int> latitudeOctaves
+                public NumericParser<Int32> latitudeOctaves
                 {
                     get { return mod.latitudeOctaves; }
                     set { mod.latitudeOctaves = value; }
@@ -847,7 +847,7 @@ namespace Kopernicus
 
                 // latitudePersistance
                 [ParserTarget("latitudePersistance")]
-                public NumericParser<float> latitudePersistance
+                public NumericParser<Single> latitudePersistance
                 {
                     get { return mod.latitudePersistance; }
                     set { mod.latitudePersistance = value; }
@@ -855,7 +855,7 @@ namespace Kopernicus
 
                 // latitudeSeed
                 [ParserTarget("latitudeSeed")]
-                public NumericParser<int> latitudeSeed
+                public NumericParser<Int32> latitudeSeed
                 {
                     get { return mod.latitudeSeed; }
                     set { mod.latitudeSeed = value; }
@@ -871,7 +871,7 @@ namespace Kopernicus
 
                 // longitudeBlend
                 [ParserTarget("longitudeBlend")]
-                public NumericParser<float> longitudeBlend
+                public NumericParser<Single> longitudeBlend
                 {
                     get { return mod.longitudeBlend; }
                     set { mod.longitudeBlend = value; }
@@ -879,7 +879,7 @@ namespace Kopernicus
 
                 // longitudeFrequency
                 [ParserTarget("longitudeFrequency")]
-                public NumericParser<float> longitudeFrequency
+                public NumericParser<Single> longitudeFrequency
                 {
                     get { return mod.longitudeFrequency; }
                     set { mod.longitudeFrequency = value; }
@@ -887,7 +887,7 @@ namespace Kopernicus
 
                 // longitudeOctaves
                 [ParserTarget("longitudeOctaves")]
-                public NumericParser<int> longitudeOctaves
+                public NumericParser<Int32> longitudeOctaves
                 {
                     get { return mod.longitudeOctaves; }
                     set { mod.longitudeOctaves = value; }
@@ -895,7 +895,7 @@ namespace Kopernicus
 
                 // longitudePersistance
                 [ParserTarget("longitudePersistance")]
-                public NumericParser<float> longitudePersistance
+                public NumericParser<Single> longitudePersistance
                 {
                     get { return mod.longitudePersistance; }
                     set { mod.longitudePersistance = value; }
@@ -903,7 +903,7 @@ namespace Kopernicus
 
                 // longitudeSeed
                 [ParserTarget("longitudeSeed")]
-                public NumericParser<int> longitudeSeed
+                public NumericParser<Int32> longitudeSeed
                 {
                     get { return mod.longitudeSeed; }
                     set { mod.longitudeSeed = value; }
@@ -919,7 +919,7 @@ namespace Kopernicus
 
                 // useHeightMap
                 [ParserTarget("useHeightMap")]
-                public NumericParser<bool> useHeightMap
+                public NumericParser<Boolean> useHeightMap
                 {
                     get { return mod.useHeightMap; }
                     set { mod.useHeightMap = value; }
@@ -927,7 +927,7 @@ namespace Kopernicus
 
                 // vHeightMax
                 [ParserTarget("vHeightMax")]
-                public NumericParser<float> vHeightMax
+                public NumericParser<Single> vHeightMax
                 {
                     get { return mod.vHeightMax; }
                     set { mod.vHeightMax = value; }
@@ -1042,7 +1042,7 @@ namespace Kopernicus
                     {
                         foreach (PQSLandControl.LandClassScatterAmount amount in landClass.scatter)
                         {
-                            int i = 0;
+                            Int32 i = 0;
                             while (i < mod.scatters.Length)
                             {
                                 if (mod.scatters[i].scatterName.Equals(amount.scatterName)) break;

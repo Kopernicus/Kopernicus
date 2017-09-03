@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -44,11 +40,11 @@ namespace Kopernicus
 
             // Reference body to orbit
             [ParserTarget("referenceBody")]
-            public string referenceBody { get; set; }
+            public String referenceBody { get; set; }
 
             // How inclined is the orbit
             [ParserTarget("inclination")]
-            public NumericParser<double> inclination 
+            public NumericParser<Double> inclination 
             {
                 get { return orbit.inclination; }
                 set { orbit.inclination = value; }
@@ -56,7 +52,7 @@ namespace Kopernicus
             
             // How excentric is the orbit
             [ParserTarget("eccentricity")]
-            public NumericParser<double> eccentricity
+            public NumericParser<Double> eccentricity
             {
                 get { return orbit.eccentricity; }
                 set { orbit.eccentricity = value; }
@@ -64,7 +60,7 @@ namespace Kopernicus
 
             // Highest point of the orbit
             [ParserTarget("semiMajorAxis")]
-            public NumericParser<double> semiMajorAxis
+            public NumericParser<Double> semiMajorAxis
             {
                 get { return orbit.semiMajorAxis; }
                 set { orbit.semiMajorAxis = value; }
@@ -72,7 +68,7 @@ namespace Kopernicus
 
             // Position of the highest point on the orbit circle
             [ParserTarget("longitudeOfAscendingNode")]
-            public NumericParser<double> longitudeOfAscendingNode
+            public NumericParser<Double> longitudeOfAscendingNode
             {
                 get { return orbit.LAN; }
                 set { orbit.LAN = value; }
@@ -80,7 +76,7 @@ namespace Kopernicus
 
             // argumentOfPeriapsis
             [ParserTarget("argumentOfPeriapsis")]
-            public NumericParser<double> argumentOfPeriapsis
+            public NumericParser<Double> argumentOfPeriapsis
             {
                 get { return orbit.argumentOfPeriapsis; }
                 set { orbit.argumentOfPeriapsis = value; }
@@ -88,7 +84,7 @@ namespace Kopernicus
 
             // meanAnomalyAtEpoch
             [ParserTarget("meanAnomalyAtEpoch")]
-            public NumericParser<double> meanAnomalyAtEpoch
+            public NumericParser<Double> meanAnomalyAtEpoch
             {
                 get { return orbit.meanAnomalyAtEpoch; }
                 set { orbit.meanAnomalyAtEpoch = value; }
@@ -96,7 +92,7 @@ namespace Kopernicus
 
             // meanAnomalyAtEpochD
             [ParserTarget("meanAnomalyAtEpochD")]
-            public NumericParser<double> meanAnomalyAtEpochD
+            public NumericParser<Double> meanAnomalyAtEpochD
             {
                 get { return orbit.meanAnomalyAtEpoch / Math.PI * 180d; }
                 set { orbit.meanAnomalyAtEpoch = value.value * Math.PI / 180d; }
@@ -104,7 +100,7 @@ namespace Kopernicus
 
             // epoch
             [ParserTarget("epoch")]
-            public NumericParser<double> epoch
+            public NumericParser<Double> epoch
             {
                 get { return orbit.epoch; }
                 set { orbit.epoch = value; }
@@ -144,7 +140,7 @@ namespace Kopernicus
 
             // Orbit rendering bounds
             [ParserTarget("cameraSmaRatioBounds")]
-            public NumericCollectionParser<float> cameraSmaRatioBounds = new NumericCollectionParser<float>(new float[] { 0.3f, 25f });
+            public NumericCollectionParser<Single> cameraSmaRatioBounds = new NumericCollectionParser<Single>(new Single[] { 0.3f, 25f });
 
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
@@ -161,7 +157,7 @@ namespace Kopernicus
                 generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
                 orbit = generatedBody.orbitDriver.orbit;
                 referenceBody = orbit?.referenceBody?.name;
-                float[] bounds = new float[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
+                Single[] bounds = new Single[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
                 cameraSmaRatioBounds = bounds;
 
                 // Remove null
@@ -191,7 +187,7 @@ namespace Kopernicus
                 this.body = body;
                 orbit = body.orbitDriver.orbit;
                 referenceBody = body.orbit.referenceBody.name;
-                float[] bounds = new float[] { body.orbitDriver.lowerCamVsSmaRatio, body.orbitDriver.upperCamVsSmaRatio };
+                Single[] bounds = new Single[] { body.orbitDriver.lowerCamVsSmaRatio, body.orbitDriver.upperCamVsSmaRatio };
                 cameraSmaRatioBounds.value = bounds.ToList();
             }
 

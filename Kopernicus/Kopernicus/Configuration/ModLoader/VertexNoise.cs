@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -41,7 +36,7 @@ namespace Kopernicus
             {
                 // falloff
                 [ParserTarget("falloff")]
-                public NumericParser<float> falloff
+                public NumericParser<Single> falloff
                 {
                     get { return mod.falloff; }
                     set { mod.falloff = value; }
@@ -49,7 +44,7 @@ namespace Kopernicus
 
                 // mesaVsPlainsBias
                 [ParserTarget("mesaVsPlainsBias")]
-                public NumericParser<float> mesaVsPlainsBias
+                public NumericParser<Single> mesaVsPlainsBias
                 {
                     get { return mod.mesaVsPlainsBias; }
                     set { mod.mesaVsPlainsBias = value; }
@@ -57,7 +52,7 @@ namespace Kopernicus
 
                 // noiseDeformity
                 [ParserTarget("noiseDeformity")]
-                public NumericParser<float> noiseDeformity
+                public NumericParser<Single> noiseDeformity
                 {
                     get { return mod.noiseDeformity; }
                     set { mod.noiseDeformity = value; }
@@ -65,7 +60,7 @@ namespace Kopernicus
 
                 // noisePasses
                 [ParserTarget("noisePasses")]
-                public NumericParser<int> noisePasses
+                public NumericParser<Int32> noisePasses
                 {
                     get { return mod.noisePasses; }
                     set { mod.noisePasses = value; }
@@ -73,7 +68,7 @@ namespace Kopernicus
 
                 // plainSmoothness
                 [ParserTarget("plainSmoothness")]
-                public NumericParser<float> plainSmoothness
+                public NumericParser<Single> plainSmoothness
                 {
                     get { return mod.plainSmoothness; }
                     set { mod.plainSmoothness = value; }
@@ -81,7 +76,7 @@ namespace Kopernicus
 
                 // plainsVsMountainSmoothness
                 [ParserTarget("plainsVsMountainSmoothness")]
-                public NumericParser<float> plainsVsMountainSmoothness
+                public NumericParser<Single> plainsVsMountainSmoothness
                 {
                     get { return mod.plainsVsMountainSmoothness; }
                     set { mod.plainsVsMountainSmoothness = value; }
@@ -89,7 +84,7 @@ namespace Kopernicus
 
                 // plainsVsMountainThreshold
                 [ParserTarget("plainsVsMountainThreshold")]
-                public NumericParser<float> plainsVsMountainThreshold
+                public NumericParser<Single> plainsVsMountainThreshold
                 {
                     get { return mod.plainsVsMountainThreshold; }
                     set { mod.plainsVsMountainThreshold = value; }
@@ -97,7 +92,7 @@ namespace Kopernicus
 
                 // seed
                 [ParserTarget("seed")]
-                public NumericParser<int> seed
+                public NumericParser<Int32> seed
                 {
                     get { return mod.seed; }
                     set { mod.seed = value; }
@@ -105,7 +100,7 @@ namespace Kopernicus
 
                 // smoothness
                 [ParserTarget("smoothness")]
-                public NumericParser<float> smoothness
+                public NumericParser<Single> smoothness
                 {
                     get { return mod.smoothness; }
                     set { mod.smoothness = value; }

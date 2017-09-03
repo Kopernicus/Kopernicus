@@ -24,7 +24,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -47,12 +46,12 @@ namespace Kopernicus
     public class CompatibilityChecker : MonoBehaviour
     {
         // Compatible version
-        internal const int version_major = 1;
-        internal const int version_minor = 3;
-        internal const int Revision = 0;
-        internal const int Kopernicus = 6;
+        internal const Int32 version_major = 1;
+        internal const Int32 version_minor = 3;
+        internal const Int32 Revision = 0;
+        internal const Int32 Kopernicus = 6;
 
-        public static bool IsCompatible()
+        public static Boolean IsCompatible()
         {
             /*-----------------------------------------------*\
             |    BEGIN IMPLEMENTATION-SPECIFIC EDITS HERE.    |
@@ -84,7 +83,7 @@ namespace Kopernicus
             \*-----------------------------------------------*/
         }
 
-        public static bool IsUnityCompatible()
+        public static Boolean IsUnityCompatible()
         {
             /*-----------------------------------------------*\
             |    BEGIN IMPLEMENTATION-SPECIFIC EDITS HERE.    |
@@ -99,7 +98,7 @@ namespace Kopernicus
         }
 
         // Version of the compatibility checker itself.
-        private static int _version = 4;
+        private static Int32 _version = 4;
 
         public void Start()
         {
@@ -109,29 +108,29 @@ namespace Kopernicus
                 .Where(t => t.Name == "CompatibilityChecker")
                 .Select(t => t.GetField("_version", BindingFlags.Static | BindingFlags.NonPublic))
                 .Where(f => f != null)
-                .Where(f => f.FieldType == typeof(int))
+                .Where(f => f.FieldType == typeof(Int32))
                 .ToArray();
 
             // Let the latest version of the checker execute.
-            if (_version != fields.Max(f => (int)f.GetValue(null))) { return; }
+            if (_version != fields.Max(f => (Int32)f.GetValue(null))) { return; }
 
             Debug.Log(String.Format("[CompatibilityChecker] Running checker version {0} from '{1}'", _version, Assembly.GetExecutingAssembly().GetName().Name));
 
             // Other checkers will see this version and not run.
             // This accomplishes the same as an explicit "ran" flag with fewer moving parts.
-            _version = int.MaxValue;
+            _version = Int32.MaxValue;
 
             // A mod is incompatible if its compatibility checker has an IsCompatible method which returns false.
             String[] incompatible =
                 fields
                 .Select(f => f.DeclaringType.GetMethod("IsCompatible", Type.EmptyTypes))
                 .Where(m => m.IsStatic)
-                .Where(m => m.ReturnType == typeof(bool))
+                .Where(m => m.ReturnType == typeof(Boolean))
                 .Where(m =>
                 {
                     try
                     {
-                        return !(bool)m.Invoke(null, new object[0]);
+                        return !(Boolean)m.Invoke(null, new object[0]);
                     }
                     catch (Exception e)
                     {
@@ -149,12 +148,12 @@ namespace Kopernicus
                 .Select(f => f.DeclaringType.GetMethod("IsUnityCompatible", Type.EmptyTypes))
                 .Where(m => m != null)  // Mods without IsUnityCompatible() are assumed to be compatible.
                 .Where(m => m.IsStatic)
-                .Where(m => m.ReturnType == typeof(bool))
+                .Where(m => m.ReturnType == typeof(Boolean))
                 .Where(m =>
                 {
                     try
                     {
-                        return !(bool)m.Invoke(null, new object[0]);
+                        return !(Boolean)m.Invoke(null, new object[0]);
                     }
                     catch (Exception e)
                     {
@@ -201,7 +200,7 @@ namespace Kopernicus
             }
         }
 
-        public static bool IsWin64()
+        public static Boolean IsWin64()
         {
             return (IntPtr.Size == 8) && (Environment.OSVersion.Platform == PlatformID.Win32NT);
         }

@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,17 +17,17 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using Kopernicus.MaterialWrapper;
+using Kopernicus.OnDemand;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Kopernicus.OnDemand;
-using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
@@ -41,7 +37,7 @@ namespace Kopernicus
         public class ScaledVersionLoader : BaseLoader, IParserEventSubscriber
         {
             // Node name which represents the scaled version material
-            public const string materialNodeName = "Material";
+            public const String materialNodeName = "Material";
 
             // Scaled representation of a planet for map view to modify
             public GameObject scaledVersion;
@@ -55,7 +51,7 @@ namespace Kopernicus
 
             // Set the altitude where the fade to scaled space starts
             [ParserTarget("fadeStart")]
-            public NumericParser<float> fadeStart 
+            public NumericParser<Single> fadeStart 
             {
                 get { return scaledVersion.GetComponentInChildren<ScaledSpaceFader>() ? scaledVersion.GetComponentInChildren<ScaledSpaceFader>().fadeStart : 0; }
                 set { scaledVersion.GetComponent<ScaledSpaceFader>().fadeStart = value; }
@@ -63,7 +59,7 @@ namespace Kopernicus
             
             // Set the altitude where the fade to scaled space starts
             [ParserTarget("fadeEnd")]
-            public NumericParser<float> fadeEnd
+            public NumericParser<Single> fadeEnd
             {
                 get { return scaledVersion.GetComponent<ScaledSpaceFader>() ? scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd : 0; }
                 set { scaledVersion.GetComponent<ScaledSpaceFader>().fadeEnd = value; }
@@ -78,10 +74,10 @@ namespace Kopernicus
             public List<CoronaLoader> coronas = new List<CoronaLoader>();
 
             [ParserTarget("sphericalModel")]
-            public NumericParser<bool> sphericalModel = new NumericParser<bool>(false);
+            public NumericParser<Boolean> sphericalModel = new NumericParser<Boolean>(false);
 
             [ParserTarget("deferMesh")]
-            public NumericParser<bool> deferMesh = new NumericParser<bool>(false);
+            public NumericParser<Boolean> deferMesh = new NumericParser<Boolean>(false);
 
             // Parser apply event
             void IParserEventSubscriber.Apply (ConfigNode node)

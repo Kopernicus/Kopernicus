@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,20 +17,18 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-using UnityEngine;
 using Kopernicus.Configuration.Asteroids;
 using KSPAchievements;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Kopernicus
@@ -47,7 +41,7 @@ namespace Kopernicus
         public static List<Asteroid> asteroids { get; set; }
 
         // Spawn interval
-        public float spawnInterval = 0.1f;
+        public Single spawnInterval = 0.1f;
 
         // Construct
         static DiscoverableObjects()
@@ -88,10 +82,10 @@ namespace Kopernicus
         }
 
         // Update the Asteroids
-        public void UpdateAsteroid(Asteroid asteroid, double time)
+        public void UpdateAsteroid(Asteroid asteroid, Double time)
         {
             List<Vessel> spaceObjects = FlightGlobals.Vessels.Where(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors) && v.DiscoveryInfo.GetSignalLife(Planetarium.GetUniversalTime()) == 0).ToList();
-            int limit = Random.Range(asteroid.spawnGroupMinLimit, asteroid.spawnGroupMaxLimit);
+            Int32 limit = Random.Range(asteroid.spawnGroupMinLimit, asteroid.spawnGroupMaxLimit);
             if (spaceObjects.Any())
             {
                 Vessel vessel = spaceObjects.First();
@@ -100,14 +94,14 @@ namespace Kopernicus
             }
             else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)))
             {
-                int untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) - spaceObjects.Count;
-                int max = Mathf.Max(untrackedCount, limit);
+                Int32 untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) - spaceObjects.Count;
+                Int32 max = Mathf.Max(untrackedCount, limit);
                 if (max > untrackedCount)
                 {
                     if (Random.Range(0, 100) < asteroid.probability)
                     {
                         uint seed = (uint)Random.Range(0, Int32.MaxValue);
-                        Random.InitState((int)seed);
+                        Random.InitState((Int32)seed);
                         SpawnAsteroid(asteroid, seed);
                     }
                     else
@@ -126,7 +120,7 @@ namespace Kopernicus
             CelestialBody body = null;
 
             // Select Orbit Type
-            int type = Random.Range(0, 3);
+            Int32 type = Random.Range(0, 3);
             if (type == 0 && asteroid.location.around.Count != 0)
             {
                 // Around
@@ -184,14 +178,14 @@ namespace Kopernicus
             }
 
             // Name
-            string name = DiscoverableObjectsUtil.GenerateAsteroidName();
+            String name = DiscoverableObjectsUtil.GenerateAsteroidName();
 
             // Lifetime
-            double lifetime = Random.Range(asteroid.minUntrackedLifetime, asteroid.maxUntrackedLifetime) * 24d * 60d * 60d;
-            double maxLifetime = asteroid.maxUntrackedLifetime * 24d * 60d * 60d;
+            Double lifetime = Random.Range(asteroid.minUntrackedLifetime, asteroid.maxUntrackedLifetime) * 24d * 60d * 60d;
+            Double maxLifetime = asteroid.maxUntrackedLifetime * 24d * 60d * 60d;
 
             // Size
-            UntrackedObjectClass size = (UntrackedObjectClass)((int)(asteroid.size.curve.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length));
+            UntrackedObjectClass size = (UntrackedObjectClass)((Int32)(asteroid.size.curve.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length));
 
             // Spawn
             ConfigNode vessel = ProtoVessel.CreateVesselNode(
@@ -238,15 +232,15 @@ namespace Kopernicus
         }
 
         // Gets a list to reflect probablilties
-        protected IEnumerable<T> GetProbabilityList<T>(IEnumerable<T> enumerable, IEnumerable<float> probabilities)
+        protected IEnumerable<T> GetProbabilityList<T>(IEnumerable<T> enumerable, IEnumerable<Single> probabilities)
         {
-            for (int i = 0; i < enumerable.Count(); i++)
-                for (int j = 0; j < probabilities.ElementAt(i); j++)
+            for (Int32 i = 0; i < enumerable.Count(); i++)
+                for (Int32 j = 0; j < probabilities.ElementAt(i); j++)
                     yield return enumerable.ElementAt(i);
         }
 
         // Overrides a ConfigNode recursively
-        protected void OverrideNode(ref ConfigNode original, ConfigNode custom, bool rec = false)
+        protected void OverrideNode(ref ConfigNode original, ConfigNode custom, Boolean rec = false)
         {
             // null checks
             if (original == null || custom == null)
@@ -259,8 +253,8 @@ namespace Kopernicus
             // Get nodes that should get removed
             if (original.HasValue("removeNodes"))
             {
-                string[] names = original.GetValue("removeNodes").Split(new char[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string name in names)
+                String[] names = original.GetValue("removeNodes").Split(new char[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (String name in names)
                     original.RemoveNodes(name);
             }
 
@@ -289,7 +283,7 @@ namespace Kopernicus
         }
 
         // Determines whether a body was already visited
-        protected bool ReachedBody(CelestialBody body)
+        protected Boolean ReachedBody(CelestialBody body)
         {
             CelestialBodySubtree bodyTree = ProgressTracking.Instance.GetBodyTree(body.name);
             return bodyTree != null && bodyTree.IsReached;

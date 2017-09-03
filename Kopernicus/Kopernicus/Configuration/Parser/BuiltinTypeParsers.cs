@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,19 +17,19 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using Kopernicus.OnDemand;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
 using UnityEngine;
-using Kopernicus.OnDemand;
 
 namespace Kopernicus
 {
@@ -45,22 +41,22 @@ namespace Kopernicus
         {
             // Latitude
             [ParserTarget("latitude")]
-            public NumericParser<double> latitude { get; set; }
+            public NumericParser<Double> latitude { get; set; }
 
             // Longitude
             [ParserTarget("longitude")]
-            public NumericParser<double> longitude { get; set; }
+            public NumericParser<Double> longitude { get; set; }
 
             // Altitude
             [ParserTarget("altitude")]
-            public NumericParser<double> altitude { get; set; }
+            public NumericParser<Double> altitude { get; set; }
 
             // Default Constructor
             public PositionParser()
             {
-                latitude = new NumericParser<double>(0);
-                longitude = new NumericParser<double>(0);
-                altitude = new NumericParser<double>(0);
+                latitude = new NumericParser<Double>(0);
+                longitude = new NumericParser<Double>(0);
+                altitude = new NumericParser<Double>(0);
             }
 
             // Convert
@@ -75,12 +71,12 @@ namespace Kopernicus
         public class Texture2DParser : IParsable
         {
             public Texture2D value;
-            public void SetFromString(string s)
+            public void SetFromString(String s)
             {
                 // Check if we are attempting to load a builtin texture
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    string textureName = Regex.Replace(s, "BUILTIN/", "");
+                    String textureName = Regex.Replace(s, "BUILTIN/", "");
                     value = Resources.FindObjectsOfTypeAll<Texture>().FirstOrDefault(tex => tex.name == textureName) as Texture2D;
                     if (value == null)
                     {
@@ -135,10 +131,10 @@ namespace Kopernicus
             public T value;
 
             // Load the MapSO
-            public void SetFromString(string s)
+            public void SetFromString(String s)
             {
                 // Should we use OnDemand?
-                bool useOnDemand = OnDemandStorage.useOnDemand;
+                Boolean useOnDemand = OnDemandStorage.useOnDemand;
 
                 if (s.StartsWith("BUILTIN/"))
                 {
@@ -152,9 +148,9 @@ namespace Kopernicus
                     {
                         if (Utility.TextureExists(s))
                         {
-                            string mapName = s;
+                            String mapName = s;
                             mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                            int lastDot = mapName.LastIndexOf('.');
+                            Int32 lastDot = mapName.LastIndexOf('.');
                             if (lastDot > 0)
                                 mapName = mapName.Substring(0, lastDot);
                             if (typeof(T) == typeof(CBAttributeMapSO))
@@ -219,10 +215,10 @@ namespace Kopernicus
             public T value;
 
             // Load the MapSO
-            public void SetFromString(string s)
+            public void SetFromString(String s)
             {
                 // Should we use OnDemand?
-                bool useOnDemand = OnDemandStorage.useOnDemand;
+                Boolean useOnDemand = OnDemandStorage.useOnDemand;
 
                 if (s.StartsWith("BUILTIN/"))
                 {
@@ -236,9 +232,9 @@ namespace Kopernicus
                     {
                         if (Utility.TextureExists(s))
                         {
-                            string mapName = s;
+                            String mapName = s;
                             mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                            int lastDot = mapName.LastIndexOf('.');
+                            Int32 lastDot = mapName.LastIndexOf('.');
                             if (lastDot > 0)
                                 mapName = mapName.Substring(0, lastDot);
                             if (typeof(T) == typeof(CBAttributeMapSO))
@@ -320,21 +316,21 @@ namespace Kopernicus
             }
 
             [ParserTarget("bounciness")]
-            public NumericParser<float> bounciness
+            public NumericParser<Single> bounciness
             {
                 get { return material.bounciness; }
                 set { material.bounciness = value; }
             }
 
             [ParserTarget("staticFriction")]
-            public NumericParser<float> staticFriction
+            public NumericParser<Single> staticFriction
             {
                 get { return material.staticFriction; }
                 set { material.staticFriction = value; }
             }
 
             [ParserTarget("dynamicFriction")]
-            public NumericParser<float> dynamicFriction
+            public NumericParser<Single> dynamicFriction
             {
                 get { return material.dynamicFriction; }
                 set { material.dynamicFriction = value.value; }
@@ -371,12 +367,12 @@ namespace Kopernicus
         public class MeshParser : IParsable
         {
             public Mesh value;
-            public void SetFromString(string s)
+            public void SetFromString(String s)
             {
                 // Check if we are attempting to load a builtin mesh
                 if (s.StartsWith("BUILTIN/"))
                 {
-                    string meshName = Regex.Replace(s, "BUILTIN/", "");
+                    String meshName = Regex.Replace(s, "BUILTIN/", "");
                     value = Resources.FindObjectsOfTypeAll<Mesh>().First(mesh => mesh.name == meshName);
                     return;
                 }
@@ -421,9 +417,9 @@ namespace Kopernicus
             private static Dictionary<String, AssetBundle> bundles = new Dictionary<String, AssetBundle>();
 
             // Load the AssetBundle with the object
-            public void SetFromString(string s)
+            public void SetFromString(String s)
             {
-                string[] split = s.Split(':');
+                String[] split = s.Split(':');
                 if (!File.Exists(KSPUtil.ApplicationRootPath + "GameData/" + split[0]))
                 {
                     Logger.Active.Log("Couldn't find asset file at path: " + KSPUtil.ApplicationRootPath + "GameData/" + split[0]);
@@ -469,7 +465,7 @@ namespace Kopernicus
         {
             public GameObject value;
 
-            public void SetFromString(string s)
+            public void SetFromString(String s)
             {
                 // If there's a model, import it
                 if (GameDatabase.Instance.ExistsModel(s))

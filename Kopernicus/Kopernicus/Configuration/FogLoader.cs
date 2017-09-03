@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,11 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
+
+using System;
 
 namespace Kopernicus
 {
@@ -39,7 +37,7 @@ namespace Kopernicus
 
             // afgAltMult
             [ParserTarget("afgAltMult")]
-            public NumericParser<float> oceanAFGAltMult
+            public NumericParser<Single> oceanAFGAltMult
             {
                 get { return body.oceanAFGAltMult; }
                 set { body.oceanAFGAltMult = value; }
@@ -47,7 +45,7 @@ namespace Kopernicus
 
             // afgBase
             [ParserTarget("afgBase")]
-            public NumericParser<float> oceanAFGBase
+            public NumericParser<Single> oceanAFGBase
             {
                 get { return body.oceanAFGBase; }
                 set { body.oceanAFGBase = value; }
@@ -55,7 +53,7 @@ namespace Kopernicus
 
             // afgLerp
             [ParserTarget("afgLerp")]
-            public NumericParser<bool> oceanAFGLerp
+            public NumericParser<Boolean> oceanAFGLerp
             {
                 get { return body.oceanAFGLerp; }
                 set { body.oceanAFGLerp = value; }
@@ -63,7 +61,7 @@ namespace Kopernicus
 
             // afgMin
             [ParserTarget("afgMin")]
-            public NumericParser<float> oceanAFGMin
+            public NumericParser<Single> oceanAFGMin
             {
                 get { return body.oceanAFGMin; }
                 set { body.oceanAFGMin = value; }
@@ -87,7 +85,7 @@ namespace Kopernicus
 
             // fogDensityAltScalar
             [ParserTarget("fogDensityAltScalar")]
-            public NumericParser<float> oceanFogDensityAltScalar
+            public NumericParser<Single> oceanFogDensityAltScalar
             {
                 get { return body.oceanFogDensityAltScalar; }
                 set { body.oceanFogDensityAltScalar = value; }
@@ -95,7 +93,7 @@ namespace Kopernicus
 
             // fogDensityEnd
             [ParserTarget("fogDensityEnd")]
-            public NumericParser<float> oceanFogDensityEnd
+            public NumericParser<Single> oceanFogDensityEnd
             {
                 get { return body.oceanFogDensityEnd; }
                 set { body.oceanFogDensityEnd = value; }
@@ -103,7 +101,7 @@ namespace Kopernicus
 
             // fogDensityExponent
             [ParserTarget("fogDensityExponent")]
-            public NumericParser<float> oceanFogDensityExponent
+            public NumericParser<Single> oceanFogDensityExponent
             {
                 get { return body.oceanFogDensityExponent; }
                 set { body.oceanFogDensityExponent = value; }
@@ -111,7 +109,7 @@ namespace Kopernicus
 
             // fogDensityPQSMult
             [ParserTarget("fogDensityPQSMult")]
-            public NumericParser<float> oceanFogDensityPQSMult
+            public NumericParser<Single> oceanFogDensityPQSMult
             {
                 get { return body.oceanFogDensityPQSMult; }
                 set { body.oceanFogDensityPQSMult = value; }
@@ -119,7 +117,7 @@ namespace Kopernicus
 
             // fogDensityStart
             [ParserTarget("fogDensityStart")]
-            public NumericParser<float> oceanFogDensityStart
+            public NumericParser<Single> oceanFogDensityStart
             {
                 get { return body.oceanFogDensityStart; }
                 set { body.oceanFogDensityStart = value; }
@@ -127,7 +125,7 @@ namespace Kopernicus
 
             // skyColorMult
             [ParserTarget("skyColorMult")]
-            public NumericParser<float> oceanSkyColorMult
+            public NumericParser<Single> oceanSkyColorMult
             {
                 get { return body.oceanSkyColorMult; }
                 set { body.oceanSkyColorMult = value; }
@@ -135,7 +133,7 @@ namespace Kopernicus
 
             // skyColorOpacityAltMult
             [ParserTarget("skyColorOpacityAltMult")]
-            public NumericParser<float> oceanSkyColorOpacityAltMult
+            public NumericParser<Single> oceanSkyColorOpacityAltMult
             {
                 get { return body.oceanSkyColorOpacityAltMult; }
                 set { body.oceanSkyColorOpacityAltMult = value; }
@@ -143,7 +141,7 @@ namespace Kopernicus
 
             // skyColorOpacityBase
             [ParserTarget("skyColorOpacityBase")]
-            public NumericParser<float> oceanSkyColorOpacityBase
+            public NumericParser<Single> oceanSkyColorOpacityBase
             {
                 get { return body.oceanSkyColorOpacityBase; }
                 set { body.oceanSkyColorOpacityBase = value; }
@@ -151,7 +149,7 @@ namespace Kopernicus
 
             // sunAltMult
             [ParserTarget("sunAltMult")]
-            public NumericParser<float> oceanSunAltMult
+            public NumericParser<Single> oceanSunAltMult
             {
                 get { return body.oceanSunAltMult; }
                 set { body.oceanSunAltMult = value; }
@@ -159,7 +157,7 @@ namespace Kopernicus
 
             // sunBase
             [ParserTarget("sunBase")]
-            public NumericParser<float> oceanSunBase
+            public NumericParser<Single> oceanSunBase
             {
                 get { return body.oceanSunBase; }
                 set { body.oceanSunBase = value; }
@@ -167,7 +165,7 @@ namespace Kopernicus
 
             // sunMin
             [ParserTarget("sunMin")]
-            public NumericParser<float> oceanSunMin
+            public NumericParser<Single> oceanSunMin
             {
                 get { return body.oceanSunMin; }
                 set { body.oceanSunMin = value; }
@@ -175,7 +173,7 @@ namespace Kopernicus
 
             // useFog
             [ParserTarget("useFog")]
-            public NumericParser<bool> oceanUseFog
+            public NumericParser<Boolean> oceanUseFog
             {
                 get { return body.oceanUseFog; }
                 set { body.oceanUseFog = value; }

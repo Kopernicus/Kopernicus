@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -41,7 +36,7 @@ namespace Kopernicus
             { 
                 // Deformation of the Voronoi
                 [ParserTarget("deformation")]
-                public NumericParser<double> deformation
+                public NumericParser<Double> deformation
                 {
                     get { return mod.deformation; }
                     set { mod.deformation = value; }
@@ -49,7 +44,7 @@ namespace Kopernicus
 
                 // Displacement of the Voronoi
                 [ParserTarget("displacement")]
-                public NumericParser<double> voronoiDisplacement
+                public NumericParser<Double> voronoiDisplacement
                 {
                     get { return mod.voronoiDisplacement; }
                     set { mod.voronoiDisplacement = value; }
@@ -57,7 +52,7 @@ namespace Kopernicus
 
                 // Enabled distance of the Voronoi
                 [ParserTarget("enableDistance")]
-                public NumericParser<bool> voronoiEnableDistance
+                public NumericParser<Boolean> voronoiEnableDistance
                 {
                     get { return mod.voronoiEnableDistance; }
                     set { mod.voronoiEnableDistance = value; }
@@ -65,7 +60,7 @@ namespace Kopernicus
 
                 // Frequency of the Voronoi
                 [ParserTarget("frequency")]
-                public NumericParser<double> frequency
+                public NumericParser<Double> frequency
                 {
                     get { return mod.voronoiFrequency; }
                     set { mod.voronoiFrequency = value; }
@@ -73,7 +68,7 @@ namespace Kopernicus
 
                 // Seed of the Voronoi
                 [ParserTarget("seed")]
-                public NumericParser<int> seed
+                public NumericParser<Int32> seed
                 {
                     get { return mod.voronoiSeed; }
                     set { mod.voronoiSeed = value; }

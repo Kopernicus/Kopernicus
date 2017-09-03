@@ -1,10 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
- * -------------------------------------------------------------
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,20 +15,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- *
+ * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- *
+ * 
  * https://kerbalspaceprogram.com
  */
 
-using UnityEngine;
+using ModularFI;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
-using ModularFI;
+using System.Reflection;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -51,7 +47,7 @@ namespace Kopernicus
             /// <summary>
             /// The results of the latest flux calculation for each star
             /// </summary>
-            public static Dictionary<string, double> SolarFlux;
+            public static Dictionary<String, Double> SolarFlux;
 
             /// <summary>
             /// The currently active star, for stuff we cant patch
@@ -87,8 +83,8 @@ namespace Kopernicus
                 flightIntegrator.BaseFICalculateSunBodyFlux();
 
                 // FI Values
-                bool directSunlight = flightIntegrator.Vessel.directSunlight;
-                double solarFlux = flightIntegrator.solarFlux;
+                Boolean directSunlight = flightIntegrator.Vessel.directSunlight;
+                Double solarFlux = flightIntegrator.solarFlux;
                 if (!SolarFlux.ContainsKey(Current.name))
                     SolarFlux.Add(Current.name, solarFlux);
                 else
@@ -137,7 +133,7 @@ namespace Kopernicus
                 if (homeBody == null) return;
                 while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
                     homeBody = homeBody.referenceBody;
-                typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(double)).Skip(2).First().SetValue(PhysicsGlobals.Instance, Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 * PhysicsGlobals.SolarLuminosityAtHome);
+                typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(Double)).Skip(2).First().SetValue(PhysicsGlobals.Instance, Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 * PhysicsGlobals.SolarLuminosityAtHome);
             }
 
             /// <summary>
@@ -155,12 +151,12 @@ namespace Kopernicus
                 RaycastHit raycastHit;
                 Boolean directSunlight = false;
                 Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(fi.IntegratorTransform.position);
-                double scale = Math.Max((star.sun.scaledBody.transform.position - scaledSpace).magnitude, 1);
+                Double scale = Math.Max((star.sun.scaledBody.transform.position - scaledSpace).magnitude, 1);
                 Vector3 sunVector = (star.sun.scaledBody.transform.position - scaledSpace) / scale;
                 Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(fi.IntegratorTransform.position), sunVector);
 
                 // Get Solar Flux
-                double realDistanceToSun = 0;
+                Double realDistanceToSun = 0;
                 if (!Physics.Raycast(ray, out raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
                 {
                     directSunlight = true;
@@ -194,7 +190,7 @@ namespace Kopernicus
                 if (Stars == null)
                     Stars = new List<KopernicusStar>();
                 if (SolarFlux == null)
-                    SolarFlux = new Dictionary<string, double>();
+                    SolarFlux = new Dictionary<String, Double>();
                 Stars.Add(this);
                 DontDestroyOnLoad(this);
                 light = gameObject.GetComponent<Light>();
@@ -247,7 +243,6 @@ namespace Kopernicus
             /// <summary>
             /// Updates the light values based on the current scene
             /// </summary>
-            /// <param name="scene"></param>
             void SceneLoaded(GameScenes scene)
             {
                 light.shadowBias = scene != GameScenes.SPACECENTER ? 0.125f : 1f;
@@ -264,7 +259,7 @@ namespace Kopernicus
                 if (light)
                 {
                     light.color = shifter.sunlightColor;
-                    light.intensity = shifter.intensityCurve.Evaluate((float)Vector3d.Distance(sun.position, target.position));
+                    light.intensity = shifter.intensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, target.position));
                     light.shadowStrength = shifter.sunlightShadowStrength;
                 }
 
@@ -272,7 +267,7 @@ namespace Kopernicus
                 if (scaledSunLight)
                 {
                     scaledSunLight.color = shifter.scaledSunlightColor;
-                    scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate((float)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));
+                    scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate((Single)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));
                 }
 
                 if (HighLogic.LoadedSceneIsFlight && iva?.GetComponent<Light>())
@@ -289,10 +284,10 @@ namespace Kopernicus
                 brightnessCurve = shifter.brightnessCurve.Curve;
 
                 // Update the lensflare orientation and scale
-                sunFlare.brightness = brightnessMultiplier * brightnessCurve.Evaluate((float)(1 / (Vector3d.Distance(target.position, ScaledSpace.LocalToScaledSpace(sun.position)) / (AU * ScaledSpace.InverseScaleFactor))));
+                sunFlare.brightness = brightnessMultiplier * brightnessCurve.Evaluate((Single)(1 / (Vector3d.Distance(target.position, ScaledSpace.LocalToScaledSpace(sun.position)) / (AU * ScaledSpace.InverseScaleFactor))));
 
                 // States
-                bool lightsOn = (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER);
+                Boolean lightsOn = (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER);
                 light.enabled = shifter.givesOffLight && lightsOn;
                 sunFlare.enabled = shifter.givesOffLight && lightsOn;
                 if (useLocalSpaceSunLight && Sun.Instance.useLocalSpaceSunLight)
@@ -308,14 +303,14 @@ namespace Kopernicus
                 }
                 else
                 {
-                    double targetAltitude = FlightGlobals.getAltitudeAtPos(localSpace, FlightGlobals.currentMainBody);
+                    Double targetAltitude = FlightGlobals.getAltitudeAtPos(localSpace, FlightGlobals.currentMainBody);
                     if (targetAltitude < 0)
                         targetAltitude = 0;
-                    double horizonAngle = Math.Acos(FlightGlobals.currentMainBody.Radius / (FlightGlobals.currentMainBody.Radius + targetAltitude));
-                    float horizonScalar = -Mathf.Sin((float)horizonAngle);
-                    float dayNightRatio = 1f - Mathf.Abs(horizonScalar);
-                    float fadeStartAtAlt = horizonScalar + fadeStart * dayNightRatio;
-                    float fadeEndAtAlt = horizonScalar - fadeEnd * dayNightRatio;
+                    Double horizonAngle = Math.Acos(FlightGlobals.currentMainBody.Radius / (FlightGlobals.currentMainBody.Radius + targetAltitude));
+                    Single horizonScalar = -Mathf.Sin((Single)horizonAngle);
+                    Single dayNightRatio = 1f - Mathf.Abs(horizonScalar);
+                    Single fadeStartAtAlt = horizonScalar + fadeStart * dayNightRatio;
+                    Single fadeEndAtAlt = horizonScalar - fadeEnd * dayNightRatio;
                     localTime = Vector3.Dot(-FlightGlobals.getUpAxis(localSpace), transform.forward);
                     light.intensity = Mathf.Lerp(0f, scaledSunLight.intensity, Mathf.InverseLerp(fadeEndAtAlt, fadeStartAtAlt, localTime));
                 }
@@ -324,12 +319,12 @@ namespace Kopernicus
             /// <summary>
             /// Override this function and use <see cref="Current"/> instead of Planetarium sun
             /// </summary>
-            public override double GetLocalTimeAtPosition(Vector3d wPos, CelestialBody cb)
+            public override Double GetLocalTimeAtPosition(Vector3d wPos, CelestialBody cb)
             {
                 Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
                 Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
 #pragma warning disable CS0618
-                double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) * Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
+                Double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) * Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
 #pragma warning restore CS0618
                 if (angle > Math.PI * 2)
                     angle -= Math.PI * 2;

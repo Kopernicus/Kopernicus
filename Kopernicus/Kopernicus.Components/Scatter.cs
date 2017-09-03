@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -42,31 +38,31 @@ namespace Kopernicus
         /// </summary>
         public class Scatter : MonoBehaviour
         {
-            /// Contains the patched vessels (=> Kerbals)
+            // Contains the patched vessels (=> Kerbals)
             public static List<Guid> vesselID = new List<Guid>();
 
-            /// Contains the blocked List of Base-Events
+            // Contains the blocked List of Base-Events
             public List<BaseEvent> blocked = new List<BaseEvent>();
 
-            /// Contains a List of colliders for the scatter
+            // Contains a List of colliders for the scatter
             public List<MeshCollider> meshColliders = new List<MeshCollider>();
 
-            /// Which experiment should we run?
+            // Which experiment should we run?
             public ConfigNode experimentNode;
 
-            /// The experiment
+            // The experiment
             public ModuleScienceExperiment experiment;
 
-            /// Should we add Science?
-            public bool science;
+            // Should we add Science?
+            public Boolean science;
 
-            /// Should we add Colliders?
-            public bool colliders;
+            // Should we add Colliders?
+            public Boolean colliders;
 
             /// <summary>
             /// Create a new ScatterExtension
             /// </summary>
-            public static Scatter CreateInstance(GameObject o, bool science, bool colliders, ConfigNode experimentNode)
+            public static Scatter CreateInstance(GameObject o, Boolean science, Boolean colliders, ConfigNode experimentNode)
             {
                 Scatter scatter = o.AddComponent<Scatter>();
                 scatter.science = science;
@@ -105,7 +101,7 @@ namespace Kopernicus
 
                 if (colliders)
                 {
-                    bool rebuild = false;
+                    Boolean rebuild = false;
                     if (transform.childCount > meshColliders.Count)
                     {
                         Debug.LogWarning("[Kopernicus] Add " + (transform.childCount - meshColliders.Count) + " colliders");
@@ -195,7 +191,7 @@ namespace Kopernicus
             /// <summary>
             /// Toggles the visibility of the experiment
             /// </summary>
-            public void ToggleExperiment(bool state)
+            public void ToggleExperiment(Boolean state)
             {
                 // Activate
                 if (state && blocked.Contains(experiment.Events["DeployExperiment"]))

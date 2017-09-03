@@ -1,12 +1,8 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public 
+ * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  *
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -29,7 +25,6 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
@@ -42,26 +37,26 @@ namespace Kopernicus
         public class KSC : MonoBehaviour
         {
             // PQSCity
-            public double? latitude;
-            public double? longitude;
+            public Double? latitude;
+            public Double? longitude;
             public Vector3? reorientInitialUp;
             public Vector3? repositionRadial;
-            public bool? repositionToSphere;
-            public bool? repositionToSphereSurface;
-            public bool? repositionToSphereSurfaceAddHeight;
-            public bool? reorientToSphere;
-            public double? repositionRadiusOffset;
-            public double? lodvisibleRangeMult;
-            public float? reorientFinalAngle;
+            public Boolean? repositionToSphere;
+            public Boolean? repositionToSphereSurface;
+            public Boolean? repositionToSphereSurfaceAddHeight;
+            public Boolean? reorientToSphere;
+            public Double? repositionRadiusOffset;
+            public Double? lodvisibleRangeMult;
+            public Single? reorientFinalAngle;
 
             // PQSMod_MapDecalTangent
             public Vector3? position;
-            public double? radius;
-            public double? heightMapDeformity;
-            public double? absoluteOffset;
-            public bool? absolute;
-            public double? decalLatitude;
-            public double? decalLongitude;
+            public Double? radius;
+            public Double? heightMapDeformity;
+            public Double? absoluteOffset;
+            public Boolean? absolute;
+            public Double? decalLatitude;
+            public Double? decalLongitude;
 
             // Material
             public Texture2D mainTexture;
@@ -133,7 +128,7 @@ namespace Kopernicus
                 if (lodvisibleRangeMult.HasValue)
                 {
                     foreach (PQSCity.LODRange lodRange in ksc.lod)
-                        lodRange.visibleRange *= (float)lodvisibleRangeMult.Value;
+                        lodRange.visibleRange *= (Single)lodvisibleRangeMult.Value;
                 }
                 if (reorientFinalAngle.HasValue)
                     ksc.reorientFinalAngle = reorientFinalAngle.Value;
@@ -172,17 +167,17 @@ namespace Kopernicus
             }
 
             // Convert latitude-longitude-altitude with body radius to a vector.
-            private Vector3 LLAtoECEF(double lat, double lon, double alt, double radius)
+            private Vector3 LLAtoECEF(Double lat, Double lon, Double alt, Double radius)
             {
-                const double degreesToRadians = Math.PI / 180.0;
+                const Double degreesToRadians = Math.PI / 180.0;
                 lat = (lat - 90) * degreesToRadians;
                 lon *= degreesToRadians;
-                double x, y, z;
-                double n = radius; // for now, it's still a sphere, so just the radius
+                Double x, y, z;
+                Double n = radius; // for now, it's still a sphere, so just the radius
                 x = (n + alt) * -1.0 * Math.Sin(lat) * Math.Cos(lon);
                 y = (n + alt) * Math.Cos(lat); // for now, it's still a sphere, so no eccentricity
                 z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
-                return new Vector3((float)x, (float)y, (float)z);
+                return new Vector3((Single)x, (Single)y, (Single)z);
             }
 
             // MaterialFixer

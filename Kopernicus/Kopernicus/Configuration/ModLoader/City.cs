@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,15 +17,16 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using CommNet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommNet;
 using UnityEngine;
 
 namespace Kopernicus
@@ -43,7 +40,7 @@ namespace Kopernicus
             {
                 // debugOrientated
                 [ParserTarget("debugOrientated")]
-                public NumericParser<bool> debugOrientated
+                public NumericParser<Boolean> debugOrientated
                 {
                     get { return mod.debugOrientated; }
                     set { mod.debugOrientated = value; }
@@ -51,7 +48,7 @@ namespace Kopernicus
 
                 // frameDelta
                 [ParserTarget("frameDelta")]
-                public NumericParser<float> frameDelta
+                public NumericParser<Single> frameDelta
                 {
                     get { return mod.frameDelta; }
                     set { mod.frameDelta = value; }
@@ -59,7 +56,7 @@ namespace Kopernicus
 
                 // randomizeOnSphere
                 [ParserTarget("randomizeOnSphere")]
-                public NumericParser<bool> randomizeOnSphere
+                public NumericParser<Boolean> randomizeOnSphere
                 {
                     get { return mod.randomizeOnSphere; }
                     set { mod.randomizeOnSphere = value; }
@@ -67,7 +64,7 @@ namespace Kopernicus
 
                 // reorientToSphere
                 [ParserTarget("reorientToSphere")]
-                public NumericParser<bool> reorientToSphere
+                public NumericParser<Boolean> reorientToSphere
                 {
                     get { return mod.reorientToSphere; }
                     set { mod.reorientToSphere = value; }
@@ -75,7 +72,7 @@ namespace Kopernicus
 
                 // reorientFinalAngle
                 [ParserTarget("reorientFinalAngle")]
-                public NumericParser<float> reorientFinalAngle
+                public NumericParser<Single> reorientFinalAngle
                 {
                     get { return mod.reorientFinalAngle; }
                     set { mod.reorientFinalAngle = value; }
@@ -99,7 +96,7 @@ namespace Kopernicus
 
                 // repositionRadiusOffset
                 [ParserTarget("repositionRadiusOffset")]
-                public NumericParser<double> repositionRadiusOffset
+                public NumericParser<Double> repositionRadiusOffset
                 {
                     get { return mod.repositionRadiusOffset; }
                     set { mod.repositionRadiusOffset = value; }
@@ -107,7 +104,7 @@ namespace Kopernicus
 
                 // repositionToSphere
                 [ParserTarget("repositionToSphere")]
-                public NumericParser<bool> repositionToSphere
+                public NumericParser<Boolean> repositionToSphere
                 {
                     get { return mod.repositionToSphere; }
                     set { mod.repositionToSphere = value; }
@@ -115,7 +112,7 @@ namespace Kopernicus
 
                 // repositionToSphereSurface
                 [ParserTarget("repositionToSphereSurface")]
-                public NumericParser<bool> repositionToSphereSurface
+                public NumericParser<Boolean> repositionToSphereSurface
                 {
                     get { return mod.repositionToSphereSurface; }
                     set { mod.repositionToSphereSurface = value; }
@@ -123,7 +120,7 @@ namespace Kopernicus
 
                 // repositionToSphereSurfaceAddHeight
                 [ParserTarget("repositionToSphereSurfaceAddHeight")]
-                public NumericParser<bool> repositionToSphereSurfaceAddHeight
+                public NumericParser<Boolean> repositionToSphereSurfaceAddHeight
                 {
                     get { return mod.repositionToSphereSurfaceAddHeight; }
                     set { mod.repositionToSphereSurfaceAddHeight = value; }
@@ -145,7 +142,7 @@ namespace Kopernicus
 
                 // visibility Range
                 [ParserTarget("visibilityRange")]
-                public NumericParser<float> visibilityRange
+                public NumericParser<Single> visibilityRange
                 {
                     get { return mod.lod[0].visibleRange; }
                     set { mod.lod[0].visibleRange = value; }
@@ -153,7 +150,7 @@ namespace Kopernicus
 
                 // Commnet Station
                 [ParserTarget("commnetStation")]
-                public NumericParser<bool> commnetStation
+                public NumericParser<Boolean> commnetStation
                 {
                     get { return mod.gameObject.GetComponentInChildren<CommNetHome>() != null; }
                     set

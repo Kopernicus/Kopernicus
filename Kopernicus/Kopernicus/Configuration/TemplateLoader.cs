@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -43,7 +39,7 @@ namespace Kopernicus
             public PSystemBody body;
 
             // Initial radius of the body
-            public double radius { get; set; }
+            public Double radius { get; set; }
 
             // Initial type of the body
             public BodyType type { get; set; }
@@ -54,7 +50,7 @@ namespace Kopernicus
             // Name of the body to use for the template
             [PreApply]
             [ParserTarget("name", optional = false)]
-            public string name 
+            public String name 
             {
                 // Crawl the system prefab for the body
                 set 
@@ -70,15 +66,15 @@ namespace Kopernicus
             // Should we strip the PQS off
             [PreApply]
             [ParserTarget("removePQS")]
-            public NumericParser<bool> removePQS = new NumericParser<bool> (false);
+            public NumericParser<Boolean> removePQS = new NumericParser<Boolean> (false);
 
             // Should we strip the atmosphere off
             [ParserTarget("removeAtmosphere")]
-            public NumericParser<bool> removeAtmosphere = new NumericParser<bool>(false);
+            public NumericParser<Boolean> removeAtmosphere = new NumericParser<Boolean>(false);
 
             // Should we strip the ocean off
             [ParserTarget("removeOcean")]
-            public NumericParser<bool> removeOcean = new NumericParser<bool>(false);
+            public NumericParser<Boolean> removeOcean = new NumericParser<Boolean>(false);
 
             // Collection of PQS mods to remove
             [ParserTarget("removePQSMods")]
@@ -86,15 +82,15 @@ namespace Kopernicus
 
             // Should we strip all Mods off
             [ParserTarget("removeAllPQSMods")]
-            public NumericParser<bool> removeAllMods = new NumericParser<bool>(false);
+            public NumericParser<Boolean> removeAllMods = new NumericParser<Boolean>(false);
 
             // Collection of PQS mods to remove
             [ParserTarget("removeProgressTree")]
-            public NumericParser<bool> removeProgressTree = new NumericParser<bool> (true);
+            public NumericParser<Boolean> removeProgressTree = new NumericParser<Boolean> (true);
 
             // Remove coronas for star
             [ParserTarget("removeCoronas")]
-            public NumericParser<bool> removeCoronas = new NumericParser<bool>(false);
+            public NumericParser<Boolean> removeCoronas = new NumericParser<Boolean>(false);
 
             // Apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
@@ -182,21 +178,21 @@ namespace Kopernicus
                     {
                         // We need a List with Types to remove
                         List<Type> mods = new List<Type>();
-                        Dictionary<string, Type> modsPerName = new Dictionary<string, Type>();
-                        foreach (string mod in removePQSMods.value)
+                        Dictionary<String, Type> modsPerName = new Dictionary<String, Type>();
+                        foreach (String mod in removePQSMods.value)
                         {
                             // If the definition has a name specified, grab that
-                            string mType = mod;
-                            string name = "";
+                            String mType = mod;
+                            String name = "";
                             if (mType.EndsWith("]"))
                             {
-                                string[] split = mType.Split('[');
+                                String[] split = mType.Split('[');
                                 mType = split[0];
                                 name = split[1].Remove(split[1].Length - 1);
                             }
                             
-                            // Get the mods matching the string
-                            string modName = mType;
+                            // Get the mods matching the String
+                            String modName = mType;
                             if(!mod.Contains("PQS"))
                                 modName = "PQSMod_" + mod;
                             if (name == "")
@@ -215,13 +211,13 @@ namespace Kopernicus
                             }
                         }
                         Utility.RemoveModsOfType(mods, body.pqsVersion);
-                        foreach (KeyValuePair<string, Type> kvP in modsPerName)
+                        foreach (KeyValuePair<String, Type> kvP in modsPerName)
                         {
-                            int index = 0;
-                            string name = kvP.Key;
+                            Int32 index = 0;
+                            String name = kvP.Key;
                             if (name.Contains(';'))
                             {
-                                string[] split = name.Split(';');
+                                String[] split = name.Split(';');
                                 name = split[0];
                                 Int32.TryParse(split[1], out index);
                             }
@@ -266,7 +262,7 @@ namespace Kopernicus
             // Private exception to throw in the case the template doesn't load
             public class TemplateNotFoundException : Exception
             {
-                public TemplateNotFoundException(string s) : base(s)
+                public TemplateNotFoundException(String s) : base(s)
                 {
 
                 }

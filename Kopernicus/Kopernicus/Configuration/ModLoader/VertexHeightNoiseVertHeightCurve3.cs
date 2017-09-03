@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,14 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using LibNoise;
+using System;
 using UnityEngine;
 
 namespace Kopernicus
@@ -42,7 +38,7 @@ namespace Kopernicus
             {
                 // Maximum deformity
                 [ParserTarget("deformityMax")]
-                public NumericParser<double> deformityMax
+                public NumericParser<Double> deformityMax
                 {
                     get { return mod.deformityMax; }
                     set { mod.deformityMax = value; }
@@ -50,7 +46,7 @@ namespace Kopernicus
 
                 // Minimum deformity
                 [ParserTarget("deformityMin")]
-                public NumericParser<double> deformityMin
+                public NumericParser<Double> deformityMin
                 {
                     get { return mod.deformityMin; }
                     set { mod.deformityMin = value; }
@@ -66,7 +62,7 @@ namespace Kopernicus
 
                 // Ending height
                 [ParserTarget("inputHeightEnd")]
-                public NumericParser<double> inputHeightEnd
+                public NumericParser<Double> inputHeightEnd
                 {
                     get { return mod.inputHeightEnd; }
                     set { mod.inputHeightEnd = value; }
@@ -74,7 +70,7 @@ namespace Kopernicus
 
                 // Starting height
                 [ParserTarget("inputHeightStart")]
-                public NumericParser<double> inputHeightStart
+                public NumericParser<Double> inputHeightStart
                 {
                     get { return mod.inputHeightStart; }
                     set { mod.inputHeightStart = value; }
@@ -82,7 +78,7 @@ namespace Kopernicus
 
                 // The frequency of the simplex multiplier
                 [ParserTarget("multiplierFrequency")]
-                public NumericParser<double> multiplierFrequency
+                public NumericParser<Double> multiplierFrequency
                 {
                     get { return mod.curveMultiplier.frequency; }
                     set { mod.curveMultiplier.frequency = value; }
@@ -90,7 +86,7 @@ namespace Kopernicus
 
                 // Octaves of the simplex multiplier
                 [ParserTarget("multiplierOctaves")]
-                public NumericParser<int> multiplierOctaves
+                public NumericParser<Int32> multiplierOctaves
                 {
                     get { return mod.curveMultiplier.octaves; }
                     set { mod.curveMultiplier.octaves = value; }
@@ -98,7 +94,7 @@ namespace Kopernicus
 
                 // Persistence of the simplex multiplier
                 [ParserTarget("multiplierPersistence")]
-                public NumericParser<double> multiplierPersistence
+                public NumericParser<Double> multiplierPersistence
                 {
                     get { return mod.curveMultiplier.persistence; }
                     set { mod.curveMultiplier.persistence = value; }
@@ -106,7 +102,7 @@ namespace Kopernicus
 
                 // The seed of the simplex multiplier
                 [ParserTarget("multiplierSeed")]
-                public NumericParser<int> multiplierSeed
+                public NumericParser<Int32> multiplierSeed
                 {
                     get { return mod.curveMultiplier.seed; }
                     set { mod.curveMultiplier.seed = value; }
@@ -114,7 +110,7 @@ namespace Kopernicus
 
                 // The frequency of the simplex noise on deformity
                 [ParserTarget("deformityFrequency")]
-                public NumericParser<double> deformityFrequency
+                public NumericParser<Double> deformityFrequency
                 {
                     get { return mod.deformity.frequency; }
                     set { mod.deformity.frequency = value; }
@@ -122,7 +118,7 @@ namespace Kopernicus
 
                 // Octaves of the simplex noise on deformity
                 [ParserTarget("deformityOctaves")]
-                public NumericParser<int> deformityOctaves
+                public NumericParser<Int32> deformityOctaves
                 {
                     get { return mod.deformity.octaves; }
                     set { mod.deformity.octaves = value; }
@@ -130,7 +126,7 @@ namespace Kopernicus
 
                 // Persistence of the simplex noise on deformity
                 [ParserTarget("deformityPersistence")]
-                public NumericParser<double> deformityPersistence
+                public NumericParser<Double> deformityPersistence
                 {
                     get { return mod.deformity.persistence; }
                     set { mod.deformity.persistence = value; }
@@ -138,7 +134,7 @@ namespace Kopernicus
 
                 // The seed of the simplex noise on deformity
                 [ParserTarget("deformitySeed")]
-                public NumericParser<int> deformitySeed
+                public NumericParser<Int32> deformitySeed
                 {
                     get { return mod.deformity.seed; }
                     set { mod.deformity.seed = value; }
@@ -146,7 +142,7 @@ namespace Kopernicus
 
                 // The frequency of the additive noise
                 [ParserTarget("ridgedAddFrequency")]
-                public NumericParser<double> ridgedAddFrequency
+                public NumericParser<Double> ridgedAddFrequency
                 {
                     get { return mod.ridgedAdd.frequency; }
                     set { mod.ridgedAdd.frequency = value; }
@@ -154,7 +150,7 @@ namespace Kopernicus
 
                 // Lacunarity of the additive noise
                 [ParserTarget("ridgedAddLacunarity")]
-                public NumericParser<double> ridgedAddLacunarity
+                public NumericParser<Double> ridgedAddLacunarity
                 {
                     get { return mod.ridgedAdd.lacunarity; }
                     set { mod.ridgedAdd.lacunarity = value; }
@@ -162,7 +158,7 @@ namespace Kopernicus
 
                 // Octaves of the additive noise
                 [ParserTarget("ridgedAddOctaves")]
-                public NumericParser<int> ridgedAddOctaves
+                public NumericParser<Int32> ridgedAddOctaves
                 {
                     get { return mod.ridgedAdd.octaves; }
                     set { mod.ridgedAdd.octaves = Mathf.Clamp(value, 1, 30); }
@@ -172,13 +168,13 @@ namespace Kopernicus
                 [ParserTarget("ridgedAddQuality")]
                 public EnumParser<KopernicusNoiseQuality> ridgedAddQuality
                 {
-                    get { return (KopernicusNoiseQuality) (int) mod.ridgedAdd.quality; }
-                    set { mod.ridgedAdd.quality = (NoiseQuality) (int) value.value; }
+                    get { return (KopernicusNoiseQuality) (Int32) mod.ridgedAdd.quality; }
+                    set { mod.ridgedAdd.quality = (NoiseQuality) (Int32) value.value; }
                 }
 
                 // The seed of the additive noise
                 [ParserTarget("ridgedAddSeed")]
-                public NumericParser<int> ridgedAddSeed
+                public NumericParser<Int32> ridgedAddSeed
                 {
                     get { return mod.ridgedAdd.seed; }
                     set { mod.ridgedAdd.seed = value; }
@@ -186,7 +182,7 @@ namespace Kopernicus
 
                 // The frequency of the subtractive noise
                 [ParserTarget("ridgedSubFrequency")]
-                public NumericParser<double> ridgedSubFrequency
+                public NumericParser<Double> ridgedSubFrequency
                 {
                     get { return mod.ridgedSub.frequency; }
                     set { mod.ridgedSub.frequency = value; }
@@ -194,7 +190,7 @@ namespace Kopernicus
 
                 // Lacunarity of the subtractive noise
                 [ParserTarget("ridgedSubLacunarity")]
-                public NumericParser<double> ridgedSubLacunarity
+                public NumericParser<Double> ridgedSubLacunarity
                 {
                     get { return mod.ridgedSub.lacunarity; }
                     set { mod.ridgedSub.lacunarity = value; }
@@ -202,7 +198,7 @@ namespace Kopernicus
 
                 // Octaves of the subtractive noise
                 [ParserTarget("ridgedSubOctaves")]
-                public NumericParser<int> ridgedSubOctaves
+                public NumericParser<Int32> ridgedSubOctaves
                 {
                     get { return mod.ridgedSub.octaves; }
                     set { mod.ridgedSub.octaves = Mathf.Clamp(value, 1, 30); }
@@ -212,13 +208,13 @@ namespace Kopernicus
                 [ParserTarget("ridgedSubQuality")]
                 public EnumParser<KopernicusNoiseQuality> ridgedSubQuality
                 {
-                    get { return (KopernicusNoiseQuality) (int) mod.ridgedSub.quality; }
-                    set { mod.ridgedSub.quality = (NoiseQuality) (int) value.value; }
+                    get { return (KopernicusNoiseQuality) (Int32) mod.ridgedSub.quality; }
+                    set { mod.ridgedSub.quality = (NoiseQuality) (Int32) value.value; }
                 }
 
                 // The seed of the subtractive noise
                 [ParserTarget("ridgedSubSeed")]
-                public NumericParser<int> ridgedSubSeed
+                public NumericParser<Int32> ridgedSubSeed
                 {
                     get { return mod.ridgedSub.seed; }
                     set { mod.ridgedSub.seed = value; }

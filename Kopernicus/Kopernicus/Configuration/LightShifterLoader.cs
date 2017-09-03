@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,15 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using UnityEngine;
 using Kopernicus.Components;
+using System;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -58,7 +55,7 @@ namespace Kopernicus
 
             // sunlightIntensity
             [ParserTarget("sunlightIntensity")]
-            public NumericParser<float> sunlightIntensity
+            public NumericParser<Single> sunlightIntensity
             {
                 get { return lsc.sunlightIntensity; }
                 set { lsc.sunlightIntensity = value; }
@@ -66,7 +63,7 @@ namespace Kopernicus
 
             // sunlightShadowStrength
             [ParserTarget("sunlightShadowStrength")]
-            public NumericParser<float> sunlightShadowStrength
+            public NumericParser<Single> sunlightShadowStrength
             {
                 get { return lsc.sunlightShadowStrength; }
                 set { lsc.sunlightShadowStrength = value; }
@@ -82,7 +79,7 @@ namespace Kopernicus
 
             // scaledSunlightIntensity
             [ParserTarget("scaledSunlightIntensity")]
-            public NumericParser<float> scaledSunlightIntensity
+            public NumericParser<Single> scaledSunlightIntensity
             {
                 get { return lsc.scaledSunlightIntensity; }
                 set { lsc.scaledSunlightIntensity = value; }
@@ -98,7 +95,7 @@ namespace Kopernicus
 
             // IVASunIntensity
             [ParserTarget("IVASunIntensity")]
-            public NumericParser<float> IVASunIntensity
+            public NumericParser<Single> IVASunIntensity
             {
                 get { return lsc.IVASunIntensity; }
                 set { lsc.IVASunIntensity = value; }
@@ -122,7 +119,7 @@ namespace Kopernicus
 
             // givesOffLight
             [ParserTarget("givesOffLight")]
-            public NumericParser<bool> givesOffLight
+            public NumericParser<Boolean> givesOffLight
             {
                 get { return lsc.givesOffLight; }
                 set { lsc.givesOffLight = value; }
@@ -130,7 +127,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("sunAU")]
-            public NumericParser<double> sunAU
+            public NumericParser<Double> sunAU
             {
                 get { return lsc.AU; }
                 set { lsc.AU = value; }
@@ -146,7 +143,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("luminosity")]
-            public NumericParser<double> luminosity
+            public NumericParser<Double> luminosity
             {
                 get { return lsc.solarLuminosity; }
                 set { lsc.solarLuminosity = value; }
@@ -154,7 +151,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("insolation")]
-            public NumericParser<double> insolation
+            public NumericParser<Double> insolation
             {
                 get { return lsc.solarInsolation; }
                 set { lsc.solarInsolation = value; }
@@ -162,7 +159,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("radiationFactor")]
-            public NumericParser<double> radiation
+            public NumericParser<Double> radiation
             {
                 get { return lsc.radiationFactor; }
                 set { lsc.radiationFactor = value; }

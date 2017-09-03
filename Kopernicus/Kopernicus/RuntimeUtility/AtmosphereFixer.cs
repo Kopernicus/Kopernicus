@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,37 +17,37 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Reflection;
 
 namespace Kopernicus
 {
     public class AFGInfo
     {
-        public static Dictionary<string, AFGInfo> atmospheres = new Dictionary<string, AFGInfo>();
+        public static Dictionary<String, AFGInfo> atmospheres = new Dictionary<String, AFGInfo>();
         
-        bool DEBUG_alwaysUpdateAll;
-        bool doScale;
-        float outerRadius;
-        float innerRadius;
-        float ESun;
-        float Kr;
-        float Km;
+        Boolean DEBUG_alwaysUpdateAll;
+        Boolean doScale;
+        Single outerRadius;
+        Single innerRadius;
+        Single ESun;
+        Single Kr;
+        Single Km;
         Vector3 transformScale;
-        float scaleDepth;
-        float samples;
-        float g;
+        Single scaleDepth;
+        Single samples;
+        Single g;
         Color waveLength;
         Color invWaveLength;
 
-        public static bool StoreAFG(AtmosphereFromGround afg)
+        public static Boolean StoreAFG(AtmosphereFromGround afg)
         {
             if (afg.planet == null)
             {
@@ -62,7 +58,7 @@ namespace Kopernicus
             return true;
         }
 
-        public static bool UpdateAFGName(string oName, string nName)
+        public static Boolean UpdateAFGName(String oName, String nName)
         {
             AFGInfo info = null;
             if (atmospheres.TryGetValue(oName, out info))
@@ -74,7 +70,7 @@ namespace Kopernicus
             return false;
         }
 
-        public static bool PatchAFG(AtmosphereFromGround afg)
+        public static Boolean PatchAFG(AtmosphereFromGround afg)
         {
             AFGInfo info = null;
             if (atmospheres.TryGetValue(afg.planet.bodyName, out info))
@@ -136,7 +132,7 @@ namespace Kopernicus
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereFixer : MonoBehaviour
     {
-        double timeCounter = 0d;
+        Double timeCounter = 0d;
         void Awake()
         {
             if (!CompatibilityChecker.IsCompatible())

@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,11 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
+
+using System;
 
 namespace Kopernicus
 {
@@ -35,9 +33,9 @@ namespace Kopernicus
         public class GameLayers
         {
             // Layer for the scaled verion
-            public const int ScaledSpaceAtmosphere = 9;
-            public const int ScaledSpace = 10;
-            public const int LocalSpace = 15;
+            public const Int32 ScaledSpaceAtmosphere = 9;
+            public const Int32 ScaledSpace = 10;
+            public const Int32 LocalSpace = 15;
         }
     }
 }

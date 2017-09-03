@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -41,7 +36,7 @@ namespace Kopernicus
             {
                 // highEnd
                 [ParserTarget("highEnd")]
-                public NumericParser<double> highEnd
+                public NumericParser<Double> highEnd
                 {
                     get { return mod.highEnd; }
                     set { mod.highEnd = value; }
@@ -49,7 +44,7 @@ namespace Kopernicus
 
                 // highStart
                 [ParserTarget("highStart")]
-                public NumericParser<double> highStart
+                public NumericParser<Double> highStart
                 {
                     get { return mod.highStart; }
                     set { mod.highStart = value; }
@@ -57,7 +52,7 @@ namespace Kopernicus
 
                 // lowEnd
                 [ParserTarget("lowEnd")]
-                public NumericParser<double> lowEnd
+                public NumericParser<Double> lowEnd
                 {
                     get { return mod.lowEnd; }
                     set { mod.lowEnd = value; }
@@ -65,7 +60,7 @@ namespace Kopernicus
 
                 // lowStart
                 [ParserTarget("lowStart")]
-                public NumericParser<double> lowStart
+                public NumericParser<Double> lowStart
                 {
                     get { return mod.lowStart; }
                     set { mod.lowStart = value; }
@@ -73,7 +68,7 @@ namespace Kopernicus
 
                 // modulo
                 [ParserTarget("modulo")]
-                public NumericParser<double> modulo
+                public NumericParser<Double> modulo
                 {
                     get { return mod.modulo; }
                     set { mod.modulo = value; }

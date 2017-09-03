@@ -5,11 +5,10 @@
  * Based on code by el anónimo
  */
 
-using UnityEngine;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using UnityEngine;
 
 public static class ObjImporter
 {
@@ -18,13 +17,13 @@ public static class ObjImporter
         public Vector3[] vertices;
         public Vector3[] normals;
         public Vector2[] uv;
-        public int[] triangles;
+        public Int32[] triangles;
         public Vector3[] faceData;
-        public string fileName;
+        public String fileName;
     }
 
     // Use this for initialization
-    public static Mesh ImportFile(string filePath)
+    public static Mesh ImportFile(String filePath)
     {
         meshStruct newMesh = createMeshStruct(filePath);
         populateMeshStruct(ref newMesh);
@@ -32,18 +31,18 @@ public static class ObjImporter
         Vector3[] newVerts = new Vector3[newMesh.faceData.Length];
         Vector2[] newUVs = new Vector2[newMesh.faceData.Length];
         Vector3[] newNormals = new Vector3[newMesh.faceData.Length];
-        int i = 0;
+        Int32 i = 0;
         /* The following foreach loops through the facedata and assigns the appropriate vertex, uv, or normal
          * for the appropriate Unity mesh array.
          */
         foreach (Vector3 v in newMesh.faceData)
         {
-            newVerts[i] = newMesh.vertices[(int)v.x - 1];
+            newVerts[i] = newMesh.vertices[(Int32)v.x - 1];
             if (v.y >= 1)
-                newUVs[i] = newMesh.uv[(int)v.y - 1];
+                newUVs[i] = newMesh.uv[(Int32)v.y - 1];
 
             if (v.z >= 1)
-                newNormals[i] = newMesh.normals[(int)v.z - 1];
+                newNormals[i] = newMesh.normals[(Int32)v.z - 1];
             i++;
         }
 
@@ -60,23 +59,23 @@ public static class ObjImporter
         return mesh;
     }
 
-    public static meshStruct createMeshStruct(string filename)
+    public static meshStruct createMeshStruct(String filename)
     {
-        int triangles = 0;
-        int vertices = 0;
-        int vt = 0;
-        int vn = 0;
-        int face = 0;
+        Int32 triangles = 0;
+        Int32 vertices = 0;
+        Int32 vt = 0;
+        Int32 vn = 0;
+        Int32 face = 0;
         meshStruct mesh = new meshStruct();
         mesh.fileName = filename;
         StreamReader stream = File.OpenText(filename);
-        string entireText = stream.ReadToEnd();
+        String entireText = stream.ReadToEnd();
         stream.Close();
         using (StringReader reader = new StringReader(entireText))
         {
-            string currentText = reader.ReadLine();
+            String currentText = reader.ReadLine();
             char[] splitIdentifier = { ' ' };
-            string[] brokenString;
+            String[] brokenString;
             while (currentText != null)
             {
                 if (!currentText.StartsWith("f ") && !currentText.StartsWith("v ") && !currentText.StartsWith("vt ")
@@ -118,7 +117,7 @@ public static class ObjImporter
                 }
             }
         }
-        mesh.triangles = new int[triangles];
+        mesh.triangles = new Int32[triangles];
         mesh.vertices = new Vector3[vertices];
         mesh.uv = new Vector2[vt];
         mesh.normals = new Vector3[vn];
@@ -129,23 +128,23 @@ public static class ObjImporter
     public static void populateMeshStruct(ref meshStruct mesh)
     {
         StreamReader stream = File.OpenText(mesh.fileName);
-        string entireText = stream.ReadToEnd();
+        String entireText = stream.ReadToEnd();
         stream.Close();
         using (StringReader reader = new StringReader(entireText))
         {
-            string currentText = reader.ReadLine();
+            String currentText = reader.ReadLine();
 
             char[] splitIdentifier = { ' ' };
             char[] splitIdentifier2 = { '/' };
-            string[] brokenString;
-            string[] brokenBrokenString;
-            int f = 0;
-            int f2 = 0;
-            int v = 0;
-            int vn = 0;
-            int vt = 0;
-            int vt1 = 0;
-            int vt2 = 0;
+            String[] brokenString;
+            String[] brokenBrokenString;
+            Int32 f = 0;
+            Int32 f2 = 0;
+            Int32 v = 0;
+            Int32 vn = 0;
+            Int32 vt = 0;
+            Int32 vt1 = 0;
+            Int32 vt2 = 0;
             while (currentText != null)
             {
                 if (!currentText.StartsWith("f ") && !currentText.StartsWith("v ") && !currentText.StartsWith("vt ") &&
@@ -199,8 +198,8 @@ public static class ObjImporter
                             break;
                         case "f":
 
-                            int j = 1;
-                            List<int> intArray = new List<int>();
+                            Int32 j = 1;
+                            List<Int32> intArray = new List<Int32>();
                             while (j < brokenString.Length && ("" + brokenString[j]).Length > 0)
                             {
                                 Vector3 temp = new Vector3();
@@ -237,7 +236,7 @@ public static class ObjImporter
                     currentText = reader.ReadLine();
                     if (currentText != null)
                     {
-                        currentText = currentText.Replace("  ", " ");       //Some .obj files insert double spaces, this removes them.
+                        currentText = currentText.Replace("  ", " ");       //Some .obj files insert Double spaces, this removes them.
                     }
                 }
             }

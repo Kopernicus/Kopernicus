@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,17 +17,16 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -41,7 +36,7 @@ namespace Kopernicus
         public class Body : IParserEventSubscriber
         {
             // Path of the ScaledSpaceCache (will eventually not matter much)
-            public const string ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
+            public const String ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
 
             // Body we are trying to edit
             public PSystemBody generatedBody { get; set; }
@@ -49,16 +44,16 @@ namespace Kopernicus
             // Name of this body
             [PreApply]
             [ParserTarget("name", optional = false)]
-            public string name { get; set; }
+            public String name { get; set; }
 
             [ParserTarget("cacheFile")]
-            public string cacheFile { get; set; }
+            public String cacheFile { get; set; }
 
             [ParserTarget("barycenter")]
-            public NumericParser<bool> barycenter = false;
+            public NumericParser<Boolean> barycenter = false;
 
             [ParserTarget("cbNameLater")]
-            public string cbNameLater
+            public String cbNameLater
             {
                 get
                 {
@@ -81,7 +76,7 @@ namespace Kopernicus
             
             // Flight globals index of this body - for computing reference id
             [ParserTarget("flightGlobalsIndex")]
-            public NumericParser<int> flightGlobalsIndex 
+            public NumericParser<Int32> flightGlobalsIndex 
             {
                 get { return generatedBody.flightGlobalsIndex; }
                 set { generatedBody.flightGlobalsIndex = value.value; }
@@ -89,7 +84,7 @@ namespace Kopernicus
 
             // Finalize the orbit of the body?
             [ParserTarget("finalizeOrbit")]
-            public NumericParser<bool> finalizeOrbit
+            public NumericParser<Boolean> finalizeOrbit
             {
                 get { return generatedBody.Has("finalizeBody"); }
                 set { if (value) generatedBody.Set("finalizeBody", true); }
@@ -97,7 +92,7 @@ namespace Kopernicus
 
             // Whether this body should be taken into account for the main menu body stuff
             [ParserTarget("randomMainMenuBody")]
-            public NumericParser<bool> canBeMainMenuBody
+            public NumericParser<Boolean> canBeMainMenuBody
             {
                 get { return Loader.Instance?.randomMainMenuBodies.Contains(name); }
                 set { if (value) Loader.Instance.randomMainMenuBodies.Add(name); }
@@ -105,9 +100,9 @@ namespace Kopernicus
 
             // Describes how often contracts should be generated for a body
             [ParserTarget("contractWeight")]
-            public NumericParser<int> contractWeight
+            public NumericParser<Int32> contractWeight
             {
-                get { return generatedBody.Has("contractWeight") ? generatedBody.Get<int>("contractWeight") : 30; }
+                get { return generatedBody.Has("contractWeight") ? generatedBody.Get<Int32>("contractWeight") : 30; }
                 set { generatedBody.Set("contractWeight", value); }
             }
 

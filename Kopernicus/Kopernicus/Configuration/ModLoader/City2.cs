@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,15 +17,16 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using CommNet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommNet;
 using UnityEngine;
 
 namespace Kopernicus
@@ -43,7 +40,7 @@ namespace Kopernicus
             {
                 // snapToSurface
                 [ParserTarget("snapToSurface")]
-                public NumericParser<bool> snapToSurface
+                public NumericParser<Boolean> snapToSurface
                 {
                     get { return mod.snapToSurface; }
                     set { mod.snapToSurface = value; }
@@ -51,7 +48,7 @@ namespace Kopernicus
 
                 // alt
                 [ParserTarget("alt")]
-                public NumericParser<double> alt
+                public NumericParser<Double> alt
                 {
                     get { return mod.alt; }
                     set { mod.alt = value; }
@@ -59,7 +56,7 @@ namespace Kopernicus
 
                 // lat
                 [ParserTarget("lat")]
-                public NumericParser<double> lat
+                public NumericParser<Double> lat
                 {
                     get { return mod.lat; }
                     set { mod.lat = value; }
@@ -67,7 +64,7 @@ namespace Kopernicus
 
                 // lon
                 [ParserTarget("lon")]
-                public NumericParser<double> lon
+                public NumericParser<Double> lon
                 {
                     get { return mod.lon; }
                     set { mod.lon = value; }
@@ -75,7 +72,7 @@ namespace Kopernicus
 
                 // objectName
                 [ParserTarget("objectName")]
-                public string objectName
+                public String objectName
                 {
                     get { return mod.objectName; }
                     set { mod.objectName = value; }
@@ -91,7 +88,7 @@ namespace Kopernicus
 
                 // rotation
                 [ParserTarget("rotation")]
-                public NumericParser<double> rotation
+                public NumericParser<Double> rotation
                 {
                     get { return mod.rotation; }
                     set { mod.rotation = value; }
@@ -99,7 +96,7 @@ namespace Kopernicus
 
                 // snapHeightOffset
                 [ParserTarget("snapHeightOffset")]
-                public NumericParser<double> snapHeightOffset
+                public NumericParser<Double> snapHeightOffset
                 {
                     get { return mod.snapHeightOffset; }
                     set { mod.snapHeightOffset = value; }
@@ -120,7 +117,7 @@ namespace Kopernicus
 
                 // visibility Range
                 [ParserTarget("visibilityRange")]
-                public NumericParser<float> visibilityRange
+                public NumericParser<Single> visibilityRange
                 {
                     get { return mod.objects[0].visibleRange; }
                     set { mod.objects[0].visibleRange = value; }
@@ -128,7 +125,7 @@ namespace Kopernicus
 
                 // Commnet Station
                 [ParserTarget("commnetStation")]
-                public NumericParser<bool> commnetStation
+                public NumericParser<Boolean> commnetStation
                 {
                     get { return mod.gameObject.GetComponentInChildren<CommNetHome>() != null; }
                     set

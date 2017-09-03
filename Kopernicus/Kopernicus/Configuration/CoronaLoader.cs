@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -44,42 +40,42 @@ namespace Kopernicus
 
             // Material definition for the Corona
             [ParserTarget("scaleSpeed", allowMerge = true)]
-            public NumericParser<float> scaleSpeed
+            public NumericParser<Single> scaleSpeed
             {
                 get { return coronaComponent.scaleSpeed; }
                 set { coronaComponent.scaleSpeed = value; }
             }
 
             [ParserTarget("scaleLimitY", allowMerge = true)]
-            public NumericParser<float> scaleLimitY 
+            public NumericParser<Single> scaleLimitY 
             {
                 get { return coronaComponent.scaleLimitY; }
                 set { coronaComponent.scaleLimitY = value; }
             }
 
             [ParserTarget("scaleLimitX", allowMerge = true)]
-            public NumericParser<float> scaleLimitX
+            public NumericParser<Single> scaleLimitX
             {
                 get { return coronaComponent.scaleLimitX; }
                 set { coronaComponent.scaleLimitX = value; }
             }
 
             [ParserTarget("updateInterval", allowMerge = true)]
-            public NumericParser<float> updateInterval
+            public NumericParser<Single> updateInterval
             {
                 get { return coronaComponent.updateInterval; }
                 set { coronaComponent.updateInterval = value; }
             }
 
             [ParserTarget("speed", allowMerge = true)]
-            public NumericParser<int> speed
+            public NumericParser<Int32> speed
             {
                 get { return coronaComponent.Speed; }
                 set { coronaComponent.Speed = value; }
             }
 
             [ParserTarget("rotation", allowMerge = true)]
-            public NumericParser<float> rotation
+            public NumericParser<Single> rotation
             {
                 get { return coronaComponent.Rotation; }
                 set { coronaComponent.Rotation = value; }

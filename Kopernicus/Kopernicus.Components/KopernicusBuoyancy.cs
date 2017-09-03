@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,17 +17,15 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace Kopernicus
@@ -65,10 +59,10 @@ namespace Kopernicus
                 GetBaseFixedUpdate()();
             }
 
-            private float GetAltitudeFromOcean(Vector3 position)
+            private Single GetAltitudeFromOcean(Vector3 position)
             {
                 PQS ocean = GetOcean();
-                return (float)ocean.GetSurfaceHeight(ocean.GetRelativePosition(position)) - (float)part.vessel.mainBody.Radius;
+                return (Single)ocean.GetSurfaceHeight(ocean.GetRelativePosition(position)) - (Single)part.vessel.mainBody.Radius;
             }
 
             private PQS GetOcean()

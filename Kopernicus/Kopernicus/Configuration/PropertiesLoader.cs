@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -44,7 +40,7 @@ namespace Kopernicus
 
             // Body description
             [ParserTarget("description")]
-            public string description 
+            public String description 
             {
                 get { return celestialBody.bodyDescription; }
                 set { celestialBody.bodyDescription = value; }
@@ -52,7 +48,7 @@ namespace Kopernicus
 
             // Radius
             [ParserTarget("radius")]
-            public NumericParser<double> radius 
+            public NumericParser<Double> radius 
             {
                 get { return celestialBody.Radius; }
                 set { celestialBody.Radius = value; }
@@ -60,7 +56,7 @@ namespace Kopernicus
             
             // GeeASL
             [ParserTarget("geeASL")]
-            public NumericParser<double> geeASL 
+            public NumericParser<Double> geeASL 
             {
                 get { return celestialBody.GeeASL; }
                 set { celestialBody.GeeASL = value; }
@@ -68,25 +64,25 @@ namespace Kopernicus
             
             // Mass
             [ParserTarget("mass")]
-            public NumericParser<double> mass
+            public NumericParser<Double> mass
             {
                 get { return celestialBody.Mass; }
                 set { celestialBody.Mass = value; hasMass = true; }
             }
-            private bool hasMass = false;
+            private Boolean hasMass = false;
 
             // Grav Param
             [ParserTarget("gravParameter")]
-            public NumericParser<double> gravParameter
+            public NumericParser<Double> gravParameter
             {
                 get { return celestialBody.gravParameter; }
                 set { celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter = value; hasGravParam = true; }
             }
-            private bool hasGravParam = false;
+            private Boolean hasGravParam = false;
             
             // Does the body rotate?
             [ParserTarget("rotates")]
-            public NumericParser<bool> rotates
+            public NumericParser<Boolean> rotates
             {
                 get { return celestialBody.rotates; }
                 set { celestialBody.rotates = value; }
@@ -94,7 +90,7 @@ namespace Kopernicus
             
             // Rotation period of the world
             [ParserTarget("rotationPeriod")]
-            public NumericParser<double> rotationPeriod
+            public NumericParser<Double> rotationPeriod
             {
                 get { return celestialBody.rotationPeriod; }
                 set { celestialBody.rotationPeriod = value; }
@@ -102,7 +98,7 @@ namespace Kopernicus
             
             // Is the body tidally locked to its parent?
             [ParserTarget("tidallyLocked")]
-            public NumericParser<bool> tidallyLocked
+            public NumericParser<Boolean> tidallyLocked
             {
                 get { return celestialBody.tidallyLocked; }
                 set { celestialBody.tidallyLocked = value; }
@@ -110,7 +106,7 @@ namespace Kopernicus
 
             // Initial rotation of the world
             [ParserTarget("initialRotation")]
-            public NumericParser<double> initialRotation
+            public NumericParser<Double> initialRotation
             {
                 get { return celestialBody.initialRotation; }
                 set { celestialBody.initialRotation = value; }
@@ -118,7 +114,7 @@ namespace Kopernicus
 
             // Altitude where the Game switches the reference frame
             [ParserTarget("inverseRotThresholdAltitude")]
-            public NumericParser<float> inverseRotThresholdAltitude
+            public NumericParser<Single> inverseRotThresholdAltitude
             {
                 get { return celestialBody.inverseRotThresholdAltitude; }
                 set { celestialBody.inverseRotThresholdAltitude = value; }
@@ -126,7 +122,7 @@ namespace Kopernicus
             
             // albedo
             [ParserTarget("albedo")]
-            public NumericParser<double> albedo
+            public NumericParser<Double> albedo
             {
                 get { return celestialBody.albedo; }
                 set { celestialBody.albedo = value; }
@@ -134,7 +130,7 @@ namespace Kopernicus
 
             // emissivity
             [ParserTarget("emissivity")]
-            public NumericParser<double> emissivity
+            public NumericParser<Double> emissivity
             {
                 get { return celestialBody.emissivity; }
                 set { celestialBody.emissivity = value; }
@@ -142,7 +138,7 @@ namespace Kopernicus
 
             // coreTemperatureOffset
             [ParserTarget("coreTemperatureOffset")]
-            public NumericParser<double> coreTemperatureOffset
+            public NumericParser<Double> coreTemperatureOffset
             {
                 get { return celestialBody.coreTemperatureOffset; }
                 set { celestialBody.coreTemperatureOffset = value; }
@@ -150,7 +146,7 @@ namespace Kopernicus
             
             // Is this the home world
             [ParserTarget("isHomeWorld")]
-            public NumericParser<bool> isHomeWorld
+            public NumericParser<Boolean> isHomeWorld
             {
                 get { return celestialBody.isHomeWorld; }
                 set { celestialBody.isHomeWorld = value; }
@@ -158,31 +154,31 @@ namespace Kopernicus
 
             // Time warp altitude limits
             [ParserTarget("timewarpAltitudeLimits")]
-            public NumericCollectionParser<float> timewarpAltitudeLimits 
+            public NumericCollectionParser<Single> timewarpAltitudeLimits 
             {
-                get { return celestialBody.timeWarpAltitudeLimits != null ? celestialBody.timeWarpAltitudeLimits : new float[0]; }
+                get { return celestialBody.timeWarpAltitudeLimits != null ? celestialBody.timeWarpAltitudeLimits : new Single[0]; }
                 set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray(); }
             }
 
             // Sphere of Influence
             [ParserTarget("sphereOfInfluence")]
-            public NumericParser<double> sphereOfInfluence
+            public NumericParser<Double> sphereOfInfluence
             {
-                get { return celestialBody.Has("sphereOfInfluence") ? celestialBody.Get<double>("sphereOfInfluence") : celestialBody.sphereOfInfluence; }
+                get { return celestialBody.Has("sphereOfInfluence") ? celestialBody.Get<Double>("sphereOfInfluence") : celestialBody.sphereOfInfluence; }
                 set { celestialBody.sphereOfInfluence = value; celestialBody.Set("sphereOfInfluence", value.value); }
             }
 
             // Hill Sphere
             [ParserTarget("hillSphere")]
-            public NumericParser<double> hillSphere
+            public NumericParser<Double> hillSphere
             {
-                get { return celestialBody.Has("hillSphere") ? celestialBody.Get<double>("hillSphere") : celestialBody.hillSphere; }
+                get { return celestialBody.Has("hillSphere") ? celestialBody.Get<Double>("hillSphere") : celestialBody.hillSphere; }
                 set { celestialBody.hillSphere = value; celestialBody.Set("hillSphere", value.value); }
             }
 
             // solarRotationPeriod
             [ParserTarget("solarRotationPeriod")]
-            public NumericParser<bool> solarRotationPeriod
+            public NumericParser<Boolean> solarRotationPeriod
             {
                 get { return celestialBody.solarRotationPeriod; }
                 set { celestialBody.solarRotationPeriod = value; }
@@ -190,14 +186,14 @@ namespace Kopernicus
 
             // navballSwitchRadiusMult
             [ParserTarget("navballSwitchRadiusMult")]
-            public NumericParser<double> navballSwitchRadiusMult
+            public NumericParser<Double> navballSwitchRadiusMult
             {
                 get { return celestialBody.navballSwitchRadiusMult; }
                 set { celestialBody.navballSwitchRadiusMult = value; }
             }
             // navballSwitchRadiusMult
             [ParserTarget("navballSwitchRadiusMultLow")]
-            public NumericParser<double> navballSwitchRadiusMultLow
+            public NumericParser<Double> navballSwitchRadiusMultLow
             {
                 get { return celestialBody.navballSwitchRadiusMultLow; }
                 set { celestialBody.navballSwitchRadiusMultLow = value; }
@@ -231,7 +227,7 @@ namespace Kopernicus
 
             // Threshold for Biomes
             [ParserTarget("nonExactThreshold")]
-            public NumericParser<float> nonExactThreshold
+            public NumericParser<Single> nonExactThreshold
             {
                 get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.nonExactThreshold : 0.05f; }
                 set { celestialBody.BiomeMap.nonExactThreshold = value; }
@@ -239,7 +235,7 @@ namespace Kopernicus
 
             // If the biome threshold should get used
             [ParserTarget("exactSearch")]
-            public NumericParser<bool> exactSearch
+            public NumericParser<Boolean> exactSearch
             {
                 get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.exactSearch : false; }
                 set { celestialBody.BiomeMap.exactSearch = value; }
@@ -247,14 +243,14 @@ namespace Kopernicus
 
             // If the body name should be prefixed with "the" in some situations
             [ParserTarget("useTheInName")]
-            public NumericParser<bool> useTheInName
+            public NumericParser<Boolean> useTheInName
             {
                 get { return celestialBody.bodyDisplayName.StartsWith("The", StringComparison.InvariantCultureIgnoreCase); }
                 set { celestialBody.bodyDisplayName = "The " + celestialBody.bodyName; }
             }
 
             [ParserTarget("displayName")]
-            public string displayName
+            public String displayName
             {
                 get { return celestialBody.bodyDisplayName; }
                 set { celestialBody.bodyDisplayName = value; }
@@ -262,7 +258,7 @@ namespace Kopernicus
 
             // If the body should be unselectable
             [ParserTarget("selectable")]
-            public NumericParser<bool> selectable
+            public NumericParser<Boolean> selectable
             {
                 get { return !celestialBody.Has("notSelectable"); }
                 set { if (!value.value) celestialBody.Set("notSelectable", true); }
@@ -293,9 +289,9 @@ namespace Kopernicus
             // Max Zoom limit for TrackingStation and MapView
             // set the number of meters that can fit in the full height of the screen
             [ParserTarget("maxZoom")]
-            public NumericParser<float> minDistance
+            public NumericParser<Single> minDistance
             {
-                get { return celestialBody.Has("maxZoom") ? celestialBody.Get<float>("maxZoom") : 10 * 6000f; }
+                get { return celestialBody.Has("maxZoom") ? celestialBody.Get<Single>("maxZoom") : 10 * 6000f; }
                 set { celestialBody.Set("maxZoom", value.value / 6000f); }
             }
             
@@ -360,7 +356,7 @@ namespace Kopernicus
             // Mass converters
             public void GeeASLToOthers()
             {
-                double rsq = celestialBody.Radius;
+                Double rsq = celestialBody.Radius;
                 rsq *= rsq;
                 celestialBody.gMagnitudeAtCenter = celestialBody.GeeASL * 9.80665 * rsq;
                 celestialBody.gravParameter = celestialBody.gMagnitudeAtCenter;
@@ -371,7 +367,7 @@ namespace Kopernicus
             // Converts mass to Gee ASL using a body's radius.
             public void MassToOthers()
             {
-                double rsq = celestialBody.Radius;
+                Double rsq = celestialBody.Radius;
                 rsq *= rsq;
                 celestialBody.GeeASL = celestialBody.Mass * (6.67408E-11 / 9.80665) / rsq;
                 celestialBody.gMagnitudeAtCenter = celestialBody.GeeASL * 9.80665 * rsq;
@@ -382,7 +378,7 @@ namespace Kopernicus
             // Convert gravParam to mass and GeeASL
             public void GravParamToOthers()
             {
-                double rsq = celestialBody.Radius;
+                Double rsq = celestialBody.Radius;
                 rsq *= rsq;
                 celestialBody.Mass = celestialBody.gravParameter * (1 / 6.67408E-11);
                 celestialBody.GeeASL = celestialBody.gravParameter / 9.80665 / rsq;

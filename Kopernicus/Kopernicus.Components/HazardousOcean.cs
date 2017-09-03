@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,13 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
- 
- using System;
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,13 +36,13 @@ namespace Kopernicus
         /// </summary>
         public class HazardousOcean : MonoBehaviour
         {
-            /// The amount of added heat per altitude
+            // The amount of added heat per altitude
             public FloatCurve heatCurve;
 
-            /// The body we're attached to
+            // The body we're attached to
             private CelestialBody body;
 
-            /// The lava ocean
+            // The lava ocean
             private PQS ocean;
 
             /// <summary>
@@ -72,8 +68,8 @@ namespace Kopernicus
                 // Loop through them
                 foreach (Vessel vessel in vessels)
                 {
-                    double distanceToPlanet = Math.Abs(Vector3d.Distance(vessel.transform.position, body.transform.position)) - ocean.GetSurfaceHeight(ocean.GetRelativePosition(vessel.transform.position));
-                    double heatingRate = heatCurve.Evaluate((float)distanceToPlanet);
+                    Double distanceToPlanet = Math.Abs(Vector3d.Distance(vessel.transform.position, body.transform.position)) - ocean.GetSurfaceHeight(ocean.GetRelativePosition(vessel.transform.position));
+                    Double heatingRate = heatCurve.Evaluate((Single)distanceToPlanet);
                     foreach (Part part in vessel.Parts)
                         part.temperature += heatingRate;
                 }

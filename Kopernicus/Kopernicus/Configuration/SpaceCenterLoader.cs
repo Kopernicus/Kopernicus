@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,15 +17,16 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using Kopernicus.Components;
-using UnityEngine;
+using System;
 using System.Linq;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -43,7 +40,7 @@ namespace Kopernicus
 
             // latitude
             [ParserTarget("latitude")]
-            public NumericParser<double> latitude
+            public NumericParser<Double> latitude
             {
                 get { return ksc.latitude; }
                 set { ksc.latitude = value; }
@@ -51,7 +48,7 @@ namespace Kopernicus
 
             // longitude
             [ParserTarget("longitude")]
-            public NumericParser<double> longitude
+            public NumericParser<Double> longitude
             {
                 get { return ksc.longitude; }
                 set { ksc.longitude = value; }
@@ -66,7 +63,7 @@ namespace Kopernicus
 
             // decalLatitude
             [ParserTarget("decalLatitude")]
-            public NumericParser<double> decalLatitude
+            public NumericParser<Double> decalLatitude
             {
                 get { return ksc.decalLatitude; }
                 set { ksc.decalLatitude = value; }
@@ -74,7 +71,7 @@ namespace Kopernicus
 
             // decalLongitude
             [ParserTarget("decalLongitude")]
-            public NumericParser<double> decalLongitude
+            public NumericParser<Double> decalLongitude
             {
                 get { return ksc.decalLongitude; }
                 set { ksc.decalLongitude = value; }
@@ -82,7 +79,7 @@ namespace Kopernicus
 
             // lodvisibleRangeMultipler
             [ParserTarget("lodvisibleRangeMultipler")]
-            public NumericParser<double> lodvisibleRangeMultipler
+            public NumericParser<Double> lodvisibleRangeMultipler
             {
                 get { return ksc.lodvisibleRangeMult; }
                 set { ksc.lodvisibleRangeMult = value; }
@@ -90,7 +87,7 @@ namespace Kopernicus
 
             // reorientFinalAngle
             [ParserTarget("reorientFinalAngle")]
-            public NumericParser<float> reorientFinalAngle
+            public NumericParser<Single> reorientFinalAngle
             {
                 get { return ksc.reorientFinalAngle; }
                 set { ksc.reorientFinalAngle = value; }
@@ -106,7 +103,7 @@ namespace Kopernicus
 
             // reorientToSphere
             [ParserTarget("reorientToSphere")]
-            public NumericParser<bool> reorientToSphere
+            public NumericParser<Boolean> reorientToSphere
             {
                 get { return ksc.reorientToSphere; }
                 set { ksc.reorientToSphere = value; }
@@ -114,7 +111,7 @@ namespace Kopernicus
 
             // repositionRadiusOffset
             [ParserTarget("repositionRadiusOffset")]
-            public NumericParser<double> repositionRadiusOffset
+            public NumericParser<Double> repositionRadiusOffset
             {
                 get { return ksc.repositionRadiusOffset; }
                 set { ksc.repositionRadiusOffset = value; }
@@ -122,7 +119,7 @@ namespace Kopernicus
 
             // repositionToSphere
             [ParserTarget("repositionToSphere")]
-            public NumericParser<bool> repositionToSphere
+            public NumericParser<Boolean> repositionToSphere
             {
                 get { return ksc.repositionToSphere; }
                 set { ksc.repositionToSphere = value; }
@@ -130,7 +127,7 @@ namespace Kopernicus
 
             // repositionToSphereSurface
             [ParserTarget("repositionToSphereSurface")]
-            public NumericParser<bool> repositionToSphereSurface
+            public NumericParser<Boolean> repositionToSphereSurface
             {
                 get { return ksc.repositionToSphereSurface; }
                 set { ksc.repositionToSphereSurface = value; }
@@ -138,7 +135,7 @@ namespace Kopernicus
 
             // repositionToSphereSurfaceAddHeight
             [ParserTarget("repositionToSphereSurfaceAddHeight")]
-            public NumericParser<bool> repositionToSphereSurfaceAddHeight
+            public NumericParser<Boolean> repositionToSphereSurfaceAddHeight
             {
                 get { return ksc.repositionToSphereSurfaceAddHeight; }
                 set { ksc.repositionToSphereSurfaceAddHeight = value; }
@@ -154,7 +151,7 @@ namespace Kopernicus
 
             // radius
             [ParserTarget("radius")]
-            public NumericParser<double> radius
+            public NumericParser<Double> radius
             {
                 get { return ksc.radius; }
                 set { ksc.radius = value; }
@@ -162,7 +159,7 @@ namespace Kopernicus
 
             // heightMapDeformity
             [ParserTarget("heightMapDeformity")]
-            public NumericParser<double> heightMapDeformity
+            public NumericParser<Double> heightMapDeformity
             {
                 get { return ksc.heightMapDeformity; }
                 set { ksc.heightMapDeformity = value; }
@@ -170,7 +167,7 @@ namespace Kopernicus
 
             // absoluteOffset
             [ParserTarget("absoluteOffset")]
-            public NumericParser<double> absoluteOffset
+            public NumericParser<Double> absoluteOffset
             {
                 get { return ksc.absoluteOffset; }
                 set { ksc.absoluteOffset = value; }
@@ -178,7 +175,7 @@ namespace Kopernicus
 
             // absolute
             [ParserTarget("absolute")]
-            public NumericParser<bool> absolute
+            public NumericParser<Boolean> absolute
             {
                 get { return ksc.absolute; }
                 set { ksc.absolute = value; }
@@ -204,13 +201,13 @@ namespace Kopernicus
             public SpaceCenterLoader()
             {
                 ksc = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
-                Object.DontDestroyOnLoad(ksc);
+                UnityEngine.Object.DontDestroyOnLoad(ksc);
             }
 
             // Runtime Constructor
             public SpaceCenterLoader(CelestialBody body)
             {
-                ksc = Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.name);
+                ksc = UnityEngine.Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.name);
             }
 
             // Apply event

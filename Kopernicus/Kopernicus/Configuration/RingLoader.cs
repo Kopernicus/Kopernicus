@@ -1,14 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: - Bryce C Schroeder (bryce.schroeder@gmail.com)
- *             - Nathaniel R. Lewis (linux.robotdude@gmail.com)
- *
- * Maintained by: - Thomas P.
- *                - NathanKell
- *
-* Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
- * -------------------------------------------------------------
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -23,15 +15,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- *
+ * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2014 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- *
+ * 
  * https://kerbalspaceprogram.com
  */
 
 using Kopernicus.Components;
+using System;
 using UnityEngine;
 
 namespace Kopernicus
@@ -46,7 +39,7 @@ namespace Kopernicus
 
             // Inner Radius of our ring
             [ParserTarget("innerRadius")]
-            public NumericParser<float> innerRadius
+            public NumericParser<Single> innerRadius
             {
                 get { return ring.innerRadius; }
                 set { ring.innerRadius = value; }
@@ -54,7 +47,7 @@ namespace Kopernicus
 
             // Outer Radius of our ring
             [ParserTarget("outerRadius")]
-            public NumericParser<float> outerRadius
+            public NumericParser<Single> outerRadius
             {
                 get { return ring.outerRadius; }
                 set { ring.outerRadius = value; }
@@ -64,14 +57,14 @@ namespace Kopernicus
             /// Distance between the top and bottom faces in milliradii
             /// </summary>
             [ParserTarget("thickness")]
-            public NumericParser<float> thickness {
+            public NumericParser<Single> thickness {
                 get { return ring.thickness;  }
                 set { ring.thickness = value; }
             }
 
             // Axis angle (inclination) of our ring
             [ParserTarget("angle")]
-            public NumericParser<float> angle
+            public NumericParser<Single> angle
             {
                 get { return -ring.rotation.eulerAngles.x; }
                 set { ring.rotation = Quaternion.Euler(-value, 0, 0); }
@@ -82,7 +75,7 @@ namespace Kopernicus
             /// Works just like the corresponding property on celestial bodies.
             /// </summary>
             [ParserTarget("longitudeOfAscendingNode")]
-            public NumericParser<float> longitudeOfAscendingNode
+            public NumericParser<Single> longitudeOfAscendingNode
             {
                 get { return ring.longitudeOfAscendingNode;  }
                 set { ring.longitudeOfAscendingNode = value; }
@@ -106,7 +99,7 @@ namespace Kopernicus
 
             // Lock rotation of our ring?
             [ParserTarget("lockRotation")]
-            public NumericParser<bool> lockRotation
+            public NumericParser<Boolean> lockRotation
             {
                 get { return ring.lockRotation; }
                 set { ring.lockRotation = value; }
@@ -118,7 +111,7 @@ namespace Kopernicus
             /// and standing perfectly still if it's true.
             /// </summary>
             [ParserTarget("rotationPeriod")]
-            public NumericParser<float> rotationPeriod
+            public NumericParser<Single> rotationPeriod
             {
                 get { return ring.rotationPeriod;  }
                 set { ring.rotationPeriod = value; }
@@ -126,7 +119,7 @@ namespace Kopernicus
 
             // Unlit our ring?
             [ParserTarget("unlit")]
-            public NumericParser<bool> unlit
+            public NumericParser<Boolean> unlit
             {
                 get { return ring.unlit; }
                 set { ring.unlit = value; }
@@ -134,7 +127,7 @@ namespace Kopernicus
 
             // Use new shader with mie scattering and planet shadow?
             [ParserTarget("useNewShader")]
-            public NumericParser<bool> useNewShader
+            public NumericParser<Boolean> useNewShader
             {
                 get { return ring.useNewShader; }
                 set { ring.useNewShader = value; }
@@ -142,7 +135,7 @@ namespace Kopernicus
 
             // Penumbra multiplier for new shader
             [ParserTarget("penumbraMultiplier")]
-            public NumericParser<float> penumbraMultiplier
+            public NumericParser<Single> penumbraMultiplier
             {
                 get { return ring.penumbraMultiplier; }
                 set { ring.penumbraMultiplier = value; }
@@ -150,7 +143,7 @@ namespace Kopernicus
 
             // Amount of vertices arount the ring
             [ParserTarget("steps")]
-            public NumericParser<int> steps
+            public NumericParser<Int32> steps
             {
                 get { return ring.steps; }
                 set { ring.steps = value; }
@@ -162,7 +155,7 @@ namespace Kopernicus
             /// from (0,0) to (1,1).
             /// </summary>
             [ParserTarget("tiles")]
-            public NumericParser<int> tiles
+            public NumericParser<Int32> tiles
             {
                 get { return ring.tiles; }
                 set { ring.tiles = value; }
@@ -182,7 +175,7 @@ namespace Kopernicus
             /// The inner shade texture repeats this many times over the inner surface
             /// </summary>
             [ParserTarget("innerShadeTiles")]
-            public NumericParser<int> innerShadeTiles
+            public NumericParser<Int32> innerShadeTiles
             {
                 get { return ring.innerShadeTiles;  }
                 set { ring.innerShadeTiles = value; }
@@ -192,7 +185,7 @@ namespace Kopernicus
             /// Number of seconds the inner shade texture takes to complete one rotation
             /// </summary>
             [ParserTarget("innerShadeRotationPeriod")]
-            public NumericParser<float> innerShadeRotationPeriod
+            public NumericParser<Single> innerShadeRotationPeriod
             {
                 get { return ring.innerShadeRotationPeriod;  }
                 set { ring.innerShadeRotationPeriod = value; }
@@ -203,7 +196,7 @@ namespace Kopernicus
             {
                 ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
                 ring.transform.parent = generatedBody.scaledVersion.transform;
-                ring.planetRadius = (float) generatedBody.celestialBody.Radius;
+                ring.planetRadius = (Single) generatedBody.celestialBody.Radius;
 
                 // Need to check the parent body's rotation to orient the LAN properly
                 ring.referenceBody = generatedBody.celestialBody;

@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,15 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using System.Collections.Generic;
-using Kopernicus.Configuration;
 using UnityEngine;
 
 namespace Kopernicus
@@ -41,17 +35,17 @@ namespace Kopernicus
         public static Mesh ReferenceGeosphere { get; set; }
 
         // Finalize Orbits stuff
-        public static double SOIMinRadiusMult = 2.0d;
-        public static double SOIMinAltitude = 40000d;
+        public static Double SOIMinRadiusMult = 2.0d;
+        public static Double SOIMinAltitude = 40000d;
 
         // Max view distance
-        public static double maxViewDistance = -1d;
+        public static Double maxViewDistance = -1d;
 
         // Global base epoch
-        public static double epoch { get; set; }
+        public static Double epoch { get; set; }
 
         // The body that should appear in MainMenu
-        public static string menuBody { get; set; }
+        public static String menuBody { get; set; }
 
         // Initialisation
         static Templates()

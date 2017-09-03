@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -41,7 +36,7 @@ namespace Kopernicus
             {
                 // The frequency of the alpha noise
                 [ParserTarget("alphaFrequency")]
-                public NumericParser<double> alphaFrequency
+                public NumericParser<Double> alphaFrequency
                 {
                     get { return mod.alphaFrequency; }
                     set { mod.alphaFrequency = value; }
@@ -49,7 +44,7 @@ namespace Kopernicus
 
                 // Octaves of the alpha noise
                 [ParserTarget("alphaOctaves")]
-                public NumericParser<double> alphaOctaves
+                public NumericParser<Double> alphaOctaves
                 {
                     get { return mod.alphaOctaves; }
                     set { mod.alphaOctaves = value; }
@@ -57,7 +52,7 @@ namespace Kopernicus
 
                 // Persistence of the alpha noise
                 [ParserTarget("alphaPersistence")]
-                public NumericParser<double> alphaPersistence
+                public NumericParser<Double> alphaPersistence
                 {
                     get { return mod.alphaPersistence; }
                     set { mod.alphaPersistence = value; }
@@ -65,7 +60,7 @@ namespace Kopernicus
 
                 // The seed of the alpha noise
                 [ParserTarget("alphaSeed")]
-                public NumericParser<int> alphaSeed
+                public NumericParser<Int32> alphaSeed
                 {
                     get { return mod.alphaSeed; }
                     set { mod.alphaSeed = value; }
@@ -73,7 +68,7 @@ namespace Kopernicus
 
                 // Amount of color that will be applied
                 [ParserTarget("blend")]
-                public NumericParser<float> blend
+                public NumericParser<Single> blend
                 {
                     get { return mod.blend; }
                     set { mod.blend = value; }
@@ -81,7 +76,7 @@ namespace Kopernicus
 
                 // The frequency of the blue noise
                 [ParserTarget("blueFrequency")]
-                public NumericParser<double> blueFrequency
+                public NumericParser<Double> blueFrequency
                 {
                     get { return mod.blueFrequency; }
                     set { mod.blueFrequency = value; }
@@ -89,7 +84,7 @@ namespace Kopernicus
 
                 // Octaves of the blue noise
                 [ParserTarget("blueOctaves")]
-                public NumericParser<double> blueOctaves
+                public NumericParser<Double> blueOctaves
                 {
                     get { return mod.blueOctaves; }
                     set { mod.blueOctaves = value; }
@@ -97,7 +92,7 @@ namespace Kopernicus
 
                 // Persistence of the blue noise
                 [ParserTarget("bluePersistence")]
-                public NumericParser<double> bluePersistence
+                public NumericParser<Double> bluePersistence
                 {
                     get { return mod.bluePersistence; }
                     set { mod.bluePersistence = value; }
@@ -105,7 +100,7 @@ namespace Kopernicus
 
                 // The seed of the blue noise
                 [ParserTarget("blueSeed")]
-                public NumericParser<int> blueSeed
+                public NumericParser<Int32> blueSeed
                 {
                     get { return mod.blueSeed; }
                     set { mod.blueSeed = value; }
@@ -113,7 +108,7 @@ namespace Kopernicus
 
                 // The frequency of the green noise
                 [ParserTarget("greenFrequency")]
-                public NumericParser<double> greenFrequency
+                public NumericParser<Double> greenFrequency
                 {
                     get { return mod.greenFrequency; }
                     set { mod.greenFrequency = value; }
@@ -121,7 +116,7 @@ namespace Kopernicus
 
                 // Octaves of the green noise
                 [ParserTarget("greenOctaves")]
-                public NumericParser<double> greenOctaves
+                public NumericParser<Double> greenOctaves
                 {
                     get { return mod.greenOctaves; }
                     set { mod.greenOctaves = value; }
@@ -129,7 +124,7 @@ namespace Kopernicus
 
                 // Persistence of the green noise
                 [ParserTarget("greenPersistence")]
-                public NumericParser<double> greenPersistence
+                public NumericParser<Double> greenPersistence
                 {
                     get { return mod.greenPersistence; }
                     set { mod.greenPersistence = value; }
@@ -137,7 +132,7 @@ namespace Kopernicus
 
                 // The seed of the green noise
                 [ParserTarget("greenSeed")]
-                public NumericParser<int> greenSeed
+                public NumericParser<Int32> greenSeed
                 {
                     get { return mod.greenSeed; }
                     set { mod.greenSeed = value; }
@@ -145,7 +140,7 @@ namespace Kopernicus
 
                 // The frequency of the red noise
                 [ParserTarget("redFrequency")]
-                public NumericParser<double> redFrequency
+                public NumericParser<Double> redFrequency
                 {
                     get { return mod.redFrequency; }
                     set { mod.redFrequency = value; }
@@ -153,7 +148,7 @@ namespace Kopernicus
 
                 // Octaves of the red noise
                 [ParserTarget("redOctaves")]
-                public NumericParser<double> redOctaves
+                public NumericParser<Double> redOctaves
                 {
                     get { return mod.redOctaves; }
                     set { mod.redOctaves = value; }
@@ -161,7 +156,7 @@ namespace Kopernicus
 
                 // Persistence of the red noise
                 [ParserTarget("redPersistence")]
-                public NumericParser<double> redPersistence
+                public NumericParser<Double> redPersistence
                 {
                     get { return mod.redPersistence; }
                     set { mod.redPersistence = value; }
@@ -169,7 +164,7 @@ namespace Kopernicus
 
                 // The seed of the red noise
                 [ParserTarget("redSeed")]
-                public NumericParser<int> redSeed
+                public NumericParser<Int32> redSeed
                 {
                     get { return mod.redSeed; }
                     set { mod.redSeed = value; }

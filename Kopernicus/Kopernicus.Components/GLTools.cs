@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,15 +17,15 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -52,7 +48,7 @@ namespace Kopernicus
             /// <summary>
             /// The resolution of the gl line
             /// </summary>
-            public const double resolution = 1d;
+            public const Double resolution = 1d;
 
             /// <summary>
             /// The internal representation of the GL material
@@ -89,7 +85,7 @@ namespace Kopernicus
             /// <summary>
             /// Draws the orbit with the given arguments.
             /// </summary>
-            public static void DrawOrbit(double inc, double e, double sma, double lan, double w, double mEp, double t, CelestialBody body)
+            public static void DrawOrbit(Double inc, Double e, Double sma, Double lan, Double w, Double mEp, Double t, CelestialBody body)
             {
                 DrawOrbit(new Orbit(inc, e, sma, lan, w, mEp, t, body));
             }
@@ -97,7 +93,7 @@ namespace Kopernicus
             /// <summary>
             /// Draws the orbit with the given arguments.
             /// </summary>
-            public static void DrawOrbit(double inc, double e, double sma, double lan, double w, double mEp, double t, CelestialBody body, Color color)
+            public static void DrawOrbit(Double inc, Double e, Double sma, Double lan, Double w, Double mEp, Double t, CelestialBody body, Color color)
             {
                 DrawOrbit(new Orbit(inc, e, sma, lan, w, mEp, t, body), color);
             }
@@ -105,7 +101,7 @@ namespace Kopernicus
             /// <summary>
             /// Draws the orbit with the given arguments.
             /// </summary>
-            public static void DrawOrbit(double inc, double e, double sma, double lan, double w, double mEp, double t, CelestialBody body, Color color, Style style)
+            public static void DrawOrbit(Double inc, Double e, Double sma, Double lan, Double w, Double mEp, Double t, CelestialBody body, Color color, Style style)
             {
                 DrawOrbit(new Orbit(inc, e, sma, lan, w, mEp, t, body), color, style);
             }
@@ -147,14 +143,14 @@ namespace Kopernicus
                 // Calculations for elliptical orbits
                 if (orbit.eccentricity < 1)
                 {
-                    for (int i = 0; i < Math.Floor(360.0 / resolution); i++)
+                    for (Int32 i = 0; i < Math.Floor(360.0 / resolution); i++)
                         points.Add(ScaledSpace.LocalToScaledSpace(orbit.getPositionFromEccAnomaly(i * resolution * Math.PI / 180)));
                     points.Add(points[0]); // close the loop
                 }
                 // Calculations for hyperbolic orbits
                 else
                 {
-                    for (int i = -1000; i <= 1000; i += 5)
+                    for (Int32 i = -1000; i <= 1000; i += 5)
                         points.Add(ScaledSpace.LocalToScaledSpace(orbit.getPositionFromEccAnomaly(i * resolution * Math.PI / 180)));
                 }
 
@@ -178,10 +174,10 @@ namespace Kopernicus
                 GL.Color(color);
 
                 // Evaluate the needed amount of steps
-                int step = (int)style;
+                Int32 step = (Int32)style;
 
                 // Draw every point
-                for (int i = 0; i < points.Count - 1; i += step)
+                for (Int32 i = 0; i < points.Count - 1; i += step)
                 {
                     // Occlusion check
                     Vector3 cameraPos = PlanetariumCamera.Camera.transform.position;
@@ -210,13 +206,13 @@ namespace Kopernicus
             /// <param name="worldPosition">The world position.</param>
             /// <param name="byBody">The by body.</param>
             /// <returns></returns>
-            public static bool IsOccluded(Vector3d worldPosition, CelestialBody byBody)
+            public static Boolean IsOccluded(Vector3d worldPosition, CelestialBody byBody)
             {
                 Vector3d camPos = ScaledSpace.ScaledToLocalSpace(PlanetariumCamera.Camera.transform.position);
                 Vector3d VC = (byBody.position - camPos) / (byBody.Radius - 100);
                 Vector3d VT = (worldPosition - camPos) / (byBody.Radius - 100);
 
-                double VT_VC = Vector3d.Dot(VT, VC);
+                Double VT_VC = Vector3d.Dot(VT, VC);
 
                 // In front of the horizon plane
                 if (VT_VC < VC.sqrMagnitude - 1) return false;

@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,24 +17,24 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
- 
-using UnityEngine;
+
+using Contracts;
 using Kopernicus.Components;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
 using Kopernicus.Configuration;
 using KSP.UI.Screens;
 using KSP.UI.Screens.Mapview;
 using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using ModularFI;
-using Contracts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -90,11 +86,11 @@ namespace Kopernicus
                         {
                             if (ContractSystem.ContractWeights.ContainsKey(body.name))
                             {
-                                ContractSystem.ContractWeights[body.name] = body.Get<int>("contractWeight");
+                                ContractSystem.ContractWeights[body.name] = body.Get<Int32>("contractWeight");
                             }
                             else
                             {
-                                ContractSystem.ContractWeights.Add(body.name, body.Get<int>("contractWeight"));
+                                ContractSystem.ContractWeights.Add(body.name, body.Get<Int32>("contractWeight"));
                             }                            
                         }
                     }
@@ -171,8 +167,8 @@ namespace Kopernicus
                         body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
                     if (body.solarRotationPeriod)
                     {
-                        double rotPeriod = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody.rotationPeriod;
-                        double num1 = Math.PI * 2 * Math.Sqrt(Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3) / body.orbit.referenceBody.gravParameter);
+                        Double rotPeriod = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody.rotationPeriod;
+                        Double num1 = Math.PI * 2 * Math.Sqrt(Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3) / body.orbit.referenceBody.gravParameter);
                         body.rotationPeriod = rotPeriod * num1 / (num1 + rotPeriod); ;
                     }
                 }
@@ -256,8 +252,8 @@ namespace Kopernicus
         }
 
         // Status
-        bool isDone = false;
-        bool isDone2 = false;
+        Boolean isDone = false;
+        Boolean isDone2 = false;
 
         // Fix the Zooming-Out bug
         void FixZooming()
@@ -281,7 +277,7 @@ namespace Kopernicus
                 {
                     CelestialBody body = target.celestialBody;
                     if (body.Has("maxZoom"))
-                        PlanetariumCamera.fetch.minDistance = body.Get<float>("maxZoom");
+                        PlanetariumCamera.fetch.minDistance = body.Get<Single>("maxZoom");
                     else 
                         PlanetariumCamera.fetch.minDistance = 10;
                 }
@@ -399,7 +395,7 @@ namespace Kopernicus
             // That sounds funny
             Rotato planetRotato = menuPlanet.AddComponent<Rotato>();
             Rotato planetRefRotato = kerbin.GetComponent<Rotato>();
-            planetRotato.speed = (planetRefRotato.speed / 9284.50070356553f) * (float)planetCB.orbitDriver.orbit.orbitalSpeed; // calc.exe for the win
+            planetRotato.speed = (planetRefRotato.speed / 9284.50070356553f) * (Single)planetCB.orbitDriver.orbit.orbitalSpeed; // calc.exe for the win
 
             // Scale the body
             menuPlanet.transform.localScale = kerbin.localScale;
@@ -413,7 +409,7 @@ namespace Kopernicus
             menuPlanet.GetComponent<Renderer>().sharedMaterial = planetCB.scaledBody.GetComponent<Renderer>().sharedMaterial;
 
             // Copy EVE 7.4 clouds / Rings
-            for (int i = 0; i < planetCB.scaledBody.transform.childCount; i++)
+            for (Int32 i = 0; i < planetCB.scaledBody.transform.childCount; i++)
             {
                 // Just clone everything
                 Transform t = planetCB.scaledBody.transform.GetChild(i);
@@ -424,7 +420,7 @@ namespace Kopernicus
                 newT.layer = 0;
                 newT.transform.localPosition = Vector3.zero;
                 newT.transform.localRotation = Quaternion.identity;
-                newT.transform.localScale = (float)(1008 / planetCB.Radius) * Vector3.one;
+                newT.transform.localScale = (Single)(1008 / planetCB.Radius) * Vector3.one;
             }
 
             // And now, create the moons
@@ -441,14 +437,14 @@ namespace Kopernicus
                 // Still funny...
                 Rotato munRotato = menuMoonPivot.AddComponent<Rotato>();
                 Rotato refRotato = mun.GetComponent<Rotato>();
-                munRotato.speed = (refRotato.speed / 542.494239600754f) * (float)moonCB.GetOrbit().getOrbitalSpeedAtDistance(moonCB.GetOrbit().semiMajorAxis);
+                munRotato.speed = (refRotato.speed / 542.494239600754f) * (Single)moonCB.GetOrbit().getOrbitalSpeedAtDistance(moonCB.GetOrbit().semiMajorAxis);
 
                 // Clone the scaledVersion and attach it to the pivot
                 GameObject menuMoon = Instantiate(moon.scaledVersion) as GameObject;
                 menuMoon.transform.parent = menuMoonPivot.transform;
 
                 // Move and scale the menuMoon correctly
-                menuMoon.transform.localPosition = new Vector3(-5000f * (float)(moonCB.GetOrbit().semiMajorAxis / 12000000.0), 0f, 0f);
+                menuMoon.transform.localPosition = new Vector3(-5000f * (Single)(moonCB.GetOrbit().semiMajorAxis / 12000000.0), 0f, 0f);
                 menuMoon.transform.localScale *= 7f;
 
                 // Destroy stuff
@@ -459,12 +455,12 @@ namespace Kopernicus
 
                 // More Rotato
                 Rotato moonRotato = menuMoon.AddComponent<Rotato>();
-                moonRotato.speed = -0.005f / (float)(moonCB.rotationPeriod / 400.0);
+                moonRotato.speed = -0.005f / (Single)(moonCB.rotationPeriod / 400.0);
 
                 // Apply orbital stuff
-                menuMoon.transform.Rotate(0f, (float)moonCB.orbitDriver.orbit.LAN, 0f);
-                menuMoon.transform.Rotate(0f, 0f, (float)moonCB.orbitDriver.orbit.inclination);
-                menuMoon.transform.Rotate(0f, (float)moonCB.orbitDriver.orbit.argumentOfPeriapsis, 0f);
+                menuMoon.transform.Rotate(0f, (Single)moonCB.orbitDriver.orbit.LAN, 0f);
+                menuMoon.transform.Rotate(0f, 0f, (Single)moonCB.orbitDriver.orbit.inclination);
+                menuMoon.transform.Rotate(0f, (Single)moonCB.orbitDriver.orbit.argumentOfPeriapsis, 0f);
 
                 // And set the layer to 0
                 menuMoon.layer = 0;
@@ -473,7 +469,7 @@ namespace Kopernicus
                 menuMoon.GetComponent<Renderer>().sharedMaterial = moonCB.scaledBody.GetComponent<Renderer>().sharedMaterial;
 
                 // Copy EVE 7.4 clouds / Rings
-                for (int i = 0; i < moonCB.scaledBody.transform.childCount; i++)
+                for (Int32 i = 0; i < moonCB.scaledBody.transform.childCount; i++)
                 {
                     Transform t = moonCB.scaledBody.transform.GetChild(i);
                     if (t.gameObject.GetComponent<AtmosphereFromGround>())
@@ -483,7 +479,7 @@ namespace Kopernicus
                     newT.layer = 0;
                     newT.transform.localPosition = Vector3.zero;
                     newT.transform.localRotation = Quaternion.identity;
-                    newT.transform.localScale = (float)(1008 / moonCB.Radius) * Vector3.one;
+                    newT.transform.localScale = (Single)(1008 / moonCB.Radius) * Vector3.one;
                 }
             }
             Events.OnRuntimeUtilityUpdateMenu.Fire();
@@ -545,16 +541,16 @@ namespace Kopernicus
             {
                 if (ksc.repositionToSphere || ksc.repositionToSphereSurface)
                 {
-                    double normalHeight = body.pqsController.GetSurfaceHeight((Vector3d)ksc.repositionRadial.normalized) - body.Radius;
+                    Double normalHeight = body.pqsController.GetSurfaceHeight((Vector3d)ksc.repositionRadial.normalized) - body.Radius;
                     if (ksc.repositionToSphereSurface)
                     {
                         normalHeight += ksc.repositionRadiusOffset;
                     }
-                    cam.altitudeInitial = 0f - (float)normalHeight;
+                    cam.altitudeInitial = 0f - (Single)normalHeight;
                 }
                 else
                 {
-                    cam.altitudeInitial = 0f - (float)ksc.repositionRadiusOffset;
+                    cam.altitudeInitial = 0f - (Single)ksc.repositionRadiusOffset;
                 }
 
                 // re-implement cam.Start()
@@ -567,7 +563,7 @@ namespace Kopernicus
 
                 // get fields
                 FieldInfo[] fields = camType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-                for (int i = 0; i < fields.Length; ++i)
+                for (Int32 i = 0; i < fields.Length; ++i)
                 {
                     FieldInfo fi = fields[i];
                     if (fi.FieldType == typeof(PQS))

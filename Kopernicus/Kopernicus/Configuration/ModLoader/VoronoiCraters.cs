@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,14 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -41,7 +36,7 @@ namespace Kopernicus
             {
                 // colorOpacity
                 [ParserTarget("colorOpacity")]
-                public NumericParser<float> colorOpacity
+                public NumericParser<Single> colorOpacity
                 {
                     get { return mod.colorOpacity; }
                     set { mod.colorOpacity = value; }
@@ -49,7 +44,7 @@ namespace Kopernicus
                 
                 // DebugColorMapping
                 [ParserTarget("DebugColorMapping")]
-                public NumericParser<bool> DebugColorMapping
+                public NumericParser<Boolean> DebugColorMapping
                 {
                     get { return mod.DebugColorMapping; }
                     set { mod.DebugColorMapping = value; }
@@ -57,7 +52,7 @@ namespace Kopernicus
 
                 // Deformation of the Voronoi
                 [ParserTarget("deformation")]
-                public NumericParser<double> deformation
+                public NumericParser<Double> deformation
                 {
                     get { return mod.deformation; }
                     set { mod.deformation = value; }
@@ -73,7 +68,7 @@ namespace Kopernicus
 
                 // jitter
                 [ParserTarget("jitter")]
-                public NumericParser<float> jitter
+                public NumericParser<Single> jitter
                 {
                     get { return mod.jitter; }
                     set { mod.jitter = value; }
@@ -89,7 +84,7 @@ namespace Kopernicus
 
                 // jitterHeight
                 [ParserTarget("jitterHeight")]
-                public NumericParser<float> jitterHeight
+                public NumericParser<Single> jitterHeight
                 {
                     get { return mod.jitterHeight; }
                     set { mod.jitterHeight = value; }
@@ -97,7 +92,7 @@ namespace Kopernicus
 
                 // rFactor
                 [ParserTarget("rFactor")]
-                public NumericParser<float> rFactor
+                public NumericParser<Single> rFactor
                 {
                     get { return mod.rFactor; }
                     set { mod.rFactor = value; }
@@ -105,7 +100,7 @@ namespace Kopernicus
 
                 // rOffset
                 [ParserTarget("rOffset")]
-                public NumericParser<float> rOffset
+                public NumericParser<Single> rOffset
                 {
                     get { return mod.rOffset; }
                     set { mod.rOffset = value; }
@@ -113,7 +108,7 @@ namespace Kopernicus
 
                 // simplexFrequency
                 [ParserTarget("simplexFrequency")]
-                public NumericParser<double> simplexFrequency
+                public NumericParser<Double> simplexFrequency
                 {
                     get { return mod.simplexFrequency; }
                     set { mod.simplexFrequency = value; }
@@ -121,7 +116,7 @@ namespace Kopernicus
 
                 // simplexOctaves
                 [ParserTarget("simplexOctaves")]
-                public NumericParser<double> simplexOctaves
+                public NumericParser<Double> simplexOctaves
                 {
                     get { return mod.simplexOctaves; }
                     set { mod.simplexOctaves = value; }
@@ -129,7 +124,7 @@ namespace Kopernicus
 
                 // simplexPersistence
                 [ParserTarget("simplexPersistence")]
-                public NumericParser<double> simplexPersistence
+                public NumericParser<Double> simplexPersistence
                 {
                     get { return mod.simplexPersistence; }
                     set { mod.simplexPersistence = value; }
@@ -137,7 +132,7 @@ namespace Kopernicus
 
                 // simplexSeed
                 [ParserTarget("simplexSeed")]
-                public NumericParser<int> simplexSeed
+                public NumericParser<Int32> simplexSeed
                 {
                     get { return mod.simplexSeed; }
                     set { mod.simplexSeed = value; }
@@ -145,7 +140,7 @@ namespace Kopernicus
 
                 // voronoiDisplacement
                 [ParserTarget("voronoiDisplacement")]
-                public NumericParser<double> voronoiDisplacement
+                public NumericParser<Double> voronoiDisplacement
                 {
                     get { return mod.voronoiDisplacement; }
                     set { mod.voronoiDisplacement = value; }
@@ -153,7 +148,7 @@ namespace Kopernicus
 
                 // voronoiFrequency
                 [ParserTarget("voronoiFrequency")]
-                public NumericParser<double> voronoiFrequency
+                public NumericParser<Double> voronoiFrequency
                 {
                     get { return mod.voronoiFrequency; }
                     set { mod.voronoiFrequency = value; }
@@ -161,7 +156,7 @@ namespace Kopernicus
 
                 // voronoiSeed
                 [ParserTarget("voronoiSeed")]
-                public NumericParser<int> voronoiSeed
+                public NumericParser<Int32> voronoiSeed
                 {
                     get { return mod.voronoiSeed; }
                     set { mod.voronoiSeed = value; }

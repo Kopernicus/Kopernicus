@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -29,10 +25,10 @@
 
 #pragma warning disable CS0618 // Disable warnings about the deprecated particle system
 
-using UnityEngine;
-using System.Reflection;
+using System;
 using System.IO;
 using System.Linq;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -43,25 +39,25 @@ namespace Kopernicus
         /// </summary>
         public class PlanetParticleEmitter : MonoBehaviour
         {
-            /// Components
+            // Components
             public ParticleEmitter emitter;
             public ParticleAnimator animator;
             public ParticleRenderer renderer;
             public MeshFilter filter;
 
-            /// Variables
-            public string target = "None";
-            public float speedScale = 0f;
-            public float minEmission, maxEmission;
-            public float minEnergy, maxEnergy;
-            public float minSize, maxSize;
-            public float sizeGrow;
+            // Variables
+            public String target = "None";
+            public Single speedScale = 0f;
+            public Single minEmission, maxEmission;
+            public Single minEnergy, maxEnergy;
+            public Single minSize, maxSize;
+            public Single sizeGrow;
             public Color[] colorAnimation;
             public Texture2D mainTexture;
             public Vector3 randomVelocity;
             public Vector3 scale = Vector3.one;
             public Mesh mesh;
-            public bool collideable;
+            public Boolean collideable;
             public Vector3 force = Vector3.zero;
 
             /// <summary>
@@ -164,7 +160,6 @@ namespace Kopernicus
             /// <summary>
             /// Detect Particle collisions
             /// </summary>
-            /// <param name="other"></param>
             void OnParticleCollision(GameObject other)
             {
                 // If we dont want collisions, abort
@@ -195,7 +190,7 @@ namespace Kopernicus
             {
                 Stream stream = typeof(PlanetParticleEmitter).Assembly.GetManifestResourceStream("Kopernicus.Components.Assets.WorldParticleCollider.unity3d");
                 byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, (int)stream.Length);
+                stream.Read(buffer, 0, (Int32)stream.Length);
                 AssetBundle bundle = AssetBundle.LoadFromMemory(buffer);
                 GameObject collider = Instantiate(bundle.LoadAsset("WorldParticleCollider", typeof(GameObject))) as GameObject;
                 bundle.Unload(true);

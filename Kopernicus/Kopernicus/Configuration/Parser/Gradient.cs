@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,17 +17,14 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
-
 using UnityEngine;
 
 namespace Kopernicus
@@ -42,19 +35,19 @@ namespace Kopernicus
         public class Gradient : IParserEventSubscriber
         {
             // Points in the gradient we are generating
-            SortedList<float, Color> points = new SortedList<float, Color>();
+            SortedList<Single, Color> points = new SortedList<Single, Color>();
             
             // Build the gradient from data found in the node
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
                 // List of keyframes
-                points = new SortedList<float, Color>();
+                points = new SortedList<Single, Color>();
                 
                 // Iterate through all the values in the node (all are keyframes)
                 foreach(ConfigNode.Value point in node.values)
                 {
-                    // Convert the "name" (left side) into a float for sorting
-                    float p = float.Parse(point.name);
+                    // Convert the "name" (left side) into a Single for sorting
+                    Single p = Single.Parse(point.name);
 
                     // Get the color at this point
                     ColorParser cp = new ColorParser();
@@ -69,32 +62,32 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node) { }
 
             // Add a point to the gradient
-            public void Add(float p, Color c)
+            public void Add(Single p, Color c)
             {
                 points.Add(p, c);
             }
 
             // Get a color from the gradient
-            public Color ColorAt (float p)
+            public Color ColorAt (Single p)
             {
                 // Gradient points
                 Color a = Color.black;
                 Color b = Color.black;
-                float ap = float.NaN;
-                float bp = float.NaN;
+                Single ap = Single.NaN;
+                Single bp = Single.NaN;
 
                 // Find the points along the gradient
-                IEnumerator<KeyValuePair<float, Color>> enumerator = points.GetEnumerator ();
+                IEnumerator<KeyValuePair<Single, Color>> enumerator = points.GetEnumerator ();
                 while (enumerator.MoveNext()) 
                 {
-                    KeyValuePair<float, Color> point = enumerator.Current;
+                    KeyValuePair<Single, Color> point = enumerator.Current;
                     if(point.Key >= p)
                     {
                         bp = point.Key;
                         b = point.Value;
 
                         // If we never found a leading color
-                        if(float.IsNaN(ap))
+                        if(Single.IsNaN(ap))
                             return b;
 
                         // break out
@@ -107,11 +100,11 @@ namespace Kopernicus
                 }
 
                 // If we never found a tail color
-                if(float.IsNaN(bp))
+                if(Single.IsNaN(bp))
                     return a;
 
                 // Calculate the color
-                float k = (p - ap) / (bp - ap);
+                Single k = (p - ap) / (bp - ap);
                 return Color.Lerp(a, b, k);
             }
         }

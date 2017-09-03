@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -34,26 +30,30 @@ namespace Kopernicus
 {
     namespace OnDemand
     {
-        // MapSO Replacement to support Texture streaming
+        /// <summary>
+        /// MapSO Replacement to support Texture streaming
+        /// </summary>
         public class MapSODemand : MapSO, ILoadOnDemand
         {
             // BitPerPixels is always 4
-            protected new const int _bpp = 4;
+            protected new const Int32 _bpp = 4;
 
             // Representation of the map
             protected new Texture2D _data { get; set; }
 
             // States
-            public bool IsLoaded { get; set; }
-            public bool AutoLoad { get; set; }
+            public Boolean IsLoaded { get; set; }
+            public Boolean AutoLoad { get; set; }
 
             // Path of the Texture
-            public string Path { get; set; }
+            public String Path { get; set; }
 
             // MapDepth
             public new MapDepth Depth { get; set; }
 
-            // Load the Map
+            /// <summary>
+            /// Load the Map
+            /// </summary>
             public void Load()
             {
                 // Check if the Map is already loaded
@@ -77,7 +77,9 @@ namespace Kopernicus
                 Debug.Log("[OD] ERROR: Failed to load map " + name + " at path " + Path);
             }
 
-            // Unload the map
+            /// <summary>
+            /// Unload the map
+            /// </summary>
             public void Unload()
             {
                 // We can only destroy the map, if it is loaded
@@ -97,7 +99,9 @@ namespace Kopernicus
                 Debug.Log("[OD] <--- Map " + name + " disabling self. Path = " + Path);
             }
 
-            // Create a map from a Texture2D
+            /// <summary>
+            /// Create a map from a Texture2D
+            /// </summary>
             public override void CreateMap(MapDepth depth, Texture2D tex)
             {
                 // If the Texture is null, abort
@@ -128,7 +132,7 @@ namespace Kopernicus
             }
 
             // GetPixelByte
-            public override byte GetPixelByte(int x, int y)
+            public override byte GetPixelByte(Int32 x, Int32 y)
             {
                 // If we aren't loaded....
                 if (!IsLoaded)
@@ -141,7 +145,7 @@ namespace Kopernicus
             }
 
             // GetPixelColor - Double
-            public override Color GetPixelColor(double x, double y)
+            public override Color GetPixelColor(Double x, Double y)
             {
                 if (!IsLoaded)
                 {
@@ -153,18 +157,18 @@ namespace Kopernicus
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color.Lerp(
                     Color.Lerp(
-                        this.GetPixelColor(coords.xFloor, coords.yFloor), 
-                        this.GetPixelColor(coords.xCeiling, coords.yFloor), 
+                        GetPixelColor(coords.xFloor, coords.yFloor),
+                        GetPixelColor(coords.xCeiling, coords.yFloor), 
                         coords.u), 
                     Color.Lerp(
-                        this.GetPixelColor(coords.xFloor, coords.yCeiling), 
-                        this.GetPixelColor(coords.xCeiling, coords.yCeiling),
+                        GetPixelColor(coords.xFloor, coords.yCeiling),
+                        GetPixelColor(coords.xCeiling, coords.yCeiling),
                         coords.u),
                     coords.v);
             }
 
             // GetPixelColor - Float
-            public override Color GetPixelColor(float x, float y)
+            public override Color GetPixelColor(Single x, Single y)
             {
                 if (!IsLoaded)
                 {
@@ -176,18 +180,18 @@ namespace Kopernicus
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color.Lerp(
                     Color.Lerp(
-                        this.GetPixelColor(coords.xFloor, coords.yFloor),
-                        this.GetPixelColor(coords.xCeiling, coords.yFloor),
+                        GetPixelColor(coords.xFloor, coords.yFloor),
+                        GetPixelColor(coords.xCeiling, coords.yFloor),
                         coords.u),
                     Color.Lerp(
-                        this.GetPixelColor(coords.xFloor, coords.yCeiling),
-                        this.GetPixelColor(coords.xCeiling, coords.yCeiling),
+                        GetPixelColor(coords.xFloor, coords.yCeiling),
+                        GetPixelColor(coords.xCeiling, coords.yCeiling),
                         coords.u),
                     coords.v);
             }
 
             // GetPixelColor - Int
-            public override Color GetPixelColor(int x, int y)
+            public override Color GetPixelColor(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -199,7 +203,7 @@ namespace Kopernicus
             }
 
             // GetPixelColor32 - Double
-            public override Color GetPixelColor32(double x, double y)
+            public override Color GetPixelColor32(Double x, Double y)
             {
                 if (!IsLoaded)
                 {
@@ -211,18 +215,18 @@ namespace Kopernicus
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color32.Lerp(
                     Color32.Lerp(
-                        this.GetPixelColor32(coords.xFloor, coords.yFloor),
-                        this.GetPixelColor32(coords.xCeiling, coords.yFloor),
+                        GetPixelColor32(coords.xFloor, coords.yFloor),
+                        GetPixelColor32(coords.xCeiling, coords.yFloor),
                         coords.u),
                     Color32.Lerp(
-                        this.GetPixelColor32(coords.xFloor, coords.yCeiling),
-                        this.GetPixelColor32(coords.xCeiling, coords.yCeiling),
+                        GetPixelColor32(coords.xFloor, coords.yCeiling),
+                        GetPixelColor32(coords.xCeiling, coords.yCeiling),
                         coords.u),
                     coords.v);
             }
 
             // GetPixelColor32 - Float - Honestly Squad, why are they named GetPixelColor32, but return normal Colors instead of Color32?
-            public override Color GetPixelColor32(float x, float y)
+            public override Color GetPixelColor32(Single x, Single y)
             {
                 if (!IsLoaded)
                 {
@@ -234,18 +238,18 @@ namespace Kopernicus
                 BilinearCoords coords = ConstructBilinearCoords(x, y);
                 return Color32.Lerp(
                     Color32.Lerp(
-                        this.GetPixelColor32(coords.xFloor, coords.yFloor),
-                        this.GetPixelColor32(coords.xCeiling, coords.yFloor),
+                        GetPixelColor32(coords.xFloor, coords.yFloor),
+                        GetPixelColor32(coords.xCeiling, coords.yFloor),
                         coords.u),
                     Color32.Lerp(
-                        this.GetPixelColor32(coords.xFloor, coords.yCeiling),
-                        this.GetPixelColor32(coords.xCeiling, coords.yCeiling),
+                        GetPixelColor32(coords.xFloor, coords.yCeiling),
+                        GetPixelColor32(coords.xCeiling, coords.yCeiling),
                         coords.u),
                     coords.v);
             }
 
             // GetPixelColor32 - Int
-            public override Color32 GetPixelColor32(int x, int y)
+            public override Color32 GetPixelColor32(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -257,7 +261,7 @@ namespace Kopernicus
             }
 
             // GetPixelFloat - Double
-            public override float GetPixelFloat(double x, double y)
+            public override Single GetPixelFloat(Double x, Double y)
             {
                 if (!IsLoaded)
                 {
@@ -280,7 +284,7 @@ namespace Kopernicus
             }
 
             // GetPixelFloat - Float
-            public override float GetPixelFloat(float x, float y)
+            public override Single GetPixelFloat(Single x, Single y)
             {
                 if (!IsLoaded)
                 {
@@ -303,7 +307,7 @@ namespace Kopernicus
             }
 
             // GetPixelFloat - Integer
-            public override float GetPixelFloat(int x, int y)
+            public override Single GetPixelFloat(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -313,7 +317,7 @@ namespace Kopernicus
                 }
 
                 Color pixel = _data.GetPixel(x, y);
-                float value = 0f;
+                Single value = 0f;
                 if (Depth == MapDepth.Greyscale)
                     value = pixel.r;
                 else if (Depth == MapDepth.HeightAlpha)
@@ -327,11 +331,11 @@ namespace Kopernicus
                 if (_data.format == TextureFormat.Alpha8)
                     value = pixel.a;
 
-                return value / (int)Depth;
+                return value / (Int32)Depth;
             }
 
             // GetPixelHeightAlpha - Double
-            public override HeightAlpha GetPixelHeightAlpha(double x, double y)
+            public override HeightAlpha GetPixelHeightAlpha(Double x, Double y)
             {
                 if (!IsLoaded)
                 {
@@ -354,7 +358,7 @@ namespace Kopernicus
             }
 
             // GetPixelHeightAlpha - Float
-            public override HeightAlpha GetPixelHeightAlpha(float x, float y)
+            public override HeightAlpha GetPixelHeightAlpha(Single x, Single y)
             {
                 if (!IsLoaded)
                 {
@@ -377,7 +381,7 @@ namespace Kopernicus
             }
 
             // GetPixelHeightAlpha - Int
-            public override HeightAlpha GetPixelHeightAlpha(int x, int y)
+            public override HeightAlpha GetPixelHeightAlpha(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -394,7 +398,7 @@ namespace Kopernicus
             }
 
             // GreyByte
-            public override byte GreyByte(int x, int y)
+            public override byte GreyByte(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -406,7 +410,7 @@ namespace Kopernicus
             }
 
             // GreyFloat
-            public override float GreyFloat(int x, int y)
+            public override Single GreyFloat(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -418,7 +422,7 @@ namespace Kopernicus
             }
 
             // PixelByte
-            public override byte[] PixelByte(int x, int y)
+            public override byte[] PixelByte(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -452,8 +456,8 @@ namespace Kopernicus
                 return compiled;
             }
 
-            // ConstructBilinearCoords from double
-            protected new BilinearCoords ConstructBilinearCoords(double x, double y)
+            // ConstructBilinearCoords from Double
+            protected new BilinearCoords ConstructBilinearCoords(Double x, Double y)
             {
                 // Create the struct
                 BilinearCoords coords = new BilinearCoords();
@@ -464,34 +468,34 @@ namespace Kopernicus
 
                 // X to U
                 coords.x = x * _width;
-                coords.xFloor = (int)Math.Floor(coords.x);
-                coords.xCeiling = (int)Math.Ceiling(coords.x);
-                coords.u = (float)(coords.x - coords.xFloor);
+                coords.xFloor = (Int32)Math.Floor(coords.x);
+                coords.xCeiling = (Int32)Math.Ceiling(coords.x);
+                coords.u = (Single)(coords.x - coords.xFloor);
                 if (coords.xCeiling == _width) coords.xCeiling = 0;
 
                 // Y to V
                 coords.y = y * _height;
-                coords.yFloor = (int)Math.Floor(coords.y);
-                coords.yCeiling = (int)Math.Ceiling(coords.y);
-                coords.v = (float)(coords.y - coords.yFloor);
-                if (coords.yCeiling == this._height) coords.yCeiling = 0;
+                coords.yFloor = (Int32)Math.Floor(coords.y);
+                coords.yCeiling = (Int32)Math.Ceiling(coords.y);
+                coords.v = (Single)(coords.y - coords.yFloor);
+                if (coords.yCeiling == _height) coords.yCeiling = 0;
 
                 // We're done
                 return coords;
             }
 
-            // ConstructBilinearCoords from float
-            protected new BilinearCoords ConstructBilinearCoords(float x, float y)
+            // ConstructBilinearCoords from Single
+            protected new BilinearCoords ConstructBilinearCoords(Single x, Single y)
             {
-                return ConstructBilinearCoords((double)x, (double)y);
+                return ConstructBilinearCoords((Double)x, (Double)y);
             }
 
             // BilinearCoords
             public struct BilinearCoords
             {
-                public double x, y;
-                public int xCeiling, xFloor, yCeiling, yFloor;
-                public float u, v;
+                public Double x, y;
+                public Int32 xCeiling, xFloor, yCeiling, yFloor;
+                public Single u, v;
             }
         }
     }

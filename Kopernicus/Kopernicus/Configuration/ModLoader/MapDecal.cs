@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,13 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
- 
-using UnityEngine;
+
+using System;
 
 namespace Kopernicus
 {
@@ -40,7 +36,7 @@ namespace Kopernicus
             {
                 // absolute
                 [ParserTarget("absolute")]
-                public NumericParser<bool> absolute
+                public NumericParser<Boolean> absolute
                 {
                     get { return mod.absolute; }
                     set { mod.absolute = value; }
@@ -48,7 +44,7 @@ namespace Kopernicus
 
                 // absoluteOffset
                 [ParserTarget("absoluteOffset")]
-                public NumericParser<float> absoluteOffset
+                public NumericParser<Single> absoluteOffset
                 {
                     get { return mod.absoluteOffset; }
                     set { mod.absoluteOffset = value; }
@@ -56,7 +52,7 @@ namespace Kopernicus
 
                 // angle
                 [ParserTarget("angle")]
-                public NumericParser<float> angle
+                public NumericParser<Single> angle
                 {
                     get { return mod.angle; }
                     set { mod.angle = value; }
@@ -72,7 +68,7 @@ namespace Kopernicus
 
                 // cullBlack
                 [ParserTarget("cullBlack")]
-                public NumericParser<bool> cullBlack
+                public NumericParser<Boolean> cullBlack
                 {
                     get { return mod.cullBlack; }
                     set { mod.cullBlack = value; }
@@ -80,7 +76,7 @@ namespace Kopernicus
 
                 // DEBUG_HighlightInclusion
                 [ParserTarget("DEBUG_HighlightInclusion")]
-                public NumericParser<bool> DEBUG_HighlightInclusion
+                public NumericParser<Boolean> DEBUG_HighlightInclusion
                 {
                     get { return mod.DEBUG_HighlightInclusion; }
                     set { mod.DEBUG_HighlightInclusion = value; }
@@ -96,7 +92,7 @@ namespace Kopernicus
 
                 // heightMapDeformity
                 [ParserTarget("heightMapDeformity")]
-                public NumericParser<double> heightMapDeformity
+                public NumericParser<Double> heightMapDeformity
                 {
                     get { return mod.heightMapDeformity; }
                     set { mod.heightMapDeformity = value; }
@@ -119,7 +115,7 @@ namespace Kopernicus
 
                 // removeScatter
                 [ParserTarget("removeScatter")]
-                public NumericParser<bool> removeScatter
+                public NumericParser<Boolean> removeScatter
                 {
                     get { return mod.removeScatter; }
                     set { mod.removeScatter = value; }
@@ -127,7 +123,7 @@ namespace Kopernicus
 
                 // radius
                 [ParserTarget("radius")]
-                public NumericParser<double> radius
+                public NumericParser<Double> radius
                 {
                     get { return mod.radius; }
                     set { mod.radius = value; }
@@ -135,7 +131,7 @@ namespace Kopernicus
 
                 // smoothColor
                 [ParserTarget("smoothColor")]
-                public NumericParser<float> smoothColor
+                public NumericParser<Single> smoothColor
                 {
                     get { return mod.smoothColor; }
                     set { mod.smoothColor = value; }
@@ -143,7 +139,7 @@ namespace Kopernicus
 
                 // smoothHeight
                 [ParserTarget("smoothHeight")]
-                public NumericParser<float> smoothHeight
+                public NumericParser<Single> smoothHeight
                 {
                     get { return mod.smoothHeight; }
                     set { mod.smoothHeight = value; }
@@ -151,7 +147,7 @@ namespace Kopernicus
 
                 // useAlphaHeightSmoothing
                 [ParserTarget("useAlphaHeightSmoothing")]
-                public NumericParser<bool> useAlphaHeightSmoothing
+                public NumericParser<Boolean> useAlphaHeightSmoothing
                 {
                     get { return mod.useAlphaHeightSmoothing; }
                     set { mod.useAlphaHeightSmoothing = value; }

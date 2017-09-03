@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -29,8 +25,6 @@
 
 using System;
 using UnityEngine;
-
-using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -46,7 +40,7 @@ namespace Kopernicus
             // Do we have an atmosphere?
             [PreApply]
             [ParserTarget("enabled")]
-            public NumericParser<bool> enabled 
+            public NumericParser<Boolean> enabled 
             {
                 get { return celestialBody.atmosphere; }
                 set { celestialBody.atmosphere = value; }
@@ -55,11 +49,11 @@ namespace Kopernicus
             // Whether an AFG should get added
             [PreApply]
             [ParserTarget("addAFG")]
-            public NumericParser<bool> addAFG = new NumericParser<bool>(true);
+            public NumericParser<Boolean> addAFG = true;
 
             // Does this atmosphere contain oxygen
             [ParserTarget("oxygen")]
-            public NumericParser<bool> oxygen 
+            public NumericParser<Boolean> oxygen 
             {
                 get { return celestialBody.atmosphereContainsOxygen; }
                 set { celestialBody.atmosphereContainsOxygen = value; }
@@ -67,7 +61,7 @@ namespace Kopernicus
 
             // Density at sea level
             [ParserTarget("staticDensityASL")]
-            public NumericParser<double> atmDensityASL
+            public NumericParser<Double> atmDensityASL
             {
                 get { return celestialBody.atmDensityASL; }
                 set { celestialBody.atmDensityASL = value; }
@@ -75,7 +69,7 @@ namespace Kopernicus
 
             // atmosphereAdiabaticIndex
             [ParserTarget("adiabaticIndex")]
-            public NumericParser<double> atmosphereAdiabaticIndex
+            public NumericParser<Double> atmosphereAdiabaticIndex
             {
                 get { return celestialBody.atmosphereAdiabaticIndex; }
                 set { celestialBody.atmosphereAdiabaticIndex = value; }
@@ -83,19 +77,19 @@ namespace Kopernicus
 
             // atmosphere cutoff altitude (x3, for backwards compatibility)
             [ParserTarget("maxAltitude")]
-            public NumericParser<double> maxAltitude
+            public NumericParser<Double> maxAltitude
             {
                 get { return celestialBody.atmosphereDepth; }
                 set { celestialBody.atmosphereDepth = value; }
             }
             [ParserTarget("altitude")]
-            public NumericParser<double> altitude
+            public NumericParser<Double> altitude
             {
                 get { return celestialBody.atmosphereDepth; }
                 set { celestialBody.atmosphereDepth = value; }
             }
             [ParserTarget("atmosphereDepth")]
-            public NumericParser<double> atmosphereDepth
+            public NumericParser<Double> atmosphereDepth
             {
                 get { return celestialBody.atmosphereDepth; }
                 set { celestialBody.atmosphereDepth = value; }
@@ -103,7 +97,7 @@ namespace Kopernicus
 
             // atmosphereGasMassLapseRate
             [ParserTarget("gasMassLapseRate")]
-            public NumericParser<double> atmosphereGasMassLapseRate
+            public NumericParser<Double> atmosphereGasMassLapseRate
             {
                 get { return celestialBody.atmosphereGasMassLapseRate; }
                 set { celestialBody.atmosphereGasMassLapseRate = value; }
@@ -111,7 +105,7 @@ namespace Kopernicus
 
             // atmosphereMolarMass
             [ParserTarget("atmosphereMolarMass")]
-            public NumericParser<double> atmosphereMolarMass
+            public NumericParser<Double> atmosphereMolarMass
             {
                 get { return celestialBody.atmosphereMolarMass; }
                 set { celestialBody.atmosphereMolarMass = value; }
@@ -131,7 +125,7 @@ namespace Kopernicus
 
             // atmospherePressureCurveIsNormalized
             [ParserTarget("pressureCurveIsNormalized")]
-            public NumericParser<bool> atmospherePressureCurveIsNormalized
+            public NumericParser<Boolean> atmospherePressureCurveIsNormalized
             {
                 get { return celestialBody.atmospherePressureCurveIsNormalized; }
                 set { celestialBody.atmospherePressureCurveIsNormalized = value; }
@@ -139,7 +133,7 @@ namespace Kopernicus
 
             // Static pressure at sea level (all worlds are set to 1.0f?)
             [ParserTarget("staticPressureASL")]
-            public NumericParser<double> staticPressureASL
+            public NumericParser<Double> staticPressureASL
             {
                 get { return celestialBody.atmospherePressureSeaLevel; }
                 set { celestialBody.atmospherePressureSeaLevel = value; }
@@ -159,7 +153,7 @@ namespace Kopernicus
 
             // atmosphereTemperatureCurveIsNormalized
             [ParserTarget("temperatureCurveIsNormalized")]
-            public NumericParser<bool> atmosphereTemperatureCurveIsNormalized
+            public NumericParser<Boolean> atmosphereTemperatureCurveIsNormalized
             {
                 get { return celestialBody.atmosphereTemperatureCurveIsNormalized; }
                 set { celestialBody.atmosphereTemperatureCurveIsNormalized = value; }
@@ -167,7 +161,7 @@ namespace Kopernicus
 
             // atmosphereTemperatureLapseRate
             [ParserTarget("temperatureLapseRate")]
-            public NumericParser<double> atmosphereTemperatureLapseRate
+            public NumericParser<Double> atmosphereTemperatureLapseRate
             {
                 get { return celestialBody.atmosphereTemperatureLapseRate; }
                 set { celestialBody.atmosphereTemperatureLapseRate = value; }
@@ -175,7 +169,7 @@ namespace Kopernicus
 
             // TemperatureSeaLevel
             [ParserTarget("temperatureSeaLevel")]
-            public NumericParser<double> atmosphereTemperatureSeaLevel
+            public NumericParser<Double> atmosphereTemperatureSeaLevel
             {
                 get { return celestialBody.atmosphereTemperatureSeaLevel; }
                 set { celestialBody.atmosphereTemperatureSeaLevel = value; }

@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -40,7 +36,7 @@ namespace Kopernicus
         [Obsolete("Please use ParserTargetExternal from Kopernicus.Parser instead.")]
         public class ExternalParserTarget : ParserTargetExternal
         {
-            public ExternalParserTarget(string configNodeName = null) : base("Body", configNodeName, "Kopernicus")
+            public ExternalParserTarget(String configNodeName = null) : base("Body", configNodeName, "Kopernicus")
             {
             }
         }

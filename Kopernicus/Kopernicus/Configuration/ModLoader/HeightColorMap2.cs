@@ -27,6 +27,7 @@
  * https://kerbalspaceprogram.com
  */
  
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -49,7 +50,7 @@ namespace Kopernicus
 
                     // Name of the class
                     [ParserTarget("name")]
-                    public string name 
+                    public String name 
                     {
                         get { return landClass2.name; }
                         set { landClass2.name = value; }
@@ -57,7 +58,7 @@ namespace Kopernicus
 
                     // Delete the landclass
                     [ParserTarget("delete")]
-                    public NumericParser<bool> delete = new NumericParser<bool>(false);
+                    public NumericParser<Boolean> delete = false;
 
                     // Color of the class
                     [ParserTarget("color")]
@@ -70,7 +71,7 @@ namespace Kopernicus
                     // Fractional altitude start
                     // altitude = (vertexHeight - vertexMinHeightOfPQS) / vertexHeightDeltaOfPQS
                     [ParserTarget("altitudeStart")]
-                    public NumericParser<double> altitudeStart
+                    public NumericParser<Double> altitudeStart
                     {
                         get { return landClass2.altStart; }
                         set { landClass2.altStart = value; }
@@ -78,7 +79,7 @@ namespace Kopernicus
 
                     // Fractional altitude end
                     [ParserTarget("altitudeEnd")]
-                    public NumericParser<double> altitudeEnd
+                    public NumericParser<Double> altitudeEnd
                     {
                         get { return landClass2.altEnd; }
                         set { landClass2.altEnd = value; }
@@ -86,7 +87,7 @@ namespace Kopernicus
 
                     // Should we blend into the next class
                     [ParserTarget("lerpToNext")]
-                    public NumericParser<bool> lerpToNext
+                    public NumericParser<Boolean> lerpToNext
                     {
                         get { return landClass2.lerpToNext; }
                         set { landClass2.lerpToNext = value; }
@@ -106,7 +107,7 @@ namespace Kopernicus
 
                 // The deformity of the simplex terrain
                 [ParserTarget("blend")]
-                public NumericParser<float> blend
+                public NumericParser<Single> blend
                 {
                     get { return mod.blend; }
                     set { mod.blend = value; }
@@ -114,7 +115,7 @@ namespace Kopernicus
 
                 // The deformity of the simplex terrain
                 [ParserTarget("maxHeight")]
-                public NumericParser<double> maxHeight
+                public NumericParser<Double> maxHeight
                 {
                     get { return mod.maxHeight; }
                     set { mod.maxHeight = value; }
@@ -122,7 +123,7 @@ namespace Kopernicus
 
                 // The deformity of the simplex terrain
                 [ParserTarget("minHeight")]
-                public NumericParser<double> minHeight
+                public NumericParser<Double> minHeight
                 {
                     get { return mod.minHeight; }
                     set { mod.minHeight = value; }

@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,30 +17,27 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.IO;
-
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
-
 
 namespace Kopernicus
 {
     public class Utility
     {
-        /**
-         * @return LocalSpace game object
-         */
+        /// <summary>
+        /// Local Space Game Object
+        /// </summary>
         public static GameObject LocalSpace
         {
             get { return GameObject.Find(PSystemManager.Instance.localSpaceName); }
@@ -53,10 +46,9 @@ namespace Kopernicus
         // Static object representing the deactivator
         private static GameObject deactivator;
 
-        /**
-         * Get an object which is deactivated, essentially, and children are prefabs
-         * @return shared deactivated object for making prefabs
-         */
+        /// <summary>
+        /// Get an object which is deactivated, essentially, and children are prefabs
+        /// </summary>
         public static Transform Deactivator
         {
             get
@@ -71,12 +63,13 @@ namespace Kopernicus
             }
         }
 
-        /**
-         * Copy one objects fields to another object via reflection
-         * @param source Object to copy fields from
-         * @param destination Object to copy fields to
-         **/
-        public static void CopyObjectFields<T>(T source, T destination, bool log = true)
+        /// <summary>
+        /// Copy one objects fields to another object via reflection
+        /// </summary>
+        /// <param name="source">Object to copy fields from</param>
+        /// <param name="destination">Object to copy fields to</param>
+        /// <param name="log">Whether the function should log the actions it performs</param>
+        public static void CopyObjectFields<T>(T source, T destination, Boolean log = true)
         {
             // Reflection based copy
             foreach (FieldInfo field in (typeof(T)).GetFields())
@@ -94,17 +87,15 @@ namespace Kopernicus
             }
         }
 
-        /**
-         * Recursively searches for a named transform in the Transform heirarchy.  The requirement of
-         * such a function is sad.  This should really be in the Unity3D API.  Transform.Find() only
-         * searches in the immediate children.
-         *
-         * @param transform Transform in which is search for named child
-         * @param name Name of child to find
-         * 
-         * @return Desired transform or null if it could not be found
-         */
-        public static Transform FindInChildren(Transform transform, string name)
+        /// <summary>
+        /// Recursively searches for a named transform in the Transform heirarchy.  The requirement of
+        /// such a function is sad.This should really be in the Unity3D API.Transform.Find() only
+        /// searches in the immediate children.
+        /// </summary>
+        /// <param name="transform">Transform in which is search for named child</param>
+        /// <param name="name">Name of child to find</param>
+        /// <returns>Desired transform or null if it could not be found</returns>
+        public static Transform FindInChildren(Transform transform, String name)
         {
             // Is this null?
             if (transform == null)
@@ -134,7 +125,7 @@ namespace Kopernicus
         }
 
         // Dump an object by reflection
-        public static void DumpObjectFields(object o, string title = "---------")
+        public static void DumpObjectFields(object o, String title = "---------")
         {
             // Dump the raw PQS of Dres (by reflection)
             Logger.Active.Log("---------" + title + "------------");
@@ -148,7 +139,7 @@ namespace Kopernicus
             Logger.Active.Log("--------------------------------------");
         }
 
-        public static void DumpObjectProperties(object o, string title = "---------")
+        public static void DumpObjectProperties(object o, String title = "---------")
         {
             // Iterate through all of the properties
             Logger.Active.Log("--------- " + title + " ------------");
@@ -160,15 +151,13 @@ namespace Kopernicus
             Logger.Active.Log("--------------------------------------");
         }
 
-        /**
-         * Recursively searches for a named PSystemBody
-         *
-         * @param body Parent body to begin search in
-         * @param name Name of body to find
-         * 
-         * @return Desired body or null if not found
-         */
-        public static PSystemBody FindBody(PSystemBody body, string name)
+        /// <summary>
+        /// Recursively searches for a named PSystemBody
+        /// </summary>
+        /// <param name="body">Parent body to begin search in</param>
+        /// <param name="name">Name of body to find</param>
+        /// <returns>Desired body or null if not found</returns>
+        public static PSystemBody FindBody(PSystemBody body, String name)
         {
             // Is this the body wer are looking for?
             if (body.celestialBody.bodyName == name)
@@ -223,7 +212,7 @@ namespace Kopernicus
             Logger.Active.Log("---------------------------------");
         }
 
-        public static void PrintTransform(Transform t, string title = "")
+        public static void PrintTransform(Transform t, String title = "")
         {
             Logger.Active.Log("------" + title + "------");
             Logger.Active.Log("Position: " + t.localPosition);
@@ -267,9 +256,9 @@ namespace Kopernicus
         }
 
         // slightly different:
-        static public void DumpUpwards(Transform t, string prefix, bool useKLog = true)
+        static public void DumpUpwards(Transform t, String prefix, Boolean useKLog = true)
         {
-            string str = prefix + "Transform " + t.name;
+            String str = prefix + "Transform " + t.name;
             if (useKLog)
                 Logger.Default.Log(str);
             else
@@ -287,9 +276,9 @@ namespace Kopernicus
                 DumpUpwards(t.parent, prefix + "  ");
 
         }
-        static public void DumpDownwards(Transform t, string prefix, bool useKLog = true)
+        static public void DumpDownwards(Transform t, String prefix, Boolean useKLog = true)
         {
-            string str = prefix + "Transform " + t.name;
+            String str = prefix + "Transform " + t.name;
             if (useKLog)
                 Logger.Default.Log(str);
             else
@@ -304,26 +293,26 @@ namespace Kopernicus
                     Debug.Log("[Kopernicus] " + str);
             }
             if (t.childCount > 0)
-                for (int i = 0; i < t.childCount; ++i)
+                for (Int32 i = 0; i < t.childCount; ++i)
                     DumpDownwards(t.GetChild(i), prefix + "  ");
 
         }
 
-        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, string cacheFile, bool exportBin, bool useSpherical)
+        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, String path, String cacheFile, Boolean exportBin, Boolean useSpherical)
         {
-            const double rJool = 6000000.0;
-            const float rScaled = 1000.0f;
+            const Double rJool = 6000000.0;
+            const Single rScaled = 1000.0f;
 
             // Compute scale between Jool and this body
-            float scale = (float)(body.Radius / rJool);
+            Single scale = (Single)(body.Radius / rJool);
             scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
             Mesh scaledMesh;
             // Attempt to load a cached version of the scale space
-            string CacheDirectory = KSPUtil.ApplicationRootPath + path;
-            string CacheFile = CacheDirectory + "/" + body.name + ".bin";
+            String CacheDirectory = KSPUtil.ApplicationRootPath + path;
+            String CacheFile = CacheDirectory + "/" + body.name + ".bin";
 
-            if (!string.IsNullOrEmpty(cacheFile))
+            if (!String.IsNullOrEmpty(cacheFile))
             {
                 CacheFile = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), cacheFile);
                 CacheDirectory = Path.GetDirectoryName(CacheFile);
@@ -357,7 +346,7 @@ namespace Kopernicus
             if (collider != null) collider.radius = rScaled;
             if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
             {
-                scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(pqs.radius / rJool);
+                scaledVersion.gameObject.transform.localScale = Vector3.one * (Single)(pqs.radius / rJool);
             }
         }
 
@@ -365,8 +354,8 @@ namespace Kopernicus
         public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
         {
             // We need to get the body for Jool (to steal it's mesh)
-            const double rScaledJool = 1000.0f;
-            double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
+            const Double rScaledJool = 1000.0f;
+            Double rMetersToScaledUnits = (Single)(rScaledJool / body.Radius);
 
             // Generate a duplicate of the Jool mesh
             Mesh mesh = Utility.DuplicateMesh(Templates.ReferenceGeosphere);
@@ -404,7 +393,7 @@ namespace Kopernicus
                 {
                     // Generate the PQS modifications
                     Vector3[] vertices = mesh.vertices;
-                    for (int i = 0; i < mesh.vertexCount; i++)
+                    for (Int32 i = 0; i < mesh.vertexCount; i++)
                     {
                         // Get the UV coordinate of this vertex
                         Vector2 uv = mesh.uv[i];
@@ -429,7 +418,7 @@ namespace Kopernicus
                             vertex.vertHeight = body.Radius;
 
                         // Adjust the displacement
-                        vertices[i] = direction * (float)(vertex.vertHeight * rMetersToScaledUnits);
+                        vertices[i] = direction * (Single)(vertex.vertHeight * rMetersToScaledUnits);
                     }
                     mesh.vertices = vertices;
                     mesh.RecalculateNormals();
@@ -453,7 +442,7 @@ namespace Kopernicus
             source.vertices.CopyTo(verts, 0);
             dest.vertices = verts;
 
-            int[] tris = new int[source.triangles.Length];
+            Int32[] tris = new Int32[source.triangles.Length];
             source.triangles.CopyTo(tris, 0);
             dest.triangles = tris;
 
@@ -494,7 +483,7 @@ namespace Kopernicus
             source.vertices.CopyTo(verts, 0);
             dest.vertices = verts;
 
-            int[] tris = new int[source.triangles.Length];
+            Int32[] tris = new Int32[source.triangles.Length];
             source.triangles.CopyTo(tris, 0);
             dest.triangles = tris;
 
@@ -527,11 +516,11 @@ namespace Kopernicus
         }
 
         // Taken from Nathankell's RSS Utils.cs; uniformly scaled vertices
-        public static void ScaleVerts(Mesh mesh, float scaleFactor)
+        public static void ScaleVerts(Mesh mesh, Single scaleFactor)
         {
             //ProfileTimer.Push("ScaleVerts");
             Vector3[] vertices = new Vector3[mesh.vertexCount];
-            for (int i = 0; i < mesh.vertexCount; i++)
+            for (Int32 i = 0; i < mesh.vertexCount; i++)
             {
                 Vector3 v = mesh.vertices[i];
                 v *= scaleFactor;
@@ -543,24 +532,24 @@ namespace Kopernicus
 
         public static void RecalculateTangents(Mesh theMesh)
         {
-            int vertexCount = theMesh.vertexCount;
+            Int32 vertexCount = theMesh.vertexCount;
             Vector3[] vertices = theMesh.vertices;
             Vector3[] normals = theMesh.normals;
             Vector2[] texcoords = theMesh.uv;
-            int[] triangles = theMesh.triangles;
-            int triangleCount = triangles.Length / 3;
+            Int32[] triangles = theMesh.triangles;
+            Int32 triangleCount = triangles.Length / 3;
 
             var tangents = new Vector4[vertexCount];
             var tan1 = new Vector3[vertexCount];
             var tan2 = new Vector3[vertexCount];
 
-            int tri = 0;
+            Int32 tri = 0;
 
-            for (int i = 0; i < (triangleCount); i++)
+            for (Int32 i = 0; i < (triangleCount); i++)
             {
-                int i1 = triangles[tri];
-                int i2 = triangles[tri + 1];
-                int i3 = triangles[tri + 2];
+                Int32 i1 = triangles[tri];
+                Int32 i2 = triangles[tri + 1];
+                Int32 i3 = triangles[tri + 2];
 
                 Vector3 v1 = vertices[i1];
                 Vector3 v2 = vertices[i2];
@@ -570,19 +559,19 @@ namespace Kopernicus
                 Vector2 w2 = texcoords[i2];
                 Vector2 w3 = texcoords[i3];
 
-                float x1 = v2.x - v1.x;
-                float x2 = v3.x - v1.x;
-                float y1 = v2.y - v1.y;
-                float y2 = v3.y - v1.y;
-                float z1 = v2.z - v1.z;
-                float z2 = v3.z - v1.z;
+                Single x1 = v2.x - v1.x;
+                Single x2 = v3.x - v1.x;
+                Single y1 = v2.y - v1.y;
+                Single y2 = v3.y - v1.y;
+                Single z1 = v2.z - v1.z;
+                Single z2 = v3.z - v1.z;
 
-                float s1 = w2.x - w1.x;
-                float s2 = w3.x - w1.x;
-                float t1 = w2.y - w1.y;
-                float t2 = w3.y - w1.y;
+                Single s1 = w2.x - w1.x;
+                Single s2 = w3.x - w1.x;
+                Single t1 = w2.y - w1.y;
+                Single t2 = w3.y - w1.y;
 
-                float r = 1.0f / (s1 * t2 - s2 * t1);
+                Single r = 1.0f / (s1 * t2 - s2 * t1);
                 var sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
                 var tdir = new Vector3((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
 
@@ -596,7 +585,7 @@ namespace Kopernicus
 
                 tri += 3;
             }
-            for (int i = 0; i < (vertexCount); i++)
+            for (Int32 i = 0; i < (vertexCount); i++)
             {
                 Vector3 n = normals[i];
                 Vector3 t = tan1[i];
@@ -615,7 +604,7 @@ namespace Kopernicus
         }
 
         // Serialize a mesh to disk
-        public static void SerializeMesh(Mesh mesh, string path)
+        public static void SerializeMesh(Mesh mesh, String path)
         {
             // Open an output filestream
             FileStream outputStream = new FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write);
@@ -636,7 +625,7 @@ namespace Kopernicus
                 writer.Write(uv.y);
             }
             writer.Write(mesh.triangles.Length);
-            foreach (int triangle in mesh.triangles)
+            foreach (Int32 triangle in mesh.triangles)
             {
                 writer.Write(triangle);
             }
@@ -647,15 +636,15 @@ namespace Kopernicus
         }
 
         // Deserialize a mesh from disk
-        public static Mesh DeserializeMesh(string path)
+        public static Mesh DeserializeMesh(String path)
         {
             FileStream inputStream = new FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             BinaryReader reader = new BinaryReader(inputStream);
 
             // Get the vertices
-            int count = reader.ReadInt32();
+            Int32 count = reader.ReadInt32();
             Vector3[] vertices = new Vector3[count];
-            for (int i = 0; i < count; i++)
+            for (Int32 i = 0; i < count; i++)
             {
                 Vector3 vertex;
                 vertex.x = reader.ReadSingle();
@@ -665,9 +654,9 @@ namespace Kopernicus
             }
 
             // Get the uvs
-            int uv_count = reader.ReadInt32();
+            Int32 uv_count = reader.ReadInt32();
             Vector2[] uvs = new Vector2[uv_count];
-            for (int i = 0; i < uv_count; i++)
+            for (Int32 i = 0; i < uv_count; i++)
             {
                 Vector2 uv;
                 uv.x = reader.ReadSingle();
@@ -676,9 +665,9 @@ namespace Kopernicus
             }
 
             // Get the triangles
-            int tris_count = reader.ReadInt32();
-            int[] triangles = new int[tris_count];
-            for (int i = 0; i < tris_count; i++)
+            Int32 tris_count = reader.ReadInt32();
+            Int32[] triangles = new Int32[tris_count];
+            for (Int32 i = 0; i < tris_count; i++)
                 triangles[i] = reader.ReadInt32();
 
             // Close
@@ -696,11 +685,11 @@ namespace Kopernicus
         }
 
         // Credit goes to Kragrathea.
-        public static Texture2D BumpToNormalMap(Texture2D source, float strength)
+        public static Texture2D BumpToNormalMap(Texture2D source, Single strength)
         {
             strength = Mathf.Clamp(strength, 0.0F, 10.0F);
             var result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
-            for (int by = 0; by < result.height; by++)
+            for (Int32 by = 0; by < result.height; by++)
             {
                 for (var bx = 0; bx < result.width; bx++)
                 {
@@ -718,32 +707,32 @@ namespace Kopernicus
         }
 
         // Convert latitude-longitude-altitude with body radius to a vector.
-        public static Vector3 LLAtoECEF(double lat, double lon, double alt, double radius)
+        public static Vector3 LLAtoECEF(Double lat, Double lon, Double alt, Double radius)
         {
-            const double degreesToRadians = Math.PI / 180.0;
+            const Double degreesToRadians = Math.PI / 180.0;
             lat = (lat - 90) * degreesToRadians;
             lon *= degreesToRadians;
-            double x, y, z;
-            double n = radius; // for now, it's still a sphere, so just the radius
+            Double x, y, z;
+            Double n = radius; // for now, it's still a sphere, so just the radius
             x = (n + alt) * -1.0 * Math.Sin(lat) * Math.Cos(lon);
             y = (n + alt) * Math.Cos(lat); // for now, it's still a sphere, so no eccentricity
             z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
-            return new Vector3((float)x, (float)y, (float)z);
+            return new Vector3((Single)x, (Single)y, (Single)z);
         }
 
-        public static bool TextureExists(string path)
+        public static Boolean TextureExists(String path)
         {
             path = KSPUtil.ApplicationRootPath + "GameData/" + path;
             return System.IO.File.Exists(path);
         }
 
-        public static Texture2D LoadTexture(string path, bool compress, bool upload, bool unreadable)
+        public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
         {
             Texture2D map = null;
             path = KSPUtil.ApplicationRootPath + "GameData/" + path;
             if (System.IO.File.Exists(path))
             {
-                bool uncaught = true;
+                Boolean uncaught = true;
                 try
                 {
                     if (path.ToLower().EndsWith(".dds"))
@@ -763,35 +752,35 @@ namespace Kopernicus
                                 new DDSHeaders.DDSHeaderDX10(binaryReader);
                             }
 
-                            bool alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
-                            bool fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
-                            bool rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
-                            bool alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
-                            bool luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
-                            bool rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
-                            //bool bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
-                            bool rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
-                            bool argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
-                            bool rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
+                            Boolean alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
+                            Boolean fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
+                            Boolean rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
+                            Boolean alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
+                            Boolean luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
+                            Boolean rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
+                            //Boolean bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
+                            Boolean rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
+                            Boolean argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
+                            Boolean rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
 
-                            bool mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
-                            bool isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
+                            Boolean mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
+                            Boolean isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
                             if (fourcc)
                             {
                                 if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
                                 {
-                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
                                 }
                                 else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
                                 {
-                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
                                 }
                                 else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
                                 {
-                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
                                 }
                                 else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
                                 {
@@ -811,7 +800,7 @@ namespace Kopernicus
                             if(!fourcc)
                             {
                                 TextureFormat textureFormat = TextureFormat.ARGB32;
-                                bool ok = true;
+                                Boolean ok = true;
                                 if (rgb && (rgb888 /*|| bgr888*/))
                                 {
                                     // RGB or RGBA format
@@ -845,8 +834,8 @@ namespace Kopernicus
                                 }
                                 if (ok)
                                 {
-                                    map = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, textureFormat, mipmap);
+                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
                                 }
 
                             }
@@ -884,19 +873,19 @@ namespace Kopernicus
             return map;
         }
 
-        public static T FindMapSO<T>(string url) where T : MapSO
+        public static T FindMapSO<T>(String url) where T : MapSO
         {
             T retVal = Resources.FindObjectsOfTypeAll<T>().FirstOrDefault(m => m.name == url);
             if (retVal != null)
             {
                 return retVal;
             }
-            bool modFound = false;
-            string trim = url.Replace("BUILTIN/", "");
-            string mBody = Regex.Replace(trim, @"/.*", "");
+            Boolean modFound = false;
+            String trim = url.Replace("BUILTIN/", "");
+            String mBody = Regex.Replace(trim, @"/.*", "");
             trim = Regex.Replace(trim, mBody + "/", "");
-            string mTypeName = Regex.Replace(trim, @"/.*", "");
-            string mName = Regex.Replace(trim, mTypeName + "/", "");
+            String mTypeName = Regex.Replace(trim, @"/.*", "");
+            String mName = Regex.Replace(trim, mTypeName + "/", "");
             PSystemBody body = FindBody(PSystemManager.Instance.systemPrefab.rootBody, mBody);
             if (body != null && body.pqsVersion != null)
             {
@@ -948,7 +937,7 @@ namespace Kopernicus
         {
             Logger.Active.Log("Removing mods from pqs " + p.name);
             List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
-            bool addTypes = (types == null);
+            Boolean addTypes = (types == null);
             if(addTypes)
                 types = new List<Type>();
             if (blacklist == null)
@@ -1001,8 +990,8 @@ namespace Kopernicus
 
         static public void RemoveEmptyGO(List<GameObject> toCheck)
         {
-            int oCount = toCheck.Count;
-            int nCount = oCount;
+            Int32 oCount = toCheck.Count;
+            Int32 nCount = oCount;
             List<GameObject> toDestroy = new List<GameObject>();
             do
             {
@@ -1081,7 +1070,7 @@ namespace Kopernicus
         }
 
         // Runs a function recursively
-        public static TOut DoRecursive<TIn, TOut>(TIn start, Func<TIn, IEnumerable<TIn>> selector, Func<TOut, bool> check, Func<TIn, TOut> action)
+        public static TOut DoRecursive<TIn, TOut>(TIn start, Func<TIn, IEnumerable<TIn>> selector, Func<TOut, Boolean> check, Func<TIn, TOut> action)
         {
             TOut tout = action(start);
             if (check(tout))
@@ -1099,163 +1088,6 @@ namespace Kopernicus
         public static void DoRecursive<T>(T start, Func<T, IEnumerable<T>> selector, Action<T> action)
         {
             DoRecursive<T, object>(start, selector, tout => false, tin => { action(tin); return null; });
-        }
-
-        /** 
-         * Enumerable class to iterate over parents.  Defined to allow us to use Linq
-         * and predicates. 
-         *
-         * See examples: http://msdn.microsoft.com/en-us/library/78dfe2yb(v=vs.110).aspx
-         **/
-        public class ParentEnumerator : IEnumerable<GameObject>
-        {
-            // The game object who and whose parents are going to be enumerated
-            private GameObject initial;
-
-            // Enumerator class
-            public class Enumerator : IEnumerator<GameObject>
-            {
-                public GameObject original;
-                public GameObject current;
-
-                public Enumerator(GameObject initial)
-                {
-                    this.original = initial;
-                    this.current = this.original;
-                }
-
-                public bool MoveNext()
-                {
-                    if (current.transform.parent != null && current.transform.parent == current.transform)
-                    {
-                        current = current.transform.parent.gameObject;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-                public void Reset()
-                {
-                    current = original;
-                }
-
-                void IDisposable.Dispose() { }
-
-                public GameObject Current
-                {
-                    get { return current; }
-                }
-
-                object IEnumerator.Current
-                {
-                    get { return Current; }
-                }
-            }
-
-            public Enumerator GetEnumerator()
-            {
-                return new Enumerator(initial);
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return (IEnumerator)GetEnumerator();
-            }
-
-            IEnumerator<GameObject> IEnumerable<GameObject>.GetEnumerator()
-            {
-                return (IEnumerator<GameObject>)GetEnumerator();
-            }
-
-            public ParentEnumerator(GameObject initial)
-            {
-                this.initial = initial;
-            }
-        }
-
-        /** 
-         * Enumerable class to iterate over parents.  Defined to allow us to use Linq
-         * and predicates.  Allows this fun operation to find a sun closest to us under 
-         * the tree
-         * 
-         *     Utility.ReferenceBodyEnumerator e = new Utility.ReferenceBodyEnumerator(FlightGlobals.currentMainBody);
-         *     CelestialBody sun = e.First(p => p.GetComponentsInChildren(typeof (ScaledSun), true).Length > 0);
-         *
-         * See examples: http://msdn.microsoft.com/en-us/library/78dfe2yb(v=vs.110).aspx
-         **/
-        public class ReferenceBodyEnumerator : IEnumerable<CelestialBody>
-        {
-            // The game object who and whose parents are going to be enumerated
-            private CelestialBody initial;
-
-            // Enumerator class
-            public class Enumerator : IEnumerator<CelestialBody>
-            {
-                public CelestialBody original;
-                public CelestialBody current;
-
-                public Enumerator(CelestialBody initial)
-                {
-                    this.original = initial;
-                    this.current = this.original;
-                }
-
-                public bool MoveNext()
-                {
-                    if (current.referenceBody != null)
-                    {
-                        current = current.referenceBody;
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                public void Reset()
-                {
-                    current = original;
-                }
-
-                void IDisposable.Dispose() { }
-
-                public CelestialBody Current
-                {
-                    get { return current; }
-                }
-
-                object IEnumerator.Current
-                {
-                    get { return Current; }
-                }
-            }
-
-            public Enumerator GetEnumerator()
-            {
-                return new Enumerator(initial);
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return (IEnumerator)GetEnumerator();
-            }
-
-            IEnumerator<CelestialBody> IEnumerable<CelestialBody>.GetEnumerator()
-            {
-                return (IEnumerator<CelestialBody>)GetEnumerator();
-            }
-
-            public ReferenceBodyEnumerator(CelestialBody initial)
-            {
-                this.initial = initial;
-            }
-        }
-
-        public static void Log(object s)
-        {
-            Logger.Active.Log(s);
         }
     }
 }

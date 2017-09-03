@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,20 +17,21 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using System.Linq;
-using UnityEngine;
-using KSP.UI.Screens;
 using Kopernicus.Components;
 using Kopernicus.Configuration;
-using TMPro;
-using System.Reflection;
+using KSP.UI.Screens;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using TMPro;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -46,7 +43,7 @@ namespace Kopernicus
         void Start()
         {
             //  FIX BODIES MOVED POSTSPAWN  //
-            bool postSpawnChanges = false;
+            Boolean postSpawnChanges = false;
             foreach (CelestialBody cb in PSystemManager.Instance.localBodies.Where(b => b.Has("orbitPatches")))
             {
                 // Fix position if the body gets moved PostSpawn
@@ -63,12 +60,12 @@ namespace Kopernicus
                     if (body != null && oldParent != null)
                     {
                         // If there is no new SMA it means only the parent changed
-                        NumericParser<double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
+                        NumericParser<Double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
                         if (patch.GetValue("semiMajorAxis") != null)
                             newSMA.SetFromString(patch.GetValue("semiMajorAxis"));
                         
                         // Count how many children comes before our body in the newParent.child list
-                        int index = 0;
+                        Int32 index = 0;
                         foreach (PSystemBody child in newParent.children)
                         {
                             if (child.orbitDriver.orbit.semiMajorAxis < newSMA.value)
@@ -114,7 +111,7 @@ namespace Kopernicus
                         {
                             if (skipList.Any(b => b.Key == parent))
                             {
-                                int index = skipList.IndexOf(skipList.First(b => b.Key == parent));
+                                Int32 index = skipList.IndexOf(skipList.First(b => b.Key == parent));
                                 skipList.Insert(index, new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
                             }
                             else
@@ -131,7 +128,7 @@ namespace Kopernicus
                 PSystemBody parent = pair.Value;
 
                 // Find where the hidden body is
-                int index = parent.children.IndexOf(hidden);
+                Int32 index = parent.children.IndexOf(hidden);
 
                 // Put its children in its place
                 parent.children.InsertRange(index, hidden.children);
@@ -146,11 +143,11 @@ namespace Kopernicus
                 AddPlanets();
 
                 // Undo the changes to the PSystem
-                for (int i = skipList.Count; i > 0; i = i - 1)
+                for (Int32 i = skipList.Count; i > 0; i = i - 1)
                 {
                     PSystemBody hidden = skipList.ElementAt(i).Key;
                     PSystemBody parent = skipList.ElementAt(i).Value;
-                    int oldIndex = parent.children.IndexOf(hidden.children.First());
+                    Int32 oldIndex = parent.children.IndexOf(hidden.children.First());
                     parent.children.Insert(oldIndex, hidden);
                     foreach (PSystemBody child in hidden.children)
                     {
@@ -215,7 +212,7 @@ namespace Kopernicus
             var RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().First();
 
             // AddPlanets requires this list to be empty when triggered
-            list.SetValue(RDAC, new Dictionary<string, List<RDArchivesController.Filter>>());
+            list.SetValue(RDAC, new Dictionary<String, List<RDArchivesController.Filter>>());
 
             // AddPlanets!
             add.Invoke(RDAC, null);

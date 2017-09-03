@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,11 +17,13 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
+
+using System;
 
 namespace Kopernicus
 {
@@ -39,7 +37,7 @@ namespace Kopernicus
 
             // Science multipler (?) for landed science
             [ParserTarget("landedDataValue")]
-            public NumericParser<float> landedDataValue 
+            public NumericParser<Single> landedDataValue 
             {
                 get { return scienceParams.LandedDataValue; }
                 set { scienceParams.LandedDataValue = value; }
@@ -47,7 +45,7 @@ namespace Kopernicus
 
             // Science multipler (?) for splashed down science
             [ParserTarget("splashedDataValue")]
-            public NumericParser<float> splashedDataValue 
+            public NumericParser<Single> splashedDataValue 
             {
                 get { return scienceParams.SplashedDataValue; }
                 set { scienceParams.SplashedDataValue = value; }
@@ -55,7 +53,7 @@ namespace Kopernicus
 
             // Science multipler (?) for flying low science
             [ParserTarget("flyingLowDataValue")]
-            public NumericParser<float> flyingLowDataValue 
+            public NumericParser<Single> flyingLowDataValue 
             {
                 get { return scienceParams.FlyingLowDataValue; }
                 set { scienceParams.FlyingLowDataValue = value; }
@@ -63,7 +61,7 @@ namespace Kopernicus
 
             // Science multipler (?) for flying high science
             [ParserTarget("flyingHighDataValue")]
-            public NumericParser<float> flyingHighDataValue 
+            public NumericParser<Single> flyingHighDataValue 
             {
                 get { return scienceParams.FlyingHighDataValue; }
                 set { scienceParams.FlyingHighDataValue = value; }
@@ -71,7 +69,7 @@ namespace Kopernicus
             
             // Science multipler (?) for in space low science
             [ParserTarget("inSpaceLowDataValue")]
-            public NumericParser<float> inSpaceLowDataValue
+            public NumericParser<Single> inSpaceLowDataValue
             {
                 get { return scienceParams.InSpaceLowDataValue; }
                 set { scienceParams.InSpaceLowDataValue = value; }
@@ -79,7 +77,7 @@ namespace Kopernicus
             
             // Science multipler (?) for in space high science
             [ParserTarget("inSpaceHighDataValue")]
-            public NumericParser<float> inSpaceHighDataValue
+            public NumericParser<Single> inSpaceHighDataValue
             {
                 get { return scienceParams.InSpaceHighDataValue; }
                 set { scienceParams.InSpaceHighDataValue = value; }
@@ -89,7 +87,7 @@ namespace Kopernicus
             // for value OR describe a multiplier for recovery of a craft returning from this
             // body....
             [ParserTarget("recoveryValue")]
-            public NumericParser<float> recoveryValue
+            public NumericParser<Single> recoveryValue
             {
                 get { return scienceParams.RecoveryValue; }
                 set { scienceParams.RecoveryValue = value; }
@@ -97,7 +95,7 @@ namespace Kopernicus
 
             // Altitude when "flying at <body>" transistions from/to "from <body>'s upper atmosphere"
             [ParserTarget("flyingAltitudeThreshold")]
-            public NumericParser<float> flyingAltitudeThreshold
+            public NumericParser<Single> flyingAltitudeThreshold
             {
                 get { return scienceParams.flyingAltitudeThreshold; }
                 set { scienceParams.flyingAltitudeThreshold = value.value; }
@@ -105,7 +103,7 @@ namespace Kopernicus
             
             // Altitude when "in space low" transistions from/to "in space high"
             [ParserTarget("spaceAltitudeThreshold")]
-            public NumericParser<float> spaceAltitudeThreshold
+            public NumericParser<Single> spaceAltitudeThreshold
             {
                 get { return scienceParams.spaceAltitudeThreshold; }
                 set { scienceParams.spaceAltitudeThreshold = value.value; }

@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -37,22 +33,24 @@ namespace Kopernicus
         public class CBAttributeMapSODemand : CBAttributeMapSO, ILoadOnDemand
         {
             // BitPerPixels is always 4
-            protected new const int _bpp = 4;
+            protected new const Int32 _bpp = 4;
 
             // Representation of the map
             protected new Texture2D _data { get; set; }
 
             // States
-            public bool IsLoaded { get; set; }
-            public bool AutoLoad { get; set; }
+            public Boolean IsLoaded { get; set; }
+            public Boolean AutoLoad { get; set; }
 
             // Path of the Texture
-            public string Path { get; set; }
+            public String Path { get; set; }
 
             // MapDepth
             public new MapDepth Depth { get; set; }
 
-            // Load the Map
+            /// <summary>
+            /// Load the Map
+            /// </summary>
             public void Load()
             {
                 // Check if the Map is already loaded
@@ -75,13 +73,15 @@ namespace Kopernicus
                 // Return nothing
                 Debug.Log("[OD] ERROR: Failed to load CBmap " + name + " at path " + Path);
             }
-            
 
-            // Unload the map
+
+            /// <summary>
+            /// Unload the map
+            /// </summary>
             public void Unload()
             {
                 // We can only destroy the map, if it is loaded and initialized
-                if (!IsLoaded || !string.IsNullOrEmpty(Path))
+                if (!IsLoaded || !String.IsNullOrEmpty(Path))
                     return;
 
                 // Nuke the map
@@ -129,7 +129,7 @@ namespace Kopernicus
             }
 
             // GetAtt
-            public override MapAttribute GetAtt(double lat, double lon)
+            public override MapAttribute GetAtt(Double lat, Double lon)
             {
                 if (!IsLoaded)
                 {
@@ -141,7 +141,7 @@ namespace Kopernicus
             }
 
             // GetPixelColor - Float
-            public override Color GetPixelColor(float x, float y)
+            public override Color GetPixelColor(Single x, Single y)
             {
                 if (!IsLoaded)
                 {
@@ -164,7 +164,7 @@ namespace Kopernicus
             }
 
             // GetPixelColor - Int
-            public override Color GetPixelColor(int x, int y)
+            public override Color GetPixelColor(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -189,8 +189,8 @@ namespace Kopernicus
                 return compiled;
             }
 
-            // ConstructBilinearCoords from double
-            protected new BilinearCoords ConstructBilinearCoords(double x, double y)
+            // ConstructBilinearCoords from Double
+            protected new BilinearCoords ConstructBilinearCoords(Double x, Double y)
             {
                 // Create the struct
                 BilinearCoords coords = new BilinearCoords();
@@ -201,34 +201,34 @@ namespace Kopernicus
 
                 // X to U
                 coords.x = x * _width;
-                coords.xFloor = (int)Math.Floor(coords.x);
-                coords.xCeiling = (int)Math.Ceiling(coords.x);
-                coords.u = (float)(coords.x - coords.xFloor);
+                coords.xFloor = (Int32)Math.Floor(coords.x);
+                coords.xCeiling = (Int32)Math.Ceiling(coords.x);
+                coords.u = (Single)(coords.x - coords.xFloor);
                 if (coords.xCeiling == _width) coords.xCeiling = 0;
 
                 // Y to V
                 coords.y = y * _height;
-                coords.yFloor = (int)Math.Floor(coords.y);
-                coords.yCeiling = (int)Math.Ceiling(coords.y);
-                coords.v = (float)(coords.y - coords.yFloor);
-                if (coords.yCeiling == this._height) coords.yCeiling = 0;
+                coords.yFloor = (Int32)Math.Floor(coords.y);
+                coords.yCeiling = (Int32)Math.Ceiling(coords.y);
+                coords.v = (Single)(coords.y - coords.yFloor);
+                if (coords.yCeiling == _height) coords.yCeiling = 0;
 
                 // We're done
                 return coords;
             }
 
-            // ConstructBilinearCoords from float
-            protected new BilinearCoords ConstructBilinearCoords(float x, float y)
+            // ConstructBilinearCoords from Single
+            protected new BilinearCoords ConstructBilinearCoords(Single x, Single y)
             {
-                return ConstructBilinearCoords((double)x, (double)y);
+                return ConstructBilinearCoords((Double)x, (Double)y);
             }
 
             // BilinearCoords
             public struct BilinearCoords
             {
-                public double x, y;
-                public int xCeiling, xFloor, yCeiling, yFloor;
-                public float u, v;
+                public Double x, y;
+                public Int32 xCeiling, xFloor, yCeiling, yFloor;
+                public Single u, v;
             }
         }
 

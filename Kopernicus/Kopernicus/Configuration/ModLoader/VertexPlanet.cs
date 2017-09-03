@@ -1,9 +1,5 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -51,7 +47,7 @@ namespace Kopernicus
 
                     // deformity
                     [ParserTarget("deformity")]
-                    public NumericParser<double> deformity
+                    public NumericParser<Double> deformity
                     {
                         get { return wrapper.deformity; }
                         set { wrapper.deformity = value; }
@@ -59,7 +55,7 @@ namespace Kopernicus
 
                     // frequency
                     [ParserTarget("frequency")]
-                    public NumericParser<double> frequency
+                    public NumericParser<Double> frequency
                     {
                         get { return wrapper.frequency; }
                         set { wrapper.frequency = value; }
@@ -67,7 +63,7 @@ namespace Kopernicus
 
                     // octaves
                     [ParserTarget("octaves")]
-                    public NumericParser<double> octaves
+                    public NumericParser<Double> octaves
                     {
                         get { return wrapper.octaves; }
                         set { wrapper.octaves = value; }
@@ -75,7 +71,7 @@ namespace Kopernicus
 
                     // persistance
                     [ParserTarget("persistance")]
-                    public NumericParser<double> persistance
+                    public NumericParser<Double> persistance
                     {
                         get { return wrapper.persistance; }
                         set { wrapper.persistance = value; }
@@ -83,7 +79,7 @@ namespace Kopernicus
 
                     // seed
                     [ParserTarget("seed")]
-                    public NumericParser<int> seed = new NumericParser<int>(0);
+                    public NumericParser<Int32> seed = 0;
 
                     // Apply Event
                     void IParserEventSubscriber.Apply(ConfigNode node) { }
@@ -132,7 +128,7 @@ namespace Kopernicus
 
                         // frequency
                         [ParserTarget("frequency")]
-                        public NumericParser<double> frequency
+                        public NumericParser<Double> frequency
                         {
                             get { return noise.Frequency; }
                             set { noise.Frequency = value; }
@@ -140,7 +136,7 @@ namespace Kopernicus
 
                         // lacunarity
                         [ParserTarget("lacunarity")]
-                        public NumericParser<double> lacunarity
+                        public NumericParser<Double> lacunarity
                         {
                             get { return noise.Lacunarity; }
                             set { noise.Lacunarity = value; }
@@ -148,7 +144,7 @@ namespace Kopernicus
 
                         // octaveCount
                         [ParserTarget("octaveCount")]
-                        public NumericParser<int> octaveCount
+                        public NumericParser<Int32> octaveCount
                         {
                             get { return noise.OctaveCount; }
                             set { noise.OctaveCount = Mathf.Clamp(value, 1, 30); }
@@ -158,13 +154,13 @@ namespace Kopernicus
                         [ParserTarget("quality")]
                         public EnumParser<KopernicusNoiseQuality> quality
                         {
-                            get { return (KopernicusNoiseQuality) (int) noise.NoiseQuality; }
-                            set { noise.NoiseQuality = (NoiseQuality) (int) value.value; }
+                            get { return (KopernicusNoiseQuality) (Int32) noise.NoiseQuality; }
+                            set { noise.NoiseQuality = (NoiseQuality) (Int32) value.value; }
                         }
 
                         // seed
                         [ParserTarget("seed")]
-                        public NumericParser<int> seed
+                        public NumericParser<Int32> seed
                         {
                             get { return noise.Seed; }
                             set { noise.Seed = value; }
@@ -186,7 +182,7 @@ namespace Kopernicus
 
                     // deformity
                     [ParserTarget("deformity")]
-                    public NumericParser<double> deformity
+                    public NumericParser<Double> deformity
                     {
                         get { return wrapper.deformity; }
                         set { wrapper.deformity = value; }
@@ -194,7 +190,7 @@ namespace Kopernicus
 
                     // frequency
                     [ParserTarget("frequency")]
-                    public NumericParser<double> frequency
+                    public NumericParser<Double> frequency
                     {
                         get { return wrapper.frequency; }
                         set { wrapper.frequency = value; }
@@ -202,7 +198,7 @@ namespace Kopernicus
 
                     // octaves
                     [ParserTarget("octaves")]
-                    public NumericParser<int> octaves
+                    public NumericParser<Int32> octaves
                     {
                         get { return wrapper.octaves; }
                         set { wrapper.octaves = Mathf.Clamp(value, 1, 30); }
@@ -210,7 +206,7 @@ namespace Kopernicus
 
                     // persistance
                     [ParserTarget("persistance")]
-                    public NumericParser<double> persistance
+                    public NumericParser<Double> persistance
                     {
                         get { return wrapper.persistance; }
                         set { wrapper.persistance = value; }
@@ -218,7 +214,7 @@ namespace Kopernicus
 
                     // seed
                     [ParserTarget("seed")]
-                    public NumericParser<int> seedLoader
+                    public NumericParser<Int32> seedLoader
                     {
                         get { return wrapper.seed; }
                         set { wrapper.seed = value; }
@@ -273,7 +269,7 @@ namespace Kopernicus
 
                     // Name of the class
                     [ParserTarget("name")]
-                    public string name
+                    public String name
                     {
                         get { return landClass.name; }
                         set { landClass.name = value; }
@@ -281,7 +277,7 @@ namespace Kopernicus
 
                     // Should we delete this
                     [ParserTarget("delete")]
-                    public NumericParser<bool> delete = new NumericParser<bool>(false);
+                    public NumericParser<Boolean> delete = new NumericParser<Boolean>(false);
 
                     // baseColor
                     [ParserTarget("baseColor")]
@@ -301,7 +297,7 @@ namespace Kopernicus
 
                     // colorNoiseAmount
                     [ParserTarget("colorNoiseAmount")]
-                    public NumericParser<double> colorNoiseAmount
+                    public NumericParser<Double> colorNoiseAmount
                     {
                         get { return landClass.colorNoiseAmount; }
                         set { landClass.colorNoiseAmount = value; }
@@ -317,7 +313,7 @@ namespace Kopernicus
 
                     // fractalEnd
                     [ParserTarget("fractalEnd")]
-                    public NumericParser<double> fractalEnd
+                    public NumericParser<Double> fractalEnd
                     {
                         get { return landClass.fractalEnd; }
                         set { landClass.fractalEnd = value; }
@@ -325,7 +321,7 @@ namespace Kopernicus
 
                     // fractalStart
                     [ParserTarget("fractalStart")]
-                    public NumericParser<double> fractalStart
+                    public NumericParser<Double> fractalStart
                     {
                         get { return landClass.fractalStart; }
                         set { landClass.fractalStart = value; }
@@ -333,7 +329,7 @@ namespace Kopernicus
 
                     // lerpToNext
                     [ParserTarget("lerpToNext")]
-                    public NumericParser<bool> lerpToNext
+                    public NumericParser<Boolean> lerpToNext
                     {
                         get { return landClass.lerpToNext; }
                         set { landClass.lerpToNext = value; }
@@ -341,7 +337,7 @@ namespace Kopernicus
 
                     // fractalDelta
                     [ParserTarget("fractalDelta")]
-                    public NumericParser<double> fractalDelta
+                    public NumericParser<Double> fractalDelta
                     {
                         get { return landClass.fractalDelta; }
                         set { landClass.fractalDelta = value; }
@@ -349,7 +345,7 @@ namespace Kopernicus
 
                     // endHeight
                     [ParserTarget("endHeight")]
-                    public NumericParser<double> endHeight
+                    public NumericParser<Double> endHeight
                     {
                         get { return landClass.endHeight; }
                         set { landClass.endHeight = value; }
@@ -357,7 +353,7 @@ namespace Kopernicus
 
                     // startHeight
                     [ParserTarget("startHeight")]
-                    public NumericParser<double> startHeight
+                    public NumericParser<Double> startHeight
                     {
                         get { return landClass.startHeight; }
                         set { landClass.startHeight = value; }
@@ -388,7 +384,7 @@ namespace Kopernicus
 
                 // buildHeightColors
                 [ParserTarget("buildHeightColors")]
-                public NumericParser<bool> buildHeightColors 
+                public NumericParser<Boolean> buildHeightColors 
                 {
                     get { return mod.buildHeightColors; }
                     set { mod.buildHeightColors = value; }
@@ -396,7 +392,7 @@ namespace Kopernicus
 
                 // colorDeformity
                 [ParserTarget("colorDeformity")]
-                public NumericParser<double> colorDeformity
+                public NumericParser<Double> colorDeformity
                 {
                     get { return mod.colorDeformity; }
                     set { mod.colorDeformity = value; }
@@ -436,7 +432,7 @@ namespace Kopernicus
 
                 // deformity
                 [ParserTarget("deformity")]
-                public NumericParser<double> deformity
+                public NumericParser<Double> deformity
                 {
                     get { return mod.deformity; }
                     set { mod.deformity = value; }
@@ -447,7 +443,7 @@ namespace Kopernicus
 
                 // oceanDepth
                 [ParserTarget("oceanDepth")]
-                public NumericParser<double> oceanDepth
+                public NumericParser<Double> oceanDepth
                 {
                     get { return mod.oceanDepth; }
                     set { mod.oceanDepth = value; }
@@ -455,7 +451,7 @@ namespace Kopernicus
 
                 // oceanLevel
                 [ParserTarget("oceanLevel")]
-                public NumericParser<double> oceanLevel
+                public NumericParser<Double> oceanLevel
                 {
                     get { return mod.oceanLevel; }
                     set { mod.oceanLevel = value; }
@@ -463,7 +459,7 @@ namespace Kopernicus
 
                 // oceanSnap
                 [ParserTarget("oceanSnap")]
-                public NumericParser<bool> oceanSnap
+                public NumericParser<Boolean> oceanSnap
                 {
                     get { return mod.oceanSnap; }
                     set { mod.oceanSnap = value; }
@@ -471,7 +467,7 @@ namespace Kopernicus
 
                 // oceanStep
                 [ParserTarget("oceanStep")]
-                public NumericParser<double> oceanStep
+                public NumericParser<Double> oceanStep
                 {
                     get { return mod.oceanStep; }
                     set { mod.oceanStep = value; }
@@ -479,7 +475,7 @@ namespace Kopernicus
 
                 // seed
                 [ParserTarget("seed")]
-                public NumericParser<int> seed
+                public NumericParser<Int32> seed
                 {
                     get { return mod.seed; }
                     set { mod.seed = value; }
@@ -487,7 +483,7 @@ namespace Kopernicus
 
                 // terrainRidgeBalance
                 [ParserTarget("terrainRidgeBalance")]
-                public NumericParser<double> terrainRidgeBalance
+                public NumericParser<Double> terrainRidgeBalance
                 {
                     get { return mod.terrainRidgeBalance; }
                     set { mod.terrainRidgeBalance = value; }
@@ -495,7 +491,7 @@ namespace Kopernicus
 
                 // terrainRidgesMax
                 [ParserTarget("terrainRidgesMax")]
-                public NumericParser<double> terrainRidgesMax
+                public NumericParser<Double> terrainRidgesMax
                 {
                     get { return mod.terrainRidgesMax; }
                     set { mod.terrainRidgesMax = value; }
@@ -503,7 +499,7 @@ namespace Kopernicus
 
                 // terrainRidgesMin
                 [ParserTarget("terrainRidgesMin")]
-                public NumericParser<double> terrainRidgesMin
+                public NumericParser<Double> terrainRidgesMin
                 {
                     get { return mod.terrainRidgesMin; }
                     set { mod.terrainRidgesMin = value; }
@@ -511,7 +507,7 @@ namespace Kopernicus
 
                 // terrainShapeEnd
                 [ParserTarget("terrainShapeEnd")]
-                public NumericParser<double> terrainShapeEnd
+                public NumericParser<Double> terrainShapeEnd
                 {
                     get { return mod.terrainShapeEnd; }
                     set { mod.terrainShapeEnd = value; }
@@ -519,7 +515,7 @@ namespace Kopernicus
 
                 // terrainShapeStart
                 [ParserTarget("terrainShapeStart")]
-                public NumericParser<double> terrainShapeStart
+                public NumericParser<Double> terrainShapeStart
                 {
                     get { return mod.terrainShapeStart; }
                     set { mod.terrainShapeStart = value; }
@@ -527,7 +523,7 @@ namespace Kopernicus
 
                 // terrainSmoothing
                 [ParserTarget("terrainSmoothing")]
-                public NumericParser<double> terrainSmoothing
+                public NumericParser<Double> terrainSmoothing
                 {
                     get { return mod.terrainSmoothing; }
                     set { mod.terrainSmoothing = value; }

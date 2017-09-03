@@ -1,9 +1,5 @@
 /**
  * Kopernicus Planetary System Modifier
- * ====================================
- * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P., NathanKell and KillAshley
- * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,17 +17,17 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+ * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Kopernicus.Components;
 using UnityEngine;
 
 namespace Kopernicus
@@ -50,7 +46,7 @@ namespace Kopernicus
 
             // We have an ocean?
             [ParserTarget("ocean")]
-            public NumericParser<bool> mapOcean
+            public NumericParser<Boolean> mapOcean
             {
                 get { return pqsVersion.mapOcean && body.ocean; }
                 set { pqsVersion.mapOcean = body.ocean = value; }
@@ -66,7 +62,7 @@ namespace Kopernicus
 
             // Height of the Ocean
             [ParserTarget("oceanHeight")]
-            public NumericParser<double> oceanHeight
+            public NumericParser<Double> oceanHeight
             {
                 get { return pqsVersion.mapOceanHeight; }
                 set { pqsVersion.mapOceanHeight = value; }
@@ -74,7 +70,7 @@ namespace Kopernicus
 
             // Density of the Ocean
             [ParserTarget("density")]
-            public NumericParser<double> density
+            public NumericParser<Double> density
             {
                 get { return body.oceanDensity; }
                 set { body.oceanDensity = value; }
@@ -82,28 +78,28 @@ namespace Kopernicus
 
             // PQS level of detail settings
             [ParserTarget("minLevel")]
-            public NumericParser<int> minLevel
+            public NumericParser<Int32> minLevel
             {
                 get { return ocean.minLevel; }
                 set { ocean.minLevel = value; }
             }
 
             [ParserTarget("maxLevel")]
-            public NumericParser<int> maxLevel
+            public NumericParser<Int32> maxLevel
             {
                 get { return ocean.maxLevel; }
                 set { ocean.maxLevel = value; }
             }
 
             [ParserTarget("minDetailDistance")]
-            public NumericParser<double> minDetailDistance
+            public NumericParser<Double> minDetailDistance
             {
                 get { return ocean.minDetailDistance; }
                 set { ocean.minDetailDistance = value; }
             }
 
             [ParserTarget("maxQuadLengthsPerFrame")]
-            public NumericParser<float> maxQuadLengthsPerFrame
+            public NumericParser<Single> maxQuadLengthsPerFrame
             {
                 get { return ocean.maxQuadLenghtsPerFrame; }
                 set { ocean.maxQuadLenghtsPerFrame = value; }
@@ -254,7 +250,7 @@ namespace Kopernicus
                     if (types.All(t => t.Name != mod.name))
                         continue;
                     Type loaderType = types.FirstOrDefault(t => t.Name == mod.name);
-                    string testName = mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl";
+                    String testName = mod.name != "LandControl" ? "PQSMod_" + mod.name : "PQSLandControl";
                     Type modType = types.FirstOrDefault(t => t.Name == testName);
                     if (loaderType == null || modType == null)
                     {
