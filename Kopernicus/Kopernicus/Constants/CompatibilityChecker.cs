@@ -100,6 +100,19 @@ namespace Kopernicus
         // Version of the compatibility checker itself.
         private static Int32 _version = 4;
 
+        void Awake()
+        {
+            // If Kopernicus isn't compatible, activate cat-ception
+            Type moduleManager = Parser.ModTypes.FirstOrDefault(t => t.Name == "ModuleManager" && t.Namespace == "ModuleManager");
+            if (moduleManager == null)
+                return; // no cat :(
+            FieldInfo nyan = moduleManager.GetField("nyan", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo ncats = moduleManager.GetField("nCats", BindingFlags.Instance | BindingFlags.NonPublic);
+            UnityEngine.Object mm = FindObjectOfType(moduleManager);
+            nyan.SetValue(mm, true);
+            ncats.SetValue(mm, true);
+        }
+
         public void Start()
         {
             // Checkers are identified by the type name and version field name.
