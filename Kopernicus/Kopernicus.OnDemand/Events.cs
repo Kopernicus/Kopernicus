@@ -52,11 +52,6 @@ namespace Kopernicus
             public static EventData<ScaledSpaceDemand> OnScaledSpaceLoad { get; private set; }
             [Description("OnDemand.ScaledSpace.Unload")]
             public static EventData<ScaledSpaceDemand> OnScaledSpaceUnload { get; private set; }
-
-            [Description("OnDemand.Body.Load")]
-            public static EventData<CelestialBody> OnBodyLoad { get; private set; }
-            [Description("OnDemand.Body.Unload")]
-            public static EventData<CelestialBody> OnBodyUnload { get; private set; }
             
             [Description("OnDemand.MapSO.Load.NR")]
             private static EventVoid OnMapSOLoadNR { get; set; }
