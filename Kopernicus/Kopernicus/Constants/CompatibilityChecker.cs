@@ -103,6 +103,8 @@ namespace Kopernicus
         void Awake()
         {
             // If Kopernicus isn't compatible, activate cat-ception
+            if (IsCompatible())
+                return;
             Type moduleManager = Parser.ModTypes.FirstOrDefault(t => t.Name == "ModuleManager" && t.Namespace == "ModuleManager");
             if (moduleManager == null)
                 return; // no cat :(
