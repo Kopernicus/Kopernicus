@@ -57,8 +57,14 @@ namespace Kopernicus
             [ParserTarget("sunlightIntensity")]
             public NumericParser<Single> sunlightIntensity
             {
-                get { return lsc.sunlightIntensity; }
-                set { lsc.sunlightIntensity = value; }
+                set
+                {
+                    lsc.intensityCurve = new FloatCurve(new Keyframe[]
+                    {
+                        new Keyframe(0, value),
+                        new Keyframe(1, value)
+                    });
+                }
             }
 
             // sunlightShadowStrength
@@ -81,8 +87,14 @@ namespace Kopernicus
             [ParserTarget("scaledSunlightIntensity")]
             public NumericParser<Single> scaledSunlightIntensity
             {
-                get { return lsc.scaledSunlightIntensity; }
-                set { lsc.scaledSunlightIntensity = value; }
+                set
+                {
+                    lsc.scaledIntensityCurve = new FloatCurve(new Keyframe[]
+                    {
+                        new Keyframe(0, value),
+                        new Keyframe(1, value)
+                    });
+                }
             }
 
             // IVASunColor
@@ -97,8 +109,14 @@ namespace Kopernicus
             [ParserTarget("IVASunIntensity")]
             public NumericParser<Single> IVASunIntensity
             {
-                get { return lsc.IVASunIntensity; }
-                set { lsc.IVASunIntensity = value; }
+                set
+                {
+                    lsc.ivaIntensityCurve = new FloatCurve(new Keyframe[]
+                    {
+                        new Keyframe(0, value),
+                        new Keyframe(1, value)
+                    });
+                }
             }
 
             // ambientLightColor
