@@ -183,6 +183,9 @@ namespace Kopernicus
             PlanetariumCamera.fetch.targets.Clear();
             PlanetariumCamera.fetch.targets.AddRange(trackingstation);
 
+            // Update the initialTarget of the tracking station
+            Resources.FindObjectsOfTypeAll<PlanetariumCamera>().FirstOrDefault().initialTarget = Resources.FindObjectsOfTypeAll<ScaledMovement>().FirstOrDefault(o => o.celestialBody.isHomeWorld);
+
             // Undo stuff
             foreach (CelestialBody b in PSystemManager.Instance.localBodies.Where(b_ => b_.Has("orbitPatches")))
             {
