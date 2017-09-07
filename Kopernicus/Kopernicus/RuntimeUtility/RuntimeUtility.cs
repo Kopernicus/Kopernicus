@@ -153,6 +153,13 @@ namespace Kopernicus
                     body.orbitDriver.orbit = loader.orbit;
                     CelestialBody oldRef = body.referenceBody;
                     body.referenceBody.orbitingBodies.Remove(body);
+
+                    CelestialBody newRef = PSystemManager.Instance.localBodies.FirstOrDefault(b => b.transform.name == loader.referenceBody);
+                    if (newRef != null)
+                        body.orbit.referenceBody = body.orbitDriver.referenceBody = newRef;
+                    else
+                        throw new Exception("PostSpawnOrbit reference body for \"" + body.name + "\" could not be found. Missing body name is \"" + loader.referenceBody + "\".");
+
                     body.orbit.referenceBody = body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.transform.name == loader.referenceBody);
                     fixes.Add(body.transform.name, new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
                     body.referenceBody.orbitingBodies.Add(body);
