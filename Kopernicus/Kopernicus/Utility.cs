@@ -378,12 +378,8 @@ namespace Kopernicus
 
                 // Deactivate blacklisted Mods
                 Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
-                
+
                 foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.enabled && blacklist.Contains(m.GetType())))
-                {
-                    mod.modEnabled = false;
-                }
-                foreach (PQSMod mod in pqsOcean.GetComponentsInChildren<PQSMod>(true).Where(m => m.enabled && blacklist.Contains(m.GetType())))
                 {
                     mod.modEnabled = false;
                 }
@@ -464,10 +460,13 @@ namespace Kopernicus
                 }
 
                 // Cleanup
+                if (pqsOcean != null)
+                {
+                    pqsOcean.isBuildingMaps = false;
+                    pqsOcean.DeactivateSphere();
+                }
                 pqsVersion.isBuildingMaps = false;
                 pqsVersion.DeactivateSphere();
-                pqsOcean.isBuildingMaps = false;
-                pqsOcean.DeactivateSphere();
                 UnityEngine.Object.Destroy(pqsVersionGameObject);
             }
 
