@@ -46,7 +46,7 @@ namespace Kopernicus
         public MapObject previous;
 
         // Awake() - flag this class as don't destroy on load and register delegates
-        void Awake ()
+        void Awake()
         {
             // Don't run if Kopernicus isn't compatible
             if (!CompatibilityChecker.IsCompatible())
@@ -56,7 +56,7 @@ namespace Kopernicus
             }
 
             // Make sure the runtime utility isn't killed
-            DontDestroyOnLoad (this);
+            DontDestroyOnLoad(this);
 
             // Add handlers
             GameEvents.onPartUnpack.Add(OnPartUnpack);
@@ -91,7 +91,7 @@ namespace Kopernicus
                             else
                             {
                                 ContractSystem.ContractWeights.Add(body.name, body.Get<Int32>("contractWeight"));
-                            }                            
+                            }
                         }
                     }
                 }
@@ -104,8 +104,8 @@ namespace Kopernicus
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
 
             // Log
-            Logger.Default.Log ("[Kopernicus] RuntimeUtility Started");
-            Logger.Default.Flush ();
+            Logger.Default.Log("[Kopernicus] RuntimeUtility Started");
+            Logger.Default.Flush();
         }
 
         // Execute MainMenu functions
@@ -128,7 +128,7 @@ namespace Kopernicus
             Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
 
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)
-            {            
+            {
                 // More stars
                 if (body.flightGlobalsIndex != 0 && body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0)
                 {
@@ -153,7 +153,21 @@ namespace Kopernicus
                     body.orbitDriver.orbit = loader.orbit;
                     CelestialBody oldRef = body.referenceBody;
                     body.referenceBody.orbitingBodies.Remove(body);
-                    body.orbit.referenceBody = body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.transform.name == loader.referenceBody);
+
+                    CelestialBody newRef = PSystemManager.Instance.localBodies.FirstOrDefault(b => b.transform.name == loader.referenceBody);
+                    if (newRef != null)
+                    {
+                        body.orbit.referenceBody = body.orbitDriver.referenceBody = newRef;
+                    }
+                    else
+                    {
+                        // Log the exception
+                        Debug.Log("Exception: PostSpawnOrbit reference body for \"" + body.name + "\" could not be found. Missing body name is \"" + loader.referenceBody + "\".");
+
+                        // Open the Warning popup
+                        Injector.DisplayWarning();
+                    }
+
                     fixes.Add(body.transform.name, new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
                     body.referenceBody.orbitingBodies.Add(body);
                     body.referenceBody.orbitingBodies = body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
@@ -223,10 +237,10 @@ namespace Kopernicus
                     OrbitTargeter targeter = FlightGlobals.ActiveVessel.orbitTargeter;
                     if (targeter == null)
                         return;
-                    Int32 mode = (Int32) fields[0].GetValue(targeter);
+                    Int32 mode = (Int32)fields[0].GetValue(targeter);
                     if (mode == 2)
                     {
-                        OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
+                        OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit)fields[2].GetValue(targeter);
                         CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or?.discoveryInfo?.name?.Value);
                         if (body == null) return;
                         if (body.Has("barycenter") || body.Has("notSelectable"))
@@ -281,7 +295,7 @@ namespace Kopernicus
                     CelestialBody body = target.celestialBody;
                     if (body.Has("maxZoom"))
                         PlanetariumCamera.fetch.minDistance = body.Get<Single>("maxZoom");
-                    else 
+                    else
                         PlanetariumCamera.fetch.minDistance = 10;
                 }
             }
@@ -491,7 +505,7 @@ namespace Kopernicus
         // Remove the thumbnail for Barycenters in the RD and patch name changes
         void RDFixer()
         {
-	        // Only run in SpaceCenter
+            // Only run in SpaceCenter
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 // Done
@@ -649,4 +663,3 @@ namespace Kopernicus
         }
     }
 }
-
