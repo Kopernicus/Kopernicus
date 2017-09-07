@@ -360,6 +360,9 @@ namespace Kopernicus
             // Generate a duplicate of the Jool mesh
             Mesh mesh = Utility.DuplicateMesh(Templates.ReferenceGeosphere);
 
+            // Load the ocean
+            PQS ocean = body?.pqsController?.GetComponentsInChildren<PQS>()?.Skip(1)?.FirstOrDefault();
+
             // If this body has a PQS, we can create a more detailed object
             if (pqs != null)
             {
@@ -372,13 +375,23 @@ namespace Kopernicus
                 GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
-                Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
+                // Do the same for the ocean
+                GameObject pqsOceanGameObject = ocean != null ? UnityEngine.Object.Instantiate(ocean.gameObject) as GameObject : null;
+                PQS pqsOcean = pqsOceanGameObject?.GetComponent<PQS>();
+
 
                 // Deactivate blacklisted Mods
+                Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
+
                 foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => blacklist.Contains(m.GetType())))
                 {
                     mod.modEnabled = false;
                 }
+                foreach (PQSMod mod in pqsOcean.GetComponentsInChildren<PQSMod>(true).Where(m => blacklist.Contains(m.GetType())))
+                {
+                    mod.modEnabled = false;
+                }
+
 
                 // Find the PQS mods and enable the PQS-sphere
                 IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
@@ -387,6 +400,19 @@ namespace Kopernicus
 
                 pqsVersion.StartUpSphere();
                 pqsVersion.isBuildingMaps = true;
+
+                // Do the same for the ocean
+                IEnumerable<PQSMod> oceanMods = null;
+                if (pqsOcean != null)
+                {
+                    oceanMods = pqsOcean.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
+                    foreach (PQSMod flatten in oceanMods.Where(m => m is PQSMod_FlattenArea))
+                        flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(Boolean)).First().SetValue(flatten, true);
+
+                    pqsOcean.StartUpSphere();
+                    pqsOcean.isBuildingMaps = true;
+                }
+
 
                 // If we were able to find PQS mods
                 if (mods.Count() > 0)
@@ -402,20 +428,34 @@ namespace Kopernicus
                         Vector3 direction = vertices[i];
                         direction.Normalize();
 
+
                         // Build the vertex data object for the PQS mods
                         PQS.VertexBuildData vertex = new PQS.VertexBuildData();
                         vertex.directionFromCenter = direction;
                         vertex.vertHeight = body.Radius;
                         vertex.u = uv.x;
                         vertex.v = uv.y;
-
+                        
                         // Build from the PQS
                         foreach (PQSMod mod in mods)
                             mod.OnVertexBuildHeight(vertex);
 
                         // Check for sea level
-                        if (body.ocean && vertex.vertHeight < body.Radius)
-                            vertex.vertHeight = body.Radius;
+                        if (body.ocean && pqsOcean != null)
+                        {
+                            // Build the vertex data object for the ocean
+                            PQS.VertexBuildData vertexOcean = pqsOcean != null ? new PQS.VertexBuildData() : null;
+                            vertexOcean.directionFromCenter = direction;
+                            vertexOcean.vertHeight = body.Radius;
+                            vertexOcean.u = uv.x;
+                            vertexOcean.v = uv.y;
+
+                            // Build from the PQS
+                            foreach (PQSMod mod in oceanMods)
+                                mod.OnVertexBuildHeight(vertexOcean);
+
+                            vertex.vertHeight = Math.Max(vertex.vertHeight, vertexOcean.vertHeight);
+                        }
 
                         // Adjust the displacement
                         vertices[i] = direction * (Single)(vertex.vertHeight * rMetersToScaledUnits);
@@ -429,6 +469,9 @@ namespace Kopernicus
                 pqsVersion.isBuildingMaps = false;
                 pqsVersion.DeactivateSphere();
                 UnityEngine.Object.Destroy(pqsVersionGameObject);
+                pqsOcean.isBuildingMaps = false;
+                pqsOcean.DeactivateSphere();
+                UnityEngine.Object.Destroy(pqsOceanGameObject);
             }
 
             // Return the generated scaled space mesh
