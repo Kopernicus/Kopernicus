@@ -162,7 +162,7 @@ namespace Kopernicus
                     else
                     {
                         // Log the exception
-                        Debug.Log("PostSpawnOrbit reference body for \"" + body.name + "\" could not be found. Missing body name is \"" + loader.referenceBody + "\".");
+                        Debug.Log("Exception: PostSpawnOrbit reference body for \"" + body.name + "\" could not be found. Missing body name is \"" + loader.referenceBody + "\".");
 
                         // Open the Warning popup
                         Injector.DisplayWarning();
