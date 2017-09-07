@@ -168,7 +168,6 @@ namespace Kopernicus
                         Injector.DisplayWarning();
                     }
 
-                    body.orbit.referenceBody = body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.Find(b => b.transform.name == loader.referenceBody);
                     fixes.Add(body.transform.name, new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
                     body.referenceBody.orbitingBodies.Add(body);
                     body.referenceBody.orbitingBodies = body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
