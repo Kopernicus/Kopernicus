@@ -246,7 +246,7 @@ namespace Kopernicus
                         Body parent = null;
                         if(!bodies.TryGetValue(body.Value.orbit.referenceBody, out parent))
                         {
-                            throw new Exception("\"" + body.Value.orbit.referenceBody + "\" not found.");
+                            throw new Exception("Reference body for \"" + body.Key + "\" could not be found. Missing body name is \"" + body.Value.orbit.referenceBody + "\".");
                         }
 
                         // Setup the orbit of the body
