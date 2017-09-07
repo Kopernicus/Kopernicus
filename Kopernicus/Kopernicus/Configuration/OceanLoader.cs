@@ -109,16 +109,16 @@ namespace Kopernicus
             [ParserTarget("Material", allowMerge = true, getChild = false)]
             public Material surfaceMaterial
             {
-                get { return pqsVersion.surfaceMaterial; }
-                set { pqsVersion.surfaceMaterial = value; }
+                get { return ocean.surfaceMaterial; }
+                set { ocean.surfaceMaterial = value; }
             }
 
             // Fallback Material of the PQS (its always the same material)
             [ParserTarget("FallbackMaterial", allowMerge = true)]
             public Material fallbackMaterial
             {
-                get { return pqsVersion.fallbackMaterial; }
-                set { pqsVersion.fallbackMaterial = value; }
+                get { return ocean.fallbackMaterial; }
+                set { ocean.fallbackMaterial = value; }
             }
 
             // Killer-Ocean
