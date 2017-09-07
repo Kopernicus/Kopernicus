@@ -231,7 +231,7 @@ namespace Kopernicus
         }
 
         // Displays a warning if Kopernicus failed to load for some reason
-        public void DisplayWarning()
+        public static void DisplayWarning()
         {
             PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "KopernicusFail", "Warning", "Kopernicus was not able to load the custom planetary system due to an exception in the loading process.\n" +
                 "Loading your savegame is NOT recommended, because the missing planets could corrupt it and delete your progress.\n\n" +
