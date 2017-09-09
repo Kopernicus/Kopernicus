@@ -252,6 +252,19 @@ namespace Kopernicus
                     scaledVersion.deferMesh = true;
                 }
 
+                // Visualize the SOI
+                if (debug.showSOI)
+                    generatedBody.celestialBody.gameObject.AddComponent<Wiresphere>();
+
+                // Loads external parser targets
+                Parser.LoadParserTargetsExternal(node, "Kopernicus", configName: "Kopernicus");
+
+                // Post gen celestial body
+                Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
+
+                // Events
+                Events.OnBodyPostApply.Fire(this, node);
+
                 // We need to generate new scaled space meshes if 
                 //   a) we are using a template and we've change either the radius or type of body
                 //   b) we aren't using a template
@@ -270,19 +283,6 @@ namespace Kopernicus
                                                 scaledVersion.sphericalModel);
                     Events.OnBodyGenerateScaledSpace.Fire(this, node);
                 }
-
-                // Visualize the SOI
-                if (debug.showSOI)
-                    generatedBody.celestialBody.gameObject.AddComponent<Wiresphere>();
-
-                // Loads external parser targets
-                Parser.LoadParserTargetsExternal(node, "Kopernicus", configName: "Kopernicus");
-
-                // Post gen celestial body
-                Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
-
-                // Events
-                Events.OnBodyPostApply.Fire(this, node);
             }
         }
     }
