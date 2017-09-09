@@ -372,21 +372,41 @@ namespace Kopernicus
                 GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
-                Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
+                // Load the PQS of the ocean
+                PQS pqsOcean = body.ocean ? pqsVersionGameObject.GetComponentsInChildren<PQS>()?.Skip(1)?.FirstOrDefault() : null;
+
 
                 // Deactivate blacklisted Mods
-                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => blacklist.Contains(m.GetType())))
+                Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
+
+                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.enabled && blacklist.Contains(m.GetType())))
                 {
                     mod.modEnabled = false;
                 }
+
 
                 // Find the PQS mods and enable the PQS-sphere
                 IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
                 foreach (PQSMod flatten in mods.Where(m => m is PQSMod_FlattenArea))
                     flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(Boolean)).First().SetValue(flatten, true);
 
+                // Do the same for the ocean
+                IEnumerable<PQSMod> oceanMods = null;
+                if (pqsOcean != null)
+                {
+                    oceanMods = pqsOcean.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
+                    foreach (PQSMod flatten in oceanMods.Where(m => m is PQSMod_FlattenArea))
+                        flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(Boolean)).First().SetValue(flatten, true);
+
+                    pqsOcean.StartUpSphere();
+                    pqsOcean.isBuildingMaps = true;
+
+                    mods = mods.Except(oceanMods);
+                }
+
                 pqsVersion.StartUpSphere();
                 pqsVersion.isBuildingMaps = true;
+
 
                 // If we were able to find PQS mods
                 if (mods.Count() > 0)
@@ -402,6 +422,7 @@ namespace Kopernicus
                         Vector3 direction = vertices[i];
                         direction.Normalize();
 
+
                         // Build the vertex data object for the PQS mods
                         PQS.VertexBuildData vertex = new PQS.VertexBuildData();
                         vertex.directionFromCenter = direction;
@@ -414,8 +435,21 @@ namespace Kopernicus
                             mod.OnVertexBuildHeight(vertex);
 
                         // Check for sea level
-                        if (body.ocean && vertex.vertHeight < body.Radius)
-                            vertex.vertHeight = body.Radius;
+                        if (body.ocean && pqsOcean != null)
+                        {
+                            // Build the vertex data object for the ocean
+                            PQS.VertexBuildData vertexOcean = pqsOcean != null ? new PQS.VertexBuildData() : null;
+                            vertexOcean.directionFromCenter = direction;
+                            vertexOcean.vertHeight = body.Radius;
+                            vertexOcean.u = uv.x;
+                            vertexOcean.v = uv.y;
+
+                            // Build from the PQS
+                            foreach (PQSMod mod in oceanMods)
+                                mod.OnVertexBuildHeight(vertexOcean);
+
+                            vertex.vertHeight = Math.Max(vertex.vertHeight, vertexOcean.vertHeight);
+                        }
 
                         // Adjust the displacement
                         vertices[i] = direction * (Single)(vertex.vertHeight * rMetersToScaledUnits);
@@ -426,6 +460,11 @@ namespace Kopernicus
                 }
 
                 // Cleanup
+                if (pqsOcean != null)
+                {
+                    pqsOcean.isBuildingMaps = false;
+                    pqsOcean.DeactivateSphere();
+                }
                 pqsVersion.isBuildingMaps = false;
                 pqsVersion.DeactivateSphere();
                 UnityEngine.Object.Destroy(pqsVersionGameObject);
@@ -797,7 +836,7 @@ namespace Kopernicus
                                 else
                                     fourcc = false;
                             }
-                            if(!fourcc)
+                            if (!fourcc)
                             {
                                 TextureFormat textureFormat = TextureFormat.ARGB32;
                                 Boolean ok = true;
@@ -896,7 +935,7 @@ namespace Kopernicus
                 }
                 catch (Exception e)
                 {
-                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but type not found. VertexHeight type for reference = " + typeof (PQSMod_VertexHeightMap).FullName + ". Exception: " + e);
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but type not found. VertexHeight type for reference = " + typeof(PQSMod_VertexHeightMap).FullName + ". Exception: " + e);
                 }
                 if (mType != null)
                 {
@@ -904,7 +943,7 @@ namespace Kopernicus
                     foreach (PQSMod m in mods.Where(m => m.name == mName))
                     {
                         modFound = true;
-                        foreach (FieldInfo fi in m.GetType().GetFields().Where(fi => fi.FieldType == typeof (MapSO)))
+                        foreach (FieldInfo fi in m.GetType().GetFields().Where(fi => fi.FieldType == typeof(MapSO)))
                         {
                             retVal = fi.GetValue(m) as T;
                             break;
@@ -938,19 +977,19 @@ namespace Kopernicus
             Logger.Active.Log("Removing mods from pqs " + p.name);
             List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
             Boolean addTypes = (types == null);
-            if(addTypes)
+            if (addTypes)
                 types = new List<Type>();
             if (blacklist == null)
             {
                 Logger.Active.Log("Creating blacklist");
                 blacklist = new List<Type>();
-                if(!types.Contains(typeof(PQSMod_CelestialBodyTransform)))
+                if (!types.Contains(typeof(PQSMod_CelestialBodyTransform)))
                     blacklist.Add(typeof(PQSMod_CelestialBodyTransform));
-                if(!types.Contains(typeof(PQSMod_MaterialSetDirection)))
+                if (!types.Contains(typeof(PQSMod_MaterialSetDirection)))
                     blacklist.Add(typeof(PQSMod_MaterialSetDirection));
-                if(!types.Contains(typeof(PQSMod_UVPlanetRelativePosition)))
+                if (!types.Contains(typeof(PQSMod_UVPlanetRelativePosition)))
                     blacklist.Add(typeof(PQSMod_UVPlanetRelativePosition));
-                if(!types.Contains(typeof(PQSMod_QuadMeshColliders)))
+                if (!types.Contains(typeof(PQSMod_QuadMeshColliders)))
                     blacklist.Add(typeof(PQSMod_QuadMeshColliders));
                 Logger.Active.Log("Blacklist count = " + blacklist.Count);
             }
@@ -958,7 +997,7 @@ namespace Kopernicus
             if (addTypes)
             {
                 Logger.Active.Log("Adding all found PQSMods in pqs " + p.name);
-                foreach(PQSMod m in cpMods)
+                foreach (PQSMod m in cpMods)
                 {
                     Type mType = m.GetType();
                     if (!types.Contains(mType) && !blacklist.Contains(mType))
@@ -1091,4 +1130,3 @@ namespace Kopernicus
         }
     }
 }
-
