@@ -278,6 +278,13 @@ namespace Kopernicus
                 // Elect root body
                 systemPrefab.rootBody = bodies.First(p => p.Value.orbit == null).Value.generatedBody;
 
+                // Try to find a home world
+                Body home = bodies.Values.FirstOrDefault(p => p.generatedBody.celestialBody.isHomeWorld);
+                if (home == null)
+                {
+                    throw new Exception("Homeworld body could not be found.");
+                }
+
                 // Sort by distance from parent (discover how this effects local bodies)
                 RecursivelySortBodies (systemPrefab.rootBody);
 
