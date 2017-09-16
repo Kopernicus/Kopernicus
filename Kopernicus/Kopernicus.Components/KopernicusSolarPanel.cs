@@ -149,7 +149,7 @@ namespace Kopernicus
                         }
                         status += ", Underwater";
                     }
-                    sunAOA += (Single)__flowRate * _sunAOA;
+                    sunAOA += _sunAOA;
                     Double energy = __distMult * _efficMult;
                     if (energy > maxEnergy)
                     {
@@ -162,7 +162,7 @@ namespace Kopernicus
                 }
 
                 // Sun AOA
-                sunAOA /= maxFlowRate != 0 ? (Single)maxFlowRate : 1;
+                sunAOA /= KopernicusStar.Stars.Count;
                 _distMult = _flowRate != 0 ? _flowRate / _efficMult / sunAOA : 0;
 
                 // We got the best star to use
