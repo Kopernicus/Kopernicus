@@ -54,7 +54,7 @@ namespace Kopernicus
             public override void PostCalculateTracking(Boolean trackingLOS, Vector3 trackingDirection)
             {
                 // Maximum values
-                Single maxAOA = 0;
+                Double maxEnergy = 0;
                 Double maxFlowRate = 0;
                 KopernicusStar maxStar = null;
 
@@ -150,7 +150,8 @@ namespace Kopernicus
                         status += ", Underwater";
                     }
                     sunAOA += (Single)__flowRate * _sunAOA;
-                    if (__flowRate > maxFlowRate)
+                    Double energy = __distMult * _efficMult;
+                    if (energy > maxEnergy)
                     {
                         maxFlowRate = __flowRate;
                         maxStar = star;
@@ -161,18 +162,55 @@ namespace Kopernicus
                 }
 
                 // Sun AOA
-                sunAOA /= (Single)maxFlowRate;
-                _distMult = _flowRate / _efficMult / sunAOA;
+                sunAOA /= maxFlowRate != 0 ? (Single)maxFlowRate : 1;
+                _distMult = _flowRate != 0 ? _flowRate / _efficMult / sunAOA : 0;
 
                 // We got the best star to use
                 if (maxStar != null && maxStar.sun != trackingBody)
                 {
-                    trackingBody = maxStar.sun;
-                    GetTrackingBodyTransforms();
+                    if (!manualTracking)
+                    {
+                        trackingBody = maxStar.sun;
+                        GetTrackingBodyTransforms();
+                    }
                 }
 
                 // Use the flow rate
                 flowRate = (Single)(resHandler.UpdateModuleResourceOutputs(_flowRate) * flowMult);
+            }
+
+            [KSPField(guiActive = true, guiActiveEditor = false, guiName = "Tracking Body", isPersistant = true)]
+            public String trackingBodyName;
+
+            [KSPField(isPersistant = true)]
+            private Boolean manualTracking;
+
+            public override void LateUpdate()
+            {
+                // Update the name
+                trackingBodyName = trackingBody.bodyDisplayName.Replace("^N", "");
+
+                base.LateUpdate();
+            }
+
+            [KSPEvent(active = true, guiActive = true, guiName = "Select Tracking Body")]
+            public void ManualTracking()
+            {
+                // Assemble the buttons
+                DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
+                options[0] = new DialogGUIButton("Auto", () => { manualTracking = false; trackingBody = null; PostCalculateTracking(false, Vector3.zero); }, true);
+                for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+                {
+                    CelestialBody body = KopernicusStar.Stars[i].sun;
+                    options[i + 1] = new DialogGUIButton(body.bodyDisplayName.Replace("^N", ""), () => { manualTracking = true; trackingBody = body; GetTrackingBodyTransforms(); }, true);
+                }
+
+                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new MultiOptionDialog(
+                    "SelectTrackingBody",
+                    "Please select the Body you want to track with this Solar Panel.",
+                    "Select Tracking Body",
+                    UISkinManager.GetSkin("MainMenuSkin"),
+                    options), false, UISkinManager.GetSkin("MainMenuSkin"));
             }
         }
     }
