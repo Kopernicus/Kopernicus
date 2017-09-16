@@ -198,7 +198,7 @@ namespace Kopernicus
             {
                 // Assemble the buttons
                 DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
-                options[0] = new DialogGUIButton("Auto", () => { manualTracking = false; trackingBody = null; PostCalculateTracking(false, Vector3.zero); }, true);
+                options[0] = new DialogGUIButton("Auto", () => { manualTracking = false; }, true);
                 for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
                 {
                     CelestialBody body = KopernicusStar.Stars[i].sun;
