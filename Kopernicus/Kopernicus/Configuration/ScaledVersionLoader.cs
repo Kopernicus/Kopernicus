@@ -123,6 +123,8 @@ namespace Kopernicus
                         } 
                         else
                         {
+                            if (data == null)
+                                throw new Exception("Scaled version has no material information");
                             newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
@@ -146,6 +148,8 @@ namespace Kopernicus
                         } 
                         else
                         {
+                            if (data == null)
+                                throw new Exception("Scaled version has no material information");
                             newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
@@ -179,6 +183,8 @@ namespace Kopernicus
                     }
                     else
                     {
+                        if (data == null)
+                            throw new Exception("Scaled version has no material information");
                         newMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader> (data, "Kopernicus");
                     }
 
