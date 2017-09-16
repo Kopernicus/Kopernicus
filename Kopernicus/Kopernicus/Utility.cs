@@ -1019,6 +1019,41 @@ namespace Kopernicus
                         if (!toCheck.Contains(delMod.gameObject))
                             toCheck.Add(delMod.gameObject);
                         delMod.sphere = null;
+                        if (delMod is PQSCity)
+                        {
+                            PQSCity city = delMod as PQSCity;
+                            if (city.lod != null)
+                            {
+                                foreach (PQSCity.LODRange range in city.lod)
+                                {
+                                    if (range.objects != null)
+                                    {
+                                        foreach (GameObject o in range.objects)
+                                            UnityEngine.Object.DestroyImmediate(o);
+                                    }
+                                    if (range.renderers != null)
+                                    {
+                                        foreach (GameObject o in range.renderers)
+                                            UnityEngine.Object.DestroyImmediate(o);
+                                    }
+                                }
+                            }
+                        }
+                        if (delMod is PQSCity2)
+                        {
+                            PQSCity2 city = delMod as PQSCity2;
+                            if (city.objects != null)
+                            {
+                                foreach (PQSCity2.LodObject range in city.objects)
+                                {
+                                    if (range.objects != null)
+                                    {
+                                        foreach (GameObject o in range.objects)
+                                            UnityEngine.Object.DestroyImmediate(o);
+                                    }
+                                }
+                            }
+                        }
                         cpMods.Remove(delMod);
                         PQSMod.DestroyImmediate(delMod);
                     }
