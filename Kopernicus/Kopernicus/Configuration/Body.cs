@@ -63,6 +63,10 @@ namespace Kopernicus
                 }
                 set
                 {
+                    // Change the displayName
+                    generatedBody.celestialBody.bodyDisplayName = value;
+
+                    // Set the NameChanger component
                     if (!generatedBody.celestialBody.GetComponent<NameChanger>())
                     {
                         NameChanger changer = generatedBody.celestialBody.gameObject.AddComponent<NameChanger>();
@@ -70,7 +74,7 @@ namespace Kopernicus
                         changer.newName = value;
                     }
                     else
-                        generatedBody.celestialBody.gameObject.GetComponent<NameChanger>().newName = cbNameLater;
+                        generatedBody.celestialBody.gameObject.GetComponent<NameChanger>().newName = value;
                 }
             }
             
