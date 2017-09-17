@@ -69,7 +69,7 @@ namespace Kopernicus
                         NumericParser<Double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
                         if (patch.GetValue("semiMajorAxis") != null)
                             newSMA.SetFromString(patch.GetValue("semiMajorAxis"));
-                        
+
                         // Count how many children comes before our body in the newParent.child list
                         Int32 index = 0;
                         foreach (PSystemBody child in newParent.children)
@@ -77,13 +77,13 @@ namespace Kopernicus
                             if (child.orbitDriver.orbit.semiMajorAxis < newSMA.value)
                                 index++;
                         }
-                        
+
                         // Add the body as child for the new parent and remove it for the old parent
                         if (index > newParent.children.Count)
                             newParent.children.Add(body);
                         else
                             newParent.children.Insert(index, body);
-                        
+
                         oldParent.children.Remove(body);
                         postSpawnChanges = true;
                     }
@@ -101,18 +101,16 @@ namespace Kopernicus
 
             // Create a list with body to hide and their parent
             PSystemBody[] bodies = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true);
-            
 
+            // Replaced 'foreach' with 'for' to improve performance
             CelestialBody[] hideBodies = PSystemManager.Instance?.localBodies?.Where(b => b.Has("hiddenRnD")).ToArray();
-            
+
             for (int i = 0; i < hideBodies?.Length; i++)
             {
                 CelestialBody body = hideBodies[i];
-            
 
                 if (body.Get<PropertiesLoader.RDVisibility>("hiddenRnD") == PropertiesLoader.RDVisibility.SKIP)
                 {
-            
                     PSystemBody hidden = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.name);
                     if (hidden.children.Count == 0)
                     {
