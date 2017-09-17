@@ -44,8 +44,14 @@ namespace Kopernicus
         {
             //  FIX BODIES MOVED POSTSPAWN  //
             Boolean postSpawnChanges = false;
-            foreach (CelestialBody cb in PSystemManager.Instance.localBodies.Where(b => b.Has("orbitPatches")))
+
+            // Replaced 'foreach' with 'for' to improve performance
+            CelestialBody[] postSpawnBodies = PSystemManager.Instance?.localBodies?.Where(b => b.Has("orbitPatches")).ToArray();
+
+            for (int i = 0; i < postSpawnBodies?.Length; i++)
             {
+                CelestialBody cb = postSpawnBodies[i];
+
                 // Fix position if the body gets moved PostSpawn
                 ConfigNode patch = cb.Get<ConfigNode>("orbitPatches");
                 if (patch.GetValue("referenceBody") != null || patch.GetValue("semiMajorAxis") != null)
@@ -95,8 +101,15 @@ namespace Kopernicus
 
             // Create a list with body to hide and their parent
             PSystemBody[] bodies = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true);
-            foreach (CelestialBody body in PSystemManager.Instance.localBodies.Where(b => b.Has("hiddenRnD")))
-            { 
+            
+
+            CelestialBody[] hideBodies = PSystemManager.Instance?.localBodies?.Where(b => b.Has("hiddenRnD")).ToArray();
+            
+            for (int i = 0; i < hideBodies?.Length; i++)
+            {
+                CelestialBody body = hideBodies[i];
+            
+
                 if (body.Get<PropertiesLoader.RDVisibility>("hiddenRnD") == PropertiesLoader.RDVisibility.SKIP)
                 {
                     PSystemBody hidden = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, name);
@@ -137,7 +150,7 @@ namespace Kopernicus
                 parent.children.Remove(hidden);
             }
 
-            if (skipList.Count > 0)
+            if (skipList?.Count > 0)
             {
                 // Rebuild Archives
                 AddPlanets();
