@@ -112,7 +112,8 @@ namespace Kopernicus
 
                 if (body.Get<PropertiesLoader.RDVisibility>("hiddenRnD") == PropertiesLoader.RDVisibility.SKIP)
                 {
-                    PSystemBody hidden = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, name);
+            
+                    PSystemBody hidden = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.name);
                     if (hidden.children.Count == 0)
                     {
                         body.Set("hiddenRnd", PropertiesLoader.RDVisibility.HIDDEN);
