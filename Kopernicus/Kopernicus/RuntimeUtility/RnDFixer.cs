@@ -202,6 +202,8 @@ namespace Kopernicus
             for (int i = 0; i < containers?.Count(); i++)
             {
                 RDPlanetListItemContainer planetItem = containers[i];
+
+                // The label text is set from the CelestialBody's displayName
                 CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(b => b.bodyDisplayName.Replace("^N", "") == planetItem.label_planetName.text);
                 if (body == null)
                 {
