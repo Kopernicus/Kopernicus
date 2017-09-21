@@ -228,6 +228,8 @@ namespace Kopernicus
         public static EventData<Loader, ConfigNode> OnLoaderPostApply { get; private set; }
         [Description("Loader.LoadBody")]
         public static EventData<Body, ConfigNode> OnLoaderLoadBody { get; private set; }
+        [Description("Loader.LoadedAllBodies")]
+        public static EventData<Loader, ConfigNode> OnLoaderLoadedAllBodies { get; private set; }
         [Description("Loader.LoadAsteroid")]
         public static EventData<Asteroid, ConfigNode> OnLoaderLoadAsteroid { get; private set; }
         [Description("Loader.FinalizeBody")]
@@ -239,6 +241,8 @@ namespace Kopernicus
         private static EventData<ConfigNode> OnLoaderPostApplyNR { get; set; }
         [Description("Loader.LoadBody.NR")]
         private static EventData<ConfigNode> OnLoaderLoadBodyNR { get; set; }
+        [Description("Loader.LoadedAllBodies.NR")]
+        private static EventData<ConfigNode> OnLoaderLoadedAllBodiesNR { get; set; }
         [Description("Loader.LoadAsteroid.NR")]
         private static EventData<ConfigNode> OnLoaderLoadAsteroidNR { get; set; }
         [Description("Loader.FinalizeBody.NR")]
