@@ -62,7 +62,7 @@ namespace Kopernicus
             // Convert
             public static implicit operator Vector3(PositionParser parser)
             {
-                return Utility.LLAtoECEF(parser.latitude, parser.longitude, parser.altitude, generatedBody.celestialBody.Radius);
+                return Utility.LLAtoECEF(parser.latitude, parser.longitude, parser.altitude, Loader.currentBody.generatedBody.celestialBody.Radius);
             }
         }
 
