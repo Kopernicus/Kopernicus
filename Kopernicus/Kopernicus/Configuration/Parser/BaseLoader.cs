@@ -27,15 +27,24 @@ namespace Kopernicus
 {
     namespace Configuration
     {
-        // Provides basic static fields or methods for IParserEventSubscribers
+        /// <summary>
+        /// Provides basic static fields or methods for IParserEventSubscribers
+        /// </summary>
         public class BaseLoader
         {
-            // Singleton of the currently edited body
-            public PSystemBody generatedBody
+            /// <summary>
+            /// Provides an override for the currently edited body
+            /// </summary>
+            private PSystemBody currentBody = null;
+
+            /// <summary>
+            /// Singleton of the currently edited body
+            /// </summary>
+            protected PSystemBody generatedBody
             {
-                get { return Loader.currentBody?.generatedBody; }
+                get { return currentBody ?? Loader.currentBody?.generatedBody; }
+                set { currentBody = value; }
             }
         }
     }
 }
-
