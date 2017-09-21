@@ -209,6 +209,9 @@ namespace Kopernicus
                     Logger.Default.SetAsActive ();
                 }
 
+                // Event
+                Events.OnLoaderLoadedAllBodies.Fire(this, node);
+
                 // Load all of the asteroids                
                 foreach (ConfigNode asteroidNode in node.GetNodes(asteroidNodeName))
                 {
