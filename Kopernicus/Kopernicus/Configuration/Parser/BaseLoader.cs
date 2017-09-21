@@ -30,19 +30,10 @@ namespace Kopernicus
         // Provides basic static fields or methods for IParserEventSubscribers
         public class BaseLoader
         {
-            // Allow to define a specific 'generatedBody'
-            public PSystemBody currentBody { internal get; set; }
-
             // Singleton of the currently edited body
-            public PSystemBody generatedBody
+            public static PSystemBody generatedBody
             {
-                get
-                {
-                    if (currentBody != null)
-                        return currentBody;
-                    else
-                        return Loader.currentBody.generatedBody;
-                }
+                get { return Loader.currentBody.generatedBody; }
             }
         }
     }
