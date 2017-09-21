@@ -31,9 +31,9 @@ namespace Kopernicus
         public class BaseLoader
         {
             // Singleton of the currently edited body
-            public static PSystemBody generatedBody
+            public PSystemBody generatedBody
             {
-                get { return Loader.currentBody.generatedBody; }
+                get { return Loader.currentBody?.generatedBody; }
             }
         }
     }
