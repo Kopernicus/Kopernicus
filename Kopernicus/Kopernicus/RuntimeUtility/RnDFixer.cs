@@ -40,6 +40,18 @@ namespace Kopernicus
     /// </summary>
     public class RnDFixer : MonoBehaviour
     {
+        List<RDPlanetListItemContainer> stars = new List<RDPlanetListItemContainer>();
+
+        void LateUpdate()
+        {
+            // Block the orientation of all stars
+            for (int i = 0; i < stars?.Count(); i++)
+            {
+                RDPlanetListItemContainer star = stars.ElementAt(i);
+                star.planet.transform.rotation = Quaternion.identity;
+            }
+        }
+
         void Start()
         {
             //  FIX BODIES MOVED POSTSPAWN  //
@@ -238,6 +250,11 @@ namespace Kopernicus
                         planetItem.planet.SetActive(true);
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
                     }
+                }
+
+                if (planetItem?.planet?.GetComponent<StarComponent>() != null)
+                {
+                    stars.Add(planetItem);
                 }
             }
         }
