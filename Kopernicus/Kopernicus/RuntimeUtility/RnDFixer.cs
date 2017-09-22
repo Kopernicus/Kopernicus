@@ -45,7 +45,7 @@ namespace Kopernicus
         void LateUpdate()
         {
             // Block the orientation of all stars
-            for (int i = 0; i < RnDRotationKill?.Count(); i++)
+            for (int i = 0; i < RnDRotationKill.Count(); i++)
             {
                 RDPlanetListItemContainer star = RnDRotationKill[i];
                 star.planet.transform.rotation = Quaternion.identity;
