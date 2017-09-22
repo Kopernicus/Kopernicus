@@ -204,7 +204,7 @@ namespace Kopernicus
                 RDPlanetListItemContainer planetItem = containers[i];
 
                 // The label text is set from the CelestialBody's displayName
-                CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(b => b.bodyDisplayName.Replace("^N", "") == planetItem.label_planetName.text);
+                CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(b => b.transform.name == planetItem.name);
                 if (body == null)
                 {
                     Debug.Log("[Kopernicus]: RnDFixer: Could not find CelestialBody for the label => " + planetItem.label_planetName.text);
