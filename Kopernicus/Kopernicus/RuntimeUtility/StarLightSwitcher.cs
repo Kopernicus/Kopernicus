@@ -50,8 +50,8 @@ namespace Kopernicus
         void Start()
         {
             // Find the celestial body we are attached to
-            celestialBody = PSystemManager.Instance.localBodies.First(body => body.scaledBody == gameObject);
-            Logger.Default.Log("StarLightSwitcher.Start() => " + celestialBody.bodyName);
+            celestialBody = PSystemManager.Instance.localBodies.FirstOrDefault(body => body.scaledBody == gameObject);
+            Logger.Default.Log("StarLightSwitcher.Start() => " + celestialBody?.bodyName);
             Logger.Default.Flush();
         }
 
