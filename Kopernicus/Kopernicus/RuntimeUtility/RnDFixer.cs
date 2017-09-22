@@ -40,14 +40,14 @@ namespace Kopernicus
     /// </summary>
     public class RnDFixer : MonoBehaviour
     {
-        List<RDPlanetListItemContainer> stars = new List<RDPlanetListItemContainer>();
+        internal static List<RDPlanetListItemContainer> RnDRotationKill = new List<RDPlanetListItemContainer>();
 
         void LateUpdate()
         {
             // Block the orientation of all stars
-            for (int i = 0; i < stars?.Count(); i++)
+            for (int i = 0; i < RnDRotationKill?.Count(); i++)
             {
-                RDPlanetListItemContainer star = stars.ElementAt(i);
+                RDPlanetListItemContainer star = RnDRotationKill[i];
                 star.planet.transform.rotation = Quaternion.identity;
             }
         }
@@ -208,7 +208,7 @@ namespace Kopernicus
 
 
 
-            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //
+            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //  Kill Rotation //
             // Loop through the Containers
             var containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
             for (int i = 0; i < containers?.Count(); i++)
@@ -251,10 +251,11 @@ namespace Kopernicus
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
                     }
                 }
-
-                if (planetItem?.planet?.GetComponent<StarComponent>() != null)
+                
+                // Add planetItems to 'RnDRotationKill'
+                if (body.Has("RnDRotation") ? !body.Get<bool>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
                 {
-                    stars.Add(planetItem);
+                    RnDRotationKill.Add(planetItem);
                 }
             }
         }
