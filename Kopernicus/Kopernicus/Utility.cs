@@ -80,7 +80,6 @@ namespace Kopernicus
                     if (log)
                     {
                         Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
-
                     }
                     field.SetValue(destination, field.GetValue(source));
                 }
