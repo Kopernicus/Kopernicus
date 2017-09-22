@@ -34,9 +34,15 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class OrbitLoader : BaseLoader, IParserEventSubscriber
         {
-            // KSP orbit objects we are editing
+            /// <summary>
+            /// KSP Orbit we're editing
+            /// </summary>
             public Orbit orbit { get; set; }
-            public CelestialBody body { get; set; }
+
+            /// <summary>
+            /// CelestialBody we're editing
+            /// </summary>
+            public CelestialBody celestialBody { get; set; }
 
             // Reference body to orbit
             [ParserTarget("referenceBody")]
@@ -110,7 +116,7 @@ namespace Kopernicus
             [ParserTarget("color")]
             public ColorParser color
             {
-                get { return generatedBody != null ? generatedBody.orbitRenderer.nodeColor : (body.orbitDriver.orbitColor * 2).A(body.orbitDriver.orbitColor.a); }
+                get { return generatedBody != null ? generatedBody.orbitRenderer.nodeColor : (celestialBody.orbitDriver.orbitColor * 2).A(celestialBody.orbitDriver.orbitColor.a); }
                 set { generatedBody.orbitRenderer.SetColor(value); }
             }
 
@@ -126,7 +132,7 @@ namespace Kopernicus
             [ParserTarget("mode")]
             public EnumParser<OrbitRenderer.DrawMode> mode
             {
-                get { return body?.orbitDriver?.Renderer?.drawMode; }
+                get { return celestialBody?.orbitDriver?.Renderer?.drawMode; }
                 set { generatedBody.Set("drawMode", value.value); }
             }
 
@@ -134,7 +140,7 @@ namespace Kopernicus
             [ParserTarget("icon")]
             public EnumParser<OrbitRenderer.DrawIcons> icon
             {
-                get { return body?.orbitDriver?.Renderer?.drawIcons; }
+                get { return celestialBody?.orbitDriver?.Renderer?.drawIcons; }
                 set { generatedBody.Set("drawIcons", value.value); }
             }
 
@@ -142,9 +148,35 @@ namespace Kopernicus
             [ParserTarget("cameraSmaRatioBounds")]
             public NumericCollectionParser<Single> cameraSmaRatioBounds = new NumericCollectionParser<Single>(new Single[] { 0.3f, 25f });
 
+            // Parser apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                if (generatedBody == null) return;
+                // Event
+                Events.OnOrbitLoaderApply.Fire(this, node);
+            }
+
+            // Parser post apply event
+            void IParserEventSubscriber.PostApply(ConfigNode node)
+            {
+                if (epoch != null)
+                    orbit.epoch += Templates.epoch;
+
+                if (generatedBody != null)
+                {
+                    generatedBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
+                    generatedBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
+                }
+                Events.OnOrbitLoaderPostApply.Fire(this, node);
+            }
+
+            /// <summary>
+            /// Creates a new Orbit Loader from the Injector context.
+            /// </summary>
+            public OrbitLoader()
+            {
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
 
                 // If this body needs orbit controllers, create them
                 if (generatedBody.orbitDriver == null)
@@ -152,44 +184,48 @@ namespace Kopernicus
                     generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
                     generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
                 }
-
-                // Setup orbit
                 generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-                orbit = generatedBody.orbitDriver.orbit;
-                referenceBody = orbit?.referenceBody?.name;
-                Single[] bounds = new Single[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
-                cameraSmaRatioBounds = bounds;
+                cameraSmaRatioBounds = new Single[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
 
-                // Remove null
-                if (orbit == null) orbit = new Orbit();
-
-                // Event
-                Events.OnOrbitLoaderApply.Fire(this, node);
+                // Store values
+                orbit = generatedBody.orbitDriver.orbit ?? new Orbit();
+                celestialBody = generatedBody.celestialBody;
             }
 
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-                if (generatedBody == null) return;
-
-                if (epoch != null)
-                    orbit.epoch += Templates.epoch;
-                generatedBody.orbitDriver.orbit = orbit;
-                generatedBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
-                generatedBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
-                Events.OnOrbitLoaderPostApply.Fire(this, node);
-            }
-
-            // Construct an empty orbit
-            public OrbitLoader() { }
-
-            // Copy orbit provided
+            /// <summary>
+            /// Creates a new Orbit Loader from a spawned CelestialBody.
+            /// </summary>
             public OrbitLoader(CelestialBody body)
             {
-                this.body = body;
-                orbit = body.orbitDriver.orbit;
-                referenceBody = body.orbit.referenceBody.name;
-                Single[] bounds = new Single[] { body.orbitDriver.lowerCamVsSmaRatio, body.orbitDriver.upperCamVsSmaRatio };
-                cameraSmaRatioBounds.value = bounds.ToList();
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
+                // Store values
+                orbit = body.orbit ?? new Orbit();
+                celestialBody = body;
+            }
+
+            /// <summary>
+            /// Creates a new Orbit Loader from a custom PSystemBody.
+            /// </summary>
+            public OrbitLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+
+                // If this body needs orbit controllers, create them
+                if (generatedBody.orbitDriver == null)
+                {
+                    generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
+                    generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
+                }
+                generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+                cameraSmaRatioBounds = new Single[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
+
+                // Store values
+                orbit = generatedBody.orbitDriver.orbit ?? new Orbit();
+                celestialBody = generatedBody.celestialBody;
             }
 
             // Finalize an Orbit

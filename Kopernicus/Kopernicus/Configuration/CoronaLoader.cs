@@ -32,7 +32,7 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class CoronaLoader : BaseLoader, IParserEventSubscriber
+        public class CoronaLoader : IParserEventSubscriber
         {
             // The generated corona
             public SunCoronas coronaComponent;
@@ -100,7 +100,9 @@ namespace Kopernicus
                 Events.OnCoronaLoaderPostApply.Fire(this, node);
             }
 
-            // Default constructor
+            /// <summary>
+            /// Creates a new Corona Loader from the Injector context.
+            /// </summary>
             public CoronaLoader()
             {
                 // We need to get the body for the Sun (to steal it's corona mesh)
@@ -116,7 +118,9 @@ namespace Kopernicus
                 material.name = Guid.NewGuid().ToString();
             }
 
-            // Runtime constructor
+            /// <summary>
+            /// Creates a new Corona Loader from an already existing corona
+            /// </summary>
             public CoronaLoader(SunCoronas component)
             {
                 coronaComponent = component;

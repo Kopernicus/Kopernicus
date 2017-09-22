@@ -197,17 +197,44 @@ namespace Kopernicus
                 set { ksc.mainTexture = value; }
             }
 
-            // Default constructor
+            /// <summary>
+            /// Creates a new SpaceCenter Loader from the Injector context.
+            /// </summary>
             public SpaceCenterLoader()
             {
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+
+                // Store values
                 ksc = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
                 UnityEngine.Object.DontDestroyOnLoad(ksc);
             }
 
-            // Runtime Constructor
+            /// <summary>
+            /// Creates a new SpaceCenter Loader from a spawned CelestialBody.
+            /// </summary>
             public SpaceCenterLoader(CelestialBody body)
             {
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
+                // Store values
                 ksc = UnityEngine.Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.name);
+            }
+
+            /// <summary>
+            /// Creates a new SpaceCenter Loader from a custom PSystemBody.
+            /// </summary>
+            public SpaceCenterLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+
+                // Store values
+                ksc = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
+                UnityEngine.Object.DontDestroyOnLoad(ksc);
             }
 
             // Apply event

@@ -24,6 +24,7 @@
  */
  
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
@@ -33,62 +34,75 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class AtmosphereFromGroundLoader : BaseLoader, IParserEventSubscriber
         {
-            // since ScaledSpace doesn't exist to query.
+            /// <summary>
+            /// The scale factor between ScaledSpace and LocalSpace
+            /// </summary>
             public const Single INVSCALEFACTOR = (1f / 6000f);
 
-            // AtmosphereFromGround we're modifying
-            public AtmosphereFromGround afg;
-            public CelestialBody body;
+            /// <summary>
+            /// AtmosphereFromGround we're modifying
+            /// </summary>
+            public AtmosphereFromGround atmosphereFromGround;
+
+            /// <summary>
+            /// CelestialBody we're modifying
+            /// </summary>
+            private CelestialBody celestialBody;
+
+            /// <summary>
+            /// ScaledSpace object of the body we're modifying
+            /// </summary>
+            private GameObject scaledVersion;
 
             // DEBUG_alwaysUpdateAll
             [ParserTarget("DEBUG_alwaysUpdateAll")]
             public NumericParser<Boolean> DEBUG_alwaysUpdateAll
             {
-                get { return afg.DEBUG_alwaysUpdateAll; }
-                set { afg.DEBUG_alwaysUpdateAll = value; }
+                get { return atmosphereFromGround.DEBUG_alwaysUpdateAll; }
+                set { atmosphereFromGround.DEBUG_alwaysUpdateAll = value; }
             }
 
             // doScale
             [ParserTarget("doScale")]
             public NumericParser<Boolean> doScale
             {
-                get { return afg.doScale; }
-                set { afg.doScale = value; }
+                get { return atmosphereFromGround.doScale; }
+                set { atmosphereFromGround.doScale = value; }
             }
 
             // ESun
             [ParserTarget("ESun")]
             public NumericParser<Single> ESun
             {
-                get { return afg.ESun; }
-                set { afg.ESun = value; }
+                get { return atmosphereFromGround.ESun; }
+                set { atmosphereFromGround.ESun = value; }
             }
 
             // g
             [ParserTarget("g")]
             public NumericParser<Single> g
             {
-                get { return afg.g; }
-                set { afg.g = value; }
+                get { return atmosphereFromGround.g; }
+                set { atmosphereFromGround.g = value; }
             }
 
             // innerRadius
             [ParserTarget("innerRadius")]
             public NumericParser<Single> innerRadius
             {
-                get { return afg.innerRadius / INVSCALEFACTOR; }
-                set { afg.innerRadius = value * INVSCALEFACTOR; }
+                get { return atmosphereFromGround.innerRadius / INVSCALEFACTOR; }
+                set { atmosphereFromGround.innerRadius = value * INVSCALEFACTOR; }
             }
 
             // invWaveLength
             [ParserTarget("invWaveLength")]
             public ColorParser invWaveLength
             {
-                get { return afg.invWaveLength; }
+                get { return atmosphereFromGround.invWaveLength; }
                 set
                 {
-                    afg.invWaveLength = value;
-                    afg.waveLength = new Color((Single)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[0])), (Single)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[1])), (Single)Math.Sqrt(Math.Sqrt(1d / afg.invWaveLength[2])), 0.5f);
+                    atmosphereFromGround.invWaveLength = value;
+                    atmosphereFromGround.waveLength = new Color((Single)Math.Sqrt(Math.Sqrt(1d / atmosphereFromGround.invWaveLength[0])), (Single)Math.Sqrt(Math.Sqrt(1d / atmosphereFromGround.invWaveLength[1])), (Single)Math.Sqrt(Math.Sqrt(1d / atmosphereFromGround.invWaveLength[2])), 0.5f);
                 }
             }
 
@@ -96,66 +110,66 @@ namespace Kopernicus
             [ParserTarget("Km")]
             public NumericParser<Single> Km
             {
-                get { return afg.Km; }
-                set { afg.Km = value; }
+                get { return atmosphereFromGround.Km; }
+                set { atmosphereFromGround.Km = value; }
             }
 
             // Kr
             [ParserTarget("Kr")]
             public NumericParser<Single> Kr
             {
-                get { return afg.Kr; }
-                set { afg.Kr = value; }
+                get { return atmosphereFromGround.Kr; }
+                set { atmosphereFromGround.Kr = value; }
             }
 
             // outerRadius
             [ParserTarget("outerRadius")]
             public NumericParser<Single> outerRadius
             {
-                get { return afg.outerRadius / INVSCALEFACTOR; }
-                set { afg.outerRadius = value * INVSCALEFACTOR; }
+                get { return atmosphereFromGround.outerRadius / INVSCALEFACTOR; }
+                set { atmosphereFromGround.outerRadius = value * INVSCALEFACTOR; }
             }
 
             // samples
             [ParserTarget("samples")]
             public NumericParser<Single> samples
             {
-                get { return afg.samples; }
-                set { afg.samples = value; }
+                get { return atmosphereFromGround.samples; }
+                set { atmosphereFromGround.samples = value; }
             }
 
             // scale
             [ParserTarget("scale")]
             public NumericParser<Single> scale
             {
-                get { return afg.scale; }
-                set { afg.scale = value; }
+                get { return atmosphereFromGround.scale; }
+                set { atmosphereFromGround.scale = value; }
             }
 
             // scaleDepth
             [ParserTarget("scaleDepth")]
             public NumericParser<Single> scaleDepth
             {
-                get { return afg.scaleDepth; }
-                set { afg.scaleDepth = value; }
+                get { return atmosphereFromGround.scaleDepth; }
+                set { atmosphereFromGround.scaleDepth = value; }
             }
 
             [ParserTarget("transformScale")]
             public Vector3Parser transformScale
             {
-                get { return afg.doScale ? Vector3.zero : afg.transform.localScale; }
-                set { afg.transform.localScale = value; afg.doScale = false; }
+                get { return atmosphereFromGround.doScale ? Vector3.zero : atmosphereFromGround.transform.localScale; }
+                set { atmosphereFromGround.transform.localScale = value; atmosphereFromGround.doScale = false; }
             }
 
             // waveLength
             [ParserTarget("waveLength")]
             public ColorParser waveLength
             {
-                get { return afg.waveLength; }
+                get { return atmosphereFromGround.waveLength; }
                 set
                 {
-                    afg.waveLength = value;
-                    afg.invWaveLength = new Color((Single)(1d / Math.Pow(afg.waveLength[0], 4)), (Single)(1d / Math.Pow(afg.waveLength[1], 4)), (Single)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
+                    atmosphereFromGround.waveLength = value;
+                    atmosphereFromGround.invWaveLength = new Color((Single)(1d / Math.Pow(atmosphereFromGround.waveLength[0], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[1], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[2], 4)), 0.5f);
                 }
             }
 
@@ -163,19 +177,21 @@ namespace Kopernicus
             [ParserTarget("outerRadiusMult")]
             public NumericParser<Single> outerRadiusMult
             {
-                get { return (afg.outerRadius / INVSCALEFACTOR) / (Single)body.Radius; }
-                set { afg.outerRadius = (((Single)body.Radius) * value) * INVSCALEFACTOR; }
+                get { return (atmosphereFromGround.outerRadius / INVSCALEFACTOR) / (Single)atmosphereFromGround.planet.Radius; }
+                set { atmosphereFromGround.outerRadius = (((Single)atmosphereFromGround.planet.Radius) * value) * INVSCALEFACTOR; }
             }
 
             // innerRadiusMult
             [ParserTarget("innerRadiusMult")]
             public NumericParser<Single> innerRadiusMult
             {
-                get { return afg.innerRadius / afg.outerRadius; }
-                set { afg.innerRadius = afg.outerRadius * value; }
+                get { return atmosphereFromGround.innerRadius / atmosphereFromGround.outerRadius; }
+                set { atmosphereFromGround.innerRadius = atmosphereFromGround.outerRadius * value; }
             }
 
-            // Calculates the default members for the AFG
+            /// <summary>
+            /// Calculates the default members for the AFG
+            /// </summary>
             public static void CalculatedMembers(AtmosphereFromGround atmo)
             {
                 atmo.g2 = atmo.g * atmo.g;
@@ -192,69 +208,110 @@ namespace Kopernicus
                     atmo.transform.localScale = Vector3.one * 1.025f;
             }
 
+            /// <summary>
+            /// Adds an AtmosphereFromGround to the body.
+            /// </summary>
+            public void AddAtmosphereFromGround()
+            {
+                // Add the material light direction behavior
+                MaterialSetDirection materialLightDirection = scaledVersion.AddComponent<MaterialSetDirection>();
+                materialLightDirection.valueName = "_localLightDirection";
+
+                // Create the atmosphere shell game object
+                GameObject scaledAtmosphere = new GameObject("Atmosphere");
+                scaledAtmosphere.transform.parent = scaledVersion.transform;
+                scaledAtmosphere.layer = Constants.GameLayers.ScaledSpaceAtmosphere;
+                MeshRenderer renderer = scaledAtmosphere.AddComponent<MeshRenderer>();
+                renderer.sharedMaterial = new MaterialWrapper.AtmosphereFromGround();
+                MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
+                meshFilter.sharedMesh = Templates.ReferenceGeosphere;
+                atmosphereFromGround = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+            }
+
             // Parser apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
+                // Create an AFG if there is none
+                if (atmosphereFromGround == null)
+                {
+                    Logger.Active.Log("AtmosphereFromGroundLoader.Apply(ConfigNode): No AtmosphereFromGround was found on \"" + celestialBody.name + "\". Adding one.");
+                }
+
+                // Set Defaults
+                atmosphereFromGround.planet = celestialBody;
+                atmosphereFromGround.ESun = 30f;
+                atmosphereFromGround.Kr = 0.00125f;
+                atmosphereFromGround.Km = 0.00015f;
+                atmosphereFromGround.samples = 4f;
+                atmosphereFromGround.g = -0.85f;
+                if (atmosphereFromGround.waveLength == new Color(0f, 0f, 0f, 0f))
+                {
+                    atmosphereFromGround.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
+                }
+                atmosphereFromGround.outerRadius = (((Single)celestialBody.Radius) * 1.025f) * INVSCALEFACTOR;
+                atmosphereFromGround.innerRadius = atmosphereFromGround.outerRadius * 0.975f;
+                atmosphereFromGround.scaleDepth = -0.25f;
+                atmosphereFromGround.invWaveLength = new Color((Single)(1d / Math.Pow(atmosphereFromGround.waveLength[0], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[1], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[2], 4)), 0.5f);
+
+                // Calculate the remaining values
+                CalculatedMembers(atmosphereFromGround);
+
+                // Fire event
                 Events.OnAFGLoaderApply.Fire(this, node);
             }
 
             // Parser post apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                CalculatedMembers(afg); // with the new values.
+                // Recalculate with the new values
+                CalculatedMembers(atmosphereFromGround);
+
+                // Fire event
                 Events.OnAFGLoaderPostApply.Fire(this, node);
             }
 
-            // Default Constructor
+            /// <summary>
+            /// Creates a new AtmosphereFromGround Loader from the Injector context.
+            /// </summary>
             public AtmosphereFromGroundLoader()
             {
-                body = generatedBody.celestialBody;
-                afg = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0];
-                
-                // Set Defaults
-                afg.planet = body;
-                afg.ESun = 30f;
-                afg.Kr = 0.00125f;
-                afg.Km = 0.00015f;
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
 
-                afg.samples = 4f;
-                afg.g = -0.85f;
-                if (afg.waveLength == new Color(0f, 0f, 0f, 0f))
-                {
-                    afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
-                }
-                afg.outerRadius = (((Single)body.Radius) * 1.025f) * INVSCALEFACTOR;
-                afg.innerRadius = afg.outerRadius * 0.975f;
-                afg.scaleDepth = -0.25f;
-                afg.invWaveLength = new Color((Single)(1d / Math.Pow(afg.waveLength[0], 4)), (Single)(1d / Math.Pow(afg.waveLength[1], 4)), (Single)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
-
-                CalculatedMembers(afg);
+                // Store values
+                celestialBody = generatedBody.celestialBody;
+                atmosphereFromGround = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)?.FirstOrDefault();
+                scaledVersion = generatedBody.scaledVersion;
             }
 
-            // Runtime constructor
+            /// <summary>
+            /// Creates a new AtmosphereFromGround Loader from a spawned CelestialBody.
+            /// </summary>
             public AtmosphereFromGroundLoader(CelestialBody body)
             {
-                this.body = body;
-                afg = body.afg;
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
 
-                // Set Defaults
-                afg.planet = body;
-                afg.ESun = 30f;
-                afg.Kr = 0.00125f;
-                afg.Km = 0.00015f;
+                // Store values
+                celestialBody = body;
+                atmosphereFromGround = body.afg;
+                scaledVersion = body.scaledBody;
+            }
 
-                afg.samples = 4f;
-                afg.g = -0.85f;
-                if (afg.waveLength == new Color(0f, 0f, 0f, 0f))
-                {
-                    afg.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
-                }
-                afg.outerRadius = (((Single)body.Radius) * 1.025f) * INVSCALEFACTOR;
-                afg.innerRadius = afg.outerRadius * 0.975f;
-                afg.scaleDepth = -0.25f;
-                afg.invWaveLength = new Color((Single)(1d / Math.Pow(afg.waveLength[0], 4)), (Single)(1d / Math.Pow(afg.waveLength[1], 4)), (Single)(1d / Math.Pow(afg.waveLength[2], 4)), 0.5f);
+            /// <summary>
+            /// Creates a new AtmosphereFromGround Loader from a custom PSystemBody.
+            /// </summary>
+            public AtmosphereFromGroundLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
 
-                CalculatedMembers(afg);
+                // Store values
+                celestialBody = generatedBody.celestialBody;
+                atmosphereFromGround = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)?.FirstOrDefault();
+                scaledVersion = generatedBody.scaledVersion;
             }
 
         }

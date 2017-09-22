@@ -355,15 +355,41 @@ namespace Kopernicus
                 Events.OnPropertiesLoaderPostApply.Fire(this, node);
             }
 
-            // Properties requires a celestial body referece, as this class is designed to edit the body
-            public PropertiesLoader(CelestialBody celestialBody)
-            {
-                this.celestialBody = celestialBody;
-            }
-
-            // Properties requires a celestial body referece, as this class is designed to edit the body
+            /// <summary>
+            /// Creates a new Properties Loader from the Injector context.
+            /// </summary>
             public PropertiesLoader()
             {
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+
+                // Store values
+                celestialBody = generatedBody.celestialBody;
+            }
+
+            /// <summary>
+            /// Creates a new Properties Loader from a spawned CelestialBody.
+            /// </summary>
+            public PropertiesLoader(CelestialBody body)
+            {
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
+                // Store values
+                celestialBody = body;
+            }
+
+            /// <summary>
+            /// Creates a new Properties Loader from a custom PSystemBody.
+            /// </summary>
+            public PropertiesLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+
+                // Store values
                 celestialBody = generatedBody.celestialBody;
             }
 

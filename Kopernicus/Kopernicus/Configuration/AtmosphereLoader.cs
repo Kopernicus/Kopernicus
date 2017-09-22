@@ -33,9 +33,15 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class AtmosphereLoader : BaseLoader, IParserEventSubscriber
         {
-            // Resoruces that will be edited
-            public GameObject scaledVersion;
+            /// <summary>
+            /// CelestialBody we're modifying
+            /// </summary>
             public CelestialBody celestialBody;
+
+            /// <summary>
+            /// The ScaledSpace object of the body we're modifying
+            /// </summary>
+            public GameObject scaledVersion;
 
             // Do we have an atmosphere?
             [PreApply]
@@ -258,22 +264,9 @@ namespace Kopernicus
                 // If we don't already have an atmospheric shell generated
                 if (scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true).Length == 0) 
                 {
-                    // Add the material light direction behavior
-                    MaterialSetDirection materialLightDirection = scaledVersion.AddComponent<MaterialSetDirection>();
-                    materialLightDirection.valueName            = "_localLightDirection";
-
-                    // Create the atmosphere shell game object
-                    GameObject scaledAtmosphere       = new GameObject("Atmosphere");
-                    scaledAtmosphere.transform.parent = scaledVersion.transform;
-                    scaledAtmosphere.layer            = Constants.GameLayers.ScaledSpaceAtmosphere;
-                    MeshRenderer renderer             = scaledAtmosphere.AddComponent<MeshRenderer>();
-                    renderer.sharedMaterial           = new MaterialWrapper.AtmosphereFromGround();
-                    MeshFilter meshFilter             = scaledAtmosphere.AddComponent<MeshFilter>();
-                    meshFilter.sharedMesh             = Templates.ReferenceGeosphere;
-                    scaledAtmosphere.AddComponent<AtmosphereFromGround>();
-
-                    // Store the AFG
+                    // Create the AFG
                     atmosphereFromGround = new AtmosphereFromGroundLoader();
+                    atmosphereFromGround.AddAtmosphereFromGround();
 
                     // Setup known defaults
                     celestialBody.atmospherePressureSeaLevel = 1.0f;
@@ -287,22 +280,49 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 if (atmosphereFromGround != null)
-                    AFGInfo.StoreAFG(atmosphereFromGround.afg);
+                    AFGInfo.StoreAFG(atmosphereFromGround.atmosphereFromGround);
                 Events.OnAtmosphereLoaderPostApply.Fire(this, node);
             }
 
-            // Default constructor
+            /// <summary>
+            /// Creates a new Atmosphere Loader from the Injector context.
+            /// </summary>
             public AtmosphereLoader()
             {
-                scaledVersion = generatedBody.scaledVersion;
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+
+                // Store values
                 celestialBody = generatedBody.celestialBody;
+                scaledVersion = generatedBody.scaledVersion;
             }
 
-            // Runtime Constructor
+            /// <summary>
+            /// Creates a new Atmosphere Loader from a spawned CelestialBody.
+            /// </summary>
             public AtmosphereLoader(CelestialBody body)
             {
-                scaledVersion = body.scaledBody;
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
+                // Store values
                 celestialBody = body;
+                scaledVersion = body.scaledBody;
+            }
+
+            /// <summary>
+            /// Creates a new Atmosphere Loader from a custom PSystemBody.
+            /// </summary>
+            public AtmosphereLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+
+                // Store values
+                celestialBody = generatedBody.celestialBody;
+                scaledVersion = generatedBody.scaledVersion;
             }
         }
     }

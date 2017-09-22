@@ -34,7 +34,9 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class LightShifterLoader : BaseLoader, IParserEventSubscriber
         {
-            // The edited object
+            /// <summary>
+            /// LightShifter we're modifying
+            /// </summary>
             public LightShifter lsc { get; set; }
 
             // The sunflare for the star
@@ -219,18 +221,46 @@ namespace Kopernicus
                 Events.OnLightShifterLoaderPostApply.Fire(this, node);
             }
 
-            // Default constructor
+            /// <summary>
+            /// Creates a new LightShifter Loader from the Injector context.
+            /// </summary>
             public LightShifterLoader()
             {
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+
+                // Store values
                 lsc = LightShifter.prefab;
                 lsc.transform.parent = generatedBody.scaledVersion.transform;
                 lsc.name = generatedBody.name;
             }
 
-            // Runtime Constructor, takes Celestial Body
+            /// <summary>
+            /// Creates a new LightShifter Loader from a spawned CelestialBody.
+            /// </summary>
             public LightShifterLoader(CelestialBody body)
             {
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
+                // Store values
                 lsc = body.GetComponentInChildren<LightShifter>();
+            }
+
+            /// <summary>
+            /// Creates a new LightShifter Loader from a custom PSystemBody.
+            /// </summary>
+            public LightShifterLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+
+                // Store values
+                lsc = LightShifter.prefab;
+                lsc.transform.parent = generatedBody.scaledVersion.transform;
+                lsc.name = generatedBody.name;
             }
         }
 

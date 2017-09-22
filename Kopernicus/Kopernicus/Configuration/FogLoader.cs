@@ -32,151 +32,153 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class FogLoader : BaseLoader, IParserEventSubscriber
         {
-            // Body we are going to modify
-            public CelestialBody body { get; set; }
+            /// <summary>
+            /// CelestialBody we're modifying
+            /// </summary>
+            public CelestialBody celestialBody { get; set; }
 
             // afgAltMult
             [ParserTarget("afgAltMult")]
             public NumericParser<Single> oceanAFGAltMult
             {
-                get { return body.oceanAFGAltMult; }
-                set { body.oceanAFGAltMult = value; }
+                get { return celestialBody.oceanAFGAltMult; }
+                set { celestialBody.oceanAFGAltMult = value; }
             }
 
             // afgBase
             [ParserTarget("afgBase")]
             public NumericParser<Single> oceanAFGBase
             {
-                get { return body.oceanAFGBase; }
-                set { body.oceanAFGBase = value; }
+                get { return celestialBody.oceanAFGBase; }
+                set { celestialBody.oceanAFGBase = value; }
             }
 
             // afgLerp
             [ParserTarget("afgLerp")]
             public NumericParser<Boolean> oceanAFGLerp
             {
-                get { return body.oceanAFGLerp; }
-                set { body.oceanAFGLerp = value; }
+                get { return celestialBody.oceanAFGLerp; }
+                set { celestialBody.oceanAFGLerp = value; }
             }
 
             // afgMin
             [ParserTarget("afgMin")]
             public NumericParser<Single> oceanAFGMin
             {
-                get { return body.oceanAFGMin; }
-                set { body.oceanAFGMin = value; }
+                get { return celestialBody.oceanAFGMin; }
+                set { celestialBody.oceanAFGMin = value; }
             }
 
             // fogColorEnd
             [ParserTarget("fogColorEnd")]
             public ColorParser oceanFogColorEnd
             {
-                get { return body.oceanFogColorEnd; }
-                set { body.oceanFogColorEnd = value; }
+                get { return celestialBody.oceanFogColorEnd; }
+                set { celestialBody.oceanFogColorEnd = value; }
             }
 
             // fogColorStart
             [ParserTarget("fogColorStart")]
             public ColorParser oceanFogColorStart
             {
-                get { return body.oceanFogColorStart; }
-                set { body.oceanFogColorStart = value; }
+                get { return celestialBody.oceanFogColorStart; }
+                set { celestialBody.oceanFogColorStart = value; }
             }
 
             // fogDensityAltScalar
             [ParserTarget("fogDensityAltScalar")]
             public NumericParser<Single> oceanFogDensityAltScalar
             {
-                get { return body.oceanFogDensityAltScalar; }
-                set { body.oceanFogDensityAltScalar = value; }
+                get { return celestialBody.oceanFogDensityAltScalar; }
+                set { celestialBody.oceanFogDensityAltScalar = value; }
             }
 
             // fogDensityEnd
             [ParserTarget("fogDensityEnd")]
             public NumericParser<Single> oceanFogDensityEnd
             {
-                get { return body.oceanFogDensityEnd; }
-                set { body.oceanFogDensityEnd = value; }
+                get { return celestialBody.oceanFogDensityEnd; }
+                set { celestialBody.oceanFogDensityEnd = value; }
             }
 
             // fogDensityExponent
             [ParserTarget("fogDensityExponent")]
             public NumericParser<Single> oceanFogDensityExponent
             {
-                get { return body.oceanFogDensityExponent; }
-                set { body.oceanFogDensityExponent = value; }
+                get { return celestialBody.oceanFogDensityExponent; }
+                set { celestialBody.oceanFogDensityExponent = value; }
             }
 
             // fogDensityPQSMult
             [ParserTarget("fogDensityPQSMult")]
             public NumericParser<Single> oceanFogDensityPQSMult
             {
-                get { return body.oceanFogDensityPQSMult; }
-                set { body.oceanFogDensityPQSMult = value; }
+                get { return celestialBody.oceanFogDensityPQSMult; }
+                set { celestialBody.oceanFogDensityPQSMult = value; }
             }
 
             // fogDensityStart
             [ParserTarget("fogDensityStart")]
             public NumericParser<Single> oceanFogDensityStart
             {
-                get { return body.oceanFogDensityStart; }
-                set { body.oceanFogDensityStart = value; }
+                get { return celestialBody.oceanFogDensityStart; }
+                set { celestialBody.oceanFogDensityStart = value; }
             }
 
             // skyColorMult
             [ParserTarget("skyColorMult")]
             public NumericParser<Single> oceanSkyColorMult
             {
-                get { return body.oceanSkyColorMult; }
-                set { body.oceanSkyColorMult = value; }
+                get { return celestialBody.oceanSkyColorMult; }
+                set { celestialBody.oceanSkyColorMult = value; }
             }
 
             // skyColorOpacityAltMult
             [ParserTarget("skyColorOpacityAltMult")]
             public NumericParser<Single> oceanSkyColorOpacityAltMult
             {
-                get { return body.oceanSkyColorOpacityAltMult; }
-                set { body.oceanSkyColorOpacityAltMult = value; }
+                get { return celestialBody.oceanSkyColorOpacityAltMult; }
+                set { celestialBody.oceanSkyColorOpacityAltMult = value; }
             }
 
             // skyColorOpacityBase
             [ParserTarget("skyColorOpacityBase")]
             public NumericParser<Single> oceanSkyColorOpacityBase
             {
-                get { return body.oceanSkyColorOpacityBase; }
-                set { body.oceanSkyColorOpacityBase = value; }
+                get { return celestialBody.oceanSkyColorOpacityBase; }
+                set { celestialBody.oceanSkyColorOpacityBase = value; }
             }
 
             // sunAltMult
             [ParserTarget("sunAltMult")]
             public NumericParser<Single> oceanSunAltMult
             {
-                get { return body.oceanSunAltMult; }
-                set { body.oceanSunAltMult = value; }
+                get { return celestialBody.oceanSunAltMult; }
+                set { celestialBody.oceanSunAltMult = value; }
             }
 
             // sunBase
             [ParserTarget("sunBase")]
             public NumericParser<Single> oceanSunBase
             {
-                get { return body.oceanSunBase; }
-                set { body.oceanSunBase = value; }
+                get { return celestialBody.oceanSunBase; }
+                set { celestialBody.oceanSunBase = value; }
             }
 
             // sunMin
             [ParserTarget("sunMin")]
             public NumericParser<Single> oceanSunMin
             {
-                get { return body.oceanSunMin; }
-                set { body.oceanSunMin = value; }
+                get { return celestialBody.oceanSunMin; }
+                set { celestialBody.oceanSunMin = value; }
             }
 
             // useFog
             [ParserTarget("useFog")]
             public NumericParser<Boolean> oceanUseFog
             {
-                get { return body.oceanUseFog; }
-                set { body.oceanUseFog = value; }
+                get { return celestialBody.oceanUseFog; }
+                set { celestialBody.oceanUseFog = value; }
             }
 
             // Parser apply event
@@ -191,16 +193,42 @@ namespace Kopernicus
                 Events.OnFogLoaderPostApply.Fire(this, node);
             }
 
-            // Default constructor
+            /// <summary>
+            /// Creates a new Fog Loader from the Injector context.
+            /// </summary>
             public FogLoader()
             {
-                body = generatedBody.celestialBody;
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+
+                // Store values
+                celestialBody = generatedBody.celestialBody;
             }
 
-            // Standard constructor takes a science parameters object
+            /// <summary>
+            /// Creates a new Fog Loader from a spawned CelestialBody.
+            /// </summary>
             public FogLoader(CelestialBody body)
             {
-                this.body = body;
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
+                // Store values
+                celestialBody = body;
+            }
+
+            /// <summary>
+            /// Creates a new Fog Loader from a custom PSystemBody.
+            /// </summary>
+            public FogLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+
+                // Store values
+                celestialBody = generatedBody.celestialBody;
             }
         }
     }

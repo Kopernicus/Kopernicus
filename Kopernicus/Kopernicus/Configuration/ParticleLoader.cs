@@ -159,18 +159,45 @@ namespace Kopernicus
                 set { particle.force = value; }
             }
 
-            // Default Constructor
+            /// <summary>
+            /// Creates a new Particle Loader from the Injector context.
+            /// </summary>
             public ParticleLoader()
             {
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+
+                // Store values
                 scaledVersion = generatedBody.scaledVersion;
                 particle = PlanetParticleEmitter.Create(scaledVersion);
             }
 
-            // Runtime constructor
+            /// <summary>
+            /// Creates a new Particle Loader from a spawned CelestialBody.
+            /// </summary>
             public ParticleLoader(CelestialBody body, GameObject particleHost)
             {
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
+                // Store values
                 scaledVersion = body.scaledBody;
                 particle = particleHost.GetComponent<PlanetParticleEmitter>();
+            }
+
+            /// <summary>
+            /// Creates a new Particle Loader from a custom PSystemBody.
+            /// </summary>
+            public ParticleLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+                
+                // Store values
+                scaledVersion = generatedBody.scaledVersion;
+                particle = PlanetParticleEmitter.Create(scaledVersion);
             }
 
             // Apply event

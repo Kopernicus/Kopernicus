@@ -254,27 +254,39 @@ namespace Kopernicus
                 Events.OnScaledVersionLoaderPostApply.Fire(this, node);
             }
 
-            // Default constructor - takes the scaledVersion game object
+            /// <summary>
+            /// Creates a new ScaledVersion Loader from the Injector context.
+            /// </summary>
             public ScaledVersionLoader()
             {
+                // Is this the parser context?
+                if (generatedBody == null)
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+
                 // Get the scaled version object
                 scaledVersion = generatedBody.scaledVersion;
                 owner = generatedBody.celestialBody;
                 type = new EnumParser<BodyType>(Loader.currentBody.template == null ? BodyType.Atmospheric : Loader.currentBody.template.type);
 
                 // Ensure scaled version at least has a mesh filter and mesh renderer
-                if(scaledVersion.GetComponent<MeshFilter>() == null)
+                if (scaledVersion.GetComponent<MeshFilter>() == null)
                     scaledVersion.AddComponent<MeshFilter>();
-                if(scaledVersion.GetComponent<MeshRenderer>() == null)
+                if (scaledVersion.GetComponent<MeshRenderer>() == null)
                 {
                     scaledVersion.AddComponent<MeshRenderer>();
                     scaledVersion.GetComponent<Renderer>().material = null;
                 }
             }
 
-            // Runtime Constructor, uses CelestialBody
+            /// <summary>
+            /// Creates a new ScaledVersion Loader from a spawned CelestialBody.
+            /// </summary>
             public ScaledVersionLoader(CelestialBody body)
             {
+                // Is this a spawned body?
+                if (body?.scaledBody == null)
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+
                 // Get the scaled version object
                 scaledVersion = body.scaledBody;
                 owner = body;
@@ -286,6 +298,29 @@ namespace Kopernicus
                     type = BodyType.Atmospheric;
                 else
                     type = BodyType.Vacuum;
+            }
+
+            /// <summary>
+            /// Creates a new ScaledVersion Loader from a custom PSystemBody.
+            /// </summary>
+            public ScaledVersionLoader(PSystemBody body)
+            {
+                // Set generatedBody
+                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+
+                // Get the scaled version object
+                scaledVersion = generatedBody.scaledVersion;
+                owner = generatedBody.celestialBody;
+                type = new EnumParser<BodyType>(Loader.currentBody.template == null ? BodyType.Atmospheric : Loader.currentBody.template.type);
+
+                // Ensure scaled version at least has a mesh filter and mesh renderer
+                if (scaledVersion.GetComponent<MeshFilter>() == null)
+                    scaledVersion.AddComponent<MeshFilter>();
+                if (scaledVersion.GetComponent<MeshRenderer>() == null)
+                {
+                    scaledVersion.AddComponent<MeshRenderer>();
+                    scaledVersion.GetComponent<Renderer>().material = null;
+                }
             }
         }
     }

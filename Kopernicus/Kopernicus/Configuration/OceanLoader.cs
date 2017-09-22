@@ -37,11 +37,24 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class OceanLoader : BaseLoader, IParserEventSubscriber
         {
-            // PQS we're editing
+            /// <summary>
+            /// The Ocean PQS we're editing
+            /// </summary>
             public PQS ocean { get; set; }
+
+            /// <summary>
+            /// The parent sphere of the Ocean we're editing
+            /// </summary>
             public PQS pqsVersion { get; set; }
+
+            /// <summary>
+            /// CelestialBody we're editing
+            /// </summary>
             public CelestialBody body { get; set; }
-            public GameObject gameObject { get; set; }
+
+            /// <summary>
+            /// The UV mod of the Ocean
+            /// </summary>
             public PQSMod_UVPlanetRelativePosition uvs;
 
             // We have an ocean?
@@ -151,7 +164,6 @@ namespace Kopernicus
                 {
                     ocean = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
                     pqsVersion = generatedBody.pqsVersion;
-                    gameObject = ocean.gameObject;
                     body = generatedBody.celestialBody;
 
                     surfaceMaterial = new PQSOceanSurfaceQuadLoader(surfaceMaterial);
@@ -163,7 +175,7 @@ namespace Kopernicus
                 }
 
                 // Generate the PQS object
-                gameObject = new GameObject("Ocean");
+                GameObject gameObject = new GameObject("Ocean");
                 gameObject.layer = Constants.GameLayers.LocalSpace;
                 ocean = gameObject.AddComponent<PQS>();
                 pqsVersion = generatedBody.pqsVersion;
