@@ -40,7 +40,7 @@ namespace Kopernicus
 
             // Body description
             [ParserTarget("description")]
-            public String description 
+            public String description
             {
                 get { return celestialBody.bodyDescription; }
                 set { celestialBody.bodyDescription = value; }
@@ -48,20 +48,20 @@ namespace Kopernicus
 
             // Radius
             [ParserTarget("radius")]
-            public NumericParser<Double> radius 
+            public NumericParser<Double> radius
             {
                 get { return celestialBody.Radius; }
                 set { celestialBody.Radius = value; }
             }
-            
+
             // GeeASL
             [ParserTarget("geeASL")]
-            public NumericParser<Double> geeASL 
+            public NumericParser<Double> geeASL
             {
                 get { return celestialBody.GeeASL; }
                 set { celestialBody.GeeASL = value; }
             }
-            
+
             // Mass
             [ParserTarget("mass")]
             public NumericParser<Double> mass
@@ -79,7 +79,7 @@ namespace Kopernicus
                 set { celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter = value; hasGravParam = true; }
             }
             private Boolean hasGravParam = false;
-            
+
             // Does the body rotate?
             [ParserTarget("rotates")]
             public NumericParser<Boolean> rotates
@@ -87,7 +87,7 @@ namespace Kopernicus
                 get { return celestialBody.rotates; }
                 set { celestialBody.rotates = value; }
             }
-            
+
             // Rotation period of the world
             [ParserTarget("rotationPeriod")]
             public NumericParser<Double> rotationPeriod
@@ -95,7 +95,7 @@ namespace Kopernicus
                 get { return celestialBody.rotationPeriod; }
                 set { celestialBody.rotationPeriod = value; }
             }
-            
+
             // Is the body tidally locked to its parent?
             [ParserTarget("tidallyLocked")]
             public NumericParser<Boolean> tidallyLocked
@@ -119,7 +119,7 @@ namespace Kopernicus
                 get { return celestialBody.inverseRotThresholdAltitude; }
                 set { celestialBody.inverseRotThresholdAltitude = value; }
             }
-            
+
             // albedo
             [ParserTarget("albedo")]
             public NumericParser<Double> albedo
@@ -143,7 +143,7 @@ namespace Kopernicus
                 get { return celestialBody.coreTemperatureOffset; }
                 set { celestialBody.coreTemperatureOffset = value; }
             }
-            
+
             // Is this the home world
             [ParserTarget("isHomeWorld")]
             public NumericParser<Boolean> isHomeWorld
@@ -154,7 +154,7 @@ namespace Kopernicus
 
             // Time warp altitude limits
             [ParserTarget("timewarpAltitudeLimits")]
-            public NumericCollectionParser<Single> timewarpAltitudeLimits 
+            public NumericCollectionParser<Single> timewarpAltitudeLimits
             {
                 get { return celestialBody.timeWarpAltitudeLimits != null ? celestialBody.timeWarpAltitudeLimits : new Single[0]; }
                 set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray(); }
@@ -213,14 +213,14 @@ namespace Kopernicus
             public MapSOParser_RGB<CBAttributeMapSO> biomeMap
             {
                 get { return celestialBody.BiomeMap; }
-                set 
+                set
                 {
-                    if (((CBAttributeMapSO)value) != null) 
+                    if (((CBAttributeMapSO)value) != null)
                     {
                         celestialBody.BiomeMap = value;
                         celestialBody.BiomeMap.exactSearch = false;
                         celestialBody.BiomeMap.nonExactThreshold = 0.05f;
-                        celestialBody.BiomeMap.Attributes = biomes.Select (b => b.attribute).ToArray ();
+                        celestialBody.BiomeMap.Attributes = biomes.Select(b => b.attribute).ToArray();
                     }
                 }
             }
@@ -299,7 +299,7 @@ namespace Kopernicus
                 HIDDEN,
                 SKIP
             }
-            
+
             // Max Zoom limit for TrackingStation and MapView
             // set the number of meters that can fit in the full height of the screen
             [ParserTarget("maxZoom")]
@@ -308,9 +308,9 @@ namespace Kopernicus
                 get { return celestialBody.Has("maxZoom") ? celestialBody.Get<Single>("maxZoom") : 10 * 6000f; }
                 set { celestialBody.Set("maxZoom", value.value / 6000f); }
             }
-            
+
             // Apply Event
-            void IParserEventSubscriber.Apply (ConfigNode node)
+            void IParserEventSubscriber.Apply(ConfigNode node)
             {
                 // We require a science values object
                 if (celestialBody.scienceValues == null)
@@ -324,7 +324,7 @@ namespace Kopernicus
             }
 
             // PostApply Event
-            void IParserEventSubscriber.PostApply (ConfigNode node)
+            void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 // Converters
                 if (hasGravParam)
@@ -335,20 +335,20 @@ namespace Kopernicus
                     GeeASLToOthers();
 
                 // Debug the fields (TODO - remove)
-                Utility.DumpObjectFields (celestialBody.scienceValues, " Science Values ");
-                if (celestialBody.BiomeMap != null) 
+                Utility.DumpObjectFields(celestialBody.scienceValues, " Science Values ");
+                if (celestialBody.BiomeMap != null)
                 {
-                    foreach (CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes) 
+                    foreach (CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes)
                     {
-                        Logger.Active.Log ("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
+                        Logger.Active.Log("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
                     }
                 }
 
                 // TODO - tentative fix, needs to be able to be configured (if it can be?)
-                if (celestialBody.progressTree == null) 
+                if (celestialBody.progressTree == null)
                 {
-                    celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree (celestialBody);
-                    Logger.Active.Log ("Added Progress Tree");
+                    celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree(celestialBody);
+                    Logger.Active.Log("Added Progress Tree");
                 }
 
                 // Event
@@ -356,7 +356,7 @@ namespace Kopernicus
             }
 
             // Properties requires a celestial body referece, as this class is designed to edit the body
-            public PropertiesLoader (CelestialBody celestialBody)
+            public PropertiesLoader(CelestialBody celestialBody)
             {
                 this.celestialBody = celestialBody;
             }
