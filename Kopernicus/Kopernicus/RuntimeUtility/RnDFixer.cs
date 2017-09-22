@@ -40,6 +40,18 @@ namespace Kopernicus
     /// </summary>
     public class RnDFixer : MonoBehaviour
     {
+        internal static List<RDPlanetListItemContainer> RnDRotationKill = new List<RDPlanetListItemContainer>();
+
+        void LateUpdate()
+        {
+            // Block the orientation of all stars
+            for (int i = 0; i < RnDRotationKill.Count(); i++)
+            {
+                RDPlanetListItemContainer star = RnDRotationKill[i];
+                star.planet.transform.rotation = Quaternion.identity;
+            }
+        }
+
         void Start()
         {
             //  FIX BODIES MOVED POSTSPAWN  //
@@ -179,8 +191,8 @@ namespace Kopernicus
                 // Undo the changes to the PSystem
                 for (Int32 i = skipList.Count - 1; i > -1; i--)
                 {
-                    PSystemBody hidden = skipList.ElementAt(i).Key;
-                    PSystemBody parent = skipList.ElementAt(i).Value;
+                    PSystemBody hidden = skipList[i].Key;
+                    PSystemBody parent = skipList[i].Value;
                     Int32 oldIndex = parent.children.IndexOf(hidden.children.FirstOrDefault());
                     parent.children.Insert(oldIndex, hidden);
 
@@ -196,7 +208,7 @@ namespace Kopernicus
 
 
 
-            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //
+            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //  Kill Rotation //
             // Loop through the Containers
             var containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
             for (int i = 0; i < containers?.Count(); i++)
@@ -204,7 +216,7 @@ namespace Kopernicus
                 RDPlanetListItemContainer planetItem = containers[i];
 
                 // The label text is set from the CelestialBody's displayName
-                CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(b => b.bodyDisplayName.Replace("^N", "") == planetItem.label_planetName.text);
+                CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(b => b.transform.name == planetItem.name);
                 if (body == null)
                 {
                     Debug.Log("[Kopernicus]: RnDFixer: Could not find CelestialBody for the label => " + planetItem.label_planetName.text);
@@ -239,10 +251,14 @@ namespace Kopernicus
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
                     }
                 }
+
+                // Add planetItems to 'RnDRotationKill'
+                if (body.Has("RnDRotation") ? !body.Get<bool>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
+                {
+                    RnDRotationKill.Add(planetItem);
+                }
             }
         }
-
-
 
         void AddPlanets()
         {
