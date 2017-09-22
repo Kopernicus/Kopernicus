@@ -38,6 +38,15 @@ namespace Kopernicus
         /// </summary>
         public class KopernicusSolarPanel : ModuleDeployableSolarPanel
         {
+            [KSPField(guiActive = true, guiActiveEditor = false, guiName = "Tracking Body", isPersistant = true)]
+            public String trackingBodyName;
+
+            [KSPField(isPersistant = true)]
+            private Boolean manualTracking;
+
+            [KSPField(isPersistant = true)]
+            private Boolean relativeSunAOA;
+
             public static Double stockLuminosity;
 
             static KopernicusSolarPanel()
@@ -162,7 +171,7 @@ namespace Kopernicus
                 }
 
                 // Sun AOA
-                sunAOA /= KopernicusStar.Stars.Count;
+                sunAOA /= relativeSunAOA ? KopernicusStar.Stars.Count : 1;
                 _distMult = _flowRate != 0 ? _flowRate / _efficMult / sunAOA : 0;
 
                 // We got the best star to use
@@ -179,16 +188,20 @@ namespace Kopernicus
                 flowRate = (Single)(resHandler.UpdateModuleResourceOutputs(_flowRate) * flowMult);
             }
 
-            [KSPField(guiActive = true, guiActiveEditor = false, guiName = "Tracking Body", isPersistant = true)]
-            public String trackingBodyName;
-
-            [KSPField(isPersistant = true)]
-            private Boolean manualTracking;
-
             public override void LateUpdate()
             {
                 // Update the name
                 trackingBodyName = trackingBody.bodyDisplayName.Replace("^N", "");
+
+                // Update the guiName for SwitchAOAMode
+                if (relativeSunAOA)
+                {
+                    Fields["SwitchAOAMode"].guiName = "Use absolute exposure";
+                }
+                else
+                {
+                    Fields["SwitchAOAMode"].guiName = "Use relative exposure";
+                }
 
                 base.LateUpdate();
             }
@@ -211,6 +224,12 @@ namespace Kopernicus
                     "Select Tracking Body",
                     UISkinManager.GetSkin("MainMenuSkin"),
                     options), false, UISkinManager.GetSkin("MainMenuSkin"));
+            }            
+
+            [KSPEvent(active = true, guiActive = true, guiName = "Use relative exposure")]
+            public void SwitchAOAMode()
+            {
+                relativeSunAOA = !relativeSunAOA;
             }
         }
     }
