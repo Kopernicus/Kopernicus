@@ -7,8 +7,8 @@ MONO_ASSEMBLIES := /usr/lib/mono/2.0-api
 
 # Build config
 MODE := DEBUG
-PARAMS_DEBUG := /debug+ /debug:portable /define:DEBUG
-PARAMS_RELEASE := /define:RELEASE
+PARAMS_DEBUG := /noconfig /debug+ /debug:portable /define:DEBUG
+PARAMS_RELEASE := /noconfig /define:RELEASE
 
 # Build Outputs
 CURRENT_DIR := $(shell pwd)
