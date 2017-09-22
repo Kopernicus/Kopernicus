@@ -37,7 +37,6 @@ namespace Kopernicus
             // KSP orbit objects we are editing
             public Orbit orbit { get; set; }
             public CelestialBody body { get; set; }
-            public PSystemBody currentBody = null;
 
             // Reference body to orbit
             [ParserTarget("referenceBody")]
@@ -111,16 +110,16 @@ namespace Kopernicus
             [ParserTarget("color")]
             public ColorParser color
             {
-                get { return currentBody != null ? currentBody.orbitRenderer.nodeColor : (body.orbitDriver.orbitColor * 2).A(body.orbitDriver.orbitColor.a); }
-                set { currentBody.orbitRenderer.SetColor(value); }
+                get { return generatedBody != null ? generatedBody.orbitRenderer.nodeColor : (body.orbitDriver.orbitColor * 2).A(body.orbitDriver.orbitColor.a); }
+                set { generatedBody.orbitRenderer.SetColor(value); }
             }
 
             // Orbit Icon color
             [ParserTarget("iconColor")]
             public ColorParser iconColor
             {
-                // get { return currentBody.orbitRenderer.nodeColor; }
-                set { currentBody.orbitRenderer.nodeColor = value.value; }
+                // get { return generatedBody.orbitRenderer.nodeColor; }
+                set { generatedBody.orbitRenderer.nodeColor = value.value; }
             }
 
             // Orbit Draw Mode
@@ -128,7 +127,7 @@ namespace Kopernicus
             public EnumParser<OrbitRenderer.DrawMode> mode
             {
                 get { return body?.orbitDriver?.Renderer?.drawMode; }
-                set { currentBody.Set("drawMode", value.value); }
+                set { generatedBody.Set("drawMode", value.value); }
             }
 
             // Orbit Icon Mode
@@ -136,7 +135,7 @@ namespace Kopernicus
             public EnumParser<OrbitRenderer.DrawIcons> icon
             {
                 get { return body?.orbitDriver?.Renderer?.drawIcons; }
-                set { currentBody.Set("drawIcons", value.value); }
+                set { generatedBody.Set("drawIcons", value.value); }
             }
 
             // Orbit rendering bounds
@@ -145,22 +144,20 @@ namespace Kopernicus
 
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                if (currentBody == null)
-                    currentBody = generatedBody;
-                if (currentBody == null) return;
+                if (generatedBody == null) return;
 
                 // If this body needs orbit controllers, create them
-                if (currentBody.orbitDriver == null)
+                if (generatedBody.orbitDriver == null)
                 {
-                    currentBody.orbitDriver = currentBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
-                    currentBody.orbitRenderer = currentBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
+                    generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
+                    generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
                 }
 
                 // Setup orbit
-                currentBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-                orbit = currentBody.orbitDriver.orbit;
+                generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+                orbit = generatedBody.orbitDriver.orbit;
                 referenceBody = orbit?.referenceBody?.name;
-                Single[] bounds = new Single[] { currentBody.orbitRenderer.lowerCamVsSmaRatio, currentBody.orbitRenderer.upperCamVsSmaRatio };
+                Single[] bounds = new Single[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
                 cameraSmaRatioBounds = bounds;
 
                 // Remove null
@@ -172,15 +169,13 @@ namespace Kopernicus
 
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                if (currentBody == null)
-                    currentBody = generatedBody;
-                if (currentBody == null) return;
+                if (generatedBody == null) return;
 
                 if (epoch != null)
                     orbit.epoch += Templates.epoch;
-                currentBody.orbitDriver.orbit = orbit;
-                currentBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
-                currentBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
+                generatedBody.orbitDriver.orbit = orbit;
+                generatedBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
+                generatedBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
                 Events.OnOrbitLoaderPostApply.Fire(this, node);
             }
 
