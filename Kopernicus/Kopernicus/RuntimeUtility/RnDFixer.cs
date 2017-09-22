@@ -191,8 +191,8 @@ namespace Kopernicus
                 // Undo the changes to the PSystem
                 for (Int32 i = skipList.Count - 1; i > -1; i--)
                 {
-                    PSystemBody hidden = skipList.ElementAt(i).Key;
-                    PSystemBody parent = skipList.ElementAt(i).Value;
+                    PSystemBody hidden = skipList[i].Key;
+                    PSystemBody parent = skipList[i].Value;
                     Int32 oldIndex = parent.children.IndexOf(hidden.children.FirstOrDefault());
                     parent.children.Insert(oldIndex, hidden);
 
@@ -251,7 +251,7 @@ namespace Kopernicus
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineRight;
                     }
                 }
-                
+
                 // Add planetItems to 'RnDRotationKill'
                 if (body.Has("RnDRotation") ? !body.Get<bool>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
                 {
