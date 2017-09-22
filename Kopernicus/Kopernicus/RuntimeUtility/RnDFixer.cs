@@ -259,8 +259,6 @@ namespace Kopernicus
             }
         }
 
-
-
         void AddPlanets()
         {
             // Stuff needed for AddPlanets
