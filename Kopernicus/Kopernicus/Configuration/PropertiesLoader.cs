@@ -279,7 +279,7 @@ namespace Kopernicus
 
             // If the body should be hidden in RnD
             [ParserTarget("RDRotation")]
-            public EnumParser<bool> RDRotation
+            public NumericParser<bool> RDRotation
             {
                 get
                 {
