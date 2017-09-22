@@ -40,14 +40,14 @@ namespace Kopernicus
     /// </summary>
     public class RnDFixer : MonoBehaviour
     {
-        List<RDPlanetListItemContainer> stars = new List<RDPlanetListItemContainer>();
+        internal static List<RDPlanetListItemContainer> RDRotationKill = new List<RDPlanetListItemContainer>();
 
         void LateUpdate()
         {
             // Block the orientation of all stars
-            for (int i = 0; i < stars?.Count(); i++)
+            for (int i = 0; i < RDRotationKill?.Count(); i++)
             {
-                RDPlanetListItemContainer star = stars.ElementAt(i);
+                RDPlanetListItemContainer star = RDRotationKill.ElementAt(i);
                 star.planet.transform.rotation = Quaternion.identity;
             }
         }
@@ -208,7 +208,7 @@ namespace Kopernicus
 
 
 
-            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //
+            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //  Kill Rotation //
             // Loop through the Containers
             var containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
             for (int i = 0; i < containers?.Count(); i++)
@@ -252,9 +252,10 @@ namespace Kopernicus
                     }
                 }
 
-                if (planetItem?.planet?.GetComponent<StarComponent>() != null)
+                // Kill Rotation
+                if (body.Has("RDRotation") ? !body.Get<bool>("RDRotation") : planetItem?.planet?.GetComponent<StarComponent>() != null)
                 {
-                    stars.Add(planetItem);
+                    RDRotationKill.Add(planetItem);
                 }
             }
         }

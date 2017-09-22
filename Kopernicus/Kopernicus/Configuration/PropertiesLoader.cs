@@ -277,6 +277,19 @@ namespace Kopernicus
                 set { celestialBody.Set("hiddenRnD", value.value); }
             }
 
+            // If the body should be hidden in RnD
+            [ParserTarget("RDRotation")]
+            public EnumParser<bool> RDRotation
+            {
+                get
+                {
+                    if (celestialBody.Has("RDRotation"))
+                        return generatedBody.Get<bool>("RDRotation");
+                    return generatedBody?.scaledVersion?.GetComponentsInChildren<SunShaderController>(true)?.Length > 0;
+                }
+                set { celestialBody.Set("RnDrotation", value.value); }
+            }
+
             // How visible should the planet be in the science archives
             public enum RDVisibility
             {
