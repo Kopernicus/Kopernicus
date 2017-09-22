@@ -264,9 +264,9 @@ namespace Kopernicus
                 set { if (!value.value) celestialBody.Set("notSelectable", true); }
             }
 
-            // If the body should be hidden in RnD
+            // If the body should be hidden in RD
             [ParserTarget("RDVisibility")]
-            public EnumParser<RDVisibility> hiddenRnD
+            public EnumParser<RDVisibility> hiddenRD
             {
                 get
                 {
@@ -278,16 +278,29 @@ namespace Kopernicus
             }
 
             // If the body should be hidden in RnD
-            [ParserTarget("RDRotation")]
-            public NumericParser<bool> RDRotation
+            [ParserTarget("RnDVisibility")]
+            public EnumParser<RDVisibility> hiddenRnD
             {
                 get
                 {
-                    if (celestialBody.Has("RDRotation"))
-                        return generatedBody.Get<bool>("RDRotation");
-                    return generatedBody?.scaledVersion?.GetComponentsInChildren<SunShaderController>(true)?.Length > 0;
+                    if (celestialBody.Has("hiddenRnD"))
+                        return celestialBody.Get<RDVisibility>("hiddenRnD");
+                    return RDVisibility.VISIBLE;
                 }
-                set { celestialBody.Set("RnDrotation", value.value); }
+                set { celestialBody.Set("hiddenRnD", value.value); }
+            }
+
+            // If the body should rotate in RnD
+            [ParserTarget("RnDRotation")]
+            public NumericParser<bool> RnDRotation
+            {
+                get
+                {
+                    if (celestialBody.Has("RnDRotation"))
+                        return celestialBody.Get<bool>("RnDRotation");
+                    return celestialBody?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null;
+                }
+                set { celestialBody.Set("RnDRotation", value.value); }
             }
 
             // How visible should the planet be in the science archives
