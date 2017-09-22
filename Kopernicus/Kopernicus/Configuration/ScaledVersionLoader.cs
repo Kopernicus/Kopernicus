@@ -306,7 +306,9 @@ namespace Kopernicus
             public ScaledVersionLoader(PSystemBody body)
             {
                 // Set generatedBody
-                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+                if (body == null)
+                    throw new InvalidOperationException("The body cannot be null.");
+                generatedBody = body;
 
                 // Get the scaled version object
                 scaledVersion = generatedBody.scaledVersion;

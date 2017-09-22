@@ -255,7 +255,9 @@ namespace Kopernicus
             public LightShifterLoader(PSystemBody body)
             {
                 // Set generatedBody
-                generatedBody = body ?? throw new InvalidOperationException("The body cannot be null.");
+                if (body == null)
+                    throw new InvalidOperationException("The body cannot be null.");
+                generatedBody = body;
 
                 // Store values
                 lsc = LightShifter.prefab;
