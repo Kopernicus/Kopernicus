@@ -28,7 +28,7 @@ PARSER_CODE := $(CURRENT_DIR)/src/external/config-parser/src
 
 # Assembly References
 CORLIB := $(MONO_ASSEMBLIES)/mscorlib.dll,$(MONO_ASSEMBLIES)/System.dll,$(MONO_ASSEMBLIES)/System.Core.dll
-REFS := $(CORLIB),Assembly-CSharp.dll,UnityEngine.dll,UnityEngine.UI.dll,ModularFlightIntegrator.dll
+REFS := $(CORLIB),deps/Assembly-CSharp.dll,deps/UnityEngine.dll,deps/UnityEngine.UI.dll,deps/ModularFlightIntegrator.dll
 
 # Zip File
 ZIP_NAME := Kopernicus-$(shell git describe --tags)-$(shell date "+%Y-%m-%d").zip
