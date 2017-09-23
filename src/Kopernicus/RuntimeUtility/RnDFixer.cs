@@ -48,7 +48,6 @@ namespace Kopernicus
             for (Int32 i = 0; i < RnDRotationKill.Count(); i++)
             {
                 RDPlanetListItemContainer planetItem = RnDRotationKill[i];
-                Debug.Log("SigmaLog: star = " + planetItem.name);
                 planetItem.planet.transform.rotation = Quaternion.identity;
             }
         }
