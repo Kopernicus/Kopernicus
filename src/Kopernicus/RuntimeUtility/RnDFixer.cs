@@ -292,12 +292,12 @@ namespace Kopernicus
 
         public static void AddPlanets()
         {
-            Debug.Log("SigmaLog: before clearing before addplanets = " + Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Count());
-            foreach (RDPlanetListItemContainer item in Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name"))
+            RDPlanetListItemContainer[] planetItems = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
+            for (int i = 0; i < planetItems.Length; i++)
             {
-                DestroyImmediate(item);
+                DestroyImmediate(planetItems[i]);
             }
-            Debug.Log("SigmaLog: after clearing before addplanets = " + Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Count());
+
             // Stuff needed for AddPlanets
             FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).FirstOrDefault();
             MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)?.Skip(26)?.FirstOrDefault();
@@ -308,7 +308,6 @@ namespace Kopernicus
 
             // AddPlanets!
             add.Invoke(RDAC, null);
-            Debug.Log("SigmaLog: after addplanets = " + Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Count());
         }
     }
 }
