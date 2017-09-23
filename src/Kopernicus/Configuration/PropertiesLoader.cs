@@ -264,8 +264,20 @@ namespace Kopernicus
                 set { if (!value.value) celestialBody.Set("notSelectable", true); }
             }
 
-            // If the body should be hidden in RnD
+            // If the body should be hidden in RD
             [ParserTarget("RDVisibility")]
+            public EnumParser<RDVisibility> hiddenRD
+            {
+                get
+                {
+                    if (celestialBody.Has("hiddenRnD"))
+                        return celestialBody.Get<RDVisibility>("hiddenRnD");
+                    return RDVisibility.VISIBLE;
+                }
+                set { celestialBody.Set("hiddenRnD", value.value); }
+            }
+
+            // If the body should be hidden in RnD
             [ParserTarget("RnDVisibility")]
             public EnumParser<RDVisibility> hiddenRnD
             {
