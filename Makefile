@@ -12,8 +12,8 @@ PARAMS_RELEASE := /noconfig /define:RELEASE
 
 # Build Outputs
 CURRENT_DIR := $(shell pwd)
-PLUGIN_DIR := $(CURRENT_DIR)/Distribution/Development
-RELEASE_DIR := $(CURRENT_DIR)/Distribution/Release
+PLUGIN_DIR := $(CURRENT_DIR)/build/Debug/GameData/Kopernicus/Plugins
+RELEASE_DIR := $(CURRENT_DIR)/build/Release
 BUILD_DIR := $(RELEASE_DIR)/GameData/Kopernicus/Plugins
 PARSER := $(PLUGIN_DIR)/Kopernicus.Parser.dll
 ONDEMAND := $(PLUGIN_DIR)/Kopernicus.OnDemand.dll
@@ -21,10 +21,10 @@ COMPONENTS := $(PLUGIN_DIR)/Kopernicus.Components.dll
 CORE := $(PLUGIN_DIR)/Kopernicus.dll
 
 # Code paths
-CORE_CODE := $(CURRENT_DIR)/Kopernicus/Kopernicus
-COMPONENT_CODE := $(CURRENT_DIR)/Kopernicus/Kopernicus.Components
-ONDEMAND_CODE := $(CURRENT_DIR)/Kopernicus/Kopernicus.OnDemand
-PARSER_CODE := $(CURRENT_DIR)/Kopernicus/external/config-parser/src
+CORE_CODE := $(CURRENT_DIR)/src/Kopernicus
+COMPONENT_CODE := $(CURRENT_DIR)/src/Kopernicus.Components
+ONDEMAND_CODE := $(CURRENT_DIR)/src/Kopernicus.OnDemand
+PARSER_CODE := $(CURRENT_DIR)/src/external/config-parser/src
 
 # Assembly References
 CORLIB := $(MONO_ASSEMBLIES)/mscorlib.dll,$(MONO_ASSEMBLIES)/System.dll,$(MONO_ASSEMBLIES)/System.Core.dll

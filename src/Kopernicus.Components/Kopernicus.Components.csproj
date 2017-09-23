@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Distribution\Development\</OutputPath>
+    <OutputPath>..\..\build\Debug\GameData\Kopernicus\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,18 +24,18 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Distribution\Release\GameData\Kopernicus\Plugins\</OutputPath>
+    <OutputPath>..\..\build\Release\GameData\Kopernicus\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\deps\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ModularFlightIntegrator">
-      <HintPath>..\..\ModularFlightIntegrator.dll</HintPath>
+      <HintPath>..\..\deps\ModularFlightIntegrator.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
@@ -45,11 +45,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\UnityEngine.dll</HintPath>
+      <HintPath>..\..\deps\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\deps\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
