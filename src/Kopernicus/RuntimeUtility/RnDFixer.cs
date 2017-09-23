@@ -131,7 +131,7 @@ namespace Kopernicus
             //  RDVisibility = HIDDEN  //  RDVisibility = SKIP  //
 
             // Create a list with body to hide and their parent
-            List<KeyValuePair<PSystemBody, Int32>> hideList = new List<KeyValuePair<PSystemBody, Int32>>();
+            List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>> hideList = new List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, int>>>();
             // Create a list with body to skip and their parent
             List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
@@ -154,7 +154,7 @@ namespace Kopernicus
                         if (hidden.children.Count == 0 || visibility == PropertiesLoader.RDVisibility.HIDDEN)
                         {
                             body.Set("hiddenRnd", PropertiesLoader.RDVisibility.HIDDEN);
-                            hideList.Add(new KeyValuePair<PSystemBody, Int32>(hidden, 0));
+                            hideList.Add(new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, int>(parent, 0)));
                         }
                         // Skip
                         else
@@ -193,7 +193,7 @@ namespace Kopernicus
             // Hide bodies
             for (Int32 i = 0; i < hideList.Count; i++)
             {
-                KeyValuePair<PSystemBody, Int32> pair = hideList[i];
+                KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>> pair = hideList[i];
 
                 // Get hidden body and parent
                 PSystemBody hidden = pair.Key;
@@ -206,7 +206,7 @@ namespace Kopernicus
                 parent.children.Remove(hidden);
 
                 // Save the position in the hideList
-                hideList[i] = new KeyValuePair<PSystemBody, Int32>(hidden, index);
+                hideList[i] = new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, int>(parent, index));
             }
 
             // Apply changes and revert to the original PSystem
@@ -219,8 +219,8 @@ namespace Kopernicus
                 for (Int32 i = hideList.Count - 1; i > -1; i--)
                 {
                     PSystemBody hidden = hideList[i].Key;
-                    PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
-                    Int32 oldIndex = hideList[i].Value;
+                    PSystemBody parent = hideList[i].Value.Key;
+                    Int32 oldIndex = hideList[i].Value.Value;
                     parent.children.Insert(oldIndex, hidden);
                 }
                 // Undo the changes to the PSystem (skip)
