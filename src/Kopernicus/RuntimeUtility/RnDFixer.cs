@@ -59,9 +59,9 @@ namespace Kopernicus
             Boolean postSpawnChanges = false;
 
             // Replaced 'foreach' with 'for' to improve performance
-            var postSpawnBodies = PSystemManager.Instance?.localBodies?.FindAll(b => b.Has("orbitPatches"));
+            CelestialBody[] postSpawnBodies = PSystemManager.Instance?.localBodies?.Where(b => b.Has("orbitPatches"))?.ToArray();
 
-            for (Int32 i = 0; i < postSpawnBodies?.Count; i++)
+            for (Int32 i = 0; i < postSpawnBodies?.Length; i++)
             {
                 CelestialBody cb = postSpawnBodies[i];
 
@@ -189,6 +189,7 @@ namespace Kopernicus
                 // Put its children in its place
                 parent.children.InsertRange(index, hidden.children);
             }
+
             // Hide bodies
             for (Int32 i = 0; i < hideList.Count; i++)
             {
@@ -209,7 +210,7 @@ namespace Kopernicus
             }
 
             // Apply changes and revert to the original PSystem
-            if (hideList.Count > 0||skipList?.Count > 0)
+            if (hideList.Count > 0 || skipList?.Count > 0)
             {
                 // Rebuild Archives
                 AddPlanets();
@@ -244,7 +245,7 @@ namespace Kopernicus
 
             //  RDVisibility = NOICON  //  Kill Rotation //
             // Loop through the Containers
-            var containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
+            RDPlanetListItemContainer[] containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
             for (Int32 i = 0; i < containers?.Count(); i++)
             {
                 RDPlanetListItemContainer planetItem = containers[i];
@@ -272,13 +273,7 @@ namespace Kopernicus
                     {
                         planetItem.planet.SetActive(false);
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineLeft;
-                    }/*
-                    else if (visibility == PropertiesLoader.RDVisibility.HIDDEN)
-                    {
-                        planetItem.Hide();
-                        planetItem.HideChildren();
-                        planetItem.gameObject.SetActive(false);
-                    }*/
+                    }
                     else
                     {
                         planetItem.planet.SetActive(true);
@@ -288,7 +283,7 @@ namespace Kopernicus
 
                 // Add planetItems to 'RnDRotationKill'
                 if (planetItem?.planet?.transform?.rotation == null) continue;
-                if (body.Has("RnDRotation") ? !body.Get<bool>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
+                if (body.Has("RnDRotation") ? !body.Get<Boolean>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
                 {
                     RnDRotationKill.Add(planetItem);
                 }
@@ -306,7 +301,7 @@ namespace Kopernicus
             // Stuff needed for AddPlanets
             FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).FirstOrDefault();
             MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)?.Skip(26)?.FirstOrDefault();
-            var RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
+            RDArchivesController RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
 
             // AddPlanets requires this list to be empty when triggered
             list.SetValue(RDAC, new Dictionary<String, List<RDArchivesController.Filter>>());
