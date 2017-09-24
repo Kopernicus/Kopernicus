@@ -196,11 +196,11 @@ namespace Kopernicus
                 // Update the guiName for SwitchAOAMode
                 if (relativeSunAOA)
                 {
-                    Fields["SwitchAOAMode"].guiName = "Use absolute exposure";
+                    Events["SwitchAOAMode"].guiName = "Use absolute exposure";
                 }
                 else
                 {
-                    Fields["SwitchAOAMode"].guiName = "Use relative exposure";
+                    Events["SwitchAOAMode"].guiName = "Use relative exposure";
                 }
 
                 base.LateUpdate();
