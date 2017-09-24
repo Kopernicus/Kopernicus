@@ -44,11 +44,11 @@ namespace Kopernicus
 
         void LateUpdate()
         {
-            // Block the orientation of all stars
-            for (int i = 0; i < RnDRotationKill.Count(); i++)
+            // Kill the rotation of selected planet thumbnails
+            for (Int32 i = 0; i < RnDRotationKill.Count(); i++)
             {
-                RDPlanetListItemContainer star = RnDRotationKill[i];
-                star.planet.transform.rotation = Quaternion.identity;
+                RDPlanetListItemContainer planetItem = RnDRotationKill[i];
+                planetItem.planet.transform.rotation = Quaternion.identity;
             }
         }
 
@@ -58,9 +58,9 @@ namespace Kopernicus
             Boolean postSpawnChanges = false;
 
             // Replaced 'foreach' with 'for' to improve performance
-            var postSpawnBodies = PSystemManager.Instance?.localBodies?.FindAll(b => b.Has("orbitPatches"));
+            CelestialBody[] postSpawnBodies = PSystemManager.Instance?.localBodies?.Where(b => b.Has("orbitPatches"))?.ToArray();
 
-            for (int i = 0; i < postSpawnBodies?.Count; i++)
+            for (Int32 i = 0; i < postSpawnBodies?.Length; i++)
             {
                 CelestialBody cb = postSpawnBodies[i];
 
@@ -127,30 +127,36 @@ namespace Kopernicus
 
 
 
-            //  RDVisibility = SKIP  //
-            List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
+            //  RDVisibility = HIDDEN  //  RDVisibility = SKIP  //
 
             // Create a list with body to hide and their parent
-            PSystemBody[] bodies = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true);
+            List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>> hideList = new List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, int>>>();
+            // Create a list with body to skip and their parent
+            List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
             // Replaced 'foreach' with 'for' to improve performance
-            CelestialBody[] hideBodies = PSystemManager.Instance?.localBodies?.Where(b => b.Has("hiddenRnD")).ToArray();
+            PSystemBody[] bodies = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true);
+            CelestialBody[] hideBodies = PSystemManager.Instance?.localBodies?.Where(cb => cb.Has("hiddenRnD"))?.ToArray();
 
-            for (int i = 0; i < hideBodies?.Length; i++)
+            for (Int32 i = 0; i < hideBodies?.Length; i++)
             {
                 CelestialBody body = hideBodies[i];
+                PropertiesLoader.RDVisibility visibility = body.Get<PropertiesLoader.RDVisibility>("hiddenRnD");
 
-                if (body.Get<PropertiesLoader.RDVisibility>("hiddenRnD") == PropertiesLoader.RDVisibility.SKIP)
+                if (visibility == PropertiesLoader.RDVisibility.HIDDEN || visibility == PropertiesLoader.RDVisibility.SKIP)
                 {
                     PSystemBody hidden = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name);
-                    if (hidden.children.Count == 0)
+                    PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
+                    if (parent != null)
                     {
-                        body.Set("hiddenRnd", PropertiesLoader.RDVisibility.HIDDEN);
-                    }
-                    else
-                    {
-                        PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
-                        if (parent != null)
+                        // Hide
+                        if (hidden.children.Count == 0 || visibility == PropertiesLoader.RDVisibility.HIDDEN)
+                        {
+                            body.Set("hiddenRnd", PropertiesLoader.RDVisibility.HIDDEN);
+                            hideList.Add(new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, int>(parent, 0)));
+                        }
+                        // Skip
+                        else
                         {
                             if (skipList.Any(b => b.Key == parent))
                             {
@@ -164,8 +170,8 @@ namespace Kopernicus
                 }
             }
 
-            // Replaced 'foreach' with 'for' to improve performance
-            for (int i = 0; i < skipList.Count; i++)
+            // Skip bodies
+            for (Int32 i = 0; i < skipList.Count; i++)
             {
                 KeyValuePair<PSystemBody, PSystemBody> pair = skipList[i];
 
@@ -176,19 +182,47 @@ namespace Kopernicus
                 // Find where the hidden body is
                 Int32 index = parent.children.IndexOf(hidden);
 
+                // Remove the hidden body from its parent's children list so it won't show up when clicking the parent
+                parent.children.Remove(hidden);
+
                 // Put its children in its place
                 parent.children.InsertRange(index, hidden.children);
+            }
+
+            // Hide bodies
+            for (Int32 i = 0; i < hideList.Count; i++)
+            {
+                KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>> pair = hideList[i];
+
+                // Get hidden body and parent
+                PSystemBody hidden = pair.Key;
+                PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
+
+                // Find where the hidden body is
+                Int32 index = parent.children.IndexOf(hidden);
 
                 // Remove the hidden body from its parent's children list so it won't show up when clicking the parent
                 parent.children.Remove(hidden);
+
+                // Save the position in the hideList
+                hideList[i] = new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, int>(parent, index));
             }
 
-            if (skipList?.Count > 0)
+            // Apply changes and revert to the original PSystem
+            if (hideList.Count > 0 || skipList?.Count > 0)
             {
                 // Rebuild Archives
                 AddPlanets();
 
-                // Undo the changes to the PSystem
+                // Undo the changes to the PSystem (hide)
+                for (Int32 i = hideList.Count - 1; i > -1; i--)
+                {
+                    PSystemBody hidden = hideList[i].Key;
+                    PSystemBody parent = hideList[i].Value.Key;
+                    Int32 oldIndex = hideList[i].Value.Value;
+                    parent.children.Insert(oldIndex, hidden);
+                }
+                // Undo the changes to the PSystem (skip)
                 for (Int32 i = skipList.Count - 1; i > -1; i--)
                 {
                     PSystemBody hidden = skipList[i].Key;
@@ -196,7 +230,7 @@ namespace Kopernicus
                     Int32 oldIndex = parent.children.IndexOf(hidden.children.FirstOrDefault());
                     parent.children.Insert(oldIndex, hidden);
 
-                    for (int j = 0; j < hidden.children.Count; j++)
+                    for (Int32 j = 0; j < hidden.children.Count; j++)
                     {
                         PSystemBody child = hidden.children[j];
 
@@ -208,18 +242,18 @@ namespace Kopernicus
 
 
 
-            //  RDVisibility = HIDDEN  //  RDVisibility = NOICON  //  Kill Rotation //
+            //  RDVisibility = NOICON  //  Kill Rotation //
             // Loop through the Containers
-            var containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
-            for (int i = 0; i < containers?.Count(); i++)
+            RDPlanetListItemContainer[] containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
+            for (Int32 i = 0; i < containers?.Count(); i++)
             {
                 RDPlanetListItemContainer planetItem = containers[i];
 
                 // The label text is set from the CelestialBody's displayName
-                CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(b => b.transform.name == planetItem.name);
+                CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(cb => cb.transform.name == planetItem.name);
                 if (body == null)
                 {
-                    Debug.Log("[Kopernicus]: RnDFixer: Could not find CelestialBody for the label => " + planetItem.label_planetName.text);
+                    Debug.Log("[Kopernicus]: RnDFixer: Could not find CelestialBody for the label => " + planetItem.name);
                     continue;
                 }
 
@@ -239,12 +273,6 @@ namespace Kopernicus
                         planetItem.planet.SetActive(false);
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineLeft;
                     }
-                    else if (visibility == PropertiesLoader.RDVisibility.HIDDEN)
-                    {
-                        planetItem.gameObject.SetActive(false);
-                        planetItem.Hide();
-                        planetItem.HideChildren();
-                    }
                     else
                     {
                         planetItem.planet.SetActive(true);
@@ -253,19 +281,26 @@ namespace Kopernicus
                 }
 
                 // Add planetItems to 'RnDRotationKill'
-                if (body.Has("RnDRotation") ? !body.Get<bool>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
+                if (planetItem?.planet?.transform?.rotation == null) continue;
+                if (body.Has("RnDRotation") ? !body.Get<Boolean>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
                 {
                     RnDRotationKill.Add(planetItem);
                 }
             }
         }
 
-        void AddPlanets()
+        public static void AddPlanets()
         {
+            RDPlanetListItemContainer[] planetItems = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
+            for (int i = 0; i < planetItems.Length; i++)
+            {
+                DestroyImmediate(planetItems[i]);
+            }
+
             // Stuff needed for AddPlanets
             FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).FirstOrDefault();
             MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)?.Skip(26)?.FirstOrDefault();
-            var RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
+            RDArchivesController RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
 
             // AddPlanets requires this list to be empty when triggered
             list.SetValue(RDAC, new Dictionary<String, List<RDArchivesController.Filter>>());
