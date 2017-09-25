@@ -49,7 +49,7 @@ namespace Kopernicus
         internal const Int32 version_major = 1;
         internal const Int32 version_minor = 3;
         internal const Int32 Revision = 0;
-        internal const Int32 Kopernicus = 6;
+        internal const Int32 Kopernicus = 7;
 
         public static Boolean IsCompatible()
         {
