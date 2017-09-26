@@ -1,22 +1,14 @@
 ﻿Kopernicus
 ==============================
-September 25, 2017
+September 26, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.0-7)
+New in this version (1.3.0-8)
 -------------------
-- Added a contractWeight option to configure the amount of contracts generated for the body
-- Added events to the loader, based on KSPs GameEvents API
-- Display a warning if Kopernicus fails to load
-- Display ModuleManagers nCats if Kopernicus fails to load
-- Solar Panels now select the star they should track based on the ec/s they could generate, even if it is blocked by something
-- Fix various smaller issues
-- Added better error messages to some parts of the loader
-- Added a manual tracking override to the solar panels
-- Added PSystemBody constructors to most of the Loaders
+- Fixed the autoselection of the tracked body
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
