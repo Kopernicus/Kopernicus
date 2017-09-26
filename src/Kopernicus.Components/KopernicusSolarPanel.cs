@@ -163,6 +163,7 @@ namespace Kopernicus
                     if (energy > maxEnergy)
                     {
                         maxFlowRate = __flowRate;
+                        maxEnergy = energy;
                         maxStar = star;
                     }
 
