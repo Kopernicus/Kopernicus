@@ -45,18 +45,18 @@ namespace Kopernicus
             public BodyType type { get; set; }
 
             // PSystemBody to use as a template in lookup & clone
-            public PSystemBody originalBody; 
+            public PSystemBody originalBody;
 
             // Name of the body to use for the template
             [PreApply]
             [ParserTarget("name", optional = false)]
-            public String name 
+            public String name
             {
                 // Crawl the system prefab for the body
-                set 
-                { 
+                set
+                {
                     originalBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value);
-                    if(originalBody == null)
+                    if (originalBody == null)
                     {
                         throw new TemplateNotFoundException("Unable to find: " + value);
                     }
@@ -66,11 +66,19 @@ namespace Kopernicus
             // Should we strip the PQS off
             [PreApply]
             [ParserTarget("removePQS")]
-            public NumericParser<Boolean> removePQS = new NumericParser<Boolean> (false);
+            public NumericParser<Boolean> removePQS = new NumericParser<Boolean>(false);
 
             // Should we strip the atmosphere off
             [ParserTarget("removeAtmosphere")]
             public NumericParser<Boolean> removeAtmosphere = new NumericParser<Boolean>(false);
+
+            // Should we remove the biomes
+            [ParserTarget("removeBiomes")]
+            public NumericParser<Boolean> removeBiomes
+            {
+                get { return body.Has("removeBiomes") ? body.Get<Boolean>("removeBiomes") : true; }
+                set { body.Set("removeBiomes", value.value); }
+            }
 
             // Should we strip the ocean off
             [ParserTarget("removeOcean")]
@@ -86,38 +94,38 @@ namespace Kopernicus
 
             // Collection of PQS mods to remove
             [ParserTarget("removeProgressTree")]
-            public NumericParser<Boolean> removeProgressTree = new NumericParser<Boolean> (true);
+            public NumericParser<Boolean> removeProgressTree = new NumericParser<Boolean>(true);
 
             // Remove coronas for star
             [ParserTarget("removeCoronas")]
             public NumericParser<Boolean> removeCoronas = new NumericParser<Boolean>(false);
 
             // Apply event
-            void IParserEventSubscriber.Apply (ConfigNode node)
+            void IParserEventSubscriber.Apply(ConfigNode node)
             {
                 // Waaaah
                 SpaceCenter.Instance = null;
 
                 // Instantiate (clone) the template body
-                GameObject bodyGameObject = UnityEngine.Object.Instantiate (originalBody.gameObject) as GameObject;
+                GameObject bodyGameObject = UnityEngine.Object.Instantiate(originalBody.gameObject) as GameObject;
                 bodyGameObject.name = originalBody.name;
                 bodyGameObject.transform.parent = Utility.Deactivator;
-                body = bodyGameObject.GetComponent<PSystemBody> ();
-                body.children = new List<PSystemBody> ();
+                body = bodyGameObject.GetComponent<PSystemBody>();
+                body.children = new List<PSystemBody>();
 
                 // Clone the scaled version
-                body.scaledVersion = UnityEngine.Object.Instantiate (originalBody.scaledVersion) as GameObject;
+                body.scaledVersion = UnityEngine.Object.Instantiate(originalBody.scaledVersion) as GameObject;
                 body.scaledVersion.transform.parent = Utility.Deactivator;
                 body.scaledVersion.name = originalBody.scaledVersion.name;
-                
+
                 // Clone the PQS version (if it has one) and we want the PQS
-                if (body.pqsVersion != null && removePQS.value != true) 
+                if (body.pqsVersion != null && removePQS.value != true)
                 {
-                    body.pqsVersion = UnityEngine.Object.Instantiate (originalBody.pqsVersion) as PQS;
+                    body.pqsVersion = UnityEngine.Object.Instantiate(originalBody.pqsVersion) as PQS;
                     body.pqsVersion.transform.parent = Utility.Deactivator;
                     body.pqsVersion.name = originalBody.pqsVersion.name;
-                } 
-                else 
+                }
+                else
                 {
                     // Make sure we have no ties to the PQS, as we wanted to remove it or it didn't exist
                     body.pqsVersion = null;
@@ -132,10 +140,10 @@ namespace Kopernicus
             }
 
             // Post apply event
-            void IParserEventSubscriber.PostApply (ConfigNode node)
+            void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 // Should we remove the atmosphere
-                if (body.celestialBody.atmosphere && removeAtmosphere.value) 
+                if (body.celestialBody.atmosphere && removeAtmosphere.value)
                 {
                     // Find atmosphere from ground and destroy the game object
                     AtmosphereFromGround atmosphere = body.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0];
@@ -151,23 +159,23 @@ namespace Kopernicus
                 }
 
                 // If we have a PQS
-                if (body.pqsVersion != null) 
+                if (body.pqsVersion != null)
                 {
-                    Logger.Active.Log ("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
+                    Logger.Active.Log("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
 
                     // Should we remove the ocean?
-                    if (body.celestialBody.ocean && removeOcean.value) 
+                    if (body.celestialBody.ocean && removeOcean.value)
                     {
                         // Find atmosphere the ocean PQS
-                        PQS ocean = body.pqsVersion.GetComponentsInChildren<PQS> (true).Where (pqs => pqs != body.pqsVersion).First ();
-                        PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform> (true).First ();
+                        PQS ocean = body.pqsVersion.GetComponentsInChildren<PQS>(true).Where(pqs => pqs != body.pqsVersion).First();
+                        PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).First();
 
                         // Destroy the ocean PQS (this could be bad - destroying the secondary fades...)
-                        cbt.planetFade.secondaryRenderers.Remove (ocean.gameObject);
+                        cbt.planetFade.secondaryRenderers.Remove(ocean.gameObject);
                         cbt.secondaryFades = null;
                         ocean.transform.parent = null;
-                        UnityEngine.Object.Destroy (ocean);
-                    
+                        UnityEngine.Object.Destroy(ocean);
+
                         // No more ocean :(
                         body.celestialBody.ocean = false;
                         body.pqsVersion.mapOcean = false;
@@ -190,10 +198,10 @@ namespace Kopernicus
                                 mType = split[0];
                                 name = split[1].Remove(split[1].Length - 1);
                             }
-                            
+
                             // Get the mods matching the String
                             String modName = mType;
-                            if(!mod.Contains("PQS"))
+                            if (!mod.Contains("PQS"))
                                 modName = "PQSMod_" + mod;
                             if (name == "")
                             {
@@ -235,7 +243,7 @@ namespace Kopernicus
                 }
 
                 // Should we remove the progress tree
-                if (removeProgressTree.value) 
+                if (removeProgressTree.value)
                 {
                     body.celestialBody.progressTree = null;
                 }
@@ -243,7 +251,7 @@ namespace Kopernicus
                 // Figure out what kind of body we are
                 if (body.scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0)
                     type = BodyType.Star;
-                else if(body.celestialBody.atmosphere)
+                else if (body.celestialBody.atmosphere)
                     type = BodyType.Atmospheric;
                 else
                     type = BodyType.Vacuum;
@@ -270,4 +278,3 @@ namespace Kopernicus
         }
     }
 }
-
