@@ -24,6 +24,7 @@
  */
 
 using System;
+using KSP.Localization;
 
 namespace Kopernicus
 {
@@ -51,7 +52,7 @@ namespace Kopernicus
             [ParserTarget("displayName")]
             public String displayName
             {
-                get { return attribute.localizationTag; } // This is not displayName because of reasons
+                get { return Localizer.Format(attribute.localizationTag); } // This is not displayName because of reasons
                 set { attribute.localizationTag = value; }
             }
 
