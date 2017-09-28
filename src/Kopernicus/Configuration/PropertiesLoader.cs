@@ -337,6 +337,10 @@ namespace Kopernicus
             // PostApply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                // Check biome map
+                if (biomeMap?.value == null)
+                    throw new InvalidOperationException("The biomeMap cannot be null.");
+
                 // Replace biomes
                 if (biomes?.Count() > 0)
                     celestialBody.BiomeMap.Attributes = biomes.Select(b => b.attribute).ToArray();
