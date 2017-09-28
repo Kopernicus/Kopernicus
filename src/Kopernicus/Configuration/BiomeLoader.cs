@@ -43,7 +43,7 @@ namespace Kopernicus
                 set
                 {
                     attribute.name = value;
-                    attribute.displayname = "TestBIOME";
+                    attribute.localizationTag = value; // This is not displayName because of reasons
                 }
             }
 
@@ -51,8 +51,8 @@ namespace Kopernicus
             [ParserTarget("displayName")]
             public String displayName 
             {
-                get { return attribute.displayname; } // This is not displayName because of reasons
-                set { attribute.displayname = value; }
+                get { return attribute.localizationTag; } // This is not displayName because of reasons
+                set { attribute.localizationTag = value; }
             }
 
             // The science multiplier for this biome
