@@ -144,14 +144,6 @@ namespace Kopernicus
                 set { celestialBody.coreTemperatureOffset = value; }
             }
 
-            // Is this the home world
-            [ParserTarget("isHomeWorld")]
-            public NumericParser<Boolean> isHomeWorld
-            {
-                get { return celestialBody.isHomeWorld; }
-                set { celestialBody.isHomeWorld = value; }
-            }
-
             // Time warp altitude limits
             [ParserTarget("timewarpAltitudeLimits")]
             public NumericCollectionParser<Single> timewarpAltitudeLimits
@@ -337,6 +329,9 @@ namespace Kopernicus
             // PostApply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                // isHomeWorld Check
+                celestialBody.isHomeWorld = celestialBody.transform.name == "Kerbin";
+
                 // Replace biomes
                 if (celestialBody.Has("removeBiomes") && celestialBody.Get<Boolean>("removeBiomes"))
                     celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
