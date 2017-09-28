@@ -342,8 +342,24 @@ namespace Kopernicus
                     throw new InvalidOperationException("The biomeMap cannot be null.");
 
                 // Replace biomes
+                if (celestialBody.Has("removeBiomes") && celestialBody.Get<Boolean>("removeBiomes"))
+                    celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
+
                 if (biomes?.Count() > 0)
-                    celestialBody.BiomeMap.Attributes = biomes.Select(b => b.attribute).ToArray();
+                {
+                    // Generate a list of biomes
+                    List<CBAttributeMapSO.MapAttribute> biomesList = new List<CBAttributeMapSO.MapAttribute>();
+
+                    // If removeBiomes is false we want to keep the original biomes
+                    if (celestialBody.Has("removeBiomes") && !celestialBody.Get<Boolean>("removeBiomes"))
+                        biomesList = celestialBody.BiomeMap.Attributes.ToList();
+
+                    // Add the new biomes
+                    biomesList.AddRange(biomes.Select(b => b.attribute));
+
+                    // Replace the old biomes list with the new one
+                    celestialBody.BiomeMap.Attributes = biomesList.ToArray();
+                }
 
                 // Converters
                 if (hasGravParam)
