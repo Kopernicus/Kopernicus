@@ -24,6 +24,7 @@
  */
 
 using System;
+using KSP.Localization;
 
 namespace Kopernicus
 {
@@ -37,27 +38,27 @@ namespace Kopernicus
 
             // The name of this biome
             [ParserTarget("name")]
-            public String name 
+            public String name
             {
                 get { return attribute.name; }
                 set
                 {
                     attribute.name = value;
-                    attribute.displayname = value;
+                    attribute.localizationTag = value; // This is not displayName because of reasons
                 }
             }
 
             // The displayName of this biome
             [ParserTarget("displayName")]
-            public String displayName 
+            public String displayName
             {
-                get { return attribute.displayname; } // This is not displayName because of reasons
-                set { attribute.displayname = value; }
+                get { return attribute.localizationTag; } // This is not displayName because of reasons
+                set { attribute.localizationTag = value; }
             }
 
             // The science multiplier for this biome
             [ParserTarget("value")]
-            public NumericParser<Single> value 
+            public NumericParser<Single> value
             {
                 get { return attribute.value; }
                 set { attribute.value = value; }
@@ -65,7 +66,7 @@ namespace Kopernicus
 
             // The color in the map for this attribute
             [ParserTarget("color")]
-            public ColorParser color 
+            public ColorParser color
             {
                 get { return attribute.mapColor; }
                 set { attribute.mapColor = value; }
@@ -84,13 +85,13 @@ namespace Kopernicus
             }
 
             // Allocate the biome descriptor
-            public BiomeLoader ()
+            public BiomeLoader()
             {
                 attribute = new CBAttributeMapSO.MapAttribute();
             }
-            
+
             // Get reference to existing biome descriptor
-            public BiomeLoader (CBAttributeMapSO.MapAttribute attribute)
+            public BiomeLoader(CBAttributeMapSO.MapAttribute attribute)
             {
                 this.attribute = attribute;
             }
