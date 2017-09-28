@@ -220,7 +220,6 @@ namespace Kopernicus
                         celestialBody.BiomeMap = value;
                         celestialBody.BiomeMap.exactSearch = false;
                         celestialBody.BiomeMap.nonExactThreshold = 0.05f;
-                        celestialBody.BiomeMap.Attributes = biomes.Select(b => b.attribute).ToArray();
                     }
                 }
             }
@@ -338,6 +337,10 @@ namespace Kopernicus
             // PostApply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                // Replace biomes
+                if (biomes?.Count() > 0)
+                    celestialBody.BiomeMap.Attributes = biomes.Select(b => b.attribute).ToArray();
+
                 // Converters
                 if (hasGravParam)
                     GravParamToOthers();
