@@ -43,7 +43,7 @@ namespace Kopernicus
                 set
                 {
                     attribute.name = value;
-                    attribute.displayname = value;
+                    attribute.displayname = "TestBIOME";
                 }
             }
 
