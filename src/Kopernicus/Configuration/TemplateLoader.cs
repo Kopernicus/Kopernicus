@@ -76,18 +76,8 @@ namespace Kopernicus
             [ParserTarget("removeBiomes")]
             public NumericParser<Boolean> removeBiomes
             {
-                get
-                {
-                    if (body.Has("removeBiomes"))
-                        return body.Get<Boolean>("removeBiomes");
-                    else
-                        return true;
-                }
-                set
-                {
-                    if (value?.value == false)
-                        body.Set("removeBiomes", value.value);
-                }
+                get { return body.Has("removeBiomes") ? body.Get<Boolean>("removeBiomes") : true; }
+                set { body.Set("removeBiomes", value.value); }
             }
 
             // Should we strip the ocean off
