@@ -193,7 +193,7 @@ namespace Kopernicus
                     SolarFlux = new Dictionary<String, Double>();
                 Stars.Add(this);
                 DontDestroyOnLoad(this);
-                light = gameObject.GetComponent<Light>();
+                light = gameObject.GetComponentInChildren<Light>();
 
                 // Gah
                 typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Last(f => f.FieldType == typeof(Light)).SetValue(this, light);
