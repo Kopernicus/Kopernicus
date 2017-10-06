@@ -123,6 +123,7 @@ namespace Kopernicus
             Utility.CopyObjectFields(Sun.Instance, star, false);
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
+            Sun.Instance.useLocalSpaceSunLight = true;
 
             // Bodies
             Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
