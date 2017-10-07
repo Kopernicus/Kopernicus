@@ -127,6 +127,7 @@ namespace Kopernicus
             // LensFlares
             gob = SunFlare.Instance.gameObject;
             KopernicusSunFlare flare = gob.AddComponent<KopernicusSunFlare>();
+            gob.name = star.sun.name;
             Utility.CopyObjectFields(SunFlare.Instance, flare, false);
             DestroyImmediate(SunFlare.Instance);
             SunFlare.Instance = star.lensFlare = flare;
@@ -150,10 +151,10 @@ namespace Kopernicus
                     starObj.transform.position = body.position;
                     starObj.transform.rotation = body.rotation;
 
-                    GameObject flareObj = Instantiate(star_.lensFlare.gameObject);
+                    GameObject flareObj = Instantiate(SunFlare.Instance.gameObject);
                     KopernicusSunFlare flare_ = flareObj.GetComponent<KopernicusSunFlare>();
                     star_.lensFlare = flare_;
-                    flareObj.transform.parent = star_.lensFlare.transform.parent;
+                    flareObj.transform.parent = SunFlare.Instance.transform.parent;
                     flareObj.name = body.name;
                     flareObj.transform.localPosition = Vector3.zero;
                     flareObj.transform.localRotation = Quaternion.identity;

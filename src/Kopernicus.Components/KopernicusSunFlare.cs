@@ -40,7 +40,14 @@ namespace Kopernicus
         {
             protected override void Awake()
             {
-
+                // sun flare
+                Camera.onPreCull += cam =>
+                {
+                    Vector3d scaledSpace = target.transform.position - ScaledSpace.LocalToScaledSpace(sun.position);
+                    sunDirection = scaledSpace.normalized;
+                    if (sunDirection != Vector3d.zero)
+                        transform.forward = sunDirection;
+                };
             }
         }
     }
