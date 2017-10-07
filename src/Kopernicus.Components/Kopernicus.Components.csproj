@@ -84,6 +84,7 @@
     <Compile Include="ShaderLoader.cs" />
     <Compile Include="Scatter.cs" />
     <Compile Include="KopernicusStar.cs" />
+    <Compile Include="KopernicusSunFlare.cs" />
     <Compile Include="StorageComponent.cs" />
     <Compile Include="Wiresphere.cs" />
     <Compile Include="PlanetaryParticle.cs" />

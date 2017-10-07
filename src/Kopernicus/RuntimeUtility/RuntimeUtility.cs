@@ -123,7 +123,13 @@ namespace Kopernicus
             Utility.CopyObjectFields(Sun.Instance, star, false);
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
-            Sun.Instance.useLocalSpaceSunLight = true;
+
+            // LensFlares
+            gob = SunFlare.Instance.gameObject;
+            KopernicusSunFlare flare = gob.AddComponent<KopernicusSunFlare>();
+            Utility.CopyObjectFields(SunFlare.Instance, flare, false);
+            DestroyImmediate(SunFlare.Instance);
+            SunFlare.Instance = star.lensFlare = flare;
 
             // Bodies
             Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
@@ -143,6 +149,17 @@ namespace Kopernicus
                     starObj.transform.localScale = Vector3.one;
                     starObj.transform.position = body.position;
                     starObj.transform.rotation = body.rotation;
+
+                    GameObject flareObj = Instantiate(star_.lensFlare.gameObject);
+                    KopernicusSunFlare flare_ = flareObj.GetComponent<KopernicusSunFlare>();
+                    star_.lensFlare = flare_;
+                    flareObj.transform.parent = star_.lensFlare.transform.parent;
+                    flareObj.name = body.name;
+                    flareObj.transform.localPosition = Vector3.zero;
+                    flareObj.transform.localRotation = Quaternion.identity;
+                    flareObj.transform.localScale = Vector3.one;
+                    flareObj.transform.position = body.position;
+                    flareObj.transform.rotation = body.rotation;
                 }
 
                 // Post spawn patcher
