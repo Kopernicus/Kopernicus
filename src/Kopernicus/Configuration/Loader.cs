@@ -182,7 +182,7 @@ namespace Kopernicus
                 Dictionary<String, Body> bodies = new Dictionary<String, Body>();
 
                 // Load all of the bodies
-                foreach (ConfigNode bodyNode in node.GetNodes(bodyNodeName)) 
+                foreach (ConfigNode bodyNode in node.GetNodes(bodyNodeName))
                 {
                     // Create a logger for this body
                     Logger bodyLogger = new Logger(bodyNode.GetValue("name") + ".Body");
@@ -196,8 +196,8 @@ namespace Kopernicus
                         bodies.Add(currentBody.name, currentBody);
                         Events.OnLoaderLoadBody.Fire(currentBody, bodyNode);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.name);
-                    } 
-                    catch (Exception e) 
+                    }
+                    catch (Exception e)
                     {
                         bodyLogger.LogException(e);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue("name"));
@@ -205,8 +205,8 @@ namespace Kopernicus
                     }
 
                     // Restore default logger
-                    bodyLogger.Flush ();
-                    Logger.Default.SetAsActive ();
+                    bodyLogger.Flush();
+                    Logger.Default.SetAsActive();
                 }
 
                 // Event
@@ -240,14 +240,14 @@ namespace Kopernicus
                 }
 
                 // Glue all the orbits together in the defined pattern
-                foreach (KeyValuePair<String, Body> body in bodies) 
+                foreach (KeyValuePair<String, Body> body in bodies)
                 {
                     // If this body is in orbit around another body
-                    if(body.Value.orbit != null)
+                    if (body.Value.orbit != null)
                     {
                         // Get the Body object for the reference body
                         Body parent = null;
-                        if(!bodies.TryGetValue(body.Value.orbit.referenceBody, out parent))
+                        if (!bodies.TryGetValue(body.Value.orbit.referenceBody, out parent))
                         {
                             throw new Exception("Reference body for \"" + body.Key + "\" could not be found. Missing body name is \"" + body.Value.orbit.referenceBody + "\".");
                         }
@@ -274,6 +274,12 @@ namespace Kopernicus
                         }
                     }
 
+                    // Set an unique identifier if there is noone
+                    if (!body.Value.generatedBody.Has("identifier"))
+                    {
+                        body.Value.generatedBody.Set("identifier", body.Value.name);
+                    }
+
                     // Event
                     Events.OnLoaderFinalizeBody.Fire(body.Value);
                 }
@@ -289,17 +295,23 @@ namespace Kopernicus
                 }
 
                 // Sort by distance from parent (discover how this effects local bodies)
-                RecursivelySortBodies (systemPrefab.rootBody);
+                RecursivelySortBodies(systemPrefab.rootBody);
 
                 // Fix doubled flightGlobals
                 List<Int32> numbers = new List<Int32>() { 0, 1 };
                 Int32 index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
                 PatchFGI(ref numbers, ref index, systemPrefab.rootBody);
 
+                // Check if all bodies have an unique identifier
+                if (bodies.Any(b => bodies.Count(body => body.Value.identifier == b.Value.identifier) > 1))
+                {
+                    throw new InvalidOperationException("Found duplicated body identifiers!");
+                }
+
                 // Main Menu bodies
                 if (randomMainMenuBodies.Any())
-                    Templates.menuBody = randomMainMenuBodies[new System.Random().Next(0, randomMainMenuBodies.Count)]; 
-                
+                    Templates.menuBody = randomMainMenuBodies[new System.Random().Next(0, randomMainMenuBodies.Count)];
+
                 // We're done
                 currentBody.generatedBody = null;
 
@@ -308,12 +320,12 @@ namespace Kopernicus
             }
 
             // Sort bodies by distance from parent body
-            public static void RecursivelySortBodies (PSystemBody body)
+            public static void RecursivelySortBodies(PSystemBody body)
             {
                 body.children = body.children.OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList();
-                foreach (PSystemBody child in body.children) 
+                foreach (PSystemBody child in body.children)
                 {
-                    RecursivelySortBodies (child);
+                    RecursivelySortBodies(child);
                 }
             }
 

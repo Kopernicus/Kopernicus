@@ -98,6 +98,8 @@ namespace Kopernicus
                 foreach (TimeOfDayAnimation anim in Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>())
                     anim.target = KopernicusStar.GetNearest(FlightGlobals.GetHomeBody()).gameObject.transform;
             });
+            GameEvents.onProtoVesselLoad.Add(TransformBodyReferencesOnLoad);
+            GameEvents.onProtoVesselSave.Add(TransformBodyReferencesOnSave);
 
             // Update Music Logic
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
@@ -671,6 +673,33 @@ namespace Kopernicus
         {
             Events.OnRuntimeUtilityPatchFI.Fire();
             ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+        }
+
+        // Transforms body references in the savegames
+        void TransformBodyReferencesOnLoad(GameEvents.FromToAction<ProtoVessel, ConfigNode> data)
+        {
+            // Check if the config node is null
+            if (data.to == null)
+                return;
+            ConfigNode orbit = data.to.GetNode("ORBIT");
+            String bodyIdent = orbit.GetValue("IDENT");
+            CelestialBody body = PSystemManager.Instance.localBodies.FirstOrDefault(b => b.Get<String>("identifier") == bodyIdent);
+            if (body == null)
+                return;
+            orbit.SetValue("REF", body.flightGlobalsIndex);
+        }
+
+        // Transforms body references in the savegames
+        void TransformBodyReferencesOnSave(GameEvents.FromToAction<ProtoVessel, ConfigNode> data)
+        {
+            // Save the reference to the real body
+            if (data.to == null)
+                return;
+            ConfigNode orbit = data.to.GetNode("ORBIT");
+            CelestialBody body = PSystemManager.Instance.localBodies.FirstOrDefault(b => b.flightGlobalsIndex == data.from.orbitSnapShot.ReferenceBodyIndex);
+            if (body == null)
+                return;
+            orbit.AddValue("IDENT", body.Get<String>("identifier"));
         }
 
         // Remove the Handlers

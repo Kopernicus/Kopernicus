@@ -30,7 +30,7 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-    namespace Configuration 
+    namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
         public class Body : IParserEventSubscriber
@@ -77,13 +77,22 @@ namespace Kopernicus
                         generatedBody.celestialBody.gameObject.GetComponent<NameChanger>().newName = value;
                 }
             }
-            
+
             // Flight globals index of this body - for computing reference id
             [ParserTarget("flightGlobalsIndex")]
-            public NumericParser<Int32> flightGlobalsIndex 
+            public NumericParser<Int32> flightGlobalsIndex
             {
                 get { return generatedBody.flightGlobalsIndex; }
                 set { generatedBody.flightGlobalsIndex = value.value; }
+            }
+
+            // An identifier that is used for referencing the orbiting body. 
+            // This must be unique!
+            [ParserTarget("identifier")]
+            public String identifier
+            {
+                get { return generatedBody.Has("identifier") ? generatedBody.Get<String>("identifier") : null; }
+                set { generatedBody.Set("identifier", value); }
             }
 
             // Finalize the orbit of the body?
@@ -126,7 +135,7 @@ namespace Kopernicus
             // Wrapper around the settings for the world's scaled version
             [ParserTarget("ScaledVersion", allowMerge = true)]
             public ScaledVersionLoader scaledVersion { get; set; }
-            
+
             // Wrapper around the settings for the world's atmosphere
             [ParserTarget("Atmosphere", allowMerge = true)]
             public AtmosphereLoader atmosphere { get; set; }
@@ -146,7 +155,7 @@ namespace Kopernicus
             // Wrapper around Particle class for editing/loading
             [ParserTargetCollection("Particles", nameSignificance = NameSignificance.None, allowMerge = true)]
             public List<ParticleLoader> particle = new List<ParticleLoader>();
-        
+
             // Wrapper around the settings for the SpaceCenter
             [ParserTarget("SpaceCenter", allowMerge = true)]
             public SpaceCenterLoader spaceCenter { get; set; }
