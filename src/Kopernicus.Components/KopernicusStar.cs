@@ -285,7 +285,7 @@ namespace Kopernicus
                 if (HighLogic.LoadedSceneIsFlight && iva?.GetComponent<Light>())
                 {
                     iva.GetComponent<Light>().color = shifter.IVASunColor;
-                    iva.GetComponent<Light>().intensity = shifter.IVASunIntensity;
+                    iva.GetComponent<Light>().intensity = shifter.ivaIntensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, target.position));
                 }
 
                 // Set SunFlare color
@@ -312,7 +312,6 @@ namespace Kopernicus
                 if (FlightGlobals.currentMainBody == null || FlightGlobals.currentMainBody == sun)
                 {
                     localTime = 1f;
-                    light.intensity = scaledSunLight.intensity;
                 }
                 else
                 {
@@ -325,7 +324,7 @@ namespace Kopernicus
                     Single fadeStartAtAlt = horizonScalar + fadeStart * dayNightRatio;
                     Single fadeEndAtAlt = horizonScalar - fadeEnd * dayNightRatio;
                     localTime = Vector3.Dot(-FlightGlobals.getUpAxis(localSpace), transform.forward);
-                    light.intensity = Mathf.Lerp(0f, scaledSunLight.intensity, Mathf.InverseLerp(fadeEndAtAlt, fadeStartAtAlt, localTime));
+                    light.intensity = Mathf.Lerp(0f, light.intensity, Mathf.InverseLerp(fadeEndAtAlt, fadeStartAtAlt, localTime));
                 }
             }
 
