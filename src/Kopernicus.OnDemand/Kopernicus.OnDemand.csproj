@@ -32,9 +32,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\deps\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\packages\Assembly-CSharp.1.3.1\lib\net35\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -42,9 +41,11 @@
     <Reference Include="System.Core">
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\deps\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\packages\UnityEngine.1.3.1\lib\net35\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\packages\UnityEngine.UI.1.3.1\lib\net35\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -56,6 +57,9 @@
     <Compile Include="PQSMod_OnDemandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScaledSpaceDemand.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -29,11 +29,11 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kopernicus 
+namespace Kopernicus
 {
     // Hook the PSystemSpawn (creation of the planetary system) event in the KSP initialization lifecycle
     [KSPAddon(KSPAddon.Startup.PSystemSpawn, false)]
-    public class Injector : MonoBehaviour 
+    public class Injector : MonoBehaviour
     {
         // Name of the config node group which manages Kopernicus
         public const String rootNodeName = "Kopernicus";
@@ -111,7 +111,7 @@ namespace Kopernicus
                 // Clear space center instance so it will accept nouveau Kerbin
                 SpaceCenter.Instance = null;
 
-                // Add a handler so that we can do post spawn fixups.  
+                // Add a handler so that we can do post spawn fixups.
                 PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
 
                 // Fire Post-Load Event
@@ -246,4 +246,3 @@ namespace Kopernicus
         }
     }
 }
-
