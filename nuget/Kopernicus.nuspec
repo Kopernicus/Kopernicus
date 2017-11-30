@@ -16,9 +16,9 @@
       <dependency id="Assembly-CSharp" version="[{KSP-VERSION}]" />
       <dependency id="UnityEngine" version="[{KSP-VERSION}]" />
       <dependency id="UnityEngine.UI" version="[{KSP-VERSION}]" />
-      <dependency id="Kopernicus.Components" version="[{KSP-VERSION}-{KOPERNICUS-VERSION}]" />
-      <dependency id="Kopernicus.OnDemand" version="[{KSP-VERSION}-{KOPERNICUS-VERSION}]" />
-      <dependency id="Kopernicus.Parser" version="[{KSP-VERSION}-{KOPERNICUS-VERSION}]" />
+      <dependency id="Kopernicus.Components" version="[{KSP-VERSION}.{KOPERNICUS-VERSION}]" />
+      <dependency id="Kopernicus.OnDemand" version="[{KSP-VERSION}.{KOPERNICUS-VERSION}]" />
+      <dependency id="Kopernicus.Parser" version="[{KSP-VERSION}.{KOPERNICUS-VERSION}]" />
       <dependency id="ModularFlightIntegrator" version="[1.2.4]" />
     </dependencies>
   </metadata>
