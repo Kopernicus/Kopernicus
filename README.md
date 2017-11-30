@@ -1,14 +1,16 @@
 ﻿Kopernicus
 ==============================
-October 07, 2017
+November 30, 2017
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.1-2)
+New in this version (1.3.1-3)
 -------------------
-- Fixed issues caused by different lensflare handling on KSP's side
+- Kopernicus now tracks vessel orbits using a custom identifier (for example a GUID) instead of the FGI. The identifier is loaded from the "identifier" option in the Body node. If no identifier is specified, the body name is used. This should make it possible to install or remove planet packs mid-game without messing up all of the orbits. **Make a backup of your save before installing this version!**
+- Fixed IntensityCurve and IVAIntensityCurve. Their values were never used.
+- Updated the MFI .version file
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
