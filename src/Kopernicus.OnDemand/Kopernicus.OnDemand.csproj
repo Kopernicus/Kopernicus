@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\packages\Assembly-CSharp.1.3.1\lib\net35\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -43,9 +44,11 @@
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\packages\UnityEngine.1.3.1\lib\net35\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\packages\UnityEngine.UI.1.3.1\lib\net35\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

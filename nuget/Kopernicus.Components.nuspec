@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Kopernicus.Components</id>
-    <version>{KSP-VERSION}-{KOPERNICUS-VERSION}</version>
+    <version>{KSP-VERSION}.{KOPERNICUS-VERSION}</version>
     <authors>TMSP</authors>
     <owners>TMSP</owners>
     <licenseUrl>https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/LICENSE</licenseUrl>
