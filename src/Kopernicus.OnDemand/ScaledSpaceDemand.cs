@@ -58,11 +58,26 @@ namespace Kopernicus
             {
                 unloadDelay = System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
                 scaledRenderer = GetComponent<MeshRenderer>();
-                OnBecameInvisible();
+                UnloadTextures();
             }
 
             void LateUpdate()
             {
+                // If we are rendered, load the textures
+                if (IsInView(ScaledCamera.Instance.cam, gameObject) && (!isLoaded || isLoaded && unloadTime != 0))
+                {
+                    // It is supposed to be loaded now so clear the unload time
+                    unloadTime = 0;
+
+                    // Load it
+                    LoadTextures();
+                }
+                else if (!IsInView(ScaledCamera.Instance.cam, gameObject) && isLoaded && unloadTime == 0)
+                {
+                    // Set the time at which to unload
+                    unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
+                }
+                
                 // If we aren't loaded or we're not wanting to unload then do nothing
                 if (!isLoaded || unloadTime == 0)
                     return;
@@ -71,32 +86,7 @@ namespace Kopernicus
                 if (System.Diagnostics.Stopwatch.GetTimestamp() > unloadTime)
                     UnloadTextures();
             }
-
-            // OnBecameVisible(), load the texture
-            void OnBecameVisible()
-            {
-                // It is supposed to be loaded now so clear the unload time
-                unloadTime = 0;
-
-                // If it is already loaded then do nothing
-                if (isLoaded)
-                    return;
-
-                // Otherwise we load it
-                LoadTextures();
-            }
-
-            // OnBecameInvisible(), kill the texture
-            void OnBecameInvisible()
-            {
-                // If it's not loaded then do nothing
-                if (!isLoaded)
-                    return;
-
-                // Set the time at which to unload
-                unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
-            }
-
+            
             void LoadTextures()
             {
                 Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
@@ -139,6 +129,34 @@ namespace Kopernicus
 
                 // Flags
                 isLoaded = false;
+            }
+            
+            private bool IsInView(Camera cam, GameObject toCheck)
+            {
+                Vector3 pointOnScreen = cam.WorldToScreenPoint(toCheck.GetComponentInChildren<Renderer>().bounds.center);
+ 
+                //Is in front
+                if (pointOnScreen.z < 0)
+                {
+                    return false;
+                }
+ 
+                //Is in FOV
+                if (pointOnScreen.x < 0 || pointOnScreen.x > Screen.width ||
+                    pointOnScreen.y < 0 || pointOnScreen.y > Screen.height)
+                {
+                    return false;
+                }
+ 
+                RaycastHit hit;
+                if (Physics.Linecast(cam.transform.position, toCheck.GetComponentInChildren<Renderer>().bounds.center, out hit))
+                {
+                    if (hit.transform.name != toCheck.name)
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
     }
