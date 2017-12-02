@@ -53,18 +53,23 @@ namespace Kopernicus
             // The number of timestamp ticks in a second
             private long unloadDelay;
 
+            // The body we're attached to
+            private CelestialBody body;
+
             // Start(), get the scaled Mesh renderer
             void Start()
             {
                 unloadDelay = System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
                 scaledRenderer = GetComponent<MeshRenderer>();
+                body = PSystemManager.Instance.localBodies.Find(b => b.scaledBody == gameObject);
                 UnloadTextures();
             }
 
             void LateUpdate()
             {
                 // If we are rendered, load the textures
-                if (IsInView(ScaledCamera.Instance.cam, gameObject) && (!isLoaded || isLoaded && unloadTime != 0))
+                Boolean isInView = IsInView(ScaledCamera.Instance.cam, body);
+                if (isInView && (!isLoaded || isLoaded && unloadTime != 0))
                 {
                     // It is supposed to be loaded now so clear the unload time
                     unloadTime = 0;
@@ -72,12 +77,12 @@ namespace Kopernicus
                     // Load it
                     LoadTextures();
                 }
-                else if (!IsInView(ScaledCamera.Instance.cam, gameObject) && isLoaded && unloadTime == 0)
+                else if (!isInView && isLoaded && unloadTime == 0)
                 {
                     // Set the time at which to unload
                     unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
                 }
-                
+
                 // If we aren't loaded or we're not wanting to unload then do nothing
                 if (!isLoaded || unloadTime == 0)
                     return;
@@ -86,20 +91,23 @@ namespace Kopernicus
                 if (System.Diagnostics.Stopwatch.GetTimestamp() > unloadTime)
                     UnloadTextures();
             }
-            
+
             void LoadTextures()
             {
                 Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
+                
                 // Load Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
-                    scaledRenderer.material.SetTexture("_MainTex", OnDemandStorage.LoadTexture(texture, false, true, true));
+                    scaledRenderer.material.SetTexture("_MainTex",
+                        OnDemandStorage.LoadTexture(texture, false, true, true));
                 }
 
                 // Load Normals
                 if (OnDemandStorage.TextureExists(normals))
                 {
-                    scaledRenderer.material.SetTexture("_BumpMap", OnDemandStorage.LoadTexture(normals, false, true, false));
+                    scaledRenderer.material.SetTexture("_BumpMap",
+                        OnDemandStorage.LoadTexture(normals, false, true, false));
                 }
 
                 // Events
@@ -112,6 +120,7 @@ namespace Kopernicus
             void UnloadTextures()
             {
                 Debug.Log("[OD] <--- ScaledSpaceDemand.UnloadTextures destroying " + texture + " and " + normals);
+                
                 // Kill Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
@@ -130,33 +139,39 @@ namespace Kopernicus
                 // Flags
                 isLoaded = false;
             }
-            
-            private bool IsInView(Camera cam, GameObject toCheck)
+
+            private bool IsInView(Camera cam, CelestialBody body)
             {
-                Vector3 pointOnScreen = cam.WorldToScreenPoint(toCheck.GetComponentInChildren<Renderer>().bounds.center);
- 
+                Vector3 pointOnScreen =
+                    cam.WorldToScreenPoint(body.scaledBody.GetComponentInChildren<Renderer>().bounds.center);
+
                 //Is in front
                 if (pointOnScreen.z < 0)
                 {
                     return false;
                 }
- 
+
                 //Is in FOV
                 if (pointOnScreen.x < 0 || pointOnScreen.x > Screen.width ||
                     pointOnScreen.y < 0 || pointOnScreen.y > Screen.height)
                 {
                     return false;
                 }
- 
+
                 RaycastHit hit;
-                if (Physics.Linecast(cam.transform.position, toCheck.GetComponentInChildren<Renderer>().bounds.center, out hit))
+                if (Physics.Linecast(cam.transform.position,
+                    body.scaledBody.GetComponentInChildren<Renderer>().bounds.center, out hit))
                 {
-                    if (hit.transform.name != toCheck.name)
+                    if (hit.transform.name != body.scaledBody.name)
                     {
                         return false;
                     }
                 }
-                return true;
+                Single pixelSize = (Single) body.Radius * 2 * Mathf.Rad2Deg * Screen.height /
+                                  (Vector3.Distance(cam.transform.position,
+                                       body.scaledBody.GetComponentInChildren<Renderer>().bounds.center) *
+                                   cam.fieldOfView);
+                return pixelSize >= 1;
             }
         }
     }
