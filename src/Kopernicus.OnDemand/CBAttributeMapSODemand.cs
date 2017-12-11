@@ -81,7 +81,7 @@ namespace Kopernicus
             public void Unload()
             {
                 // We can only destroy the map, if it is loaded and initialized
-                if (!IsLoaded || !String.IsNullOrEmpty(Path))
+                if (!IsLoaded || String.IsNullOrEmpty(Path))
                     return;
 
                 // Nuke the map
