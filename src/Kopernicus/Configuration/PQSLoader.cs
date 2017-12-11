@@ -266,19 +266,9 @@ namespace Kopernicus
                 collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
                 collider.sphere = pqsVersion;
                 collider.maxLevelOffset = 0;
-                collider.physicsMaterial = new PhysicMaterial();
-                collider.physicsMaterial.name = "Ground";
-                collider.physicsMaterial.dynamicFriction = 0.6f;
-                collider.physicsMaterial.staticFriction = 0.8f;
-                collider.physicsMaterial.bounciness = 0.0f;
-                collider.physicsMaterial.frictionCombine = PhysicMaterialCombine.Maximum;
-                collider.physicsMaterial.bounceCombine = PhysicMaterialCombine.Average;
                 collider.requirements = PQS.ModiferRequirements.Default;
                 collider.modEnabled = true;
                 collider.order = 100;
-
-                // Create physics material editor
-                physicsMaterial = new PhysicsMaterialParser (collider.physicsMaterial);
 
                 // Assing the new PQS
                 generatedBody.pqsVersion = pqsVersion;

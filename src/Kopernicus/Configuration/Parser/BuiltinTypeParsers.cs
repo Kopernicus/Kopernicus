@@ -343,7 +343,13 @@ namespace Kopernicus
             // Default constructor
             public PhysicsMaterialParser()
             {
-                this.material = null;
+                material = new PhysicMaterial();
+                material.name = "Ground";
+                material.dynamicFriction = 0.6f;
+                material.staticFriction = 0.8f;
+                material.bounciness = 0.0f;
+                material.frictionCombine = PhysicMaterialCombine.Maximum;
+                material.bounceCombine = PhysicMaterialCombine.Average;;
             }
 
             // Initializing constructor
