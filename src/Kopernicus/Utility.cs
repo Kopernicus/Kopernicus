@@ -467,7 +467,6 @@ namespace Kopernicus
                 pqsVersion.isBuildingMaps = false;
                 pqsVersion.DeactivateSphere();
                 UnityEngine.Object.Destroy(pqsVersionGameObject);
-                OnDemand.OnDemandStorage.DisableBody(body.bodyName);
             }
 
             // Return the generated scaled space mesh
