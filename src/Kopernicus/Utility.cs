@@ -1067,7 +1067,7 @@ namespace Kopernicus
                     }
                 }
             }
-            RemoveEmptyGO(toCheck);
+            // RemoveEmptyGO(toCheck);
         }
 
         static public void RemoveEmptyGO(List<GameObject> toCheck)
