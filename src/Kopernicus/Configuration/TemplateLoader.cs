@@ -231,7 +231,52 @@ namespace Kopernicus
                             }
                             PQSMod[] allMods = body.pqsVersion.GetComponentsInChildren(kvP.Value, true).Select(m => m as PQSMod).Where(m => m.name == name).ToArray();
                             if (allMods.Length > 0)
+                            {
+                                if (allMods[index] is PQSCity)
+                                {
+                                    PQSCity city = allMods[index] as PQSCity;
+                                    if (city.lod != null)
+                                    {
+                                        foreach (PQSCity.LODRange range in city.lod)
+                                        {
+                                            if (range.objects != null)
+                                            {
+                                                foreach (GameObject o in range.objects)
+                                                    UnityEngine.Object.DestroyImmediate(o);
+                                            }
+                                            if (range.renderers != null)
+                                            {
+                                                foreach (GameObject o in range.renderers)
+                                                    UnityEngine.Object.DestroyImmediate(o);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (allMods[index] is PQSCity2)
+                                {
+                                    PQSCity2 city = allMods[index] as PQSCity2;
+                                    if (city.objects != null)
+                                    {
+                                        foreach (PQSCity2.LodObject range in city.objects)
+                                        {
+                                            if (range.objects != null)
+                                            {
+                                                foreach (GameObject o in range.objects)
+                                                    UnityEngine.Object.DestroyImmediate(o);
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // If no mod is left, delete the game object too
+                                GameObject gameObject = allMods[index].gameObject;
                                 UnityEngine.Object.DestroyImmediate(allMods[index]);
+                                PQSMod[] allRemainingMods = gameObject.GetComponentsInChildren<PQSMod>(true);
+                                if (allRemainingMods.Length == 0)
+                                {
+                                    UnityEngine.Object.DestroyImmediate(gameObject);
+                                }
+                            }
                         }
                     }
 

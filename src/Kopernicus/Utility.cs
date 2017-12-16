@@ -1055,7 +1055,15 @@ namespace Kopernicus
                             }
                         }
                         cpMods.Remove(delMod);
-                        PQSMod.DestroyImmediate(delMod);
+                        
+                        // If no mod is left, delete the game object too
+                        GameObject gameObject = delMod.gameObject;
+                        UnityEngine.Object.DestroyImmediate(delMod);
+                        PQSMod[] allRemainingMods = gameObject.GetComponentsInChildren<PQSMod>(true);
+                        if (allRemainingMods.Length == 0)
+                        {
+                            UnityEngine.Object.DestroyImmediate(gameObject);
+                        }
                     }
                 }
             }
