@@ -24,6 +24,8 @@
  */
 
 using System;
+using System.ComponentModel;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -46,6 +48,7 @@ namespace Kopernicus
             // Do we have an atmosphere?
             [PreApply]
             [ParserTarget("enabled")]
+            [KittopiaDescription("Whether the body has an atmosphere.")]
             public NumericParser<Boolean> enabled 
             {
                 get { return celestialBody.atmosphere; }
@@ -55,10 +58,12 @@ namespace Kopernicus
             // Whether an AFG should get added
             [PreApply]
             [ParserTarget("addAFG")]
+            [KittopiaHideOption]
             public NumericParser<Boolean> addAFG = true;
 
             // Does this atmosphere contain oxygen
             [ParserTarget("oxygen")]
+            [KittopiaDescription("Whether the atmosphere contains oxygen.")]
             public NumericParser<Boolean> oxygen 
             {
                 get { return celestialBody.atmosphereContainsOxygen; }
@@ -67,6 +72,7 @@ namespace Kopernicus
 
             // Density at sea level
             [ParserTarget("staticDensityASL")]
+            [KittopiaDescription("Atmospherical density at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
             public NumericParser<Double> atmDensityASL
             {
                 get { return celestialBody.atmDensityASL; }
@@ -83,18 +89,21 @@ namespace Kopernicus
 
             // atmosphere cutoff altitude (x3, for backwards compatibility)
             [ParserTarget("maxAltitude")]
+            [KittopiaHideOption]
             public NumericParser<Double> maxAltitude
             {
                 get { return celestialBody.atmosphereDepth; }
                 set { celestialBody.atmosphereDepth = value; }
             }
             [ParserTarget("altitude")]
+            [KittopiaHideOption]
             public NumericParser<Double> altitude
             {
                 get { return celestialBody.atmosphereDepth; }
                 set { celestialBody.atmosphereDepth = value; }
             }
             [ParserTarget("atmosphereDepth")]
+            [KittopiaDescription("The height of the atmosphere.")]
             public NumericParser<Double> atmosphereDepth
             {
                 get { return celestialBody.atmosphereDepth; }
@@ -119,6 +128,7 @@ namespace Kopernicus
 
             // Pressure curve
             [ParserTarget("pressureCurve")]
+            [KittopiaDescription("Assigns a pressure value to a height value inside of the atmosphere.")]
             public FloatCurveParser pressureCurve
             {
                 get { return celestialBody.atmosphereUsePressureCurve ? celestialBody.atmospherePressureCurve : null; }
@@ -131,6 +141,7 @@ namespace Kopernicus
 
             // atmospherePressureCurveIsNormalized
             [ParserTarget("pressureCurveIsNormalized")]
+            [KittopiaDescription("Whether the pressure curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
             public NumericParser<Boolean> atmospherePressureCurveIsNormalized
             {
                 get { return celestialBody.atmospherePressureCurveIsNormalized; }
@@ -139,6 +150,7 @@ namespace Kopernicus
 
             // Static pressure at sea level (all worlds are set to 1.0f?)
             [ParserTarget("staticPressureASL")]
+            [KittopiaDescription("The static pressure at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
             public NumericParser<Double> staticPressureASL
             {
                 get { return celestialBody.atmospherePressureSeaLevel; }
@@ -147,6 +159,7 @@ namespace Kopernicus
 
             // Temperature curve (see below)
             [ParserTarget("temperatureCurve")]
+            [KittopiaDescription("Assigns a temperature value to a height value inside of the atmosphere.")]
             public FloatCurveParser temperatureCurve 
             {
                 get { return celestialBody.atmosphereUseTemperatureCurve ? celestialBody.atmosphereTemperatureCurve : null; }
@@ -159,6 +172,7 @@ namespace Kopernicus
 
             // atmosphereTemperatureCurveIsNormalized
             [ParserTarget("temperatureCurveIsNormalized")]
+            [KittopiaDescription("Whether the temperature curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
             public NumericParser<Boolean> atmosphereTemperatureCurveIsNormalized
             {
                 get { return celestialBody.atmosphereTemperatureCurveIsNormalized; }
@@ -175,6 +189,7 @@ namespace Kopernicus
 
             // TemperatureSeaLevel
             [ParserTarget("temperatureSeaLevel")]
+            [KittopiaDescription("The static temperature at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
             public NumericParser<Double> atmosphereTemperatureSeaLevel
             {
                 get { return celestialBody.atmosphereTemperatureSeaLevel; }
@@ -231,6 +246,7 @@ namespace Kopernicus
 
             // ambient atmosphere color
             [ParserTarget("ambientColor")]
+            [KittopiaDescription("All objects inside of the atmosphere will slightly shine in this color.")]
             public ColorParser ambientColor 
             {
                 get { return celestialBody.atmosphericAmbientColor; }
@@ -239,10 +255,12 @@ namespace Kopernicus
 
             // AFG
             [ParserTarget("AtmosphereFromGround", allowMerge = true)]
+            [KittopiaDescription("The atmosphere effect that is seen on the horizon.")]
             public AtmosphereFromGroundLoader atmosphereFromGround { get; set; }
 
             // light color
             [ParserTarget("lightColor")]
+            [KittopiaHideOption]
             public ColorParser lightColor 
             {
                 get { return atmosphereFromGround?.waveLength; }
@@ -252,6 +270,28 @@ namespace Kopernicus
                         atmosphereFromGround = new AtmosphereFromGroundLoader();
                     atmosphereFromGround.waveLength = value;
                 }
+            }
+
+            [KittopiaAction("Remove Atmosphere", destructive = true)]
+            [KittopiaDescription("Removes the Atmosphere of this body.")]
+            public void RemoveAtmosphere()
+            {
+                // Remove the Atmosphere from Ground
+                AtmosphereFromGround[] afgs = celestialBody.GetComponentsInChildren<AtmosphereFromGround>();
+                foreach (AtmosphereFromGround afg in afgs)
+                {
+                    UnityEngine.Object.Destroy(afg.gameObject);
+                }
+
+                // Disable the Light controller
+                MaterialSetDirection[] msds = celestialBody.GetComponentsInChildren<MaterialSetDirection>();
+                foreach (MaterialSetDirection msd in msds)
+                {
+                    UnityEngine.Object.Destroy(msd.gameObject);
+                }
+
+                // No Atmosphere :(
+                celestialBody.atmosphere = false;
             }
 
             // Parser apply event
@@ -264,13 +304,12 @@ namespace Kopernicus
                 // If we don't already have an atmospheric shell generated
                 if (scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true).Length == 0) 
                 {
-                    // Create the AFG
-                    atmosphereFromGround = new AtmosphereFromGroundLoader();
-                    atmosphereFromGround.AddAtmosphereFromGround();
-
                     // Setup known defaults
                     celestialBody.atmospherePressureSeaLevel = 1.0f;
                 }
+                
+                // Create the AFG Loader
+                atmosphereFromGround = new AtmosphereFromGroundLoader();
 
                 // Event
                 Events.OnAtmosphereLoaderApply.Fire(this, node);
@@ -279,8 +318,6 @@ namespace Kopernicus
             // Parser post apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                if (atmosphereFromGround != null)
-                    AFGInfo.StoreAFG(atmosphereFromGround.atmosphereFromGround);
                 Events.OnAtmosphereLoaderPostApply.Fire(this, node);
             }
 
@@ -290,9 +327,11 @@ namespace Kopernicus
             public AtmosphereLoader()
             {
                 // Is this the parser context?
-                if (generatedBody == null)
+                if (!Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("Must be executed in Injector context.");
-
+                }
+                
                 // Store values
                 celestialBody = generatedBody.celestialBody;
                 scaledVersion = generatedBody.scaledVersion;
@@ -301,31 +340,22 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Atmosphere Loader from a spawned CelestialBody.
             /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
             public AtmosphereLoader(CelestialBody body)
             {
                 // Is this a spawned body?
-                if (body?.scaledBody == null)
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
 
                 // Store values
                 celestialBody = body;
                 scaledVersion = body.scaledBody;
-            }
-
-            /// <summary>
-            /// Creates a new Atmosphere Loader from a custom PSystemBody.
-            /// </summary>
-            public AtmosphereLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-
-                // Store values
-                celestialBody = generatedBody.celestialBody;
-                scaledVersion = generatedBody.scaledVersion;
+                if (celestialBody.afg)
+                {
+                    atmosphereFromGround = new AtmosphereFromGroundLoader(celestialBody);
+                }
             }
         }
     }

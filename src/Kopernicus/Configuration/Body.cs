@@ -26,6 +26,7 @@
 using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -40,6 +41,23 @@ namespace Kopernicus
 
             // Body we are trying to edit
             public PSystemBody generatedBody { get; set; }
+
+            // The CelestialBody component of the body
+            private CelestialBody _celestialBody;
+            public CelestialBody celestialBody
+            {
+                get
+                {
+                    if (Injector.IsInPrefab)
+                        return generatedBody?.celestialBody;
+                    return _celestialBody;
+                }
+                set
+                {
+                    if (!Injector.IsInPrefab)
+                        _celestialBody = value;
+                }
+            }
 
             // Name of this body
             [PreApply]
@@ -57,71 +75,72 @@ namespace Kopernicus
             {
                 get
                 {
-                    if (generatedBody.celestialBody.GetComponent<NameChanger>())
-                        return generatedBody.celestialBody.GetComponent<NameChanger>().newName;
-                    return "";
+                    NameChanger changer = celestialBody.GetComponent<NameChanger>();
+                    return changer ? changer.newName : "";
                 }
                 set
                 {
                     // Change the displayName
-                    generatedBody.celestialBody.bodyDisplayName = value;
+                    celestialBody.bodyDisplayName = value;
 
                     // Set the NameChanger component
-                    if (!generatedBody.celestialBody.GetComponent<NameChanger>())
+                    NameChanger changer = celestialBody.gameObject.AddOrGetComponent<NameChanger>();
+                    changer.oldName = celestialBody.bodyName;
+                    changer.newName = value;
+
+                    // Update the name
+                    if (!Injector.IsInPrefab)
                     {
-                        NameChanger changer = generatedBody.celestialBody.gameObject.AddComponent<NameChanger>();
-                        changer.oldName = name;
-                        changer.newName = value;
+                        changer.Start();
                     }
-                    else
-                        generatedBody.celestialBody.gameObject.GetComponent<NameChanger>().newName = value;
                 }
             }
 
             // Flight globals index of this body - for computing reference id
-            [ParserTarget("flightGlobalsIndex")]
-            public NumericParser<Int32> flightGlobalsIndex
-            {
-                get { return generatedBody.flightGlobalsIndex; }
-                set { generatedBody.flightGlobalsIndex = value.value; }
-            }
+            // [ParserTarget("flightGlobalsIndex")]
+            // public NumericParser<Int32> flightGlobalsIndex
+            // {
+            //     get { return generatedBody.flightGlobalsIndex; }
+            //     set { generatedBody.flightGlobalsIndex = value.value; }
+            // }
 
             // An identifier that is used for referencing the orbiting body. 
             // This must be unique!
             [ParserTarget("identifier")]
             public String identifier
             {
-                get { return generatedBody.Has("identifier") ? generatedBody.Get<String>("identifier") : null; }
-                set { generatedBody.Set("identifier", value); }
+                get { return celestialBody.Get("identifier", celestialBody.transform.name); }
+                set { celestialBody.Set("identifier", value); }
             }
 
             // Finalize the orbit of the body?
             [ParserTarget("finalizeOrbit")]
             public NumericParser<Boolean> finalizeOrbit
             {
-                get { return generatedBody.Has("finalizeBody"); }
-                set { if (value) generatedBody.Set("finalizeBody", true); }
+                get { return celestialBody.Get("finalizeBody", false); }
+                set { celestialBody.Set("finalizeBody", value.value); }
             }
 
             // Whether this body should be taken into account for the main menu body stuff
             [ParserTarget("randomMainMenuBody")]
-            public NumericParser<Boolean> canBeMainMenuBody
+            public NumericParser<Boolean> randomMainMenuBody
             {
-                get { return Loader.Instance?.randomMainMenuBodies.Contains(name); }
-                set { if (value) Loader.Instance.randomMainMenuBodies.Add(name); }
+                get { return Templates.randomMainMenuBodies.Contains(name); }
+                set { if (value) Templates.randomMainMenuBodies.Add(name); }
             }
 
             // Describes how often contracts should be generated for a body
             [ParserTarget("contractWeight")]
             public NumericParser<Int32> contractWeight
             {
-                get { return generatedBody.Has("contractWeight") ? generatedBody.Get<Int32>("contractWeight") : 30; }
-                set { generatedBody.Set("contractWeight", value); }
+                get { return celestialBody.Get("contractWeight", 30); }
+                set { celestialBody.Set("contractWeight", value.value); }
             }
 
             // Template property of a body - responsible for generating a PSystemBody from an existing one
             [PreApply]
             [ParserTarget("Template")]
+            [KittopiaHideOption]
             public TemplateLoader template { get; set; }
 
             // Celestial body properties (description, mass, etc.)
@@ -150,11 +169,11 @@ namespace Kopernicus
 
             // Wrapper around Ring class for editing/loading
             [ParserTargetCollection("Rings", nameSignificance = NameSignificance.None, allowMerge = true)]
-            public List<RingLoader> rings = new List<RingLoader>();
+            public List<RingLoader> rings { get; set; }
 
             // Wrapper around Particle class for editing/loading
             [ParserTargetCollection("Particles", nameSignificance = NameSignificance.None, allowMerge = true)]
-            public List<ParticleLoader> particle = new List<ParticleLoader>();
+            public List<ParticleLoader> particles { get; set; }
 
             // Wrapper around the settings for the SpaceCenter
             [ParserTarget("SpaceCenter", allowMerge = true)]
@@ -166,9 +185,10 @@ namespace Kopernicus
 
             // Post spawn orbit patcher
             [ParserTarget("PostSpawnOrbit")]
-            public ConfigNode postspawn
+            public ConfigNode postSpawnOrbit
             {
-                set { generatedBody.Set("orbitPatches", value); }
+                get { return celestialBody.Get<ConfigNode>("orbitPatches", null); }
+                set { celestialBody.Set("orbitPatches", value); }
             }
 
             // Parser Apply Event
@@ -243,7 +263,7 @@ namespace Kopernicus
                 if (generatedBody.pqsVersion)
                 {
                     // Adjust the radius of the PQSs appropriately
-                    foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
+                    foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true))https://wallpaperscraft.com/image/galaxy_nebula_blurring_stars_65152_1920x1080.jpg
                         p.radius = generatedBody.celestialBody.Radius;
                 }
 
@@ -283,7 +303,7 @@ namespace Kopernicus
                 //   b) we aren't using a template
                 //   c) debug mode is active
                 if (!scaledVersion.deferMesh &&
-                    (((template != null) && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value))
+                    (template != null && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value)
                     || template == null || debug.update))
                 {
 
@@ -296,6 +316,51 @@ namespace Kopernicus
                                                 scaledVersion.sphericalModel);
                     Events.OnBodyGenerateScaledSpace.Fire(this, node);
                 }
+            }
+
+            /// <summary>
+            /// Creates a new Body from the Injector context.
+            /// </summary>
+            public Body()
+            {
+                rings = new List<RingLoader>();
+                particles = new List<ParticleLoader>();
+            }
+
+            /// <summary>
+            /// Creates a new Body from a spawned CelestialBody.
+            /// </summary>
+            public Body(CelestialBody celestialBody)
+            {
+                this.celestialBody = celestialBody;
+                
+                // Create the accessors
+                properties = new PropertiesLoader(celestialBody);
+                scaledVersion = new ScaledVersionLoader(celestialBody);
+                if (celestialBody.orbitDriver != null)
+                {
+                    orbit = new OrbitLoader(celestialBody);
+                }
+                if (celestialBody.atmosphere)
+                {
+                    atmosphere = new AtmosphereLoader(celestialBody);
+                }
+                rings = new List<RingLoader>();
+                foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
+                {
+                    rings.Add(new RingLoader(ring));
+                }
+                particles = new List<ParticleLoader>();
+                foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
+                    .GetComponentsInChildren<PlanetParticleEmitter>(true))
+                {
+                    particles.Add(new ParticleLoader(celestialBody, particle.gameObject));
+                }
+                if (celestialBody.isHomeWorld)
+                {
+                    spaceCenter = new SpaceCenterLoader(celestialBody);
+                }
+                debug = new DebugLoader(celestialBody);
             }
         }
     }

@@ -33,10 +33,35 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class ModLoader<T> : BaseLoader where T : PQSMod
+            public class ModLoader<T> : BaseLoader, IModLoader, IPatchable, ICreatable where T : PQSMod
             {
                 // The mod loader must always be able to return a mod
                 public T mod { get; set; }
+
+                // The mod loader must always be able to return a mod
+                PQSMod IModLoader.Mod
+                {
+                    get { return mod; }
+                    set { mod = (T) value; }
+                }
+
+                /// <summary>
+                /// Returns the currently edited PQS
+                /// </summary>
+                protected PQS pqsVersion
+                {
+                    get
+                    {
+                        try
+                        {
+                            return Parser.GetState<PQS>("Kopernicus:pqsVersion");
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+                    }
+                }
 
                 // Mod loader provides basic PQS mod loading functions
                 [ParserTarget("order")]
@@ -56,28 +81,16 @@ namespace Kopernicus
 
                 // The name of the PQSMod
                 [ParserTarget("name")]
-                public String modName
+                public String name
                 {
                     get { return mod.name; }
                     set { mod.name = value; }
                 }
 
                 // Creates the a PQSMod of type T
-                public virtual void Create()
+                void ICreatable.Create()
                 {
-                    mod = new GameObject(typeof(T).Name.Replace("PQSMod_", "").Replace("PQS", "")).AddComponent<T>();
-                    mod.transform.parent = generatedBody.pqsVersion.transform;
-                    mod.sphere = generatedBody.pqsVersion;
-                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                }
-
-                // Grabs a PQSMod of type T from a parameter
-                public virtual void Create(T _mod)
-                {
-                    mod = _mod;
-                    mod.transform.parent = generatedBody.pqsVersion.transform;
-                    mod.sphere = generatedBody.pqsVersion;
-                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                    Create(pqsVersion);
                 }
 
                 // Creates the a PQSMod of type T with given PQS
@@ -87,6 +100,12 @@ namespace Kopernicus
                     mod.transform.parent = pqsVersion.transform;
                     mod.sphere = pqsVersion;
                     mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                }
+
+                // Creates the a PQSMod of type T with given PQS
+                void IModLoader.Create(PQSMod _mod, PQS pqsVersion)
+                {
+                    Create((T)_mod, pqsVersion);
                 }
 
                 // Grabs a PQSMod of type T from a parameter with a given PQS

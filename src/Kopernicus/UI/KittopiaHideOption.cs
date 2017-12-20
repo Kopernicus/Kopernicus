@@ -24,34 +24,26 @@
  */
 
 using System;
-using System.Linq;
-using UnityEngine;
 
 namespace Kopernicus
 {
-    namespace Components
+    namespace UI
     {
         /// <summary>
-        /// Component to change the displayed name of a body
+        /// Hides a Kopernicus config option from the KittopiaTech UI
         /// </summary>
-        public class NameChanger : MonoBehaviour
+        [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+        public class KittopiaHideOption : Attribute
         {
-            // Variables
-            public String oldName;
-            public String newName;
+            /// <summary>
+            /// Whether this option should end up in a cfg file.
+            /// </summary>
+            public Boolean export = true;
 
             /// <summary>
-            /// Apply the name changes
+            /// Whether this option should be visible in the UI
             /// </summary>
-            public void Start()
-            {
-                foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
-                {
-                    b.bodyName = newName;
-                    PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
-                    Events.OnApplyNameChange.Fire(this, b);
-                }
-            }
+            public Boolean show = false;
         }
     }
 }

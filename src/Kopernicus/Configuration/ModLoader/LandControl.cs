@@ -1094,6 +1094,26 @@ namespace Kopernicus
                     mod.longitudePersistance = 1;
                     mod.longitudeFrequency = 1;
                 }
+
+                // Create defaults
+                public override void Create(PQS pqsVersion)
+                {
+                    base.Create(pqsVersion);
+
+                    // Initialize default parameters
+                    mod.altitudeSeed = 1;
+                    mod.altitudeOctaves = 1;
+                    mod.altitudePersistance = 1;
+                    mod.altitudeFrequency = 1;
+                    mod.latitudeSeed = 1;
+                    mod.latitudeOctaves = 1;
+                    mod.latitudePersistance = 1;
+                    mod.latitudeFrequency = 1;
+                    mod.longitudeSeed = 1;
+                    mod.longitudeOctaves = 1;
+                    mod.longitudePersistance = 1;
+                    mod.longitudeFrequency = 1;
+                }
             }
         }
     }

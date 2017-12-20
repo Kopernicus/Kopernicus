@@ -99,5 +99,25 @@ namespace Kopernicus
         {
             body.celestialBody.Remove(id);
         }
+
+        /// <summary>
+        /// Returns a value or a default one if the element doesn't exist
+        /// </summary>
+        public static T Get<T>(this CelestialBody body, String id, T defaultValue)
+        {
+            if (body.Has(id))
+            {
+                return body.Get<T>(id);
+            }
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Returns a value or a default one if the element doesn't exist
+        /// </summary>
+        public static T Get<T>(this PSystemBody body, String id, T defaultValue)
+        {
+            return body.celestialBody.Get<T>(id, defaultValue);
+        }
     }
 }

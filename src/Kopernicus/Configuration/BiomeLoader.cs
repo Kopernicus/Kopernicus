@@ -24,6 +24,8 @@
  */
 
 using System;
+using System.ComponentModel;
+using Kopernicus.UI;
 using KSP.Localization;
 
 namespace Kopernicus
@@ -38,6 +40,7 @@ namespace Kopernicus
 
             // The name of this biome
             [ParserTarget("name")]
+            [KittopiaDescription("The name of this biome.")]
             public String name
             {
                 get { return attribute.name; }
@@ -50,6 +53,7 @@ namespace Kopernicus
 
             // The displayName of this biome
             [ParserTarget("displayName")]
+            [KittopiaDescription("The displayed name of the biome. Can be a localization tag.")]
             public String displayName
             {
                 get { return attribute.localizationTag; } // This is not displayName because of reasons
@@ -58,6 +62,7 @@ namespace Kopernicus
 
             // The science multiplier for this biome
             [ParserTarget("value")]
+            [KittopiaDescription("A value that gets multiplied with every amount of science that is returned in the biome.")]
             public NumericParser<Single> value
             {
                 get { return attribute.value; }
@@ -66,6 +71,7 @@ namespace Kopernicus
 
             // The color in the map for this attribute
             [ParserTarget("color")]
+            [KittopiaDescription("The color of the biome on the biome map.")]
             public ColorParser color
             {
                 get { return attribute.mapColor; }
@@ -85,12 +91,14 @@ namespace Kopernicus
             }
 
             // Allocate the biome descriptor
+            [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
             public BiomeLoader()
             {
                 attribute = new CBAttributeMapSO.MapAttribute();
             }
 
             // Get reference to existing biome descriptor
+            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public BiomeLoader(CBAttributeMapSO.MapAttribute attribute)
             {
                 this.attribute = attribute;

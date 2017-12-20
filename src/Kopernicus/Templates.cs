@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kopernicus
@@ -47,6 +48,9 @@ namespace Kopernicus
         // The body that should appear in MainMenu
         public static String menuBody { get; set; }
 
+        // Whether the main menu body should be randomized
+        public static List<String> randomMainMenuBodies { get; set; }
+
         // Initialisation
         static Templates()
         {
@@ -58,6 +62,9 @@ namespace Kopernicus
 
             // Main Menu body
             menuBody = "Kerbin";
+            
+            // Random Main Menu bodies
+            randomMainMenuBodies = new List<String>();
         }
     }
 }

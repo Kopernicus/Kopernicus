@@ -24,6 +24,7 @@
  */
 
 using System;
+using Kopernicus.UI;
 
 namespace Kopernicus
 {
@@ -37,6 +38,7 @@ namespace Kopernicus
 
             // Science multipler (?) for landed science
             [ParserTarget("landedDataValue")]
+            [KittopiaDescription("Science multipler for landed science.")]
             public NumericParser<Single> landedDataValue 
             {
                 get { return scienceParams.LandedDataValue; }
@@ -45,6 +47,7 @@ namespace Kopernicus
 
             // Science multipler (?) for splashed down science
             [ParserTarget("splashedDataValue")]
+            [KittopiaDescription("Science multipler for splashed down science.")]
             public NumericParser<Single> splashedDataValue 
             {
                 get { return scienceParams.SplashedDataValue; }
@@ -53,6 +56,7 @@ namespace Kopernicus
 
             // Science multipler (?) for flying low science
             [ParserTarget("flyingLowDataValue")]
+            [KittopiaDescription("Science multipler for flying low science.")]
             public NumericParser<Single> flyingLowDataValue 
             {
                 get { return scienceParams.FlyingLowDataValue; }
@@ -61,6 +65,7 @@ namespace Kopernicus
 
             // Science multipler (?) for flying high science
             [ParserTarget("flyingHighDataValue")]
+            [KittopiaDescription("Science multipler for flying high science.")]
             public NumericParser<Single> flyingHighDataValue 
             {
                 get { return scienceParams.FlyingHighDataValue; }
@@ -69,6 +74,7 @@ namespace Kopernicus
             
             // Science multipler (?) for in space low science
             [ParserTarget("inSpaceLowDataValue")]
+            [KittopiaDescription("Science multipler for in space low science.")]
             public NumericParser<Single> inSpaceLowDataValue
             {
                 get { return scienceParams.InSpaceLowDataValue; }
@@ -77,6 +83,7 @@ namespace Kopernicus
             
             // Science multipler (?) for in space high science
             [ParserTarget("inSpaceHighDataValue")]
+            [KittopiaDescription("Science multipler for in space high science.")]
             public NumericParser<Single> inSpaceHighDataValue
             {
                 get { return scienceParams.InSpaceHighDataValue; }
@@ -95,6 +102,7 @@ namespace Kopernicus
 
             // Altitude when "flying at <body>" transistions from/to "from <body>'s upper atmosphere"
             [ParserTarget("flyingAltitudeThreshold")]
+            [KittopiaDescription("Altitude when \"flying at <body>\" transistions from/to \"from <body>'s upper atmosphere\"")]
             public NumericParser<Single> flyingAltitudeThreshold
             {
                 get { return scienceParams.flyingAltitudeThreshold; }
@@ -103,6 +111,7 @@ namespace Kopernicus
             
             // Altitude when "in space low" transistions from/to "in space high"
             [ParserTarget("spaceAltitudeThreshold")]
+            [KittopiaDescription("Altitude when \"in space low\" transistions from/to \"in space high\"")]
             public NumericParser<Single> spaceAltitudeThreshold
             {
                 get { return scienceParams.spaceAltitudeThreshold; }

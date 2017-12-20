@@ -165,9 +165,11 @@ namespace Kopernicus
             public ParticleLoader()
             {
                 // Is this the parser context?
-                if (generatedBody == null)
+                if (!Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("Must be executed in Injector context.");
-
+                }
+                
                 // Store values
                 scaledVersion = generatedBody.scaledVersion;
                 particle = PlanetParticleEmitter.Create(scaledVersion);
@@ -179,27 +181,14 @@ namespace Kopernicus
             public ParticleLoader(CelestialBody body, GameObject particleHost)
             {
                 // Is this a spawned body?
-                if (body?.scaledBody == null)
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
 
                 // Store values
                 scaledVersion = body.scaledBody;
                 particle = particleHost.GetComponent<PlanetParticleEmitter>();
-            }
-
-            /// <summary>
-            /// Creates a new Particle Loader from a custom PSystemBody.
-            /// </summary>
-            public ParticleLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-                // Store values
-                scaledVersion = generatedBody.scaledVersion;
-                particle = PlanetParticleEmitter.Create(scaledVersion);
             }
 
             // Apply event

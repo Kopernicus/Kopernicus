@@ -364,6 +364,13 @@ namespace Kopernicus
         // Update the menu body
         void UpdateMenu()
         {
+            // Select a random body?
+            if (Templates.randomMainMenuBodies.Any())
+            {
+                Templates.menuBody =
+                    Templates.randomMainMenuBodies[new System.Random().Next(0, Templates.randomMainMenuBodies.Count)];
+            }
+
             // Grab the main body
             CelestialBody planetCB = PSystemManager.Instance.localBodies.Find(b => b.transform.name == Templates.menuBody);
             PSystemBody planet = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Templates.menuBody);

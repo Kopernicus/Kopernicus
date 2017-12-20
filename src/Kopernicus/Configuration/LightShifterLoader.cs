@@ -25,6 +25,7 @@
 
 using Kopernicus.Components;
 using System;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -41,6 +42,7 @@ namespace Kopernicus
 
             // The sunflare for the star
             [ParserTarget("sunFlare")]
+            [KittopiaDescription("The asset bundle containing a Unity LensFlare object that should be applied to the star.")]
             public AssetParser<Flare> sunFlare
             {
                 get { return lsc.sunFlare; }
@@ -49,6 +51,7 @@ namespace Kopernicus
 
             // sunlightColor
             [ParserTarget("sunlightColor")]
+            [KittopiaDescription("The color of the LocalSpace starlight. Influences vessels and PQS terrain.")]
             public ColorParser sunlightColor
             {
                 get { return lsc.sunlightColor; }
@@ -57,6 +60,7 @@ namespace Kopernicus
 
             // sunlightIntensity
             [ParserTarget("sunlightIntensity")]
+            [KittopiaDescription("The intensity of the LocalSpace starlight. Usage not recommended, because of a lacking distance limit. Use IntensityCurve instead.")]
             public NumericParser<Single> sunlightIntensity
             {
                 set
@@ -71,6 +75,7 @@ namespace Kopernicus
 
             // sunlightShadowStrength
             [ParserTarget("sunlightShadowStrength")]
+            [KittopiaDescription("The strength of the shadows caused by LocalSpace starlight.")]
             public NumericParser<Single> sunlightShadowStrength
             {
                 get { return lsc.sunlightShadowStrength; }
@@ -79,6 +84,7 @@ namespace Kopernicus
 
             // scaledSunlightColor
             [ParserTarget("scaledSunlightColor")]
+            [KittopiaDescription("The color of the ScaledSpace starlight. Influences the ScaledSpace representation of the bodies.")]
             public ColorParser scaledSunlightColor
             {
                 get { return lsc.scaledSunlightColor; }
@@ -87,6 +93,7 @@ namespace Kopernicus
 
             // scaledSunlightIntensity
             [ParserTarget("scaledSunlightIntensity")]
+            [KittopiaDescription("The intensity of the ScaledSpace starlight. Usage not recommended, because of a lacking distance limit. Use ScaledIntensityCurve instead.")]
             public NumericParser<Single> scaledSunlightIntensity
             {
                 set
@@ -101,6 +108,7 @@ namespace Kopernicus
 
             // IVASunColor
             [ParserTarget("IVASunColor")]
+            [KittopiaDescription("The color of the starlight in IVA view.")]
             public ColorParser IVASunColor
             {
                 get { return lsc.IVASunColor; }
@@ -109,6 +117,7 @@ namespace Kopernicus
 
             // IVASunIntensity
             [ParserTarget("IVASunIntensity")]
+            [KittopiaDescription("The intensity of the IVA starlight. Usage not recommended, because of a lacking distance limit. Use IVAIntensityCurve instead.")]
             public NumericParser<Single> IVASunIntensity
             {
                 set
@@ -123,6 +132,7 @@ namespace Kopernicus
 
             // ambientLightColor
             [ParserTarget("ambientLightColor")]
+            [KittopiaDescription("The color of ambient lighting when orbiting near the star.")]
             public ColorParser ambientLightColor
             {
                 get { return lsc.ambientLightColor; }
@@ -131,6 +141,7 @@ namespace Kopernicus
 
             // Set the color that the star emits
             [ParserTarget("sunLensFlareColor")]
+            [KittopiaDescription("The color of the stars LensFlare effect. Gets multiplied with the color of the base texture (yellow-ish for stock flare).")]
             public ColorParser sunLensFlareColor
             {
                 get { return lsc.sunLensFlareColor; }
@@ -139,6 +150,7 @@ namespace Kopernicus
 
             // givesOffLight
             [ParserTarget("givesOffLight")]
+            [KittopiaDescription("Whether the star should emit light and have a LensFlare effect.")]
             public NumericParser<Boolean> givesOffLight
             {
                 get { return lsc.givesOffLight; }
@@ -147,6 +159,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("sunAU")]
+            [KittopiaDescription("TODO")]
             public NumericParser<Double> sunAU
             {
                 get { return lsc.AU; }
@@ -155,6 +168,7 @@ namespace Kopernicus
 
             // brightnessCurve
             [ParserTarget("brightnessCurve")]
+            [KittopiaDescription("Associates a distance value with a multiplier for the brightness of the LensFlare effect.")]
             public FloatCurveParser brightnessCurve
             {
                 get { return lsc.brightnessCurve; }
@@ -163,6 +177,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("luminosity")]
+            [KittopiaDescription("TODO")]
             public NumericParser<Double> luminosity
             {
                 get { return lsc.solarLuminosity; }
@@ -171,6 +186,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("insolation")]
+            [KittopiaDescription("TODO")]
             public NumericParser<Double> insolation
             {
                 get { return lsc.solarInsolation; }
@@ -179,6 +195,7 @@ namespace Kopernicus
 
             // sunAU
             [ParserTarget("radiationFactor")]
+            [KittopiaDescription("TODO")]
             public NumericParser<Double> radiation
             {
                 get { return lsc.radiationFactor; }
@@ -187,6 +204,7 @@ namespace Kopernicus
 
             // intensityCurve
             [ParserTarget("IntensityCurve")]
+            [KittopiaDescription("Associates a distance value (in meters) with a value that describes the intensity of the LocalSpace starlight at that point.")]
             public FloatCurveParser intensityCurve
             {
                 get { return lsc.intensityCurve; }
@@ -195,6 +213,7 @@ namespace Kopernicus
 
             // scaledIntensityCurve
             [ParserTarget("ScaledIntensityCurve")]
+            [KittopiaDescription("Associates a distance value (in meters / 6000) with a value that describes the intensity of the ScaledSpace starlight at that point.")]
             public FloatCurveParser scaledIntensityCurve
             {
                 get { return lsc.scaledIntensityCurve; }
@@ -203,6 +222,7 @@ namespace Kopernicus
 
             // intensityCurve
             [ParserTarget("IVAIntensityCurve")]
+            [KittopiaDescription("Associates a distance value (in meters) with a value that describes the intensity of the IVA starlight at that point.")]
             public FloatCurveParser ivaIntensityCurve
             {
                 get { return lsc.ivaIntensityCurve; }
@@ -227,8 +247,10 @@ namespace Kopernicus
             public LightShifterLoader()
             {
                 // Is this the parser context?
-                if (generatedBody == null)
+                if (!Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("Must be executed in Injector context.");
+                }
 
                 // Store values
                 lsc = LightShifter.prefab;
@@ -237,32 +259,25 @@ namespace Kopernicus
             }
 
             /// <summary>
-            /// Creates a new LightShifter Loader from a spawned CelestialBody.
+            /// Creates a new LightShifter Loader from an already existing body
             /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
             public LightShifterLoader(CelestialBody body)
             {
                 // Is this a spawned body?
-                if (body?.scaledBody == null)
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
 
-                // Store values
-                lsc = body.GetComponentInChildren<LightShifter>();
-            }
-
-            /// <summary>
-            /// Creates a new LightShifter Loader from a custom PSystemBody.
-            /// </summary>
-            public LightShifterLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-                // Store values
-                lsc = LightShifter.prefab;
-                lsc.transform.parent = generatedBody.scaledVersion.transform;
-                lsc.name = generatedBody.name;
+                // Store values or create a new light shifter
+                lsc = body.scaledBody.GetComponentInChildren<LightShifter>();
+                if (lsc == null)
+                {
+                    lsc = LightShifter.prefab;
+                    lsc.transform.parent = body.scaledBody.transform;
+                    lsc.name = body.transform.name;
+                }
             }
         }
 

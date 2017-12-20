@@ -29,8 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\Assembly-CSharp.1.3.1\lib\net35\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\DarkMultiPlayer\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="ModularFlightIntegrator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\packages\ModularFlightIntegrator.1.2.4\lib\net35\ModularFlightIntegrator.dll</HintPath>
@@ -67,6 +66,7 @@
     <Compile Include="Configuration\MaterialLoader\PQSMainExtrasLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
     <Compile Include="Configuration\ModLoader\City.cs" />
+    <Compile Include="Configuration\ModLoader\IModLoader.cs" />
     <Compile Include="Configuration\ModLoader\MeshScatter.cs" />
     <Compile Include="Configuration\ModLoader\LandControl.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitudeDouble.cs" />
@@ -102,11 +102,15 @@
     <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
     <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
     <Compile Include="Configuration\ModLoader\VoronoiCraters.cs" />
+    <Compile Include="Configuration\Parser\CallbackList.cs" />
     <Compile Include="Configuration\Parser\ExternalParserTarget.cs" />
     <Compile Include="Configuration\Parser\ExternalParserTargetLoader.cs" />
     <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\CollisionModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\MinMaxCurveLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\ShurikenLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />
     <Compile Include="Configuration\LightShifterLoader.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
@@ -169,6 +173,11 @@
     <Compile Include="Configuration\ModLoader\VertexColorMap.cs" />
     <Compile Include="Configuration\ModLoader\ModLoader.cs" />
     <Compile Include="Configuration\ModLoader\HeightColorMap.cs" />
+    <Compile Include="UI\KittopiaAction.cs" />
+    <Compile Include="UI\KittopiaConstructor.cs" />
+    <Compile Include="UI\KittopiaDescription.cs" />
+    <Compile Include="UI\KittopiaDestructor.cs" />
+    <Compile Include="UI\KittopiaHideOption.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

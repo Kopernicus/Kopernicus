@@ -24,34 +24,17 @@
  */
 
 using System;
-using System.Linq;
-using UnityEngine;
 
 namespace Kopernicus
 {
-    namespace Components
+    namespace UI
     {
         /// <summary>
-        /// Component to change the displayed name of a body
+        /// Defines a method that is responsible for cleaning up the object if it is removed
         /// </summary>
-        public class NameChanger : MonoBehaviour
+        [AttributeUsage(AttributeTargets.Method)]
+        public class KittopiaDestructor : Attribute
         {
-            // Variables
-            public String oldName;
-            public String newName;
-
-            /// <summary>
-            /// Apply the name changes
-            /// </summary>
-            public void Start()
-            {
-                foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
-                {
-                    b.bodyName = newName;
-                    PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
-                    Events.OnApplyNameChange.Fire(this, b);
-                }
-            }
         }
     }
 }

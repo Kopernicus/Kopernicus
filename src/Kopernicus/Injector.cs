@@ -47,6 +47,9 @@ namespace Kopernicus
 
         // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
         public static PSystem StockSystemPrefab { get; set; }
+        
+        // Whether the injector is currently patching the prefab
+        public static Boolean IsInPrefab { get; private set; }
 
         // Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
         // it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
@@ -75,6 +78,7 @@ namespace Kopernicus
             try
             {
                 // We're ALIVE
+                IsInPrefab = true;
                 Logger.Default.SetAsActive();
                 Logger.Default.Log("Injector.Awake(): Begin");
 
@@ -121,6 +125,7 @@ namespace Kopernicus
                 TimeSpan duration = (DateTime.Now - start);
                 Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
                 Logger.Default.Flush();
+                IsInPrefab = false;
             }
             catch (Exception e)
             {

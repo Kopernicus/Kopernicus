@@ -26,6 +26,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -35,11 +37,11 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class HeightColorMap : ModLoader<PQSMod_HeightColorMap>, IParserEventSubscriber
+            public class HeightColorMap : ModLoader<PQSMod_HeightColorMap>
             {
                 // Land class loader 
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassLoader
+                public class LandClassLoader : IPatchable
                 {
                     // Land class object
                     public PQSMod_HeightColorMap.LandClass landClass;
@@ -89,12 +91,14 @@ namespace Kopernicus
                         set { landClass.lerpToNext = value; }
                     }
 
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
                     public LandClassLoader ()
                     {
                         // Initialize the land class
                         landClass = new PQSMod_HeightColorMap.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
                     }
 
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassLoader(PQSMod_HeightColorMap.LandClass c)
                     {
                         landClass = c;
@@ -110,61 +114,44 @@ namespace Kopernicus
                 }
 
                 // The land classes
-                public List<LandClassLoader> landClasses = new List<LandClassLoader> ();
+                [ParserTargetCollection("LandClasses", allowMerge = true)]
+                public CallbackList<LandClassLoader> landClasses { get; set; }
 
-                void IParserEventSubscriber.Apply(ConfigNode node)
+                // Creates the a PQSMod of type T with given PQS
+                public override void Create(PQS pqsVersion)
                 {
-                    // Load the LandClasses manually, to support patching
-                    if (mod.landClasses != null) mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
-                    if (node.HasNode("LandClasses"))
+                    base.Create(pqsVersion);
+                    
+                    // Create the callback list
+                    landClasses = new CallbackList<LandClassLoader> ((e) =>
                     {
-                        // Already patched classes
-                        List<PQSMod_HeightColorMap.LandClass> patchedClasses = new List<PQSMod_HeightColorMap.LandClass>();
-
-                        // Go through the nodes
-                        foreach (ConfigNode lcNode in node.GetNode("LandClasses").nodes)
-                        {
-                            // The Loader
-                            LandClassLoader loader = null;
-
-                            // Are there existing LandClasses?
-                            if (landClasses.Count > 0)
-                            {
-                                // Attempt to find a LandClass we can edit that we have not edited before
-                                loader = landClasses.Where(m => !patchedClasses.Contains(m.landClass) && ((lcNode.HasValue("name") ? m.landClass.name == lcNode.GetValue("name") : true) || (lcNode.HasValue("index") ? landClasses.IndexOf(m).ToString() == lcNode.GetValue("index") : false)))
-                                                                 .FirstOrDefault();
-
-                                // Load the Loader (lol)
-                                if (loader != null)
-                                {
-                                    Parser.LoadObjectFromConfigurationNode(loader, lcNode, "Kopernicus");
-                                    landClasses.Remove(loader);
-                                    patchedClasses.Add(loader.landClass);
-                                }
-                            }
-
-                            // If we can't patch a LandClass, create a new one
-                            if (loader == null)
-                            {
-                                loader = Parser.CreateObjectFromConfigNode<LandClassLoader>(lcNode, "Kopernicus");
-                            }
-
-                            // Add the Loader to the List
-                            if (!loader.delete.value)
-                                landClasses.Add(loader);
-                        }
-                    }
+                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
+                            .Select(landClass => landClass.landClass).ToArray();
+                        mod.lcCount = mod.landClasses.Length;
+                    });
                 }
 
-                // Select the land class objects and push into the mod
-                void IParserEventSubscriber.PostApply(ConfigNode node)
+                // Grabs a PQSMod of type T from a parameter with a given PQS
+                public override void Create(PQSMod_HeightColorMap _mod, PQS pqsVersion)
                 {
-                    PQSMod_HeightColorMap.LandClass[] landClassesArray = landClasses.Select(loader => loader.landClass).ToArray();
-                    if (landClassesArray.Count() != 0)
+                    base.Create(_mod, pqsVersion);
+                    
+                    // Create the callback list
+                    landClasses = new CallbackList<LandClassLoader> ((e) =>
                     {
-                        mod.landClasses = landClassesArray;
+                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
+                            .Select(landClass => landClass.landClass).ToArray();
+                        mod.lcCount = mod.landClasses.Length;
+                    });
+                    
+                    // Load LandClasses
+                    if (mod.landClasses != null)
+                    {
+                        foreach (PQSMod_HeightColorMap.LandClass landClass in mod.landClasses)
+                        {
+                            landClasses.Add(new LandClassLoader(landClass));
+                        }
                     }
-                    mod.lcCount = mod.landClasses.Length;
                 }
             }
         }

@@ -35,6 +35,15 @@ namespace Kopernicus
         [RequireConfigType(ConfigType.Node)]
         public class PropertiesLoader : BaseLoader, IParserEventSubscriber
         {
+            // How visible should the planet be in the science archives
+            public enum RDVisibility
+            {
+                VISIBLE,
+                NOICON,
+                HIDDEN,
+                SKIP
+            }
+            
             // Celestial body to edit
             public CelestialBody celestialBody { get; set; }
 
@@ -67,18 +76,18 @@ namespace Kopernicus
             public NumericParser<Double> mass
             {
                 get { return celestialBody.Mass; }
-                set { celestialBody.Mass = value; hasMass = true; }
+                set { celestialBody.Mass = value; _hasMass = true; }
             }
-            private Boolean hasMass = false;
+            private Boolean _hasMass = false;
 
             // Grav Param
             [ParserTarget("gravParameter")]
             public NumericParser<Double> gravParameter
             {
                 get { return celestialBody.gravParameter; }
-                set { celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter = value; hasGravParam = true; }
+                set { celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter = value; _hasGravParam = true; }
             }
-            private Boolean hasGravParam = false;
+            private Boolean _hasGravParam = false;
 
             // Does the body rotate?
             [ParserTarget("rotates")]
@@ -156,7 +165,7 @@ namespace Kopernicus
             [ParserTarget("sphereOfInfluence")]
             public NumericParser<Double> sphereOfInfluence
             {
-                get { return celestialBody.Has("sphereOfInfluence") ? celestialBody.Get<Double>("sphereOfInfluence") : celestialBody.sphereOfInfluence; }
+                get { return celestialBody.Get("sphereOfInfluence", celestialBody.sphereOfInfluence); }
                 set { celestialBody.sphereOfInfluence = value; celestialBody.Set("sphereOfInfluence", value.value); }
             }
 
@@ -164,7 +173,7 @@ namespace Kopernicus
             [ParserTarget("hillSphere")]
             public NumericParser<Double> hillSphere
             {
-                get { return celestialBody.Has("hillSphere") ? celestialBody.Get<Double>("hillSphere") : celestialBody.hillSphere; }
+                get { return celestialBody.Get("hillSphere", celestialBody.hillSphere); }
                 set { celestialBody.hillSphere = value; celestialBody.Set("hillSphere", value.value); }
             }
 
@@ -194,11 +203,6 @@ namespace Kopernicus
             // Science values of this body
             [ParserTarget("ScienceValues", allowMerge = true)]
             public ScienceValuesLoader scienceValues { get; set; }
-
-            // Biomes of this body
-            [PreApply]
-            [ParserTargetCollection("Biomes", nameSignificance = NameSignificance.None)]
-            public List<BiomeLoader> biomes = new List<BiomeLoader>();
 
             // Biome definition via MapSO parser
             [ParserTarget("biomeMap")]
@@ -232,6 +236,22 @@ namespace Kopernicus
                 set { celestialBody.BiomeMap.exactSearch = value; }
             }
 
+            // Biomes of this body
+            [ParserTargetCollection("Biomes", nameSignificance = NameSignificance.None)]
+            public List<BiomeLoader> biomes
+            {
+                get { return celestialBody.BiomeMap?.Attributes?.Select(a => new BiomeLoader(a)).ToList(); }
+                set
+                {
+                    // Check biome map
+                    if (celestialBody.BiomeMap == null)
+                        throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
+
+                    // Replace the old biomes list with the new one
+                    celestialBody.BiomeMap.Attributes = value.Select(a => a.attribute).ToArray();
+                }
+            }
+
             // If the body name should be prefixed with "the" in some situations
             [ParserTarget("useTheInName")]
             public NumericParser<Boolean> useTheInName
@@ -251,20 +271,15 @@ namespace Kopernicus
             [ParserTarget("selectable")]
             public NumericParser<Boolean> selectable
             {
-                get { return !celestialBody.Has("notSelectable"); }
-                set { if (!value.value) celestialBody.Set("notSelectable", true); }
+                get { return celestialBody.Get("notSelectable", false); }
+                set { celestialBody.Set("notSelectable", value.value); }
             }
 
             // If the body should be hidden in RD
             [ParserTarget("RDVisibility")]
             public EnumParser<RDVisibility> hiddenRD
             {
-                get
-                {
-                    if (celestialBody.Has("hiddenRnD"))
-                        return celestialBody.Get<RDVisibility>("hiddenRnD");
-                    return RDVisibility.VISIBLE;
-                }
+                get { return celestialBody.Get("hiddenRnD", RDVisibility.VISIBLE); }
                 set { celestialBody.Set("hiddenRnD", value.value); }
             }
 
@@ -272,35 +287,20 @@ namespace Kopernicus
             [ParserTarget("RnDVisibility")]
             public EnumParser<RDVisibility> hiddenRnD
             {
-                get
-                {
-                    if (celestialBody.Has("hiddenRnD"))
-                        return celestialBody.Get<RDVisibility>("hiddenRnD");
-                    return RDVisibility.VISIBLE;
-                }
-                set { celestialBody.Set("hiddenRnD", value.value); }
+                get { return hiddenRD; }
+                set { hiddenRD = value; }
             }
 
             // If the body should rotate in RnD
             [ParserTarget("RnDRotation")]
-            public NumericParser<bool> RnDRotation
+            public NumericParser<Boolean> RnDRotation
             {
                 get
                 {
-                    if (celestialBody.Has("RnDRotation"))
-                        return celestialBody.Get<bool>("RnDRotation");
-                    return celestialBody?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null;
+                    return celestialBody.Get("RnDRotation",
+                        celestialBody?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null);
                 }
                 set { celestialBody.Set("RnDRotation", value.value); }
-            }
-
-            // How visible should the planet be in the science archives
-            public enum RDVisibility
-            {
-                VISIBLE,
-                NOICON,
-                HIDDEN,
-                SKIP
             }
 
             // Max Zoom limit for TrackingStation and MapView
@@ -308,20 +308,17 @@ namespace Kopernicus
             [ParserTarget("maxZoom")]
             public NumericParser<Single> minDistance
             {
-                get { return celestialBody.Has("maxZoom") ? celestialBody.Get<Single>("maxZoom") : 10 * 6000f; }
+                get { return celestialBody.Get("maxZoom", 10 * 6000f); }
                 set { celestialBody.Set("maxZoom", value.value / 6000f); }
             }
 
             // Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
-                // We require a science values object
-                if (celestialBody.scienceValues == null)
-                    celestialBody.scienceValues = new CelestialBodyScienceParams();
-
-                // Create the science values cache
-                scienceValues = new ScienceValuesLoader(celestialBody.scienceValues);
-
+                // Replace biomes
+                if (celestialBody.Get("removeBiomes", true) && celestialBody.BiomeMap != null)
+                    celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
+                
                 // Event
                 Events.OnPropertiesLoaderApply.Fire(this, node);
             }
@@ -329,37 +326,10 @@ namespace Kopernicus
             // PostApply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                // isHomeWorld Check
-                celestialBody.isHomeWorld = celestialBody.transform.name == "Kerbin";
-
-                // Replace biomes
-                if (celestialBody.Has("removeBiomes") && celestialBody.Get<Boolean>("removeBiomes"))
-                    celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
-
-                if (biomes?.Count() > 0)
-                {
-                    // Check biome map
-                    if (biomeMap?.value == null)
-                        throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
-
-                    // Generate a list of biomes
-                    List<CBAttributeMapSO.MapAttribute> biomesList = new List<CBAttributeMapSO.MapAttribute>();
-
-                    // If removeBiomes is false we want to keep the original biomes
-                    if (celestialBody.Has("removeBiomes") && !celestialBody.Get<Boolean>("removeBiomes"))
-                        biomesList = celestialBody.BiomeMap.Attributes.ToList();
-
-                    // Add the new biomes
-                    biomesList.AddRange(biomes.Select(b => b.attribute));
-
-                    // Replace the old biomes list with the new one
-                    celestialBody.BiomeMap.Attributes = biomesList.ToArray();
-                }
-
                 // Converters
-                if (hasGravParam)
+                if (_hasGravParam)
                     GravParamToOthers();
-                else if (hasMass)
+                else if (_hasMass)
                     MassToOthers();
                 else
                     GeeASLToOthers();
@@ -391,11 +361,21 @@ namespace Kopernicus
             public PropertiesLoader()
             {
                 // Is this the parser context?
-                if (generatedBody == null)
+                if (!Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("Must be executed in Injector context.");
-
+                }
+                
                 // Store values
                 celestialBody = generatedBody.celestialBody;
+                
+                // We require a science values object
+                if (celestialBody.scienceValues == null)
+                    celestialBody.scienceValues = new CelestialBodyScienceParams();
+                scienceValues = new ScienceValuesLoader(celestialBody.scienceValues);
+                
+                // isHomeWorld Check
+                celestialBody.isHomeWorld = celestialBody.transform.name == "Kerbin";
             }
 
             /// <summary>
@@ -404,25 +384,21 @@ namespace Kopernicus
             public PropertiesLoader(CelestialBody body)
             {
                 // Is this a spawned body?
-                if (body?.scaledBody == null)
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
 
                 // Store values
                 celestialBody = body;
-            }
-
-            /// <summary>
-            /// Creates a new Properties Loader from a custom PSystemBody.
-            /// </summary>
-            public PropertiesLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-                // Store values
-                celestialBody = generatedBody.celestialBody;
+                
+                // We require a science values object
+                if (celestialBody.scienceValues == null)
+                    celestialBody.scienceValues = new CelestialBodyScienceParams();
+                scienceValues = new ScienceValuesLoader(celestialBody.scienceValues);
+                
+                // isHomeWorld Check
+                celestialBody.isHomeWorld = celestialBody.transform.name == "Kerbin";
             }
 
             // Mass converters

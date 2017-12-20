@@ -23,34 +23,33 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
 {
     namespace Components
     {
-        /// <summary>
-        /// Component to change the displayed name of a body
-        /// </summary>
-        public class NameChanger : MonoBehaviour
+        // Wrapper for the OrbitRendererData class to make it a bit easier to use
+        public class KopernicusOrbitRendererData : OrbitRendererData
         {
-            // Variables
-            public String oldName;
-            public String newName;
+            // Accessor for the nodeColor field
+            private static FieldInfo _nodeColor = typeof(OrbitRendererData)
+                .GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
 
-            /// <summary>
-            /// Apply the name changes
-            /// </summary>
-            public void Start()
+            public Color nodeColor
             {
-                foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
-                {
-                    b.bodyName = newName;
-                    PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
-                    Events.OnApplyNameChange.Fire(this, b);
-                }
+                get { return (Color) _nodeColor.GetValue(this); }
+                set { _nodeColor.SetValue(this, value); }
+            }
+
+            public KopernicusOrbitRendererData(CelestialBody body, OrbitRenderer renderer) : base(body)
+            {
+                orbitColor = renderer.orbitColor;
+                nodeColor = renderer.nodeColor;
+                lowerCamVsSmaRatio = renderer.lowerCamVsSmaRatio;
+                upperCamVsSmaRatio = renderer.upperCamVsSmaRatio;
             }
         }
     }

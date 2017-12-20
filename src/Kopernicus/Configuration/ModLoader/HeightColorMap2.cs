@@ -147,8 +147,7 @@ namespace Kopernicus
                             if (landClasses.Count > 0)
                             {
                                 // Attempt to find a LandClass we can edit that we have not edited before
-                                loader = landClasses.Where(m => !patchedClasses.Contains(m.landClass2) && ((lcNode.HasValue("name") ? m.landClass2.name == lcNode.GetValue("name") : false) || (lcNode.HasValue("index") ? landClasses.IndexOf(m).ToString() == lcNode.GetValue("index") : false)))
-                                                                 .FirstOrDefault();
+                                loader = landClasses.FirstOrDefault(m => !patchedClasses.Contains(m.landClass2) && (lcNode.HasValue("name") && m.landClass2.name == lcNode.GetValue("name") || lcNode.HasValue("index") && landClasses.IndexOf(m).ToString() == lcNode.GetValue("index")));
 
                                 // Load the Loader (lol)
                                 if (loader != null)

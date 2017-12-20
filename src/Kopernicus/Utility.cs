@@ -87,6 +87,40 @@ namespace Kopernicus
         }
 
         /// <summary>
+        /// Copy one objects properties to another object via reflection
+        /// </summary>
+        /// <param name="source">Object to copy fields from</param>
+        /// <param name="destination">Object to copy fields to</param>
+        /// <param name="log">Whether the function should log the actions it performs</param>
+        public static void CopyObjectProperties<T>(T source, T destination, Boolean log = true)
+        {
+            // Reflection based copy
+            foreach (PropertyInfo property in typeof(T).GetProperties())
+            {
+                // Only copy editable
+                if (property.CanRead && property.CanWrite)
+                {
+                    if (property.GetGetMethod().IsStatic)
+                        continue;
+
+                    System.Object sourceValue = property.GetValue(source, null);
+                    System.Object destValue = property.GetValue(destination, null);
+                    
+                    // Check if both values are equal
+                    if (sourceValue == destValue)
+                        continue;
+                    
+                    // Log the fields
+                    if (log)
+                    {
+                        Logger.Active.Log("Copying \"" + property.Name + "\": " + (destValue ?? "<NULL>") + " => " + (sourceValue ?? "<NULL>"));
+                    }
+                    property.SetValue(destination, sourceValue, null);
+                }
+            }
+        }
+
+        /// <summary>
         /// Recursively searches for a named transform in the Transform heirarchy.  The requirement of
         /// such a function is sad.This should really be in the Unity3D API.Transform.Find() only
         /// searches in the immediate children.

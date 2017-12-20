@@ -23,33 +23,38 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
 {
     namespace Components
     {
-        /// <summary>
-        /// Component to change the displayed name of a body
-        /// </summary>
-        public class NameChanger : MonoBehaviour
+        [RequireComponent(typeof(OrbitDriver))]
+        public class OrbitRendererUpdater : MonoBehaviour
         {
-            // Variables
-            public String oldName;
-            public String newName;
+            private OrbitDriver _driver;
 
-            /// <summary>
-            /// Apply the name changes
-            /// </summary>
-            public void Start()
+            void Start()
             {
-                foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
+                _driver = GetComponent<OrbitDriver>();
+            }
+            
+            // Updates the parameters of OrbitRenderer every frame
+            void Update()
+            {
+                if (_driver.celestialBody == null)
+                    return;
+                if (!PSystemManager.OrbitRendererDataCache.ContainsKey(_driver.celestialBody))
+                    return;
+                
+                if (_driver.Renderer != null)
                 {
-                    b.bodyName = newName;
-                    PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
-                    Events.OnApplyNameChange.Fire(this, b);
+                    KopernicusOrbitRendererData data =
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[_driver.celestialBody];
+                    _driver.Renderer.orbitColor = data.orbitColor;
+                    _driver.Renderer.nodeColor = data.nodeColor;
+                    _driver.Renderer.upperCamVsSmaRatio = data.upperCamVsSmaRatio;
+                    _driver.Renderer.lowerCamVsSmaRatio = data.lowerCamVsSmaRatio;
                 }
             }
         }

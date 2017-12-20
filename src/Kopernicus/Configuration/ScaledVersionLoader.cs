@@ -27,6 +27,8 @@ using Kopernicus.MaterialWrapper;
 using Kopernicus.OnDemand;
 using System;
 using System.Collections.Generic;
+using Kopernicus.Components;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -47,6 +49,7 @@ namespace Kopernicus
             // Type of object this body's scaled version is
             [PreApply]
             [ParserTarget("type")]
+            [KittopiaHideOption]
             public EnumParser<BodyType> type { get; set; }
 
             // Set the altitude where the fade to scaled space starts
@@ -67,7 +70,26 @@ namespace Kopernicus
 
             // Create the Kopernicus LightShifter
             [ParserTarget("Light", allowMerge = true)]
-            public LightShifterLoader lightShifter { get; set; }
+            public LightShifterLoader lightShifter
+            {
+                get
+                {
+                    if (type == BodyType.Star)
+                    {
+                        LightShifter shifter = scaledVersion.GetComponentInChildren<LightShifter>();
+                        if (shifter != null)
+                        {
+                            return new LightShifterLoader(owner);
+                        }
+                        if (Injector.IsInPrefab)
+                        {
+                            return new LightShifterLoader();
+                        }
+                    }
+                    return null;
+                }
+                set { value.lsc.transform.parent = scaledVersion.transform; }
+            }
 
             // Coronas for a star's scaled version
             [ParserTargetCollection("Coronas", nameSignificance = NameSignificance.None)]
@@ -96,15 +118,15 @@ namespace Kopernicus
                 if (type.value != BodyType.Star)
                 {
                     // If we are not a star, we need a scaled space fader and a sphere collider
-                    if (scaledVersion.GetComponent<ScaledSpaceFader> () == null) 
+                    if (scaledVersion.GetComponent<ScaledSpaceFader>() == null)
                     {
-                        ScaledSpaceFader fader = scaledVersion.AddComponent<ScaledSpaceFader> ();
+                        ScaledSpaceFader fader = scaledVersion.AddComponent<ScaledSpaceFader>();
                         fader.floatName = "_Opacity";
                         fader.celestialBody = owner;
                     }
 
                     // Add a sphere collider if we need one
-                    if (scaledVersion.GetComponent<SphereCollider> () == null)
+                    if (scaledVersion.GetComponent<SphereCollider>() == null)
                     {
                         SphereCollider collider = scaledVersion.AddComponent<SphereCollider>();
                         collider.center = Vector3.zero;
@@ -112,20 +134,21 @@ namespace Kopernicus
                     }
 
                     // Generate new atmospheric body material
-                    if (type.value == BodyType.Atmospheric) 
+                    if (type.value == BodyType.Atmospheric)
                     {
                         ScaledPlanetRimAerialLoader newMaterial = null;
-                        if (material != null && ScaledPlanetRimAerial.UsesSameShader(material)) 
+                        if (material != null && ScaledPlanetRimAerial.UsesSameShader(material))
                         {
-                            newMaterial = new ScaledPlanetRimAerialLoader (material);
-                            if(data != null)
-                                Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
-                        } 
+                            newMaterial = new ScaledPlanetRimAerialLoader(material);
+                            if (data != null)
+                                Parser.LoadObjectFromConfigurationNode(newMaterial, data, "Kopernicus");
+                        }
                         else
                         {
                             if (data == null)
                                 throw new Exception("Scaled version has no material information");
-                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader> (data, "Kopernicus");
+                            newMaterial =
+                                Parser.CreateObjectFromConfigNode<ScaledPlanetRimAerialLoader>(data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
                         if (newMaterial.rimColorRamp != null)
@@ -137,20 +160,21 @@ namespace Kopernicus
                     }
 
                     // Generate new vacuum body material
-                    else 
+                    else
                     {
                         ScaledPlanetSimpleLoader newMaterial = null;
-                        if (material != null && ScaledPlanetSimple.UsesSameShader(material)) 
+                        if (material != null && ScaledPlanetSimple.UsesSameShader(material))
                         {
-                            newMaterial = new ScaledPlanetSimpleLoader (material);
-                            if(data != null)
-                                Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
-                        } 
+                            newMaterial = new ScaledPlanetSimpleLoader(material);
+                            if (data != null)
+                                Parser.LoadObjectFromConfigurationNode(newMaterial, data, "Kopernicus");
+                        }
                         else
                         {
                             if (data == null)
                                 throw new Exception("Scaled version has no material information");
-                            newMaterial = Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader> (data, "Kopernicus");
+                            newMaterial =
+                                Parser.CreateObjectFromConfigNode<ScaledPlanetSimpleLoader>(data, "Kopernicus");
                         }
                         newMaterial.name = Guid.NewGuid().ToString();
                         scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
@@ -158,38 +182,45 @@ namespace Kopernicus
                 }
 
                 // Otherwise we are a star
-                else 
+                else
                 {
                     // Add the SunShaderController behavior
-                    if(scaledVersion.GetComponent<SunShaderController>() == null)
+                    if (scaledVersion.GetComponent<SunShaderController>() == null)
                         scaledVersion.AddComponent<SunShaderController>();
 
                     // Add the ScaledSun behavior
                     // TODO - apparently there can only be one of these (or it destroys itself)
-                    if(scaledVersion.GetComponent<ScaledSun>() == null)
+                    if (scaledVersion.GetComponent<ScaledSun>() == null)
                         scaledVersion.AddComponent<ScaledSun>();
 
                     // Add the Kopernicus star componenet
-                    component = scaledVersion.AddComponent<StarComponent> ();
-                    lightShifter = new LightShifterLoader();
+                    component = scaledVersion.AddComponent<StarComponent>();
 
                     // Generate a new material for the star
                     EmissiveMultiRampSunspotsLoader newMaterial = null;
-                    if(material != null && EmissiveMultiRampSunspots.UsesSameShader(material))
+                    if (material != null && EmissiveMultiRampSunspots.UsesSameShader(material))
                     {
-                        newMaterial = new EmissiveMultiRampSunspotsLoader (material);
-                        if(data != null)
-                            Parser.LoadObjectFromConfigurationNode (newMaterial, data, "Kopernicus");
+                        newMaterial = new EmissiveMultiRampSunspotsLoader(material);
+                        if (data != null)
+                            Parser.LoadObjectFromConfigurationNode(newMaterial, data, "Kopernicus");
                     }
                     else
                     {
                         if (data == null)
                             throw new Exception("Scaled version has no material information");
-                        newMaterial = Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader> (data, "Kopernicus");
+                        newMaterial =
+                            Parser.CreateObjectFromConfigNode<EmissiveMultiRampSunspotsLoader>(data, "Kopernicus");
                     }
 
                     newMaterial.name = Guid.NewGuid().ToString();
                     scaledVersion.GetComponent<Renderer>().sharedMaterial = newMaterial;
+
+
+                    // Backup existing coronas
+                    foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true))
+                    {
+                        corona.transform.parent = Utility.Deactivator;
+                    }
                 }
 
                 // Event
@@ -206,34 +237,20 @@ namespace Kopernicus
                 // If we are a star, we need to generate the coronas 
                 if (type.value == BodyType.Star) 
                 {
-                    if (lightShifter != null)
-                        lightShifter.lsc.transform.parent = scaledVersion.transform;
-
-                    // Apply custom coronas
-                    if (coronas.Count > 0) 
+                    // Restore backed up coronas if no custom ones were specified
+                    if (coronas.Count == 0)
                     {
-                        // Nuke existing ones
-                        foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
+                        foreach (SunCoronas corona in Utility.Deactivator.GetComponentsInChildren<SunCoronas>(true))
+                        {
+                            corona.transform.parent = scaledVersion.transform;
+                        }
+                    }
+                    else
+                    {
+                        foreach (SunCoronas corona in Utility.Deactivator.GetComponentsInChildren<SunCoronas>(true))
                         {
                             corona.transform.parent = null;
                             UnityEngine.Object.Destroy(corona.gameObject);
-                        }
-
-                        // Apply new ones
-                        foreach (CoronaLoader corona in coronas) 
-                        {
-                            // Backup local transform parameters 
-                            Vector3 position = corona.corona.transform.localPosition;
-                            Vector3 scale = corona.corona.transform.localScale;
-                            Quaternion rotation = corona.corona.transform.rotation;
-
-                            // Parent the new corona
-                            corona.corona.transform.parent = scaledVersion.transform;
-
-                            // Restore the local transform settings
-                            corona.corona.transform.localPosition = position;
-                            corona.corona.transform.localScale = scale;
-                            corona.corona.transform.localRotation = rotation;
                         }
                     }
                 }
@@ -260,9 +277,11 @@ namespace Kopernicus
             public ScaledVersionLoader()
             {
                 // Is this the parser context?
-                if (generatedBody == null)
+                if (!Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("Must be executed in Injector context.");
-
+                }
+                
                 // Get the scaled version object
                 scaledVersion = generatedBody.scaledVersion;
                 owner = generatedBody.celestialBody;
@@ -270,7 +289,9 @@ namespace Kopernicus
 
                 // Ensure scaled version at least has a mesh filter and mesh renderer
                 if (scaledVersion.GetComponent<MeshFilter>() == null)
+                {
                     scaledVersion.AddComponent<MeshFilter>();
+                }
                 if (scaledVersion.GetComponent<MeshRenderer>() == null)
                 {
                     scaledVersion.AddComponent<MeshRenderer>();
@@ -284,8 +305,10 @@ namespace Kopernicus
             public ScaledVersionLoader(CelestialBody body)
             {
                 // Is this a spawned body?
-                if (body?.scaledBody == null)
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
 
                 // Get the scaled version object
                 scaledVersion = body.scaledBody;
@@ -298,31 +321,6 @@ namespace Kopernicus
                     type = BodyType.Atmospheric;
                 else
                     type = BodyType.Vacuum;
-            }
-
-            /// <summary>
-            /// Creates a new ScaledVersion Loader from a custom PSystemBody.
-            /// </summary>
-            public ScaledVersionLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-                // Get the scaled version object
-                scaledVersion = generatedBody.scaledVersion;
-                owner = generatedBody.celestialBody;
-                type = new EnumParser<BodyType>(Loader.currentBody.template == null ? BodyType.Atmospheric : Loader.currentBody.template.type);
-
-                // Ensure scaled version at least has a mesh filter and mesh renderer
-                if (scaledVersion.GetComponent<MeshFilter>() == null)
-                    scaledVersion.AddComponent<MeshFilter>();
-                if (scaledVersion.GetComponent<MeshRenderer>() == null)
-                {
-                    scaledVersion.AddComponent<MeshRenderer>();
-                    scaledVersion.GetComponent<Renderer>().material = null;
-                }
             }
         }
     }

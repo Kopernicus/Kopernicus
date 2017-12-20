@@ -24,33 +24,50 @@
  */
 
 using System;
-using System.Linq;
-using UnityEngine;
 
 namespace Kopernicus
 {
-    namespace Components
+    namespace UI
     {
         /// <summary>
-        /// Component to change the displayed name of a body
+        /// Defines the constructor that should be used when creating the object
         /// </summary>
-        public class NameChanger : MonoBehaviour
+        [AttributeUsage(AttributeTargets.Constructor)]
+        public class KittopiaConstructor : Attribute
         {
-            // Variables
-            public String oldName;
-            public String newName;
+            /// <summary>
+            /// Describes the parameters that should be passed to the constructor
+            /// </summary>
+            public enum Parameter
+            {
+                CelestialBody,
+                Element,
+                Empty
+            }
 
             /// <summary>
-            /// Apply the name changes
+            /// Describes how the constructor is used
             /// </summary>
-            public void Start()
+            public enum Purpose
             {
-                foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
-                {
-                    b.bodyName = newName;
-                    PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
-                    Events.OnApplyNameChange.Fire(this, b);
-                }
+                Create = 1,
+                Edit = 2,
+                Both = Create | Edit
+            }
+            
+            /// <summary>
+            /// The parameters for the constructor
+            /// </summary>
+            public Parameter[] parameters;
+
+            /// <summary>
+            /// Describes how the constructor is used
+            /// </summary>
+            public Purpose purpose = Purpose.Both;
+
+            public KittopiaConstructor(params Parameter[] parameters)
+            {
+                this.parameters = parameters;
             }
         }
     }

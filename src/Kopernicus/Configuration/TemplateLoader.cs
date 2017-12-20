@@ -76,7 +76,7 @@ namespace Kopernicus
             [ParserTarget("removeBiomes")]
             public NumericParser<Boolean> removeBiomes
             {
-                get { return body.Has("removeBiomes") ? body.Get<Boolean>("removeBiomes") : true; }
+                get { return body.Get("removeBiomes", true); }
                 set { body.Set("removeBiomes", value.value); }
             }
 

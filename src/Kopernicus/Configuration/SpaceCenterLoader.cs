@@ -26,6 +26,7 @@
 using Kopernicus.Components;
 using System;
 using System.Linq;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -40,6 +41,7 @@ namespace Kopernicus
 
             // latitude
             [ParserTarget("latitude")]
+            [KittopiaDescription("The latitude of the KSC buildings.")]
             public NumericParser<Double> latitude
             {
                 get { return ksc.latitude; }
@@ -48,6 +50,7 @@ namespace Kopernicus
 
             // longitude
             [ParserTarget("longitude")]
+            [KittopiaDescription("The longitude of the KSC buildings.")]
             public NumericParser<Double> longitude
             {
                 get { return ksc.longitude; }
@@ -63,6 +66,7 @@ namespace Kopernicus
 
             // decalLatitude
             [ParserTarget("decalLatitude")]
+            [KittopiaDescription("The latitude of the center of the flat area around the KSC.")]
             public NumericParser<Double> decalLatitude
             {
                 get { return ksc.decalLatitude; }
@@ -71,6 +75,7 @@ namespace Kopernicus
 
             // decalLongitude
             [ParserTarget("decalLongitude")]
+            [KittopiaDescription("The longitude of the center of the flat area around the KSC.")]
             public NumericParser<Double> decalLongitude
             {
                 get { return ksc.decalLongitude; }
@@ -143,6 +148,7 @@ namespace Kopernicus
 
             // position
             [ParserTarget("position")]
+            [KittopiaDescription("The position of the KSC buildings represented as a Vector.")]
             public Vector3Parser position
             {
                 get { return ksc.position; }
@@ -151,6 +157,7 @@ namespace Kopernicus
 
             // radius
             [ParserTarget("radius")]
+            [KittopiaDescription("The altitude of the KSC.")]
             public NumericParser<Double> radius
             {
                 get { return ksc.radius; }
@@ -183,6 +190,7 @@ namespace Kopernicus
 
             // groundColor
             [ParserTarget("groundColor")]
+            [KittopiaDescription("The color of the grass at the KSC.")]
             public ColorParser groundColorParser
             {
                 get { return ksc.color; }
@@ -191,52 +199,18 @@ namespace Kopernicus
 
             // Texture
             [ParserTarget("groundTexture")]
+            [KittopiaDescription("The surface texture of the grass spots at the KSC.")]
             public Texture2DParser groundTextureParser
             {
                 get { return ksc.mainTexture; }
                 set { ksc.mainTexture = value; }
             }
 
-            /// <summary>
-            /// Creates a new SpaceCenter Loader from the Injector context.
-            /// </summary>
-            public SpaceCenterLoader()
+            [KittopiaAction("Update KSC")]
+            [KittopiaDescription("Updates and applies the parameters of the KSC object")]
+            public void UpdateKSC()
             {
-                // Is this the parser context?
-                if (generatedBody == null)
-                    throw new InvalidOperationException("Must be executed in Injector context.");
-
-                // Store values
-                ksc = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
-                UnityEngine.Object.DontDestroyOnLoad(ksc);
-            }
-
-            /// <summary>
-            /// Creates a new SpaceCenter Loader from a spawned CelestialBody.
-            /// </summary>
-            public SpaceCenterLoader(CelestialBody body)
-            {
-                // Is this a spawned body?
-                if (body?.scaledBody == null)
-                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
-
-                // Store values
-                ksc = UnityEngine.Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.name);
-            }
-
-            /// <summary>
-            /// Creates a new SpaceCenter Loader from a custom PSystemBody.
-            /// </summary>
-            public SpaceCenterLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-                // Store values
-                ksc = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
-                UnityEngine.Object.DontDestroyOnLoad(ksc);
+                ksc.Start();
             }
 
             // Apply event
@@ -249,6 +223,43 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 Events.OnSpaceCenterLoaderPostApply.Fire(this, node);
+            }
+
+            /// <summary>
+            /// Creates a new SpaceCenter Loader from the Injector context.
+            /// </summary>
+            public SpaceCenterLoader()
+            {
+                // Is this the parser context?
+                if (!Injector.IsInPrefab)
+                {
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+                }
+
+                // Store values
+                ksc = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
+                UnityEngine.Object.DontDestroyOnLoad(ksc);
+            }
+
+            /// <summary>
+            /// Creates a new SpaceCenter Loader from a spawned CelestialBody.
+            /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
+            public SpaceCenterLoader(CelestialBody body)
+            {
+                // Is this a spawned body?
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
+
+                // Store values
+                ksc = UnityEngine.Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.transform.name);
+                if (ksc == null)
+                {
+                    ksc = new GameObject("SpaceCenter " + body.transform.name).AddComponent<KSC>();
+                    UnityEngine.Object.DontDestroyOnLoad(ksc);
+                }
             }
         }
     }

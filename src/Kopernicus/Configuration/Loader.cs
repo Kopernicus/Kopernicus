@@ -125,9 +125,6 @@ namespace Kopernicus
                 set { Templates.menuBody = value; }
             }
 
-            // Whether the main menu body should be randomized
-            public List<String> randomMainMenuBodies = new List<String>();
-
             // The maximum viewing distance in tracking station
             [ParserTarget("maxViewingDistance")]
             public NumericParser<Double> maxViewDistance
@@ -307,10 +304,6 @@ namespace Kopernicus
                 {
                     throw new InvalidOperationException("Found duplicated body identifiers!");
                 }
-
-                // Main Menu bodies
-                if (randomMainMenuBodies.Any())
-                    Templates.menuBody = randomMainMenuBodies[new System.Random().Next(0, randomMainMenuBodies.Count)];
 
                 // We're done
                 currentBody.generatedBody = null;

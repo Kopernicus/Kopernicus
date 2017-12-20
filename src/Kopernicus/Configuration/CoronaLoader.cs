@@ -25,6 +25,8 @@
 
 using System;
 using System.Linq;
+using Kopernicus.MaterialWrapper;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -32,7 +34,7 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class CoronaLoader : IParserEventSubscriber
+        public class CoronaLoader : BaseLoader, IParserEventSubscriber
         {
             // The generated corona
             public SunCoronas coronaComponent;
@@ -84,8 +86,14 @@ namespace Kopernicus
             [ParserTarget("Material", allowMerge = true, getChild = false)]
             public ParticleAddSmoothLoader material
             {
-                get { return new ParticleAddSmoothLoader(coronaComponent.GetComponent<Renderer>().sharedMaterial); }
-                set { coronaComponent.GetComponent<Renderer>().sharedMaterial = new Material(value); }
+                get { return (ParticleAddSmoothLoader)coronaComponent.GetComponent<Renderer>().sharedMaterial; }
+                set { coronaComponent.GetComponent<Renderer>().sharedMaterial = value; }
+            }
+
+            [KittopiaDestructor]
+            public void Destroy()
+            {
+                UnityEngine.Object.Destroy(corona);
             }
 
             // Parser apply event
@@ -105,12 +113,69 @@ namespace Kopernicus
             /// </summary>
             public CoronaLoader()
             {
+                // Is this the parser context?
+                if (!Injector.IsInPrefab)
+                {
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+                }
+                
                 // We need to get the body for the Sun (to steal it's corona mesh)
-                PSystemBody sun = Utility.FindBody (PSystemManager.Instance.systemPrefab.rootBody, "Sun");
+                PSystemBody sun = Utility.FindBody (Injector.StockSystemPrefab.rootBody, "Sun");
 
                 // Clone a default Corona
                 corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
-                corona.transform.parent = Utility.Deactivator;
+                
+                // Backup local transform parameters 
+                Vector3 position = corona.transform.localPosition;
+                Vector3 scale = corona.transform.localScale;
+                Quaternion rotation = corona.transform.rotation;
+
+                // Parent the new corona
+                corona.transform.parent = generatedBody.scaledVersion.transform;
+
+                // Restore the local transform settings
+                corona.transform.localPosition = position;
+                corona.transform.localScale = scale;
+                corona.transform.localRotation = rotation;
+                
+                coronaComponent = corona.GetComponent<SunCoronas> ();
+
+                // Setup the material loader
+                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().material);
+                material.name = Guid.NewGuid().ToString();
+            }
+
+            /// <summary>
+            /// Creates a new Corona Loader for an already existing body.
+            /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Create)]
+            public CoronaLoader(CelestialBody body)
+            {
+                // Is this a spawned body?
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
+                
+                // We need to get the body for the Sun (to steal it's corona mesh)
+                PSystemBody sun = Utility.FindBody (Injector.StockSystemPrefab.rootBody, "Sun");
+
+                // Clone a default Corona
+                corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
+                
+                // Backup local transform parameters 
+                Vector3 position = corona.transform.localPosition;
+                Vector3 scale = corona.transform.localScale;
+                Quaternion rotation = corona.transform.rotation;
+
+                // Parent the new corona
+                corona.transform.parent = body.scaledBody.transform;
+
+                // Restore the local transform settings
+                corona.transform.localPosition = position;
+                corona.transform.localScale = scale;
+                corona.transform.localRotation = rotation;
+                
                 coronaComponent = corona.GetComponent<SunCoronas> ();
 
                 // Setup the material loader
@@ -121,10 +186,15 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Corona Loader from an already existing corona
             /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public CoronaLoader(SunCoronas component)
             {
                 coronaComponent = component;
                 corona = component.gameObject;
+                if (!(corona.GetComponent<Renderer>().material is ParticleAddSmoothLoader))
+                {
+                    material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().material);
+                }
             }
         }
     }

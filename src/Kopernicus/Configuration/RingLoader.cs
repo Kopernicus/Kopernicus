@@ -25,6 +25,7 @@
 
 using Kopernicus.Components;
 using System;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -35,10 +36,11 @@ namespace Kopernicus
         public class RingLoader : BaseLoader, IParserEventSubscriber
         {
             // Set-up our custom ring
-            public Ring ring { get; set; }
+            public Ring ring;
 
             // Inner Radius of our ring
             [ParserTarget("innerRadius")]
+            [KittopiaDescription("The lower bound of the ring (measured in meters from the center of the body).")]
             public NumericParser<Single> innerRadius
             {
                 get { return ring.innerRadius; }
@@ -47,6 +49,7 @@ namespace Kopernicus
 
             // Outer Radius of our ring
             [ParserTarget("outerRadius")]
+            [KittopiaDescription("The upper bound of the ring (measured in meters from the center of the body).")]
             public NumericParser<Single> outerRadius
             {
                 get { return ring.outerRadius; }
@@ -57,13 +60,16 @@ namespace Kopernicus
             /// Distance between the top and bottom faces in milliradii
             /// </summary>
             [ParserTarget("thickness")]
-            public NumericParser<Single> thickness {
+            [KittopiaDescription("Distance between the top and bottom faces in milliradii.")]
+            public NumericParser<Single> thickness 
+            {
                 get { return ring.thickness;  }
                 set { ring.thickness = value; }
             }
 
             // Axis angle (inclination) of our ring
             [ParserTarget("angle")]
+            [KittopiaDescription("Axis angle (inclination) of our ring.")]
             public NumericParser<Single> angle
             {
                 get { return -ring.rotation.eulerAngles.x; }
@@ -75,6 +81,7 @@ namespace Kopernicus
             /// Works just like the corresponding property on celestial bodies.
             /// </summary>
             [ParserTarget("longitudeOfAscendingNode")]
+            [KittopiaDescription("Angle between the absolute reference direction and the ascending node.")]
             public NumericParser<Single> longitudeOfAscendingNode
             {
                 get { return ring.longitudeOfAscendingNode;  }
@@ -83,6 +90,7 @@ namespace Kopernicus
 
             // Texture of our ring
             [ParserTarget("texture")]
+            [KittopiaDescription("Texture of the ring")]
             public Texture2DParser texture
             {
                 get { return ring.texture; }
@@ -91,6 +99,7 @@ namespace Kopernicus
 
             // Color of our ring
             [ParserTarget("color")]
+            [KittopiaDescription("Color of the ring")]
             public ColorParser color
             {
                 get { return ring.color; }
@@ -99,6 +108,7 @@ namespace Kopernicus
 
             // Lock rotation of our ring?
             [ParserTarget("lockRotation")]
+            [KittopiaDescription("Whether the rotation of the ring should always stay the same.")]
             public NumericParser<Boolean> lockRotation
             {
                 get { return ring.lockRotation; }
@@ -111,6 +121,7 @@ namespace Kopernicus
             /// and standing perfectly still if it's true.
             /// </summary>
             [ParserTarget("rotationPeriod")]
+            [KittopiaDescription("Number of seconds for the ring to complete one rotation. If zero, fall back to matching parent body if lockRotation=false, and standing perfectly still if it's true.")]
             public NumericParser<Single> rotationPeriod
             {
                 get { return ring.rotationPeriod;  }
@@ -119,6 +130,7 @@ namespace Kopernicus
 
             // Unlit our ring?
             [ParserTarget("unlit")]
+            [KittopiaDescription("Apply an unlit shader to the ring?")]
             public NumericParser<Boolean> unlit
             {
                 get { return ring.unlit; }
@@ -127,6 +139,7 @@ namespace Kopernicus
 
             // Use new shader with mie scattering and planet shadow?
             [ParserTarget("useNewShader")]
+            [KittopiaDescription("Use the new custom ring shader instead of the builtin Unity shaders.")]
             public NumericParser<Boolean> useNewShader
             {
                 get { return ring.useNewShader; }
@@ -143,6 +156,7 @@ namespace Kopernicus
 
             // Amount of vertices arount the ring
             [ParserTarget("steps")]
+            [KittopiaDescription("Amount of vertices arount the ring.")]
             public NumericParser<Int32> steps
             {
                 get { return ring.steps; }
@@ -155,6 +169,7 @@ namespace Kopernicus
             /// from (0,0) to (1,1).
             /// </summary>
             [ParserTarget("tiles")]
+            [KittopiaDescription("Number of times the texture should be tiled around the cylinder. If zero, use the old behavior of sampling a thin diagonal strip from (0,0) to (1,1).")]
             public NumericParser<Int32> tiles
             {
                 get { return ring.tiles; }
@@ -165,6 +180,7 @@ namespace Kopernicus
             /// This texture's opaque pixels cast shadows on our inner surface
             /// </summary>
             [ParserTarget("innerShadeTexture")]
+            [KittopiaDescription("This texture's opaque pixels cast shadows on our inner surface.")]
             public Texture2DParser innerShadeTexture
             {
                 get { return ring.innerShadeTexture;  }
@@ -175,6 +191,7 @@ namespace Kopernicus
             /// The inner shade texture repeats this many times over the inner surface
             /// </summary>
             [ParserTarget("innerShadeTiles")]
+            [KittopiaDescription("The inner shade texture repeats this many times over the inner surface.")]
             public NumericParser<Int32> innerShadeTiles
             {
                 get { return ring.innerShadeTiles;  }
@@ -185,27 +202,26 @@ namespace Kopernicus
             /// Number of seconds the inner shade texture takes to complete one rotation
             /// </summary>
             [ParserTarget("innerShadeRotationPeriod")]
+            [KittopiaDescription("Number of seconds the inner shade texture takes to complete one rotation")]
             public NumericParser<Single> innerShadeRotationPeriod
             {
                 get { return ring.innerShadeRotationPeriod;  }
                 set { ring.innerShadeRotationPeriod = value; }
             }
 
-            // Initialize the RingLoader
-            public RingLoader()
+            [KittopiaAction("Rebuild Ring")]
+            [KittopiaDescription("Updates the mesh of the planetary ring.")]
+            public void RebuildRing()
             {
-                ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
-                ring.transform.parent = generatedBody.scaledVersion.transform;
-                ring.planetRadius = (Single) generatedBody.celestialBody.Radius;
-
-                // Need to check the parent body's rotation to orient the LAN properly
-                ring.referenceBody = generatedBody.celestialBody;
+                UnityEngine.Object.Destroy(ring.GetComponent<MeshRenderer>());
+                UnityEngine.Object.Destroy(ring.GetComponent<MeshFilter>());
+                ring.BuildRing();
             }
 
-            // Initialize the RingLoader
-            public RingLoader(Ring ring)
+            [KittopiaDestructor]
+            public void Destroy()
             {
-                this.ring = ring;
+                UnityEngine.Object.Destroy(ring.gameObject);
             }
 
             // Apply event
@@ -218,6 +234,50 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 Events.OnRingLoaderPostApply.Fire(this, node);
+            }
+
+            // Initialize the RingLoader
+            public RingLoader()
+            {
+                // Is this the parser context?
+                if (!Injector.IsInPrefab)
+                {
+                    throw new InvalidOperationException("Must be executed in Injector context.");
+                }
+
+                ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
+                ring.transform.parent = generatedBody.scaledVersion.transform;
+                ring.planetRadius = (Single) generatedBody.celestialBody.Radius;
+
+                // Need to check the parent body's rotation to orient the LAN properly
+                ring.referenceBody = generatedBody.celestialBody;
+            }
+
+            /// <summary>
+            /// Creates a new Ring Loader from a spawned CelestialBody.
+            /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Create)]
+            public RingLoader(CelestialBody body)
+            {
+                // Is this a spawned body?
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
+                
+                ring = new GameObject(body.transform.name + "Ring").AddComponent<Ring>();
+                ring.transform.parent = body.scaledBody.transform;
+                ring.planetRadius = (Single) body.Radius;
+
+                // Need to check the parent body's rotation to orient the LAN properly
+                ring.referenceBody = body;
+            }
+
+            // Initialize the RingLoader
+            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
+            public RingLoader(Ring ring)
+            {
+                this.ring = ring;
             }
         }
     }

@@ -24,6 +24,7 @@
  */
 
 using System;
+using Kopernicus.UI;
 
 namespace Kopernicus
 {
@@ -199,8 +200,10 @@ namespace Kopernicus
             public FogLoader()
             {
                 // Is this the parser context?
-                if (generatedBody == null)
+                if (!Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("Must be executed in Injector context.");
+                }
 
                 // Store values
                 celestialBody = generatedBody.celestialBody;
@@ -209,28 +212,17 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Fog Loader from a spawned CelestialBody.
             /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
             public FogLoader(CelestialBody body)
             {
                 // Is this a spawned body?
-                if (body?.scaledBody == null)
+                if (body?.scaledBody == null || Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                }
 
                 // Store values
                 celestialBody = body;
-            }
-
-            /// <summary>
-            /// Creates a new Fog Loader from a custom PSystemBody.
-            /// </summary>
-            public FogLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-                // Store values
-                celestialBody = generatedBody.celestialBody;
             }
         }
     }

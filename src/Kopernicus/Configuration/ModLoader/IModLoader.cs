@@ -23,34 +23,21 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Linq;
-using UnityEngine;
-
 namespace Kopernicus
 {
-    namespace Components
+    namespace Configuration
     {
-        /// <summary>
-        /// Component to change the displayed name of a body
-        /// </summary>
-        public class NameChanger : MonoBehaviour
+        namespace ModLoader
         {
-            // Variables
-            public String oldName;
-            public String newName;
-
             /// <summary>
-            /// Apply the name changes
+            /// An interface that allows us to group ModLoaders without falling back to System.Object
             /// </summary>
-            public void Start()
+            public interface IModLoader
             {
-                foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
-                {
-                    b.bodyName = newName;
-                    PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
-                    Events.OnApplyNameChange.Fire(this, b);
-                }
+                void Create(PQS pqsVersion);
+                void Create(PQSMod _mod, PQS pqsVersion);
+                
+                PQSMod Mod { get; set; }
             }
         }
     }

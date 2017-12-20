@@ -24,7 +24,9 @@
  */
 
 using System;
-using System.Linq;
+using Kopernicus.Components;
+using Kopernicus.UI;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -46,7 +48,30 @@ namespace Kopernicus
 
             // Reference body to orbit
             [ParserTarget("referenceBody")]
-            public String referenceBody { get; set; }
+            [KittopiaHideOption]
+            [KittopiaDescription("The body that this body is orbiting around.")]
+            public String referenceBody
+            {
+                get
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        return _referenceBody;
+                    }
+                    return celestialBody.orbitDriver.referenceBody.transform.name;
+                }
+                set
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        _referenceBody = value;
+                    }
+                    celestialBody.orbitDriver.referenceBody = celestialBody.orbit.referenceBody =
+                        PSystemManager.Instance.localBodies.Find(b => b.transform.name == value);
+                }
+            }
+
+            private String _referenceBody;
 
             // How inclined is the orbit
             [ParserTarget("inclination")]
@@ -66,6 +91,7 @@ namespace Kopernicus
 
             // Highest point of the orbit
             [ParserTarget("semiMajorAxis")]
+            [KittopiaDescription("The altitude of the highest point in the orbit")]
             public NumericParser<Double> semiMajorAxis
             {
                 get { return orbit.semiMajorAxis; }
@@ -74,6 +100,7 @@ namespace Kopernicus
 
             // Position of the highest point on the orbit circle
             [ParserTarget("longitudeOfAscendingNode")]
+            [KittopiaDescription("The position of the highest point on the orbit circle")]
             public NumericParser<Double> longitudeOfAscendingNode
             {
                 get { return orbit.LAN; }
@@ -114,39 +141,117 @@ namespace Kopernicus
             
             // Orbit renderer color
             [ParserTarget("color")]
+            [KittopiaDescription("The color of the orbit line in the Tracking Station")]
             public ColorParser color
             {
-                get { return generatedBody != null ? generatedBody.orbitRenderer.nodeColor : (celestialBody.orbitDriver.orbitColor * 2).A(celestialBody.orbitDriver.orbitColor.a); }
-                set { generatedBody.orbitRenderer.SetColor(value); }
+                get
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        return generatedBody.orbitRenderer.nodeColor;
+                    }
+                    KopernicusOrbitRendererData data =
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                    return data.nodeColor;
+                }
+                set
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        generatedBody.orbitRenderer.SetColor(value);
+                    }
+                    KopernicusOrbitRendererData data =
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                    data.nodeColor = value;
+                    data.orbitColor = (value.value * 0.5f).A(data.nodeColor.a);
+                    PSystemManager.OrbitRendererDataCache[celestialBody] = data;
+                }
             }
 
             // Orbit Icon color
             [ParserTarget("iconColor")]
+            [KittopiaDescription("The color of the circle that marks the planets current position on the orbit")]
             public ColorParser iconColor
             {
-                // get { return generatedBody.orbitRenderer.nodeColor; }
-                set { generatedBody.orbitRenderer.nodeColor = value.value; }
+                get
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        return generatedBody.orbitRenderer.nodeColor;
+                    }
+                    KopernicusOrbitRendererData data =
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                    return data.nodeColor;
+                }
+                set
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        generatedBody.orbitRenderer.nodeColor = value;
+                    }
+                    KopernicusOrbitRendererData data =
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                    data.nodeColor = value;
+                    PSystemManager.OrbitRendererDataCache[celestialBody] = data;
+                }
             }
 
             // Orbit Draw Mode
             [ParserTarget("mode")]
             public EnumParser<OrbitRenderer.DrawMode> mode
             {
-                get { return celestialBody?.orbitDriver?.Renderer?.drawMode; }
-                set { generatedBody.Set("drawMode", value.value); }
+                get { return celestialBody.Get("drawMode", OrbitRenderer.DrawMode.REDRAW_AND_RECALCULATE); }
+                set { celestialBody.Set("drawMode", value.value); }
             }
 
             // Orbit Icon Mode
             [ParserTarget("icon")]
             public EnumParser<OrbitRenderer.DrawIcons> icon
             {
-                get { return celestialBody?.orbitDriver?.Renderer?.drawIcons; }
-                set { generatedBody.Set("drawIcons", value.value); }
+                get { return celestialBody.Get("drawIcons", OrbitRenderer.DrawIcons.ALL); }
+                set { celestialBody.Set("drawIcons", value.value); }
             }
 
             // Orbit rendering bounds
             [ParserTarget("cameraSmaRatioBounds")]
-            public NumericCollectionParser<Single> cameraSmaRatioBounds = new NumericCollectionParser<Single>(new Single[] { 0.3f, 25f });
+            public Vector2Parser cameraSmaRatioBounds
+            {
+                get
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        return new Vector2(generatedBody.orbitRenderer.lowerCamVsSmaRatio,
+                            generatedBody.orbitRenderer.upperCamVsSmaRatio);
+                    }
+                    OrbitRendererData data = PSystemManager.OrbitRendererDataCache[celestialBody];
+                    return new Vector2(data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio);
+                }
+                set
+                {
+                    if (Injector.IsInPrefab)
+                    {
+                        generatedBody.orbitRenderer.lowerCamVsSmaRatio = value.value[0];
+                        generatedBody.orbitRenderer.upperCamVsSmaRatio = value.value[1];
+                    }
+                    else
+                    {
+                        OrbitRendererData data = PSystemManager.OrbitRendererDataCache[celestialBody];
+                        data.lowerCamVsSmaRatio = value.value[0];
+                        data.upperCamVsSmaRatio = value.value[1];
+                        PSystemManager.OrbitRendererDataCache[celestialBody] = data;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Recalculates some of the orbital parameters to be more realistic
+            /// </summary>
+            [KittopiaAction("Finalize Orbit")]
+            [KittopiaDescription("Recalculates some of the orbital parameters to be more realistic")]
+            public void FinalizeOrbit()
+            {
+                FinalizeOrbit(celestialBody);
+            }
 
             // Parser apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
@@ -160,12 +265,7 @@ namespace Kopernicus
             {
                 if (epoch != null)
                     orbit.epoch += Templates.epoch;
-
-                if (generatedBody != null)
-                {
-                    generatedBody.orbitRenderer.lowerCamVsSmaRatio = cameraSmaRatioBounds.value[0];
-                    generatedBody.orbitRenderer.upperCamVsSmaRatio = cameraSmaRatioBounds.value[1];
-                }
+                
                 Events.OnOrbitLoaderPostApply.Fire(this, node);
             }
 
@@ -175,8 +275,10 @@ namespace Kopernicus
             public OrbitLoader()
             {
                 // Is this the parser context?
-                if (generatedBody == null)
+                if (!Injector.IsInPrefab)
+                {
                     throw new InvalidOperationException("Must be executed in Injector context.");
+                }
 
                 // If this body needs orbit controllers, create them
                 if (generatedBody.orbitDriver == null)
@@ -184,8 +286,8 @@ namespace Kopernicus
                     generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
                     generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
                 }
+                generatedBody.celestialBody.gameObject.AddComponent<OrbitRendererUpdater>();
                 generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-                cameraSmaRatioBounds = new Single[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
 
                 // Store values
                 orbit = generatedBody.orbitDriver.orbit ?? new Orbit();
@@ -195,39 +297,38 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Orbit Loader from a spawned CelestialBody.
             /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Edit)]
             public OrbitLoader(CelestialBody body)
             {
                 // Is this a spawned body?
-                if (body?.scaledBody == null)
-                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
-
-                // Store values
-                orbit = body.orbit ?? new Orbit();
-                celestialBody = body;
-            }
-
-            /// <summary>
-            /// Creates a new Orbit Loader from a custom PSystemBody.
-            /// </summary>
-            public OrbitLoader(PSystemBody body)
-            {
-                // Set generatedBody
-                if (body == null)
-                    throw new InvalidOperationException("The body cannot be null.");
-                generatedBody = body;
-
-                // If this body needs orbit controllers, create them
-                if (generatedBody.orbitDriver == null)
+                if (body?.scaledBody == null || Injector.IsInPrefab)
                 {
-                    generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
-                    generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
+                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
                 }
-                generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-                cameraSmaRatioBounds = new Single[] { generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio };
+
+                // Does this body have an orbit?
+                if (body.orbitDriver == null)
+                {
+                    throw new InvalidOperationException("The body must have an Orbit to be editabled.");
+                }
+
+                // Add the rendering updater to the celestial body
+                body.gameObject.AddComponent<OrbitRendererUpdater>();
+                
+                // Update the OrbitRenderer data
+                KopernicusOrbitRendererData data = new KopernicusOrbitRendererData(body, body.orbitDriver.Renderer);
+                if (PSystemManager.OrbitRendererDataCache.ContainsKey(body))
+                {
+                    PSystemManager.OrbitRendererDataCache[body] = data;
+                }
+                else
+                {
+                    PSystemManager.OrbitRendererDataCache.Add(body, data);
+                }
 
                 // Store values
-                orbit = generatedBody.orbitDriver.orbit ?? new Orbit();
-                celestialBody = generatedBody.celestialBody;
+                orbit = body.orbitDriver.orbit ?? new Orbit();
+                celestialBody = body;
             }
 
             // Finalize an Orbit
