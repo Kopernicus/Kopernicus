@@ -63,8 +63,10 @@
     <Compile Include="Exceptions\ParserTargetMissingException.cs" />
     <Compile Include="Exceptions\ParserTargetTypeMismatchException.cs" />
     <Compile Include="Attributes\ParserTargetExternal.cs" />
+    <Compile Include="Interfaces\ICreatable.cs" />
     <Compile Include="Interfaces\IParsable.cs" />
     <Compile Include="Interfaces\IParserEventSubscriber.cs" />
+    <Compile Include="Interfaces\IPatchable.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="ParserOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

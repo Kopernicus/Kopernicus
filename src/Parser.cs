@@ -41,6 +41,11 @@ namespace Kopernicus
     public class Parser
     {
         /// <summary>
+        /// A list of states that can be shared through the parser
+        /// </summary>
+        internal static Dictionary<String, Func<Object>> states = new Dictionary<String, Func<Object>>();
+        
+        /// <summary>
         /// Create an object form a configuration node (Generic)
         /// </summary>
         /// <typeparam name="T">The resulting class</typeparam>
@@ -316,6 +321,9 @@ namespace Kopernicus
                             collection = Activator.CreateInstance(targetType) as IList;
                             targetValue = collection;
                         }
+                        
+                        // Store the objects that were already patched
+                        List<Object> patched = new List<Object>();
 
                         // Process the node
                         ConfigNode _node = target.fieldName == "self" ? node : node.GetNode(target.fieldName);
@@ -342,9 +350,70 @@ namespace Kopernicus
                                     {
                                         // Generate the type from the name
                                         Type elementType = ModTypes.FirstOrDefault(t => t.Name == subnode.name && t.Assembly != typeof(HighLogic).Assembly);
+                                        
+                                        // Check if the type represents patchable data
+                                        Object current = null;
+                                        if (typeof(IPatchable).IsAssignableFrom(elementType) && collection.Count > 0)
+                                        {
+                                            foreach (Object obj in collection)
+                                            {
+                                                if (obj.GetType() != elementType)
+                                                    continue;
+                                                if (patched.Contains(obj))
+                                                    continue;
+                                                IPatchable patchable = (IPatchable) obj;
+                                                PatchData data = CreateObjectFromConfigNode<PatchData>(subnode);
+                                                if (data.name == patchable.name)
+                                                {
+                                                    // Name matches, check for an index
+                                                    if (data.index == collection.IndexOf(obj))
+                                                    {
+                                                        // Both values match
+                                                        current = obj;
+                                                        break;
+                                                    }
+                                                    if (data.index > -1)
+                                                    {
+                                                        // Index doesn't match, continue
+                                                        continue;
+                                                    }
 
-                                        // Add the object to the collection
-                                        collection?.Add(CreateObjectFromConfigNode(elementType, subnode, configName, target.getChild));
+                                                    // Name matches, and no index exists
+                                                    current = obj;
+                                                    break;
+
+                                                }
+                                                if (data.name != null)
+                                                {
+                                                    // The name doesn't match, continue the search
+                                                    continue;
+                                                }
+
+                                                // We found the first object that wasn't patched yet
+                                                current = obj;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        // If no object was found, check if the type implements custom constructors
+                                        if (current == null)
+                                        {
+                                            current = Activator.CreateInstance(elementType);
+                                            collection?.Add(current);
+                                            if (typeof(ICreatable).IsAssignableFrom(elementType))
+                                            {
+                                                ICreatable creatable = (ICreatable) current ;
+                                                creatable.Create();
+                                            }
+                                        }
+
+                                        // Parse the config node into the object
+                                        LoadObjectFromConfigurationNode(current, subnode, configName, target.getChild);
+                                        patched.Add(current);
+                                        if (collection != null)
+                                        {
+                                            collection[collection.IndexOf(current)] = current;
+                                        }
                                     }
 
                                     // Select only the nodes with an acceptable name
@@ -643,6 +712,41 @@ namespace Kopernicus
             }
         }
 
+        /// <summary>
+        /// Adds a new state accessor into the parser
+        /// </summary>
+        public static void SetState<T>(String name, Func<T> accessor)
+        {
+            if (!states.ContainsKey(name))
+            {
+                states.Add(name, () => accessor());
+            }
+            throw new InvalidOperationException();
+        }
+
+        /// <summary>
+        /// Removes a state accessor from the parser
+        /// </summary>
+        public static void ClearState(String name)
+        {
+            if (states.ContainsKey(name))
+            {
+                states.Remove(name);
+            }
+            throw new IndexOutOfRangeException();
+        }
+
+        /// <summary>
+        /// Accesses the shared state
+        /// </summary>
+        public static T GetState<T>(String name)
+        {
+            if (states.ContainsKey(name))
+            {
+                return (T) states[name]();
+            }
+            throw new IndexOutOfRangeException();
+        }
 
         // Custom Assembly query since AppDomain and Assembly loader are not quite what we want in 1.1
         private static List<Type> _ModTypes;
