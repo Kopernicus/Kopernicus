@@ -33,10 +33,17 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class ModLoader<T> : BaseLoader, IModLoader, IPatchable, ICreatable where T : PQSMod
+            public class ModLoader<T> : BaseLoader, IModLoader, IPatchable, ICreatable<T>, ITypeParser<T> where T : PQSMod
             {
                 // The mod loader must always be able to return a mod
                 public T mod { get; set; }
+
+                // The mod loader must always be able to return a mod
+                T ITypeParser<T>.Value
+                {
+                    get { return mod; }
+                    set { mod = value; }
+                }
 
                 // The mod loader must always be able to return a mod
                 PQSMod IModLoader.Mod
@@ -91,6 +98,12 @@ namespace Kopernicus
                 void ICreatable.Create()
                 {
                     Create(pqsVersion);
+                }
+
+                // Creates the a PQSMod of type T
+                void ICreatable<T>.Create(T value)
+                {
+                    Create(value, pqsVersion);
                 }
 
                 // Creates the a PQSMod of type T with given PQS

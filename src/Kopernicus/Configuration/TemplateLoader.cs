@@ -55,7 +55,7 @@ namespace Kopernicus
                 // Crawl the system prefab for the body
                 set
                 {
-                    originalBody = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, value);
+                    originalBody = Utility.FindBody(Injector.StockSystemPrefab.rootBody, value);
                     if (originalBody == null)
                     {
                         throw new TemplateNotFoundException("Unable to find: " + value);
@@ -66,23 +66,23 @@ namespace Kopernicus
             // Should we strip the PQS off
             [PreApply]
             [ParserTarget("removePQS")]
-            public NumericParser<Boolean> removePQS = new NumericParser<Boolean>(false);
+            public NumericParser<Boolean> removePQS = false;
 
             // Should we strip the atmosphere off
             [ParserTarget("removeAtmosphere")]
-            public NumericParser<Boolean> removeAtmosphere = new NumericParser<Boolean>(false);
+            public NumericParser<Boolean> removeAtmosphere = false;
 
             // Should we remove the biomes
             [ParserTarget("removeBiomes")]
             public NumericParser<Boolean> removeBiomes
             {
                 get { return body.Get("removeBiomes", true); }
-                set { body.Set("removeBiomes", value.value); }
+                set { body.Set("removeBiomes", value.Value); }
             }
 
             // Should we strip the ocean off
             [ParserTarget("removeOcean")]
-            public NumericParser<Boolean> removeOcean = new NumericParser<Boolean>(false);
+            public NumericParser<Boolean> removeOcean = false;
 
             // Collection of PQS mods to remove
             [ParserTarget("removePQSMods")]
@@ -90,15 +90,15 @@ namespace Kopernicus
 
             // Should we strip all Mods off
             [ParserTarget("removeAllPQSMods")]
-            public NumericParser<Boolean> removeAllMods = new NumericParser<Boolean>(false);
+            public NumericParser<Boolean> removeAllMods = false;
 
             // Collection of PQS mods to remove
             [ParserTarget("removeProgressTree")]
-            public NumericParser<Boolean> removeProgressTree = new NumericParser<Boolean>(true);
+            public NumericParser<Boolean> removeProgressTree = true;
 
             // Remove coronas for star
             [ParserTarget("removeCoronas")]
-            public NumericParser<Boolean> removeCoronas = new NumericParser<Boolean>(false);
+            public NumericParser<Boolean> removeCoronas = false;
 
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
@@ -119,7 +119,7 @@ namespace Kopernicus
                 body.scaledVersion.name = originalBody.scaledVersion.name;
 
                 // Clone the PQS version (if it has one) and we want the PQS
-                if (body.pqsVersion != null && removePQS.value != true)
+                if (body.pqsVersion != null && removePQS.Value != true)
                 {
                     body.pqsVersion = UnityEngine.Object.Instantiate(originalBody.pqsVersion) as PQS;
                     body.pqsVersion.transform.parent = Utility.Deactivator;
@@ -143,7 +143,7 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 // Should we remove the atmosphere
-                if (body.celestialBody.atmosphere && removeAtmosphere.value)
+                if (body.celestialBody.atmosphere && removeAtmosphere.Value)
                 {
                     // Find atmosphere from ground and destroy the game object
                     AtmosphereFromGround atmosphere = body.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)[0];
@@ -164,7 +164,7 @@ namespace Kopernicus
                     Logger.Active.Log("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
 
                     // Should we remove the ocean?
-                    if (body.celestialBody.ocean && removeOcean.value)
+                    if (body.celestialBody.ocean && removeOcean.Value)
                     {
                         // Find atmosphere the ocean PQS
                         PQS ocean = body.pqsVersion.GetComponentsInChildren<PQS>(true).Where(pqs => pqs != body.pqsVersion).First();
@@ -182,12 +182,12 @@ namespace Kopernicus
                     }
 
                     // Selectively remove PQS Mods
-                    if (removePQSMods != null && removePQSMods.value.LongCount() > 0)
+                    if (removePQSMods != null && removePQSMods.Value.LongCount() > 0)
                     {
                         // We need a List with Types to remove
                         List<Type> mods = new List<Type>();
                         Dictionary<String, Type> modsPerName = new Dictionary<String, Type>();
-                        foreach (String mod in removePQSMods.value)
+                        foreach (String mod in removePQSMods.Value)
                         {
                             // If the definition has a name specified, grab that
                             String mType = mod;
@@ -280,7 +280,7 @@ namespace Kopernicus
                         }
                     }
 
-                    if (removeAllMods != null && removeAllMods.value)
+                    if (removeAllMods != null && removeAllMods.Value)
                     {
                         // Remove all mods
                         Utility.RemoveModsOfType(null, body.pqsVersion);
@@ -288,7 +288,7 @@ namespace Kopernicus
                 }
 
                 // Should we remove the progress tree
-                if (removeProgressTree.value)
+                if (removeProgressTree.Value)
                 {
                     body.celestialBody.progressTree = null;
                 }

@@ -97,7 +97,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> mode
                 {
                     get { return (KopernicusNoiseQuality) (Int32) mod.mode; }
-                    set { mod.mode = (NoiseQuality) (Int32) value.value; }
+                    set { mod.mode = (NoiseQuality) (Int32) value.Value; }
                 }
 
                 // Noise type
@@ -105,7 +105,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseType> noiseType
                 {
                     get { return (KopernicusNoiseType) (Int32) mod.noiseType; }
-                    set { mod.noiseType = (PQSMod_VertexHeightNoiseVertHeight.NoiseType) (Int32) value.value; }
+                    set { mod.noiseType = (PQSMod_VertexHeightNoiseVertHeight.NoiseType) (Int32) value.Value; }
                 }
 
                 // Lacunarity

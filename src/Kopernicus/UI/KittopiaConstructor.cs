@@ -32,7 +32,7 @@ namespace Kopernicus
         /// <summary>
         /// Defines the constructor that should be used when creating the object
         /// </summary>
-        [AttributeUsage(AttributeTargets.Constructor)]
+        [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
         public class KittopiaConstructor : Attribute
         {
             /// <summary>

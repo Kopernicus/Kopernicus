@@ -57,8 +57,17 @@ namespace Kopernicus
 
             public void Add(T item)
             {
-                callback(item);
                 _list.Add(item);
+                callback(item);
+            }
+
+            public void Add(T item, Boolean call)
+            {
+                _list.Add(item);
+                if (call)
+                {
+                    callback(item);
+                }
             }
 
             public void Clear()
@@ -78,7 +87,9 @@ namespace Kopernicus
 
             public Boolean Remove(T item)
             {
-                return _list.Remove(item);
+                Boolean val = _list.Remove(item);
+                callback(default(T));
+                return val;
             }
 
             public Int32 Count
@@ -98,18 +109,20 @@ namespace Kopernicus
 
             public void Insert(Int32 index, T item)
             {
+                callback(item);
                 _list.Insert(index, item);
             }
 
             public void RemoveAt(Int32 index)
             {
                 _list.RemoveAt(index);
+                callback(default(T));
             }
 
             public T this[Int32 index]
             {
                 get { return _list[index]; }
-                set { _list[index] = value; }
+                set { _list[index] = value; callback(value); }
             }
         }
     }

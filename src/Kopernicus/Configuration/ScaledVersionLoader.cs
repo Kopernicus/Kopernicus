@@ -88,7 +88,7 @@ namespace Kopernicus
                     }
                     return null;
                 }
-                set { value.lsc.transform.parent = scaledVersion.transform; }
+                set { value.Value.transform.parent = scaledVersion.transform; }
             }
 
             // Coronas for a star's scaled version
@@ -115,7 +115,7 @@ namespace Kopernicus
                 }
 
                 // Are we a planet or moon?
-                if (type.value != BodyType.Star)
+                if (type.Value != BodyType.Star)
                 {
                     // If we are not a star, we need a scaled space fader and a sphere collider
                     if (scaledVersion.GetComponent<ScaledSpaceFader>() == null)
@@ -134,7 +134,7 @@ namespace Kopernicus
                     }
 
                     // Generate new atmospheric body material
-                    if (type.value == BodyType.Atmospheric)
+                    if (type.Value == BodyType.Atmospheric)
                     {
                         ScaledPlanetRimAerialLoader newMaterial = null;
                         if (material != null && ScaledPlanetRimAerial.UsesSameShader(material))
@@ -235,7 +235,7 @@ namespace Kopernicus
                 Logger.Active.Log("===========================================");
 
                 // If we are a star, we need to generate the coronas 
-                if (type.value == BodyType.Star) 
+                if (type.Value == BodyType.Star) 
                 {
                     // Restore backed up coronas if no custom ones were specified
                     if (coronas.Count == 0)
@@ -256,7 +256,7 @@ namespace Kopernicus
                 }
 
                 // If we use OnDemand, we need to delete the original textures and reload them
-                if (OnDemandStorage.useOnDemand && type.value != BodyType.Star)
+                if (OnDemandStorage.useOnDemand && type.Value != BodyType.Star)
                 {
                     Texture2D texture = scaledVersion.GetComponent<Renderer>().material.GetTexture("_MainTex") as Texture2D;
                     Texture2D normals = scaledVersion.GetComponent<Renderer>().material.GetTexture("_BumpMap") as Texture2D;

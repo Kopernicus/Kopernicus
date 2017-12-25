@@ -33,17 +33,12 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class AtmosphereLoader : BaseLoader, IParserEventSubscriber
+        public class AtmosphereLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
         {
             /// <summary>
             /// CelestialBody we're modifying
             /// </summary>
-            public CelestialBody celestialBody;
-
-            /// <summary>
-            /// The ScaledSpace object of the body we're modifying
-            /// </summary>
-            public GameObject scaledVersion;
+            public CelestialBody Value { get; set; }
 
             // Do we have an atmosphere?
             [PreApply]
@@ -51,8 +46,8 @@ namespace Kopernicus
             [KittopiaDescription("Whether the body has an atmosphere.")]
             public NumericParser<Boolean> enabled 
             {
-                get { return celestialBody.atmosphere; }
-                set { celestialBody.atmosphere = value; }
+                get { return Value.atmosphere; }
+                set { Value.atmosphere = value; }
             }
 
             // Whether an AFG should get added
@@ -66,8 +61,8 @@ namespace Kopernicus
             [KittopiaDescription("Whether the atmosphere contains oxygen.")]
             public NumericParser<Boolean> oxygen 
             {
-                get { return celestialBody.atmosphereContainsOxygen; }
-                set { celestialBody.atmosphereContainsOxygen = value; }
+                get { return Value.atmosphereContainsOxygen; }
+                set { Value.atmosphereContainsOxygen = value; }
             }
 
             // Density at sea level
@@ -75,16 +70,16 @@ namespace Kopernicus
             [KittopiaDescription("Atmospherical density at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
             public NumericParser<Double> atmDensityASL
             {
-                get { return celestialBody.atmDensityASL; }
-                set { celestialBody.atmDensityASL = value; }
+                get { return Value.atmDensityASL; }
+                set { Value.atmDensityASL = value; }
             }
 
             // atmosphereAdiabaticIndex
             [ParserTarget("adiabaticIndex")]
             public NumericParser<Double> atmosphereAdiabaticIndex
             {
-                get { return celestialBody.atmosphereAdiabaticIndex; }
-                set { celestialBody.atmosphereAdiabaticIndex = value; }
+                get { return Value.atmosphereAdiabaticIndex; }
+                set { Value.atmosphereAdiabaticIndex = value; }
             }
 
             // atmosphere cutoff altitude (x3, for backwards compatibility)
@@ -92,38 +87,38 @@ namespace Kopernicus
             [KittopiaHideOption]
             public NumericParser<Double> maxAltitude
             {
-                get { return celestialBody.atmosphereDepth; }
-                set { celestialBody.atmosphereDepth = value; }
+                get { return Value.atmosphereDepth; }
+                set { Value.atmosphereDepth = value; }
             }
             [ParserTarget("altitude")]
             [KittopiaHideOption]
             public NumericParser<Double> altitude
             {
-                get { return celestialBody.atmosphereDepth; }
-                set { celestialBody.atmosphereDepth = value; }
+                get { return Value.atmosphereDepth; }
+                set { Value.atmosphereDepth = value; }
             }
             [ParserTarget("atmosphereDepth")]
             [KittopiaDescription("The height of the atmosphere.")]
             public NumericParser<Double> atmosphereDepth
             {
-                get { return celestialBody.atmosphereDepth; }
-                set { celestialBody.atmosphereDepth = value; }
+                get { return Value.atmosphereDepth; }
+                set { Value.atmosphereDepth = value; }
             }
 
             // atmosphereGasMassLapseRate
             [ParserTarget("gasMassLapseRate")]
             public NumericParser<Double> atmosphereGasMassLapseRate
             {
-                get { return celestialBody.atmosphereGasMassLapseRate; }
-                set { celestialBody.atmosphereGasMassLapseRate = value; }
+                get { return Value.atmosphereGasMassLapseRate; }
+                set { Value.atmosphereGasMassLapseRate = value; }
             }
 
             // atmosphereMolarMass
             [ParserTarget("atmosphereMolarMass")]
             public NumericParser<Double> atmosphereMolarMass
             {
-                get { return celestialBody.atmosphereMolarMass; }
-                set { celestialBody.atmosphereMolarMass = value; }
+                get { return Value.atmosphereMolarMass; }
+                set { Value.atmosphereMolarMass = value; }
             }
 
             // Pressure curve
@@ -131,11 +126,11 @@ namespace Kopernicus
             [KittopiaDescription("Assigns a pressure value to a height value inside of the atmosphere.")]
             public FloatCurveParser pressureCurve
             {
-                get { return celestialBody.atmosphereUsePressureCurve ? celestialBody.atmospherePressureCurve : null; }
+                get { return Value.atmosphereUsePressureCurve ? Value.atmospherePressureCurve : null; }
                 set
                 {
-                    celestialBody.atmospherePressureCurve = value;
-                    celestialBody.atmosphereUsePressureCurve = true;
+                    Value.atmospherePressureCurve = value;
+                    Value.atmosphereUsePressureCurve = true;
                 }
             }
 
@@ -144,8 +139,8 @@ namespace Kopernicus
             [KittopiaDescription("Whether the pressure curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
             public NumericParser<Boolean> atmospherePressureCurveIsNormalized
             {
-                get { return celestialBody.atmospherePressureCurveIsNormalized; }
-                set { celestialBody.atmospherePressureCurveIsNormalized = value; }
+                get { return Value.atmospherePressureCurveIsNormalized; }
+                set { Value.atmospherePressureCurveIsNormalized = value; }
             }
 
             // Static pressure at sea level (all worlds are set to 1.0f?)
@@ -153,8 +148,8 @@ namespace Kopernicus
             [KittopiaDescription("The static pressure at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
             public NumericParser<Double> staticPressureASL
             {
-                get { return celestialBody.atmospherePressureSeaLevel; }
-                set { celestialBody.atmospherePressureSeaLevel = value; }
+                get { return Value.atmospherePressureSeaLevel; }
+                set { Value.atmospherePressureSeaLevel = value; }
             }
 
             // Temperature curve (see below)
@@ -162,11 +157,11 @@ namespace Kopernicus
             [KittopiaDescription("Assigns a temperature value to a height value inside of the atmosphere.")]
             public FloatCurveParser temperatureCurve 
             {
-                get { return celestialBody.atmosphereUseTemperatureCurve ? celestialBody.atmosphereTemperatureCurve : null; }
+                get { return Value.atmosphereUseTemperatureCurve ? Value.atmosphereTemperatureCurve : null; }
                 set
                 {
-                    celestialBody.atmosphereTemperatureCurve = value;
-                    celestialBody.atmosphereUseTemperatureCurve = true;
+                    Value.atmosphereTemperatureCurve = value;
+                    Value.atmosphereUseTemperatureCurve = true;
                 }
             }
 
@@ -175,16 +170,16 @@ namespace Kopernicus
             [KittopiaDescription("Whether the temperature curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
             public NumericParser<Boolean> atmosphereTemperatureCurveIsNormalized
             {
-                get { return celestialBody.atmosphereTemperatureCurveIsNormalized; }
-                set { celestialBody.atmosphereTemperatureCurveIsNormalized = value; }
+                get { return Value.atmosphereTemperatureCurveIsNormalized; }
+                set { Value.atmosphereTemperatureCurveIsNormalized = value; }
             }
 
             // atmosphereTemperatureLapseRate
             [ParserTarget("temperatureLapseRate")]
             public NumericParser<Double> atmosphereTemperatureLapseRate
             {
-                get { return celestialBody.atmosphereTemperatureLapseRate; }
-                set { celestialBody.atmosphereTemperatureLapseRate = value; }
+                get { return Value.atmosphereTemperatureLapseRate; }
+                set { Value.atmosphereTemperatureLapseRate = value; }
             }
 
             // TemperatureSeaLevel
@@ -192,56 +187,56 @@ namespace Kopernicus
             [KittopiaDescription("The static temperature at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
             public NumericParser<Double> atmosphereTemperatureSeaLevel
             {
-                get { return celestialBody.atmosphereTemperatureSeaLevel; }
-                set { celestialBody.atmosphereTemperatureSeaLevel = value; }
+                get { return Value.atmosphereTemperatureSeaLevel; }
+                set { Value.atmosphereTemperatureSeaLevel = value; }
             }
 
             // atmosphereTemperatureSunMultCurve
             [ParserTarget("temperatureSunMultCurve")]
             public FloatCurveParser atmosphereTemperatureSunMultCurve
             {
-                get { return celestialBody.atmosphereTemperatureSunMultCurve; }
-                set { celestialBody.atmosphereTemperatureSunMultCurve = value; }
+                get { return Value.atmosphereTemperatureSunMultCurve; }
+                set { Value.atmosphereTemperatureSunMultCurve = value; }
             }
 
             // Temperature latitude bias
             [ParserTarget("temperatureLatitudeBiasCurve")]
             public FloatCurveParser latitudeTemperatureBiasCurve
             {
-                get { return celestialBody.latitudeTemperatureBiasCurve; }
-                set { celestialBody.latitudeTemperatureBiasCurve = value; }
+                get { return Value.latitudeTemperatureBiasCurve; }
+                set { Value.latitudeTemperatureBiasCurve = value; }
             }
 
             // latitudeTemperatureSunMultCurve
             [ParserTarget("temperatureLatitudeSunMultCurve")]
             public FloatCurveParser latitudeTemperatureSunMultCurve
             {
-                get { return celestialBody.latitudeTemperatureSunMultCurve; }
-                set { celestialBody.latitudeTemperatureSunMultCurve = value; }
+                get { return Value.latitudeTemperatureSunMultCurve; }
+                set { Value.latitudeTemperatureSunMultCurve = value; }
             }
 
             // axialTemperatureSunMultCurve
             [ParserTarget("temperatureAxialSunBiasCurve")]
             public FloatCurveParser axialTemperatureSunBiasCurve
             {
-                get { return celestialBody.axialTemperatureSunBiasCurve; }
-                set { celestialBody.axialTemperatureSunBiasCurve = value; }
+                get { return Value.axialTemperatureSunBiasCurve; }
+                set { Value.axialTemperatureSunBiasCurve = value; }
             }
             
             // axialTemperatureSunMultCurve
             [ParserTarget("temperatureAxialSunMultCurve")]
             public FloatCurveParser axialTemperatureSunMultCurve
             {
-                get { return celestialBody.axialTemperatureSunMultCurve; }
-                set { celestialBody.axialTemperatureSunMultCurve = value; }
+                get { return Value.axialTemperatureSunMultCurve; }
+                set { Value.axialTemperatureSunMultCurve = value; }
             }
             
             // eccentricityTemperatureBiasCurve
             [ParserTarget("temperatureEccentricityBiasCurve")]
             public FloatCurveParser eccentricityTemperatureBiasCurve
             {
-                get { return celestialBody.eccentricityTemperatureBiasCurve; }
-                set { celestialBody.eccentricityTemperatureBiasCurve = value; }
+                get { return Value.eccentricityTemperatureBiasCurve; }
+                set { Value.eccentricityTemperatureBiasCurve = value; }
             }
 
             // ambient atmosphere color
@@ -249,8 +244,8 @@ namespace Kopernicus
             [KittopiaDescription("All objects inside of the atmosphere will slightly shine in this color.")]
             public ColorParser ambientColor 
             {
-                get { return celestialBody.atmosphericAmbientColor; }
-                set { celestialBody.atmosphericAmbientColor = value.value; }
+                get { return Value.atmosphericAmbientColor; }
+                set { Value.atmosphericAmbientColor = value.Value; }
             }
 
             // AFG
@@ -277,35 +272,35 @@ namespace Kopernicus
             public void RemoveAtmosphere()
             {
                 // Remove the Atmosphere from Ground
-                AtmosphereFromGround[] afgs = celestialBody.GetComponentsInChildren<AtmosphereFromGround>();
+                AtmosphereFromGround[] afgs = Value.GetComponentsInChildren<AtmosphereFromGround>();
                 foreach (AtmosphereFromGround afg in afgs)
                 {
                     UnityEngine.Object.Destroy(afg.gameObject);
                 }
 
                 // Disable the Light controller
-                MaterialSetDirection[] msds = celestialBody.GetComponentsInChildren<MaterialSetDirection>();
+                MaterialSetDirection[] msds = Value.GetComponentsInChildren<MaterialSetDirection>();
                 foreach (MaterialSetDirection msd in msds)
                 {
                     UnityEngine.Object.Destroy(msd.gameObject);
                 }
 
                 // No Atmosphere :(
-                celestialBody.atmosphere = false;
+                Value.atmosphere = false;
             }
 
             // Parser apply event
             void IParserEventSubscriber.Apply (ConfigNode node)
             {
                 // If we don't want an atmosphere, ignore this step
-                if(!celestialBody.atmosphere || !addAFG)
+                if(!Value.atmosphere || !addAFG)
                     return;
 
                 // If we don't already have an atmospheric shell generated
-                if (scaledVersion.GetComponentsInChildren<AtmosphereFromGround> (true).Length == 0) 
+                if (Value.scaledBody.GetComponentsInChildren<AtmosphereFromGround> (true).Length == 0) 
                 {
                     // Setup known defaults
-                    celestialBody.atmospherePressureSeaLevel = 1.0f;
+                    Value.atmospherePressureSeaLevel = 1.0f;
                 }
                 
                 // Create the AFG Loader
@@ -333,8 +328,8 @@ namespace Kopernicus
                 }
                 
                 // Store values
-                celestialBody = generatedBody.celestialBody;
-                scaledVersion = generatedBody.scaledVersion;
+                Value = generatedBody.celestialBody;
+                Value.scaledBody = generatedBody.scaledVersion;
             }
 
             /// <summary>
@@ -350,11 +345,10 @@ namespace Kopernicus
                 }
 
                 // Store values
-                celestialBody = body;
-                scaledVersion = body.scaledBody;
-                if (celestialBody.afg)
+                Value = body;
+                if (Value.afg)
                 {
-                    atmosphereFromGround = new AtmosphereFromGroundLoader(celestialBody);
+                    atmosphereFromGround = new AtmosphereFromGroundLoader(Value);
                 }
             }
         }

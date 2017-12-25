@@ -37,7 +37,7 @@ namespace Kopernicus
         public class Body : IParserEventSubscriber
         {
             // Path of the ScaledSpaceCache (will eventually not matter much)
-            public const String ScaledSpaceCacheDirectory = "GameData/Kopernicus/Cache";
+            public const String ScaledSpaceCacheDirectory = "Kopernicus/Cache";
 
             // Body we are trying to edit
             public PSystemBody generatedBody { get; set; }
@@ -62,13 +62,22 @@ namespace Kopernicus
             // Name of this body
             [PreApply]
             [ParserTarget("name", optional = false)]
+            [KittopiaHideOption]
             public String name { get; set; }
 
             [ParserTarget("cacheFile")]
-            public String cacheFile { get; set; }
+            public String cacheFile
+            {
+                get { return celestialBody.Get("cacheFile", ""); }
+                set { celestialBody.Set("cacheFile", value); }
+            }
 
             [ParserTarget("barycenter")]
-            public NumericParser<Boolean> barycenter = false;
+            public NumericParser<Boolean> barycenter
+            {
+                get { return celestialBody.Get("barycenter", false); }
+                set { celestialBody.Set("barycenter", value.Value); }
+            }
 
             [ParserTarget("cbNameLater")]
             public String cbNameLater
@@ -103,6 +112,7 @@ namespace Kopernicus
             //     get { return generatedBody.flightGlobalsIndex; }
             //     set { generatedBody.flightGlobalsIndex = value.value; }
             // }
+            // Kill this with fire. I mean, it's not 2013 anymore
 
             // An identifier that is used for referencing the orbiting body. 
             // This must be unique!
@@ -118,7 +128,7 @@ namespace Kopernicus
             public NumericParser<Boolean> finalizeOrbit
             {
                 get { return celestialBody.Get("finalizeBody", false); }
-                set { celestialBody.Set("finalizeBody", value.value); }
+                set { celestialBody.Set("finalizeBody", value.Value); }
             }
 
             // Whether this body should be taken into account for the main menu body stuff
@@ -134,7 +144,7 @@ namespace Kopernicus
             public NumericParser<Int32> contractWeight
             {
                 get { return celestialBody.Get("contractWeight", 30); }
-                set { celestialBody.Set("contractWeight", value.value); }
+                set { celestialBody.Set("contractWeight", value.Value); }
             }
 
             // Template property of a body - responsible for generating a PSystemBody from an existing one
@@ -168,11 +178,11 @@ namespace Kopernicus
             public OceanLoader ocean { get; set; }
 
             // Wrapper around Ring class for editing/loading
-            [ParserTargetCollection("Rings", nameSignificance = NameSignificance.None, allowMerge = true)]
+            [ParserTargetCollection("Rings", allowMerge = true)]
             public List<RingLoader> rings { get; set; }
 
             // Wrapper around Particle class for editing/loading
-            [ParserTargetCollection("Particles", nameSignificance = NameSignificance.None, allowMerge = true)]
+            [ParserTargetCollection("Particles", allowMerge = true)]
             public List<ParticleLoader> particles { get; set; }
 
             // Wrapper around the settings for the SpaceCenter
@@ -255,39 +265,11 @@ namespace Kopernicus
             // Parser Post Apply Event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                // If Debug Mode is null, create default values
-                if (debug == null) debug = new DebugLoader();
-                if (scaledVersion == null) scaledVersion = new ScaledVersionLoader();
-
-                // PQS
-                if (generatedBody.pqsVersion)
-                {
-                    // Adjust the radius of the PQSs appropriately
-                    foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true))https://wallpaperscraft.com/image/galaxy_nebula_blurring_stars_65152_1920x1080.jpg
-                        p.radius = generatedBody.celestialBody.Radius;
-                }
-
                 // Create a barycenter
-                if (barycenter.value)
+                if (barycenter.Value)
                 {
-                    // Register the body for post-spawn patching
-                    generatedBody.Set("barycenter", true);
-
-                    // Nuke the PQS
-                    if (generatedBody.pqsVersion != null)
-                    {
-                        generatedBody.pqsVersion.transform.parent = null;
-                        UnityEngine.Object.Destroy(generatedBody.pqsVersion);
-                        generatedBody.pqsVersion = null;
-                    }
-
-                    // Stop ScaledSpace Cache
-                    scaledVersion.deferMesh = true;
+                    CreateBarycenter();
                 }
-
-                // Visualize the SOI
-                if (debug.showSOI)
-                    generatedBody.celestialBody.gameObject.AddComponent<Wiresphere>();
 
                 // Loads external parser targets
                 Parser.LoadParserTargetsExternal(node, "Kopernicus", configName: "Kopernicus");
@@ -303,7 +285,7 @@ namespace Kopernicus
                 //   b) we aren't using a template
                 //   c) debug mode is active
                 if (!scaledVersion.deferMesh &&
-                    (template != null && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.value)
+                    (template != null && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.Value)
                     || template == null || debug.update))
                 {
 
@@ -318,11 +300,32 @@ namespace Kopernicus
                 }
             }
 
+            [KittopiaAction("Convert Body to Barycenter")]
+            public void CreateBarycenter()
+            {
+                // Set the value accordingly
+                barycenter = true;
+                
+                // Nuke the PQS
+                if (generatedBody.pqsVersion != null)
+                {
+                    generatedBody.pqsVersion.transform.parent = null;
+                    UnityEngine.Object.Destroy(generatedBody.pqsVersion);
+                    generatedBody.pqsVersion = null;
+                }
+
+                // Stop ScaledSpace Cache
+                scaledVersion.deferMesh = true;
+                celestialBody.scaledBody?.SetActive(false);
+            }
+
             /// <summary>
             /// Creates a new Body from the Injector context.
             /// </summary>
             public Body()
             {
+                debug = new DebugLoader();
+                scaledVersion = new ScaledVersionLoader();
                 rings = new List<RingLoader>();
                 particles = new List<ParticleLoader>();
             }
@@ -354,7 +357,7 @@ namespace Kopernicus
                 foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
                     .GetComponentsInChildren<PlanetParticleEmitter>(true))
                 {
-                    particles.Add(new ParticleLoader(celestialBody, particle.gameObject));
+                    particles.Add(new ParticleLoader(particle));
                 }
                 if (celestialBody.isHomeWorld)
                 {

@@ -42,9 +42,9 @@ namespace Kopernicus
                     get { return new Color(mod.rBlend, mod.gBlend, mod.bBlend, 1); }
                     set 
                     {
-                        mod.bBlend = value.value.b;
-                        mod.rBlend = value.value.r;
-                        mod.gBlend = value.value.g;
+                        mod.bBlend = value.Value.b;
+                        mod.rBlend = value.Value.r;
+                        mod.gBlend = value.Value.g;
                     }
                 }
 

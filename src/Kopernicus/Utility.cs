@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Kopernicus.OnDemand;
 using UnityEngine;
 
 namespace Kopernicus
@@ -72,7 +73,7 @@ namespace Kopernicus
         public static void CopyObjectFields<T>(T source, T destination, Boolean log = true)
         {
             // Reflection based copy
-            foreach (FieldInfo field in (typeof(T)).GetFields())
+            foreach (FieldInfo field in typeof(T).GetFields())
             {
                 // Only copy non static fields
                 if (!field.IsStatic)
@@ -339,27 +340,27 @@ namespace Kopernicus
             // Compute scale between Jool and this body
             Single scale = (Single)(body.Radius / rJool);
             scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
-
-            Mesh scaledMesh;
+            
             // Attempt to load a cached version of the scale space
-            String CacheDirectory = KSPUtil.ApplicationRootPath + path;
-            String CacheFile = CacheDirectory + "/" + body.name + ".bin";
-
+            String cacheDirectory = KSPUtil.ApplicationRootPath + "GameData/" + path;
             if (!String.IsNullOrEmpty(cacheFile))
             {
-                CacheFile = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), cacheFile);
-                CacheDirectory = Path.GetDirectoryName(CacheFile);
+                cacheFile = KSPUtil.ApplicationRootPath + "GameData/" + cacheFile;
+                cacheDirectory = Path.GetDirectoryName(cacheFile);
 
-                Logger.Active.Log($"{body.name} is using custom cache file '{CacheFile}' in '{CacheDirectory}'");
+                Logger.Active.Log($"{body.name} is using custom cache file '{cacheFile}'");
             }
+            else
+            {
+                cacheFile = cacheDirectory + "/" + body.name + ".bin";
+            }
+            Directory.CreateDirectory(cacheDirectory);
 
-            Directory.CreateDirectory(CacheDirectory);
-
-            if (File.Exists(CacheFile) && exportBin)
+            if (File.Exists(cacheFile) && exportBin)
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
-                scaledMesh = Utility.DeserializeMesh(CacheFile);
-                Utility.RecalculateTangents(scaledMesh);
+                Mesh scaledMesh = DeserializeMesh(cacheFile);
+                RecalculateTangents(scaledMesh);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
             }
 
@@ -367,11 +368,11 @@ namespace Kopernicus
             else
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
-                scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
-                Utility.RecalculateTangents(scaledMesh);
+                Mesh scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
+                RecalculateTangents(scaledMesh);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
                 if (exportBin)
-                    Utility.SerializeMesh(scaledMesh, CacheFile);
+                    SerializeMesh(scaledMesh, cacheFile);
             }
 
             // Apply mesh to the body
@@ -388,61 +389,74 @@ namespace Kopernicus
         {
             // We need to get the body for Jool (to steal it's mesh)
             const Double rScaledJool = 1000.0f;
-            Double rMetersToScaledUnits = (Single)(rScaledJool / body.Radius);
+            Double rMetersToScaledUnits = (Single) (rScaledJool / body.Radius);
 
             // Generate a duplicate of the Jool mesh
-            Mesh mesh = Utility.DuplicateMesh(Templates.ReferenceGeosphere);
+            Mesh mesh = DuplicateMesh(Templates.ReferenceGeosphere);
 
             // If this body has a PQS, we can create a more detailed object
             if (pqs != null)
             {
                 // first we enable all maps
-                OnDemand.OnDemandStorage.EnableBody(body.bodyName);
+                OnDemandStorage.EnableBody(body.bodyName);
 
-                // In order to generate the scaled space we have to enable the mods.  Since this is
-                // a prefab they don't get disabled as kill game performance.  To resolve this we 
-                // clone the PQS, use it, and then delete it when done
-                GameObject pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
+                // The game object the PQS is attached to
+                GameObject pqsVersionGameObject = null;
+                if (Injector.IsInPrefab)
+                {
+                    // In order to generate the scaled space we have to enable the mods.  Since this is
+                    // a prefab they don't get disabled as kill game performance.  To resolve this we 
+                    // clone the PQS, use it, and then delete it when done
+                    pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
+                }
+                else
+                {
+                    // At runtime we simply use the PQS that is active
+                    pqsVersionGameObject = pqs.gameObject;
+                }
                 PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
                 // Load the PQS of the ocean
-                PQS pqsOcean = body.ocean ? pqsVersionGameObject.GetComponentsInChildren<PQS>()?.Skip(1)?.FirstOrDefault() : null;
-
+                PQS pqsOcean = pqs.ChildSpheres?.FirstOrDefault();
 
                 // Deactivate blacklisted Mods
-                Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
-
-                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.enabled && blacklist.Contains(m.GetType())))
+                Type[] blacklist = {typeof(PQSMod_OnDemandHandler)};
+                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true)
+                    .Where(m => m.enabled && blacklist.Contains(m.GetType())))
                 {
                     mod.modEnabled = false;
                 }
 
-
                 // Find the PQS mods and enable the PQS-sphere
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
+                PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true)
+                    .Where(m => m.modEnabled && m.sphere == pqsVersion).OrderBy(m => m.order).ToArray();
                 foreach (PQSMod flatten in mods.Where(m => m is PQSMod_FlattenArea))
-                    flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(Boolean)).First().SetValue(flatten, true);
+                {
+                    flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                        .First(f => f.FieldType == typeof(Boolean)).SetValue(flatten, true);
+                }
 
                 // Do the same for the ocean
-                IEnumerable<PQSMod> oceanMods = null;
+                PQSMod[] oceanMods = new PQSMod[0];
                 if (pqsOcean != null)
                 {
-                    oceanMods = pqsOcean.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled).OrderBy(m => m.order);
+                    oceanMods = pqsOcean.GetComponentsInChildren<PQSMod>(true)
+                        .Where(m => m.modEnabled && m.sphere == pqsOcean).OrderBy(m => m.order).ToArray();
                     foreach (PQSMod flatten in oceanMods.Where(m => m is PQSMod_FlattenArea))
-                        flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(f => f.FieldType == typeof(Boolean)).First().SetValue(flatten, true);
+                    {
+                        flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                            .First(f => f.FieldType == typeof(Boolean)).SetValue(flatten, true);
+                    }
 
                     pqsOcean.StartUpSphere();
                     pqsOcean.isBuildingMaps = true;
-
-                    mods = mods.Except(oceanMods);
                 }
 
                 pqsVersion.StartUpSphere();
                 pqsVersion.isBuildingMaps = true;
 
-
                 // If we were able to find PQS mods
-                if (mods.Count() > 0)
+                if (mods.Any())
                 {
                     // Generate the PQS modifications
                     Vector3[] vertices = mesh.vertices;
@@ -454,7 +468,6 @@ namespace Kopernicus
                         // Since this is a geosphere, normalizing the vertex gives the direction from center center
                         Vector3 direction = vertices[i];
                         direction.Normalize();
-
 
                         // Build the vertex data object for the PQS mods
                         PQS.VertexBuildData vertex = new PQS.VertexBuildData();
@@ -468,10 +481,10 @@ namespace Kopernicus
                             mod.OnVertexBuildHeight(vertex);
 
                         // Check for sea level
-                        if (body.ocean && pqsOcean != null)
+                        if (pqsOcean != null)
                         {
                             // Build the vertex data object for the ocean
-                            PQS.VertexBuildData vertexOcean = pqsOcean != null ? new PQS.VertexBuildData() : null;
+                            PQS.VertexBuildData vertexOcean = new PQS.VertexBuildData();
                             vertexOcean.directionFromCenter = direction;
                             vertexOcean.vertHeight = body.Radius;
                             vertexOcean.u = uv.x;
@@ -485,7 +498,7 @@ namespace Kopernicus
                         }
 
                         // Adjust the displacement
-                        vertices[i] = direction * (Single)(vertex.vertHeight * rMetersToScaledUnits);
+                        vertices[i] = direction * (Single) (vertex.vertHeight * rMetersToScaledUnits);
                     }
                     mesh.vertices = vertices;
                     mesh.RecalculateNormals();
@@ -500,8 +513,13 @@ namespace Kopernicus
                 }
                 pqsVersion.isBuildingMaps = false;
                 pqsVersion.DeactivateSphere();
-                UnityEngine.Object.Destroy(pqsVersionGameObject);
-                OnDemand.OnDemandStorage.DisableBody(body.bodyName);
+
+                // If we are working with a copied PQS, clean it up
+                if (Injector.IsInPrefab)
+                {
+                    UnityEngine.Object.Destroy(pqsVersionGameObject);
+                }
+                OnDemandStorage.DisableBody(body.bodyName);
             }
 
             // Return the generated scaled space mesh
@@ -510,7 +528,6 @@ namespace Kopernicus
 
         public static void CopyMesh(Mesh source, Mesh dest)
         {
-            //ProfileTimer.Push("CopyMesh");
             Vector3[] verts = new Vector3[source.vertexCount];
             source.vertices.CopyTo(verts, 0);
             dest.vertices = verts;
@@ -542,8 +559,6 @@ namespace Kopernicus
             Color32[] colors32 = new Color32[source.colors32.Length];
             source.colors32.CopyTo(colors32, 0);
             dest.colors32 = colors32;
-
-            //ProfileTimer.Pop("CopyMesh");
         }
 
         public static Mesh DuplicateMesh(Mesh source)
@@ -551,7 +566,6 @@ namespace Kopernicus
             // Create new mesh object
             Mesh dest = new Mesh();
 
-            //ProfileTimer.Push("CopyMesh");
             Vector3[] verts = new Vector3[source.vertexCount];
             source.vertices.CopyTo(verts, 0);
             dest.vertices = verts;
@@ -584,14 +598,12 @@ namespace Kopernicus
             source.colors32.CopyTo(colors32, 0);
             dest.colors32 = colors32;
 
-            //ProfileTimer.Pop("CopyMesh");
             return dest;
         }
 
         // Taken from Nathankell's RSS Utils.cs; uniformly scaled vertices
         public static void ScaleVerts(Mesh mesh, Single scaleFactor)
         {
-            //ProfileTimer.Push("ScaleVerts");
             Vector3[] vertices = new Vector3[mesh.vertexCount];
             for (Int32 i = 0; i < mesh.vertexCount; i++)
             {
@@ -600,7 +612,6 @@ namespace Kopernicus
                 vertices[i] = v;
             }
             mesh.vertices = vertices;
-            //ProfileTimer.Pop("ScaleVerts");
         }
 
         public static void RecalculateTangents(Mesh theMesh)
@@ -612,13 +623,13 @@ namespace Kopernicus
             Int32[] triangles = theMesh.triangles;
             Int32 triangleCount = triangles.Length / 3;
 
-            var tangents = new Vector4[vertexCount];
-            var tan1 = new Vector3[vertexCount];
-            var tan2 = new Vector3[vertexCount];
+            Vector4[] tangents = new Vector4[vertexCount];
+            Vector3[] tan1 = new Vector3[vertexCount];
+            Vector3[] tan2 = new Vector3[vertexCount];
 
             Int32 tri = 0;
 
-            for (Int32 i = 0; i < (triangleCount); i++)
+            for (Int32 i = 0; i < triangleCount; i++)
             {
                 Int32 i1 = triangles[tri];
                 Int32 i2 = triangles[tri + 1];
@@ -645,8 +656,8 @@ namespace Kopernicus
                 Single t2 = w3.y - w1.y;
 
                 Single r = 1.0f / (s1 * t2 - s2 * t1);
-                var sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
-                var tdir = new Vector3((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+                Vector3 sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+                Vector3 tdir = new Vector3((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
 
                 tan1[i1] += sdir;
                 tan1[i2] += sdir;
@@ -658,7 +669,7 @@ namespace Kopernicus
 
                 tri += 3;
             }
-            for (Int32 i = 0; i < (vertexCount); i++)
+            for (Int32 i = 0; i < vertexCount; i++)
             {
                 Vector3 n = normals[i];
                 Vector3 t = tan1[i];
@@ -671,7 +682,7 @@ namespace Kopernicus
                 tangents[i].z = t.z;
 
                 // Calculate handedness
-                tangents[i].w = (Vector3.Dot(Vector3.Cross(n, t), tan2[i]) < 0.0f) ? -1.0f : 1.0f;
+                tangents[i].w = Vector3.Dot(Vector3.Cross(n, t), tan2[i]) < 0.0f ? -1.0f : 1.0f;
             }
             theMesh.tangents = tangents;
         }
@@ -680,7 +691,7 @@ namespace Kopernicus
         public static void SerializeMesh(Mesh mesh, String path)
         {
             // Open an output filestream
-            FileStream outputStream = new FileStream(path, System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            FileStream outputStream = new FileStream(path, FileMode.Create, FileAccess.Write);
             BinaryWriter writer = new BinaryWriter(outputStream);
 
             // Write the vertex count of the mesh
@@ -711,7 +722,7 @@ namespace Kopernicus
         // Deserialize a mesh from disk
         public static Mesh DeserializeMesh(String path)
         {
-            FileStream inputStream = new FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            FileStream inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             BinaryReader reader = new BinaryReader(inputStream);
 
             // Get the vertices
@@ -761,17 +772,17 @@ namespace Kopernicus
         public static Texture2D BumpToNormalMap(Texture2D source, Single strength)
         {
             strength = Mathf.Clamp(strength, 0.0F, 10.0F);
-            var result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
+            Texture2D result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
             for (Int32 by = 0; by < result.height; by++)
             {
-                for (var bx = 0; bx < result.width; bx++)
+                for (Int32 bx = 0; bx < result.width; bx++)
                 {
-                    var xLeft = source.GetPixel(bx - 1, by).grayscale * strength;
-                    var xRight = source.GetPixel(bx + 1, by).grayscale * strength;
-                    var yUp = source.GetPixel(bx, by - 1).grayscale * strength;
-                    var yDown = source.GetPixel(bx, by + 1).grayscale * strength;
-                    var xDelta = ((xLeft - xRight) + 1) * 0.5f;
-                    var yDelta = ((yUp - yDown) + 1) * 0.5f;
+                    Single xLeft = source.GetPixel(bx - 1, by).grayscale * strength;
+                    Single xRight = source.GetPixel(bx + 1, by).grayscale * strength;
+                    Single yUp = source.GetPixel(bx, by - 1).grayscale * strength;
+                    Single yDown = source.GetPixel(bx, by + 1).grayscale * strength;
+                    Single xDelta = (xLeft - xRight + 1) * 0.5f;
+                    Single yDelta = (yUp - yDown + 1) * 0.5f;
                     result.SetPixel(bx, by, new Color(yDelta, yDelta, yDelta, xDelta));
                 }
             }
@@ -796,154 +807,12 @@ namespace Kopernicus
         public static Boolean TextureExists(String path)
         {
             path = KSPUtil.ApplicationRootPath + "GameData/" + path;
-            return System.IO.File.Exists(path);
+            return File.Exists(path);
         }
 
         public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
         {
-            Texture2D map = null;
-            path = KSPUtil.ApplicationRootPath + "GameData/" + path;
-            if (System.IO.File.Exists(path))
-            {
-                Boolean uncaught = true;
-                try
-                {
-                    if (path.ToLower().EndsWith(".dds"))
-                    {
-                        // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
-                        // Also borrowed the extra bits from Sarbian.
-                        byte[] buffer = System.IO.File.ReadAllBytes(path);
-                        System.IO.BinaryReader binaryReader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
-                        uint num = binaryReader.ReadUInt32();
-                        if (num == DDSHeaders.DDSValues.uintMagic)
-                        {
-
-                            DDSHeaders.DDSHeader dDSHeader = new DDSHeaders.DDSHeader(binaryReader);
-
-                            if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
-                            {
-                                new DDSHeaders.DDSHeaderDX10(binaryReader);
-                            }
-
-                            Boolean alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
-                            Boolean fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
-                            Boolean rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
-                            Boolean alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
-                            Boolean luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
-                            Boolean rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
-                            //Boolean bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
-                            Boolean rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
-                            Boolean argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
-                            Boolean rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
-
-                            Boolean mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
-                            Boolean isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
-                            if (fourcc)
-                            {
-                                if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
-                                {
-                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
-                                }
-                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
-                                {
-                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
-                                }
-                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
-                                {
-                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
-                                }
-                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
-                                {
-                                    Debug.Log("[Kopernicus] DXT2 not supported" + path);
-                                }
-                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT4)
-                                {
-                                    Debug.Log("[Kopernicus] DXT4 not supported: " + path);
-                                }
-                                else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
-                                {
-                                    Debug.Log("[Kopernicus] DX10 dds not supported: " + path);
-                                }
-                                else
-                                    fourcc = false;
-                            }
-                            if (!fourcc)
-                            {
-                                TextureFormat textureFormat = TextureFormat.ARGB32;
-                                Boolean ok = true;
-                                if (rgb && (rgb888 /*|| bgr888*/))
-                                {
-                                    // RGB or RGBA format
-                                    textureFormat = alphapixel
-                                    ? TextureFormat.RGBA32
-                                    : TextureFormat.RGB24;
-                                }
-                                else if (rgb && rgb565)
-                                {
-                                    // Nvidia texconv B5G6R5_UNORM
-                                    textureFormat = TextureFormat.RGB565;
-                                }
-                                else if (rgb && alphapixel && argb4444)
-                                {
-                                    // Nvidia texconv B4G4R4A4_UNORM
-                                    textureFormat = TextureFormat.ARGB4444;
-                                }
-                                else if (rgb && alphapixel && rbga4444)
-                                {
-                                    textureFormat = TextureFormat.RGBA4444;
-                                }
-                                else if (!rgb && alpha != luminance)
-                                {
-                                    // A8 format or Luminance 8
-                                    textureFormat = TextureFormat.Alpha8;
-                                }
-                                else
-                                {
-                                    ok = false;
-                                    Debug.Log("[Kopernicus] Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
-                                }
-                                if (ok)
-                                {
-                                    map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, textureFormat, mipmap);
-                                    map.LoadRawTextureData(binaryReader.ReadBytes((Int32)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
-                                }
-
-                            }
-                            if (map != null)
-                                if (upload)
-                                    map.Apply(false, unreadable);
-                        }
-                        else
-                            Debug.Log("[Kopernicus] Bad DDS header.");
-                    }
-                    else
-                    {
-                        map = new Texture2D(2, 2);
-                        map.LoadImage(System.IO.File.ReadAllBytes(path));
-                        if (compress)
-                            map.Compress(true);
-                        if (upload)
-                            map.Apply(false, unreadable);
-                    }
-                }
-                catch (Exception e)
-                {
-                    uncaught = false;
-                    Debug.Log("[Kopernicus] failed to load " + path + " with exception " + e.Message);
-                }
-                if (map == null && uncaught)
-                {
-                    Debug.Log("[Kopernicus] failed to load " + path);
-                }
-                map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
-            }
-            else
-                Debug.Log("[Kopernicus] texture does not exist! " + path);
-
-            return map;
+            return OnDemandStorage.LoadTexture(path, compress, upload, unreadable);
         }
 
         public static T FindMapSO<T>(String url) where T : MapSO
@@ -1010,7 +879,7 @@ namespace Kopernicus
         {
             Logger.Active.Log("Removing mods from pqs " + p.name);
             List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
-            Boolean addTypes = (types == null);
+            Boolean addTypes = types == null;
             if (addTypes)
                 types = new List<Type>();
             if (blacklist == null)
@@ -1117,7 +986,7 @@ namespace Kopernicus
                     if (go.transform.childCount == 0)
                     {
                         Component[] comps = go.GetComponents<Component>();
-                        if (comps.Length == 0 || (comps.Length == 1 && comps[0].GetType() == typeof(Transform)))
+                        if (comps.Length == 0 || comps.Length == 1 && comps[0].GetType() == typeof(Transform))
                             toDestroy.Add(go);
                     }
                 }

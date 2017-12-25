@@ -106,7 +106,7 @@ namespace Kopernicus
                     }
                     else
                     {
-                        Debug.Log("[Kopernicus] No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
+                        Debug.Log("[Kopernicus] No new objects this time. (Probablility is " + asteroid.probability.Value + "%)");
                     }
                 }
             }
@@ -124,7 +124,7 @@ namespace Kopernicus
             if (type == 0 && asteroid.location.around.Count != 0)
             {
                 // Around
-                IEnumerable<Location.AroundLoader> arounds = GetProbabilityList(asteroid.location.around, asteroid.location.around.Select(a => a.probability.value));
+                IEnumerable<Location.AroundLoader> arounds = GetProbabilityList(asteroid.location.around, asteroid.location.around.Select(a => a.probability.Value));
                 Location.AroundLoader around = arounds.ElementAt(Random.Range(0, arounds.Count()));
                 body = PSystemManager.Instance.localBodies.Find(b => b.name == around.body);
                 if (!body) return;
@@ -143,7 +143,7 @@ namespace Kopernicus
             else if (type == 1 && asteroid.location.nearby.Count != 0)
             {
                 // Nearby
-                IEnumerable<Location.NearbyLoader> nearbys = GetProbabilityList(asteroid.location.nearby, asteroid.location.nearby.Select(a => a.probability.value));
+                IEnumerable<Location.NearbyLoader> nearbys = GetProbabilityList(asteroid.location.nearby, asteroid.location.nearby.Select(a => a.probability.Value));
                 Location.NearbyLoader nearby = nearbys.ElementAt(Random.Range(0, nearbys.Count()));
                 body = PSystemManager.Instance.localBodies.Find(b => b.name == nearby.body);
                 if (!body) return;
@@ -162,7 +162,7 @@ namespace Kopernicus
             else if (type == 2 && asteroid.location.flyby.Count != 0)
             {
                 // Flyby
-                IEnumerable<Location.FlybyLoader> flybys = GetProbabilityList(asteroid.location.flyby, asteroid.location.flyby.Select(a => a.probability.value));
+                IEnumerable<Location.FlybyLoader> flybys = GetProbabilityList(asteroid.location.flyby, asteroid.location.flyby.Select(a => a.probability.Value));
                 Location.FlybyLoader flyby = flybys.ElementAt(Random.Range(0, flybys.Count()));
                 body = PSystemManager.Instance.localBodies.Find(b => b.name == flyby.body);
                 if (!body) return;
@@ -173,7 +173,7 @@ namespace Kopernicus
             // Check 
             if (orbit == null)
             {
-                Debug.Log("[Kopernicus] No new objects this time. (Probablility is " + asteroid.probability.value + "%)");
+                Debug.Log("[Kopernicus] No new objects this time. (Probablility is " + asteroid.probability.Value + "%)");
                 return;
             }
 
@@ -185,7 +185,7 @@ namespace Kopernicus
             Double maxLifetime = asteroid.maxUntrackedLifetime * 24d * 60d * 60d;
 
             // Size
-            UntrackedObjectClass size = (UntrackedObjectClass)((Int32)(asteroid.size.curve.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length));
+            UntrackedObjectClass size = (UntrackedObjectClass)((Int32)(asteroid.size.Value.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length));
 
             // Spawn
             ConfigNode vessel = ProtoVessel.CreateVesselNode(

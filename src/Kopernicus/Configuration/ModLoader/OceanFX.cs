@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -141,43 +142,14 @@ namespace Kopernicus
                 }
 
                 // Watermain
-                [ParserTarget("Watermain")]
-                public ConfigNode watermain
+                [ParserTargetCollection("Watermain")]
+                public List<Texture2DParser> watermain
                 {
-                    get
-                    {
-                        if (mod.watermain == null)
-                            return new ConfigNode("Watermain");
-
-                        // Not null
-                        ConfigNode watermain = new ConfigNode("Watermain");
-                        foreach (Texture2D texture in mod.watermain)
-                            watermain.AddValue("waterTex-" + mod.watermain.ToList().IndexOf(texture), texture.name);
-                        return watermain;
-                    }
+                    get { return mod.watermain.Select(t => new Texture2DParser(t)).ToList(); }
                     set
                     {
-                        // Set the Watermain length
-                        mod.waterMainLength = value.values.Count;
-
-                        // If the array isn't there, recreate it
-                        if (mod.watermain == null) mod.watermain = new Texture2D[(Int32)mod.waterMainLength];
-
-                        // If the count doesn't matches, recreate the array
-                        if (mod.watermain.Length != mod.waterMainLength)
-                        {
-                            mod.watermain = new Texture2D[(Int32)mod.waterMainLength];
-                        }
-
-                        // Load the textures
-                        Int32 i = 0;
-                        foreach (String s in value.GetValuesStartsWith("waterTex-"))
-                        {
-                            Texture2DParser texParser = new Texture2DParser();
-                            texParser.SetFromString(s);
-                            mod.watermain[i] = texParser.value;
-                            i++;
-                        }
+                        mod.watermain = value.Select(t => t.Value).ToArray();
+                        mod.waterMainLength = value.Count;
                     }
                 }
 
@@ -188,11 +160,29 @@ namespace Kopernicus
                     base.Create(pqsVersion);
 
                     // Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
-                    PSystemBody Body = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
+                    PSystemBody Body = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
                     foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
                     {
                         if (ocean.name == "LaytheOcean")
                             Utility.CopyObjectFields(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0], mod);
+                    }
+                }
+
+                // Create the mod
+                public override void Create(PQSMod_OceanFX _mod, PQS pqsVersion)
+                {
+                    // Call base
+                    base.Create(_mod, pqsVersion);
+
+                    // Create the base mod if needed
+                    if (mod.reflection == null)
+                    {
+                        PSystemBody Body = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
+                        foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
+                        {
+                            if (ocean.name == "LaytheOcean")
+                                Utility.CopyObjectFields(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0], mod);
+                        }
                     }
                 }
             }

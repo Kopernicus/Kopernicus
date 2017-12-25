@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -38,65 +39,11 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class LandControl : ModLoader<PQSLandControl>, IParserEventSubscriber
+            public class LandControl : ModLoader<PQSLandControl>
             {
-                // Loader for a Simplex object
-                [RequireConfigType(ConfigType.Node)]
-                public class SimplexLoader
-                {
-                    // The edited object
-                    public Simplex simplex;
-
-                    // The frequency of the simplex noise
-                    [ParserTarget("frequency")]
-                    public NumericParser<Double> frequency
-                    {
-                        get { return simplex.frequency; }
-                        set { simplex.frequency = value; }
-                    }
-                    
-                    // Octaves of the simplex noise
-                    [ParserTarget("octaves")]
-                    public NumericParser<Double> octaves
-                    {
-                        get { return simplex.octaves; }
-                        set { simplex.octaves = value; }
-                    }
-
-                    // Persistence of the simplex noise
-                    [ParserTarget("persistence")]
-                    public NumericParser<Double> persistence
-                    {
-                        get { return simplex.persistence; }
-                        set { simplex.persistence = value; }
-                    }
-
-                    // The seed of the simplex noise
-                    [ParserTarget("seed")]
-                    public NumericParser<Int32> seed
-                    {
-                        set { simplex.seed = value; }
-                    }
-
-                    // Default constructor
-                    public SimplexLoader()
-                    {
-                        simplex = new Simplex(0, 1, 1, 1);
-                    }
-
-                    // Runtime Constructor
-                    public SimplexLoader(Simplex simplex)
-                    {
-                        if (simplex != null)
-                            this.simplex = simplex;
-                        else
-                            this.simplex = new Simplex(0, 1, 1, 1);
-                    }
-                }
-
                 // Loader for a Ground Scatter
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassScatterLoader : IParserEventSubscriber
+                public class LandClassScatterLoader : IParserEventSubscriber, IPatchable, ITypeParser<PQSLandControl.LandClassScatter>
                 {
                     public enum ScatterMaterialType
                     {
@@ -107,35 +54,25 @@ namespace Kopernicus
                         CutoutDiffuse,
                         AerialCutout
                     };
+                    
+                    // The value we are editing
+                    public PQSLandControl.LandClassScatter Value { get; set; }
 
-                    public PQSLandControl.LandClassScatter scatter;
-
-                    // Stock scatter material parser
-                    [RequireConfigType(ConfigType.Value)]
-                    public class StockMaterialParser : IParsable
+                    /// <summary>
+                    /// Returns the currently edited PQS
+                    /// </summary>
+                    protected PQS pqsVersion
                     {
-                        public Material value;
-                        public void SetFromString(String s)
+                        get
                         {
-                            String materialName = Regex.Replace(s, "BUILTIN/", "");
-                            value = Resources.FindObjectsOfTypeAll<Material>().Where(material => material.name == materialName).FirstOrDefault();
-                        }
-
-                        // Convert
-                        public static implicit operator Material(StockMaterialParser parser)
-                        {
-                            if (parser != null)
-                                return parser.value;
-                            else
+                            try
+                            {
+                                return Parser.GetState<PQS>("Kopernicus:pqsVersion");
+                            }
+                            catch
+                            {
                                 return null;
-                        }
-                        public static implicit operator StockMaterialParser(Material material)
-                        {
-                            if (material == null)
-                                return new StockMaterialParser();
-                            Material m = new Material(material);
-                            m.name = "BUILTIN/" + m.name;
-                            return new StockMaterialParser { value = m };
+                            }
                         }
                     }
 
@@ -149,599 +86,761 @@ namespace Kopernicus
                                 return null;
                             if (NormalDiffuse.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.Diffuse;
-                            else if (NormalBumped.UsesSameShader(customMaterial))
+                            if (NormalBumped.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.BumpedDiffuse;
-                            else if (NormalDiffuseDetail.UsesSameShader(customMaterial))
+                            if (NormalDiffuseDetail.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.DiffuseDetail;
-                            else if (DiffuseWrap.UsesSameShader(customMaterial))
+                            if (DiffuseWrap.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.DiffuseWrapped;
-                            else if (AlphaTestDiffuse.UsesSameShader(customMaterial))
+                            if (AlphaTestDiffuse.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.CutoutDiffuse;
-                            else if (AerialTransCutout.UsesSameShader(customMaterial))
+                            if (AerialTransCutout.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.AerialCutout;
                             return null;
                         }
                         set
                         {
-                            if (value.value == ScatterMaterialType.Diffuse)
+                            if (value == ScatterMaterialType.Diffuse)
                                 customMaterial = new NormalDiffuseLoader();
-                            else if (value.value == ScatterMaterialType.BumpedDiffuse)
+                            else if (value == ScatterMaterialType.BumpedDiffuse)
                                 customMaterial = new NormalBumpedLoader();
-                            else if (value.value == ScatterMaterialType.DiffuseDetail)
+                            else if (value == ScatterMaterialType.DiffuseDetail)
                                 customMaterial = new NormalDiffuseDetailLoader();
-                            else if (value.value == ScatterMaterialType.DiffuseWrapped)
+                            else if (value == ScatterMaterialType.DiffuseWrapped)
                                 customMaterial = new DiffuseWrapLoader();
-                            else if (value.value == ScatterMaterialType.CutoutDiffuse)
+                            else if (value == ScatterMaterialType.CutoutDiffuse)
                                 customMaterial = new AlphaTestDiffuseLoader();
-                            else if (value.value == ScatterMaterialType.AerialCutout)
+                            else if (value == ScatterMaterialType.AerialCutout)
                                 customMaterial = new AerialTransCutoutLoader();
                         }
                     }
 
                     // Should we delete the Scatter?
                     [ParserTarget("delete")]
+                    [KittopiaHideOption]
                     public NumericParser<Boolean> delete = false;
 
-                    // Should we add colliders to the scatter=
+                    // Should we add colliders to the Scatter?
                     [ParserTarget("collide")]
+                    [KittopiaHideOption]
                     public NumericParser<Boolean> collide = false;
 
                     // Should we add Science to the Scatter?
                     [ParserTarget("science")]
+                    [KittopiaHideOption]
                     public NumericParser<Boolean> science = false;
 
                     // ConfigNode that stores the Experiment
                     [ParserTarget("Experiment")]
+                    [KittopiaHideOption]
                     public ConfigNode experiment;
 
                     // Custom scatter material
                     [ParserTarget("Material", allowMerge = true, getChild = false)]
-                    public Material customMaterial;
+                    public Material customMaterial
+                    {
+                        get { return Value.material; }
+                        set { Value.material = value; }
+                    }
 
                     // The mesh
                     [ParserTarget("mesh")]
                     public MeshParser baseMesh
                     {
-                        get { return scatter.baseMesh; }
-                        set { scatter.baseMesh = value; }
+                        get { return Value.baseMesh; }
+                        set { Value.baseMesh = value; }
                     }
 
                     // castShadows
                     [ParserTarget("castShadows")]
                     public NumericParser<Boolean> castShadows
                     {
-                        get { return scatter.castShadows; }
-                        set { scatter.castShadows = value; }
+                        get { return Value.castShadows; }
+                        set { Value.castShadows = value; }
                     }
 
                     // densityFactor
                     [ParserTarget("densityFactor")]
                     public NumericParser<Double> densityFactor
                     {
-                        get { return scatter.densityFactor; }
-                        set { scatter.densityFactor = value; }
+                        get { return Value.densityFactor; }
+                        set { Value.densityFactor = value; }
                     }
 
                     // Stock material
                     [ParserTarget("material")]
                     public StockMaterialParser material
                     {
-                        get { return scatter.material; }
-                        set { scatter.material = value; }
+                        get { return Value.material; }
+                        set { Value.material = value; }
                     }
 
                     // maxCache
                     [ParserTarget("maxCache")]
                     public NumericParser<Int32> maxCache
                     {
-                        get { return scatter.maxCache; }
-                        set { scatter.maxCache = value; }
+                        get { return Value.maxCache; }
+                        set { Value.maxCache = value; }
                     }
 
                     // maxCacheDelta
                     [ParserTarget("maxCacheDelta")]
                     public NumericParser<Int32> maxCacheDelta
                     {
-                        get { return scatter.maxCacheDelta; }
-                        set { scatter.maxCacheDelta = value; }
+                        get { return Value.maxCacheDelta; }
+                        set { Value.maxCacheDelta = value; }
                     }
 
                     // maxLevelOffset
                     [ParserTarget("maxLevelOffset")]
                     public NumericParser<Int32> maxLevelOffset
                     {
-                        get { return scatter.maxLevelOffset; }
-                        set { scatter.maxLevelOffset = value; }
+                        get { return Value.maxLevelOffset; }
+                        set { Value.maxLevelOffset = value; }
                     }
 
                     // maxScale
                     [ParserTarget("maxScale")]
                     public NumericParser<Single> maxScale
                     {
-                        get { return scatter.maxScale; }
-                        set { scatter.maxScale = value; }
+                        get { return Value.maxScale; }
+                        set { Value.maxScale = value; }
                     }
 
                     // maxScatter
                     [ParserTarget("maxScatter")]
                     public NumericParser<Int32> maxScatter
                     {
-                        get { return scatter.maxScatter; }
-                        set { scatter.maxScatter = value; }
+                        get { return Value.maxScatter; }
+                        set { Value.maxScatter = value; }
                     }
 
                     // maxSpeed
                     [ParserTarget("maxSpeed")]
                     public NumericParser<Double> maxSpeed
                     {
-                        get { return scatter.maxSpeed; }
-                        set { scatter.maxSpeed = value; }
+                        get { return Value.maxSpeed; }
+                        set { Value.maxSpeed = value; }
                     }
 
                     // minScale
                     [ParserTarget("minScale")]
                     public NumericParser<Single> minScale
                     {
-                        get { return scatter.minScale; }
-                        set { scatter.minScale = value; }
+                        get { return Value.minScale; }
+                        set { Value.minScale = value; }
                     }
 
                     // recieveShadows
                     [ParserTarget("recieveShadows")]
                     public NumericParser<Boolean> recieveShadows
                     {
-                        get { return scatter.recieveShadows; }
-                        set { scatter.recieveShadows = value; }
+                        get { return Value.recieveShadows; }
+                        set { Value.recieveShadows = value; }
                     }
 
                     // Scatter name
                     [ParserTarget("name")]
-                    public String scatterName
+                    public String name
                     {
-                        get { return scatter.scatterName; }
-                        set { scatter.scatterName = value; }
+                        get { return Value.scatterName; }
+                        set { Value.scatterName = value; }
                     }
-
+                    
+                    // The value we are editing
                     // Scatter seed
                     [ParserTarget("seed")]
                     public NumericParser<Int32> seed
                     {
-                        get { return scatter.seed; }
-                        set { scatter.seed = value; }
+                        get { return Value.seed; }
+                        set { Value.seed = value; }
                     }
 
                     // verticalOffset
                     [ParserTarget("verticalOffset")]
                     public NumericParser<Single> verticalOffset
                     {
-                        get { return scatter.verticalOffset; }
-                        set { scatter.verticalOffset = value; }
+                        get { return Value.verticalOffset; }
+                        set { Value.verticalOffset = value; }
                     }
 
                     // Default Constructor
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
                     public LandClassScatterLoader()
                     {
-                        scatter = new PQSLandControl.LandClassScatter();
+                        Value = new PQSLandControl.LandClassScatter();
 
                         // Initialize default parameters
-                        scatter.maxCache = 512;
-                        scatter.maxCacheDelta = 32;
-                        scatter.maxSpeed = 1000;
+                        Value.maxCache = 512;
+                        Value.maxCacheDelta = 32;
+                        Value.maxSpeed = 1000;
                     }
 
                     // Runtime constructor
-                    public LandClassScatterLoader(PQSLandControl.LandClassScatter scatter)
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
+                    public LandClassScatterLoader(PQSLandControl.LandClassScatter value)
                     {
-                        if (scatter != null)
-                            this.scatter = scatter;
-                        else
-                        {
-                            this.scatter = new PQSLandControl.LandClassScatter();
+                        Value = value;
 
-                            // Initialize default parameters
-                            scatter.maxCache = 512;
-                            scatter.maxCacheDelta = 32;
-                            scatter.maxSpeed = 1000;
+                        if (value.material)
+                        {
+                            if (NormalDiffuse.UsesSameShader(value.material))
+                                customMaterial = new NormalDiffuseLoader(value.material);
+                            else if (NormalBumped.UsesSameShader(value.material))
+                                customMaterial = new NormalBumpedLoader(value.material);
+                            else if (NormalDiffuseDetail.UsesSameShader(value.material))
+                                customMaterial = new NormalDiffuseDetailLoader(value.material);
+                            else if (DiffuseWrap.UsesSameShader(value.material))
+                                customMaterial = new DiffuseWrapLoader(value.material);
+                            else if (AlphaTestDiffuse.UsesSameShader(value.material))
+                                customMaterial = new AlphaTestDiffuseLoader(value.material);
+                            else if (AerialTransCutout.UsesSameShader(value.material))
+                                customMaterial = new AerialTransCutoutLoader(value.material);
                         }
                     }
 
-                    void IParserEventSubscriber.Apply(ConfigNode node) 
-                    {
-                        if (!customMaterial && scatter.material)
-                        {
-                            if (scatter.material.shader == new NormalDiffuse().shader)
-                                customMaterial = new NormalDiffuseLoader(scatter.material);
-                            else if (scatter.material.shader == new NormalBumped().shader)
-                                customMaterial = new NormalBumpedLoader(scatter.material);
-                            else if (scatter.material.shader == new NormalDiffuseDetail().shader)
-                                customMaterial = new NormalDiffuseDetailLoader(scatter.material);
-                            else if (scatter.material.shader == new DiffuseWrapLoader().shader)
-                                customMaterial = new DiffuseWrapLoader(scatter.material);
-                            else if (scatter.material.shader == new AlphaTestDiffuse().shader)
-                                customMaterial = new AlphaTestDiffuseLoader(scatter.material);
-                            else if (scatter.material.shader == new AerialTransCutout().shader)
-                                customMaterial = new AerialTransCutoutLoader(scatter.material);
-                        }
-                    }
+                    // Apply Event
+                    void IParserEventSubscriber.Apply(ConfigNode node) { }
 
+                    // PostApply Event
                     void IParserEventSubscriber.PostApply(ConfigNode node)
                     {
-                        // If defined, use custom material
-                        if (customMaterial != null) scatter.material = customMaterial;
+                        // Create the Scatter-Parent
+                        GameObject scatterParent = new GameObject("Scatter " + Guid.NewGuid());
+                        scatterParent.transform.parent = pqsVersion.transform;
+                        scatterParent.transform.localPosition = Vector3.zero;
+                        scatterParent.transform.localRotation = Quaternion.identity;
+                        scatterParent.transform.localScale = Vector3.one;
+
+                        // Add the ScatterExtension
+                        // TODO(TMSP): Make this modular
+                        Scatter.CreateInstance(scatterParent, science, collide, experiment);
+                    }
+
+                    /// <summary>
+                    /// Convert Parser to Value
+                    /// </summary>
+                    public static implicit operator PQSLandControl.LandClassScatter(LandClassScatterLoader parser)
+                    {
+                        return parser.Value;
+                    }
+        
+                    /// <summary>
+                    /// Convert Value to Parser
+                    /// </summary>
+                    public static implicit operator LandClassScatterLoader(PQSLandControl.LandClassScatter value)
+                    {
+                        return new LandClassScatterLoader(value);
                     }
                 }
 
                 // Loader for the Amount of a Scatter on a body
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassScatterAmountLoader
+                public class LandClassScatterAmountLoader : IPatchable, ITypeParser<PQSLandControl.LandClassScatterAmount>
                 {
-                    public PQSLandControl.LandClassScatterAmount scatterAmount;
+                    // The value we are editing
+                    public PQSLandControl.LandClassScatterAmount Value { get; set; }
+
+                    // Should we delete the ScatterAmount?
+                    [ParserTarget("delete")]
+                    [KittopiaHideOption]
+                    public NumericParser<Boolean> delete = false;
 
                     // density
                     [ParserTarget("density")]
                     public NumericParser<Double> density
                     {
-                        get { return scatterAmount.density; }
-                        set { scatterAmount.density = value; }
+                        get { return Value.density; }
+                        set { Value.density = value; }
                     }
 
                     // The name of the scatter used
                     [ParserTarget("scatterName")]
-                    public String scatterName
+                    public String name
                     {
-                        get { return scatterAmount.scatterName; }
-                        set { scatterAmount.scatterName = value; }
+                        get { return Value.scatterName; }
+                        set { Value.scatterName = value; }
                     }
 
                     // Default Constructor
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
                     public LandClassScatterAmountLoader()
                     {
-                        scatterAmount = new PQSLandControl.LandClassScatterAmount();
+                        Value = new PQSLandControl.LandClassScatterAmount();
                     }
 
                     // Runtime Constructor
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassScatterAmountLoader(PQSLandControl.LandClassScatterAmount amount)
                     {
-                        if (amount != null)
-                            scatterAmount = amount;
-                        else
-                            scatterAmount = new PQSLandControl.LandClassScatterAmount();
+                         Value = amount;
+                    }
+
+                    /// <summary>
+                    /// Convert Parser to Value
+                    /// </summary>
+                    public static implicit operator PQSLandControl.LandClassScatterAmount(LandClassScatterAmountLoader parser)
+                    {
+                        return parser.Value;
+                    }
+        
+                    /// <summary>
+                    /// Convert Value to Parser
+                    /// </summary>
+                    public static implicit operator LandClassScatterAmountLoader(PQSLandControl.LandClassScatterAmount value)
+                    {
+                        return new LandClassScatterAmountLoader(value);
                     }
                 }
 
                 // Loader for LerpRange
                 [RequireConfigType(ConfigType.Node)]
-                public class LerpRangeLoader
+                public class LerpRangeLoader : ITypeParser<PQSLandControl.LerpRange>
                 {
-                    public PQSLandControl.LerpRange lerpRange;
+                    // The value we are editing
+                    public PQSLandControl.LerpRange Value { get; set; }
 
                     // endEnd
                     [ParserTarget("endEnd")]
                     public NumericParser<Double> endEnd
                     {
-                        get { return lerpRange.endEnd; }
-                        set { lerpRange.endEnd = value; }
+                        get { return Value.endEnd; }
+                        set { Value.endEnd = value; }
                     }
 
                     // endStart
                     [ParserTarget("endStart")]
                     public NumericParser<Double> endStart
                     {
-                        get { return lerpRange.endStart; }
-                        set { lerpRange.endStart = value; }
+                        get { return Value.endStart; }
+                        set { Value.endStart = value; }
                     }
 
                     // startEnd
                     [ParserTarget("startEnd")]
                     public NumericParser<Double> startEnd
                     {
-                        get { return lerpRange.startEnd; }
-                        set { lerpRange.startEnd = value; }
+                        get { return Value.startEnd; }
+                        set { Value.startEnd = value; }
                     }
 
                     // startStart
                     [ParserTarget("startStart")]
                     public NumericParser<Double> startStart
                     {
-                        get { return lerpRange.startStart; }
-                        set { lerpRange.startStart = value; }
+                        get { return Value.startStart; }
+                        set { Value.startStart = value; }
                     }
 
                     // Default constructor
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
                     public LerpRangeLoader()
                     {
-                        lerpRange = new PQSLandControl.LerpRange();
+                        Value = new PQSLandControl.LerpRange();
                     }
 
                     // Runtime Constructor
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LerpRangeLoader(PQSLandControl.LerpRange lerp)
                     {
-                        if (lerp != null)
-                            lerpRange = lerp;
-                        else
-                            lerpRange = new PQSLandControl.LerpRange();
+                        Value = lerp;
+                    }
+
+                    /// <summary>
+                    /// Convert Parser to Value
+                    /// </summary>
+                    public static implicit operator PQSLandControl.LerpRange(LerpRangeLoader parser)
+                    {
+                        return parser.Value;
+                    }
+        
+                    /// <summary>
+                    /// Convert Value to Parser
+                    /// </summary>
+                    public static implicit operator LerpRangeLoader(PQSLandControl.LerpRange value)
+                    {
+                        return new LerpRangeLoader(value);
                     }
                 }
 
                 // Loader for LandClass
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassLoader : IParserEventSubscriber
+                public class LandClassLoader : IPatchable, ITypeParser<PQSLandControl.LandClass>
                 {
-                    public PQSLandControl.LandClass landClass;
+                    // The value we are editing
+                    public PQSLandControl.LandClass Value { get; set; }
 
                     // Should we delete the LandClass?
                     [ParserTarget("delete")]
+                    [KittopiaHideOption]
                     public NumericParser<Boolean> delete = false;
 
                     // alterApparentHeight
                     [ParserTarget("alterApparentHeight")]
                     public NumericParser<Single> alterApparentHeight
                     {
-                        get { return landClass.alterApparentHeight; }
-                        set { landClass.alterApparentHeight = value; }
+                        get { return Value.alterApparentHeight; }
+                        set { Value.alterApparentHeight = value; }
                     }
 
                     // alterRealHeight
                     [ParserTarget("alterRealHeight")]
                     public NumericParser<Double> alterRealHeight
                     {
-                        get { return landClass.alterRealHeight; }
-                        set { landClass.alterRealHeight = value; }
+                        get { return Value.alterRealHeight; }
+                        set { Value.alterRealHeight = value; }
                     }
 
                     // altitudeRange
                     [ParserTarget("altitudeRange", allowMerge = true)]
                     public LerpRangeLoader altitudeRange
                     {
-                        get { return new LerpRangeLoader(landClass.altitudeRange); }
-                        set { landClass.altitudeRange = value.lerpRange; }
+                        get { return Value.altitudeRange; }
+                        set { Value.altitudeRange = value; }
                     }
 
                     // color
                     [ParserTarget("color")]
                     public ColorParser color
                     {
-                        get { return landClass.color; }
-                        set { landClass.color = value; }
+                        get { return Value.color; }
+                        set { Value.color = value; }
                     }
 
                     // coverageBlend
                     [ParserTarget("coverageBlend")]
                     public NumericParser<Single> coverageBlend
                     {
-                        get { return landClass.coverageBlend; }
-                        set { landClass.coverageBlend = value; }
+                        get { return Value.coverageBlend; }
+                        set { Value.coverageBlend = value; }
                     }
 
                     // coverageFrequency
                     [ParserTarget("coverageFrequency")]
                     public NumericParser<Single> coverageFrequency
                     {
-                        get { return landClass.coverageFrequency; }
-                        set { landClass.coverageFrequency = value; }
+                        get { return Value.coverageFrequency; }
+                        set
+                        {
+                            Value.coverageFrequency = value;
+                            Value.coverageSimplex = new Simplex(Value.coverageSeed, Value.coverageOctaves,
+                                Value.coveragePersistance, Value.coverageFrequency);
+                        }
                     }
 
                     // coverageOctaves
                     [ParserTarget("coverageOctaves")]
                     public NumericParser<Int32> coverageOctaves
                     {
-                        get { return landClass.coverageOctaves; }
-                        set { landClass.coverageOctaves = value; }
+                        get { return Value.coverageOctaves; }
+                        set
+                        {
+                            Value.coverageOctaves = value;
+                            Value.coverageSimplex = new Simplex(Value.coverageSeed, Value.coverageOctaves,
+                                Value.coveragePersistance, Value.coverageFrequency);
+                        }
                     }
 
                     // coveragePersistance
                     [ParserTarget("coveragePersistance")]
                     public NumericParser<Single> coveragePersistance
                     {
-                        get { return landClass.coveragePersistance; }
-                        set { landClass.coveragePersistance = value; }
+                        get { return Value.coveragePersistance; }
+                        set
+                        {
+                            Value.coveragePersistance = value;
+                            Value.coverageSimplex = new Simplex(Value.coverageSeed, Value.coverageOctaves,
+                                Value.coveragePersistance, Value.coverageFrequency);
+                        }
                     }
 
                     // coverageSeed
                     [ParserTarget("coverageSeed")]
                     public NumericParser<Int32> coverageSeed
                     {
-                        get { return landClass.coverageSeed; }
-                        set { landClass.coverageSeed = value; }
-                    }
-
-                    // coverageSimplex
-                    [ParserTarget("coverageSimplex", allowMerge = true)]
-                    public SimplexLoader coverageSimplex
-                    {
-                        get { return new SimplexLoader(landClass.coverageSimplex); }
-                        set { landClass.coverageSimplex = value.simplex; }
+                        get { return Value.coverageSeed; }
+                        set
+                        {
+                            Value.coverageSeed = value;
+                            Value.coverageSimplex = new Simplex(Value.coverageSeed, Value.coverageOctaves,
+                                Value.coveragePersistance, Value.coverageFrequency);
+                        }
                     }
 
                     // The name of the landclass
                     [ParserTarget("name")]
-                    public String landClassName
+                    public String name
                     {
-                        get { return landClass.landClassName; }
-                        set { landClass.landClassName = value; }
+                        get { return Value.landClassName; }
+                        set { Value.landClassName = value; }
                     }
 
                     // latDelta
                     [ParserTarget("latDelta")]
                     public NumericParser<Double> latDelta
                     {
-                        get { return landClass.latDelta; }
-                        set { landClass.latDelta = value; }
+                        get { return Value.latDelta; }
+                        set { Value.latDelta = value; }
                     }
 
                     // latitudeDouble
                     [ParserTarget("latitudeDouble")]
                     public NumericParser<Boolean> latitudeDouble
                     {
-                        get { return landClass.latitudeDouble; }
-                        set { landClass.latitudeDouble = value; }
+                        get { return Value.latitudeDouble; }
+                        set { Value.latitudeDouble = value; }
                     }
 
                     // latitudeDoubleRange
                     [ParserTarget("latitudeDoubleRange", allowMerge = true)]
                     public LerpRangeLoader latitudeDoubleRange
                     {
-                        get { return new LerpRangeLoader(landClass.latitudeDoubleRange); }
-                        set { landClass.latitudeDoubleRange = value.lerpRange; }
+                        get { return new LerpRangeLoader(Value.latitudeDoubleRange); }
+                        set { Value.latitudeDoubleRange = value.Value; }
                     }
 
                     // latitudeRange
                     [ParserTarget("latitudeRange", allowMerge = true)]
                     public LerpRangeLoader latitudeRange
                     {
-                        get { return new LerpRangeLoader(landClass.latitudeRange); }
-                        set { landClass.latitudeRange = value.lerpRange; }
+                        get { return new LerpRangeLoader(Value.latitudeRange); }
+                        set { Value.latitudeRange = value.Value; }
                     }
 
                     // lonDelta
                     [ParserTarget("lonDelta")]
                     public NumericParser<Double> lonDelta
                     {
-                        get { return landClass.lonDelta; }
-                        set { landClass.lonDelta = value; }
+                        get { return Value.lonDelta; }
+                        set { Value.lonDelta = value; }
                     }
 
                     // longitudeRange
                     [ParserTarget("longitudeRange", allowMerge = true)]
                     public LerpRangeLoader longitudeRange
                     {
-                        get { return new LerpRangeLoader(landClass.longitudeRange); }
-                        set { landClass.longitudeRange = value.lerpRange; }
+                        get { return new LerpRangeLoader(Value.longitudeRange); }
+                        set { Value.longitudeRange = value.Value; }
                     }
 
                     // minimumRealHeight
                     [ParserTarget("minimumRealHeight")]
                     public NumericParser<Double> minimumRealHeight
                     {
-                        get { return landClass.minimumRealHeight; }
-                        set { landClass.minimumRealHeight = value; }
+                        get { return Value.minimumRealHeight; }
+                        set { Value.minimumRealHeight = value; }
                     }
 
                     // noiseBlend
                     [ParserTarget("noiseBlend")]
                     public NumericParser<Single> noiseBlend
                     {
-                        get { return landClass.noiseBlend; }
-                        set { landClass.noiseBlend = value; }
+                        get { return Value.noiseBlend; }
+                        set { Value.noiseBlend = value; }
                     }
 
                     // noiseColor
                     [ParserTarget("noiseColor")]
                     public ColorParser noiseColor
                     {
-                        get { return landClass.noiseColor; }
-                        set { landClass.noiseColor = value; }
+                        get { return Value.noiseColor; }
+                        set { Value.noiseColor = value; }
                     }
 
                     // noiseFrequency
                     [ParserTarget("noiseFrequency")]
                     public NumericParser<Single> noiseFrequency
                     {
-                        get { return landClass.noiseFrequency; }
-                        set { landClass.noiseFrequency = value; }
+                        get { return Value.noiseFrequency; }
+                        set
+                        {
+                            Value.noiseFrequency = value;
+                            Value.noiseSimplex = new Simplex(Value.noiseSeed, Value.noiseOctaves,
+                                Value.noisePersistance, Value.noiseFrequency);
+                        }
                     }
 
                     // noiseOctaves
                     [ParserTarget("noiseOctaves")]
                     public NumericParser<Int32> noiseOctaves
                     {
-                        get { return landClass.noiseOctaves; }
-                        set { landClass.noiseOctaves = value; }
+                        get { return Value.noiseOctaves; }
+                        set
+                        {
+                            Value.noiseOctaves = value;
+                            Value.noiseSimplex = new Simplex(Value.noiseSeed, Value.noiseOctaves,
+                                Value.noisePersistance, Value.noiseFrequency);
+                        }
                     }
 
                     // noisePersistance
                     [ParserTarget("noisePersistance")]
                     public NumericParser<Single> noisePersistance
                     {
-                        get { return landClass.noisePersistance; }
-                        set { landClass.noisePersistance = value; }
+                        get { return Value.noisePersistance; }
+                        set
+                        {
+                            Value.noisePersistance = value;
+                            Value.noiseSimplex = new Simplex(Value.noiseSeed, Value.noiseOctaves,
+                                Value.noisePersistance, Value.noiseFrequency);
+                        }
                     }
 
                     // noiseSeed
                     [ParserTarget("noiseSeed")]
                     public NumericParser<Int32> noiseSeed
                     {
-                        get { return landClass.noiseSeed; }
-                        set { landClass.noiseSeed = value; }
-                    }
-
-                    // noiseSimplex
-                    [ParserTarget("noiseSimplex", allowMerge = true)]
-                    public SimplexLoader noiseSimplex
-                    {
-                        get { return new SimplexLoader(landClass.noiseSimplex); }
-                        set { landClass.noiseSimplex = value.simplex; }
+                        get { return Value.noiseSeed; }
+                        set
+                        {
+                            Value.noiseSeed = value;
+                            Value.noiseSimplex = new Simplex(Value.noiseSeed, Value.noiseOctaves,
+                                Value.noisePersistance, Value.noiseFrequency);
+                        }
                     }
 
                     // List of scatters used
                     [ParserTargetCollection("scatters", nameSignificance = NameSignificance.None)]
-                    public List<LandClassScatterAmountLoader> scatter = new List<LandClassScatterAmountLoader>();
-
-                    // Apply Event
-                    void IParserEventSubscriber.Apply(ConfigNode node) { }
-
-                    // Post Apply Event
-                    void IParserEventSubscriber.PostApply(ConfigNode node)
-                    {
-                        if (scatter.Any() || landClass.scatter == null)
-                            landClass.scatter = scatter.Select(s => s.scatterAmount).ToArray();
-                    }
+                    public CallbackList<LandClassScatterAmountLoader> scatter { get; set; }
 
                     // Default constructor
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
                     public LandClassLoader()
                     {
-                        landClass = new PQSLandControl.LandClass();
-                        LerpRangeLoader range;
-
+                        Value = new PQSLandControl.LandClass();
+                        
                         // Initialize default parameters
-                        landClass.altDelta = 1;
-                        landClass.color = new Color(0, 0, 0, 0);
-                        landClass.coverageFrequency = 1;
-                        landClass.coverageOctaves = 1;
-                        landClass.coveragePersistance = 1;
-                        landClass.coverageSeed = 1;
-                        landClass.landClassName = "Base";
-                        landClass.latDelta = 1;
-                        landClass.lonDelta = 1;
-                        landClass.noiseColor = new Color(0, 0, 0, 0);
-                        landClass.noiseFrequency = 1;
-                        landClass.noiseOctaves = 1;
-                        landClass.noisePersistance = 1;
-                        landClass.noiseSeed = 1;
+                        Value.altDelta = 1;
+                        Value.color = new Color(0, 0, 0, 0);
+                        Value.coverageFrequency = 1;
+                        Value.coverageOctaves = 1;
+                        Value.coveragePersistance = 1;
+                        Value.coverageSeed = 1;
+                        Value.landClassName = "Base";
+                        Value.latDelta = 1;
+                        Value.lonDelta = 1;
+                        Value.noiseColor = new Color(0, 0, 0, 0);
+                        Value.noiseFrequency = 1;
+                        Value.noiseOctaves = 1;
+                        Value.noisePersistance = 1;
+                        Value.noiseSeed = 1;
 
-                        range = new LerpRangeLoader();
-                        range.lerpRange.endEnd = 1;
-                        range.lerpRange.endStart = 1;
-                        range.lerpRange.startEnd = 0;
-                        range.lerpRange.startStart = 0;
+                        LerpRangeLoader range = new LerpRangeLoader();
+                        range.Value.endEnd = 1;
+                        range.Value.endStart = 1;
+                        range.Value.startEnd = 0;
+                        range.Value.startStart = 0;
                         altitudeRange = range;
 
                         range = new LerpRangeLoader();
-                        range.lerpRange.endEnd = 1;
-                        range.lerpRange.endStart = 1;
-                        range.lerpRange.startEnd = 0;
-                        range.lerpRange.startStart = 0;
+                        range.Value.endEnd = 1;
+                        range.Value.endStart = 1;
+                        range.Value.startEnd = 0;
+                        range.Value.startStart = 0;
                         latitudeRange = range;
 
                         range = new LerpRangeLoader();
-                        range.lerpRange.endEnd = 1;
-                        range.lerpRange.endStart = 1;
-                        range.lerpRange.startEnd = 0;
-                        range.lerpRange.startStart = 0;
+                        range.Value.endEnd = 1;
+                        range.Value.endStart = 1;
+                        range.Value.startEnd = 0;
+                        range.Value.startStart = 0;
                         latitudeDoubleRange = range;
 
                         range = new LerpRangeLoader();
-                        range.lerpRange.endEnd = 2;
-                        range.lerpRange.endStart = 2;
-                        range.lerpRange.startEnd = -1;
-                        range.lerpRange.startStart = -1;
+                        range.Value.endEnd = 2;
+                        range.Value.endStart = 2;
+                        range.Value.startEnd = -1;
+                        range.Value.startStart = -1;
                         longitudeRange = range;
+
+                        // Create the scatter list
+                        scatter = new CallbackList<LandClassScatterAmountLoader>(e =>
+                        {
+                            Value.scatter = scatter.Where(s => !s.delete).Select(s => s.Value).ToArray();
+                        });
+                        Value.scatter = new PQSLandControl.LandClassScatterAmount[0];
                     }
 
                     // Runtime constructor
-                    public LandClassLoader(PQSLandControl.LandClass landClass)
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
+                    public LandClassLoader(PQSLandControl.LandClass value)
                     {
-                        this.landClass = landClass;
+                        Value = value;
+                        
+                        // Initialize default parameters
+                        if (Value.altitudeRange == null)
+                        {
+                            LerpRangeLoader range = new LerpRangeLoader();
+                            range.Value.endEnd = 1;
+                            range.Value.endStart = 1;
+                            range.Value.startEnd = 0;
+                            range.Value.startStart = 0;
+                            altitudeRange = range;
+                        }
+                        if (Value.latitudeRange == null)
+                        {
+                            LerpRangeLoader range = new LerpRangeLoader();
+                            range.Value.endEnd = 1;
+                            range.Value.endStart = 1;
+                            range.Value.startEnd = 0;
+                            range.Value.startStart = 0;
+                            latitudeRange = range;
+                        }
+                        if (Value.latitudeDoubleRange == null)
+                        {
+                            LerpRangeLoader range = new LerpRangeLoader();
+                            range.Value.endEnd = 1;
+                            range.Value.endStart = 1;
+                            range.Value.startEnd = 0;
+                            range.Value.startStart = 0;
+                            latitudeDoubleRange = range;
+                        }
+                        if (Value.longitudeRange == null)
+                        {
+                            LerpRangeLoader range = new LerpRangeLoader();
+                            range.Value.endEnd = 2;
+                            range.Value.endStart = 2;
+                            range.Value.startEnd = -1;
+                            range.Value.startStart = -1;
+                            longitudeRange = range;
+                        }
+                        
+                        // Create the scatter list
+                        scatter = new CallbackList<LandClassScatterAmountLoader>(e =>
+                        {
+                            Value.scatter = scatter.Where(s => !s.delete).Select(s => s.Value).ToArray();
+                        });
+
+                        // Load scatters
+                        if (Value.scatter != null)
+                        {
+                            for (Int32 i = 0; i < Value.scatter.Length; i++)
+                            {
+                                // Only activate the callback if we are adding the last loader
+                                scatter.Add(new LandClassScatterAmountLoader(Value.scatter[i]),
+                                    i == Value.scatter.Length - 1);
+                            }
+                        }
+                        else
+                        {
+                            Value.scatter = new PQSLandControl.LandClassScatterAmount[0];
+                        }
+                    }
+
+                    /// <summary>
+                    /// Convert Parser to Value
+                    /// </summary>
+                    public static implicit operator PQSLandControl.LandClass(LandClassLoader parser)
+                    {
+                        return parser.Value;
+                    }
+        
+                    /// <summary>
+                    /// Convert Value to Parser
+                    /// </summary>
+                    public static implicit operator LandClassLoader(PQSLandControl.LandClass value)
+                    {
+                        return new LandClassLoader(value);
                     }
                 }
 
@@ -758,7 +857,12 @@ namespace Kopernicus
                 public NumericParser<Single> altitudeFrequency
                 {
                     get { return mod.altitudeFrequency; }
-                    set { mod.altitudeFrequency = value; }
+                    set
+                    {
+                        mod.altitudeFrequency = value;
+                        mod.altitudeSimplex = new Simplex(mod.altitudeSeed, mod.altitudeOctaves,
+                            mod.altitudePersistance, mod.altitudeFrequency);
+                    }
                 }
 
                 // altitudeOctaves
@@ -766,7 +870,12 @@ namespace Kopernicus
                 public NumericParser<Int32> altitudeOctaves
                 {
                     get { return mod.altitudeOctaves; }
-                    set { mod.altitudeOctaves = value; }
+                    set
+                    {
+                        mod.altitudeOctaves = value;
+                        mod.altitudeSimplex = new Simplex(mod.altitudeSeed, mod.altitudeOctaves,
+                            mod.altitudePersistance, mod.altitudeFrequency);
+                    }
                 }
 
                 // altitudePersistance
@@ -774,7 +883,12 @@ namespace Kopernicus
                 public NumericParser<Single> altitudePersistance
                 {
                     get { return mod.altitudePersistance; }
-                    set { mod.altitudePersistance = value; }
+                    set
+                    {
+                        mod.altitudePersistance = value;
+                        mod.altitudeSimplex = new Simplex(mod.altitudeSeed, mod.altitudeOctaves,
+                            mod.altitudePersistance, mod.altitudeFrequency);
+                    }
                 }
 
                 // altitudeSeed
@@ -782,15 +896,12 @@ namespace Kopernicus
                 public NumericParser<Int32> altitudeSeed
                 {
                     get { return mod.altitudeSeed; }
-                    set { mod.altitudeSeed = value; }
-                }
-
-                // altitudeSimplex
-                [ParserTarget("altitudeSimplex")]
-                public SimplexLoader altitudeSimplex
-                {
-                    get { return new SimplexLoader(mod.altitudeSimplex); }
-                    set { mod.altitudeSimplex = value.simplex; }
+                    set
+                    {
+                        mod.altitudeSeed = value;
+                        mod.altitudeSimplex = new Simplex(mod.altitudeSeed, mod.altitudeOctaves,
+                            mod.altitudePersistance, mod.altitudeFrequency);
+                    }
                 }
 
                 // createColors
@@ -830,7 +941,12 @@ namespace Kopernicus
                 public NumericParser<Single> latitudeFrequency
                 {
                     get { return mod.latitudeFrequency; }
-                    set { mod.latitudeFrequency = value; }
+                    set
+                    {
+                        mod.latitudeFrequency = value;
+                        mod.latitudeSimplex = new Simplex(mod.latitudeSeed, mod.latitudeOctaves,
+                            mod.latitudePersistance, mod.latitudeFrequency);
+                    }
                 }
 
                 // latitudeOctaves
@@ -838,7 +954,12 @@ namespace Kopernicus
                 public NumericParser<Int32> latitudeOctaves
                 {
                     get { return mod.latitudeOctaves; }
-                    set { mod.latitudeOctaves = value; }
+                    set
+                    {
+                        mod.latitudeOctaves = value;
+                        mod.latitudeSimplex = new Simplex(mod.latitudeSeed, mod.latitudeOctaves,
+                            mod.latitudePersistance, mod.latitudeFrequency);
+                    }
                 }
 
                 // latitudePersistance
@@ -846,7 +967,12 @@ namespace Kopernicus
                 public NumericParser<Single> latitudePersistance
                 {
                     get { return mod.latitudePersistance; }
-                    set { mod.latitudePersistance = value; }
+                    set
+                    {
+                        mod.latitudePersistance = value;
+                        mod.latitudeSimplex = new Simplex(mod.latitudeSeed, mod.latitudeOctaves,
+                            mod.latitudePersistance, mod.latitudeFrequency);
+                    }
                 }
 
                 // latitudeSeed
@@ -854,15 +980,12 @@ namespace Kopernicus
                 public NumericParser<Int32> latitudeSeed
                 {
                     get { return mod.latitudeSeed; }
-                    set { mod.latitudeSeed = value; }
-                }
-
-                // latitudeSimplex
-                [ParserTarget("latitudeSimplex")]
-                public SimplexLoader latitudeSimplex
-                {
-                    get { return new SimplexLoader(mod.latitudeSimplex); }
-                    set { mod.latitudeSimplex = value.simplex; }
+                    set
+                    {
+                        mod.latitudeSeed = value;
+                        mod.latitudeSimplex = new Simplex(mod.latitudeSeed, mod.latitudeOctaves,
+                            mod.latitudePersistance, mod.latitudeFrequency);
+                    }
                 }
 
                 // longitudeBlend
@@ -878,7 +1001,12 @@ namespace Kopernicus
                 public NumericParser<Single> longitudeFrequency
                 {
                     get { return mod.longitudeFrequency; }
-                    set { mod.longitudeFrequency = value; }
+                    set
+                    {
+                        mod.longitudeFrequency = value;
+                        mod.longitudeSimplex = new Simplex(mod.longitudeSeed, mod.longitudeOctaves,
+                            mod.longitudePersistance, mod.longitudeFrequency);
+                    }
                 }
 
                 // longitudeOctaves
@@ -886,7 +1014,12 @@ namespace Kopernicus
                 public NumericParser<Int32> longitudeOctaves
                 {
                     get { return mod.longitudeOctaves; }
-                    set { mod.longitudeOctaves = value; }
+                    set
+                    {
+                        mod.longitudeOctaves = value;
+                        mod.longitudeSimplex = new Simplex(mod.longitudeSeed, mod.longitudeOctaves,
+                            mod.longitudePersistance, mod.longitudeFrequency);
+                    }
                 }
 
                 // longitudePersistance
@@ -894,7 +1027,12 @@ namespace Kopernicus
                 public NumericParser<Single> longitudePersistance
                 {
                     get { return mod.longitudePersistance; }
-                    set { mod.longitudePersistance = value; }
+                    set
+                    {
+                        mod.longitudePersistance = value;
+                        mod.longitudeSimplex = new Simplex(mod.longitudeSeed, mod.longitudeOctaves,
+                            mod.longitudePersistance, mod.longitudeFrequency);
+                    }
                 }
 
                 // longitudeSeed
@@ -902,15 +1040,12 @@ namespace Kopernicus
                 public NumericParser<Int32> longitudeSeed
                 {
                     get { return mod.longitudeSeed; }
-                    set { mod.longitudeSeed = value; }
-                }
-
-                // longitudeSimplex
-                [ParserTarget("longitudeSimplex")]
-                public SimplexLoader longitudeSimplex
-                {
-                    get { return new SimplexLoader(mod.longitudeSimplex); }
-                    set { mod.longitudeSimplex = value.simplex; }
+                    set
+                    {
+                        mod.longitudeSeed = value;
+                        mod.longitudeSimplex = new Simplex(mod.longitudeSeed, mod.longitudeOctaves,
+                            mod.longitudePersistance, mod.longitudeFrequency);
+                    }
                 }
 
                 // useHeightMap
@@ -930,172 +1065,14 @@ namespace Kopernicus
                 }
 
                 // List of scatters
-                public List<LandClassScatterLoader> scatters = new List<LandClassScatterLoader>();
+                [ParserTargetCollection("scatters", allowMerge = true)] // TODO(TMSP): Explore the possibilities of capitalizing this
+                public CallbackList<LandClassScatterLoader> scatters { get; set; }
 
                 // List of landclasses
-                public List<LandClassLoader> landClasses = new List<LandClassLoader>();
+                [ParserTargetCollection("landClasses", allowMerge = true)]
+                public CallbackList<LandClassLoader> landClasses { get; set; }
 
-                // Apply event
-                void IParserEventSubscriber.Apply(ConfigNode node) { }
-
-                // Post Apply Event
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-                    // Load the LandClasses manually, to support patching
-                    if (mod.landClasses != null) mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoader(c)));
-                    if (node.HasNode("landClasses"))
-                    {
-                        // Already patched classes
-                        List<PQSLandControl.LandClass> patchedClasses = new List<PQSLandControl.LandClass>();
-
-                        // Go through the nodes
-                        foreach (ConfigNode lcNode in node.GetNode("landClasses").nodes)
-                        {
-                            // The Loader
-                            LandClassLoader loader = null;
-
-                            // Are there existing LandClasses?
-                            if (landClasses.Count > 0)
-                            {
-                                // Attempt to find a LandClass we can edit that we have not edited before
-                                loader = landClasses.Where(m => !patchedClasses.Contains(m.landClass) && (lcNode.HasValue("name") ? m.landClass.landClassName == lcNode.GetValue("name") : false))
-                                                                 .FirstOrDefault();
-
-                                // Load the Loader (lol)
-                                if (loader != null)
-                                {
-                                    Parser.LoadObjectFromConfigurationNode(loader, lcNode, "Kopernicus");
-                                    landClasses.Remove(loader);
-                                    patchedClasses.Add(loader.landClass);
-                                }
-                            }
-
-                            // If we can't patch a LandClass, create a new one
-                            if (loader == null)
-                            {
-                                loader = Parser.CreateObjectFromConfigNode<LandClassLoader>(lcNode, "Kopernicus"); 
-                            }
-
-                            // Add the Loader to the List
-                            if (!loader.delete.value)
-                                landClasses.Add(loader);
-                        }
-                    }
-
-                    // Load the Scatters manually, to support patching
-                    if (mod.scatters != null)  mod.scatters.ToList().ForEach(s => scatters.Add(new LandClassScatterLoader(s)));
-                    if (node.HasNode("scatters"))
-                    {
-                        // Already patched scatters
-                        List<PQSLandControl.LandClassScatter> patchedScatters = new List<PQSLandControl.LandClassScatter>();
-
-                        // Go through the nodes
-                        foreach (ConfigNode scatterNode in node.GetNode("scatters").nodes)
-                        {
-                            // The Loader
-                            LandClassScatterLoader loader = null;
-
-                            // Are there existing Scatters?
-                            if (scatters.Count > 0)
-                            {
-                                // Attempt to find a Scatter we can edit that we have not edited before
-                                loader = scatters.Where(m => !patchedScatters.Contains(m.scatter) && (scatterNode.HasValue("name") ? m.scatter.scatterName == scatterNode.GetValue("name") : false))
-                                                                 .FirstOrDefault();
-
-
-                                // Load the Loader (lol)
-                                if (loader != null)
-                                {
-                                    Parser.LoadObjectFromConfigurationNode(loader, scatterNode, "Kopernicus");
-                                    scatters.Remove(loader);
-                                    patchedScatters.Add(loader.scatter);
-                                }
-                            }
-
-                            // If we can't patch a Scatter, create a new one
-                            if (loader == null)
-                            {
-                                loader = Parser.CreateObjectFromConfigNode<LandClassScatterLoader>(scatterNode, "Kopernicus");
-                            }
-
-                            // Add the Loader to the List
-                            if (!loader.delete.value)
-                                scatters.Add(loader);
-                        }
-                    }
-
-                    if (scatters.Count > 0)
-                        mod.scatters = scatters.Select(s => s.scatter).ToArray();
-                    else
-                        mod.scatters = new PQSLandControl.LandClassScatter[0];
-                    if (landClasses.Count > 0)
-                        mod.landClasses = landClasses.Select(c => c.landClass).ToArray();
-                    else
-                        mod.landClasses = new PQSLandControl.LandClass[0];
-
-                    // Assign each scatter amount with their corresponding scatter
-                    foreach (PQSLandControl.LandClass landClass in mod.landClasses)
-                    {
-                        foreach (PQSLandControl.LandClassScatterAmount amount in landClass.scatter)
-                        {
-                            Int32 i = 0;
-                            while (i < mod.scatters.Length)
-                            {
-                                if (mod.scatters[i].scatterName.Equals(amount.scatterName)) break;
-                                i++;
-                            }
-
-                            if (i < mod.scatters.Length)
-                            {
-                                amount.scatterIndex = i;
-                                amount.scatter = mod.scatters[i];
-                            }
-                        }
-                    }
-
-                    // Add Colliders to the scatters
-                    foreach (PQSLandControl.LandClassScatter scatter in mod.scatters)
-                    {
-                        // If nothing's there, abort
-                        if (!scatters.Any(s => s.scatter.scatterName == scatter.scatterName))
-                            continue;
-
-                        // Get the Loader
-                        LandClassScatterLoader loader = scatters.First(s => s.scatter.scatterName == scatter.scatterName);
-
-                        // Create the Scatter-Parent
-                        GameObject scatterParent = new GameObject("Scatter " + scatter.scatterName);
-                        scatterParent.transform.parent = mod.sphere.transform;
-                        scatterParent.transform.localPosition = Vector3.zero;
-                        scatterParent.transform.localRotation = Quaternion.identity;
-                        scatterParent.transform.localScale = Vector3.one;
-
-                        // Add the ScatterExtension
-                        Scatter.CreateInstance(scatterParent, loader.science, loader.collide, loader.experiment);
-                    }
-                }
-
-                // Create defaults
-                public override void Create()
-                {
-                    base.Create();
-
-                    // Initialize default parameters
-                    mod.altitudeSeed = 1;
-                    mod.altitudeOctaves = 1;
-                    mod.altitudePersistance = 1;
-                    mod.altitudeFrequency = 1;
-                    mod.latitudeSeed = 1;
-                    mod.latitudeOctaves = 1;
-                    mod.latitudePersistance = 1;
-                    mod.latitudeFrequency = 1;
-                    mod.longitudeSeed = 1;
-                    mod.longitudeOctaves = 1;
-                    mod.longitudePersistance = 1;
-                    mod.longitudeFrequency = 1;
-                }
-
-                // Create defaults
+                // Creates the a PQSMod of type T with given PQS
                 public override void Create(PQS pqsVersion)
                 {
                     base.Create(pqsVersion);
@@ -1113,6 +1090,107 @@ namespace Kopernicus
                     mod.longitudeOctaves = 1;
                     mod.longitudePersistance = 1;
                     mod.longitudeFrequency = 1;
+                    
+                    // Create the callback list for Scatters
+                    scatters = new CallbackList<LandClassScatterLoader>(e =>
+                    {
+                        mod.scatters = scatters.Where(scatter => !scatter.delete)
+                            .Select(scatter => scatter.Value).ToArray();
+                    });
+                    mod.scatters = new PQSLandControl.LandClassScatter[0];
+                    
+                    // Create the callback list for LandClasses
+                    landClasses = new CallbackList<LandClassLoader> (e =>
+                    {
+                        // Assign each scatter amount with their corresponding scatter
+                        foreach (PQSLandControl.LandClassScatterAmount amount in e.scatter)
+                        {
+                            Int32 i = 0;
+                            while (i < mod.scatters.Length)
+                            {
+                                if (mod.scatters[i].scatterName.Equals(amount.scatterName)) break;
+                                i++;
+                            }
+
+                            if (i < mod.scatters.Length)
+                            {
+                                amount.scatterIndex = i;
+                                amount.scatter = mod.scatters[i];
+                            }
+                        }
+                        
+                        // Assign the new values
+                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
+                            .Select(landClass => landClass.Value).ToArray();
+                    });
+                    mod.landClasses = new PQSLandControl.LandClass[0];
+                }
+
+                // Grabs a PQSMod of type T from a parameter with a given PQS
+                public override void Create(PQSLandControl _mod, PQS pqsVersion)
+                {
+                    base.Create(_mod, pqsVersion);
+                    
+                    // Create the callback list for Scatters
+                    scatters = new CallbackList<LandClassScatterLoader>(e =>
+                    {
+                        mod.scatters = scatters.Where(scatter => !scatter.delete)
+                            .Select(scatter => scatter.Value).ToArray();
+                    });
+                    
+                    // Load Scatters
+                    if (mod.scatters != null)
+                    {
+                        for (Int32 i = 0; i < mod.scatters.Length; i++)
+                        {
+                            // Only activate the callback if we are adding the last loader
+                            scatters.Add(new LandClassScatterLoader(mod.scatters[i]), i == mod.landClasses.Length - 1);
+                        }
+                    }
+                    else
+                    {
+                        mod.scatters = new PQSLandControl.LandClassScatter[0];
+                    }
+                    
+                    // Create the callback list for LandClasses
+                    landClasses = new CallbackList<LandClassLoader> (e =>
+                    {
+                        // Assign each scatter amount with their corresponding scatter
+                        foreach (PQSLandControl.LandClassScatterAmount amount in e.scatter)
+                        {
+                            Int32 i = 0;
+                            while (i < mod.scatters.Length)
+                            {
+                                if (mod.scatters[i].scatterName.Equals(amount.scatterName)) break;
+                                i++;
+                            }
+
+                            if (i < mod.scatters.Length)
+                            {
+                                amount.scatterIndex = i;
+                                amount.scatter = mod.scatters[i];
+                            }
+                        }
+                        
+                        // Assign the new values
+                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
+                            .Select(landClass => landClass.Value).ToArray();
+                    });
+                    
+                    // Load LandClasses
+                    if (mod.landClasses != null)
+                    {
+                        for (Int32 i = 0; i < mod.landClasses.Length; i++)
+                        {
+                            // Only activate the callback if we are adding the last loader
+                            landClasses.Add(new LandClassLoader(mod.landClasses[i]), i == mod.landClasses.Length - 1);
+                        }
+                    }
+                    else
+                    {
+                        mod.landClasses = new PQSLandControl.LandClass[0];
+                    }
+                    
                 }
             }
         }

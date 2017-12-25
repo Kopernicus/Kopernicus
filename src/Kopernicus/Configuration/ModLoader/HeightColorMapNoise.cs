@@ -35,21 +35,21 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class HeightColorMapNoise : ModLoader<PQSMod_HeightColorMapNoise>, IParserEventSubscriber
+            public class HeightColorMapNoise : ModLoader<PQSMod_HeightColorMapNoise>
             {
                 // Land class loader 
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassLoaderNoise
+                public class LandClassLoader : IPatchable, ITypeParser<PQSMod_HeightColorMapNoise.LandClass>
                 {
                     // Land class object
-                    public PQSMod_HeightColorMapNoise.LandClass landClassNoise;
+                    public PQSMod_HeightColorMapNoise.LandClass Value { get; set; }
 
                     // Name of the class
                     [ParserTarget("name")]
                     public String name 
                     {
-                        get { return landClassNoise.name; }
-                        set { landClassNoise.name = value; }
+                        get { return Value.name; }
+                        set { Value.name = value; }
                     }
 
                     // Delete the landclass
@@ -60,8 +60,8 @@ namespace Kopernicus
                     [ParserTarget("color")]
                     public ColorParser color
                     {
-                        get { return landClassNoise.color; }
-                        set { landClassNoise.color = value; }
+                        get { return Value.color; }
+                        set { Value.color = value; }
                     }
 
                     // Fractional altitude start
@@ -69,35 +69,35 @@ namespace Kopernicus
                     [ParserTarget("altitudeStart")]
                     public NumericParser<Double> altitudeStart
                     {
-                        get { return landClassNoise.altStart; }
-                        set { landClassNoise.altStart = value; }
+                        get { return Value.altStart; }
+                        set { Value.altStart = value; }
                     }
 
                     // Fractional altitude end
                     [ParserTarget("altitudeEnd")]
                     public NumericParser<Double> altitudeEnd
                     {
-                        get { return landClassNoise.altEnd; }
-                        set { landClassNoise.altEnd = value; }
+                        get { return Value.altEnd; }
+                        set { Value.altEnd = value; }
                     }
 
                     // Should we blend into the next class
                     [ParserTarget("lerpToNext")]
                     public NumericParser<Boolean> lerpToNext
                     {
-                        get { return landClassNoise.lerpToNext; }
-                        set { landClassNoise.lerpToNext = value; }
+                        get { return Value.lerpToNext; }
+                        set { Value.lerpToNext = value; }
                     }
 
-                    public LandClassLoaderNoise ()
+                    public LandClassLoader()
                     {
                         // Initialize the land class
-                        landClassNoise = new PQSMod_HeightColorMapNoise.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
+                        Value = new PQSMod_HeightColorMapNoise.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
                     }
 
-                    public LandClassLoaderNoise(PQSMod_HeightColorMapNoise.LandClass c)
+                    public LandClassLoader(PQSMod_HeightColorMapNoise.LandClass c)
                     {
-                        landClassNoise = c;
+                        Value = c;
                     }
                 }
 
@@ -110,61 +110,50 @@ namespace Kopernicus
                 }
 
                 // The land classes
-                public List<LandClassLoaderNoise> landClasses = new List<LandClassLoaderNoise> ();
+                [ParserTargetCollection("LandClasses", allowMerge = true)]
+                public CallbackList<LandClassLoader> landClasses { get; set; }
 
-                void IParserEventSubscriber.Apply(ConfigNode node)
+                // Creates the a PQSMod of type T with given PQS
+                public override void Create(PQS pqsVersion)
                 {
-                    // Load the LandClasses manually, to support patching
-                    if (mod.landClasses != null) mod.landClasses.ToList().ForEach(c => landClasses.Add(new LandClassLoaderNoise(c)));
-                    if (node.HasNode("LandClasses"))
+                    base.Create(pqsVersion);
+                    
+                    // Create the callback list
+                    landClasses = new CallbackList<LandClassLoader> ((e) =>
                     {
-                        // Already patched classes
-                        List<PQSMod_HeightColorMapNoise.LandClass> patchedClasses = new List<PQSMod_HeightColorMapNoise.LandClass>();
-
-                        // Go through the nodes
-                        foreach (ConfigNode lcNode in node.GetNode("LandClasses").nodes)
-                        {
-                            // The Loader
-                            LandClassLoaderNoise loader = null;
-
-                            // Are there existing LandClasses?
-                            if (landClasses.Count > 0)
-                            {
-                                // Attempt to find a LandClass we can edit that we have not edited before
-                                loader = landClasses.Where(m => !patchedClasses.Contains(m.landClassNoise) && ((lcNode.HasValue("name") ? m.landClassNoise.name == lcNode.GetValue("name") : false) || (lcNode.HasValue("index") ? landClasses.IndexOf(m).ToString() == lcNode.GetValue("index") : false)))
-                                                                 .FirstOrDefault();
-
-                                // Load the Loader (lol)
-                                if (loader != null)
-                                {
-                                    Parser.LoadObjectFromConfigurationNode(loader, lcNode, "Kopernicus");
-                                    landClasses.Remove(loader);
-                                    patchedClasses.Add(loader.landClassNoise);
-                                }
-                            }
-
-                            // If we can't patch a LandClass, create a new one
-                            if (loader == null)
-                            {
-                                loader = Parser.CreateObjectFromConfigNode<LandClassLoaderNoise>(lcNode, "Kopernicus");
-                            }
-
-                            // Add the Loader to the List
-                            if (!loader.delete.value)
-                                landClasses.Add(loader);
-                        }
-                    }
+                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
+                            .Select(landClass => landClass.Value).ToArray();
+                        mod.lcCount = mod.landClasses.Length;
+                    });
+                    mod.landClasses = new PQSMod_HeightColorMapNoise.LandClass[mod.lcCount = 0];
                 }
 
-                // Select the land class objects and push into the mod
-                void IParserEventSubscriber.PostApply(ConfigNode node)
+                // Grabs a PQSMod of type T from a parameter with a given PQS
+                public override void Create(PQSMod_HeightColorMapNoise _mod, PQS pqsVersion)
                 {
-                    PQSMod_HeightColorMapNoise.LandClass[] landClassesArray = landClasses.Select(loader => loader.landClassNoise).ToArray();
-                    if (landClassesArray.Count() != 0)
+                    base.Create(_mod, pqsVersion);
+                    
+                    // Create the callback list
+                    landClasses = new CallbackList<LandClassLoader> ((e) =>
                     {
-                        mod.landClasses = landClassesArray;
+                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
+                            .Select(landClass => landClass.Value).ToArray();
+                        mod.lcCount = mod.landClasses.Length;
+                    });
+                    
+                    // Load LandClasses
+                    if (mod.landClasses != null)
+                    {
+                        for (Int32 i = 0; i < mod.landClasses.Length; i++)
+                        {
+                            // Only activate the callback if we are adding the last loader
+                            landClasses.Add(new LandClassLoader(mod.landClasses[i]), i == mod.landClasses.Length - 1);
+                        }
                     }
-                    mod.lcCount = mod.landClasses.Count();
+                    else
+                    {
+                        mod.landClasses = new PQSMod_HeightColorMapNoise.LandClass[mod.lcCount = 0];
+                    }
                 }
             }
         }

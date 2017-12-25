@@ -34,17 +34,12 @@ namespace Kopernicus
     {
         // See: http://en.wikipedia.org/wiki/Argument_of_periapsis#mediaviewer/File:Orbit1.svg
         [RequireConfigType(ConfigType.Node)]
-        public class OrbitLoader : BaseLoader, IParserEventSubscriber
+        public class OrbitLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
         {
-            /// <summary>
-            /// KSP Orbit we're editing
-            /// </summary>
-            public Orbit orbit { get; set; }
-
             /// <summary>
             /// CelestialBody we're editing
             /// </summary>
-            public CelestialBody celestialBody { get; set; }
+            public CelestialBody Value { get; set; }
 
             // Reference body to orbit
             [ParserTarget("referenceBody")]
@@ -58,7 +53,7 @@ namespace Kopernicus
                     {
                         return _referenceBody;
                     }
-                    return celestialBody.orbitDriver.referenceBody.transform.name;
+                    return Value.orbitDriver.referenceBody.transform.name;
                 }
                 set
                 {
@@ -66,7 +61,7 @@ namespace Kopernicus
                     {
                         _referenceBody = value;
                     }
-                    celestialBody.orbitDriver.referenceBody = celestialBody.orbit.referenceBody =
+                    Value.orbitDriver.referenceBody = Value.orbit.referenceBody =
                         PSystemManager.Instance.localBodies.Find(b => b.transform.name == value);
                 }
             }
@@ -77,16 +72,16 @@ namespace Kopernicus
             [ParserTarget("inclination")]
             public NumericParser<Double> inclination 
             {
-                get { return orbit.inclination; }
-                set { orbit.inclination = value; }
+                get { return Value.orbit.inclination; }
+                set { Value.orbit.inclination = value; }
             }
             
             // How excentric is the orbit
             [ParserTarget("eccentricity")]
             public NumericParser<Double> eccentricity
             {
-                get { return orbit.eccentricity; }
-                set { orbit.eccentricity = value; }
+                get { return Value.orbit.eccentricity; }
+                set { Value.orbit.eccentricity = value; }
             }
 
             // Highest point of the orbit
@@ -94,8 +89,8 @@ namespace Kopernicus
             [KittopiaDescription("The altitude of the highest point in the orbit")]
             public NumericParser<Double> semiMajorAxis
             {
-                get { return orbit.semiMajorAxis; }
-                set { orbit.semiMajorAxis = value; }
+                get { return Value.orbit.semiMajorAxis; }
+                set { Value.orbit.semiMajorAxis = value; }
             }
 
             // Position of the highest point on the orbit circle
@@ -103,40 +98,40 @@ namespace Kopernicus
             [KittopiaDescription("The position of the highest point on the orbit circle")]
             public NumericParser<Double> longitudeOfAscendingNode
             {
-                get { return orbit.LAN; }
-                set { orbit.LAN = value; }
+                get { return Value.orbit.LAN; }
+                set { Value.orbit.LAN = value; }
             }
 
             // argumentOfPeriapsis
             [ParserTarget("argumentOfPeriapsis")]
             public NumericParser<Double> argumentOfPeriapsis
             {
-                get { return orbit.argumentOfPeriapsis; }
-                set { orbit.argumentOfPeriapsis = value; }
+                get { return Value.orbit.argumentOfPeriapsis; }
+                set { Value.orbit.argumentOfPeriapsis = value; }
             }
 
             // meanAnomalyAtEpoch
             [ParserTarget("meanAnomalyAtEpoch")]
             public NumericParser<Double> meanAnomalyAtEpoch
             {
-                get { return orbit.meanAnomalyAtEpoch; }
-                set { orbit.meanAnomalyAtEpoch = value; }
+                get { return Value.orbit.meanAnomalyAtEpoch; }
+                set { Value.orbit.meanAnomalyAtEpoch = value; }
             }
 
             // meanAnomalyAtEpochD
             [ParserTarget("meanAnomalyAtEpochD")]
             public NumericParser<Double> meanAnomalyAtEpochD
             {
-                get { return orbit.meanAnomalyAtEpoch / Math.PI * 180d; }
-                set { orbit.meanAnomalyAtEpoch = value.value * Math.PI / 180d; }
+                get { return Value.orbit.meanAnomalyAtEpoch / Math.PI * 180d; }
+                set { Value.orbit.meanAnomalyAtEpoch = value.Value * Math.PI / 180d; }
             }
 
             // epoch
             [ParserTarget("epoch")]
             public NumericParser<Double> epoch
             {
-                get { return orbit.epoch; }
-                set { orbit.epoch = value; }
+                get { return Value.orbit.epoch; }
+                set { Value.orbit.epoch = value; }
             }
             
             // Orbit renderer color
@@ -151,7 +146,7 @@ namespace Kopernicus
                         return generatedBody.orbitRenderer.nodeColor;
                     }
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
                     return data.nodeColor;
                 }
                 set
@@ -161,10 +156,10 @@ namespace Kopernicus
                         generatedBody.orbitRenderer.SetColor(value);
                     }
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
                     data.nodeColor = value;
-                    data.orbitColor = (value.value * 0.5f).A(data.nodeColor.a);
-                    PSystemManager.OrbitRendererDataCache[celestialBody] = data;
+                    data.orbitColor = (value.Value * 0.5f).A(data.nodeColor.a);
+                    PSystemManager.OrbitRendererDataCache[Value] = data;
                 }
             }
 
@@ -180,7 +175,7 @@ namespace Kopernicus
                         return generatedBody.orbitRenderer.nodeColor;
                     }
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
                     return data.nodeColor;
                 }
                 set
@@ -190,9 +185,9 @@ namespace Kopernicus
                         generatedBody.orbitRenderer.nodeColor = value;
                     }
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[celestialBody];
+                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
                     data.nodeColor = value;
-                    PSystemManager.OrbitRendererDataCache[celestialBody] = data;
+                    PSystemManager.OrbitRendererDataCache[Value] = data;
                 }
             }
 
@@ -200,16 +195,16 @@ namespace Kopernicus
             [ParserTarget("mode")]
             public EnumParser<OrbitRenderer.DrawMode> mode
             {
-                get { return celestialBody.Get("drawMode", OrbitRenderer.DrawMode.REDRAW_AND_RECALCULATE); }
-                set { celestialBody.Set("drawMode", value.value); }
+                get { return Value.Get("drawMode", OrbitRenderer.DrawMode.REDRAW_AND_RECALCULATE); }
+                set { Value.Set("drawMode", value.Value); }
             }
 
             // Orbit Icon Mode
             [ParserTarget("icon")]
             public EnumParser<OrbitRenderer.DrawIcons> icon
             {
-                get { return celestialBody.Get("drawIcons", OrbitRenderer.DrawIcons.ALL); }
-                set { celestialBody.Set("drawIcons", value.value); }
+                get { return Value.Get("drawIcons", OrbitRenderer.DrawIcons.ALL); }
+                set { Value.Set("drawIcons", value.Value); }
             }
 
             // Orbit rendering bounds
@@ -223,22 +218,22 @@ namespace Kopernicus
                         return new Vector2(generatedBody.orbitRenderer.lowerCamVsSmaRatio,
                             generatedBody.orbitRenderer.upperCamVsSmaRatio);
                     }
-                    OrbitRendererData data = PSystemManager.OrbitRendererDataCache[celestialBody];
+                    OrbitRendererData data = PSystemManager.OrbitRendererDataCache[Value];
                     return new Vector2(data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio);
                 }
                 set
                 {
                     if (Injector.IsInPrefab)
                     {
-                        generatedBody.orbitRenderer.lowerCamVsSmaRatio = value.value[0];
-                        generatedBody.orbitRenderer.upperCamVsSmaRatio = value.value[1];
+                        generatedBody.orbitRenderer.lowerCamVsSmaRatio = value.Value[0];
+                        generatedBody.orbitRenderer.upperCamVsSmaRatio = value.Value[1];
                     }
                     else
                     {
-                        OrbitRendererData data = PSystemManager.OrbitRendererDataCache[celestialBody];
-                        data.lowerCamVsSmaRatio = value.value[0];
-                        data.upperCamVsSmaRatio = value.value[1];
-                        PSystemManager.OrbitRendererDataCache[celestialBody] = data;
+                        OrbitRendererData data = PSystemManager.OrbitRendererDataCache[Value];
+                        data.lowerCamVsSmaRatio = value.Value[0];
+                        data.upperCamVsSmaRatio = value.Value[1];
+                        PSystemManager.OrbitRendererDataCache[Value] = data;
                     }
                 }
             }
@@ -250,7 +245,7 @@ namespace Kopernicus
             [KittopiaDescription("Recalculates some of the orbital parameters to be more realistic")]
             public void FinalizeOrbit()
             {
-                FinalizeOrbit(celestialBody);
+                FinalizeOrbit(Value);
             }
 
             // Parser apply event
@@ -264,7 +259,7 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 if (epoch != null)
-                    orbit.epoch += Templates.epoch;
+                    Value.orbit.epoch += Templates.epoch;
                 
                 Events.OnOrbitLoaderPostApply.Fire(this, node);
             }
@@ -290,8 +285,9 @@ namespace Kopernicus
                 generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 
                 // Store values
-                orbit = generatedBody.orbitDriver.orbit ?? new Orbit();
-                celestialBody = generatedBody.celestialBody;
+                Value = generatedBody.celestialBody;
+                Value.orbitDriver = generatedBody.orbitDriver;
+                Value.orbitDriver.orbit = generatedBody.orbitDriver.orbit ?? new Orbit();
             }
 
             /// <summary>
@@ -327,8 +323,11 @@ namespace Kopernicus
                 }
 
                 // Store values
-                orbit = body.orbitDriver.orbit ?? new Orbit();
-                celestialBody = body;
+                Value = body;
+                if (Value.orbitDriver.orbit == null)
+                {
+                    Value.orbitDriver.orbit = new Orbit();
+                }
             }
 
             // Finalize an Orbit

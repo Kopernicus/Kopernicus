@@ -33,20 +33,20 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class LightShifterLoader : BaseLoader, IParserEventSubscriber
+        public class LightShifterLoader : BaseLoader, IParserEventSubscriber, ITypeParser<LightShifter>
         {
             /// <summary>
             /// LightShifter we're modifying
             /// </summary>
-            public LightShifter lsc { get; set; }
+            public LightShifter Value { get; set; }
 
             // The sunflare for the star
             [ParserTarget("sunFlare")]
             [KittopiaDescription("The asset bundle containing a Unity LensFlare object that should be applied to the star.")]
             public AssetParser<Flare> sunFlare
             {
-                get { return lsc.sunFlare; }
-                set { lsc.sunFlare = value; }
+                get { return Value.sunFlare; }
+                set { Value.sunFlare = value; }
             }
 
             // sunlightColor
@@ -54,8 +54,8 @@ namespace Kopernicus
             [KittopiaDescription("The color of the LocalSpace starlight. Influences vessels and PQS terrain.")]
             public ColorParser sunlightColor
             {
-                get { return lsc.sunlightColor; }
-                set { lsc.sunlightColor = value; }
+                get { return Value.sunlightColor; }
+                set { Value.sunlightColor = value; }
             }
 
             // sunlightIntensity
@@ -65,7 +65,7 @@ namespace Kopernicus
             {
                 set
                 {
-                    lsc.intensityCurve = new FloatCurve(new Keyframe[]
+                    Value.intensityCurve = new FloatCurve(new Keyframe[]
                     {
                         new Keyframe(0, value),
                         new Keyframe(1, value)
@@ -78,8 +78,8 @@ namespace Kopernicus
             [KittopiaDescription("The strength of the shadows caused by LocalSpace starlight.")]
             public NumericParser<Single> sunlightShadowStrength
             {
-                get { return lsc.sunlightShadowStrength; }
-                set { lsc.sunlightShadowStrength = value; }
+                get { return Value.sunlightShadowStrength; }
+                set { Value.sunlightShadowStrength = value; }
             }
 
             // scaledSunlightColor
@@ -87,8 +87,8 @@ namespace Kopernicus
             [KittopiaDescription("The color of the ScaledSpace starlight. Influences the ScaledSpace representation of the bodies.")]
             public ColorParser scaledSunlightColor
             {
-                get { return lsc.scaledSunlightColor; }
-                set { lsc.scaledSunlightColor = value; }
+                get { return Value.scaledSunlightColor; }
+                set { Value.scaledSunlightColor = value; }
             }
 
             // scaledSunlightIntensity
@@ -98,7 +98,7 @@ namespace Kopernicus
             {
                 set
                 {
-                    lsc.scaledIntensityCurve = new FloatCurve(new Keyframe[]
+                    Value.scaledIntensityCurve = new FloatCurve(new Keyframe[]
                     {
                         new Keyframe(0, value),
                         new Keyframe(1, value)
@@ -111,8 +111,8 @@ namespace Kopernicus
             [KittopiaDescription("The color of the starlight in IVA view.")]
             public ColorParser IVASunColor
             {
-                get { return lsc.IVASunColor; }
-                set { lsc.IVASunColor = value; }
+                get { return Value.IVASunColor; }
+                set { Value.IVASunColor = value; }
             }
 
             // IVASunIntensity
@@ -122,7 +122,7 @@ namespace Kopernicus
             {
                 set
                 {
-                    lsc.ivaIntensityCurve = new FloatCurve(new Keyframe[]
+                    Value.ivaIntensityCurve = new FloatCurve(new Keyframe[]
                     {
                         new Keyframe(0, value),
                         new Keyframe(1, value)
@@ -135,8 +135,8 @@ namespace Kopernicus
             [KittopiaDescription("The color of ambient lighting when orbiting near the star.")]
             public ColorParser ambientLightColor
             {
-                get { return lsc.ambientLightColor; }
-                set { lsc.ambientLightColor = value; }
+                get { return Value.ambientLightColor; }
+                set { Value.ambientLightColor = value; }
             }
 
             // Set the color that the star emits
@@ -144,8 +144,8 @@ namespace Kopernicus
             [KittopiaDescription("The color of the stars LensFlare effect. Gets multiplied with the color of the base texture (yellow-ish for stock flare).")]
             public ColorParser sunLensFlareColor
             {
-                get { return lsc.sunLensFlareColor; }
-                set { lsc.sunLensFlareColor = value; }
+                get { return Value.sunLensFlareColor; }
+                set { Value.sunLensFlareColor = value; }
             }
 
             // givesOffLight
@@ -153,8 +153,8 @@ namespace Kopernicus
             [KittopiaDescription("Whether the star should emit light and have a LensFlare effect.")]
             public NumericParser<Boolean> givesOffLight
             {
-                get { return lsc.givesOffLight; }
-                set { lsc.givesOffLight = value; }
+                get { return Value.givesOffLight; }
+                set { Value.givesOffLight = value; }
             }
 
             // sunAU
@@ -162,8 +162,8 @@ namespace Kopernicus
             [KittopiaDescription("TODO")]
             public NumericParser<Double> sunAU
             {
-                get { return lsc.AU; }
-                set { lsc.AU = value; }
+                get { return Value.AU; }
+                set { Value.AU = value; }
             }
 
             // brightnessCurve
@@ -171,8 +171,8 @@ namespace Kopernicus
             [KittopiaDescription("Associates a distance value with a multiplier for the brightness of the LensFlare effect.")]
             public FloatCurveParser brightnessCurve
             {
-                get { return lsc.brightnessCurve; }
-                set { lsc.brightnessCurve = value; }
+                get { return Value.brightnessCurve; }
+                set { Value.brightnessCurve = value; }
             }
 
             // sunAU
@@ -180,8 +180,8 @@ namespace Kopernicus
             [KittopiaDescription("TODO")]
             public NumericParser<Double> luminosity
             {
-                get { return lsc.solarLuminosity; }
-                set { lsc.solarLuminosity = value; }
+                get { return Value.solarLuminosity; }
+                set { Value.solarLuminosity = value; }
             }
 
             // sunAU
@@ -189,8 +189,8 @@ namespace Kopernicus
             [KittopiaDescription("TODO")]
             public NumericParser<Double> insolation
             {
-                get { return lsc.solarInsolation; }
-                set { lsc.solarInsolation = value; }
+                get { return Value.solarInsolation; }
+                set { Value.solarInsolation = value; }
             }
 
             // sunAU
@@ -198,8 +198,8 @@ namespace Kopernicus
             [KittopiaDescription("TODO")]
             public NumericParser<Double> radiation
             {
-                get { return lsc.radiationFactor; }
-                set { lsc.radiationFactor = value; }
+                get { return Value.radiationFactor; }
+                set { Value.radiationFactor = value; }
             }
 
             // intensityCurve
@@ -207,8 +207,8 @@ namespace Kopernicus
             [KittopiaDescription("Associates a distance value (in meters) with a value that describes the intensity of the LocalSpace starlight at that point.")]
             public FloatCurveParser intensityCurve
             {
-                get { return lsc.intensityCurve; }
-                set { lsc.intensityCurve = value; }
+                get { return Value.intensityCurve; }
+                set { Value.intensityCurve = value; }
             }
 
             // scaledIntensityCurve
@@ -216,8 +216,8 @@ namespace Kopernicus
             [KittopiaDescription("Associates a distance value (in meters / 6000) with a value that describes the intensity of the ScaledSpace starlight at that point.")]
             public FloatCurveParser scaledIntensityCurve
             {
-                get { return lsc.scaledIntensityCurve; }
-                set { lsc.scaledIntensityCurve = value; }
+                get { return Value.scaledIntensityCurve; }
+                set { Value.scaledIntensityCurve = value; }
             }
 
             // intensityCurve
@@ -225,8 +225,8 @@ namespace Kopernicus
             [KittopiaDescription("Associates a distance value (in meters) with a value that describes the intensity of the IVA starlight at that point.")]
             public FloatCurveParser ivaIntensityCurve
             {
-                get { return lsc.ivaIntensityCurve; }
-                set { lsc.ivaIntensityCurve = value; }
+                get { return Value.ivaIntensityCurve; }
+                set { Value.ivaIntensityCurve = value; }
             }
 
             // Parser apply event
@@ -253,9 +253,9 @@ namespace Kopernicus
                 }
 
                 // Store values
-                lsc = LightShifter.prefab;
-                lsc.transform.parent = generatedBody.scaledVersion.transform;
-                lsc.name = generatedBody.name;
+                Value = LightShifter.prefab;
+                Value.transform.parent = generatedBody.scaledVersion.transform;
+                Value.name = generatedBody.name;
             }
 
             /// <summary>
@@ -271,12 +271,12 @@ namespace Kopernicus
                 }
 
                 // Store values or create a new light shifter
-                lsc = body.scaledBody.GetComponentInChildren<LightShifter>();
-                if (lsc == null)
+                Value = body.scaledBody.GetComponentInChildren<LightShifter>();
+                if (Value == null)
                 {
-                    lsc = LightShifter.prefab;
-                    lsc.transform.parent = body.scaledBody.transform;
-                    lsc.name = body.transform.name;
+                    Value = LightShifter.prefab;
+                    Value.transform.parent = body.scaledBody.transform;
+                    Value.name = body.transform.name;
                 }
             }
         }

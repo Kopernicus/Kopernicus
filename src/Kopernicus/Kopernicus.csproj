@@ -108,9 +108,6 @@
     <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
-    <Compile Include="Configuration\ParticleSystem\CollisionModuleLoader.cs" />
-    <Compile Include="Configuration\ParticleSystem\MinMaxCurveLoader.cs" />
-    <Compile Include="Configuration\ParticleSystem\ShurikenLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />
     <Compile Include="Configuration\LightShifterLoader.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />

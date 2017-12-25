@@ -54,7 +54,7 @@ namespace Kopernicus
                     cp.SetFromString(point.value);
                     
                     // Add the keyframe to the list
-                    points.Add(p, cp.value);
+                    points.Add(p, cp.Value);
                 }
             }
             

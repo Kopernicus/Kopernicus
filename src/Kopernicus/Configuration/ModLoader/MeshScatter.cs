@@ -48,31 +48,31 @@ namespace Kopernicus
                             return null;
                         if (NormalDiffuse.UsesSameShader(customMaterial))
                             return ScatterMaterialType.Diffuse;
-                        else if (NormalBumped.UsesSameShader(customMaterial))
+                        if (NormalBumped.UsesSameShader(customMaterial))
                             return ScatterMaterialType.BumpedDiffuse;
-                        else if (NormalDiffuseDetail.UsesSameShader(customMaterial))
+                        if (NormalDiffuseDetail.UsesSameShader(customMaterial))
                             return ScatterMaterialType.DiffuseDetail;
-                        else if (DiffuseWrap.UsesSameShader(customMaterial))
+                        if (DiffuseWrap.UsesSameShader(customMaterial))
                             return ScatterMaterialType.DiffuseWrapped;
-                        else if (AlphaTestDiffuse.UsesSameShader(customMaterial))
+                        if (AlphaTestDiffuse.UsesSameShader(customMaterial))
                             return ScatterMaterialType.CutoutDiffuse;
-                        else if (AerialTransCutout.UsesSameShader(customMaterial))
+                        if (AerialTransCutout.UsesSameShader(customMaterial))
                             return ScatterMaterialType.AerialCutout;
                         return null;
                     }
                     set
                     {
-                        if (value.value == ScatterMaterialType.Diffuse)
+                        if (value == ScatterMaterialType.Diffuse)
                             customMaterial = new NormalDiffuseLoader();
-                        else if (value.value == ScatterMaterialType.BumpedDiffuse)
+                        else if (value == ScatterMaterialType.BumpedDiffuse)
                             customMaterial = new NormalBumpedLoader();
-                        else if (value.value == ScatterMaterialType.DiffuseDetail)
+                        else if (value == ScatterMaterialType.DiffuseDetail)
                             customMaterial = new NormalDiffuseDetailLoader();
-                        else if (value.value == ScatterMaterialType.DiffuseWrapped)
+                        else if (value == ScatterMaterialType.DiffuseWrapped)
                             customMaterial = new DiffuseWrapLoader();
-                        else if (value.value == ScatterMaterialType.CutoutDiffuse)
+                        else if (value == ScatterMaterialType.CutoutDiffuse)
                             customMaterial = new AlphaTestDiffuseLoader();
-                        else if (value.value == ScatterMaterialType.AerialCutout)
+                        else if (value == ScatterMaterialType.AerialCutout)
                             customMaterial = new AerialTransCutoutLoader();
                     }
                 }

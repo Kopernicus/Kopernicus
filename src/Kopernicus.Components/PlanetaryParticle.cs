@@ -116,20 +116,6 @@ namespace Kopernicus
             }
 
             /// <summary>
-            /// Load the values into the components
-            /// </summary>
-            void Start()
-            {
-                emitter.minSize = minSize;
-                emitter.maxSize = maxSize;
-                animator.sizeGrow = sizeGrow;
-                animator.colorAnimation = colorAnimation;
-                renderer.material.mainTexture = mainTexture;
-                filter.mesh = filter.sharedMesh = mesh ?? transform.parent.GetComponent<MeshFilter>().sharedMesh;
-                animator.force = force;
-            }
-
-            /// <summary>
             /// The position of our target
             /// </summary>
             public Transform targetTransform { get; set; }
@@ -139,6 +125,15 @@ namespace Kopernicus
             /// </summary>
             void Update()
             {
+                // Update the values
+                emitter.minSize = minSize;
+                emitter.maxSize = maxSize;
+                animator.sizeGrow = sizeGrow;
+                animator.colorAnimation = colorAnimation;
+                renderer.material.mainTexture = mainTexture;
+                filter.mesh = filter.sharedMesh = mesh ?? transform.parent.GetComponent<MeshFilter>().sharedMesh;
+                animator.force = force;
+                
                 // We have a target
                 if (target != "None")
                 {

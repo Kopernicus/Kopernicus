@@ -31,155 +31,155 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class FogLoader : BaseLoader, IParserEventSubscriber
+        public class FogLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
         {
             /// <summary>
             /// CelestialBody we're modifying
             /// </summary>
-            public CelestialBody celestialBody { get; set; }
+            public CelestialBody Value { get; set; }
 
             // afgAltMult
             [ParserTarget("afgAltMult")]
             public NumericParser<Single> oceanAFGAltMult
             {
-                get { return celestialBody.oceanAFGAltMult; }
-                set { celestialBody.oceanAFGAltMult = value; }
+                get { return Value.oceanAFGAltMult; }
+                set { Value.oceanAFGAltMult = value; }
             }
 
             // afgBase
             [ParserTarget("afgBase")]
             public NumericParser<Single> oceanAFGBase
             {
-                get { return celestialBody.oceanAFGBase; }
-                set { celestialBody.oceanAFGBase = value; }
+                get { return Value.oceanAFGBase; }
+                set { Value.oceanAFGBase = value; }
             }
 
             // afgLerp
             [ParserTarget("afgLerp")]
             public NumericParser<Boolean> oceanAFGLerp
             {
-                get { return celestialBody.oceanAFGLerp; }
-                set { celestialBody.oceanAFGLerp = value; }
+                get { return Value.oceanAFGLerp; }
+                set { Value.oceanAFGLerp = value; }
             }
 
             // afgMin
             [ParserTarget("afgMin")]
             public NumericParser<Single> oceanAFGMin
             {
-                get { return celestialBody.oceanAFGMin; }
-                set { celestialBody.oceanAFGMin = value; }
+                get { return Value.oceanAFGMin; }
+                set { Value.oceanAFGMin = value; }
             }
 
             // fogColorEnd
             [ParserTarget("fogColorEnd")]
             public ColorParser oceanFogColorEnd
             {
-                get { return celestialBody.oceanFogColorEnd; }
-                set { celestialBody.oceanFogColorEnd = value; }
+                get { return Value.oceanFogColorEnd; }
+                set { Value.oceanFogColorEnd = value; }
             }
 
             // fogColorStart
             [ParserTarget("fogColorStart")]
             public ColorParser oceanFogColorStart
             {
-                get { return celestialBody.oceanFogColorStart; }
-                set { celestialBody.oceanFogColorStart = value; }
+                get { return Value.oceanFogColorStart; }
+                set { Value.oceanFogColorStart = value; }
             }
 
             // fogDensityAltScalar
             [ParserTarget("fogDensityAltScalar")]
             public NumericParser<Single> oceanFogDensityAltScalar
             {
-                get { return celestialBody.oceanFogDensityAltScalar; }
-                set { celestialBody.oceanFogDensityAltScalar = value; }
+                get { return Value.oceanFogDensityAltScalar; }
+                set { Value.oceanFogDensityAltScalar = value; }
             }
 
             // fogDensityEnd
             [ParserTarget("fogDensityEnd")]
             public NumericParser<Single> oceanFogDensityEnd
             {
-                get { return celestialBody.oceanFogDensityEnd; }
-                set { celestialBody.oceanFogDensityEnd = value; }
+                get { return Value.oceanFogDensityEnd; }
+                set { Value.oceanFogDensityEnd = value; }
             }
 
             // fogDensityExponent
             [ParserTarget("fogDensityExponent")]
             public NumericParser<Single> oceanFogDensityExponent
             {
-                get { return celestialBody.oceanFogDensityExponent; }
-                set { celestialBody.oceanFogDensityExponent = value; }
+                get { return Value.oceanFogDensityExponent; }
+                set { Value.oceanFogDensityExponent = value; }
             }
 
             // fogDensityPQSMult
             [ParserTarget("fogDensityPQSMult")]
             public NumericParser<Single> oceanFogDensityPQSMult
             {
-                get { return celestialBody.oceanFogDensityPQSMult; }
-                set { celestialBody.oceanFogDensityPQSMult = value; }
+                get { return Value.oceanFogDensityPQSMult; }
+                set { Value.oceanFogDensityPQSMult = value; }
             }
 
             // fogDensityStart
             [ParserTarget("fogDensityStart")]
             public NumericParser<Single> oceanFogDensityStart
             {
-                get { return celestialBody.oceanFogDensityStart; }
-                set { celestialBody.oceanFogDensityStart = value; }
+                get { return Value.oceanFogDensityStart; }
+                set { Value.oceanFogDensityStart = value; }
             }
 
             // skyColorMult
             [ParserTarget("skyColorMult")]
             public NumericParser<Single> oceanSkyColorMult
             {
-                get { return celestialBody.oceanSkyColorMult; }
-                set { celestialBody.oceanSkyColorMult = value; }
+                get { return Value.oceanSkyColorMult; }
+                set { Value.oceanSkyColorMult = value; }
             }
 
             // skyColorOpacityAltMult
             [ParserTarget("skyColorOpacityAltMult")]
             public NumericParser<Single> oceanSkyColorOpacityAltMult
             {
-                get { return celestialBody.oceanSkyColorOpacityAltMult; }
-                set { celestialBody.oceanSkyColorOpacityAltMult = value; }
+                get { return Value.oceanSkyColorOpacityAltMult; }
+                set { Value.oceanSkyColorOpacityAltMult = value; }
             }
 
             // skyColorOpacityBase
             [ParserTarget("skyColorOpacityBase")]
             public NumericParser<Single> oceanSkyColorOpacityBase
             {
-                get { return celestialBody.oceanSkyColorOpacityBase; }
-                set { celestialBody.oceanSkyColorOpacityBase = value; }
+                get { return Value.oceanSkyColorOpacityBase; }
+                set { Value.oceanSkyColorOpacityBase = value; }
             }
 
             // sunAltMult
             [ParserTarget("sunAltMult")]
             public NumericParser<Single> oceanSunAltMult
             {
-                get { return celestialBody.oceanSunAltMult; }
-                set { celestialBody.oceanSunAltMult = value; }
+                get { return Value.oceanSunAltMult; }
+                set { Value.oceanSunAltMult = value; }
             }
 
             // sunBase
             [ParserTarget("sunBase")]
             public NumericParser<Single> oceanSunBase
             {
-                get { return celestialBody.oceanSunBase; }
-                set { celestialBody.oceanSunBase = value; }
+                get { return Value.oceanSunBase; }
+                set { Value.oceanSunBase = value; }
             }
 
             // sunMin
             [ParserTarget("sunMin")]
             public NumericParser<Single> oceanSunMin
             {
-                get { return celestialBody.oceanSunMin; }
-                set { celestialBody.oceanSunMin = value; }
+                get { return Value.oceanSunMin; }
+                set { Value.oceanSunMin = value; }
             }
 
             // useFog
             [ParserTarget("useFog")]
             public NumericParser<Boolean> oceanUseFog
             {
-                get { return celestialBody.oceanUseFog; }
-                set { celestialBody.oceanUseFog = value; }
+                get { return Value.oceanUseFog; }
+                set { Value.oceanUseFog = value; }
             }
 
             // Parser apply event
@@ -206,7 +206,7 @@ namespace Kopernicus
                 }
 
                 // Store values
-                celestialBody = generatedBody.celestialBody;
+                Value = generatedBody.celestialBody;
             }
 
             /// <summary>
@@ -222,7 +222,7 @@ namespace Kopernicus
                 }
 
                 // Store values
-                celestialBody = body;
+                Value = body;
             }
         }
     }

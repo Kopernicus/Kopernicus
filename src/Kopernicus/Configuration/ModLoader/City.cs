@@ -132,7 +132,7 @@ namespace Kopernicus
                 {
                     set
                     {
-                        value.value.transform.parent = mod.transform;
+                        value.Value.transform.parent = mod.transform;
                         Transform[] gameObjectList = mod.gameObject.GetComponentsInChildren<Transform>();
                         List<GameObject> rendererList = gameObjectList.Where(t => t.gameObject.GetComponent<Renderer>() != null).Select(t => t.gameObject).ToList();
                         mod.lod[0].objects = new GameObject[0];

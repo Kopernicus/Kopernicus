@@ -34,18 +34,18 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class SpaceCenterLoader : BaseLoader, IParserEventSubscriber
+        public class SpaceCenterLoader : BaseLoader, IParserEventSubscriber, ITypeParser<KSC>
         {
             // The KSC Object we're editing
-            public KSC ksc;
+            public KSC Value { get; set; }
 
             // latitude
             [ParserTarget("latitude")]
             [KittopiaDescription("The latitude of the KSC buildings.")]
             public NumericParser<Double> latitude
             {
-                get { return ksc.latitude; }
-                set { ksc.latitude = value; }
+                get { return Value.latitude; }
+                set { Value.latitude = value; }
             }
 
             // longitude
@@ -53,15 +53,15 @@ namespace Kopernicus
             [KittopiaDescription("The longitude of the KSC buildings.")]
             public NumericParser<Double> longitude
             {
-                get { return ksc.longitude; }
-                set { ksc.longitude = value; }
+                get { return Value.longitude; }
+                set { Value.longitude = value; }
             }
 
             [ParserTarget("repositionRadial")]
             public Vector3Parser repositionRadial
             {
-                get { return ksc.repositionRadial; }
-                set { ksc.repositionRadial = value; }
+                get { return Value.repositionRadial; }
+                set { Value.repositionRadial = value; }
             }
 
             // decalLatitude
@@ -69,8 +69,8 @@ namespace Kopernicus
             [KittopiaDescription("The latitude of the center of the flat area around the KSC.")]
             public NumericParser<Double> decalLatitude
             {
-                get { return ksc.decalLatitude; }
-                set { ksc.decalLatitude = value; }
+                get { return Value.decalLatitude; }
+                set { Value.decalLatitude = value; }
             }
 
             // decalLongitude
@@ -78,72 +78,72 @@ namespace Kopernicus
             [KittopiaDescription("The longitude of the center of the flat area around the KSC.")]
             public NumericParser<Double> decalLongitude
             {
-                get { return ksc.decalLongitude; }
-                set { ksc.decalLongitude = value; }
+                get { return Value.decalLongitude; }
+                set { Value.decalLongitude = value; }
             }
 
             // lodvisibleRangeMultipler
             [ParserTarget("lodvisibleRangeMultipler")]
             public NumericParser<Double> lodvisibleRangeMultipler
             {
-                get { return ksc.lodvisibleRangeMult; }
-                set { ksc.lodvisibleRangeMult = value; }
+                get { return Value.lodvisibleRangeMult; }
+                set { Value.lodvisibleRangeMult = value; }
             }
 
             // reorientFinalAngle
             [ParserTarget("reorientFinalAngle")]
             public NumericParser<Single> reorientFinalAngle
             {
-                get { return ksc.reorientFinalAngle; }
-                set { ksc.reorientFinalAngle = value; }
+                get { return Value.reorientFinalAngle; }
+                set { Value.reorientFinalAngle = value; }
             }
 
             // reorientInitialUp
             [ParserTarget("reorientInitialUp")]
             public Vector3Parser reorientInitialUp
             {
-                get { return ksc.reorientInitialUp; }
-                set { ksc.reorientInitialUp = value; }
+                get { return Value.reorientInitialUp; }
+                set { Value.reorientInitialUp = value; }
             }
 
             // reorientToSphere
             [ParserTarget("reorientToSphere")]
             public NumericParser<Boolean> reorientToSphere
             {
-                get { return ksc.reorientToSphere; }
-                set { ksc.reorientToSphere = value; }
+                get { return Value.reorientToSphere; }
+                set { Value.reorientToSphere = value; }
             }
 
             // repositionRadiusOffset
             [ParserTarget("repositionRadiusOffset")]
             public NumericParser<Double> repositionRadiusOffset
             {
-                get { return ksc.repositionRadiusOffset; }
-                set { ksc.repositionRadiusOffset = value; }
+                get { return Value.repositionRadiusOffset; }
+                set { Value.repositionRadiusOffset = value; }
             }
 
             // repositionToSphere
             [ParserTarget("repositionToSphere")]
             public NumericParser<Boolean> repositionToSphere
             {
-                get { return ksc.repositionToSphere; }
-                set { ksc.repositionToSphere = value; }
+                get { return Value.repositionToSphere; }
+                set { Value.repositionToSphere = value; }
             }
 
             // repositionToSphereSurface
             [ParserTarget("repositionToSphereSurface")]
             public NumericParser<Boolean> repositionToSphereSurface
             {
-                get { return ksc.repositionToSphereSurface; }
-                set { ksc.repositionToSphereSurface = value; }
+                get { return Value.repositionToSphereSurface; }
+                set { Value.repositionToSphereSurface = value; }
             }
 
             // repositionToSphereSurfaceAddHeight
             [ParserTarget("repositionToSphereSurfaceAddHeight")]
             public NumericParser<Boolean> repositionToSphereSurfaceAddHeight
             {
-                get { return ksc.repositionToSphereSurfaceAddHeight; }
-                set { ksc.repositionToSphereSurfaceAddHeight = value; }
+                get { return Value.repositionToSphereSurfaceAddHeight; }
+                set { Value.repositionToSphereSurfaceAddHeight = value; }
             }
 
             // position
@@ -151,8 +151,8 @@ namespace Kopernicus
             [KittopiaDescription("The position of the KSC buildings represented as a Vector.")]
             public Vector3Parser position
             {
-                get { return ksc.position; }
-                set { ksc.position = value; }
+                get { return Value.position; }
+                set { Value.position = value; }
             }
 
             // radius
@@ -160,32 +160,32 @@ namespace Kopernicus
             [KittopiaDescription("The altitude of the KSC.")]
             public NumericParser<Double> radius
             {
-                get { return ksc.radius; }
-                set { ksc.radius = value; }
+                get { return Value.radius; }
+                set { Value.radius = value; }
             }
 
             // heightMapDeformity
             [ParserTarget("heightMapDeformity")]
             public NumericParser<Double> heightMapDeformity
             {
-                get { return ksc.heightMapDeformity; }
-                set { ksc.heightMapDeformity = value; }
+                get { return Value.heightMapDeformity; }
+                set { Value.heightMapDeformity = value; }
             }
 
             // absoluteOffset
             [ParserTarget("absoluteOffset")]
             public NumericParser<Double> absoluteOffset
             {
-                get { return ksc.absoluteOffset; }
-                set { ksc.absoluteOffset = value; }
+                get { return Value.absoluteOffset; }
+                set { Value.absoluteOffset = value; }
             }
 
             // absolute
             [ParserTarget("absolute")]
             public NumericParser<Boolean> absolute
             {
-                get { return ksc.absolute; }
-                set { ksc.absolute = value; }
+                get { return Value.absolute; }
+                set { Value.absolute = value; }
             }
 
             // groundColor
@@ -193,8 +193,8 @@ namespace Kopernicus
             [KittopiaDescription("The color of the grass at the KSC.")]
             public ColorParser groundColorParser
             {
-                get { return ksc.color; }
-                set { ksc.color = value; }
+                get { return Value.color; }
+                set { Value.color = value; }
             }
 
             // Texture
@@ -202,15 +202,15 @@ namespace Kopernicus
             [KittopiaDescription("The surface texture of the grass spots at the KSC.")]
             public Texture2DParser groundTextureParser
             {
-                get { return ksc.mainTexture; }
-                set { ksc.mainTexture = value; }
+                get { return Value.mainTexture; }
+                set { Value.mainTexture = value; }
             }
 
             [KittopiaAction("Update KSC")]
             [KittopiaDescription("Updates and applies the parameters of the KSC object")]
             public void UpdateKSC()
             {
-                ksc.Start();
+                Value.Start();
             }
 
             // Apply event
@@ -237,8 +237,8 @@ namespace Kopernicus
                 }
 
                 // Store values
-                ksc = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
-                UnityEngine.Object.DontDestroyOnLoad(ksc);
+                Value = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
+                UnityEngine.Object.DontDestroyOnLoad(Value);
             }
 
             /// <summary>
@@ -254,11 +254,11 @@ namespace Kopernicus
                 }
 
                 // Store values
-                ksc = UnityEngine.Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.transform.name);
-                if (ksc == null)
+                Value = UnityEngine.Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.transform.name);
+                if (Value == null)
                 {
-                    ksc = new GameObject("SpaceCenter " + body.transform.name).AddComponent<KSC>();
-                    UnityEngine.Object.DontDestroyOnLoad(ksc);
+                    Value = new GameObject("SpaceCenter " + body.transform.name).AddComponent<KSC>();
+                    UnityEngine.Object.DontDestroyOnLoad(Value);
                 }
             }
         }

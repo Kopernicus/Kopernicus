@@ -26,6 +26,8 @@
 using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -33,130 +35,137 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class ParticleLoader : BaseLoader, IParserEventSubscriber
+        public class ParticleLoader : BaseLoader, IParserEventSubscriber, ITypeParser<PlanetParticleEmitter>
         {
             // Set-up our parental objects
-            PlanetParticleEmitter particle;
-            GameObject scaledVersion;
+            public PlanetParticleEmitter Value { get; set; }
 
             // Target of our particles
             [ParserTarget("target")]
             public String target
             {
-                get { return particle.target; }
-                set { particle.target = value; }
+                get { return Value.target; }
+                set { Value.target = value; }
             }
 
             // minEmission of particles
             [ParserTarget("minEmission")]
             public NumericParser<Single> minEmission
             {
-                get { return particle.minEmission; }
-                set { particle.minEmission = value; }
+                get { return Value.minEmission; }
+                set { Value.minEmission = value; }
             }
 
             // maxEmission of particles
             [ParserTarget("maxEmission")]
             public NumericParser<Single> maxEmission
             {
-                get { return particle.maxEmission; }
-                set { particle.maxEmission = value; }
+                get { return Value.maxEmission; }
+                set { Value.maxEmission = value; }
             }
 
             // minimum lifespan of particles
             [ParserTarget("lifespanMin")]
             public NumericParser<Single> lifespanMin
             {
-                get { return particle.minEnergy; }
-                set { particle.minEnergy = value; }
+                get { return Value.minEnergy; }
+                set { Value.minEnergy = value; }
             }
 
             // maximum lifespan of particles
             [ParserTarget("lifespanMax")]
             public NumericParser<Single> lifespanMax
             {
-                get { return particle.maxEnergy; }
-                set { particle.maxEnergy = value; }
+                get { return Value.maxEnergy; }
+                set { Value.maxEnergy = value; }
             }
 
             // minimum size of particles
             [ParserTarget("sizeMin")]
             public NumericParser<Single> sizeMin
             {
-                get { return particle.minSize; }
-                set { particle.minSize = value; }
+                get { return Value.minSize; }
+                set { Value.minSize = value; }
             }
 
             // maximum size of particles
             [ParserTarget("sizeMax")]
             public NumericParser<Single> sizeMax
             {
-                get { return particle.maxSize; }
-                set { particle.maxSize = value; }
+                get { return Value.maxSize; }
+                set { Value.maxSize = value; }
             }
 
             // speedScale of particles
             [ParserTarget("speedScale")]
             public NumericParser<Single> speedScaleLoader
             {
-                get { return particle.speedScale; }
-                set { particle.speedScale = value; }
+                get { return Value.speedScale; }
+                set { Value.speedScale = value; }
             }
 
             // grow rate of particles
             [ParserTarget("rate")]
             public NumericParser<Single> rate
             {
-                get { return particle.sizeGrow; }
-                set { particle.sizeGrow = value; }
+                get { return Value.sizeGrow; }
+                set { Value.sizeGrow = value; }
             }
 
             // rand Velocity of particles
             [ParserTarget("randVelocity")]
             public Vector3Parser randVelocity
             {
-                get { return particle.randomVelocity; }
-                set { particle.randomVelocity = value; }
+                get { return Value.randomVelocity; }
+                set { Value.randomVelocity = value; }
             }
 
             // Texture of particles
             [ParserTarget("texture")]
             public Texture2DParser texture
             {
-                get { return particle.mainTexture as Texture2D; }
-                set { particle.mainTexture = value; }
+                get { return Value.mainTexture as Texture2D; }
+                set { Value.mainTexture = value; }
             }
 
             // scale
             [ParserTarget("scale")]
             public Vector3Parser scale
             {
-                get { return particle.scale; }
-                set { particle.scale = value; }
+                get { return Value.scale; }
+                set { Value.scale = value; }
             }
 
             // mesh
             [ParserTarget("mesh")]
             public MeshParser mesh
             {
-                get { return particle.mesh; }
-                set { particle.mesh = value; }
+                get { return Value.mesh; }
+                set { Value.mesh = value; }
             }
 
             // Whether the particles should collide with stuff
             [ParserTarget("collide")]
             public NumericParser<Boolean> collide
             {
-                get { return particle.collideable; }
-                set { particle.collideable = value; }
+                get { return Value.collideable; }
+                set { Value.collideable = value; }
             }
 
             // force
             [ParserTarget("force")]
             public Vector3Parser force
             {
-                get { return particle.force; }
-                set { particle.force = value; }
+                get { return Value.force; }
+                set { Value.force = value; }
+            }
+            
+            // Colors
+            [ParserTargetCollection("Colors")]
+            public List<ColorParser> colors
+            {
+                get { return Value.colorAnimation.Select(c => new ColorParser(c)).ToList(); }
+                set { Value.colorAnimation = value.Select(c => c.Value).ToArray(); }
             }
 
             /// <summary>
@@ -171,14 +180,15 @@ namespace Kopernicus
                 }
                 
                 // Store values
-                scaledVersion = generatedBody.scaledVersion;
-                particle = PlanetParticleEmitter.Create(scaledVersion);
+                Value = PlanetParticleEmitter.Create(generatedBody.scaledVersion);
+                Value.colorAnimation = new Color[0];
             }
 
             /// <summary>
-            /// Creates a new Particle Loader from a spawned CelestialBody.
+            /// Creates a new Particle Loader on a spawned CelestialBody.
             /// </summary>
-            public ParticleLoader(CelestialBody body, GameObject particleHost)
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Create)]
+            public ParticleLoader(CelestialBody body)
             {
                 // Is this a spawned body?
                 if (body?.scaledBody == null || Injector.IsInPrefab)
@@ -187,8 +197,24 @@ namespace Kopernicus
                 }
 
                 // Store values
-                scaledVersion = body.scaledBody;
-                particle = particleHost.GetComponent<PlanetParticleEmitter>();
+                Value = PlanetParticleEmitter.Create(body.scaledBody);
+                Value.colorAnimation = new Color[0];
+            }
+
+            /// <summary>
+            /// Creates a new Particle Loader from an already existing emitter
+            /// </summary>
+            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
+            public ParticleLoader(PlanetParticleEmitter particle)
+            {
+                // Store values
+                Value = particle;
+
+                // Null safe
+                if (Value.colorAnimation == null)
+                {
+                    Value.colorAnimation = new Color[0];
+                }
             }
 
             // Apply event
@@ -200,13 +226,6 @@ namespace Kopernicus
             // Post-Apply event
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                List<Color> colors = new List<Color>();
-                foreach (String color in node.GetNode("Colors").GetValuesStartsWith("color"))
-                {
-                    Vector4 c = ConfigNode.ParseVector4(color);
-                    colors.Add(new Color(c.x, c.y, c.z, c.w));
-                }
-                particle.colorAnimation = colors.ToArray();
                 Events.OnParticleLoaderPostApply.Fire(this, node);
             }
 

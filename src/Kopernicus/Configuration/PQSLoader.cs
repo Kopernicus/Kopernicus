@@ -38,7 +38,7 @@ namespace Kopernicus
     namespace Configuration 
     {
         [RequireConfigType(ConfigType.Node)]
-        public class PQSLoader : BaseLoader, IParserEventSubscriber
+        public class PQSLoader : BaseLoader, IParserEventSubscriber, ITypeParser<PQS>
         {
             // PQS Material Type Enum
             public enum PQSMaterialType
@@ -51,96 +51,108 @@ namespace Kopernicus
             };
 
             // PQS we are creating
-            public PQS pqsVersion { get; set; }
+            public PQS Value { get; set; }
 
             // Required PQSMods
-            public PQSMod_CelestialBodyTransform   transform;
-            public PQSMod_MaterialSetDirection     lightDirection;
-            public PQSMod_UVPlanetRelativePosition uvs;
-            public PQSMod_QuadMeshColliders        collider;
+            private readonly PQSMod_CelestialBodyTransform   _transform;
+            private readonly PQSMod_QuadMeshColliders        _collider;
             
             // Surface physics material
             [ParserTarget("PhysicsMaterial", allowMerge = true)]
             public PhysicsMaterialParser physicsMaterial
             {
-                get { return collider.physicsMaterial; }
-                set { collider.physicsMaterial = value; }
+                get { return _collider.physicsMaterial; }
+                set { _collider.physicsMaterial = value; }
             }
 
             // PQS level of detail settings
             [ParserTarget("minLevel")]
             public NumericParser<Int32> minLevel 
             {
-                get { return pqsVersion.minLevel; }
-                set { pqsVersion.minLevel = value; }
+                get { return Value.minLevel; }
+                set { Value.minLevel = value; }
             }
 
             [ParserTarget("maxLevel")]
             public NumericParser<Int32> maxLevel 
             {
-                get { return pqsVersion.maxLevel; }
-                set { pqsVersion.maxLevel = value; }
+                get { return Value.maxLevel; }
+                set { Value.maxLevel = value; }
             }
 
             [ParserTarget("minDetailDistance")]
             public NumericParser<Double> minDetailDistance 
             {
-                get { return pqsVersion.minDetailDistance; }
-                set { pqsVersion.minDetailDistance = value; }
+                get { return Value.minDetailDistance; }
+                set { Value.minDetailDistance = value; }
             }
 
             [ParserTarget("maxQuadLengthsPerFrame")]
             public NumericParser<Single> maxQuadLengthsPerFrame 
             {
-                get { return pqsVersion.maxQuadLenghtsPerFrame; }
-                set { pqsVersion.maxQuadLenghtsPerFrame = value; }
+                get { return Value.maxQuadLenghtsPerFrame; }
+                set { Value.maxQuadLenghtsPerFrame = value; }
             }
 
             // CelestialBodyTransform fades. should more or less line up with ScaledVersion's fadeStart/fadeEnd
             [ParserTarget("fadeStart")]
             public NumericParser<Single> fadeStart
             {
-                get { return transform.planetFade.fadeStart; }
-                set { transform.planetFade.fadeStart = value; }
+                get { return _transform.planetFade.fadeStart; }
+                set { _transform.planetFade.fadeStart = value; }
             }
 
             [ParserTarget("fadeEnd")]
             public NumericParser<Single> fadeEnd
             {
-                get { return transform.planetFade.fadeEnd; }
-                set { transform.planetFade.fadeEnd = value; }
+                get { return _transform.planetFade.fadeEnd; }
+                set { _transform.planetFade.fadeEnd = value; }
             }
 
             [ParserTarget("deactivateAltitude")]
             public NumericParser<Double> deactivateAltitude
             {
-                get { return transform.deactivateAltitude; }
-                set { transform.deactivateAltitude = value; }
+                get { return _transform.deactivateAltitude; }
+                set { _transform.deactivateAltitude = value; }
             }
 
             // Map Export Arguments
             [ParserTarget("mapMaxHeight")]
             public NumericParser<Double> mapMaxHeight
             {
-                get { return pqsVersion.mapMaxHeight; }
-                set { pqsVersion.mapMaxHeight = value; }
+                get { return Value.mapMaxHeight; }
+                set { Value.mapMaxHeight = value; }
             }
 
             [PreApply]
             [ParserTarget("materialType")]
             public EnumParser<PQSMaterialType> materialType
             {
+                get
+                {
+                    if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
+                        return PQSMaterialType.AtmosphericOptimized;
+                    else if (PQSMainShader.UsesSameShader(surfaceMaterial))
+                        return PQSMaterialType.AtmosphericMain;
+                    else if (PQSProjectionAerialQuadRelative.UsesSameShader(surfaceMaterial))
+                        return PQSMaterialType.AtmosphericBasic;
+                    else if (PQSProjectionSurfaceQuad.UsesSameShader(surfaceMaterial))
+                        return PQSMaterialType.Vacuum;
+                    else if (PQSMainExtras.UsesSameShader(surfaceMaterial))
+                        return PQSMaterialType.AtmosphericExtra;
+                    return PQSMaterialType.Vacuum;
+                }
                 set 
                 {
-                    if (value.value == PQSMaterialType.AtmosphericOptimized)
+                    if (value.Value == PQSMaterialType.AtmosphericOptimized)
                         surfaceMaterial = new PQSMainOptimisedLoader();
-                    else if (value.value == PQSMaterialType.AtmosphericMain)
+                    else if (value.Value == PQSMaterialType.AtmosphericMain)
                         surfaceMaterial = new PQSMainShaderLoader();
-                    else if (value.value == PQSMaterialType.AtmosphericBasic)
+                    else if (value.Value == PQSMaterialType.AtmosphericBasic)
                         surfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
-                    else if (value.value == PQSMaterialType.Vacuum)
+                    else if (value.Value == PQSMaterialType.Vacuum)
                         surfaceMaterial = new PQSProjectionSurfaceQuadLoader();
-                    else if (value.value == PQSMaterialType.AtmosphericExtra)
+                    else if (value.Value == PQSMaterialType.AtmosphericExtra)
                         surfaceMaterial = new PQSMainExtrasLoader();
                 }
             }
@@ -149,16 +161,16 @@ namespace Kopernicus
             [ParserTarget("Material", allowMerge = true, getChild = false)]
             public Material surfaceMaterial
             {
-                get { return pqsVersion.surfaceMaterial; }
-                set { pqsVersion.surfaceMaterial = value; }
+                get { return Value.surfaceMaterial; }
+                set { Value.surfaceMaterial = value; }
             }
 
             // Fallback Material of the PQS (its always the same material)
             [ParserTarget("FallbackMaterial", allowMerge = true, getChild = false)]
             public Material fallbackMaterial
             {
-                get { return pqsVersion.fallbackMaterial; }
-                set { pqsVersion.fallbackMaterial = value; }
+                get { return Value.fallbackMaterial; }
+                set { Value.fallbackMaterial = value; }
             }
 
             // PQSMod loader
@@ -179,17 +191,13 @@ namespace Kopernicus
                 if (generatedBody.pqsVersion != null)
                 {
                     // Save the PQSVersion
-                    pqsVersion = generatedBody.pqsVersion;
+                    Value = generatedBody.pqsVersion;
 
                     // Get the required PQS information
-                    transform = pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
-                    lightDirection = pqsVersion.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
-                    uvs = pqsVersion.GetComponentsInChildren<PQSMod_UVPlanetRelativePosition>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
-                    collider = pqsVersion.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
+                    _transform = Value.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
+                        .FirstOrDefault(Mod => Mod.transform.parent == Value.transform);
+                    _collider = Value.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true)
+                        .FirstOrDefault(Mod => Mod.transform.parent == Value.transform);
 
                     // Clone the surface material of the PQS
                     if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
@@ -226,45 +234,45 @@ namespace Kopernicus
 
                     // Create a new PQS
                     GameObject controllerRoot = new GameObject();
-                    controllerRoot.transform.parent = Utility.Deactivator;
-                    pqsVersion = controllerRoot.AddComponent<PQS>();
+                    controllerRoot.transform.parent = generatedBody.celestialBody.transform;
+                    Value = controllerRoot.AddComponent<PQS>();
 
                     // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
                     // And I (Thomas) am at this time just too lazy to do it differently...
-                    PSystemBody Laythe = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Laythe");
-                    Utility.CopyObjectFields(Laythe.pqsVersion, pqsVersion);
-                    pqsVersion.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
+                    PSystemBody Laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
+                    Utility.CopyObjectFields(Laythe.pqsVersion, Value);
+                    Value.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
 
                     // Create the fallback material (always the same shader)
                     fallbackMaterial = new PQSProjectionFallbackLoader();
-                    pqsVersion.fallbackMaterial = fallbackMaterial;
+                    Value.fallbackMaterial = fallbackMaterial;
                     fallbackMaterial.name = Guid.NewGuid().ToString();
 
                     // Create the celestial body transform
                     GameObject mod = new GameObject("_CelestialBody");
                     mod.transform.parent = controllerRoot.transform;
-                    transform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
-                    transform.sphere = pqsVersion;
-                    transform.forceActivate = false;
-                    transform.deactivateAltitude = 115000;
-                    transform.forceRebuildOnTargetChange = false;
-                    transform.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade();
-                    transform.planetFade.fadeFloatName = "_PlanetOpacity";
-                    transform.planetFade.fadeStart = 100000.0f;
-                    transform.planetFade.fadeEnd = 110000.0f;
-                    transform.planetFade.valueStart = 0.0f;
-                    transform.planetFade.valueEnd = 1.0f;
-                    transform.planetFade.secondaryRenderers = new List<GameObject>();
-                    transform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
-                    transform.requirements = PQS.ModiferRequirements.Default;
-                    transform.modEnabled = true;
-                    transform.order = 10;
+                    _transform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
+                    _transform.sphere = Value;
+                    _transform.forceActivate = false;
+                    _transform.deactivateAltitude = 115000;
+                    _transform.forceRebuildOnTargetChange = false;
+                    _transform.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade();
+                    _transform.planetFade.fadeFloatName = "_PlanetOpacity";
+                    _transform.planetFade.fadeStart = 100000.0f;
+                    _transform.planetFade.fadeEnd = 110000.0f;
+                    _transform.planetFade.valueStart = 0.0f;
+                    _transform.planetFade.valueEnd = 1.0f;
+                    _transform.planetFade.secondaryRenderers = new List<GameObject>();
+                    _transform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
+                    _transform.requirements = PQS.ModiferRequirements.Default;
+                    _transform.modEnabled = true;
+                    _transform.order = 10;
 
                     // Create the material direction
                     mod = new GameObject("_Material_SunLight");
                     mod.transform.parent = controllerRoot.gameObject.transform;
-                    lightDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
-                    lightDirection.sphere = pqsVersion;
+                    PQSMod_MaterialSetDirection lightDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
+                    lightDirection.sphere = Value;
                     lightDirection.valueName = "_sunLightDirection";
                     lightDirection.requirements = PQS.ModiferRequirements.Default;
                     lightDirection.modEnabled = true;
@@ -273,8 +281,8 @@ namespace Kopernicus
                     // Create the UV planet relative position
                     mod = new GameObject("_Material_SurfaceQuads");
                     mod.transform.parent = controllerRoot.transform;
-                    uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                    uvs.sphere = pqsVersion;
+                    PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
+                    uvs.sphere = Value;
                     uvs.requirements = PQS.ModiferRequirements.Default;
                     uvs.modEnabled = true;
                     uvs.order = 999999;
@@ -282,30 +290,30 @@ namespace Kopernicus
                     // Crete the quad mesh colliders
                     mod = new GameObject("QuadMeshColliders");
                     mod.transform.parent = controllerRoot.gameObject.transform;
-                    collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
-                    collider.sphere = pqsVersion;
-                    collider.maxLevelOffset = 0;
-                    collider.requirements = PQS.ModiferRequirements.Default;
-                    collider.modEnabled = true;
-                    collider.order = 100;
+                    _collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
+                    _collider.sphere = Value;
+                    _collider.maxLevelOffset = 0;
+                    _collider.requirements = PQS.ModiferRequirements.Default;
+                    _collider.modEnabled = true;
+                    _collider.order = 100;
                 }
 
                 // Assing the new PQS
-                generatedBody.pqsVersion = pqsVersion;
+                generatedBody.pqsVersion = Value;
                 generatedBody.pqsVersion.name = generatedBody.name;
                 generatedBody.pqsVersion.transform.name = generatedBody.name;
                 generatedBody.pqsVersion.gameObject.name = generatedBody.name;
                 generatedBody.pqsVersion.radius = generatedBody.celestialBody.Radius;
 
                 // Add an OnDemand Handler
-                if (pqsVersion.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
+                if (Value.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
                 {
-                    OnDemandStorage.AddHandler(pqsVersion);
+                    OnDemandStorage.AddHandler(Value);
                 }
                 
                 // Load existing mods
-                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.sphere = pqsVersion))
+                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true)
+                    .Where(m => m.sphere = Value))
                 {
                     Type modType = mod.GetType();
                     foreach (Type loaderType in Parser.ModTypes)
@@ -321,7 +329,7 @@ namespace Kopernicus
                         
                         // We found our loader type
                         IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                        loader.Create(mod, pqsVersion);
+                        loader.Create(mod, Value);
                         mods.Add(loader);
                     }
                 }
@@ -342,17 +350,13 @@ namespace Kopernicus
                 if (body.pqsController != null)
                 {
                     // Save the PQSVersion
-                    pqsVersion = body.pqsController;
+                    Value = body.pqsController;
 
                     // Get the required PQS information
-                    transform = pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
-                    lightDirection = pqsVersion.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
-                    uvs = pqsVersion.GetComponentsInChildren<PQSMod_UVPlanetRelativePosition>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
-                    collider = pqsVersion.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true)
-                        .FirstOrDefault(Mod => Mod.transform.parent == pqsVersion.transform);
+                    _transform = Value.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
+                        .FirstOrDefault(Mod => Mod.transform.parent == Value.transform);
+                    _collider = Value.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true)
+                        .FirstOrDefault(Mod => Mod.transform.parent == Value.transform);
 
                     // Clone the surface material of the PQS
                     if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
@@ -388,45 +392,45 @@ namespace Kopernicus
                 {
                     // Create a new PQS
                     GameObject controllerRoot = new GameObject();
-                    controllerRoot.transform.parent = Utility.Deactivator;
-                    pqsVersion = controllerRoot.AddComponent<PQS>();
+                    controllerRoot.transform.parent = body.transform;
+                    Value = controllerRoot.AddComponent<PQS>();
 
                     // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
                     // And I (Thomas) am at this time just too lazy to do it differently...
                     PSystemBody Laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
-                    Utility.CopyObjectFields(Laythe.pqsVersion, pqsVersion);
-                    pqsVersion.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
+                    Utility.CopyObjectFields(Laythe.pqsVersion, Value);
+                    Value.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
 
                     // Create the fallback material (always the same shader)
                     fallbackMaterial = new PQSProjectionFallbackLoader();
-                    pqsVersion.fallbackMaterial = fallbackMaterial;
+                    Value.fallbackMaterial = fallbackMaterial;
                     fallbackMaterial.name = Guid.NewGuid().ToString();
 
                     // Create the celestial body transform
                     GameObject mod = new GameObject("_CelestialBody");
                     mod.transform.parent = controllerRoot.transform;
-                    transform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
-                    transform.sphere = pqsVersion;
-                    transform.forceActivate = false;
-                    transform.deactivateAltitude = 115000;
-                    transform.forceRebuildOnTargetChange = false;
-                    transform.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade();
-                    transform.planetFade.fadeFloatName = "_PlanetOpacity";
-                    transform.planetFade.fadeStart = 100000.0f;
-                    transform.planetFade.fadeEnd = 110000.0f;
-                    transform.planetFade.valueStart = 0.0f;
-                    transform.planetFade.valueEnd = 1.0f;
-                    transform.planetFade.secondaryRenderers = new List<GameObject>();
-                    transform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
-                    transform.requirements = PQS.ModiferRequirements.Default;
-                    transform.modEnabled = true;
-                    transform.order = 10;
+                    _transform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
+                    _transform.sphere = Value;
+                    _transform.forceActivate = false;
+                    _transform.deactivateAltitude = 115000;
+                    _transform.forceRebuildOnTargetChange = false;
+                    _transform.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade();
+                    _transform.planetFade.fadeFloatName = "_PlanetOpacity";
+                    _transform.planetFade.fadeStart = 100000.0f;
+                    _transform.planetFade.fadeEnd = 110000.0f;
+                    _transform.planetFade.valueStart = 0.0f;
+                    _transform.planetFade.valueEnd = 1.0f;
+                    _transform.planetFade.secondaryRenderers = new List<GameObject>();
+                    _transform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
+                    _transform.requirements = PQS.ModiferRequirements.Default;
+                    _transform.modEnabled = true;
+                    _transform.order = 10;
 
                     // Create the material direction
                     mod = new GameObject("_Material_SunLight");
                     mod.transform.parent = controllerRoot.gameObject.transform;
-                    lightDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
-                    lightDirection.sphere = pqsVersion;
+                    PQSMod_MaterialSetDirection lightDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
+                    lightDirection.sphere = Value;
                     lightDirection.valueName = "_sunLightDirection";
                     lightDirection.requirements = PQS.ModiferRequirements.Default;
                     lightDirection.modEnabled = true;
@@ -435,8 +439,8 @@ namespace Kopernicus
                     // Create the UV planet relative position
                     mod = new GameObject("_Material_SurfaceQuads");
                     mod.transform.parent = controllerRoot.transform;
-                    uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                    uvs.sphere = pqsVersion;
+                    PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
+                    uvs.sphere = Value;
                     uvs.requirements = PQS.ModiferRequirements.Default;
                     uvs.modEnabled = true;
                     uvs.order = 999999;
@@ -444,30 +448,30 @@ namespace Kopernicus
                     // Crete the quad mesh colliders
                     mod = new GameObject("QuadMeshColliders");
                     mod.transform.parent = controllerRoot.gameObject.transform;
-                    collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
-                    collider.sphere = pqsVersion;
-                    collider.maxLevelOffset = 0;
-                    collider.requirements = PQS.ModiferRequirements.Default;
-                    collider.modEnabled = true;
-                    collider.order = 100;
+                    _collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
+                    _collider.sphere = Value;
+                    _collider.maxLevelOffset = 0;
+                    _collider.requirements = PQS.ModiferRequirements.Default;
+                    _collider.modEnabled = true;
+                    _collider.order = 100;
                 }
 
                 // Assing the new PQS
-                body.pqsController = pqsVersion;
+                body.pqsController = Value;
                 body.pqsController.name = body.transform.name;
                 body.pqsController.transform.name = body.transform.name;
                 body.pqsController.gameObject.name = body.transform.name;
                 body.pqsController.radius = body.Radius;
 
                 // Add an OnDemand Handler
-                if (pqsVersion.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
+                if (Value.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
                 {
-                    OnDemandStorage.AddHandler(pqsVersion);
+                    OnDemandStorage.AddHandler(Value);
                 }
                 
                 // Load existing mods
-                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.sphere = pqsVersion))
+                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true)
+                    .Where(m => m.sphere = Value))
                 {
                     Type modType = mod.GetType();
                     foreach (Type loaderType in Parser.ModTypes)
@@ -483,7 +487,7 @@ namespace Kopernicus
                         
                         // We found our loader type
                         IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                        loader.Create(mod, pqsVersion);
+                        loader.Create(mod, Value);
                         mods.Add(loader);
                     }
                 }
@@ -493,7 +497,7 @@ namespace Kopernicus
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
                 // Share the current PQS
-                Parser.SetState("Kopernicus:pqsVersion", () => pqsVersion);
+                Parser.SetState("Kopernicus:pqsVersion", () => Value);
                 
                 Events.OnPQSLoaderApply.Fire(this, node);
             }
@@ -509,7 +513,7 @@ namespace Kopernicus
 
                 // ----------- DEBUG -------------
                 // Utility.DumpObjectProperties(pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
-                Utility.GameObjectWalk(pqsVersion.gameObject, "  ");
+                Utility.GameObjectWalk(Value.gameObject, "  ");
                 // -------------------------------
             }
         }

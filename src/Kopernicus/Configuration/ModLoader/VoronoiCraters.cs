@@ -62,8 +62,8 @@ namespace Kopernicus
                 [ParserTarget("CraterCurve")]
                 public FloatCurveParser craterCurve
                 {
-                    get { return mod.craterCurve != null ? new FloatCurve(mod.craterCurve.keys) : new FloatCurve(); }
-                    set { mod.craterCurve = value.curve.Curve; }
+                    get { return mod.craterCurve; }
+                    set { mod.craterCurve = value; }
                 }
 
                 // jitter
@@ -78,8 +78,8 @@ namespace Kopernicus
                 [ParserTarget("JitterCurve")]
                 public FloatCurveParser jitterCurve
                 {
-                    get { return mod.jitterCurve != null ? new FloatCurve(mod.jitterCurve.keys) : new FloatCurve(); }
-                    set { mod.jitterCurve = value.curve.Curve; }
+                    get { return mod.jitterCurve; }
+                    set { mod.jitterCurve = value; }
                 }
 
                 // jitterHeight
@@ -163,15 +163,31 @@ namespace Kopernicus
                 }
 
                 // Create the mod
-                public override void Create()
+                public override void Create(PQS pqsVersion)
                 {
-                    base.Create();
+                    base.Create(pqsVersion);
 
                     // Create the base mod
-                    PQSMod_VoronoiCraters clone = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Mun").pqsVersion.GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
+                    PQSMod_VoronoiCraters clone =
+                        Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Mun").pqsVersion
+                            .GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
                     Utility.CopyObjectFields(clone, base.mod, false);
                 }
-                
+
+                // Create the mod
+                public override void Create(PQSMod_VoronoiCraters _mod, PQS pqsVersion)
+                {
+                    base.Create(_mod, pqsVersion);
+                    
+                    // Create the base mod if needed
+                    if (mod.craterColourRamp == null)
+                    {
+                        PQSMod_VoronoiCraters clone =
+                            Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Mun").pqsVersion
+                                .GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
+                        Utility.CopyObjectFields(clone, base.mod, false);
+                    }
+                }
             }
         }
     }

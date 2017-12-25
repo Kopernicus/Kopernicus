@@ -33,21 +33,21 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class BiomeLoader : IParserEventSubscriber
+        public class BiomeLoader : IParserEventSubscriber, ITypeParser<CBAttributeMapSO.MapAttribute>
         {
             // The map attribute object we are creating
-            public CBAttributeMapSO.MapAttribute attribute { get; set; }
+            public CBAttributeMapSO.MapAttribute Value { get; set; }
 
             // The name of this biome
             [ParserTarget("name")]
             [KittopiaDescription("The name of this biome.")]
             public String name
             {
-                get { return attribute.name; }
+                get { return Value.name; }
                 set
                 {
-                    attribute.name = value;
-                    attribute.localizationTag = value; // This is not displayName because of reasons
+                    Value.name = value;
+                    Value.localizationTag = value; // This is not displayName because of reasons
                 }
             }
 
@@ -56,8 +56,8 @@ namespace Kopernicus
             [KittopiaDescription("The displayed name of the biome. Can be a localization tag.")]
             public String displayName
             {
-                get { return attribute.localizationTag; } // This is not displayName because of reasons
-                set { attribute.localizationTag = value; }
+                get { return Value.localizationTag; } // This is not displayName because of reasons
+                set { Value.localizationTag = value; }
             }
 
             // The science multiplier for this biome
@@ -65,8 +65,8 @@ namespace Kopernicus
             [KittopiaDescription("A value that gets multiplied with every amount of science that is returned in the biome.")]
             public NumericParser<Single> value
             {
-                get { return attribute.value; }
-                set { attribute.value = value; }
+                get { return Value.value; }
+                set { Value.value = value; }
             }
 
             // The color in the map for this attribute
@@ -74,8 +74,8 @@ namespace Kopernicus
             [KittopiaDescription("The color of the biome on the biome map.")]
             public ColorParser color
             {
-                get { return attribute.mapColor; }
-                set { attribute.mapColor = value; }
+                get { return Value.mapColor; }
+                set { Value.mapColor = value; }
             }
 
             // Parser apply event
@@ -94,14 +94,14 @@ namespace Kopernicus
             [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
             public BiomeLoader()
             {
-                attribute = new CBAttributeMapSO.MapAttribute();
+                Value = new CBAttributeMapSO.MapAttribute();
             }
 
             // Get reference to existing biome descriptor
             [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public BiomeLoader(CBAttributeMapSO.MapAttribute attribute)
             {
-                this.attribute = attribute;
+                Value = attribute;
             }
         }
     }

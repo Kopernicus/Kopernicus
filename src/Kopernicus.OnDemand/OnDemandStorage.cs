@@ -196,7 +196,7 @@ namespace Kopernicus
                 {
                     // Round it up to a 1MB multiple
                     sizeWholeFile = (fileBytes + 0xFFFFF) & ~0xFFFFF;
-                    Debug.Log("[OD] LoadWholeFile reallocating buffer to " + sizeWholeFile);
+                    Debug.Log("[Kopernicus] LoadWholeFile reallocating buffer to " + sizeWholeFile);
                     wholeFileBuffer = new byte[sizeWholeFile];
                 }
                 else
@@ -243,7 +243,7 @@ namespace Kopernicus
                 {
                     // Round it up to a 1MB multiple
                     sizeWholeFile = (fileBytes + 0xFFFFF) & ~0xFFFFF;
-                    Debug.Log("[OD] LoadRestOfReader reallocating buffer to " + sizeWholeFile);
+                    Debug.Log("[Kopernicus] LoadRestOfReader reallocating buffer to " + sizeWholeFile);
                     wholeFileBuffer = new byte[sizeWholeFile];
                 }
                 else
@@ -285,7 +285,7 @@ namespace Kopernicus
                     }
 
                     arrayLengthOffset = (*p == 3) ? offset : 1;
-                    Debug.Log("[OD] CalculateArrayLengthOffset using offset of " + arrayLengthOffset);
+                    Debug.Log("[Kopernicus] CalculateArrayLengthOffset using offset of " + arrayLengthOffset);
                 }
             }
 

@@ -40,8 +40,8 @@ namespace Kopernicus
                 [ParserTarget("curve")]
                 public FloatCurveParser curve
                 {
-                    get { return mod.curve != null ? new FloatCurve(mod.curve.keys) : new FloatCurve(); }
-                    set { mod.curve = value.curve.Curve; }
+                    get { return mod.curve; }
+                    set { mod.curve = value; }
                 }
                 
                 // Where the height starts
@@ -113,16 +113,15 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> mode
                 {
                     get { return (KopernicusNoiseQuality) (Int32) mod.mode; }
-                    set { mod.mode = (NoiseQuality) (Int32) value.value; }
+                    set { mod.mode = (NoiseQuality) (Int32) value.Value; }
                 }
 
                 // mode
                 [ParserTarget("noiseType")]
-
                 public EnumParser<KopernicusNoiseType> noiseType
                 {
                     get { return (KopernicusNoiseType) (Int32) mod.noiseType; }
-                    set { mod.noiseType = (PQSMod_VertexHeightNoiseVertHeightCurve.NoiseType) (Int32) value.value; }
+                    set { mod.noiseType = (PQSMod_VertexHeightNoiseVertHeightCurve.NoiseType) (Int32) value.Value; }
                 }
             }
         }

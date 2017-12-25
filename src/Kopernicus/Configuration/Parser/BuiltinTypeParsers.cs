@@ -69,17 +69,24 @@ namespace Kopernicus
 
         // Parser for Texture2D
         [RequireConfigType(ConfigType.Value)]
-        public class Texture2DParser : IParsable
+        public class Texture2DParser : IParsable, ITypeParser<Texture2D>
         {
-            public Texture2D value;
+            /// <summary>
+            /// The value that is being parsed
+            /// </summary>
+            public Texture2D Value { get; set; }
+            
+            /// <summary>
+            /// Parse the Value from a string
+            /// </summary>
             public void SetFromString(String s)
             {
                 // Check if we are attempting to load a builtin texture
                 if (s.StartsWith("BUILTIN/"))
                 {
                     String textureName = Regex.Replace(s, "BUILTIN/", "");
-                    value = Resources.FindObjectsOfTypeAll<Texture>().FirstOrDefault(tex => tex.name == textureName) as Texture2D;
-                    if (value == null)
+                    Value = Resources.FindObjectsOfTypeAll<Texture>().FirstOrDefault(tex => tex.name == textureName) as Texture2D;
+                    if (Value == null)
                     {
                         Debug.LogError("[Kopernicus] Could not find built-in texture " + textureName);
                         Logger.Active.Log("Could not find built-in texture " + textureName);
@@ -88,37 +95,64 @@ namespace Kopernicus
                 }
 
                 // Otherwise search the game database for one loaded from GameData/
-                else if (GameDatabase.Instance.ExistsTexture(s))
+                if (GameDatabase.Instance.ExistsTexture(s))
                 {
                     // Get the texture URL
-                    value = GameDatabase.Instance.GetTexture(s, false);
+                    Value = GameDatabase.Instance.GetTexture(s, false);
                     return;
                 }
 
                 // Or load the texture directly
-                else if (Utility.TextureExists(s))
+                if (OnDemandStorage.TextureExists(s))
                 {
-                    value = Utility.LoadTexture(s, false, false, false);
+                    Value = OnDemandStorage.LoadTexture(s, false, true, false);
+                    
+                    // Upload it to the GPU if the parser could load something
+                    if (Value != null)
+                    {
+                        try
+                        {
+                            Value.Apply(false, true);
+                        }
+                        catch
+                        {
+                            Debug.LogError("[Kopernicus] Failed to upload texture " + Value.name + " to the GPU");
+                            Logger.Active.Log("Failed to upload texture " + Value.name + " to the GPU");
+                        }
+                    }
                     return;
                 }
 
                 // Texture was not found
-                value = null;
+                Value = null;
             }
+        
+            /// <summary>
+            /// Create a new Texture2DParser
+            /// </summary>
             public Texture2DParser()
             {
-
             }
-            public Texture2DParser(Texture2D value)
+        
+            /// <summary>
+            /// Create a new Texture2DParser from an already existing Texture
+            /// </summary>
+            public Texture2DParser(Texture2D i)
             {
-                this.value = value;
+                Value = i;
             }
 
-            // Convert
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
             public static implicit operator Texture2D(Texture2DParser parser)
             {
-                return parser.value;
+                return parser.Value;
             }
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
             public static implicit operator Texture2DParser(Texture2D value)
             {
                 return new Texture2DParser(value);
@@ -126,12 +160,16 @@ namespace Kopernicus
         }
 
         // Parser for a MapSO
-        public class MapSOParser_GreyScale<T> : BaseLoader, IParsable where T : MapSO
+        public class MapSOParser_GreyScale<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
         {
-            // Value
-            public T value;
+            /// <summary>
+            /// The value that is being parsed
+            /// </summary>
+            public T Value { get; set; }
 
-            // Load the MapSO
+            /// <summary>
+            /// Parse the Value from a string
+            /// </summary>
             public void SetFromString(String s)
             {
                 // Should we use OnDemand?
@@ -140,7 +178,7 @@ namespace Kopernicus
                 if (s.StartsWith("BUILTIN/"))
                 {
                     s = s.Substring(8);
-                    value = Utility.FindMapSO<T>(s);
+                    Value = Utility.FindMapSO<T>(s);
                 }
                 else
                 {
@@ -162,7 +200,7 @@ namespace Kopernicus
                                 valCB.name = mapName + " (CBG) for " + generatedBody.name;
                                 valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
                                 OnDemandStorage.AddMap(generatedBody.name, valCB);
-                                value = valCB as T;
+                                Value = valCB as T;
                             }
                             else
                             {
@@ -172,37 +210,51 @@ namespace Kopernicus
                                 valMap.name = mapName + " (G) for " + generatedBody.name;
                                 valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
                                 OnDemandStorage.AddMap(generatedBody.name, valMap);
-                                value = valMap as T;
+                                Value = valMap as T;
                             }
                         }
                     }
                     else // Load the texture
                     {
-                        Texture2D map = Utility.LoadTexture(s, false, false, false);
+                        Texture2D map = OnDemandStorage.LoadTexture(s, false, false, false);
                         if (map != null)
                         {
                             // Create a new map script object
-                            value = ScriptableObject.CreateInstance<T>();
-                            value.CreateMap(MapSO.MapDepth.Greyscale, map);
+                            Value = ScriptableObject.CreateInstance<T>();
+                            Value.CreateMap(MapSO.MapDepth.Greyscale, map);
                             UnityEngine.Object.DestroyImmediate(map);
                         }
                     }
                 }
             }
+        
+            /// <summary>
+            /// Create a new MapSOParser_GreyScale
+            /// </summary>
             public MapSOParser_GreyScale()
             {
-                this.value = null;
+                
             }
+        
+            /// <summary>
+            /// Create a new MapSOParser_GreyScale from an already existing Texture
+            /// </summary>
             public MapSOParser_GreyScale(T value)
             {
-                this.value = value;
+                Value = value;
             }
 
-            // Convert
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
             public static implicit operator T(MapSOParser_GreyScale<T> parser)
             {
-                return parser.value;
+                return parser.Value;
             }
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
             public static implicit operator MapSOParser_GreyScale<T>(T value)
             {
                 return new MapSOParser_GreyScale<T>(value);
@@ -210,12 +262,16 @@ namespace Kopernicus
         }
 
         // Parser for a MapSO
-        public class MapSOParser_RGB<T> : BaseLoader, IParsable where T : MapSO
+        public class MapSOParser_RGB<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
         {
-            // Value
-            public T value;
+            /// <summary>
+            /// The value that is being parsed
+            /// </summary>
+            public T Value { get; set; }
 
-            // Load the MapSO
+            /// <summary>
+            /// Parse the Value from a string
+            /// </summary>
             public void SetFromString(String s)
             {
                 // Should we use OnDemand?
@@ -224,7 +280,7 @@ namespace Kopernicus
                 if (s.StartsWith("BUILTIN/"))
                 {
                     s = s.Substring(8);
-                    value = Utility.FindMapSO<T>(s);
+                    Value = Utility.FindMapSO<T>(s);
                 }
                 else
                 {
@@ -246,7 +302,7 @@ namespace Kopernicus
                                 valCB.name = mapName + " (CBRGB) for " + generatedBody.name;
                                 valCB.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
                                 OnDemandStorage.AddMap(generatedBody.name, valCB);
-                                value = valCB as T;
+                                Value = valCB as T;
                             }
                             else
                             {
@@ -256,7 +312,7 @@ namespace Kopernicus
                                 valMap.name = mapName + " (RGB) for " + generatedBody.name;
                                 valMap.AutoLoad = OnDemandStorage.onDemandLoadOnMissing;
                                 OnDemandStorage.AddMap(generatedBody.name, valMap);
-                                value = valMap as T;
+                                Value = valMap as T;
                             }
                         }
                     }
@@ -267,27 +323,41 @@ namespace Kopernicus
                         if (map != null)
                         {
                             // Create a new map script object
-                            value = ScriptableObject.CreateInstance<T>();
-                            value.CreateMap(MapSO.MapDepth.RGB, map);
+                            Value = ScriptableObject.CreateInstance<T>();
+                            Value.CreateMap(MapSO.MapDepth.RGB, map);
                             UnityEngine.Object.DestroyImmediate(map);
                         }
                     }
                 }
             }
+        
+            /// <summary>
+            /// Create a new MapSOParser_RGB
+            /// </summary>
             public MapSOParser_RGB()
             {
-                this.value = null;
+                
             }
+        
+            /// <summary>
+            /// Create a new MapSOParser_RGB from an already existing Texture
+            /// </summary>
             public MapSOParser_RGB(T value)
             {
-                this.value = value;
+                Value = value;
             }
 
-            // Convert
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
             public static implicit operator T(MapSOParser_RGB<T> parser)
             {
-                return parser.value;
+                return parser.Value;
             }
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
             public static implicit operator MapSOParser_RGB<T>(T value)
             {
                 return new MapSOParser_RGB<T>(value);
@@ -296,134 +366,166 @@ namespace Kopernicus
 
         // Parser for Physics Material
         [RequireConfigType(ConfigType.Node)]
-        public class PhysicsMaterialParser : IParserEventSubscriber
+        public class PhysicsMaterialParser : ITypeParser<PhysicMaterial>
         {
             // Physics material we are generating
-            public PhysicMaterial material { get; set; }
+            public PhysicMaterial Value { get; set; }
 
             // Physics material parameters
             [ParserTarget("bounceCombine")]
             public EnumParser<PhysicMaterialCombine> bounceCombine
             {
-                get { return material.bounceCombine; }
-                set { material.bounceCombine = value; }
+                get { return Value.bounceCombine; }
+                set { Value.bounceCombine = value; }
             }
 
             [ParserTarget("frictionCombine")]
             public EnumParser<PhysicMaterialCombine> frictionCombine
             {
-                get { return material.frictionCombine; }
-                set { material.frictionCombine = value; }
+                get { return Value.frictionCombine; }
+                set { Value.frictionCombine = value; }
             }
 
             [ParserTarget("bounciness")]
             public NumericParser<Single> bounciness
             {
-                get { return material.bounciness; }
-                set { material.bounciness = value; }
+                get { return Value.bounciness; }
+                set { Value.bounciness = value; }
             }
 
             [ParserTarget("staticFriction")]
             public NumericParser<Single> staticFriction
             {
-                get { return material.staticFriction; }
-                set { material.staticFriction = value; }
+                get { return Value.staticFriction; }
+                set { Value.staticFriction = value; }
             }
 
             [ParserTarget("dynamicFriction")]
             public NumericParser<Single> dynamicFriction
             {
-                get { return material.dynamicFriction; }
-                set { material.dynamicFriction = value.value; }
+                get { return Value.dynamicFriction; }
+                set { Value.dynamicFriction = value; }
             }
-
-            void IParserEventSubscriber.Apply(ConfigNode node) { }
-            void IParserEventSubscriber.PostApply(ConfigNode node) { }
-
-            // Default constructor
+        
+            /// <summary>
+            /// Create a new PhysicsMaterialParser
+            /// </summary>
             public PhysicsMaterialParser()
             {
-                material = new PhysicMaterial();
-                material.name = "Ground";
-                material.dynamicFriction = 0.6f;
-                material.staticFriction = 0.8f;
-                material.bounciness = 0.0f;
-                material.frictionCombine = PhysicMaterialCombine.Maximum;
-                material.bounceCombine = PhysicMaterialCombine.Average;;
+                Value = new PhysicMaterial();
+                Value.name = "Ground";
+                Value.dynamicFriction = 0.6f;
+                Value.staticFriction = 0.8f;
+                Value.bounciness = 0.0f;
+                Value.frictionCombine = PhysicMaterialCombine.Maximum;
+                Value.bounceCombine = PhysicMaterialCombine.Average;;
             }
-
-            // Initializing constructor
+        
+            /// <summary>
+            /// Create a new PhysicsMaterialParser from an already existing PhysicMaterial
+            /// </summary>
             public PhysicsMaterialParser(PhysicMaterial material)
             {
-                this.material = material;
+                Value = material;
             }
 
-            // Convert
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
             public static implicit operator PhysicMaterial(PhysicsMaterialParser parser)
             {
-                return parser.material;
+                return parser.Value;
             }
-            public static implicit operator PhysicsMaterialParser(PhysicMaterial material)
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator PhysicsMaterialParser(PhysicMaterial value)
             {
-                return new PhysicsMaterialParser(material);
+                return new PhysicsMaterialParser(value);
             }
         }
 
         // Parser for mesh
         [RequireConfigType(ConfigType.Value)]
-        public class MeshParser : IParsable
+        public class MeshParser : IParsable, ITypeParser<Mesh>
         {
-            public Mesh value;
+            /// <summary>
+            /// The value that is being parsed
+            /// </summary>
+            public Mesh Value { get; set; }
+
+            /// <summary>
+            /// Parse the Value from a string
+            /// </summary>
             public void SetFromString(String s)
             {
                 // Check if we are attempting to load a builtin mesh
                 if (s.StartsWith("BUILTIN/"))
                 {
                     String meshName = Regex.Replace(s, "BUILTIN/", "");
-                    value = Resources.FindObjectsOfTypeAll<Mesh>().First(mesh => mesh.name == meshName);
+                    Value = Resources.FindObjectsOfTypeAll<Mesh>().First(mesh => mesh.name == meshName);
                     return;
                 }
 
                 String path = KSPUtil.ApplicationRootPath + "GameData/" + s;
                 if (File.Exists(path))
                 {
-                    value = ObjImporter.ImportFile(path);
-                    value.name = Path.GetFileNameWithoutExtension(path);
+                    Value = ObjImporter.ImportFile(path);
+                    Value.name = Path.GetFileNameWithoutExtension(path);
                     return;
                 }
 
                 // Mesh was not found
-                value = null;
+                Value = null;
             }
+        
+            /// <summary>
+            /// Create a new MeshParser
+            /// </summary>
             public MeshParser()
             {
 
             }
+        
+            /// <summary>
+            /// Create a new MeshParser from an already existing Mesh
+            /// </summary>
             public MeshParser(Mesh value)
             {
-                this.value = value;
+                Value = value;
             }
 
-            // Convert
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
             public static implicit operator Mesh(MeshParser parser)
             {
-                return parser.value;
+                return parser.Value;
             }
-            public static implicit operator MeshParser(Mesh mesh)
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator MeshParser(Mesh value)
             {
-                return new MeshParser(mesh);
+                return new MeshParser(value);
             }
         }
 
         [RequireConfigType(ConfigType.Value)]
-        public class AssetParser<T> : IParsable where T : UnityEngine.Object
+        public class AssetParser<T> : IParsable, ITypeParser<T> where T : UnityEngine.Object
         {
-            // The loaded value
-            public T value;
+            /// <summary>
+            /// The value that is being parsed
+            /// </summary>
+            public T Value { get; set; }
 
             private static Dictionary<String, AssetBundle> bundles = new Dictionary<String, AssetBundle>();
 
-            // Load the AssetBundle with the object
+            /// <summary>
+            /// Parse the Value from a string
+            /// </summary>
             public void SetFromString(String s)
             {
                 String[] split = s.Split(':');
@@ -442,24 +544,37 @@ namespace Kopernicus
                 {
                     bundle = bundles[split[0]];
                 }
-                value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
-                UnityEngine.Object.DontDestroyOnLoad(value);
-                //bundle.Unload(false);
+                Value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
+                UnityEngine.Object.DontDestroyOnLoad(Value);
             }
+        
+            /// <summary>
+            /// Create a new AssetParser
+            /// </summary>
             public AssetParser()
             {
 
             }
+        
+            /// <summary>
+            /// Create a new AssetParser from an already existing Value
+            /// </summary>
             public AssetParser(T value)
             {
-                this.value = value;
+                Value = value;
             }
 
-            // Convert
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
             public static implicit operator T(AssetParser<T> parser)
             {
-                return parser.value;
+                return parser.Value;
             }
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
             public static implicit operator AssetParser<T>(T value)
             {
                 return new AssetParser<T>(value);
@@ -468,32 +583,113 @@ namespace Kopernicus
 
         // parser for .mu
         [RequireConfigType(ConfigType.Value)]
-        public class MuParser : IParsable
+        public class MuParser : IParsable, ITypeParser<GameObject>
         {
-            public GameObject value;
+            /// <summary>
+            /// The value that is being parsed
+            /// </summary>
+            public GameObject Value { get; set; }
 
+            /// <summary>
+            /// Parse the Value from a string
+            /// </summary>
             public void SetFromString(String s)
             {
                 // If there's a model, import it
                 if (GameDatabase.Instance.ExistsModel(s))
                 {
-                    value = GameDatabase.Instance.GetModel(s);
+                    Value = GameDatabase.Instance.GetModel(s);
                     return;
                 }
 
                 // Otherwise, set the value to null
-                value = null;
+                Value = null;
             }
-
-            // Default constructor
+        
+            /// <summary>
+            /// Create a new MuParser
+            /// </summary>
             public MuParser()
             {
-            }
 
-            // Initializing constructor
+            }
+        
+            /// <summary>
+            /// Create a new MuParser from an already existing Object
+            /// </summary>
             public MuParser(GameObject value)
             {
-                this.value = value;
+                Value = value;
+            }
+
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
+            public static implicit operator GameObject(MuParser parser)
+            {
+                return parser.Value;
+            }
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator MuParser(GameObject value)
+            {
+                return new MuParser(value);
+            }
+        }
+        
+        // Stock scatter material parser
+        [RequireConfigType(ConfigType.Value)]
+        public class StockMaterialParser : IParsable, ITypeParser<Material>
+        {
+            /// <summary>
+            /// The value that is being parsed
+            /// </summary>
+            public Material Value { get; set; }
+        
+            /// <summary>
+            /// Parse the Value from a string
+            /// </summary>
+            public void SetFromString(String s)
+            {
+                String materialName = Regex.Replace(s, "BUILTIN/", "");
+                Value = Resources.FindObjectsOfTypeAll<Material>().FirstOrDefault(material => material.name == materialName);
+            }
+        
+            /// <summary>
+            /// Create a new StockMaterialParser
+            /// </summary>
+            public StockMaterialParser()
+            {
+            }
+        
+            /// <summary>
+            /// Create a new StockMaterialParser from an already existing Material
+            /// </summary>
+            public StockMaterialParser(Material i)
+            {
+                Value = i;
+            }
+
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
+            public static implicit operator Material(StockMaterialParser parser)
+            {
+                return parser?.Value;
+            }
+        
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator StockMaterialParser(Material material)
+            {
+                if (material == null)
+                    return new StockMaterialParser();
+                Material m = new Material(material);
+                m.name = "BUILTIN/" + m.name;
+                return new StockMaterialParser { Value = m };
             }
         }
     }

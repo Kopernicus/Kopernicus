@@ -34,35 +34,25 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class AtmosphereFromGroundLoader : BaseLoader, IParserEventSubscriber
+        public class AtmosphereFromGroundLoader : BaseLoader, IParserEventSubscriber, ITypeParser<AtmosphereFromGround>
         {
             /// <summary>
             /// The scale factor between ScaledSpace and LocalSpace
             /// </summary>
-            public const Single INVSCALEFACTOR = (1f / 6000f);
+            public const Single INVSCALEFACTOR = 1f / 6000f;
 
             /// <summary>
             /// AtmosphereFromGround we're modifying
             /// </summary>
-            public AtmosphereFromGround atmosphereFromGround;
-
-            /// <summary>
-            /// CelestialBody we're modifying
-            /// </summary>
-            private CelestialBody celestialBody;
-
-            /// <summary>
-            /// ScaledSpace object of the body we're modifying
-            /// </summary>
-            private GameObject scaledVersion;
+            public AtmosphereFromGround Value { get; set; }
 
             // DEBUG_alwaysUpdateAll
             [ParserTarget("DEBUG_alwaysUpdateAll")]
             [KittopiaDescription("Whether all parameters should get recalculated and reapplied every frame.")]
             public NumericParser<Boolean> DEBUG_alwaysUpdateAll
             {
-                get { return atmosphereFromGround.DEBUG_alwaysUpdateAll; }
-                set { atmosphereFromGround.DEBUG_alwaysUpdateAll = value; }
+                get { return Value.DEBUG_alwaysUpdateAll; }
+                set { Value.DEBUG_alwaysUpdateAll = value; }
             }
 
             // doScale
@@ -70,24 +60,24 @@ namespace Kopernicus
             [KittopiaDescription("Whether the atmosphere mesh should be scaled automatically.")]
             public NumericParser<Boolean> doScale
             {
-                get { return atmosphereFromGround.doScale; }
-                set { atmosphereFromGround.doScale = value; }
+                get { return Value.doScale; }
+                set { Value.doScale = value; }
             }
 
             // ESun
             [ParserTarget("ESun")]
             public NumericParser<Single> ESun
             {
-                get { return atmosphereFromGround.ESun; }
-                set { atmosphereFromGround.ESun = value; }
+                get { return Value.ESun; }
+                set { Value.ESun = value; }
             }
 
             // g
             [ParserTarget("g")]
             public NumericParser<Single> g
             {
-                get { return atmosphereFromGround.g; }
-                set { atmosphereFromGround.g = value; }
+                get { return Value.g; }
+                set { Value.g = value; }
             }
 
             // innerRadius
@@ -95,19 +85,19 @@ namespace Kopernicus
             [KittopiaDescription("The lower bound of the atmosphere effect.")]
             public NumericParser<Single> innerRadius
             {
-                get { return atmosphereFromGround.innerRadius / INVSCALEFACTOR; }
-                set { atmosphereFromGround.innerRadius = value * INVSCALEFACTOR; }
+                get { return Value.innerRadius / INVSCALEFACTOR; }
+                set { Value.innerRadius = value * INVSCALEFACTOR; }
             }
 
             // invWaveLength
             [ParserTarget("invWaveLength")]
             public ColorParser invWaveLength
             {
-                get { return atmosphereFromGround.invWaveLength; }
+                get { return Value.invWaveLength; }
                 set
                 {
-                    atmosphereFromGround.invWaveLength = value;
-                    atmosphereFromGround.waveLength = new Color((Single)Math.Sqrt(Math.Sqrt(1d / atmosphereFromGround.invWaveLength[0])), (Single)Math.Sqrt(Math.Sqrt(1d / atmosphereFromGround.invWaveLength[1])), (Single)Math.Sqrt(Math.Sqrt(1d / atmosphereFromGround.invWaveLength[2])), 0.5f);
+                    Value.invWaveLength = value;
+                    Value.waveLength = new Color((Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[0])), (Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[1])), (Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[2])), 0.5f);
                 }
             }
 
@@ -115,16 +105,16 @@ namespace Kopernicus
             [ParserTarget("Km")]
             public NumericParser<Single> Km
             {
-                get { return atmosphereFromGround.Km; }
-                set { atmosphereFromGround.Km = value; }
+                get { return Value.Km; }
+                set { Value.Km = value; }
             }
 
             // Kr
             [ParserTarget("Kr")]
             public NumericParser<Single> Kr
             {
-                get { return atmosphereFromGround.Kr; }
-                set { atmosphereFromGround.Kr = value; }
+                get { return Value.Kr; }
+                set { Value.Kr = value; }
             }
 
             // outerRadius
@@ -132,51 +122,51 @@ namespace Kopernicus
             [KittopiaDescription("The upper bound of the atmosphere effect.")]
             public NumericParser<Single> outerRadius
             {
-                get { return atmosphereFromGround.outerRadius / INVSCALEFACTOR; }
-                set { atmosphereFromGround.outerRadius = value * INVSCALEFACTOR; }
+                get { return Value.outerRadius / INVSCALEFACTOR; }
+                set { Value.outerRadius = value * INVSCALEFACTOR; }
             }
 
             // samples
             [ParserTarget("samples")]
             public NumericParser<Single> samples
             {
-                get { return atmosphereFromGround.samples; }
-                set { atmosphereFromGround.samples = value; }
+                get { return Value.samples; }
+                set { Value.samples = value; }
             }
 
             // scale
             [ParserTarget("scale")]
             public NumericParser<Single> scale
             {
-                get { return atmosphereFromGround.scale; }
-                set { atmosphereFromGround.scale = value; }
+                get { return Value.scale; }
+                set { Value.scale = value; }
             }
 
             // scaleDepth
             [ParserTarget("scaleDepth")]
             public NumericParser<Single> scaleDepth
             {
-                get { return atmosphereFromGround.scaleDepth; }
-                set { atmosphereFromGround.scaleDepth = value; }
+                get { return Value.scaleDepth; }
+                set { Value.scaleDepth = value; }
             }
 
             [ParserTarget("transformScale")]
             [KittopiaDescription("The scale of the atmosphere mesh in all three directions. Automatically set if doScale is enabled.")]
             public Vector3Parser transformScale
             {
-                get { return atmosphereFromGround.doScale ? Vector3.zero : atmosphereFromGround.transform.localScale; }
-                set { atmosphereFromGround.transform.localScale = value; atmosphereFromGround.doScale = false; }
+                get { return Value.doScale ? Vector3.zero : Value.transform.localScale; }
+                set { Value.transform.localScale = value; Value.doScale = false; }
             }
 
             // waveLength
             [ParserTarget("waveLength")]
             public ColorParser waveLength
             {
-                get { return atmosphereFromGround.waveLength; }
+                get { return Value.waveLength; }
                 set
                 {
-                    atmosphereFromGround.waveLength = value;
-                    atmosphereFromGround.invWaveLength = new Color((Single)(1d / Math.Pow(atmosphereFromGround.waveLength[0], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[1], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[2], 4)), 0.5f);
+                    Value.waveLength = value;
+                    Value.invWaveLength = new Color((Single)(1d / Math.Pow(Value.waveLength[0], 4)), (Single)(1d / Math.Pow(Value.waveLength[1], 4)), (Single)(1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);
                 }
             }
 
@@ -185,8 +175,8 @@ namespace Kopernicus
             [KittopiaDescription("A multiplier that automatically sets outerRadius based on the planets radius.")]
             public NumericParser<Single> outerRadiusMult
             {
-                get { return (atmosphereFromGround.outerRadius / INVSCALEFACTOR) / (Single)atmosphereFromGround.planet.Radius; }
-                set { atmosphereFromGround.outerRadius = (((Single)atmosphereFromGround.planet.Radius) * value) * INVSCALEFACTOR; }
+                get { return Value.outerRadius / INVSCALEFACTOR / (Single)Value.planet.Radius; }
+                set { Value.outerRadius = (Single)Value.planet.Radius * value * INVSCALEFACTOR; }
             }
 
             // innerRadiusMult
@@ -194,8 +184,8 @@ namespace Kopernicus
             [KittopiaDescription("A multiplier that automatically sets innerRadius based on the planets radius.")]
             public NumericParser<Single> innerRadiusMult
             {
-                get { return atmosphereFromGround.innerRadius / atmosphereFromGround.outerRadius; }
-                set { atmosphereFromGround.innerRadius = atmosphereFromGround.outerRadius * value; }
+                get { return Value.innerRadius / Value.outerRadius; }
+                set { Value.innerRadius = Value.outerRadius * value; }
             }
 
             /// <summary>
@@ -206,20 +196,19 @@ namespace Kopernicus
             public void SetDefaultValues()
             {
                 // Set Defaults
-                atmosphereFromGround.planet = celestialBody;
-                atmosphereFromGround.ESun = 30f;
-                atmosphereFromGround.Kr = 0.00125f;
-                atmosphereFromGround.Km = 0.00015f;
-                atmosphereFromGround.samples = 4f;
-                atmosphereFromGround.g = -0.85f;
-                if (atmosphereFromGround.waveLength == new Color(0f, 0f, 0f, 0f))
+                Value.ESun = 30f;
+                Value.Kr = 0.00125f;
+                Value.Km = 0.00015f;
+                Value.samples = 4f;
+                Value.g = -0.85f;
+                if (Value.waveLength == new Color(0f, 0f, 0f, 0f))
                 {
-                    atmosphereFromGround.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
+                    Value.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
                 }
-                atmosphereFromGround.outerRadius = (((Single)celestialBody.Radius) * 1.025f) * INVSCALEFACTOR;
-                atmosphereFromGround.innerRadius = atmosphereFromGround.outerRadius * 0.975f;
-                atmosphereFromGround.scaleDepth = -0.25f;
-                atmosphereFromGround.invWaveLength = new Color((Single)(1d / Math.Pow(atmosphereFromGround.waveLength[0], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[1], 4)), (Single)(1d / Math.Pow(atmosphereFromGround.waveLength[2], 4)), 0.5f);
+                Value.outerRadius = (Single)Value.planet.Radius * 1.025f * INVSCALEFACTOR;
+                Value.innerRadius = Value.outerRadius * 0.975f;
+                Value.scaleDepth = -0.25f;
+                Value.invWaveLength = new Color((Single)(1d / Math.Pow(Value.waveLength[0], 4)), (Single)(1d / Math.Pow(Value.waveLength[1], 4)), (Single)(1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);
             }
 
             /// <summary>
@@ -229,7 +218,7 @@ namespace Kopernicus
             [KittopiaDescription("Calculates values that are based on changeable values.")]
             public void CalculateMembers()
             {
-                CalculatedMembers(atmosphereFromGround);
+                CalculatedMembers(Value);
             }
 
             /// <summary>
@@ -240,7 +229,7 @@ namespace Kopernicus
             public void Store()
             {
                 CalculateMembers();
-                AFGInfo.StoreAFG(atmosphereFromGround);
+                AFGInfo.StoreAFG(Value);
             }
 
             /// <summary>
@@ -295,25 +284,24 @@ namespace Kopernicus
                     throw new InvalidOperationException("Must be executed in Injector context.");
 
                 // Store values
-                celestialBody = generatedBody.celestialBody;
-                atmosphereFromGround = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)?.FirstOrDefault();
-                scaledVersion = generatedBody.scaledVersion;
+                Value = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)?.FirstOrDefault();
 
-                if (atmosphereFromGround == null)
+                if (Value == null)
                 {
                     // Add the material light direction behavior
-                    MaterialSetDirection materialLightDirection = scaledVersion.AddComponent<MaterialSetDirection>();
+                    MaterialSetDirection materialLightDirection = generatedBody.scaledVersion.AddComponent<MaterialSetDirection>();
                     materialLightDirection.valueName = "_localLightDirection";
 
                     // Create the atmosphere shell game object
                     GameObject scaledAtmosphere = new GameObject("Atmosphere");
-                    scaledAtmosphere.transform.parent = scaledVersion.transform;
+                    scaledAtmosphere.transform.parent = generatedBody.scaledVersion.transform;
                     scaledAtmosphere.layer = Constants.GameLayers.ScaledSpaceAtmosphere;
                     MeshRenderer renderer = scaledAtmosphere.AddComponent<MeshRenderer>();
                     renderer.sharedMaterial = new MaterialWrapper.AtmosphereFromGround();
                     MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh = Templates.ReferenceGeosphere;
-                    atmosphereFromGround = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+                    Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+                    Value.planet = generatedBody.celestialBody;
                 }
             }
 
@@ -328,25 +316,24 @@ namespace Kopernicus
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
 
                 // Store values
-                celestialBody = body;
-                atmosphereFromGround = body.afg;
-                scaledVersion = body.scaledBody;
+                Value = body.afg;
 
-                if (atmosphereFromGround == null)
+                if (Value == null)
                 {
                     // Add the material light direction behavior
-                    MaterialSetDirection materialLightDirection = scaledVersion.AddComponent<MaterialSetDirection>();
+                    MaterialSetDirection materialLightDirection = body.scaledBody.AddComponent<MaterialSetDirection>();
                     materialLightDirection.valueName = "_localLightDirection";
 
                     // Create the atmosphere shell game object
                     GameObject scaledAtmosphere = new GameObject("Atmosphere");
-                    scaledAtmosphere.transform.parent = scaledVersion.transform;
+                    scaledAtmosphere.transform.parent = body.scaledBody.transform;
                     scaledAtmosphere.layer = Constants.GameLayers.ScaledSpaceAtmosphere;
                     MeshRenderer renderer = scaledAtmosphere.AddComponent<MeshRenderer>();
                     renderer.sharedMaterial = new MaterialWrapper.AtmosphereFromGround();
                     MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh = Templates.ReferenceGeosphere;
-                    atmosphereFromGround = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+                    Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+                    Value.planet = body;
                 }
             }
         }

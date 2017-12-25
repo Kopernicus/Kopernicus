@@ -31,18 +31,18 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class ScienceValuesLoader : BaseLoader, IParserEventSubscriber
+        public class ScienceValuesLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBodyScienceParams>
         {
             // Science parameters we are going to be modifying
-            public CelestialBodyScienceParams scienceParams { get; set; }
+            public CelestialBodyScienceParams Value { get; set; }
 
             // Science multipler (?) for landed science
             [ParserTarget("landedDataValue")]
             [KittopiaDescription("Science multipler for landed science.")]
             public NumericParser<Single> landedDataValue 
             {
-                get { return scienceParams.LandedDataValue; }
-                set { scienceParams.LandedDataValue = value; }
+                get { return Value.LandedDataValue; }
+                set { Value.LandedDataValue = value; }
             }
 
             // Science multipler (?) for splashed down science
@@ -50,8 +50,8 @@ namespace Kopernicus
             [KittopiaDescription("Science multipler for splashed down science.")]
             public NumericParser<Single> splashedDataValue 
             {
-                get { return scienceParams.SplashedDataValue; }
-                set { scienceParams.SplashedDataValue = value; }
+                get { return Value.SplashedDataValue; }
+                set { Value.SplashedDataValue = value; }
             }
 
             // Science multipler (?) for flying low science
@@ -59,8 +59,8 @@ namespace Kopernicus
             [KittopiaDescription("Science multipler for flying low science.")]
             public NumericParser<Single> flyingLowDataValue 
             {
-                get { return scienceParams.FlyingLowDataValue; }
-                set { scienceParams.FlyingLowDataValue = value; }
+                get { return Value.FlyingLowDataValue; }
+                set { Value.FlyingLowDataValue = value; }
             }
 
             // Science multipler (?) for flying high science
@@ -68,8 +68,8 @@ namespace Kopernicus
             [KittopiaDescription("Science multipler for flying high science.")]
             public NumericParser<Single> flyingHighDataValue 
             {
-                get { return scienceParams.FlyingHighDataValue; }
-                set { scienceParams.FlyingHighDataValue = value; }
+                get { return Value.FlyingHighDataValue; }
+                set { Value.FlyingHighDataValue = value; }
             }
             
             // Science multipler (?) for in space low science
@@ -77,8 +77,8 @@ namespace Kopernicus
             [KittopiaDescription("Science multipler for in space low science.")]
             public NumericParser<Single> inSpaceLowDataValue
             {
-                get { return scienceParams.InSpaceLowDataValue; }
-                set { scienceParams.InSpaceLowDataValue = value; }
+                get { return Value.InSpaceLowDataValue; }
+                set { Value.InSpaceLowDataValue = value; }
             }
             
             // Science multipler (?) for in space high science
@@ -86,8 +86,8 @@ namespace Kopernicus
             [KittopiaDescription("Science multipler for in space high science.")]
             public NumericParser<Single> inSpaceHighDataValue
             {
-                get { return scienceParams.InSpaceHighDataValue; }
-                set { scienceParams.InSpaceHighDataValue = value; }
+                get { return Value.InSpaceHighDataValue; }
+                set { Value.InSpaceHighDataValue = value; }
             }
             
             // Some number describing recovery value (?) on this body.  Could be a multiplier
@@ -96,8 +96,8 @@ namespace Kopernicus
             [ParserTarget("recoveryValue")]
             public NumericParser<Single> recoveryValue
             {
-                get { return scienceParams.RecoveryValue; }
-                set { scienceParams.RecoveryValue = value; }
+                get { return Value.RecoveryValue; }
+                set { Value.RecoveryValue = value; }
             }
 
             // Altitude when "flying at <body>" transistions from/to "from <body>'s upper atmosphere"
@@ -105,8 +105,8 @@ namespace Kopernicus
             [KittopiaDescription("Altitude when \"flying at <body>\" transistions from/to \"from <body>'s upper atmosphere\"")]
             public NumericParser<Single> flyingAltitudeThreshold
             {
-                get { return scienceParams.flyingAltitudeThreshold; }
-                set { scienceParams.flyingAltitudeThreshold = value.value; }
+                get { return Value.flyingAltitudeThreshold; }
+                set { Value.flyingAltitudeThreshold = value; }
             }
             
             // Altitude when "in space low" transistions from/to "in space high"
@@ -114,20 +114,21 @@ namespace Kopernicus
             [KittopiaDescription("Altitude when \"in space low\" transistions from/to \"in space high\"")]
             public NumericParser<Single> spaceAltitudeThreshold
             {
-                get { return scienceParams.spaceAltitudeThreshold; }
-                set { scienceParams.spaceAltitudeThreshold = value.value; }
+                get { return Value.spaceAltitudeThreshold; }
+                set { Value.spaceAltitudeThreshold = value; }
             }
 
             // Default constructor
             public ScienceValuesLoader()
             {
-                scienceParams = generatedBody.celestialBody.scienceValues;
+                Value = generatedBody.celestialBody.scienceValues;
             }
 
             // Standard constructor takes a science parameters object
-            public ScienceValuesLoader (CelestialBodyScienceParams scienceParams)
+            [KittopiaConstructor(KittopiaConstructor.Parameter.Element)]
+            public ScienceValuesLoader(CelestialBodyScienceParams value)
             {
-                this.scienceParams = scienceParams;
+                Value = value;
             }
 
             // Apply event

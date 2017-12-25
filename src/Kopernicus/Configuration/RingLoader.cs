@@ -33,18 +33,18 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class RingLoader : BaseLoader, IParserEventSubscriber
+        public class RingLoader : BaseLoader, IParserEventSubscriber, ITypeParser<Ring>
         {
             // Set-up our custom ring
-            public Ring ring;
+            public Ring Value { get; set; }
 
             // Inner Radius of our ring
             [ParserTarget("innerRadius")]
             [KittopiaDescription("The lower bound of the ring (measured in meters from the center of the body).")]
             public NumericParser<Single> innerRadius
             {
-                get { return ring.innerRadius; }
-                set { ring.innerRadius = value; }
+                get { return Value.innerRadius; }
+                set { Value.innerRadius = value; }
             }
 
             // Outer Radius of our ring
@@ -52,8 +52,8 @@ namespace Kopernicus
             [KittopiaDescription("The upper bound of the ring (measured in meters from the center of the body).")]
             public NumericParser<Single> outerRadius
             {
-                get { return ring.outerRadius; }
-                set { ring.outerRadius = value; }
+                get { return Value.outerRadius; }
+                set { Value.outerRadius = value; }
             }
 
             /// <summary>
@@ -63,8 +63,8 @@ namespace Kopernicus
             [KittopiaDescription("Distance between the top and bottom faces in milliradii.")]
             public NumericParser<Single> thickness 
             {
-                get { return ring.thickness;  }
-                set { ring.thickness = value; }
+                get { return Value.thickness;  }
+                set { Value.thickness = value; }
             }
 
             // Axis angle (inclination) of our ring
@@ -72,8 +72,8 @@ namespace Kopernicus
             [KittopiaDescription("Axis angle (inclination) of our ring.")]
             public NumericParser<Single> angle
             {
-                get { return -ring.rotation.eulerAngles.x; }
-                set { ring.rotation = Quaternion.Euler(-value, 0, 0); }
+                get { return -Value.rotation.eulerAngles.x; }
+                set { Value.rotation = Quaternion.Euler(-value, 0, 0); }
             }
 
             /// <summary>
@@ -84,8 +84,8 @@ namespace Kopernicus
             [KittopiaDescription("Angle between the absolute reference direction and the ascending node.")]
             public NumericParser<Single> longitudeOfAscendingNode
             {
-                get { return ring.longitudeOfAscendingNode;  }
-                set { ring.longitudeOfAscendingNode = value; }
+                get { return Value.longitudeOfAscendingNode;  }
+                set { Value.longitudeOfAscendingNode = value; }
             }
 
             // Texture of our ring
@@ -93,8 +93,8 @@ namespace Kopernicus
             [KittopiaDescription("Texture of the ring")]
             public Texture2DParser texture
             {
-                get { return ring.texture; }
-                set { ring.texture = value; }
+                get { return Value.texture; }
+                set { Value.texture = value; }
             }
 
             // Color of our ring
@@ -102,8 +102,8 @@ namespace Kopernicus
             [KittopiaDescription("Color of the ring")]
             public ColorParser color
             {
-                get { return ring.color; }
-                set { ring.color = value; }
+                get { return Value.color; }
+                set { Value.color = value; }
             }
 
             // Lock rotation of our ring?
@@ -111,8 +111,8 @@ namespace Kopernicus
             [KittopiaDescription("Whether the rotation of the ring should always stay the same.")]
             public NumericParser<Boolean> lockRotation
             {
-                get { return ring.lockRotation; }
-                set { ring.lockRotation = value; }
+                get { return Value.lockRotation; }
+                set { Value.lockRotation = value; }
             }
 
             /// <summary>
@@ -124,8 +124,8 @@ namespace Kopernicus
             [KittopiaDescription("Number of seconds for the ring to complete one rotation. If zero, fall back to matching parent body if lockRotation=false, and standing perfectly still if it's true.")]
             public NumericParser<Single> rotationPeriod
             {
-                get { return ring.rotationPeriod;  }
-                set { ring.rotationPeriod = value; }
+                get { return Value.rotationPeriod;  }
+                set { Value.rotationPeriod = value; }
             }
 
             // Unlit our ring?
@@ -133,8 +133,8 @@ namespace Kopernicus
             [KittopiaDescription("Apply an unlit shader to the ring?")]
             public NumericParser<Boolean> unlit
             {
-                get { return ring.unlit; }
-                set { ring.unlit = value; }
+                get { return Value.unlit; }
+                set { Value.unlit = value; }
             }
 
             // Use new shader with mie scattering and planet shadow?
@@ -142,16 +142,16 @@ namespace Kopernicus
             [KittopiaDescription("Use the new custom ring shader instead of the builtin Unity shaders.")]
             public NumericParser<Boolean> useNewShader
             {
-                get { return ring.useNewShader; }
-                set { ring.useNewShader = value; }
+                get { return Value.useNewShader; }
+                set { Value.useNewShader = value; }
             }
 
             // Penumbra multiplier for new shader
             [ParserTarget("penumbraMultiplier")]
             public NumericParser<Single> penumbraMultiplier
             {
-                get { return ring.penumbraMultiplier; }
-                set { ring.penumbraMultiplier = value; }
+                get { return Value.penumbraMultiplier; }
+                set { Value.penumbraMultiplier = value; }
             }
 
             // Amount of vertices arount the ring
@@ -159,8 +159,8 @@ namespace Kopernicus
             [KittopiaDescription("Amount of vertices arount the ring.")]
             public NumericParser<Int32> steps
             {
-                get { return ring.steps; }
-                set { ring.steps = value; }
+                get { return Value.steps; }
+                set { Value.steps = value; }
             }
 
             /// <summary>
@@ -172,8 +172,8 @@ namespace Kopernicus
             [KittopiaDescription("Number of times the texture should be tiled around the cylinder. If zero, use the old behavior of sampling a thin diagonal strip from (0,0) to (1,1).")]
             public NumericParser<Int32> tiles
             {
-                get { return ring.tiles; }
-                set { ring.tiles = value; }
+                get { return Value.tiles; }
+                set { Value.tiles = value; }
             }
 
             /// <summary>
@@ -183,8 +183,8 @@ namespace Kopernicus
             [KittopiaDescription("This texture's opaque pixels cast shadows on our inner surface.")]
             public Texture2DParser innerShadeTexture
             {
-                get { return ring.innerShadeTexture;  }
-                set { ring.innerShadeTexture = value; }
+                get { return Value.innerShadeTexture;  }
+                set { Value.innerShadeTexture = value; }
             }
 
             /// <summary>
@@ -194,8 +194,8 @@ namespace Kopernicus
             [KittopiaDescription("The inner shade texture repeats this many times over the inner surface.")]
             public NumericParser<Int32> innerShadeTiles
             {
-                get { return ring.innerShadeTiles;  }
-                set { ring.innerShadeTiles = value; }
+                get { return Value.innerShadeTiles;  }
+                set { Value.innerShadeTiles = value; }
             }
 
             /// <summary>
@@ -205,23 +205,23 @@ namespace Kopernicus
             [KittopiaDescription("Number of seconds the inner shade texture takes to complete one rotation")]
             public NumericParser<Single> innerShadeRotationPeriod
             {
-                get { return ring.innerShadeRotationPeriod;  }
-                set { ring.innerShadeRotationPeriod = value; }
+                get { return Value.innerShadeRotationPeriod;  }
+                set { Value.innerShadeRotationPeriod = value; }
             }
 
             [KittopiaAction("Rebuild Ring")]
             [KittopiaDescription("Updates the mesh of the planetary ring.")]
             public void RebuildRing()
             {
-                UnityEngine.Object.Destroy(ring.GetComponent<MeshRenderer>());
-                UnityEngine.Object.Destroy(ring.GetComponent<MeshFilter>());
-                ring.BuildRing();
+                UnityEngine.Object.Destroy(Value.GetComponent<MeshRenderer>());
+                UnityEngine.Object.Destroy(Value.GetComponent<MeshFilter>());
+                Value.BuildRing();
             }
 
             [KittopiaDestructor]
             public void Destroy()
             {
-                UnityEngine.Object.Destroy(ring.gameObject);
+                UnityEngine.Object.Destroy(Value.gameObject);
             }
 
             // Apply event
@@ -245,12 +245,12 @@ namespace Kopernicus
                     throw new InvalidOperationException("Must be executed in Injector context.");
                 }
 
-                ring = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
-                ring.transform.parent = generatedBody.scaledVersion.transform;
-                ring.planetRadius = (Single) generatedBody.celestialBody.Radius;
+                Value = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
+                Value.transform.parent = generatedBody.scaledVersion.transform;
+                Value.planetRadius = (Single) generatedBody.celestialBody.Radius;
 
                 // Need to check the parent body's rotation to orient the LAN properly
-                ring.referenceBody = generatedBody.celestialBody;
+                Value.referenceBody = generatedBody.celestialBody;
             }
 
             /// <summary>
@@ -265,19 +265,19 @@ namespace Kopernicus
                     throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
                 }
                 
-                ring = new GameObject(body.transform.name + "Ring").AddComponent<Ring>();
-                ring.transform.parent = body.scaledBody.transform;
-                ring.planetRadius = (Single) body.Radius;
+                Value = new GameObject(body.transform.name + "Ring").AddComponent<Ring>();
+                Value.transform.parent = body.scaledBody.transform;
+                Value.planetRadius = (Single) body.Radius;
 
                 // Need to check the parent body's rotation to orient the LAN properly
-                ring.referenceBody = body;
+                Value.referenceBody = body;
             }
 
             // Initialize the RingLoader
             [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
-            public RingLoader(Ring ring)
+            public RingLoader(Ring value)
             {
-                this.ring = ring;
+                Value = value;
             }
         }
     }

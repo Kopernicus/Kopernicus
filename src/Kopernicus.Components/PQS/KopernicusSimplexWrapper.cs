@@ -29,42 +29,33 @@ using UnityEngine;
 
 namespace Kopernicus
 {
-    // Globally used values
-    public class Templates
+    namespace Components
     {
-        // The reference mesh for ScaledSpace (Jools Mesh)
-        public static Mesh ReferenceGeosphere { get; set; }
-
-        // Finalize Orbits stuff
-        public static Double SOIMinRadiusMult = 2.0d;
-        public static Double SOIMinAltitude = 40000d;
-
-        // Max view distance
-        public static Double maxViewDistance = -1d;
-
-        // Global base epoch
-        public static Double epoch { get; set; }
-
-        // The body that should appear in MainMenu
-        public static String menuBody { get; set; }
-
-        // Whether the main menu body should be randomized
-        public static List<String> randomMainMenuBodies { get; set; }
-
-        // Initialisation
-        static Templates()
+        /// <summary>
+        /// A wrapper for SimplexWrapper to provide a storage for the seed
+        /// </summary>
+        public class KopernicusSimplexWrapper : PQSMod_VertexPlanet.SimplexWrapper
         {
-            // We need to get the body for Jool (to steal it's mesh)
-            PSystemBody Jool = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Jool");
+            protected Int32 _seed;
 
-            // Return it's mesh
-            ReferenceGeosphere = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+            public Int32 seed
+            {
+                get { return _seed; }
+                set
+                {
+                    _seed = value;
+                    Setup(_seed);
+                }
+            }
 
-            // Main Menu body
-            menuBody = "Kerbin";
-            
-            // Random Main Menu bodies
-            randomMainMenuBodies = new List<String>();
+            public KopernicusSimplexWrapper(PQSMod_VertexPlanet.SimplexWrapper copyFrom) : base(copyFrom)
+            {
+            }
+
+            public KopernicusSimplexWrapper(Double deformity, Double octaves, Double persistance, Double frequency) :
+                base(deformity, octaves, persistance, frequency)
+            {
+            }
         }
     }
 }

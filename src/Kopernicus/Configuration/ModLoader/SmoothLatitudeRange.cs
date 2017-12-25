@@ -39,7 +39,7 @@ namespace Kopernicus
                 public LandControl.LerpRangeLoader latitudeRange
                 {
                     get { return mod.latitudeRange == null ? null : new LandControl.LerpRangeLoader(mod.latitudeRange); }
-                    set { mod.latitudeRange = value.lerpRange; }
+                    set { mod.latitudeRange = value.Value; }
                 }
 
                 // smoothToAltitude

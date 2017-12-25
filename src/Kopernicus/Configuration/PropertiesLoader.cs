@@ -33,7 +33,7 @@ namespace Kopernicus
     {
         // Edit the CelestialBody component
         [RequireConfigType(ConfigType.Node)]
-        public class PropertiesLoader : BaseLoader, IParserEventSubscriber
+        public class PropertiesLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
         {
             // How visible should the planet be in the science archives
             public enum RDVisibility
@@ -45,38 +45,38 @@ namespace Kopernicus
             }
             
             // Celestial body to edit
-            public CelestialBody celestialBody { get; set; }
+            public CelestialBody Value { get; set; }
 
             // Body description
             [ParserTarget("description")]
             public String description
             {
-                get { return celestialBody.bodyDescription; }
-                set { celestialBody.bodyDescription = value; }
+                get { return Value.bodyDescription; }
+                set { Value.bodyDescription = value; }
             }
 
             // Radius
             [ParserTarget("radius")]
             public NumericParser<Double> radius
             {
-                get { return celestialBody.Radius; }
-                set { celestialBody.Radius = value; }
+                get { return Value.Radius; }
+                set { Value.Radius = value; }
             }
 
             // GeeASL
             [ParserTarget("geeASL")]
             public NumericParser<Double> geeASL
             {
-                get { return celestialBody.GeeASL; }
-                set { celestialBody.GeeASL = value; }
+                get { return Value.GeeASL; }
+                set { Value.GeeASL = value; }
             }
 
             // Mass
             [ParserTarget("mass")]
             public NumericParser<Double> mass
             {
-                get { return celestialBody.Mass; }
-                set { celestialBody.Mass = value; _hasMass = true; }
+                get { return Value.Mass; }
+                set { Value.Mass = value; _hasMass = true; }
             }
             private Boolean _hasMass = false;
 
@@ -84,8 +84,8 @@ namespace Kopernicus
             [ParserTarget("gravParameter")]
             public NumericParser<Double> gravParameter
             {
-                get { return celestialBody.gravParameter; }
-                set { celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter = value; _hasGravParam = true; }
+                get { return Value.gravParameter; }
+                set { Value.gMagnitudeAtCenter = Value.gravParameter = value; _hasGravParam = true; }
             }
             private Boolean _hasGravParam = false;
 
@@ -93,111 +93,111 @@ namespace Kopernicus
             [ParserTarget("rotates")]
             public NumericParser<Boolean> rotates
             {
-                get { return celestialBody.rotates; }
-                set { celestialBody.rotates = value; }
+                get { return Value.rotates; }
+                set { Value.rotates = value; }
             }
 
             // Rotation period of the world
             [ParserTarget("rotationPeriod")]
             public NumericParser<Double> rotationPeriod
             {
-                get { return celestialBody.rotationPeriod; }
-                set { celestialBody.rotationPeriod = value; }
+                get { return Value.rotationPeriod; }
+                set { Value.rotationPeriod = value; }
             }
 
             // Is the body tidally locked to its parent?
             [ParserTarget("tidallyLocked")]
             public NumericParser<Boolean> tidallyLocked
             {
-                get { return celestialBody.tidallyLocked; }
-                set { celestialBody.tidallyLocked = value; }
+                get { return Value.tidallyLocked; }
+                set { Value.tidallyLocked = value; }
             }
 
             // Initial rotation of the world
             [ParserTarget("initialRotation")]
             public NumericParser<Double> initialRotation
             {
-                get { return celestialBody.initialRotation; }
-                set { celestialBody.initialRotation = value; }
+                get { return Value.initialRotation; }
+                set { Value.initialRotation = value; }
             }
 
             // Altitude where the Game switches the reference frame
             [ParserTarget("inverseRotThresholdAltitude")]
             public NumericParser<Single> inverseRotThresholdAltitude
             {
-                get { return celestialBody.inverseRotThresholdAltitude; }
-                set { celestialBody.inverseRotThresholdAltitude = value; }
+                get { return Value.inverseRotThresholdAltitude; }
+                set { Value.inverseRotThresholdAltitude = value; }
             }
 
             // albedo
             [ParserTarget("albedo")]
             public NumericParser<Double> albedo
             {
-                get { return celestialBody.albedo; }
-                set { celestialBody.albedo = value; }
+                get { return Value.albedo; }
+                set { Value.albedo = value; }
             }
 
             // emissivity
             [ParserTarget("emissivity")]
             public NumericParser<Double> emissivity
             {
-                get { return celestialBody.emissivity; }
-                set { celestialBody.emissivity = value; }
+                get { return Value.emissivity; }
+                set { Value.emissivity = value; }
             }
 
             // coreTemperatureOffset
             [ParserTarget("coreTemperatureOffset")]
             public NumericParser<Double> coreTemperatureOffset
             {
-                get { return celestialBody.coreTemperatureOffset; }
-                set { celestialBody.coreTemperatureOffset = value; }
+                get { return Value.coreTemperatureOffset; }
+                set { Value.coreTemperatureOffset = value; }
             }
 
             // Time warp altitude limits
             [ParserTarget("timewarpAltitudeLimits")]
             public NumericCollectionParser<Single> timewarpAltitudeLimits
             {
-                get { return celestialBody.timeWarpAltitudeLimits != null ? celestialBody.timeWarpAltitudeLimits : new Single[0]; }
-                set { celestialBody.timeWarpAltitudeLimits = value.value.ToArray(); }
+                get { return Value.timeWarpAltitudeLimits != null ? Value.timeWarpAltitudeLimits.ToList() : new List<Single>(0); }
+                set { Value.timeWarpAltitudeLimits = value.Value.ToArray(); }
             }
 
             // Sphere of Influence
             [ParserTarget("sphereOfInfluence")]
             public NumericParser<Double> sphereOfInfluence
             {
-                get { return celestialBody.Get("sphereOfInfluence", celestialBody.sphereOfInfluence); }
-                set { celestialBody.sphereOfInfluence = value; celestialBody.Set("sphereOfInfluence", value.value); }
+                get { return Value.Get("sphereOfInfluence", Value.sphereOfInfluence); }
+                set { Value.sphereOfInfluence = value; Value.Set("sphereOfInfluence", value.Value); }
             }
 
             // Hill Sphere
             [ParserTarget("hillSphere")]
             public NumericParser<Double> hillSphere
             {
-                get { return celestialBody.Get("hillSphere", celestialBody.hillSphere); }
-                set { celestialBody.hillSphere = value; celestialBody.Set("hillSphere", value.value); }
+                get { return Value.Get("hillSphere", Value.hillSphere); }
+                set { Value.hillSphere = value; Value.Set("hillSphere", value.Value); }
             }
 
             // solarRotationPeriod
             [ParserTarget("solarRotationPeriod")]
             public NumericParser<Boolean> solarRotationPeriod
             {
-                get { return celestialBody.solarRotationPeriod; }
-                set { celestialBody.solarRotationPeriod = value; }
+                get { return Value.solarRotationPeriod; }
+                set { Value.solarRotationPeriod = value; }
             }
 
             // navballSwitchRadiusMult
             [ParserTarget("navballSwitchRadiusMult")]
             public NumericParser<Double> navballSwitchRadiusMult
             {
-                get { return celestialBody.navballSwitchRadiusMult; }
-                set { celestialBody.navballSwitchRadiusMult = value; }
+                get { return Value.navballSwitchRadiusMult; }
+                set { Value.navballSwitchRadiusMult = value; }
             }
             // navballSwitchRadiusMult
             [ParserTarget("navballSwitchRadiusMultLow")]
             public NumericParser<Double> navballSwitchRadiusMultLow
             {
-                get { return celestialBody.navballSwitchRadiusMultLow; }
-                set { celestialBody.navballSwitchRadiusMultLow = value; }
+                get { return Value.navballSwitchRadiusMultLow; }
+                set { Value.navballSwitchRadiusMultLow = value; }
             }
 
             // Science values of this body
@@ -208,14 +208,14 @@ namespace Kopernicus
             [ParserTarget("biomeMap")]
             public MapSOParser_RGB<CBAttributeMapSO> biomeMap
             {
-                get { return celestialBody.BiomeMap; }
+                get { return Value.BiomeMap; }
                 set
                 {
                     if (((CBAttributeMapSO)value) != null)
                     {
-                        celestialBody.BiomeMap = value;
-                        celestialBody.BiomeMap.exactSearch = false;
-                        celestialBody.BiomeMap.nonExactThreshold = 0.05f;
+                        Value.BiomeMap = value;
+                        Value.BiomeMap.exactSearch = false;
+                        Value.BiomeMap.nonExactThreshold = 0.05f;
                     }
                 }
             }
@@ -224,31 +224,31 @@ namespace Kopernicus
             [ParserTarget("nonExactThreshold")]
             public NumericParser<Single> nonExactThreshold
             {
-                get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.nonExactThreshold : 0.05f; }
-                set { celestialBody.BiomeMap.nonExactThreshold = value; }
+                get { return Value.BiomeMap != null ? Value.BiomeMap.nonExactThreshold : 0.05f; }
+                set { Value.BiomeMap.nonExactThreshold = value; }
             }
 
             // If the biome threshold should get used
             [ParserTarget("exactSearch")]
             public NumericParser<Boolean> exactSearch
             {
-                get { return celestialBody.BiomeMap != null ? celestialBody.BiomeMap.exactSearch : false; }
-                set { celestialBody.BiomeMap.exactSearch = value; }
+                get { return Value.BiomeMap != null ? Value.BiomeMap.exactSearch : false; }
+                set { Value.BiomeMap.exactSearch = value; }
             }
 
             // Biomes of this body
             [ParserTargetCollection("Biomes", nameSignificance = NameSignificance.None)]
             public List<BiomeLoader> biomes
             {
-                get { return celestialBody.BiomeMap?.Attributes?.Select(a => new BiomeLoader(a)).ToList(); }
+                get { return Value.BiomeMap?.Attributes?.Select(a => new BiomeLoader(a)).ToList(); }
                 set
                 {
                     // Check biome map
-                    if (celestialBody.BiomeMap == null)
+                    if (Value.BiomeMap == null)
                         throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
 
                     // Replace the old biomes list with the new one
-                    celestialBody.BiomeMap.Attributes = value.Select(a => a.attribute).ToArray();
+                    Value.BiomeMap.Attributes = value.Select(a => a.Value).ToArray();
                 }
             }
 
@@ -256,31 +256,31 @@ namespace Kopernicus
             [ParserTarget("useTheInName")]
             public NumericParser<Boolean> useTheInName
             {
-                get { return celestialBody.bodyDisplayName.StartsWith("The", StringComparison.InvariantCultureIgnoreCase); }
-                set { celestialBody.bodyDisplayName = "The " + celestialBody.bodyName; }
+                get { return Value.bodyDisplayName.StartsWith("The", StringComparison.InvariantCultureIgnoreCase); }
+                set { Value.bodyDisplayName = "The " + Value.bodyName; }
             }
 
             [ParserTarget("displayName")]
             public String displayName
             {
-                get { return celestialBody.bodyDisplayName; }
-                set { celestialBody.bodyDisplayName = value; }
+                get { return Value.bodyDisplayName; }
+                set { Value.bodyDisplayName = value; }
             }
 
             // If the body should be unselectable
             [ParserTarget("selectable")]
             public NumericParser<Boolean> selectable
             {
-                get { return celestialBody.Get("notSelectable", false); }
-                set { celestialBody.Set("notSelectable", value.value); }
+                get { return Value.Get("notSelectable", false); }
+                set { Value.Set("notSelectable", value.Value); }
             }
 
             // If the body should be hidden in RD
             [ParserTarget("RDVisibility")]
             public EnumParser<RDVisibility> hiddenRD
             {
-                get { return celestialBody.Get("hiddenRnD", RDVisibility.VISIBLE); }
-                set { celestialBody.Set("hiddenRnD", value.value); }
+                get { return Value.Get("hiddenRnD", RDVisibility.VISIBLE); }
+                set { Value.Set("hiddenRnD", value.Value); }
             }
 
             // If the body should be hidden in RnD
@@ -297,10 +297,10 @@ namespace Kopernicus
             {
                 get
                 {
-                    return celestialBody.Get("RnDRotation",
-                        celestialBody?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null);
+                    return Value.Get("RnDRotation",
+                        Value?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null);
                 }
-                set { celestialBody.Set("RnDRotation", value.value); }
+                set { Value.Set("RnDRotation", value.Value); }
             }
 
             // Max Zoom limit for TrackingStation and MapView
@@ -308,16 +308,16 @@ namespace Kopernicus
             [ParserTarget("maxZoom")]
             public NumericParser<Single> minDistance
             {
-                get { return celestialBody.Get("maxZoom", 10 * 6000f); }
-                set { celestialBody.Set("maxZoom", value.value / 6000f); }
+                get { return Value.Get("maxZoom", 10 * 6000f); }
+                set { Value.Set("maxZoom", value.Value / 6000f); }
             }
 
             // Apply Event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
                 // Replace biomes
-                if (celestialBody.Get("removeBiomes", true) && celestialBody.BiomeMap != null)
-                    celestialBody.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
+                if (Value.Get("removeBiomes", true) && Value.BiomeMap != null)
+                    Value.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
                 
                 // Event
                 Events.OnPropertiesLoaderApply.Fire(this, node);
@@ -335,19 +335,19 @@ namespace Kopernicus
                     GeeASLToOthers();
 
                 // Debug the fields (TODO - remove)
-                Utility.DumpObjectFields(celestialBody.scienceValues, " Science Values ");
-                if (celestialBody.BiomeMap != null)
+                Utility.DumpObjectFields(Value.scienceValues, " Science Values ");
+                if (Value.BiomeMap != null)
                 {
-                    foreach (CBAttributeMapSO.MapAttribute biome in celestialBody.BiomeMap.Attributes)
+                    foreach (CBAttributeMapSO.MapAttribute biome in Value.BiomeMap.Attributes)
                     {
                         Logger.Active.Log("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
                     }
                 }
 
                 // TODO - tentative fix, needs to be able to be configured (if it can be?)
-                if (celestialBody.progressTree == null)
+                if (Value.progressTree == null)
                 {
-                    celestialBody.progressTree = new KSPAchievements.CelestialBodySubtree(celestialBody);
+                    Value.progressTree = new KSPAchievements.CelestialBodySubtree(Value);
                     Logger.Active.Log("Added Progress Tree");
                 }
 
@@ -367,15 +367,15 @@ namespace Kopernicus
                 }
                 
                 // Store values
-                celestialBody = generatedBody.celestialBody;
+                Value = generatedBody.celestialBody;
                 
                 // We require a science values object
-                if (celestialBody.scienceValues == null)
-                    celestialBody.scienceValues = new CelestialBodyScienceParams();
-                scienceValues = new ScienceValuesLoader(celestialBody.scienceValues);
+                if (Value.scienceValues == null)
+                    Value.scienceValues = new CelestialBodyScienceParams();
+                scienceValues = new ScienceValuesLoader(Value.scienceValues);
                 
                 // isHomeWorld Check
-                celestialBody.isHomeWorld = celestialBody.transform.name == "Kerbin";
+                Value.isHomeWorld = Value.transform.name == "Kerbin";
             }
 
             /// <summary>
@@ -390,48 +390,48 @@ namespace Kopernicus
                 }
 
                 // Store values
-                celestialBody = body;
+                Value = body;
                 
                 // We require a science values object
-                if (celestialBody.scienceValues == null)
-                    celestialBody.scienceValues = new CelestialBodyScienceParams();
-                scienceValues = new ScienceValuesLoader(celestialBody.scienceValues);
+                if (Value.scienceValues == null)
+                    Value.scienceValues = new CelestialBodyScienceParams();
+                scienceValues = new ScienceValuesLoader(Value.scienceValues);
                 
                 // isHomeWorld Check
-                celestialBody.isHomeWorld = celestialBody.transform.name == "Kerbin";
+                Value.isHomeWorld = Value.transform.name == "Kerbin";
             }
 
             // Mass converters
             public void GeeASLToOthers()
             {
-                Double rsq = celestialBody.Radius;
+                Double rsq = Value.Radius;
                 rsq *= rsq;
-                celestialBody.gMagnitudeAtCenter = celestialBody.GeeASL * 9.80665 * rsq;
-                celestialBody.gravParameter = celestialBody.gMagnitudeAtCenter;
-                celestialBody.Mass = celestialBody.gravParameter * (1 / 6.67408E-11);
-                Logger.Active.Log("Via surface G, set gravParam to " + celestialBody.gravParameter + ", mass to " + celestialBody.Mass);
+                Value.gMagnitudeAtCenter = Value.GeeASL * 9.80665 * rsq;
+                Value.gravParameter = Value.gMagnitudeAtCenter;
+                Value.Mass = Value.gravParameter * (1 / 6.67408E-11);
+                Logger.Active.Log("Via surface G, set gravParam to " + Value.gravParameter + ", mass to " + Value.Mass);
             }
 
             // Converts mass to Gee ASL using a body's radius.
             public void MassToOthers()
             {
-                Double rsq = celestialBody.Radius;
+                Double rsq = Value.Radius;
                 rsq *= rsq;
-                celestialBody.GeeASL = celestialBody.Mass * (6.67408E-11 / 9.80665) / rsq;
-                celestialBody.gMagnitudeAtCenter = celestialBody.GeeASL * 9.80665 * rsq;
-                celestialBody.gravParameter = celestialBody.gMagnitudeAtCenter;
-                Logger.Active.Log("Via mass, set gravParam to " + celestialBody.gravParameter + ", surface G to " + celestialBody.GeeASL);
+                Value.GeeASL = Value.Mass * (6.67408E-11 / 9.80665) / rsq;
+                Value.gMagnitudeAtCenter = Value.GeeASL * 9.80665 * rsq;
+                Value.gravParameter = Value.gMagnitudeAtCenter;
+                Logger.Active.Log("Via mass, set gravParam to " + Value.gravParameter + ", surface G to " + Value.GeeASL);
             }
 
             // Convert gravParam to mass and GeeASL
             public void GravParamToOthers()
             {
-                Double rsq = celestialBody.Radius;
+                Double rsq = Value.Radius;
                 rsq *= rsq;
-                celestialBody.Mass = celestialBody.gravParameter * (1 / 6.67408E-11);
-                celestialBody.GeeASL = celestialBody.gravParameter / 9.80665 / rsq;
-                celestialBody.gMagnitudeAtCenter = celestialBody.gravParameter;
-                Logger.Active.Log("Via gravParam, set mass to " + celestialBody.Mass + ", surface G to " + celestialBody.GeeASL);
+                Value.Mass = Value.gravParameter * (1 / 6.67408E-11);
+                Value.GeeASL = Value.gravParameter / 9.80665 / rsq;
+                Value.gMagnitudeAtCenter = Value.gravParameter;
+                Logger.Active.Log("Via gravParam, set mass to " + Value.Mass + ", surface G to " + Value.GeeASL);
             }
         }
     }

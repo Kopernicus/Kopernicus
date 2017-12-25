@@ -34,66 +34,65 @@ namespace Kopernicus
     namespace Configuration
     {
         [RequireConfigType(ConfigType.Node)]
-        public class CoronaLoader : BaseLoader, IParserEventSubscriber
+        public class CoronaLoader : BaseLoader, IParserEventSubscriber, ITypeParser<SunCoronas>
         {
             // The generated corona
-            public SunCoronas coronaComponent;
-            public GameObject corona { get; set; }
+            public SunCoronas Value { get; set; }
 
             // Material definition for the Corona
             [ParserTarget("scaleSpeed", allowMerge = true)]
             public NumericParser<Single> scaleSpeed
             {
-                get { return coronaComponent.scaleSpeed; }
-                set { coronaComponent.scaleSpeed = value; }
+                get { return Value.scaleSpeed; }
+                set { Value.scaleSpeed = value; }
             }
 
             [ParserTarget("scaleLimitY", allowMerge = true)]
             public NumericParser<Single> scaleLimitY 
             {
-                get { return coronaComponent.scaleLimitY; }
-                set { coronaComponent.scaleLimitY = value; }
+                get { return Value.scaleLimitY; }
+                set { Value.scaleLimitY = value; }
             }
 
             [ParserTarget("scaleLimitX", allowMerge = true)]
             public NumericParser<Single> scaleLimitX
             {
-                get { return coronaComponent.scaleLimitX; }
-                set { coronaComponent.scaleLimitX = value; }
+                get { return Value.scaleLimitX; }
+                set { Value.scaleLimitX = value; }
             }
 
             [ParserTarget("updateInterval", allowMerge = true)]
             public NumericParser<Single> updateInterval
             {
-                get { return coronaComponent.updateInterval; }
-                set { coronaComponent.updateInterval = value; }
+                get { return Value.updateInterval; }
+                set { Value.updateInterval = value; }
             }
 
             [ParserTarget("speed", allowMerge = true)]
             public NumericParser<Int32> speed
             {
-                get { return coronaComponent.Speed; }
-                set { coronaComponent.Speed = value; }
+                get { return Value.Speed; }
+                set { Value.Speed = value; }
             }
 
             [ParserTarget("rotation", allowMerge = true)]
             public NumericParser<Single> rotation
             {
-                get { return coronaComponent.Rotation; }
-                set { coronaComponent.Rotation = value; }
+                get { return Value.Rotation; }
+                set { Value.Rotation = value; }
             }
 
             [ParserTarget("Material", allowMerge = true, getChild = false)]
             public ParticleAddSmoothLoader material
             {
-                get { return (ParticleAddSmoothLoader)coronaComponent.GetComponent<Renderer>().sharedMaterial; }
-                set { coronaComponent.GetComponent<Renderer>().sharedMaterial = value; }
+                get { return (ParticleAddSmoothLoader)Value.GetComponent<Renderer>().sharedMaterial; }
+                set { Value.GetComponent<Renderer>().sharedMaterial = value; }
             }
 
             [KittopiaDestructor]
             public void Destroy()
             {
-                UnityEngine.Object.Destroy(corona);
+                UnityEngine.Object.Destroy(Value.gameObject);
             }
 
             // Parser apply event
@@ -123,7 +122,7 @@ namespace Kopernicus
                 PSystemBody sun = Utility.FindBody (Injector.StockSystemPrefab.rootBody, "Sun");
 
                 // Clone a default Corona
-                corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
+                GameObject corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
                 
                 // Backup local transform parameters 
                 Vector3 position = corona.transform.localPosition;
@@ -138,7 +137,7 @@ namespace Kopernicus
                 corona.transform.localScale = scale;
                 corona.transform.localRotation = rotation;
                 
-                coronaComponent = corona.GetComponent<SunCoronas> ();
+                Value = corona.GetComponent<SunCoronas> ();
 
                 // Setup the material loader
                 material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().material);
@@ -161,7 +160,7 @@ namespace Kopernicus
                 PSystemBody sun = Utility.FindBody (Injector.StockSystemPrefab.rootBody, "Sun");
 
                 // Clone a default Corona
-                corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
+                GameObject corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
                 
                 // Backup local transform parameters 
                 Vector3 position = corona.transform.localPosition;
@@ -176,7 +175,7 @@ namespace Kopernicus
                 corona.transform.localScale = scale;
                 corona.transform.localRotation = rotation;
                 
-                coronaComponent = corona.GetComponent<SunCoronas> ();
+                Value = corona.GetComponent<SunCoronas> ();
 
                 // Setup the material loader
                 material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().material);
@@ -189,11 +188,10 @@ namespace Kopernicus
             [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public CoronaLoader(SunCoronas component)
             {
-                coronaComponent = component;
-                corona = component.gameObject;
-                if (!(corona.GetComponent<Renderer>().material is ParticleAddSmoothLoader))
+                Value = component;
+                if (!(Value.GetComponent<Renderer>().material is ParticleAddSmoothLoader))
                 {
-                    material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().material);
+                    material = new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().material);
                 }
             }
         }

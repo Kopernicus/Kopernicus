@@ -57,6 +57,9 @@ namespace Kopernicus
 
             // Make sure the runtime utility isn't killed
             DontDestroyOnLoad(this);
+            
+            // Init the runtime logging
+            new Logger("Kopernicus.Runtime").SetAsActive();
 
             // Add handlers
             GameEvents.onPartUnpack.Add(OnPartUnpack);
@@ -171,7 +174,6 @@ namespace Kopernicus
                     ConfigNode orbitNode = body.Get<ConfigNode>("orbitPatches");
                     OrbitLoader loader = new OrbitLoader(body);
                     Parser.LoadObjectFromConfigurationNode(loader, orbitNode, "Kopernicus");
-                    body.orbitDriver.orbit = loader.orbit;
                     CelestialBody oldRef = body.referenceBody;
                     body.referenceBody.orbitingBodies.Remove(body);
 

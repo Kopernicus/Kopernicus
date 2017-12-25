@@ -41,17 +41,17 @@ namespace Kopernicus
             {
                 // Land class loader 
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassLoader : IPatchable
+                public class LandClassLoader : IPatchable, ITypeParser<PQSMod_HeightColorMap.LandClass>
                 {
                     // Land class object
-                    public PQSMod_HeightColorMap.LandClass landClass;
+                    public PQSMod_HeightColorMap.LandClass Value { get; set; }
 
                     // Name of the class
                     [ParserTarget("name")]
                     public String name 
                     {
-                        get { return landClass.name; }
-                        set { landClass.name = value; }
+                        get { return Value.name; }
+                        set { Value.name = value; }
                     }
 
                     // Delete the landclass
@@ -62,8 +62,8 @@ namespace Kopernicus
                     [ParserTarget("color")]
                     public ColorParser color
                     {
-                        get { return landClass.color; }
-                        set { landClass.color = value; }
+                        get { return Value.color; }
+                        set { Value.color = value; }
                     }
 
                     // Fractional altitude start
@@ -71,37 +71,53 @@ namespace Kopernicus
                     [ParserTarget("altitudeStart")]
                     public NumericParser<Double> altitudeStart
                     {
-                        get { return landClass.altStart; }
-                        set { landClass.altStart = value; }
+                        get { return Value.altStart; }
+                        set { Value.altStart = value; }
                     }
 
                     // Fractional altitude end
                     [ParserTarget("altitudeEnd")]
                     public NumericParser<Double> altitudeEnd
                     {
-                        get { return landClass.altEnd; }
-                        set { landClass.altEnd = value; }
+                        get { return Value.altEnd; }
+                        set { Value.altEnd = value; }
                     }
 
                     // Should we blend into the next class
                     [ParserTarget("lerpToNext")]
                     public NumericParser<Boolean> lerpToNext
                     {
-                        get { return landClass.lerpToNext; }
-                        set { landClass.lerpToNext = value; }
+                        get { return Value.lerpToNext; }
+                        set { Value.lerpToNext = value; }
                     }
 
                     [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
                     public LandClassLoader ()
                     {
                         // Initialize the land class
-                        landClass = new PQSMod_HeightColorMap.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
+                        Value = new PQSMod_HeightColorMap.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
                     }
 
                     [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassLoader(PQSMod_HeightColorMap.LandClass c)
                     {
-                        landClass = c;
+                        Value = c;
+                    }
+
+                    /// <summary>
+                    /// Convert Parser to Value
+                    /// </summary>
+                    public static implicit operator PQSMod_HeightColorMap.LandClass(LandClassLoader parser)
+                    {
+                        return parser.Value;
+                    }
+        
+                    /// <summary>
+                    /// Convert Value to Parser
+                    /// </summary>
+                    public static implicit operator LandClassLoader(PQSMod_HeightColorMap.LandClass value)
+                    {
+                        return new LandClassLoader(value);
                     }
                 }
 
@@ -110,7 +126,7 @@ namespace Kopernicus
                 public NumericParser<Single> blend
                 {
                     get { return mod.blend; }
-                    set { mod.blend = value.value; }
+                    set { mod.blend = value.Value; }
                 }
 
                 // The land classes
@@ -126,9 +142,10 @@ namespace Kopernicus
                     landClasses = new CallbackList<LandClassLoader> ((e) =>
                     {
                         mod.landClasses = landClasses.Where(landClass => !landClass.delete)
-                            .Select(landClass => landClass.landClass).ToArray();
+                            .Select(landClass => landClass.Value).ToArray();
                         mod.lcCount = mod.landClasses.Length;
                     });
+                    mod.landClasses = new PQSMod_HeightColorMap.LandClass[mod.lcCount = 0];
                 }
 
                 // Grabs a PQSMod of type T from a parameter with a given PQS
@@ -140,17 +157,22 @@ namespace Kopernicus
                     landClasses = new CallbackList<LandClassLoader> ((e) =>
                     {
                         mod.landClasses = landClasses.Where(landClass => !landClass.delete)
-                            .Select(landClass => landClass.landClass).ToArray();
+                            .Select(landClass => landClass.Value).ToArray();
                         mod.lcCount = mod.landClasses.Length;
                     });
                     
                     // Load LandClasses
                     if (mod.landClasses != null)
                     {
-                        foreach (PQSMod_HeightColorMap.LandClass landClass in mod.landClasses)
+                        for (Int32 i = 0; i < mod.landClasses.Length; i++)
                         {
-                            landClasses.Add(new LandClassLoader(landClass));
+                            // Only activate the callback if we are adding the last loader
+                            landClasses.Add(new LandClassLoader(mod.landClasses[i]), i == mod.landClasses.Length - 1);
                         }
+                    }
+                    else
+                    {
+                        mod.landClasses = new PQSMod_HeightColorMap.LandClass[mod.lcCount = 0];
                     }
                 }
             }

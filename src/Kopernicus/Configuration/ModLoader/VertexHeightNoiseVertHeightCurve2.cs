@@ -81,7 +81,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> ridgedMode
                 {
                     get { return (KopernicusNoiseQuality) (Int32) mod.ridgedMode; }
-                    set { mod.ridgedMode = (NoiseQuality) (Int32) value.value; }
+                    set { mod.ridgedMode = (NoiseQuality) (Int32) value.Value; }
                 }
 
                 // ridgedSubFrequency
@@ -120,8 +120,8 @@ namespace Kopernicus
                 [ParserTarget("simplexCurve")]
                 public FloatCurveParser simplexCurve
                 {
-                    get { return mod.simplexCurve != null ? new FloatCurve(mod.simplexCurve.keys) : new FloatCurve(); }
-                    set { mod.simplexCurve = value.curve.Curve; }
+                    get { return mod.simplexCurve; }
+                    set { mod.simplexCurve = value; }
                 }
 
                 // simplexFrequency

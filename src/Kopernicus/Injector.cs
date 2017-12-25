@@ -164,7 +164,7 @@ namespace Kopernicus
                     body.flightGlobalsIndex = counter++;
 
                     // Finalize the Orbit
-                    if (body.Has("finalizeBody"))
+                    if (body.Get("finalizeBody", false))
                         OrbitLoader.FinalizeOrbit(body);
 
                     // Patch the SOI
@@ -176,7 +176,7 @@ namespace Kopernicus
                         body.hillSphere = body.Get<Double>("hillSphere");
 
                     // Make the Body a barycenter
-                    if (body.Has("barycenter"))
+                    if (body.Get("barycenter", false))
                         body.scaledBody.SetActive(false);
 
                     // Event

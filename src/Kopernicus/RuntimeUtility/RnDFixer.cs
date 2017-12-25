@@ -108,7 +108,7 @@ namespace Kopernicus
                     oldParent.children.Remove(body);
 
                     // Find the index of the body in newParent.children
-                    Int32 index = newParent.children.FindAll(c => c.orbitDriver.orbit.semiMajorAxis < newSMA.value).Count;
+                    Int32 index = newParent.children.FindAll(c => c.orbitDriver.orbit.semiMajorAxis < newSMA.Value).Count;
 
                     // Add the body to newParent.children
                     if (index > newParent.children.Count)

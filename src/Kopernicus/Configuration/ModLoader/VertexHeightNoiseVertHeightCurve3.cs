@@ -56,8 +56,8 @@ namespace Kopernicus
                 [ParserTarget("inputHeightCurve")]
                 public FloatCurveParser inputHeightCurve
                 {
-                    get { return mod.inputHeightCurve != null ? new FloatCurve(mod.inputHeightCurve.keys) : new FloatCurve(); }
-                    set { mod.inputHeightCurve = value.curve.Curve; }
+                    get { return mod.inputHeightCurve; }
+                    set { mod.inputHeightCurve = value; }
                 }
 
                 // Ending height
@@ -169,7 +169,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> ridgedAddQuality
                 {
                     get { return (KopernicusNoiseQuality) (Int32) mod.ridgedAdd.quality; }
-                    set { mod.ridgedAdd.quality = (NoiseQuality) (Int32) value.value; }
+                    set { mod.ridgedAdd.quality = (NoiseQuality) (Int32) value.Value; }
                 }
 
                 // The seed of the additive noise
@@ -209,7 +209,7 @@ namespace Kopernicus
                 public EnumParser<KopernicusNoiseQuality> ridgedSubQuality
                 {
                     get { return (KopernicusNoiseQuality) (Int32) mod.ridgedSub.quality; }
-                    set { mod.ridgedSub.quality = (NoiseQuality) (Int32) value.value; }
+                    set { mod.ridgedSub.quality = (NoiseQuality) (Int32) value.Value; }
                 }
 
                 // The seed of the subtractive noise
@@ -221,15 +221,39 @@ namespace Kopernicus
                 }
 
                 // Create the mod
-                public override void Create()
+                public override void Create(PQS pqsVersion)
                 {
-                    base.Create();
+                    base.Create(pqsVersion);
 
                     // Construct the internal objects.
                     mod.curveMultiplier = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
                     mod.deformity = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
                     mod.ridgedAdd = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
                     mod.ridgedSub = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
+                }
+
+                // Create the mod
+                public override void Create(PQSMod_VertexHeightNoiseVertHeightCurve3 _mod, PQS pqsVersion)
+                {
+                    base.Create(_mod, pqsVersion);
+
+                    // Construct the internal objects.
+                    if (mod.curveMultiplier == null)
+                    {
+                        mod.curveMultiplier = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
+                    }
+                    if (mod.deformity == null)
+                    {
+                        mod.deformity = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
+                    }
+                    if (mod.ridgedAdd == null)
+                    {
+                        mod.ridgedAdd = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
+                    }
+                    if (mod.ridgedSub == null)
+                    {
+                        mod.ridgedSub = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
+                    }
                 }
             }
         }

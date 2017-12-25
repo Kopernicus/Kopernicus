@@ -35,18 +35,18 @@ namespace Kopernicus
     {
         // Loads Debugging properties for a Body
         [RequireConfigType(ConfigType.Node)]
-        public class DebugLoader : BaseLoader, IParserEventSubscriber
+        public class DebugLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
         {
             // The Body we're editing
-            public CelestialBody celestialBody;
+            public CelestialBody Value { get; set; }
             
             // If this is set to false, Kopernicus wont save a .bin file with the scaledSpace mesh 
             [ParserTarget("exportMesh")]
             [KittopiaDescription("Whether Kopernicus should save a .bin file with the ScaledSpace mesh.")]
             public NumericParser<Boolean> exportMesh
             {
-                get { return celestialBody.Get("exportMesh", true); }
-                set { celestialBody.Set("exportMesh", value.value); }
+                get { return Value.Get("exportMesh", true); }
+                set { Value.Set("exportMesh", value.Value); }
             }
 
             // If this is set to true, Kopernicus will update the ScaledSpace mesh, even if the original conditions aren't matched
@@ -54,8 +54,8 @@ namespace Kopernicus
             [KittopiaDescription("Setting this to true will force Kopernicus to update the ScaledSpace mesh.")]
             public NumericParser<Boolean> update
             {
-                get { return celestialBody.Get("update", false); }
-                set { celestialBody.Set("update", value.value); }
+                get { return Value.Get("update", false); }
+                set { Value.Set("update", value.Value); }
             }
 
             // If this is set to true, a wireframe will appear to visualize the SOI
@@ -63,8 +63,15 @@ namespace Kopernicus
             [KittopiaHideOption]
             public NumericParser<Boolean> showSOI
             {
-                get { return celestialBody.Get("showSOI", false); }
-                set { celestialBody.Set("showSOI", value.value); }
+                get { return Value.Get("showSOI", false); }
+                set
+                {
+                    Value.Set("showSOI", value.Value);
+                    if (value)
+                    {
+                        Value.gameObject.AddComponent<Wiresphere>();
+                    }
+                }
             }
 
             /// <summary>
@@ -74,14 +81,14 @@ namespace Kopernicus
             [KittopiaDescription("Visualizes the SOI of the planet.")]
             public void ShowSOI()
             {
-                celestialBody.Set("showSOI", !celestialBody.Get("showSOI", false));
-                if (celestialBody.Get("showSOI", false))
+                Value.Set("showSOI", !Value.Get("showSOI", false));
+                if (Value.Get("showSOI", false))
                 {
-                    celestialBody.gameObject.AddComponent<Wiresphere>();
+                    Value.gameObject.AddComponent<Wiresphere>();
                 }
                 else
                 {
-                    UnityEngine.Object.Destroy(celestialBody.GetComponent<Wiresphere>());
+                    UnityEngine.Object.Destroy(Value.GetComponent<Wiresphere>());
                 }
             }
 
@@ -109,7 +116,7 @@ namespace Kopernicus
                 }
 
                 // Store values
-                celestialBody = generatedBody.celestialBody;
+                Value = generatedBody.celestialBody;
             }
 
             /// <summary>
@@ -125,7 +132,7 @@ namespace Kopernicus
                 }
 
                 // Store values
-                celestialBody = body;
+                Value = body;
             }
         }
     }

@@ -56,6 +56,7 @@
     <Compile Include="Events.cs" />
     <Compile Include="ILoadOnDemand.cs" />
     <Compile Include="MapSODemand.cs" />
+    <Compile Include="NativeDoubleArray.cs" />
     <Compile Include="OnDemandStorage.cs" />
     <Compile Include="PQSMod_OnDemandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
