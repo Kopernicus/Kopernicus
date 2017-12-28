@@ -302,7 +302,7 @@ namespace Kopernicus
             public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
             {
                 Texture2D map = null;
-                path = Directory.GetCurrentDirectory() + "/GameData/" + path;
+                path = KSPUtil.ApplicationRootPath + "GameData/" + path;
                 if (File.Exists(path))
                 {
                     Boolean uncaught = true;
@@ -452,7 +452,7 @@ namespace Kopernicus
             // Checks if a Texture exists
             public static Boolean TextureExists(String path)
             {
-                path = Directory.GetCurrentDirectory() + "/GameData/" + path;
+                path = KSPUtil.ApplicationRootPath + "GameData/" + path;
                 return File.Exists(path);
             }
         }

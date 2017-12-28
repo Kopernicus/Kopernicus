@@ -289,13 +289,7 @@ namespace Kopernicus
                     || template == null || debug.update))
                 {
 
-                    Utility.UpdateScaledMesh(generatedBody.scaledVersion,
-                                                generatedBody.pqsVersion,
-                                                generatedBody.celestialBody,
-                                                ScaledSpaceCacheDirectory,
-                                                cacheFile,
-                                                debug.exportMesh,
-                                                scaledVersion.sphericalModel);
+                    scaledVersion.RebuildScaledSpace();
                     Events.OnBodyGenerateScaledSpace.Fire(this, node);
                 }
             }
@@ -339,15 +333,17 @@ namespace Kopernicus
                 
                 // Create the accessors
                 properties = new PropertiesLoader(celestialBody);
-                scaledVersion = new ScaledVersionLoader(celestialBody);
                 if (celestialBody.orbitDriver != null)
                 {
                     orbit = new OrbitLoader(celestialBody);
                 }
+                scaledVersion = new ScaledVersionLoader(celestialBody);
                 if (celestialBody.atmosphere)
                 {
                     atmosphere = new AtmosphereLoader(celestialBody);
                 }
+                pqs = new PQSLoader(celestialBody);
+                ocean = new OceanLoader(celestialBody);
                 rings = new List<RingLoader>();
                 foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
                 {

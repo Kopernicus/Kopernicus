@@ -349,6 +349,8 @@ namespace Kopernicus
                         mods.Add(loader);
                     }
                 }
+
+                fog = new FogLoader(body);
             }
 
             // Apply Event

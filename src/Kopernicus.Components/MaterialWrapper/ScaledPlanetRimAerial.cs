@@ -182,7 +182,12 @@ namespace Kopernicus
             public Texture2D rimColorRamp
             {
                 get { return GetTexture (Properties.Instance.rimColorRampID) as Texture2D; }
-                set { SetTexture (Properties.Instance.rimColorRampID, value); }
+                set
+                {
+                    value.wrapMode = TextureWrapMode.Clamp;
+                    value.mipMapBias = 0.0f;
+                    SetTexture(Properties.Instance.rimColorRampID, value);
+                }
             }
 
             public Vector2 rimColorRampScale

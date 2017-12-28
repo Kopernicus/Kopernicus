@@ -132,13 +132,13 @@ namespace Kopernicus
                 {
                     if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
                         return PQSMaterialType.AtmosphericOptimized;
-                    else if (PQSMainShader.UsesSameShader(surfaceMaterial))
+                    if (PQSMainShader.UsesSameShader(surfaceMaterial))
                         return PQSMaterialType.AtmosphericMain;
-                    else if (PQSProjectionAerialQuadRelative.UsesSameShader(surfaceMaterial))
+                    if (PQSProjectionAerialQuadRelative.UsesSameShader(surfaceMaterial))
                         return PQSMaterialType.AtmosphericBasic;
-                    else if (PQSProjectionSurfaceQuad.UsesSameShader(surfaceMaterial))
+                    if (PQSProjectionSurfaceQuad.UsesSameShader(surfaceMaterial))
                         return PQSMaterialType.Vacuum;
-                    else if (PQSMainExtras.UsesSameShader(surfaceMaterial))
+                    if (PQSMainExtras.UsesSameShader(surfaceMaterial))
                         return PQSMaterialType.AtmosphericExtra;
                     return PQSMaterialType.Vacuum;
                 }
@@ -231,7 +231,6 @@ namespace Kopernicus
                 }
                 else
                 {
-
                     // Create a new PQS
                     GameObject controllerRoot = new GameObject();
                     controllerRoot.transform.parent = generatedBody.celestialBody.transform;
