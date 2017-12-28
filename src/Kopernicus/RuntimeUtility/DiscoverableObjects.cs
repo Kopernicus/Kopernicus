@@ -100,7 +100,7 @@ namespace Kopernicus
                 {
                     if (Random.Range(0, 100) < asteroid.probability)
                     {
-                        uint seed = (uint)Random.Range(0, Int32.MaxValue);
+                        UInt32 seed = (UInt32)Random.Range(0, Int32.MaxValue);
                         Random.InitState((Int32)seed);
                         SpawnAsteroid(asteroid, seed);
                     }
@@ -113,7 +113,7 @@ namespace Kopernicus
         }
 
         // Spawn the actual asteroid
-        public void SpawnAsteroid(Asteroid asteroid, uint seed)
+        public void SpawnAsteroid(Asteroid asteroid, UInt32 seed)
         {
             // Create Default Orbit
             Orbit orbit = null;
@@ -253,7 +253,7 @@ namespace Kopernicus
             // Get nodes that should get removed
             if (original.HasValue("removeNodes"))
             {
-                String[] names = original.GetValue("removeNodes").Split(new char[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                String[] names = original.GetValue("removeNodes").Split(new Char[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String name in names)
                     original.RemoveNodes(name);
             }

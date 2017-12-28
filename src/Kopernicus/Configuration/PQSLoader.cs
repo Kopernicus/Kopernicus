@@ -27,7 +27,6 @@ using Kopernicus.MaterialWrapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;

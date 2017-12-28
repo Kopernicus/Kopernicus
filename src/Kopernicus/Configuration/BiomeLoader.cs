@@ -24,9 +24,7 @@
  */
 
 using System;
-using System.ComponentModel;
 using Kopernicus.UI;
-using KSP.Localization;
 
 namespace Kopernicus
 {

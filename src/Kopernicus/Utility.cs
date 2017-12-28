@@ -31,6 +31,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Kopernicus.OnDemand;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Kopernicus
 {
@@ -159,7 +160,7 @@ namespace Kopernicus
         }
 
         // Dump an object by reflection
-        public static void DumpObjectFields(object o, String title = "---------")
+        public static void DumpObjectFields(Object o, String title = "---------")
         {
             // Dump the raw PQS of Dres (by reflection)
             Logger.Active.Log("---------" + title + "------------");
@@ -173,7 +174,7 @@ namespace Kopernicus
             Logger.Active.Log("--------------------------------------");
         }
 
-        public static void DumpObjectProperties(object o, String title = "---------")
+        public static void DumpObjectProperties(Object o, String title = "---------")
         {
             // Iterate through all of the properties
             Logger.Active.Log("--------- " + title + " ------------");
@@ -1072,7 +1073,7 @@ namespace Kopernicus
         // Runs a function recursively
         public static void DoRecursive<T>(T start, Func<T, IEnumerable<T>> selector, Action<T> action)
         {
-            DoRecursive<T, object>(start, selector, tout => false, tin => { action(tin); return null; });
+            DoRecursive<T, Object>(start, selector, tout => false, tin => { action(tin); return null; });
         }
     }
 }

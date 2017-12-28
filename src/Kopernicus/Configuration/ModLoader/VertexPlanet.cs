@@ -25,11 +25,12 @@
 
 using LibNoise;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Kopernicus.Components;
+using Kopernicus.Configuration.NoiseLoader;
 using Kopernicus.UI;
 using UnityEngine;
+using RidgedMultifractal = LibNoise.RidgedMultifractal;
 
 namespace Kopernicus
 {
@@ -127,90 +128,11 @@ namespace Kopernicus
                 }
 
                 // Loader for Noise
-                // TODO(TMSP): Implement the generic IModule loader from KopernicusExpansion here
                 [RequireConfigType(ConfigType.Node)]
-                public class NoiseModLoader : IParserEventSubscriber, ITypeParser<PQSMod_VertexPlanet.NoiseModWrapper>
+                public class NoiseModLoader : ITypeParser<PQSMod_VertexPlanet.NoiseModWrapper>
                 {
                     // The loaded noise
                     public PQSMod_VertexPlanet.NoiseModWrapper Value { get; set; }
-
-                    // Parser for RiggedMultifractal (Yes, you can use any ModuleBase, but I don't want to code them all...)
-                    [RequireConfigType(ConfigType.Node)]
-                    public class RiggedParser : ITypeParser<RidgedMultifractal>
-                    {
-                        // Noise
-                        public RidgedMultifractal Value { get; set; }
-
-                        // frequency
-                        [ParserTarget("frequency")]
-                        public NumericParser<Double> frequency
-                        {
-                            get { return Value.Frequency; }
-                            set { Value.Frequency = value; }
-                        }
-
-                        // lacunarity
-                        [ParserTarget("lacunarity")]
-                        public NumericParser<Double> lacunarity
-                        {
-                            get { return Value.Lacunarity; }
-                            set { Value.Lacunarity = value; }
-                        }
-
-                        // octaveCount
-                        [ParserTarget("octaveCount")]
-                        public NumericParser<Int32> octaveCount
-                        {
-                            get { return Value.OctaveCount; }
-                            set { Value.OctaveCount = Mathf.Clamp(value, 1, 30); }
-                        }
-
-                        // quality
-                        [ParserTarget("quality")]
-                        public EnumParser<KopernicusNoiseQuality> quality
-                        {
-                            get { return (KopernicusNoiseQuality) (Int32) Value.NoiseQuality; }
-                            set { Value.NoiseQuality = (NoiseQuality) (Int32) value.Value; }
-                        }
-
-                        // seed
-                        [ParserTarget("seed")]
-                        public NumericParser<Int32> seed
-                        {
-                            get { return Value.Seed; }
-                            set { Value.Seed = value; }
-                        }
-
-                        // Default Constructor
-                        [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
-                        public RiggedParser()
-                        {
-                            Value = new RidgedMultifractal();
-                        }
-
-                        // Runtime Constructor
-                        [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
-                        public RiggedParser(RidgedMultifractal rigged)
-                        {
-                            Value = rigged;
-                        }
-
-                        /// <summary>
-                        /// Convert Parser to Value
-                        /// </summary>
-                        public static implicit operator RidgedMultifractal(RiggedParser parser)
-                        {
-                            return parser?.Value;
-                        }
-        
-                        /// <summary>
-                        /// Convert Value to Parser
-                        /// </summary>
-                        public static implicit operator RiggedParser(RidgedMultifractal value)
-                        {
-                            return value != null ? new RiggedParser(value) : null;
-                        }
-                    }
 
                     // deformity
                     [ParserTarget("deformity")]
@@ -255,23 +177,36 @@ namespace Kopernicus
                     // noise
                     [ParserTarget("Noise", allowMerge = true)]
                     [KittopiaHideOption]
-                    public RiggedParser riggedNoise
+                    public INoiseLoader noise
                     {
-                        get { return Value.noise as RidgedMultifractal; }
-                        set { Value.Setup(value.Value); }
-                    }
-
-                    // Apply Event
-                    void IParserEventSubscriber.Apply(ConfigNode node)
-                    {
-                        if (Value.noise is RidgedMultifractal)
-                            riggedNoise = new RiggedParser((RidgedMultifractal)Value.noise);
-                    }
-
-                    // Post Apply Event
-                    void IParserEventSubscriber.PostApply(ConfigNode node)
-                    {
-                        Value.Setup(riggedNoise.Value);
+                        get
+                        {
+                            if (Value.noise != null)
+                            {
+                                Type noiseType = Value.noise.GetType();
+                                foreach (Type loaderType in Parser.ModTypes)
+                                {
+                                    if (loaderType.BaseType == null)
+                                        continue;
+                                    if (loaderType.BaseType.Namespace != "Kopernicus.Configuration.NoiseLoader")
+                                        continue;
+                                    if (!loaderType.BaseType.Name.StartsWith("NoiseLoader"))
+                                        continue;
+                                    if (loaderType.BaseType.GetGenericArguments()[0] != noiseType)
+                                        continue;
+                        
+                                    // We found our loader type
+                                    INoiseLoader loader = (INoiseLoader) Activator.CreateInstance(loaderType);
+                                    loader.Create(Value.noise);
+                                    return loader;
+                                }
+                            }
+                            return null;
+                        }
+                        set
+                        {
+                            Value.Setup(value.Noise);
+                        }
                     }
 
                     // Default constructor

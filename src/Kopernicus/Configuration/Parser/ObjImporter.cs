@@ -74,7 +74,7 @@ public static class ObjImporter
         using (StringReader reader = new StringReader(entireText))
         {
             String currentText = reader.ReadLine();
-            char[] splitIdentifier = { ' ' };
+            Char[] splitIdentifier = { ' ' };
             String[] brokenString;
             while (currentText != null)
             {
@@ -134,8 +134,8 @@ public static class ObjImporter
         {
             String currentText = reader.ReadLine();
 
-            char[] splitIdentifier = { ' ' };
-            char[] splitIdentifier2 = { '/' };
+            Char[] splitIdentifier = { ' ' };
+            Char[] splitIdentifier2 = { '/' };
             String[] brokenString;
             String[] brokenBrokenString;
             Int32 f = 0;

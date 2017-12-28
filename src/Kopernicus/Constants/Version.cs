@@ -68,7 +68,7 @@ namespace Kopernicus
                 String filePath = Assembly.GetCallingAssembly().Location;
                 const Int32 c_PeHeaderOffset = 60;
                 const Int32 c_LinkerTimestampOffset = 8;
-                byte[] b = new byte[2048];
+                Byte[] b = new Byte[2048];
                 Stream s = null;
 
                 try

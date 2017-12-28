@@ -23,7 +23,6 @@
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
 using Kopernicus.Configuration;
 using KSP.UI.Screens;
 using System;
@@ -130,7 +129,7 @@ namespace Kopernicus
             //  RDVisibility = HIDDEN  //  RDVisibility = SKIP  //
 
             // Create a list with body to hide and their parent
-            List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>> hideList = new List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, int>>>();
+            List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>> hideList = new List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>>();
             // Create a list with body to skip and their parent
             List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
@@ -153,7 +152,7 @@ namespace Kopernicus
                         if (hidden.children.Count == 0 || visibility == PropertiesLoader.RDVisibility.HIDDEN)
                         {
                             body.Set("hiddenRnd", PropertiesLoader.RDVisibility.HIDDEN);
-                            hideList.Add(new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, int>(parent, 0)));
+                            hideList.Add(new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, Int32>(parent, 0)));
                         }
                         // Skip
                         else
@@ -205,7 +204,7 @@ namespace Kopernicus
                 parent.children.Remove(hidden);
 
                 // Save the position in the hideList
-                hideList[i] = new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, int>(parent, index));
+                hideList[i] = new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, Int32>(parent, index));
             }
 
             // Apply changes and revert to the original PSystem
@@ -292,7 +291,7 @@ namespace Kopernicus
         public static void AddPlanets()
         {
             RDPlanetListItemContainer[] planetItems = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
-            for (int i = 0; i < planetItems.Length; i++)
+            for (Int32 i = 0; i < planetItems.Length; i++)
             {
                 DestroyImmediate(planetItems[i]);
             }

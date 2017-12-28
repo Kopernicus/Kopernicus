@@ -27,6 +27,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Object = System.Object;
 
 /*-----------------------------------------*\
 |   SUBSTITUTE YOUR MOD'S NAMESPACE HERE.   |
@@ -145,7 +146,7 @@ namespace Kopernicus
                 {
                     try
                     {
-                        return !(Boolean)m.Invoke(null, new object[0]);
+                        return !(Boolean)m.Invoke(null, new Object[0]);
                     }
                     catch (Exception e)
                     {
@@ -168,7 +169,7 @@ namespace Kopernicus
                 {
                     try
                     {
-                        return !(Boolean)m.Invoke(null, new object[0]);
+                        return !(Boolean)m.Invoke(null, new Object[0]);
                     }
                     catch (Exception e)
                     {

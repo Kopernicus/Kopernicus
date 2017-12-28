@@ -27,6 +27,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Kopernicus
 {
@@ -79,7 +80,7 @@ namespace Kopernicus
         TextWriter loggerStream = null;
 
         // Write text to the log
-        public void Log(object o)
+        public void Log(Object o)
         {
             if (loggerStream == null)
                 return;

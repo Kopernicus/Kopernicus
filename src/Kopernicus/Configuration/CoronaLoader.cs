@@ -25,7 +25,6 @@
 
 using System;
 using System.Linq;
-using Kopernicus.MaterialWrapper;
 using Kopernicus.UI;
 using UnityEngine;
 
