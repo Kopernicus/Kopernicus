@@ -96,10 +96,17 @@ namespace Kopernicus
                     }
 
                     // Runtime constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public SimplexLoader(PQSMod_VertexPlanet.SimplexWrapper simplex)
                     {
-                        Value = (KopernicusSimplexWrapper)simplex;
+                        Value = new KopernicusSimplexWrapper(simplex.deformity, simplex.octaves, simplex.persistance,
+                            simplex.frequency);
+                    }
+                    
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
+                    public SimplexLoader(KopernicusSimplexWrapper simplex)
+                    {
+                        Value = new KopernicusSimplexWrapper(simplex.deformity, simplex.octaves, simplex.persistance,
+                            simplex.frequency);
                     }
 
                     /// <summary>
@@ -115,6 +122,8 @@ namespace Kopernicus
                     /// </summary>
                     public static implicit operator SimplexLoader(KopernicusSimplexWrapper value)
                     {
+                        if (value == null)
+                            return null;
                         return new SimplexLoader(value);
                     }
         
@@ -123,6 +132,8 @@ namespace Kopernicus
                     /// </summary>
                     public static implicit operator SimplexLoader(PQSMod_VertexPlanet.SimplexWrapper value)
                     {
+                        if (value == null)
+                            return null;
                         return new SimplexLoader(value);
                     }
                 }
@@ -228,7 +239,7 @@ namespace Kopernicus
                     /// </summary>
                     public static implicit operator PQSMod_VertexPlanet.NoiseModWrapper(NoiseModLoader parser)
                     {
-                        return parser?.Value;
+                        return parser.Value;
                     }
         
                     /// <summary>
@@ -236,7 +247,7 @@ namespace Kopernicus
                     /// </summary>
                     public static implicit operator NoiseModLoader(PQSMod_VertexPlanet.NoiseModWrapper value)
                     {
-                        return value != null ? new NoiseModLoader(value) : null;
+                        return new NoiseModLoader(value);
                     }
                 }
 
@@ -557,9 +568,17 @@ namespace Kopernicus
                     {
                         continental = new SimplexLoader();
                     }
+                    else if (mod.continental.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+                    {
+                        continental = new SimplexLoader(mod.continental);
+                    }
                     if (continentalRuggedness == null)
                     {
                         continentalRuggedness = new SimplexLoader();
+                    }
+                    else if (mod.continentalRuggedness.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+                    {
+                        continental = new SimplexLoader(mod.continentalRuggedness);
                     }
                     if (continentalSharpness == null)
                     {
@@ -569,9 +588,17 @@ namespace Kopernicus
                     {
                         continentalSharpnessMap = new SimplexLoader();
                     }
+                    else if (mod.continentalSharpnessMap.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+                    {
+                        continental = new SimplexLoader(mod.continentalSharpnessMap);
+                    }
                     if (terrainType == null)
                     {
                         terrainType = new SimplexLoader();
+                    }
+                    else if (mod.terrainType.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+                    {
+                        continental = new SimplexLoader(mod.terrainType);
                     }
                     
                     // Create the callback list

@@ -257,6 +257,10 @@ namespace Kopernicus
                     generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
                     generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
                 }
+                
+                // Create accessors
+                debug = new DebugLoader();
+                scaledVersion = new ScaledVersionLoader();
 
                 // Event
                 Events.OnBodyApply.Fire(this, node);
@@ -318,8 +322,6 @@ namespace Kopernicus
             /// </summary>
             public Body()
             {
-                debug = new DebugLoader();
-                scaledVersion = new ScaledVersionLoader();
                 rings = new List<RingLoader>();
                 particles = new List<ParticleLoader>();
             }

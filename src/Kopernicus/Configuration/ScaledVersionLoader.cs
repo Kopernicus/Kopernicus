@@ -289,8 +289,8 @@ namespace Kopernicus
                 }
 
                 // Get the scaled version object
-                Value.scaledBody = generatedBody.scaledVersion;
                 Value = generatedBody.celestialBody;
+                Value.scaledBody = generatedBody.scaledVersion;
                 type = new EnumParser<BodyType>(Loader.currentBody.template == null
                     ? BodyType.Atmospheric
                     : Loader.currentBody.template.type);
