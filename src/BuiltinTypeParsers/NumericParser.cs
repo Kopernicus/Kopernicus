@@ -35,29 +35,54 @@ namespace Kopernicus
     /// Simple parser for numerics
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class NumericParser<T> : IParsable
+    public class NumericParser<T> : IParsable, ITypeParser<T>
     {
-        public T value;
-        public MethodInfo parserMethod;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public T Value { get; set; }
+        
+        /// <summary>
+        /// The method that is used to parse the string
+        /// </summary>
+        private readonly MethodInfo _parserMethod;
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = (T)parserMethod.Invoke(null, new Object[] { s });
+            Value = (T)_parserMethod.Invoke(null, new Object[] { s });
         }
+        
+        /// <summary>
+        /// Create a new NumericParser
+        /// </summary>
         public NumericParser()
         {
             // Get the parse method for this object
-            parserMethod = (typeof(T)).GetMethod("Parse", new [] { typeof(String) });
+            _parserMethod = typeof(T).GetMethod("Parse", new [] { typeof(String) });
         }
+        
+        /// <summary>
+        /// Create a new NumericParser from an already existing value
+        /// </summary>
         public NumericParser(T i) : this()
         {
-            value = i;
+            Value = i;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator T(NumericParser<T> parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator NumericParser<T>(T value)
         {
             return new NumericParser<T>(value);

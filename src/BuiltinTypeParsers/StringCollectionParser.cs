@@ -36,33 +36,50 @@ namespace Kopernicus
     /// Simple parser for String arrays
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class StringCollectionParser : IParsable
+    public class StringCollectionParser : IParsable, ITypeParser<List<String>>
     {
-        public IList<String> value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public List<String> Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
             // Need a new list
-            value = new List<String>(s.Split(',').Select(a => a.Trim()));
+            Value = new List<String>(s.Split(',').Select(a => a.Trim()));
         }
+        
+        /// <summary>
+        /// Create a new StringCollectionParser
+        /// </summary>
         public StringCollectionParser()
         {
-            value = new List<String>();
+            
         }
-        public StringCollectionParser(String[] i)
+        
+        /// <summary>
+        /// Create a new StringCollectionParser from already existing values
+        /// </summary>
+        public StringCollectionParser(List<String> i)
         {
-            value = new List<String>(i);
-        }
-        public StringCollectionParser(IList<String> i)
-        {
-            value = i;
+            Value = i;
         }
 
-        // Convert
-        public static implicit operator String[] (StringCollectionParser parser)
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
+        public static implicit operator List<String>(StringCollectionParser parser)
         {
-            return parser.value.ToArray();
+            return parser.Value;
         }
-        public static implicit operator StringCollectionParser(String[] value)
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
+        public static implicit operator StringCollectionParser(List<String> value)
         {
             return new StringCollectionParser(value);
         }

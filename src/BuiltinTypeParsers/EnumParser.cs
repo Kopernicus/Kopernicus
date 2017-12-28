@@ -34,27 +34,48 @@ namespace Kopernicus
     /// Parser for enum
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class EnumParser<T> : IParsable where T : struct, IConvertible
+    public class EnumParser<T> : IParsable, ITypeParser<T> where T : struct, IConvertible
     {
-        public T value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public T Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = (T)(Object)ConfigNode.ParseEnum(typeof(T), s);
+            Value = (T)(Object)ConfigNode.ParseEnum(typeof(T), s);
         }
+        
+        /// <summary>
+        /// Create a new EnumParser
+        /// </summary>
         public EnumParser()
         {
 
         }
+        
+        /// <summary>
+        /// Create a new EnumParser from an already existing value
+        /// </summary>
         public EnumParser(T i)
         {
-            value = i;
+            Value = i;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator T(EnumParser<T> parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator EnumParser<T>(T value)
         {
             return new EnumParser<T>(value);

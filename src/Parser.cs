@@ -720,6 +720,7 @@ namespace Kopernicus
             if (!states.ContainsKey(name))
             {
                 states.Add(name, () => accessor());
+                return;
             }
             throw new InvalidOperationException();
         }
@@ -732,6 +733,7 @@ namespace Kopernicus
             if (states.ContainsKey(name))
             {
                 states.Remove(name);
+                return;
             }
             throw new IndexOutOfRangeException();
         }

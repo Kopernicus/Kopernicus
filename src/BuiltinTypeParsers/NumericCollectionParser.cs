@@ -36,37 +36,62 @@ namespace Kopernicus
     /// Simple parser for numeric collections 
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class NumericCollectionParser<T> : IParsable
+    public class NumericCollectionParser<T> : IParsable, ITypeParser<List<T>>
     {
-        public List<T> value;
-        public MethodInfo parserMethod;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public List<T> Value { get; set; }
+        
+        /// <summary>
+        /// The method that is used to parse the string
+        /// </summary>
+        private readonly MethodInfo _parserMethod;
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
             // Need a new list
-            value = new List<T>();
+            Value = new List<T>();
 
             // Get the tokens of this String
             foreach (String e in s.Split(' '))
             {
-                value.Add((T)parserMethod.Invoke(null, new Object[] { e }));
+                Value.Add((T)_parserMethod.Invoke(null, new Object[] { e }));
             }
         }
+        
+        /// <summary>
+        /// Create a new NumericCollectionParser
+        /// </summary>
         public NumericCollectionParser()
         {
             // Get the parse method for this object
-            parserMethod = typeof(T).GetMethod("Parse", new [] { typeof(String) });
+            _parserMethod = typeof(T).GetMethod("Parse", new [] { typeof(String) });
         }
-        public NumericCollectionParser(IEnumerable<T> i) : this()
+        
+        /// <summary>
+        /// Create a new NumericCollectionParser from already existing values
+        /// </summary>
+        public NumericCollectionParser(List<T> i) : this()
         {
-            value = new List<T>(i);
+            Value = i;
         }
 
-        // Convert
-        public static implicit operator T[] (NumericCollectionParser<T> parser)
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
+        public static implicit operator List<T>(NumericCollectionParser<T> parser)
         {
-            return parser.value.ToArray();
+            return parser.Value;
         }
-        public static implicit operator NumericCollectionParser<T>(T[] value)
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
+        public static implicit operator NumericCollectionParser<T>(List<T> value)
         {
             return new NumericCollectionParser<T>(value);
         }

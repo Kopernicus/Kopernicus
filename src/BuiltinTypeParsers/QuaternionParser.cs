@@ -35,27 +35,48 @@ namespace Kopernicus
     /// Parser for quaternion
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class QuaternionParser : IParsable
+    public class QuaternionParser : IParsable, ITypeParser<Quaternion>
     {
-        public Quaternion value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public Quaternion Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = ConfigNode.ParseQuaternion(s);
+            Value = ConfigNode.ParseQuaternion(s);
         }
+        
+        /// <summary>
+        /// Create a new QuaternionParser
+        /// </summary>
         public QuaternionParser()
         {
 
         }
+        
+        /// <summary>
+        /// Create a new QuaternionParser from an already existing value
+        /// </summary>
         public QuaternionParser(Quaternion value)
         {
-            this.value = value;
+            Value = value;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator Quaternion(QuaternionParser parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator QuaternionParser(Quaternion value)
         {
             return new QuaternionParser(value);
@@ -66,27 +87,48 @@ namespace Kopernicus
     /// Parser for dual quaternion
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class QuaternionDParser : IParsable
+    public class QuaternionDParser : IParsable, ITypeParser<QuaternionD>
     {
-        public QuaternionD value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public QuaternionD Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = ConfigNode.ParseQuaternion(s);
+            Value = ConfigNode.ParseQuaternionD(s);
         }
+        
+        /// <summary>
+        /// Create a new QuaternionDParser
+        /// </summary>
         public QuaternionDParser()
         {
 
         }
+        
+        /// <summary>
+        /// Create a new QuaternionDParser from an already existing value
+        /// </summary>
         public QuaternionDParser(QuaternionD value)
         {
-            this.value = value;
+            Value = value;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator QuaternionD(QuaternionDParser parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator QuaternionDParser(QuaternionD value)
         {
             return new QuaternionDParser(value);

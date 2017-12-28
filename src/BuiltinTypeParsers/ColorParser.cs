@@ -36,9 +36,16 @@ namespace Kopernicus
     /// Parser for color
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class ColorParser : IParsable
+    public class ColorParser : IParsable, ITypeParser<Color>
     {
-        public Color value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public Color Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String str)
         {
             if (str.StartsWith("RGBA("))
@@ -48,7 +55,7 @@ namespace Kopernicus
                 str = str.Replace(" ", "");
                 String[] colorArray = str.Split(',');
 
-                value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, Single.Parse(colorArray[3]) / 255);
+                Value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, Single.Parse(colorArray[3]) / 255);
             }
             else if (str.StartsWith("RGB("))
             {
@@ -57,7 +64,7 @@ namespace Kopernicus
                 str = str.Replace(" ", "");
                 String[] colorArray = str.Split(',');
 
-                value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, 1);
+                Value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, 1);
             }
             else if (str.StartsWith("HSBA("))
             {
@@ -72,7 +79,7 @@ namespace Kopernicus
                 Single b = Single.Parse(colorArray[2]) / 255f;
 
                 // RGB
-                value = new Color(b, b, b, Single.Parse(colorArray[3]) / 255f);
+                Color value = new Color(b, b, b, Single.Parse(colorArray[3]) / 255f);
                 if (s != 0)
                 {
                     Single max = b;
@@ -124,35 +131,50 @@ namespace Kopernicus
                         value.b = 0;
                     }
                 }
+                Value = value;
             }
             else if (str.StartsWith("XKCD."))
             {
                 PropertyInfo color = typeof(XKCDColors).GetProperty(str.Replace("XKCD.", ""), BindingFlags.Static | BindingFlags.Public);
-                value = (Color)color.GetValue(null, null);
+                Value = (Color)color.GetValue(null, null);
             }
             else if (str.StartsWith("#"))
             {
-                value = XKCDColors.ColorTranslator.FromHtml(str);
+                Value = XKCDColors.ColorTranslator.FromHtml(str);
             }
             else
             {
-                value = ConfigNode.ParseColor(str);
+                Value = ConfigNode.ParseColor(str);
             }
         }
+        
+        /// <summary>
+        /// Create a new ColorParser
+        /// </summary>
         public ColorParser()
         {
-            value = Color.white;
+            Value = Color.white;
         }
+        
+        /// <summary>
+        /// Create a new ColorParser from an already existing Color
+        /// </summary>
         public ColorParser(Color i)
         {
-            value = i;
+            Value = i;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator Color(ColorParser parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator ColorParser(Color value)
         {
             return new ColorParser(value);

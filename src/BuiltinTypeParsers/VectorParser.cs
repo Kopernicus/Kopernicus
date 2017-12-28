@@ -35,27 +35,48 @@ namespace Kopernicus
     /// Parser for vec2 
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class Vector2Parser : IParsable
+    public class Vector2Parser : IParsable, ITypeParser<Vector2>
     {
-        public Vector2 value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public Vector2 Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = ConfigNode.ParseVector2(s);
+            Value = ConfigNode.ParseVector2(s);
         }
+        
+        /// <summary>
+        /// Create a new Vector2Parser
+        /// </summary>
         public Vector2Parser()
         {
 
         }
+        
+        /// <summary>
+        /// Create a new Vector2Parser from an already existing value
+        /// </summary>
         public Vector2Parser(Vector2 value)
         {
-            this.value = value;
+            Value = value;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator Vector2(Vector2Parser parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator Vector2Parser(Vector2 value)
         {
             return new Vector2Parser(value);
@@ -66,27 +87,48 @@ namespace Kopernicus
     /// Parser for vec3
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class Vector3Parser : IParsable
+    public class Vector3Parser : IParsable, ITypeParser<Vector3>
     {
-        public Vector3 value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public Vector3 Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = ConfigNode.ParseVector3(s);
+            Value = ConfigNode.ParseVector3(s);
         }
+        
+        /// <summary>
+        /// Create a new Vector3Parser
+        /// </summary>
         public Vector3Parser()
         {
 
         }
+        
+        /// <summary>
+        /// Create a new Vector3Parser from an already existing value
+        /// </summary>
         public Vector3Parser(Vector3 value)
         {
-            this.value = value;
+            Value = value;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator Vector3(Vector3Parser parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator Vector3Parser(Vector3 value)
         {
             return new Vector3Parser(value);
@@ -97,27 +139,48 @@ namespace Kopernicus
     /// Parser for vec3d
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class Vector3DParser : IParsable
+    public class Vector3DParser : IParsable, ITypeParser<Vector3d>
     {
-        public Vector3d value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public Vector3d Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = ConfigNode.ParseVector3D(s);
+            Value = ConfigNode.ParseVector3D(s);
         }
+        
+        /// <summary>
+        /// Create a new Vector3DParser
+        /// </summary>
         public Vector3DParser()
         {
 
         }
+        
+        /// <summary>
+        /// Create a new Vector3DParser from an already existing value
+        /// </summary>
         public Vector3DParser(Vector3d value)
         {
-            this.value = value;
+            Value = value;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator Vector3d(Vector3DParser parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator Vector3DParser(Vector3d value)
         {
             return new Vector3DParser(value);
@@ -128,27 +191,48 @@ namespace Kopernicus
     /// Parser for vec4
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
-    public class Vector4Parser : IParsable
+    public class Vector4Parser : IParsable, ITypeParser<Vector4>
     {
-        public Vector4 value;
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public Vector4 Value { get; set; }
+        
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
         public void SetFromString(String s)
         {
-            value = ConfigNode.ParseVector4(s);
+            Value = ConfigNode.ParseVector4(s);
         }
+        
+        /// <summary>
+        /// Create a new Vector4Parser
+        /// </summary>
         public Vector4Parser()
         {
 
         }
+        
+        /// <summary>
+        /// Create a new Vector4Parser from an already existing value
+        /// </summary>
         public Vector4Parser(Vector4 value)
         {
-            this.value = value;
+            Value = value;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator Vector4(Vector4Parser parser)
         {
-            return parser.value;
+            return parser.Value;
         }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator Vector4Parser(Vector4 value)
         {
             return new Vector4Parser(value);

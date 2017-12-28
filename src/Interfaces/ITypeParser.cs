@@ -29,18 +29,10 @@
 namespace Kopernicus
 {
     /// <summary>
-    /// An interface that supports implementing a custom constructor
+    /// Provides basic members for type parsers
     /// </summary>
-    public interface ICreatable
+    public interface ITypeParser<T>
     {
-        void Create();
-    }
-
-    /// <summary>
-    /// An interface that supports implementing a custom constructor
-    /// </summary>
-    public interface ICreatable<T> : ICreatable
-    {
-        void Create(T value);
+        T Value { get; set; }
     }
 }

@@ -26,46 +26,77 @@
  * https://kerbalspaceprogram.com
  */
 
+using UnityEngine;
+
 namespace Kopernicus
 {
     /// <summary>
     /// Parser for a Single curve
     /// </summary>
     [RequireConfigType(ConfigType.Node)]
-    public class FloatCurveParser : IParserEventSubscriber
+    public class FloatCurveParser : IParserEventSubscriber, ITypeParser<FloatCurve>
     {
-        public FloatCurve curve { get; set; }
-
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public FloatCurve Value { get; set; }
+        
         // Build the curve from the data found in the node
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            curve = new FloatCurve();
-            curve.Load(node);
+            Value = new FloatCurve();
+            Value.Load(node);
         }
 
         // We don't use this
         void IParserEventSubscriber.PostApply(ConfigNode node) { }
-
-        // Default constructor
+        
+        /// <summary>
+        /// Create a new FloatCurveParser
+        /// </summary>
         public FloatCurveParser()
         {
-            curve = null;
+            Value = null;
         }
-
-        // Default constructor
+        
+        /// <summary>
+        /// Create a new FloatCurveParser from an already existing value
+        /// </summary>
         public FloatCurveParser(FloatCurve curve)
         {
-            this.curve = curve;
+            Value = curve;
         }
 
-        // Convert
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
         public static implicit operator FloatCurve(FloatCurveParser parser)
         {
-            return parser.curve;
+            return parser.Value;
         }
+
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
+        public static implicit operator AnimationCurve(FloatCurveParser parser)
+        {
+            return parser.Value.Curve;
+        }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
         public static implicit operator FloatCurveParser(FloatCurve value)
         {
             return new FloatCurveParser(value);
+        }
+        
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
+        public static implicit operator FloatCurveParser(AnimationCurve value)
+        {
+            return new FloatCurveParser(new FloatCurve(value?.keys ?? new Keyframe[0]));
         }
     }
 }
