@@ -242,7 +242,7 @@ namespace Kopernicus
                 if (type.Value == BodyType.Star)
                 {
                     // Restore backed up coronas if no custom ones were specified
-                    if (coronas.Count == 0)
+                    if (!coronas.Any())
                     {
                         foreach (SunCoronas corona in Utility.Deactivator.GetComponentsInChildren<SunCoronas>(true))
                         {
@@ -294,8 +294,6 @@ namespace Kopernicus
                 type = new EnumParser<BodyType>(Loader.currentBody.template == null
                     ? BodyType.Atmospheric
                     : Loader.currentBody.template.type);
-                coronas = Value.scaledBody.GetComponentsInChildren<SunCoronas>(true).Select(c => new CoronaLoader(c))
-                    .ToList();
 
                 // Ensure scaled version at least has a mesh filter and mesh renderer
                 if (Value.scaledBody.GetComponent<MeshFilter>() == null)
