@@ -101,12 +101,12 @@ namespace Kopernicus
                         Value = new KopernicusSimplexWrapper(simplex.deformity, simplex.octaves, simplex.persistance,
                             simplex.frequency);
                     }
-                    
+
+                    // Runtime constructor
                     [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public SimplexLoader(KopernicusSimplexWrapper simplex)
                     {
-                        Value = new KopernicusSimplexWrapper(simplex.deformity, simplex.octaves, simplex.persistance,
-                            simplex.frequency);
+                        Value = simplex;
                     }
 
                     /// <summary>
