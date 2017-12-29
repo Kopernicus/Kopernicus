@@ -142,6 +142,9 @@ namespace Kopernicus
 
             private bool IsInView(Camera cam, CelestialBody body)
             {
+                if (body == null)
+                    return false;
+                
                 Vector3 pointOnScreen =
                     cam.WorldToScreenPoint(body.scaledBody.GetComponentInChildren<Renderer>().bounds.center);
 
