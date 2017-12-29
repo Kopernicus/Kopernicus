@@ -192,6 +192,12 @@ namespace Kopernicus
                     }
                 }
 
+                // Get settings data
+                ParserOptions.Data data = ParserOptions.options[configName];
+
+                // Log
+                data.logCallback("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")"); 
+
                 // If there was no data found for this node
                 if (!isNode && !isValue)
                 {
@@ -362,17 +368,17 @@ namespace Kopernicus
                                                 if (patched.Contains(obj))
                                                     continue;
                                                 IPatchable patchable = (IPatchable) obj;
-                                                PatchData data = CreateObjectFromConfigNode<PatchData>(subnode);
-                                                if (data.name == patchable.name)
+                                                PatchData patchData = CreateObjectFromConfigNode<PatchData>(subnode);
+                                                if (patchData.name == patchable.name)
                                                 {
                                                     // Name matches, check for an index
-                                                    if (data.index == collection.IndexOf(obj))
+                                                    if (patchData.index == collection.IndexOf(obj))
                                                     {
                                                         // Both values match
                                                         current = obj;
                                                         break;
                                                     }
-                                                    if (data.index > -1)
+                                                    if (patchData.index > -1)
                                                     {
                                                         // Index doesn't match, continue
                                                         continue;
@@ -383,7 +389,7 @@ namespace Kopernicus
                                                     break;
 
                                                 }
-                                                if (data.name != null)
+                                                if (patchData.name != null)
                                                 {
                                                     // The name doesn't match, continue the search
                                                     continue;

@@ -33,7 +33,7 @@ namespace Kopernicus
     /// <summary>
     /// Attribute indicating the type of config node data this can load from - node or value
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
     public class RequireConfigType : Attribute
     {
         /// <summary>
