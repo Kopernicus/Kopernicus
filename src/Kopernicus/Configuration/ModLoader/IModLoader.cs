@@ -32,6 +32,7 @@ namespace Kopernicus
             /// <summary>
             /// An interface that allows us to group ModLoaders without falling back to System.Object
             /// </summary>
+            [RequireConfigType(ConfigType.Node)]
             public interface IModLoader
             {
                 void Create(PQS pqsVersion);

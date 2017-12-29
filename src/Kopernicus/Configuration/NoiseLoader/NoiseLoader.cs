@@ -25,6 +25,7 @@
 
 using LibNoise;
 using System;
+using UnityEngine;
 
 namespace Kopernicus
 {

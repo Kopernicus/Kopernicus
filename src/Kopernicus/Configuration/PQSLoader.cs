@@ -302,6 +302,7 @@ namespace Kopernicus
                 generatedBody.pqsVersion.transform.name = generatedBody.name;
                 generatedBody.pqsVersion.gameObject.name = generatedBody.name;
                 generatedBody.pqsVersion.radius = generatedBody.celestialBody.Radius;
+                generatedBody.celestialBody.pqsController = generatedBody.pqsVersion;
 
                 // Add an OnDemand Handler
                 if (Value.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)

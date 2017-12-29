@@ -222,6 +222,7 @@ namespace Kopernicus
                         generatedBody.pqsVersion.transform.name = name;
                         foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
                             p.name = p.name.Replace(template.body.celestialBody.bodyName, name);
+                        generatedBody.celestialBody.pqsController = generatedBody.pqsVersion;
                     }
 
                     // If we've changed the name, reset use_The_InName

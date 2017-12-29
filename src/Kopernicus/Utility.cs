@@ -394,6 +394,10 @@ namespace Kopernicus
 
             // Generate a duplicate of the Jool mesh
             Mesh mesh = DuplicateMesh(Templates.ReferenceGeosphere);
+            
+            Logger.Active.Log(body);
+            Logger.Active.Log(pqs);
+            Logger.Active.Log(body.pqsController);
 
             // If this body has a PQS, we can create a more detailed object
             if (pqs != null)
@@ -430,19 +434,20 @@ namespace Kopernicus
 
                 // Find the PQS mods and enable the PQS-sphere
                 PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.modEnabled && m.sphere == pqsVersion).OrderBy(m => m.order).ToArray();
+                    .Where(m => m.modEnabled && m.transform.parent == pqsVersion.transform).OrderBy(m => m.order).ToArray();
                 foreach (PQSMod flatten in mods.Where(m => m is PQSMod_FlattenArea))
                 {
                     flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                         .First(f => f.FieldType == typeof(Boolean)).SetValue(flatten, true);
                 }
+                Logger.Active.Log(mods.Length);
 
                 // Do the same for the ocean
                 PQSMod[] oceanMods = new PQSMod[0];
                 if (pqsOcean != null)
                 {
                     oceanMods = pqsOcean.GetComponentsInChildren<PQSMod>(true)
-                        .Where(m => m.modEnabled && m.sphere == pqsOcean).OrderBy(m => m.order).ToArray();
+                        .Where(m => m.modEnabled && m.transform.parent == pqsOcean.transform).OrderBy(m => m.order).ToArray();
                     foreach (PQSMod flatten in oceanMods.Where(m => m is PQSMod_FlattenArea))
                     {
                         flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)

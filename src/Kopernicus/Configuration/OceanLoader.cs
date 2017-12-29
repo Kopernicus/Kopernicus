@@ -209,6 +209,7 @@ namespace Kopernicus
                 }
 
                 // Assing the new PQS
+                body = generatedBody.celestialBody;
                 Value.name = generatedBody.name + "Ocean";
                 Value.transform.name = generatedBody.name + "Ocean";
                 Value.gameObject.name = generatedBody.name + "Ocean";
@@ -316,6 +317,7 @@ namespace Kopernicus
                 }
 
                 // Assing the new PQS
+                this.body = body;
                 Value.name = body.transform.name + "Ocean";
                 Value.transform.name = body.transform.name + "Ocean";
                 Value.gameObject.name = body.transform.name + "Ocean";

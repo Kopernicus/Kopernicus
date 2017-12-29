@@ -157,11 +157,14 @@ namespace Kopernicus
                     {
                         generatedBody.orbitRenderer.SetColor(value);
                     }
-                    KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
-                    data.nodeColor = value;
-                    data.orbitColor = (value.Value * 0.5f).A(data.nodeColor.a);
-                    PSystemManager.OrbitRendererDataCache[Value] = data;
+                    else
+                    {
+                        KopernicusOrbitRendererData data =
+                            (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                        data.nodeColor = value;
+                        data.orbitColor = (value.Value * 0.5f).A(data.nodeColor.a);
+                        PSystemManager.OrbitRendererDataCache[Value] = data;
+                    }
                 }
             }
 
@@ -186,10 +189,13 @@ namespace Kopernicus
                     {
                         generatedBody.orbitRenderer.nodeColor = value;
                     }
-                    KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
-                    data.nodeColor = value;
-                    PSystemManager.OrbitRendererDataCache[Value] = data;
+                    else
+                    {
+                        KopernicusOrbitRendererData data =
+                            (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                        data.nodeColor = value;
+                        PSystemManager.OrbitRendererDataCache[Value] = data;
+                    }
                 }
             }
 
