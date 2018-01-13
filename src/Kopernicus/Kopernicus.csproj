@@ -139,11 +139,14 @@
     <Compile Include="Configuration\NoiseLoader\Noise\Turbulence.cs" />
     <Compile Include="Configuration\NoiseLoader\Noise\Voronoi.cs" />
     <Compile Include="Configuration\Parser\CallbackList.cs" />
+    <Compile Include="Configuration\Parser\ComponentLoader.cs" />
     <Compile Include="Configuration\Parser\ExternalParserTarget.cs" />
     <Compile Include="Configuration\Parser\ExternalParserTargetLoader.cs" />
     <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
+    <Compile Include="Configuration\RingSystem\DebrisFieldLoader.cs" />
+    <Compile Include="Configuration\RingSystem\RingLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />
     <Compile Include="Configuration\LightShifterLoader.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
@@ -163,7 +166,6 @@
     <Compile Include="Configuration\ModLoader\AerialPerspectiveMaterial.cs" />
     <Compile Include="Configuration\ParticleLoader.cs" />
     <Compile Include="Configuration\OceanLoader.cs" />
-    <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Constants\CompatibilityChecker.cs" />
     <Compile Include="Constants\Version.cs" />
     <Compile Include="Events.cs" />

@@ -36,13 +36,12 @@ namespace Kopernicus
         /// <summary>
         /// Class to render a ring around a planet
         /// </summary>
-        public class Ring : MonoBehaviourSerializable
+        public class Ring : MonoBehaviour, IComponentSystem<Ring>
         {
-            public enum DensityMode
-            {
-                Alpha,
-                Greyscale
-            }
+            /// <summary>
+            /// Components that can be added to the Ring
+            /// </summary>
+            public List<IComponent<Ring>> Components { get; set; }
             
             // Settings
             public Single innerRadius;
@@ -116,67 +115,14 @@ namespace Kopernicus
             public CelestialBody referenceBody;
 
             public MeshRenderer ringMR;
-            
-            // -- Settings for debris rings -- //
 
             /// <summary>
-            /// The seed that is used to select the meshes
+            /// Create the module list
             /// </summary>
-            public Int32 seed;
-            
-            /// <summary>
-            /// The meshes that can be applied to the debris ring
-            /// </summary>
-            public GameObject[] meshes;
-
-            // The noise that determines the offset
-            public IModule xNoise
+            void Awake()
             {
-                get { return GetProperty<IModule>("xNoise"); }
-                set { SetProperty("xNoise", value); }
+                Components = new List<IComponent<Ring>>();
             }
-            public IModule yNoise
-            {
-                get { return GetProperty<IModule>("yNoise"); }
-                set { SetProperty("yNoise", value); }
-            }
-            public IModule zNoise
-            {
-                get { return GetProperty<IModule>("yNoise"); }
-                set { SetProperty("yNoise", value); }
-            }
-            
-            // The noise that determines the rotation
-            public IModule xRotNoise
-            {
-                get { return GetProperty<IModule>("xRotNoise"); }
-                set { SetProperty("xRotNoise", value); }
-            }
-            public IModule yRotNoise
-            {
-                get { return GetProperty<IModule>("xRotNoise"); }
-                set { SetProperty("xRotNoise", value); }
-            }
-            public IModule zRotNoise
-            {
-                get { return GetProperty<IModule>("xRotNoise"); }
-                set { SetProperty("xRotNoise", value); }
-            }
-
-            /// <summary>
-            /// A vector that determines the offset, gets multiplied with the results of the noise modules
-            /// </summary>
-            public Vector3 offset;
-
-            /// <summary>
-            /// Defines the density of the debris ring
-            /// </summary>
-            public Texture2D densityMap;
-
-            /// <summary>
-            /// How many objects can fit into the ring
-            /// </summary>
-            public Int32 outwardSteps;
 
             /// <summary>
             /// Create the Ring Mesh
@@ -192,6 +138,10 @@ namespace Kopernicus
             /// </summary>
             public void BuildRing()
             {
+                // Call the modules
+                Components.ForEach(m => m.Apply(this));
+                
+                // Create the ring mesh
                 GameObject parent = transform.parent.gameObject;
                 List<Vector3> vertices = new List<Vector3>();
                 List<Vector2> Uvs = new List<Vector2>();
@@ -260,24 +210,30 @@ namespace Kopernicus
                 }
 
                 ringMR.material.color = color;
-
                 ringMR.material.renderQueue = parentRenderer.material.renderQueue;
                 parentRenderer.material.renderQueue--;
-                MakeDebrisField(degreeStep, innerScale, outerScale);
+                
+                // Call the modules
+                Components.ForEach(m => m.PostApply(this));
             }
 
+            /// <summary>
+            /// The shaders used by the ring mesh
+            /// </summary>
             private const String newShader = "Kopernicus/Rings",
                                  unlitShader = "Unlit/Transparent",
                                  diffuseShader = "Transparent/Diffuse";
 
+            /// <summary>
+            /// Queries the shader the material should use
+            /// </summary>
             private Shader getShader()
             {
                 if (useNewShader)
                     return ShaderLoader.GetShader(newShader);
-                else if (unlit)
+                if (unlit)
                     return Shader.Find(unlitShader);
-                else
-                    return Shader.Find(diffuseShader);
+                return Shader.Find(diffuseShader);
             }
 
             /// <summary>
@@ -538,83 +494,29 @@ namespace Kopernicus
                     }
                 }
             }
-            
-            private void MakeDebrisField(
-                Single         degreeStep,
-                Single         innerScale,
-                Single         outerScale)
-            {
-                // Prepare some things
-                Random random = new Random(seed);
-                
-                Single deltaScale = outerScale - innerScale;
-                Debug.Log(meshes);
-                Debug.Log(meshes[0]);
-                Debug.Log(densityMap);
-                Debug.Log(xNoise);
-                Debug.Log(yNoise);
-                Debug.Log(zNoise);
-                Debug.Log(xRotNoise);
-                Debug.Log(yRotNoise);
-                Debug.Log(zRotNoise);
-                
-                // Mesh wrapping
-                for (Single i = 0f; i < 360f; i += degreeStep)
-                {
-                    // Rotation
-                    Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
-
-                    for (Single j = 0f; j < deltaScale; j += (deltaScale / outwardSteps))
-                    {
-                        // Density
-                        Int32 coord = (Int32) (j / deltaScale * densityMap.width);
-                        Single density = densityMap.GetPixel(coord, coord).grayscale;
-                        if (random.Next(0, 100) < density * 100)
-                        {
-                            Int32 coordTile = (Int32) (coord * (tiles > 0 ? 0.2f : 1f));
-                            Color pixelColor = texture.GetPixel(coordTile, coordTile);
-                            Vector3d direction = new Vector3d(i / 360f, 0, j / deltaScale);
-                            
-                            // Select a mesh to apply
-                            GameObject meshObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            meshObject.layer = gameObject.layer;
-                            meshObject.transform.parent = transform;
-                            meshObject.transform.localPosition = eVert * (j + innerScale) +
-                                                                 new Vector3(
-                                                                     offset.x * (Single)xNoise.GetValue(direction),
-                                                                     offset.y * (Single)yNoise.GetValue(direction),
-                                                                     offset.z * (Single)zNoise.GetValue(direction));
-                            meshObject.GetComponent<Renderer>().sharedMaterial.color = pixelColor;
-                            meshObject.transform.localRotation = Quaternion.Euler(
-                                (Single) xRotNoise.GetValue(direction),
-                                (Single) yRotNoise.GetValue(direction), (Single) zRotNoise.GetValue(direction));
-                            meshObject.AddComponent<DebrisLoader>().body = referenceBody;
-                            
-                        }
-                    }
-                }
-            }
 
             /// <summary>
             /// Update the scale and the lock
             /// </summary>
             void Update()
             {
-                if (transform?.parent != null) {
-                    transform.localScale = transform.parent.localScale;
-                    SetRotation();
-                }
+                transform.localScale = transform.parent.localScale;
+                SetRotation();
 
                 if (useNewShader && ringMR?.material != null
-                        && KopernicusStar.Current?.sun?.transform != null)
+                    && KopernicusStar.Current?.sun?.transform != null)
                 {
                     ringMR.material.SetFloat("sunRadius",
                         (Single) KopernicusStar.Current.sun.Radius);
                     ringMR.material.SetVector("sunPosRelativeToPlanet",
-                        (Vector3) (KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position)));
+                        (Vector3) (KopernicusStar.Current.sun.transform.position -
+                                   ScaledSpace.ScaledToLocalSpace(transform.position)));
                     ringMR.material.SetFloat("innerShadeOffset",
                         (Single) (Planetarium.GetUniversalTime() * innerShadeOffsetRate));
                 }
+
+                // Call Modules
+                Components.ForEach(m => m.Update(this));
             }
 
             /// <summary>
@@ -624,6 +526,9 @@ namespace Kopernicus
             {
                 transform.localScale = transform.parent.localScale;
                 SetRotation();
+                
+                // Call Modules
+                Components.ForEach(m => m.Update(this));
             }
 
             /// <summary>
@@ -633,6 +538,9 @@ namespace Kopernicus
             {
                 transform.localScale = transform.parent.localScale;
                 SetRotation();
+                
+                // Call Modules
+                Components.ForEach(m => m.Update(this));
             }
 
             /// <summary>
@@ -663,63 +571,6 @@ namespace Kopernicus
                     }
                 }
             }
-
-            public class DebrisLoader : MonoBehaviour
-            {
-                private Renderer renderer;
-                public CelestialBody body;
-                
-                void Start()
-                {
-                    renderer = GetComponent<Renderer>();
-                }
-                
-                void Update()
-                {
-                    if (HighLogic.LoadedSceneHasPlanetarium || MapView.MapIsEnabled)
-                        renderer.enabled = false;
-                    if (HighLogic.LoadedSceneIsFlight)
-                        renderer.enabled = IsInView(Camera.current, body);
-                }
-                
-                private Boolean IsInView(Camera cam, CelestialBody body)
-                {
-                    if (body == null)
-                        return false;
-                
-                    Vector3 pointOnScreen =
-                        cam.WorldToScreenPoint(body.scaledBody.GetComponentInChildren<Renderer>().bounds.center);
-
-                    //Is in front
-                    if (pointOnScreen.z < 0)
-                    {
-                        return false;
-                    }
-
-                    //Is in FOV
-                    if (pointOnScreen.x < 0 || pointOnScreen.x > Screen.width ||
-                        pointOnScreen.y < 0 || pointOnScreen.y > Screen.height)
-                    {
-                        return false;
-                    }
-
-                    RaycastHit hit;
-                    if (Physics.Linecast(cam.transform.position,
-                        body.scaledBody.GetComponentInChildren<Renderer>().bounds.center, out hit))
-                    {
-                        if (hit.transform.name != body.scaledBody.name)
-                        {
-                            return false;
-                        }
-                    }
-                    Single pixelSize = (Single) body.Radius * 2 * Mathf.Rad2Deg * Screen.height /
-                                       (Vector3.Distance(cam.transform.position,
-                                            body.scaledBody.GetComponentInChildren<Renderer>().bounds.center) *
-                                        cam.fieldOfView);
-                    return pixelSize >= 1;
-                }
-            }
-
         }
     }
 }

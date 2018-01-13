@@ -213,7 +213,7 @@ namespace Kopernicus
             }
 
             [ParserTargetCollection("Components", allowMerge = true, nameSignificance = NameSignificance.Type)]
-            public CallbackList<ComponentLoader<Ring>> Components;
+            public CallbackList<ComponentLoader<Ring>> Components { get; set; }
 
             [KittopiaAction("Rebuild Ring")]
             [KittopiaDescription("Updates the mesh of the planetary ring.")]
