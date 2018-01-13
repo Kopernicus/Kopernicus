@@ -51,6 +51,14 @@ namespace Kopernicus
                 lowerCamVsSmaRatio = renderer.lowerCamVsSmaRatio;
                 upperCamVsSmaRatio = renderer.upperCamVsSmaRatio;
             }
+
+            public KopernicusOrbitRendererData(CelestialBody body, OrbitRendererData data) : base(body)
+            {
+                orbitColor = data.orbitColor;
+                nodeColor = (Color) _nodeColor.GetValue(data);
+                lowerCamVsSmaRatio = data.lowerCamVsSmaRatio;
+                upperCamVsSmaRatio = data.upperCamVsSmaRatio;
+            }
         }
     }
 }

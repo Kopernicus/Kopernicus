@@ -25,7 +25,10 @@
 
 using Kopernicus.Components;
 using System;
+using System.Collections.Generic;
+using Kopernicus.Configuration.NoiseLoader;
 using Kopernicus.UI;
+using UniLinq;
 using UnityEngine;
 
 namespace Kopernicus
@@ -209,6 +212,9 @@ namespace Kopernicus
                 set { Value.innerShadeRotationPeriod = value; }
             }
 
+            [ParserTargetCollection("Components", allowMerge = true, nameSignificance = NameSignificance.Type)]
+            public CallbackList<ComponentLoader<Ring>> Components;
+
             [KittopiaAction("Rebuild Ring")]
             [KittopiaDescription("Updates the mesh of the planetary ring.")]
             public void RebuildRing()
@@ -251,6 +257,12 @@ namespace Kopernicus
 
                 // Need to check the parent body's rotation to orient the LAN properly
                 Value.referenceBody = generatedBody.celestialBody;
+                
+                // Create the Component callback
+                Components = new CallbackList<ComponentLoader<Ring>> (e =>
+                {
+                    Value.Components = Components.Select(c => c.Value).ToList();
+                });
             }
 
             /// <summary>
@@ -271,6 +283,36 @@ namespace Kopernicus
 
                 // Need to check the parent body's rotation to orient the LAN properly
                 Value.referenceBody = body;
+                
+                // Create the Component callback
+                Components = new CallbackList<ComponentLoader<Ring>> (e =>
+                {
+                    Value.Components = Components.Select(c => c.Value).ToList();
+                });
+                
+                // Load existing Modules
+                foreach (IComponent<Ring> component in Value.Components)
+                {
+                    Type componentType = component.GetType();
+                    foreach (Type loaderType in Parser.ModTypes)
+                    {
+                        if (loaderType.BaseType == null)
+                            continue;
+                        if (loaderType.BaseType.Namespace != "Kopernicus.Configuration")
+                            continue;
+                        if (!loaderType.BaseType.Name.StartsWith("ComponentParser"))
+                            continue;
+                        if (loaderType.BaseType.GetGenericArguments()[0] != Value.GetType())
+                            continue;
+                        if (loaderType.BaseType.GetGenericArguments()[1] != componentType)
+                            continue;
+                        
+                        // We found our loader type
+                        ComponentLoader<Ring> loader = (ComponentLoader<Ring>) Activator.CreateInstance(loaderType);
+                        loader.Create(component);
+                        Components.Add(loader);
+                    }
+                }
             }
 
             // Initialize the RingLoader
@@ -278,6 +320,36 @@ namespace Kopernicus
             public RingLoader(Ring value)
             {
                 Value = value;
+                
+                // Create the Component callback
+                Components = new CallbackList<ComponentLoader<Ring>> (e =>
+                {
+                    Value.Components = Components.Select(c => c.Value).ToList();
+                });
+                
+                // Load existing Modules
+                foreach (IComponent<Ring> component in Value.Components)
+                {
+                    Type componentType = component.GetType();
+                    foreach (Type loaderType in Parser.ModTypes)
+                    {
+                        if (loaderType.BaseType == null)
+                            continue;
+                        if (loaderType.BaseType.Namespace != "Kopernicus.Configuration")
+                            continue;
+                        if (!loaderType.BaseType.Name.StartsWith("ComponentParser"))
+                            continue;
+                        if (loaderType.BaseType.GetGenericArguments()[0] != Value.GetType())
+                            continue;
+                        if (loaderType.BaseType.GetGenericArguments()[1] != componentType)
+                            continue;
+                        
+                        // We found our loader type
+                        ComponentLoader<Ring> loader = (ComponentLoader<Ring>) Activator.CreateInstance(loaderType);
+                        loader.Create(component);
+                        Components.Add(loader);
+                    }
+                }
             }
         }
     }

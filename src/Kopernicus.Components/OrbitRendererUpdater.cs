@@ -23,6 +23,7 @@
  * https://kerbalspaceprogram.com
  */
 
+using TMPro;
 using UnityEngine;
 
 namespace Kopernicus
@@ -49,8 +50,13 @@ namespace Kopernicus
                 
                 if (_driver.Renderer != null)
                 {
-                    KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[_driver.celestialBody];
+                    OrbitRendererData __data = PSystemManager.OrbitRendererDataCache[_driver.celestialBody];
+                    if (!(__data is KopernicusOrbitRendererData))
+                    {
+                        PSystemManager.OrbitRendererDataCache[_driver.celestialBody] =
+                            new KopernicusOrbitRendererData(_driver.celestialBody, __data);
+                    }
+                    KopernicusOrbitRendererData data = (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[_driver.celestialBody];
                     _driver.Renderer.orbitColor = data.orbitColor;
                     _driver.Renderer.nodeColor = data.nodeColor;
                     _driver.Renderer.upperCamVsSmaRatio = data.upperCamVsSmaRatio;
