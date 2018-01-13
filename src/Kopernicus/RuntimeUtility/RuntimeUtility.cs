@@ -74,13 +74,13 @@ namespace Kopernicus
                     PatchFI();
                 foreach (CelestialBody body in PSystemManager.Instance.localBodies)
                 {
-                    GameObject star_ = KopernicusStar.GetNearest(body).gameObject;
+                    GameObject star = KopernicusStar.GetNearest(body).gameObject;
                     if (body.afg != null)
-                        body.afg.sunLight = star_;
+                        body.afg.sunLight = star;
                     if (body.scaledBody.GetComponent<MaterialSetDirection>() != null)
-                        body.scaledBody.GetComponent<MaterialSetDirection>().target = star_.transform;
+                        body.scaledBody.GetComponent<MaterialSetDirection>().target = star.transform;
                     foreach (PQSMod_MaterialSetDirection msd in body.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true))
-                        msd.target = star_.transform;
+                        msd.target = star.transform;
 
                     // Contract Weight
                     if (ContractSystem.ContractWeights != null)
@@ -146,8 +146,8 @@ namespace Kopernicus
                 if (body.flightGlobalsIndex != 0 && body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0)
                 {
                     GameObject starObj = Instantiate(Sun.Instance.gameObject);
-                    KopernicusStar star_ = starObj.GetComponent<KopernicusStar>();
-                    star_.sun = body;
+                    star = starObj.GetComponent<KopernicusStar>();
+                    star.sun = body;
                     starObj.transform.parent = Sun.Instance.transform.parent;
                     starObj.name = body.name;
                     starObj.transform.localPosition = Vector3.zero;
@@ -157,8 +157,8 @@ namespace Kopernicus
                     starObj.transform.rotation = body.rotation;
 
                     GameObject flareObj = Instantiate(SunFlare.Instance.gameObject);
-                    KopernicusSunFlare flare_ = flareObj.GetComponent<KopernicusSunFlare>();
-                    star_.lensFlare = flare_;
+                    flare = flareObj.GetComponent<KopernicusSunFlare>();
+                    star.lensFlare = flare;
                     flareObj.transform.parent = SunFlare.Instance.transform.parent;
                     flareObj.name = body.name;
                     flareObj.transform.localPosition = Vector3.zero;

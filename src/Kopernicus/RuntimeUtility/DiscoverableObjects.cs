@@ -143,8 +143,8 @@ namespace Kopernicus
             else if (type == 1 && asteroid.location.nearby.Count != 0)
             {
                 // Nearby
-                IEnumerable<Location.NearbyLoader> nearbys = GetProbabilityList(asteroid.location.nearby, asteroid.location.nearby.Select(a => a.probability.Value));
-                Location.NearbyLoader nearby = nearbys.ElementAt(Random.Range(0, nearbys.Count()));
+                Location.NearbyLoader[] nearbys = GetProbabilityList(asteroid.location.nearby, asteroid.location.nearby.Select(a => a.probability.Value)).ToArray();
+                Location.NearbyLoader nearby = nearbys[Random.Range(0, nearbys.Length)];
                 body = PSystemManager.Instance.localBodies.Find(b => b.name == nearby.body);
                 if (!body) return;
                 if (nearby.reached && !ReachedBody(body)) return;
@@ -162,8 +162,8 @@ namespace Kopernicus
             else if (type == 2 && asteroid.location.flyby.Count != 0)
             {
                 // Flyby
-                IEnumerable<Location.FlybyLoader> flybys = GetProbabilityList(asteroid.location.flyby, asteroid.location.flyby.Select(a => a.probability.Value));
-                Location.FlybyLoader flyby = flybys.ElementAt(Random.Range(0, flybys.Count()));
+                Location.FlybyLoader[] flybys = GetProbabilityList(asteroid.location.flyby, asteroid.location.flyby.Select(a => a.probability.Value)).ToArray();
+                Location.FlybyLoader flyby = flybys[Random.Range(0, flybys.Length)];
                 body = PSystemManager.Instance.localBodies.Find(b => b.name == flyby.body);
                 if (!body) return;
                 if (flyby.reached && !ReachedBody(body)) return;
