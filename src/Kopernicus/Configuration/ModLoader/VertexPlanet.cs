@@ -186,7 +186,7 @@ namespace Kopernicus
                     }
 
                     // noise
-                    [ParserTarget("Noise", allowMerge = true)]
+                    [ParserTarget("Noise", allowMerge = true, nameSignificance = NameSignificance.Type)]
                     [KittopiaHideOption]
                     public INoiseLoader noise
                     {

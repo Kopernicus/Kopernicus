@@ -98,6 +98,14 @@ namespace Kopernicus
                     get { return mod.seed; }
                     set { mod.seed = value; }
                 }
+
+                // The lacunarity of the simplex height
+                [ParserTarget("lacunarity")]
+                public NumericParser<Single> lacunarity
+                {
+                    get { return mod.lacunarity; }
+                    set { mod.lacunarity = value; }
+                }
             }
         }
     }
