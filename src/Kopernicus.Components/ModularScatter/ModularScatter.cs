@@ -44,9 +44,19 @@ namespace Kopernicus
             public List<IComponent<ModularScatter>> Components { get; set; }
 
             /// <summary>
+            /// The mod we are attached to
+            /// </summary>
+            public PQSLandControl landControl;
+
+            /// <summary>
+            /// The scatter instance we are attached to
+            /// </summary>
+            public PQSLandControl.LandClassScatter scatter;
+            
+            /// <summary>
             /// Create a new ScatterExtension
             /// </summary>
-            void Awake()
+            public ModularScatter()
             {
                 Components = new List<IComponent<ModularScatter>>();
             }
@@ -57,8 +67,11 @@ namespace Kopernicus
             void Start()
             {
                 // Register us as the parental object for the scatter
-                PQSLandControl landControl = transform.parent.GetComponentInChildren<PQSLandControl>();
-                PQSLandControl.LandClassScatter scatter = landControl.scatters.First(s => s.scatterName == name.Split(' ').Last());
+                landControl = transform.parent.GetComponent<PQSLandControl>();
+                transform.parent = landControl.sphere.transform;
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
+                transform.localScale = Vector3.one;
                 typeof(PQSLandControl.LandClassScatter).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                     .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
 
