@@ -84,13 +84,15 @@
     <Compile Include="MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="ModularComponentSystem\IComponent.cs" />
     <Compile Include="ModularComponentSystem\IComponentSystem.cs" />
+    <Compile Include="ModularScatter\ModularScatter.cs" />
+    <Compile Include="ModularScatter\ScatterColliders.cs" />
+    <Compile Include="ModularScatter\ScatterExperiments.cs" />
     <Compile Include="NameChanger.cs" />
     <Compile Include="OrbitRendererUpdater.cs" />
     <Compile Include="PQS\KopernicusSimplexWrapper.cs" />
     <Compile Include="Ring.cs" />
     <Compile Include="RingSystem\DebrisField.cs" />
     <Compile Include="ShaderLoader.cs" />
-    <Compile Include="Scatter.cs" />
     <Compile Include="KopernicusStar.cs" />
     <Compile Include="KopernicusSunFlare.cs" />
     <Compile Include="StorageComponent.cs" />

@@ -103,6 +103,8 @@
     <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
     <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
     <Compile Include="Configuration\ModLoader\VoronoiCraters.cs" />
+    <Compile Include="Configuration\ModularScatterLoader\ScatterCollidersLoader.cs" />
+    <Compile Include="Configuration\ModularScatterLoader\ScatterExperimentsLoader.cs" />
     <Compile Include="Configuration\NoiseLoader\INoiseLoader.cs" />
     <Compile Include="Configuration\NoiseLoader\Modifiers\AbsoluteOutput.cs" />
     <Compile Include="Configuration\NoiseLoader\Modifiers\Add.cs" />

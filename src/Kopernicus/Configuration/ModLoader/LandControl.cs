@@ -27,6 +27,7 @@ using Kopernicus.Components;
 using Kopernicus.MaterialWrapper;
 using System;
 using System.Linq;
+using System.Reflection;
 using Kopernicus.UI;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ namespace Kopernicus
             {
                 // Loader for a Ground Scatter
                 [RequireConfigType(ConfigType.Node)]
-                public class LandClassScatterLoader : IParserEventSubscriber, IPatchable, ITypeParser<PQSLandControl.LandClassScatter>
+                public class LandClassScatterLoader : IPatchable, ITypeParser<PQSLandControl.LandClassScatter>
                 {
                     public enum ScatterMaterialType
                     {
@@ -118,20 +119,8 @@ namespace Kopernicus
                     [KittopiaHideOption]
                     public NumericParser<Boolean> delete = false;
 
-                    // Should we add colliders to the Scatter?
-                    [ParserTarget("collide")]
-                    [KittopiaHideOption]
-                    public NumericParser<Boolean> collide = false;
-
-                    // Should we add Science to the Scatter?
-                    [ParserTarget("science")]
-                    [KittopiaHideOption]
-                    public NumericParser<Boolean> science = false;
-
-                    // ConfigNode that stores the Experiment
-                    [ParserTarget("Experiment")]
-                    [KittopiaHideOption]
-                    public ConfigNode experiment;
+                    [ParserTargetCollection("Components", allowMerge = true, nameSignificance = NameSignificance.Type)]
+                    public CallbackList<ComponentLoader<ModularScatter>> Components { get; set; }
 
                     // Custom scatter material
                     [ParserTarget("Material", allowMerge = true, getChild = false)]
@@ -272,6 +261,22 @@ namespace Kopernicus
                         Value.maxCache = 512;
                         Value.maxCacheDelta = 32;
                         Value.maxSpeed = 1000;
+                        
+                        // Create the Scatter-Parent
+                        GameObject scatterParent = new GameObject("Scatter " + Guid.NewGuid());
+                        scatterParent.transform.parent = pqsVersion.transform;
+                        scatterParent.transform.localPosition = Vector3.zero;
+                        scatterParent.transform.localRotation = Quaternion.identity;
+                        scatterParent.transform.localScale = Vector3.one;
+                        
+                        // Add the scatter module
+                        ModularScatter scatter = scatterParent.AddComponent<ModularScatter>();
+                
+                        // Create the Component callback
+                        Components = new CallbackList<ComponentLoader<ModularScatter>> (e =>
+                        {
+                            scatter.Components = Components.Select(c => c.Value).ToList();
+                        });
                     }
 
                     // Runtime constructor
@@ -295,24 +300,54 @@ namespace Kopernicus
                             else if (AerialTransCutout.UsesSameShader(value.material))
                                 customMaterial = new AerialTransCutoutLoader(value.material);
                         }
-                    }
-
-                    // Apply Event
-                    void IParserEventSubscriber.Apply(ConfigNode node) { }
-
-                    // PostApply Event
-                    void IParserEventSubscriber.PostApply(ConfigNode node)
-                    {
-                        // Create the Scatter-Parent
-                        GameObject scatterParent = new GameObject("Scatter " + Guid.NewGuid());
-                        scatterParent.transform.parent = pqsVersion.transform;
-                        scatterParent.transform.localPosition = Vector3.zero;
-                        scatterParent.transform.localRotation = Quaternion.identity;
-                        scatterParent.transform.localScale = Vector3.one;
-
-                        // Add the ScatterExtension
-                        // TODO(TMSP): Make this modular
-                        Scatter.CreateInstance(scatterParent, science, collide, experiment);
+                        
+                        // Get the Scatter-Parent
+                        GameObject scatterParent = typeof(PQSLandControl.LandClassScatter)
+                            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                            .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.GetValue(Value) as GameObject;
+                        
+                        // If the GameObject is null, create one
+                        if (scatterParent == null)
+                        {
+                            scatterParent = new GameObject("Scatter " + Guid.NewGuid());
+                            scatterParent.transform.parent = pqsVersion.transform;
+                            scatterParent.transform.localPosition = Vector3.zero;
+                            scatterParent.transform.localRotation = Quaternion.identity;
+                            scatterParent.transform.localScale = Vector3.one;
+                        }
+                        
+                        // Add the scatter module
+                        ModularScatter scatter = scatterParent.AddOrGetComponent<ModularScatter>();
+                
+                        // Create the Component callback
+                        Components = new CallbackList<ComponentLoader<ModularScatter>> (e =>
+                        {
+                            scatter.Components = Components.Select(c => c.Value).ToList();
+                        });
+                
+                        // Load existing Modules
+                        foreach (IComponent<ModularScatter> component in scatter.Components)
+                        {
+                            Type componentType = component.GetType();
+                            foreach (Type loaderType in Parser.ModTypes)
+                            {
+                                if (loaderType.BaseType == null)
+                                    continue;
+                                if (loaderType.BaseType.Namespace != "Kopernicus.Configuration")
+                                    continue;
+                                if (!loaderType.BaseType.Name.StartsWith("ComponentParser"))
+                                    continue;
+                                if (loaderType.BaseType.GetGenericArguments()[0] != typeof(ModularScatter))
+                                    continue;
+                                if (loaderType.BaseType.GetGenericArguments()[1] != componentType)
+                                    continue;
+                        
+                                // We found our loader type
+                                ComponentLoader<ModularScatter> loader = (ComponentLoader<ModularScatter>) Activator.CreateInstance(loaderType);
+                                loader.Create(component);
+                                Components.Add(loader);
+                            }
+                        }
                     }
 
                     /// <summary>

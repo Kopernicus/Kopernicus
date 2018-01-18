@@ -233,7 +233,7 @@ namespace Kopernicus
         public static void PerformObjectDump()
         {
             Logger.Active.Log("--------- Object Dump -----------");
-            foreach (GameObject b in GameObject.FindObjectsOfType(typeof(GameObject)))
+            foreach (GameObject b in UnityEngine.Object.FindObjectsOfType<GameObject>())
             {
                 // Essentially, we iterate through all game objects currently alive and search for 
                 // the ones without a parent.  Extrememly inefficient and terrible, but its just for
@@ -291,7 +291,7 @@ namespace Kopernicus
         }
 
         // slightly different:
-        static public void DumpUpwards(Transform t, String prefix, Boolean useKLog = true)
+        public static void DumpUpwards(Transform t, String prefix, Boolean useKLog = true)
         {
             String str = prefix + "Transform " + t.name;
             if (useKLog)
@@ -311,7 +311,7 @@ namespace Kopernicus
                 DumpUpwards(t.parent, prefix + "  ");
 
         }
-        static public void DumpDownwards(Transform t, String prefix, Boolean useKLog = true)
+        public static void DumpDownwards(Transform t, String prefix, Boolean useKLog = true)
         {
             String str = prefix + "Transform " + t.name;
             if (useKLog)
@@ -412,7 +412,7 @@ namespace Kopernicus
                     // In order to generate the scaled space we have to enable the mods.  Since this is
                     // a prefab they don't get disabled as kill game performance.  To resolve this we 
                     // clone the PQS, use it, and then delete it when done
-                    pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject) as GameObject;
+                    pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject);
                 }
                 else
                 {
@@ -979,7 +979,7 @@ namespace Kopernicus
             // RemoveEmptyGO(toCheck);
         }
 
-        static public void RemoveEmptyGO(List<GameObject> toCheck)
+        public static void RemoveEmptyGO(List<GameObject> toCheck)
         {
             Int32 oCount = toCheck.Count;
             Int32 nCount = oCount;
@@ -1006,7 +1006,7 @@ namespace Kopernicus
             } while (nCount != oCount && nCount > 0);
         }
 
-        static public void CBTCheck(PSystemBody body)
+        public static void CBTCheck(PSystemBody body)
         {
             if (body.pqsVersion != null)
             {
