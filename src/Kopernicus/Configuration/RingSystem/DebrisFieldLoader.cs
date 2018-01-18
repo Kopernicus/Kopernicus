@@ -23,6 +23,7 @@
  * https://kerbalspaceprogram.com
  */
 
+#if FALSE
 using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
@@ -252,3 +253,4 @@ namespace Kopernicus
         }
     }
 }
+#endif

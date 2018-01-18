@@ -145,8 +145,8 @@
     <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
+    <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Configuration\RingSystem\DebrisFieldLoader.cs" />
-    <Compile Include="Configuration\RingSystem\RingLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />
     <Compile Include="Configuration\LightShifterLoader.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
