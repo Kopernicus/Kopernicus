@@ -327,7 +327,6 @@ namespace Kopernicus
                         foreach (IComponent<ModularScatter> component in scatter.Components)
                         {
                             Type componentType = component.GetType();
-                            Debug.Log(componentType);
                             foreach (Type loaderType in Parser.ModTypes)
                             {
                                 if (loaderType.BaseType == null)

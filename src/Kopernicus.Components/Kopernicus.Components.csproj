@@ -86,7 +86,7 @@
     <Compile Include="ModularComponentSystem\IComponentSystem.cs" />
     <Compile Include="ModularScatter\ModularScatter.cs" />
     <Compile Include="ModularScatter\ScatterColliders.cs" />
-    <Compile Include="ModularScatter\ScatterExperiments.cs" />
+    <Compile Include="ModularScatter\ScatterExperiment.cs" />
     <Compile Include="NameChanger.cs" />
     <Compile Include="OrbitRendererUpdater.cs" />
     <Compile Include="PQS\KopernicusSimplexWrapper.cs" />

@@ -34,7 +34,7 @@ namespace Kopernicus
             /// <summary>
             /// The loader for collideable scatter objects
             /// </summary>
-            public class ScatterCollidersLoader : ComponentLoader<ModularScatter, ScatterColliders>
+            public class ScatterColliders : ComponentLoader<ModularScatter, Components.ScatterColliders>
             {
                 
             }
