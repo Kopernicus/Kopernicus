@@ -66,7 +66,7 @@ namespace Kopernicus
             GameEvents.onLevelWasLoaded.Add(FixCameras);
             GameEvents.onLevelWasLoaded.Add(delegate (GameScenes scene)
             {
-                if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null)
+                if (MapView.fetch != null)
                     MapView.fetch.max3DlineDrawDist = Single.MaxValue;
                 if (scene == GameScenes.MAINMENU)
                     UpdateMenu();
