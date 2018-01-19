@@ -300,8 +300,8 @@ namespace Kopernicus
                     MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh = Templates.ReferenceGeosphere;
                     Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
-                    Value.planet = generatedBody.celestialBody;
                 }
+                Value.planet = generatedBody.celestialBody;
             }
 
             /// <summary>
@@ -332,8 +332,8 @@ namespace Kopernicus
                     MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh = Templates.ReferenceGeosphere;
                     Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
-                    Value.planet = body;
                 }
+                Value.planet = body;
             }
         }
     }
