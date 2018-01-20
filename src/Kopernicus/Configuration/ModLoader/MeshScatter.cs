@@ -90,7 +90,7 @@ namespace Kopernicus
                 public ConfigNode experiment;
 
                 // Custom scatter material                
-                [ParserTarget("Material", allowMerge = true)]
+                [ParserTarget("Material", AllowMerge = true)]
                 public Material customMaterial;
 
                 // The name of the scatter
@@ -126,7 +126,7 @@ namespace Kopernicus
                 }
 
                 // Stock material
-                [ParserTarget("material", allowMerge = true)]
+                [ParserTarget("material", AllowMerge = true)]
                 public StockMaterialParser material
                 {
                     get { return mod.material; }

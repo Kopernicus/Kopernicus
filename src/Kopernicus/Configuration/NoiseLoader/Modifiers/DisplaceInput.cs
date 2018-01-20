@@ -35,19 +35,19 @@ namespace Kopernicus
             public class DisplaceInput : NoiseLoader<LibNoise.Modifiers.DisplaceInput>
             {
                 [PreApply]
-                [ParserTarget("Source", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader sourceModule;
 
                 [PreApply]
-                [ParserTarget("DisplaceX", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("DisplaceX", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader displaceXModule;
 
                 [PreApply]
-                [ParserTarget("DisplaceY", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("DisplaceY", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader displaceYModule;
 
                 [PreApply]
-                [ParserTarget("DisplaceZ", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("DisplaceZ", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader displaceZModule;
 
                 public override void Apply(ConfigNode node)

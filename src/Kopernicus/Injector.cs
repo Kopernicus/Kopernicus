@@ -83,7 +83,7 @@ namespace Kopernicus
                 Logger.Default.Log("Injector.Awake(): Begin");
 
                 // Parser Config
-                ParserOptions.Register("Kopernicus", new ParserOptions.Data { errorCallback = e => Logger.Active.LogException(e), logCallback = s => Logger.Active.Log(s) });
+                ParserOptions.Register("Kopernicus", new ParserOptions.Data { ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s) });
 
                 // Yo garbage collector - we have work to do man
                 DontDestroyOnLoad(this);

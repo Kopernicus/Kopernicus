@@ -35,11 +35,11 @@ namespace Kopernicus
             public class Power : NoiseLoader<LibNoise.Modifiers.Power>
             {
                 [PreApply]
-                [ParserTarget("Base", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("Base", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader baseModule;
 
                 [PreApply]
-                [ParserTarget("Power", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("Power", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader powerModule;
 
                 public override void Apply(ConfigNode node)

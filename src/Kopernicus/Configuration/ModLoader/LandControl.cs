@@ -120,11 +120,11 @@ namespace Kopernicus
                     [KittopiaHideOption]
                     public NumericParser<Boolean> delete = false;
 
-                    [ParserTargetCollection("Components", allowMerge = true, nameSignificance = NameSignificance.Type)]
+                    [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
                     public CallbackList<ComponentLoader<ModularScatter>> Components { get; set; }
 
                     // Custom scatter material
-                    [ParserTarget("Material", allowMerge = true, getChild = false)]
+                    [ParserTarget("Material", AllowMerge = true, GetChild = false)]
                     public Material customMaterial
                     {
                         get { return Value.material; }
@@ -523,7 +523,7 @@ namespace Kopernicus
                     }
 
                     // altitudeRange
-                    [ParserTarget("altitudeRange", allowMerge = true)]
+                    [ParserTarget("altitudeRange", AllowMerge = true)]
                     public LerpRangeLoader altitudeRange
                     {
                         get { return Value.altitudeRange; }
@@ -623,7 +623,7 @@ namespace Kopernicus
                     }
 
                     // latitudeDoubleRange
-                    [ParserTarget("latitudeDoubleRange", allowMerge = true)]
+                    [ParserTarget("latitudeDoubleRange", AllowMerge = true)]
                     public LerpRangeLoader latitudeDoubleRange
                     {
                         get { return new LerpRangeLoader(Value.latitudeDoubleRange); }
@@ -631,7 +631,7 @@ namespace Kopernicus
                     }
 
                     // latitudeRange
-                    [ParserTarget("latitudeRange", allowMerge = true)]
+                    [ParserTarget("latitudeRange", AllowMerge = true)]
                     public LerpRangeLoader latitudeRange
                     {
                         get { return new LerpRangeLoader(Value.latitudeRange); }
@@ -647,7 +647,7 @@ namespace Kopernicus
                     }
 
                     // longitudeRange
-                    [ParserTarget("longitudeRange", allowMerge = true)]
+                    [ParserTarget("longitudeRange", AllowMerge = true)]
                     public LerpRangeLoader longitudeRange
                     {
                         get { return new LerpRangeLoader(Value.longitudeRange); }
@@ -731,7 +731,7 @@ namespace Kopernicus
                     }
 
                     // List of scatters used
-                    [ParserTargetCollection("scatters", nameSignificance = NameSignificance.None)]
+                    [ParserTargetCollection("scatters", NameSignificance = NameSignificance.None)]
                     public CallbackList<LandClassScatterAmountLoader> scatter { get; set; }
 
                     // Default constructor
@@ -1096,11 +1096,11 @@ namespace Kopernicus
                 }
 
                 // List of scatters
-                [ParserTargetCollection("scatters", allowMerge = true)] // TODO(TMSP): Explore the possibilities of capitalizing this
+                [ParserTargetCollection("scatters", AllowMerge = true)] // TODO(TMSP): Explore the possibilities of capitalizing this
                 public CallbackList<LandClassScatterLoader> scatters { get; set; }
 
                 // List of landclasses
-                [ParserTargetCollection("landClasses", allowMerge = true)]
+                [ParserTargetCollection("landClasses", AllowMerge = true)]
                 public CallbackList<LandClassLoader> landClasses { get; set; }
 
                 // Creates the a PQSMod of type T with given PQS

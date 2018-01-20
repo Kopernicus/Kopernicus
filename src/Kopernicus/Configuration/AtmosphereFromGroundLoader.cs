@@ -38,7 +38,7 @@ namespace Kopernicus
             /// <summary>
             /// The scale factor between ScaledSpace and LocalSpace
             /// </summary>
-            public const Single INVSCALEFACTOR = 1f / 6000f;
+            private const Single Invscalefactor = 1f / 6000f;
 
             /// <summary>
             /// AtmosphereFromGround we're modifying
@@ -84,8 +84,8 @@ namespace Kopernicus
             [KittopiaDescription("The lower bound of the atmosphere effect.")]
             public NumericParser<Single> innerRadius
             {
-                get { return Value.innerRadius / INVSCALEFACTOR; }
-                set { Value.innerRadius = value * INVSCALEFACTOR; }
+                get { return Value.innerRadius / Invscalefactor; }
+                set { Value.innerRadius = value * Invscalefactor; }
             }
 
             // invWaveLength
@@ -121,8 +121,8 @@ namespace Kopernicus
             [KittopiaDescription("The upper bound of the atmosphere effect.")]
             public NumericParser<Single> outerRadius
             {
-                get { return Value.outerRadius / INVSCALEFACTOR; }
-                set { Value.outerRadius = value * INVSCALEFACTOR; }
+                get { return Value.outerRadius / Invscalefactor; }
+                set { Value.outerRadius = value * Invscalefactor; }
             }
 
             // samples
@@ -174,8 +174,8 @@ namespace Kopernicus
             [KittopiaDescription("A multiplier that automatically sets outerRadius based on the planets radius.")]
             public NumericParser<Single> outerRadiusMult
             {
-                get { return Value.outerRadius / INVSCALEFACTOR / (Single)Value.planet.Radius; }
-                set { Value.outerRadius = (Single)Value.planet.Radius * value * INVSCALEFACTOR; }
+                get { return Value.outerRadius / Invscalefactor / (Single)Value.planet.Radius; }
+                set { Value.outerRadius = (Single)Value.planet.Radius * value * Invscalefactor; }
             }
 
             // innerRadiusMult
@@ -204,7 +204,7 @@ namespace Kopernicus
                 {
                     Value.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
                 }
-                Value.outerRadius = (Single)Value.planet.Radius * 1.025f * INVSCALEFACTOR;
+                Value.outerRadius = (Single)Value.planet.Radius * 1.025f * Invscalefactor;
                 Value.innerRadius = Value.outerRadius * 0.975f;
                 Value.scaleDepth = -0.25f;
                 Value.invWaveLength = new Color((Single)(1d / Math.Pow(Value.waveLength[0], 4)), (Single)(1d / Math.Pow(Value.waveLength[1], 4)), (Single)(1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);

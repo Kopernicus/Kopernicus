@@ -78,7 +78,7 @@ namespace Kopernicus
             }
 
             // Create the Kopernicus LightShifter
-            [ParserTarget("Light", allowMerge = true)]
+            [ParserTarget("Light", AllowMerge = true)]
             public LightShifterLoader lightShifter
             {
                 get
@@ -101,7 +101,7 @@ namespace Kopernicus
             }
 
             // Coronas for a star's scaled version
-            [ParserTargetCollection("Coronas", nameSignificance = NameSignificance.None)]
+            [ParserTargetCollection("Coronas", NameSignificance = NameSignificance.None)]
             public List<CoronaLoader> coronas = new List<CoronaLoader>();
 
             [ParserTarget("sphericalModel")]
@@ -118,7 +118,7 @@ namespace Kopernicus
                 set { Value.Set("deferMesh", value.Value); }
             }
 
-            [ParserTarget("Material", allowMerge = true)]
+            [ParserTarget("Material", AllowMerge = true)]
             public Material material
             {
                 get { return Value.scaledBody.GetComponent<Renderer>().sharedMaterial; }

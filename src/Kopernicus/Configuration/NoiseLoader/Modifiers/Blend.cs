@@ -35,15 +35,15 @@ namespace Kopernicus
             public class Blend : NoiseLoader<LibNoise.Modifiers.Blend>
             {
                 [PreApply]
-                [ParserTarget("SourceA", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader sourceModuleA;
 
                 [PreApply]
-                [ParserTarget("SourceB", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader sourceModuleB;
 
                 [PreApply]
-                [ParserTarget("Weight", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("Weight", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader weightModule;
 
                 public override void Apply(ConfigNode node)

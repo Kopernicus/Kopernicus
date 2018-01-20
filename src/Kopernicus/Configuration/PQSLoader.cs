@@ -26,6 +26,7 @@
 using Kopernicus.MaterialWrapper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.OnDemand;
@@ -57,7 +58,7 @@ namespace Kopernicus
             private readonly PQSMod_QuadMeshColliders        _collider;
             
             // Surface physics material
-            [ParserTarget("PhysicsMaterial", allowMerge = true)]
+            [ParserTarget("PhysicsMaterial", AllowMerge = true)]
             public PhysicsMaterialParser physicsMaterial
             {
                 get { return _collider.physicsMaterial; }
@@ -157,7 +158,7 @@ namespace Kopernicus
             }
 
             // Surface Material of the PQS
-            [ParserTarget("Material", allowMerge = true, getChild = false)]
+            [ParserTarget("Material", AllowMerge = true, GetChild = false)]
             public Material surfaceMaterial
             {
                 get { return Value.surfaceMaterial; }
@@ -165,7 +166,7 @@ namespace Kopernicus
             }
 
             // Fallback Material of the PQS (its always the same material)
-            [ParserTarget("FallbackMaterial", allowMerge = true, getChild = false)]
+            [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
             public Material fallbackMaterial
             {
                 get { return Value.fallbackMaterial; }
@@ -173,7 +174,7 @@ namespace Kopernicus
             }
 
             // PQSMod loader
-            [ParserTargetCollection("Mods", allowMerge = true, nameSignificance = NameSignificance.Type)]
+            [ParserTargetCollection("Mods", AllowMerge = true, NameSignificance = NameSignificance.Type)]
             public List<IModLoader> mods = new List<IModLoader>();
 
             /// <summary>

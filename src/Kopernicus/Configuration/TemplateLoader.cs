@@ -49,7 +49,7 @@ namespace Kopernicus
 
             // Name of the body to use for the template
             [PreApply]
-            [ParserTarget("name", optional = false)]
+            [ParserTarget("name", Optional = false)]
             public String name
             {
                 // Crawl the system prefab for the body

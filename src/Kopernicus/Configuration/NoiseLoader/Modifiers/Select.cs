@@ -45,15 +45,15 @@ namespace Kopernicus
                 public NumericParser<Double> edgefalloff;
 
                 [PreApply]
-                [ParserTarget("Control", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("Control", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader controlModule;
 
                 [PreApply]
-                [ParserTarget("SourceA", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader sourceModuleA;
 
                 [PreApply]
-                [ParserTarget("SourceB", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader sourceModuleB;
 
                 public override void Apply(ConfigNode node)

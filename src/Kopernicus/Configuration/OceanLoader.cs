@@ -110,7 +110,7 @@ namespace Kopernicus
             }
 
             // Surface Material of the PQS
-            [ParserTarget("Material", allowMerge = true, getChild = false)]
+            [ParserTarget("Material", AllowMerge = true, GetChild = false)]
             public Material surfaceMaterial
             {
                 get { return Value.surfaceMaterial; }
@@ -118,7 +118,7 @@ namespace Kopernicus
             }
 
             // Fallback Material of the PQS (its always the same material)
-            [ParserTarget("FallbackMaterial", allowMerge = true)]
+            [ParserTarget("FallbackMaterial", AllowMerge = true)]
             public Material fallbackMaterial
             {
                 get { return Value.fallbackMaterial; }
@@ -126,15 +126,15 @@ namespace Kopernicus
             }
 
             // PQSMod loader
-            [ParserTargetCollection("Mods", allowMerge = true, nameSignificance = NameSignificance.Type)]
+            [ParserTargetCollection("Mods", AllowMerge = true, NameSignificance = NameSignificance.Type)]
             public List<IModLoader> mods = new List<IModLoader>();
 
             // Killer-Ocean
-            [ParserTarget("HazardousOcean", allowMerge = true)]
+            [ParserTarget("HazardousOcean", AllowMerge = true)]
             public FloatCurveParser hazardousOcean;
 
             // Ocean-Fog
-            [ParserTarget("Fog", allowMerge = true)]
+            [ParserTarget("Fog", AllowMerge = true)]
             public FogLoader fog;
             
             /// <summary>

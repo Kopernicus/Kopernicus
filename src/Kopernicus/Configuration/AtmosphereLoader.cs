@@ -247,7 +247,7 @@ namespace Kopernicus
             }
 
             // AFG
-            [ParserTarget("AtmosphereFromGround", allowMerge = true)]
+            [ParserTarget("AtmosphereFromGround", AllowMerge = true)]
             [KittopiaDescription("The atmosphere effect that is seen on the horizon.")]
             public AtmosphereFromGroundLoader atmosphereFromGround { get; set; }
 

@@ -35,7 +35,7 @@ namespace Kopernicus
             public class SmoothLatitudeRange : ModLoader<PQSMod_SmoothLatitudeRange>
             {
                 // latitudeRange
-                [ParserTarget("LatitudeRange", allowMerge = true)]
+                [ParserTarget("LatitudeRange", AllowMerge = true)]
                 public LandControl.LerpRangeLoader latitudeRange
                 {
                     get { return mod.latitudeRange == null ? null : new LandControl.LerpRangeLoader(mod.latitudeRange); }

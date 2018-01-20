@@ -42,7 +42,7 @@ namespace Kopernicus
                 public NumericParser<Double> upper;
 
                 [PreApply]
-                [ParserTarget("Source", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader sourceModule;
 
                 public override void Apply(ConfigNode node)

@@ -186,7 +186,7 @@ namespace Kopernicus
                     }
 
                     // noise
-                    [ParserTarget("Noise", allowMerge = true, nameSignificance = NameSignificance.Type)]
+                    [ParserTarget("Noise", AllowMerge = true, NameSignificance = NameSignificance.Type)]
                     [KittopiaHideOption]
                     public INoiseLoader noise
                     {
@@ -295,7 +295,7 @@ namespace Kopernicus
                     }
 
                     // colorNoiseMap
-                    [ParserTarget("SimplexNoiseMap", allowMerge = true)]
+                    [ParserTarget("SimplexNoiseMap", AllowMerge = true)]
                     public SimplexLoader colorNoiseMap
                     {
                         get { return Value.colorNoiseMap; }
@@ -398,7 +398,7 @@ namespace Kopernicus
                 }
 
                 // continental
-                [ParserTarget("ContinentalSimplex", allowMerge = true)]
+                [ParserTarget("ContinentalSimplex", AllowMerge = true)]
                 public SimplexLoader continental
                 {
                     get { return mod.continental; }
@@ -406,7 +406,7 @@ namespace Kopernicus
                 }
 
                 // continentalRuggedness
-                [ParserTarget("RuggednessSimplex", allowMerge = true)]
+                [ParserTarget("RuggednessSimplex", AllowMerge = true)]
                 public SimplexLoader continentalRuggedness
                 {
                     get { return mod.continentalRuggedness; }
@@ -414,7 +414,7 @@ namespace Kopernicus
                 }
 
                 // continentalSharpness
-                [ParserTarget("SharpnessNoise", allowMerge = true)]
+                [ParserTarget("SharpnessNoise", AllowMerge = true)]
                 public NoiseModLoader continentalSharpness
                 {
                     get { return mod.continentalSharpness; }
@@ -422,7 +422,7 @@ namespace Kopernicus
                 }
 
                 // continentalSharpnessMap
-                [ParserTarget("SharpnessSimplexMap", allowMerge = true)]
+                [ParserTarget("SharpnessSimplexMap", AllowMerge = true)]
                 public SimplexLoader continentalSharpnessMap
                 {
                     get { return mod.continentalSharpnessMap; }
@@ -438,7 +438,7 @@ namespace Kopernicus
                 }
 
                 // The land classes
-                [ParserTargetCollection("LandClasses", allowMerge = true)]
+                [ParserTargetCollection("LandClasses", AllowMerge = true)]
                 public CallbackList<LandClassLoader> landClasses { get; set; }
 
                 // oceanDepth
@@ -530,7 +530,7 @@ namespace Kopernicus
                 }
 
                 // terrainType
-                [ParserTarget("TerrainTypeSimplex", allowMerge = true)]
+                [ParserTarget("TerrainTypeSimplex", AllowMerge = true)]
                 public SimplexLoader terrainType
                 {
                     get { return mod.terrainType; }

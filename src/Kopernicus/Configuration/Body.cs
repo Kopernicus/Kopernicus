@@ -61,7 +61,7 @@ namespace Kopernicus
 
             // Name of this body
             [PreApply]
-            [ParserTarget("name", optional = false)]
+            [ParserTarget("name", Optional = false)]
             [KittopiaHideOption]
             public String name { get; set; }
 
@@ -154,39 +154,39 @@ namespace Kopernicus
             public TemplateLoader template { get; set; }
 
             // Celestial body properties (description, mass, etc.)
-            [ParserTarget("Properties", allowMerge = true)]
+            [ParserTarget("Properties", AllowMerge = true)]
             public PropertiesLoader properties { get; set; }
 
             // Wrapper around KSP's Orbit class for editing/loading
-            [ParserTarget("Orbit", allowMerge = true)]
+            [ParserTarget("Orbit", AllowMerge = true)]
             public OrbitLoader orbit { get; set; }
 
             // Wrapper around the settings for the world's scaled version
-            [ParserTarget("ScaledVersion", allowMerge = true)]
+            [ParserTarget("ScaledVersion", AllowMerge = true)]
             public ScaledVersionLoader scaledVersion { get; set; }
 
             // Wrapper around the settings for the world's atmosphere
-            [ParserTarget("Atmosphere", allowMerge = true)]
+            [ParserTarget("Atmosphere", AllowMerge = true)]
             public AtmosphereLoader atmosphere { get; set; }
 
             // Wrapper around the settings for the PQS
-            [ParserTarget("PQS", allowMerge = true)]
+            [ParserTarget("PQS", AllowMerge = true)]
             public PQSLoader pqs { get; set; }
 
             // Wrapper around the settings for the Ocean
-            [ParserTarget("Ocean", allowMerge = true)]
+            [ParserTarget("Ocean", AllowMerge = true)]
             public OceanLoader ocean { get; set; }
 
             // Wrapper around Ring class for editing/loading
-            [ParserTargetCollection("Rings", allowMerge = true)]
+            [ParserTargetCollection("Rings", AllowMerge = true)]
             public List<RingLoader> rings { get; set; }
 
             // Wrapper around Particle class for editing/loading
-            [ParserTargetCollection("Particles", allowMerge = true)]
+            [ParserTargetCollection("Particles", AllowMerge = true)]
             public List<ParticleLoader> particles { get; set; }
 
             // Wrapper around the settings for the SpaceCenter
-            [ParserTarget("SpaceCenter", allowMerge = true)]
+            [ParserTarget("SpaceCenter", AllowMerge = true)]
             public SpaceCenterLoader spaceCenter { get; set; }
 
             // Wrapper around DebugMode settings

@@ -65,7 +65,7 @@ namespace Kopernicus
                 }
 
                 [PreApply]
-                [ParserTarget("Source", nameSignificance = NameSignificance.Type)]
+                [ParserTarget("Source", NameSignificance = NameSignificance.Type)]
                 public INoiseLoader module;
 
                 public override void Apply(ConfigNode node)

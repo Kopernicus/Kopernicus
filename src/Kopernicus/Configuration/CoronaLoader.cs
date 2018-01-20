@@ -39,49 +39,49 @@ namespace Kopernicus
             public SunCoronas Value { get; set; }
 
             // Material definition for the Corona
-            [ParserTarget("scaleSpeed", allowMerge = true)]
+            [ParserTarget("scaleSpeed", AllowMerge = true)]
             public NumericParser<Single> scaleSpeed
             {
                 get { return Value.scaleSpeed; }
                 set { Value.scaleSpeed = value; }
             }
 
-            [ParserTarget("scaleLimitY", allowMerge = true)]
+            [ParserTarget("scaleLimitY", AllowMerge = true)]
             public NumericParser<Single> scaleLimitY 
             {
                 get { return Value.scaleLimitY; }
                 set { Value.scaleLimitY = value; }
             }
 
-            [ParserTarget("scaleLimitX", allowMerge = true)]
+            [ParserTarget("scaleLimitX", AllowMerge = true)]
             public NumericParser<Single> scaleLimitX
             {
                 get { return Value.scaleLimitX; }
                 set { Value.scaleLimitX = value; }
             }
 
-            [ParserTarget("updateInterval", allowMerge = true)]
+            [ParserTarget("updateInterval", AllowMerge = true)]
             public NumericParser<Single> updateInterval
             {
                 get { return Value.updateInterval; }
                 set { Value.updateInterval = value; }
             }
 
-            [ParserTarget("speed", allowMerge = true)]
+            [ParserTarget("speed", AllowMerge = true)]
             public NumericParser<Int32> speed
             {
                 get { return Value.Speed; }
                 set { Value.Speed = value; }
             }
 
-            [ParserTarget("rotation", allowMerge = true)]
+            [ParserTarget("rotation", AllowMerge = true)]
             public NumericParser<Single> rotation
             {
                 get { return Value.Rotation; }
                 set { Value.Rotation = value; }
             }
 
-            [ParserTarget("Material", allowMerge = true, getChild = false)]
+            [ParserTarget("Material", AllowMerge = true, GetChild = false)]
             public ParticleAddSmoothLoader material
             {
                 get { return (ParticleAddSmoothLoader)Value.GetComponent<Renderer>().sharedMaterial; }

@@ -201,7 +201,7 @@ namespace Kopernicus
             }
 
             // Science values of this body
-            [ParserTarget("ScienceValues", allowMerge = true)]
+            [ParserTarget("ScienceValues", AllowMerge = true)]
             public ScienceValuesLoader scienceValues { get; set; }
 
             // Biome definition via MapSO parser
@@ -237,7 +237,7 @@ namespace Kopernicus
             }
 
             // Biomes of this body
-            [ParserTargetCollection("Biomes", nameSignificance = NameSignificance.None)]
+            [ParserTargetCollection("Biomes", NameSignificance = NameSignificance.None)]
             public List<BiomeLoader> biomes
             {
                 get { return Value.BiomeMap?.Attributes?.Select(a => new BiomeLoader(a)).ToList(); }

@@ -35,7 +35,7 @@ namespace Kopernicus
             public class VertexHeightMapStep : ModLoader<PQSMod_VertexHeightMapStep>
             {
                 // The map texture for the planet
-                [ParserTarget("map", optional = false)]
+                [ParserTarget("map", Optional = false)]
                 public Texture2DParser heightMap
                 {
                     get { return mod.heightMap; }

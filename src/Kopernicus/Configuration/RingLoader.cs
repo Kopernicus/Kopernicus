@@ -212,7 +212,7 @@ namespace Kopernicus
                 set { Value.innerShadeRotationPeriod = value; }
             }
 
-            [ParserTargetCollection("Components", allowMerge = true, nameSignificance = NameSignificance.Type)]
+            [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
             public CallbackList<ComponentLoader<Ring>> Components { get; set; }
 
             [KittopiaAction("Rebuild Ring")]

@@ -35,7 +35,7 @@ namespace Kopernicus
             [RequireConfigType(ConfigType.Node)]
             public class Terrace : NoiseLoader<LibNoise.Modifiers.Terrace>
             {
-                [ParserTarget("controlPoints", optional = false)]
+                [ParserTarget("controlPoints", Optional = false)]
                 public NumericCollectionParser<Double> controlPoints
                 {
                     get { return noise.ControlPoints; }
@@ -50,7 +50,7 @@ namespace Kopernicus
                 }
 
                 [PreApply]
-                [ParserTarget("Source", nameSignificance = NameSignificance.Type, optional = false)]
+                [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
                 public INoiseLoader sourceModule;
 
                 public override void Apply(ConfigNode node)

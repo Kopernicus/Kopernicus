@@ -128,7 +128,7 @@ namespace Kopernicus
                 }
 
                 // The land classes
-                [ParserTargetCollection("LandClasses", allowMerge = true)]
+                [ParserTargetCollection("LandClasses", AllowMerge = true)]
                 public CallbackList<LandClassLoader> landClasses { get; set; }
 
                 // Creates the a PQSMod of type T with given PQS

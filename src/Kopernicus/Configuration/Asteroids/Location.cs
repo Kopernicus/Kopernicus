@@ -180,15 +180,15 @@ namespace Kopernicus
                 }
 
                 // Nearby-Orbits
-                [ParserTargetCollection("Nearby", allowMerge = true)]
+                [ParserTargetCollection("Nearby", AllowMerge = true)]
                 public List<NearbyLoader> nearby = new List<NearbyLoader>();
 
                 // Flyby-Orbits
-                [ParserTargetCollection("Flyby", allowMerge = true)]
+                [ParserTargetCollection("Flyby", AllowMerge = true)]
                 public List<FlybyLoader> flyby = new List<FlybyLoader>();
 
                 // Around-Orbits
-                [ParserTargetCollection("Around", allowMerge = true)]
+                [ParserTargetCollection("Around", AllowMerge = true)]
                 public List<AroundLoader> around = new List<AroundLoader>();
             }
         }
