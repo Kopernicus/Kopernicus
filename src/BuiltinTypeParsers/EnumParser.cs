@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Kopernicus
 {
@@ -34,6 +35,7 @@ namespace Kopernicus
     /// Parser for enum
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class EnumParser<T> : IParsable, ITypeParser<T> where T : struct, IConvertible
     {
         /// <summary>

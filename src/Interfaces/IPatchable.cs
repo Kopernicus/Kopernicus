@@ -27,18 +27,22 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Kopernicus
 {
     /// <summary>
     /// An interface that allows us to select a 
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public interface IPatchable
     {
         String name { get; set; }
     }
 
     [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
     internal class PatchData
     {
         [ParserTarget("name")]

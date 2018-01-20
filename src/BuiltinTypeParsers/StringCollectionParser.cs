@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Kopernicus
@@ -36,6 +37,8 @@ namespace Kopernicus
     /// Simple parser for String arrays
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class StringCollectionParser : IParsable, ITypeParser<List<String>>
     {
         /// <summary>

@@ -39,39 +39,40 @@ namespace Kopernicus
         /// <summary>
         /// Storage key in config node tree.  If null, key is determined with reflection
         /// </summary>
-        public String fieldName;
+        public readonly String FieldName;
 
         /// <summary>
         /// Flag indiciating whether the presence of this value is required
         /// </summary>
-        public Boolean optional = true;
+        public Boolean Optional = true;
 
         /// <summary>
         /// Flag indiciating whether the contents of the config tree can be merged
         /// via reflection with a potentially present field.  If the field is null,
         /// this flag is disregarged
         /// </summary>
-        public Boolean allowMerge = false;
+        public Boolean AllowMerge = false;
 
         /// <summary>
         /// Flag indicating whether the parser should try to call the getter on properties on this object
         /// </summary>
-        public Boolean getChild = true;
+        public Boolean GetChild = true;
 
         /// <summary>
         /// Node name significance - does the name mean anything
         /// </summary>
-        public NameSignificance nameSignificance = NameSignificance.None;
+        public NameSignificance NameSignificance = NameSignificance.None;
 
         /// <summary>
         /// Name of the acceptable values for NameSigificance.Key
         /// </summary>
-        public String key = "";
+        public readonly String Key;
 
         // Constructor sets name
         public ParserTarget(String fieldName)
         {
-            this.fieldName = fieldName;
+            FieldName = fieldName;
+            Key = "";
         }
     }
 }

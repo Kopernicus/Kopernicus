@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Kopernicus
@@ -35,6 +36,7 @@ namespace Kopernicus
     /// Parser for quaternion
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class QuaternionParser : IParsable, ITypeParser<Quaternion>
     {
         /// <summary>
@@ -87,6 +89,7 @@ namespace Kopernicus
     /// Parser for dual quaternion
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class QuaternionDParser : IParsable, ITypeParser<QuaternionD>
     {
         /// <summary>

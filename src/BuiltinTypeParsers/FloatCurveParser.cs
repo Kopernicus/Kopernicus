@@ -26,6 +26,7 @@
  * https://kerbalspaceprogram.com
  */
 
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Kopernicus
@@ -34,6 +35,8 @@ namespace Kopernicus
     /// Parser for a Single curve
     /// </summary>
     [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class FloatCurveParser : IParserEventSubscriber, ITypeParser<FloatCurve>
     {
         /// <summary>

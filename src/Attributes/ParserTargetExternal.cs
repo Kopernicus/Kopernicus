@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Kopernicus
 {
@@ -34,29 +35,30 @@ namespace Kopernicus
     /// Attribute used to tag a class in another library to add it to the ParserTargets
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
+    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
     public class ParserTargetExternal : Attribute
     {
         /// <summary>
         /// Like the ParserTarget, if null, this will be determined via reflection
         /// </summary>
-        public String configNodeName;
+        public readonly String ConfigNodeName;
 
         /// <summary>
         /// The parser will look for this in the node with this name
         /// </summary>
-        public String parentNodeName;
+        public readonly String ParentNodeName;
 
         /// <summary>
         /// The name of the mod calling the external target
         /// </summary>
-        public String modName;
+        public readonly String ModName;
 
         // Constructor sets name
         public ParserTargetExternal(String parentNodeName, String configNodeName, String modName)
         {
-            this.parentNodeName = parentNodeName;
-            this.configNodeName = configNodeName;
-            this.modName = modName;
+            ParentNodeName = parentNodeName;
+            ConfigNodeName = configNodeName;
+            ModName = modName;
         }
     }
 }

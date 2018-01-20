@@ -40,6 +40,6 @@ namespace Kopernicus
     {
         None,
         Type,
-        Key,
+        Key
     }
 }

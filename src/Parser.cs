@@ -29,6 +29,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Object = System.Object;
@@ -38,22 +40,23 @@ namespace Kopernicus
     /// <summary>
     /// Class which manages loading from config nodes via reflection and attribution
     /// </summary>
-    public class Parser
+    public static class Parser
     {
         /// <summary>
         /// A list of states that can be shared through the parser
         /// </summary>
-        internal static Dictionary<String, Func<Object>> states = new Dictionary<String, Func<Object>>();
-        
+        private static readonly Dictionary<String, Func<Object>> States = new Dictionary<String, Func<Object>>();
+
         /// <summary>
         /// Create an object form a configuration node (Generic)
         /// </summary>
         /// <typeparam name="T">The resulting class</typeparam>
         /// <param name="node">The node with the data that should be loaded</param>
-        /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
+        /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
         /// <returns></returns>
-        public static T CreateObjectFromConfigNode<T>(ConfigNode node, String configName = "Default", Boolean getChilds = true) where T : class, new()
+        public static T CreateObjectFromConfigNode<T>(ConfigNode node, String configName = "Default",
+            Boolean getChilds = true) where T : class, new()
         {
             T o = new T();
             LoadObjectFromConfigurationNode(o, node, configName, getChilds);
@@ -65,10 +68,12 @@ namespace Kopernicus
         /// </summary>
         /// <param name="type">The resulting class</param>
         /// <param name="node">The node with the data that should be loaded</param>
-        /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
+        /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
         /// <returns></returns>
-        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, String configName = "Default", Boolean getChilds = true)
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, String configName = "Default",
+            Boolean getChilds = true)
         {
             Object o = Activator.CreateInstance(type);
             LoadObjectFromConfigurationNode(o, node, configName, getChilds);
@@ -81,10 +86,12 @@ namespace Kopernicus
         /// <param name="type">The resulting class</param>
         /// <param name="node">The node with the data that should be loaded</param>
         /// <param name="arguments">Arguments that should be passed to the constructor</param>
-        /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
+        /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
         /// <returns></returns>
-        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, Object[] arguments, String configName = "Default", Boolean getChilds = true)
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public static Object CreateObjectFromConfigNode(Type type, ConfigNode node, Object[] arguments,
+            String configName = "Default", Boolean getChilds = true)
         {
             Object o = Activator.CreateInstance(type, arguments);
             LoadObjectFromConfigurationNode(o, node, configName, getChilds);
@@ -96,9 +103,10 @@ namespace Kopernicus
         /// </summary>
         /// <param name="o">Object for which to load data.  Needs to be instatiated object</param>
         /// <param name="node">Configuration node from which to load data</param>
-        /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
+        /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
-        public static void LoadObjectFromConfigurationNode(Object o, ConfigNode node, String configName = "Default", Boolean getChilds = true)
+        public static void LoadObjectFromConfigurationNode(Object o, ConfigNode node, String configName = "Default",
+            Boolean getChilds = true)
         {
             // Get the object as a parser event subscriber (will be null if 'o' does not conform)
             IParserEventSubscriber subscriber = o as IParserEventSubscriber;
@@ -108,20 +116,25 @@ namespace Kopernicus
             List<KeyValuePair<Boolean, MemberInfo>> postapplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
 
             // Discover members tagged with parser attributes
-            foreach (MemberInfo member in o.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+            foreach (MemberInfo member in o.GetType()
+                .GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
             {
                 // Is this member a parser target?
-                ParserTarget[] attributes = (ParserTarget[]) member.GetCustomAttributes((typeof(ParserTarget)), true);
-                if (attributes.Length > 0)
-                {
-                    // If this member is a collection
-                    Boolean isCollection = attributes[0].GetType() == typeof(ParserTargetCollection);
+                ParserTarget[] attributes = (ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true);
 
-                    // If this member has the preapply attribute, we need to process it
-                    if (member.GetCustomAttributes((typeof(PreApply)), true).Length > 0)
-                        preapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
-                    else
-                        postapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
+                if (attributes.Length <= 0) continue;
+
+                // If this member is a collection
+                Boolean isCollection = attributes[0].GetType() == typeof(ParserTargetCollection);
+
+                // If this member has the preapply attribute, we need to process it
+                if (member.GetCustomAttributes((typeof(PreApply)), true).Length > 0)
+                {
+                    preapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
+                }
+                else
+                {
+                    postapplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
                 }
             }
 
@@ -129,9 +142,13 @@ namespace Kopernicus
             foreach (KeyValuePair<Boolean, MemberInfo> member in preapplyMembers)
             {
                 if (member.Key)
+                {
                     LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName, getChilds);
+                }
                 else
+                {
                     LoadObjectMemberFromConfigurationNode(member.Value, o, node, configName, getChilds);
+                }
             }
 
             // Call Apply
@@ -141,9 +158,13 @@ namespace Kopernicus
             foreach (KeyValuePair<Boolean, MemberInfo> member in postapplyMembers)
             {
                 if (member.Key)
-                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName);
+                {
+                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName, getChilds);
+                }
                 else
-                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, configName);
+                {
+                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, configName, getChilds);
+                }
             }
 
             // Call PostApply
@@ -156,35 +177,39 @@ namespace Kopernicus
         /// <param name="member">Member to load data for</param>
         /// <param name="o">Instance of the object which owns member</param>
         /// <param name="node">Configuration node from which to load data</param>
-        /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
+        /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
-        public static void LoadCollectionMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node, String configName = "Default", Boolean getChilds = true)
+        private static void LoadCollectionMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node,
+            String configName = "Default", Boolean getChilds = true)
         {
             // Get the target attributes
-            ParserTargetCollection[] targets = ((ParserTargetCollection[]) member.GetCustomAttributes(typeof(ParserTargetCollection), true));
+            ParserTargetCollection[] targets =
+                (ParserTargetCollection[]) member.GetCustomAttributes(typeof(ParserTargetCollection), true);
 
             // Process the target attributes
             foreach (ParserTargetCollection target in targets)
             {
                 // Figure out if this field exists and if we care
-                Boolean isNode = node.HasNode(target.fieldName) || target.fieldName == "self";
-                Boolean isValue = node.HasValue(target.fieldName);
+                Boolean isNode = node.HasNode(target.FieldName) || target.FieldName == "self";
+                Boolean isValue = node.HasValue(target.FieldName);
 
                 // Obtain the type the member is (can only be field or property)
                 Type targetType;
                 Object targetValue = null;
                 if (member.MemberType == MemberTypes.Field)
                 {
-                    targetType = ((FieldInfo)member).FieldType;
-                    targetValue = getChilds ? ((FieldInfo)member).GetValue(o) : null;
+                    targetType = ((FieldInfo) member).FieldType;
+                    targetValue = getChilds ? ((FieldInfo) member).GetValue(o) : null;
                 }
                 else
                 {
-                    targetType = ((PropertyInfo)member).PropertyType;
+                    targetType = ((PropertyInfo) member).PropertyType;
                     try
                     {
-                        if (((PropertyInfo)member).CanRead && getChilds)
-                            targetValue = ((PropertyInfo)member).GetValue(o, null);
+                        if (((PropertyInfo) member).CanRead && getChilds)
+                        {
+                            targetValue = ((PropertyInfo) member).GetValue(o, null);
+                        }
                     }
                     catch (Exception)
                     {
@@ -193,23 +218,28 @@ namespace Kopernicus
                 }
 
                 // Get settings data
-                ParserOptions.Data data = ParserOptions.options[configName];
+                ParserOptions.Data data = ParserOptions.Options[configName];
 
                 // Log
-                data.logCallback("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")"); 
+                data.LogCallback("Parsing Target " + target.FieldName + " in (" + o.GetType() + ") as (" + targetType +
+                                 ")");
 
                 // If there was no data found for this node
                 if (!isNode && !isValue)
                 {
-                    if (!target.optional && !(target.allowMerge && targetValue != null))
+                    if (!target.Optional && !(target.AllowMerge && targetValue != null))
                     {
                         // Error - non optional field is missing
-                        throw new ParserTargetMissingException("Missing non-optional field: " + o.GetType() + "." + target.fieldName);
+                        throw new ParserTargetMissingException(
+                            "Missing non-optional field: " + o.GetType() + "." + target.FieldName);
                     }
 
                     // Nothing to do, so return
                     return;
                 }
+
+                data.LogCallback("isNode: " + isNode);
+                data.LogCallback("isValue: " + isValue);
 
                 // If we are dealing with a generic collection
                 if (targetType.IsGenericType)
@@ -231,75 +261,77 @@ namespace Kopernicus
                         Type genericTypeB = targetType.GetGenericArguments()[1];
 
                         // Create a new collection if merge is disallowed or if the collection is null
-                        if (collection == null || !target.allowMerge)
+                        if (collection == null || !target.AllowMerge)
                         {
                             collection = Activator.CreateInstance(targetType) as IDictionary;
                             targetValue = collection;
                         }
 
                         // Process the node
-                        ConfigNode _node = target.fieldName == "self" ? node : node.GetNode(target.fieldName);
+                        ConfigNode targetNode = target.FieldName == "self" ? node : node.GetNode(target.FieldName);
 
                         // Check the config type
-                        RequireConfigType[] attributes = (RequireConfigType[])genericTypeA.GetCustomAttributes(typeof(RequireConfigType), true);
+                        RequireConfigType[] attributes =
+                            (RequireConfigType[]) genericTypeA.GetCustomAttributes(typeof(RequireConfigType), true);
                         if (attributes.Length > 0)
                         {
-                            if (attributes[0].type == ConfigType.Node)
+                            if (attributes[0].Type == ConfigType.Node)
                             {
-                                throw new ParserTargetTypeMismatchException("The key value of a generic dictionary must be a Value");
+                                throw new ParserTargetTypeMismatchException(
+                                    "The key value of a generic dictionary must be a Value");
                             }
                         }
-                        attributes = (RequireConfigType[])genericTypeB.GetCustomAttributes(typeof(RequireConfigType), true);
+
+                        attributes =
+                            (RequireConfigType[]) genericTypeB.GetCustomAttributes(typeof(RequireConfigType), true);
                         if (attributes.Length > 0 || genericTypeB == typeof(String))
                         {
-                            ConfigType type = genericTypeB == typeof(String) ? ConfigType.Value : attributes[0].type;
+                            ConfigType type = genericTypeB == typeof(String) ? ConfigType.Value : attributes[0].Type;
                             if (type == ConfigType.Node)
                             {
                                 // Iterate over all of the nodes in this node
-                                foreach (ConfigNode subnode in _node.nodes)
+                                foreach (ConfigNode subnode in targetNode.nodes)
                                 {
                                     // Check for the name significance
-                                    if (target.nameSignificance == NameSignificance.None)
+                                    switch (target.NameSignificance)
                                     {
-                                        // Just processes the contents of the node
-                                        collection?.Add(ProcessValue(genericTypeA, subnode.name), CreateObjectFromConfigNode(genericTypeB, subnode, configName, target.getChild));
-                                    }
-
-                                    // Otherwise throw an exception because we don't support named ones
-                                    else if (target.nameSignificance == NameSignificance.Type)
-                                    {
-                                        throw new Exception("NameSignificance.Type isn't supported on generic dictionaries.");
-                                    }
-
-                                    // We dont support key specific ones either (makes no sense)
-                                    else if (target.nameSignificance == NameSignificance.Key)
-                                    {
-                                        throw new Exception("NameSignificance.Key isn't supported on generic dictionaries");
+                                        case NameSignificance.None:
+                                            // Just processes the contents of the node
+                                            collection.Add(ProcessValue(genericTypeA, subnode.name),
+                                                CreateObjectFromConfigNode(genericTypeB, subnode, configName,
+                                                    target.GetChild));
+                                            break;
+                                        case NameSignificance.Type:
+                                            throw new Exception(
+                                                "NameSignificance.Type isn't supported on generic dictionaries.");
+                                        case NameSignificance.Key:
+                                            throw new Exception(
+                                                "NameSignificance.Key isn't supported on generic dictionaries");
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
                                     }
                                 }
                             }
                             else
                             {
                                 // Iterate over all of the values in this node
-                                foreach (ConfigNode.Value value in _node.values)
+                                foreach (ConfigNode.Value value in targetNode.values)
                                 {
                                     // Check for the name significance
-                                    if (target.nameSignificance == NameSignificance.None)
+                                    switch (target.NameSignificance)
                                     {
-                                        // Just processes the contents of the node
-                                        collection?.Add(ProcessValue(genericTypeA, value.name), ProcessValue(genericTypeB, value.value));
-                                    }
-
-                                    // Otherwise throw an exception because we don't support named ones
-                                    else if (target.nameSignificance == NameSignificance.Type)
-                                    {
-                                        throw new Exception("NameSignificance.Type isn't supported on generic dictionaries.");
-                                    }
-
-                                    // We dont support key specific ones either (makes no sense)
-                                    else if (target.nameSignificance == NameSignificance.Key)
-                                    {
-                                        throw new Exception("NameSignificance.Key isn't supported on generic dictionaries");
+                                        case NameSignificance.None:
+                                            collection.Add(ProcessValue(genericTypeA, value.name),
+                                                ProcessValue(genericTypeB, value.value));
+                                            break;
+                                        case NameSignificance.Type:
+                                            throw new Exception(
+                                                "NameSignificance.Type isn't supported on generic dictionaries.");
+                                        case NameSignificance.Key:
+                                            throw new Exception(
+                                                "NameSignificance.Key isn't supported on generic dictionaries");
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
                                     }
                                 }
                             }
@@ -309,6 +341,8 @@ namespace Kopernicus
                     // If the target is a generic collection
                     else if (typeof(IList).IsAssignableFrom(targetType))
                     {
+                        data.LogCallback(targetType.ToString());
+
                         // We need a node for this decoding
                         if (!isNode)
                         {
@@ -322,141 +356,169 @@ namespace Kopernicus
                         Type genericType = targetType.GetGenericArguments()[0];
 
                         // Create a new collection if merge is disallowed or if the collection is null
-                        if (collection == null || !target.allowMerge)
+                        if (collection == null || !target.AllowMerge)
                         {
                             collection = Activator.CreateInstance(targetType) as IList;
                             targetValue = collection;
                         }
-                        
+
                         // Store the objects that were already patched
                         List<Object> patched = new List<Object>();
 
                         // Process the node
-                        ConfigNode _node = target.fieldName == "self" ? node : node.GetNode(target.fieldName);
+                        ConfigNode targetNode = target.FieldName == "self" ? node : node.GetNode(target.FieldName);
 
                         // Check the config type
-                        RequireConfigType[] attributes = (RequireConfigType[])genericType.GetCustomAttributes(typeof(RequireConfigType), true);
+                        RequireConfigType[] attributes =
+                            (RequireConfigType[]) genericType.GetCustomAttributes(typeof(RequireConfigType), true);
                         if (attributes.Length > 0 || genericType == typeof(String))
                         {
-                            ConfigType type = genericType == typeof(String) ? ConfigType.Value : attributes[0].type;
+                            ConfigType type = genericType == typeof(String) ? ConfigType.Value : attributes[0].Type;
+                            data.LogCallback(type.ToString());
                             if (type == ConfigType.Node)
                             {
                                 // Iterate over all of the nodes in this node
-                                foreach (ConfigNode subnode in _node.nodes)
+                                foreach (ConfigNode subnode in targetNode.nodes)
                                 {
                                     // Check for the name significance
-                                    if (target.nameSignificance == NameSignificance.None)
+                                    switch (target.NameSignificance)
                                     {
-                                        // Just processes the contents of the node
-                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName, target.getChild));
-                                    }
+                                        case NameSignificance.None:
 
-                                    // Otherwise throw an exception because we don't support named ones yet
-                                    else if (target.nameSignificance == NameSignificance.Type)
-                                    {
-                                        // Generate the type from the name
-                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == subnode.name && t.Assembly != typeof(HighLogic).Assembly);
-                                        
-                                        // Check if the type represents patchable data
-                                        Object current = null;
-                                        if (typeof(IPatchable).IsAssignableFrom(elementType) && collection.Count > 0)
-                                        {
-                                            foreach (Object obj in collection)
+                                            // Just processes the contents of the node
+                                            collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName,
+                                                target.GetChild));
+                                            break;
+
+                                        case NameSignificance.Type:
+
+                                            // Generate the type from the name
+                                            Type elementType = ModTypes.FirstOrDefault(t =>
+                                                t.Name == subnode.name &&
+                                                !Equals(t.Assembly, typeof(HighLogic).Assembly));
+
+                                            // Check if the type represents patchable data
+                                            Object current = null;
+                                            if (typeof(IPatchable).IsAssignableFrom(elementType) &&
+                                                collection.Count > 0)
                                             {
-                                                if (obj.GetType() != elementType)
-                                                    continue;
-                                                if (patched.Contains(obj))
-                                                    continue;
-                                                IPatchable patchable = (IPatchable) obj;
-                                                PatchData patchData = CreateObjectFromConfigNode<PatchData>(subnode);
-                                                if (patchData.name == patchable.name)
+                                                foreach (Object obj in collection)
                                                 {
-                                                    // Name matches, check for an index
-                                                    if (patchData.index == collection.IndexOf(obj))
+                                                    if (obj.GetType() != elementType)
+                                                        continue;
+                                                    if (patched.Contains(obj))
+                                                        continue;
+                                                    IPatchable patchable = (IPatchable) obj;
+                                                    PatchData patchData =
+                                                        CreateObjectFromConfigNode<PatchData>(subnode);
+                                                    if (patchData.name == patchable.name)
                                                     {
-                                                        // Both values match
+                                                        // Name matches, check for an index
+                                                        if (patchData.index == collection.IndexOf(obj))
+                                                        {
+                                                            // Both values match
+                                                            current = obj;
+                                                            break;
+                                                        }
+
+                                                        if (patchData.index > -1)
+                                                        {
+                                                            // Index doesn't match, continue
+                                                            continue;
+                                                        }
+
+                                                        // Name matches, and no index exists
                                                         current = obj;
                                                         break;
+
                                                     }
-                                                    if (patchData.index > -1)
+
+                                                    if (patchData.name != null)
                                                     {
-                                                        // Index doesn't match, continue
+                                                        // The name doesn't match, continue the search
                                                         continue;
                                                     }
 
-                                                    // Name matches, and no index exists
+                                                    // We found the first object that wasn't patched yet
                                                     current = obj;
                                                     break;
-
                                                 }
-                                                if (patchData.name != null)
-                                                {
-                                                    // The name doesn't match, continue the search
-                                                    continue;
-                                                }
-
-                                                // We found the first object that wasn't patched yet
-                                                current = obj;
-                                                break;
                                             }
-                                        }
-                                        
-                                        // If no object was found, check if the type implements custom constructors
-                                        if (current == null)
-                                        {
-                                            current = Activator.CreateInstance(elementType);
-                                            collection?.Add(current);
-                                            if (typeof(ICreatable).IsAssignableFrom(elementType))
+
+                                            // If no object was found, check if the type implements custom constructors
+                                            if (current == null)
                                             {
-                                                ICreatable creatable = (ICreatable) current ;
-                                                creatable.Create();
+                                                current = Activator.CreateInstance(elementType);
+                                                collection?.Add(current);
+                                                if (typeof(ICreatable).IsAssignableFrom(elementType))
+                                                {
+                                                    ICreatable creatable = (ICreatable) current;
+                                                    creatable.Create();
+                                                }
                                             }
-                                        }
 
-                                        // Parse the config node into the object
-                                        LoadObjectFromConfigurationNode(current, subnode, configName, target.getChild);
-                                        patched.Add(current);
-                                        if (collection != null)
-                                        {
-                                            collection[collection.IndexOf(current)] = current;
-                                        }
-                                    }
+                                            // Parse the config node into the object
+                                            LoadObjectFromConfigurationNode(current, subnode, configName,
+                                                target.GetChild);
+                                            patched.Add(current);
+                                            if (collection != null)
+                                            {
+                                                collection[collection.IndexOf(current)] = current;
+                                            }
 
-                                    // Select only the nodes with an acceptable name
-                                    else if (target.nameSignificance == NameSignificance.Key && subnode.name == target.key)
-                                    {
-                                        // Just processes the contents of the node
-                                        collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName, target.getChild));
+                                            break;
+
+                                        case NameSignificance.Key when subnode.name == target.Key:
+
+                                            // Just processes the contents of the node
+                                            collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName,
+                                                target.GetChild));
+                                            break;
+
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
                                     }
                                 }
                             }
                             else
                             {
+                                data.LogCallback(node.name);
+
                                 // Iterate over all of the nodes in this node
-                                foreach (ConfigNode.Value value in _node.values)
+                                foreach (ConfigNode.Value value in targetNode.values)
                                 {
+                                    data.LogCallback(value.value);
+
                                     // Check for the name significance
-                                    if (target.nameSignificance == NameSignificance.None)
+                                    switch (target.NameSignificance)
                                     {
-                                        // Just processes the contents of the node
-                                        collection?.Add(ProcessValue(genericType, value.value));
-                                    }
+                                        case NameSignificance.None:
 
-                                    // Otherwise throw an exception because we don't support named ones yet
-                                    else if (target.nameSignificance == NameSignificance.Type)
-                                    {
-                                        // Generate the type from the name
-                                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == value.name && t.Assembly != typeof(HighLogic).Assembly);
+                                            // Just processes the contents of the node
+                                            collection?.Add(ProcessValue(genericType, value.value));
+                                            data.LogCallback(value.value);
+                                            data.LogCallback(ProcessValue(genericType, value.value).ToString());
+                                            break;
 
-                                        // Add the object to the collection
-                                        collection?.Add(ProcessValue(elementType, value.value));
-                                    }
+                                        case NameSignificance.Type:
 
-                                    // Select only the nodes with an acceptable name
-                                    else if (target.nameSignificance == NameSignificance.Key && value.name == target.key)
-                                    {
-                                        // Just processes the contents of the node
-                                        collection?.Add(ProcessValue(genericType, value.value));
+                                            // Generate the type from the name
+                                            Type elementType = ModTypes.FirstOrDefault(t =>
+                                                t.Name == value.name &&
+                                                !Equals(t.Assembly, typeof(HighLogic).Assembly));
+
+                                            // Add the object to the collection
+                                            collection?.Add(ProcessValue(elementType, value.value));
+                                            break;
+
+                                        case NameSignificance.Key when value.name == target.Key:
+
+                                            // Just processes the contents of the node
+                                            collection?.Add(ProcessValue(genericType, value.value));
+                                            break;
+
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
                                     }
                                 }
                             }
@@ -468,22 +530,23 @@ namespace Kopernicus
                 else
                 {
                     // Check for invalid scenarios
-                    if (target.nameSignificance == NameSignificance.None)
+                    if (target.NameSignificance == NameSignificance.None)
                     {
-                        throw new Exception("Can not infer type from non generic target; can not infer type from zero name significance");
+                        throw new Exception(
+                            "Can not infer type from non generic target; can not infer type from zero name significance");
                     }
                 }
 
                 // If the member type is a field, set the value
                 if (member.MemberType == MemberTypes.Field)
                 {
-                    ((FieldInfo)member).SetValue(o, targetValue);
+                    ((FieldInfo) member).SetValue(o, targetValue);
                 }
 
                 // If the member wasn't a field, it must be a property.  If the property is writable, set it.
-                else if (((PropertyInfo)member).CanWrite)
+                else if (((PropertyInfo) member).CanWrite)
                 {
-                    ((PropertyInfo)member).SetValue(o, targetValue, null);
+                    ((PropertyInfo) member).SetValue(o, targetValue, null);
                 }
             }
         }
@@ -493,35 +556,37 @@ namespace Kopernicus
         /// </summary>
         /// <param name="member">Member to load data for</param>
         /// <param name="o">Instance of the object which owns member</param>
-        /// <param name="node">Configuration node from which to load data</param>        /// <param name="modName">The name of the mod that corresponds to the entry in ParserOptions</param>
+        /// <param name="node">Configuration node from which to load data</param>
+        /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChilds">Whether getters on the object should get called</param>
-        public static void LoadObjectMemberFromConfigurationNode(MemberInfo member, object o, ConfigNode node, String configName = "Default", Boolean getChilds = true)
+        private static void LoadObjectMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node,
+            String configName = "Default", Boolean getChilds = true)
         {
             // Get the parser targets
-            ParserTarget[] targets = ((ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true));
+            ParserTarget[] targets = (ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true);
 
             // Process the targets
             foreach (ParserTarget target in targets)
             {
                 // Figure out if this field exists and if we care
-                Boolean isNode = node.GetNodes().Any(n => n.name.StartsWith(target.fieldName));
-                Boolean isValue = node.HasValue(target.fieldName);
+                Boolean isNode = node.GetNodes().Any(n => n.name.StartsWith(target.FieldName));
+                Boolean isValue = node.HasValue(target.FieldName);
 
                 // Obtain the type the member is (can only be field or property)
                 Type targetType;
                 Object targetValue = null;
                 if (member.MemberType == MemberTypes.Field)
                 {
-                    targetType = ((FieldInfo)member).FieldType;
-                    targetValue = getChilds ? ((FieldInfo)member).GetValue(o) : null;
+                    targetType = ((FieldInfo) member).FieldType;
+                    targetValue = getChilds ? ((FieldInfo) member).GetValue(o) : null;
                 }
                 else
                 {
-                    targetType = ((PropertyInfo)member).PropertyType;
+                    targetType = ((PropertyInfo) member).PropertyType;
                     try
                     {
-                        if (((PropertyInfo)member).CanRead && getChilds)
-                            targetValue = ((PropertyInfo)member).GetValue(o, null);
+                        if (((PropertyInfo) member).CanRead && getChilds)
+                            targetValue = ((PropertyInfo) member).GetValue(o, null);
                     }
                     catch (Exception)
                     {
@@ -530,18 +595,20 @@ namespace Kopernicus
                 }
 
                 // Get settings data
-                ParserOptions.Data data = ParserOptions.options[configName];
+                ParserOptions.Data data = ParserOptions.Options[configName];
 
                 // Log
-                data.logCallback("Parsing Target " + target.fieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
+                data.LogCallback("Parsing Target " + target.FieldName + " in (" + o.GetType() + ") as (" + targetType +
+                                 ")");
 
                 // If there was no data found for this node
                 if (!isNode && !isValue)
                 {
-                    if (!target.optional && !(target.allowMerge && targetValue != null))
+                    if (!target.Optional && !(target.AllowMerge && targetValue != null))
                     {
                         // Error - non optional field is missing
-                        throw new ParserTargetMissingException("Missing non-optional field: " + o.GetType() + "." + target.fieldName);
+                        throw new ParserTargetMissingException(
+                            "Missing non-optional field: " + o.GetType() + "." + target.FieldName);
                     }
 
                     // Nothing to do, so DONT return!
@@ -549,12 +616,15 @@ namespace Kopernicus
                 }
 
                 // Does this node have a required config source type (and if so, check if valid)
-                RequireConfigType[] attributes = (RequireConfigType[])member.GetCustomAttributes(typeof(RequireConfigType), true);
+                RequireConfigType[] attributes =
+                    (RequireConfigType[]) member.GetCustomAttributes(typeof(RequireConfigType), true);
                 if (attributes.Length > 0)
                 {
-                    if ((attributes[0].type == ConfigType.Node && !isNode) || (attributes[0].type == ConfigType.Value && !isValue))
+                    if (attributes[0].Type == ConfigType.Node && !isNode ||
+                        attributes[0].Type == ConfigType.Value && !isValue)
                     {
-                        throw new ParserTargetTypeMismatchException(target.fieldName + " requires config value of " + attributes[0].type);
+                        throw new ParserTargetTypeMismatchException(
+                            target.FieldName + " requires config value of " + attributes[0].Type);
                     }
                 }
 
@@ -562,18 +632,17 @@ namespace Kopernicus
                 if (isValue)
                 {
                     // Process the value
-                    Object val = ProcessValue(targetType, node.GetValue(target.fieldName));
+                    Object val = ProcessValue(targetType, node.GetValue(target.FieldName));
 
                     // Throw exception or print error
                     if (val == null)
                     {
-                        data.logCallback("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.fieldName + "\" is a non parsable type: " + targetType);
+                        data.LogCallback("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.FieldName +
+                                         "\" is a non parsable type: " + targetType);
                         return;
                     }
-                    else
-                    {
-                        targetValue = val;
-                    }
+
+                    targetValue = val;
                 }
 
                 // If this object is a node (potentially merge)
@@ -581,54 +650,72 @@ namespace Kopernicus
                 {
                     // If the target type is a ConfigNode, this works natively
                     if (targetType == typeof(ConfigNode))
-                        targetValue = node.GetNode(target.fieldName);
+                    {
+                        targetValue = node.GetNode(target.FieldName);
+                    }
 
                     // We need to get an instance of the object we are trying to populate
                     // If we are not allowed to merge, or the object does not exist, make a new instance
                     // Otherwise we can merge this value
-                    else if (targetValue == null || !target.allowMerge)
+                    else if (targetValue == null || !target.AllowMerge)
                     {
-                        targetValue = Activator.CreateInstance(targetType);
+                        if (!targetType.IsAbstract)
+                        {
+                            targetValue = Activator.CreateInstance(targetType);
+                        }
                     }
 
                     // Check for the name significance
-                    if (target.nameSignificance == NameSignificance.None)
+                    switch (target.NameSignificance)
                     {
-                        // Just processes the contents of the node
-                        LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.fieldName), configName, target.getChild);
-                    }
+                        case NameSignificance.None:
 
-                    // Otherwise throw an exception because we don't support named ones yet
-                    else if (target.nameSignificance == NameSignificance.Type)
-                    {
-                        // Generate the type from the name
-                        ConfigNode subnode = node.GetNodes().First(n => n.name.StartsWith(target.fieldName));
-                        String[] split = subnode.name.Split(':');
-                        Type elementType = ModTypes.FirstOrDefault(t => t.Name == split[1] && t.Assembly != typeof(HighLogic).Assembly);
+                            // Just processes the contents of the node
+                            LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.FieldName), configName,
+                                target.GetChild);
+                            break;
 
-                        // Add the object to the collection
-                        targetValue = CreateObjectFromConfigNode(elementType, subnode, configName, target.getChild);
-                    }
-                    else if (target.nameSignificance == NameSignificance.Key)
-                    {
-                        throw new Exception("NameSignificance.Key is not supported on ParserTargets");
+                        case NameSignificance.Type:
+
+                            // Generate the type from the name
+                            ConfigNode subnode = node.GetNodes().First(n => n.name.StartsWith(target.FieldName));
+                            String[] split = subnode.name.Split(':');
+                            Type elementType = ModTypes.FirstOrDefault(t =>
+                                t.Name == split[1] && t.Assembly != typeof(HighLogic).Assembly);
+
+                            // If no object was found, check if the type implements custom constructors
+                            targetValue = Activator.CreateInstance(elementType);
+                            if (typeof(ICreatable).IsAssignableFrom(elementType))
+                            {
+                                ICreatable creatable = (ICreatable) targetValue;
+                                creatable.Create();
+                            }
+
+                            // Parse the config node into the object
+                            LoadObjectFromConfigurationNode(targetValue, subnode, configName, target.GetChild);
+                            break;
+
+                        case NameSignificance.Key:
+                            throw new Exception("NameSignificance.Key is not supported on ParserTargets");
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
 
                 // If the member type is a field, set the value
                 if (member.MemberType == MemberTypes.Field)
                 {
-                    ((FieldInfo)member).SetValue(o, targetValue);
+                    ((FieldInfo) member).SetValue(o, targetValue);
                 }
 
                 // If the member wasn't a field, it must be a property.  If the property is writable, set it.
-                else if (((PropertyInfo)member).CanWrite)
+                else if (((PropertyInfo) member).CanWrite)
                 {
-                    ((PropertyInfo)member).SetValue(o, targetValue, null);
+                    ((PropertyInfo) member).SetValue(o, targetValue, null);
                 }
             }
         }
-        
+
         /// <summary>
         /// Processes a value from a config
         /// </summary>
@@ -642,21 +729,22 @@ namespace Kopernicus
             }
 
             // Figure out if this object is a parsable type
-            else if (typeof(IParsable).IsAssignableFrom(targetType))
+            if (!typeof(IParsable).IsAssignableFrom(targetType))
             {
-                // Create a new object
-                IParsable targetParsable = (IParsable)Activator.CreateInstance(targetType);
-                targetParsable.SetFromString(nodeValue);
-                return targetParsable;
+                return null;
             }
 
-            return null;
+            // Create a new object
+            IParsable targetParsable = (IParsable) Activator.CreateInstance(targetType);
+            targetParsable.SetFromString(nodeValue);
+            return targetParsable;
         }
-        
+
         /// <summary>
         /// Loads ParserTargets from other assemblies in GameData/
         /// </summary>
-        public static void LoadParserTargetsExternal(ConfigNode node, String modName, String configName = "Default", Boolean getChilds = true)
+        public static void LoadParserTargetsExternal(ConfigNode node, String modName, String configName = "Default",
+            Boolean getChilds = true)
         {
             LoadExternalParserTargets(node, modName, configName, getChilds);
             foreach (ConfigNode childNode in node.GetNodes())
@@ -668,7 +756,8 @@ namespace Kopernicus
         /// <summary>
         /// Loads ParserTargets from other assemblies in GameData/
         /// </summary>
-        private static void LoadExternalParserTargets(ConfigNode node, String calling, String configName = "Default", Boolean getChilds = true)
+        private static void LoadExternalParserTargets(ConfigNode node, String calling, String configName = "Default",
+            Boolean getChilds = true)
         {
             // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
             try
@@ -677,34 +766,52 @@ namespace Kopernicus
                 {
                     try
                     {
-                        ParserTargetExternal[] attributes = (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
-                        if (attributes.Length == 0) continue;
+                        ParserTargetExternal[] attributes =
+                            (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
+                        if (attributes.Length == 0)
+                        {
+                            continue;
+                        }
+
                         ParserTargetExternal external = attributes[0];
-                        if (node.name != external.parentNodeName)
+                        if (node.name != external.ParentNodeName)
+                        {
                             continue;
-                        if (calling != external.modName)
+                        }
+
+                        if (calling != external.ModName)
+                        {
                             continue;
-                        String nodeName = external.configNodeName ?? type.Name;
+                        }
+
+                        String nodeName = external.ConfigNodeName ?? type.Name;
 
                         // Get settings data
-                        ParserOptions.Data data = ParserOptions.options[configName];
+                        ParserOptions.Data data = ParserOptions.Options[configName];
 
-                        if (!node.HasNode(nodeName)) continue;
+                        if (!node.HasNode(nodeName))
+                        {
+                            continue;
+                        }
+
                         try
                         {
-                            data.logCallback("Parsing ParserTarget " + nodeName + " in node " + external.parentNodeName + " from Assembly " + type.Assembly.FullName);
+                            data.LogCallback("Parsing ParserTarget " + nodeName + " in node " +
+                                             external.ParentNodeName + " from Assembly " + type.Assembly.FullName);
                             ConfigNode nodeToLoad = node.GetNode(nodeName);
                             Object obj = CreateObjectFromConfigNode(type, nodeToLoad, configName, getChilds);
                         }
                         catch (MissingMethodException missingMethod)
                         {
-                            data.logCallback("Failed to load ParserTargetExternal " + nodeName + " because it does not have a parameterless constructor");
-                            data.errorCallback(missingMethod);
+                            data.LogCallback("Failed to load ParserTargetExternal " + nodeName +
+                                             " because it does not have a parameterless constructor");
+                            data.ErrorCallback(missingMethod);
                         }
                         catch (Exception exception)
                         {
-                            data.logCallback("Failed to load ParserTargetExternal " + nodeName + " from node " + external.parentNodeName);
-                            data.errorCallback(exception);
+                            data.LogCallback("Failed to load ParserTargetExternal " + nodeName + " from node " +
+                                             external.ParentNodeName);
+                            data.ErrorCallback(exception);
                         }
                     }
                     catch (TypeLoadException)
@@ -723,12 +830,12 @@ namespace Kopernicus
         /// </summary>
         public static void SetState<T>(String name, Func<T> accessor)
         {
-            if (!states.ContainsKey(name))
+            if (States.ContainsKey(name))
             {
-                states.Add(name, () => accessor());
-                return;
+                throw new InvalidOperationException();
             }
-            throw new InvalidOperationException();
+
+            States.Add(name, () => accessor());
         }
 
         /// <summary>
@@ -736,12 +843,12 @@ namespace Kopernicus
         /// </summary>
         public static void ClearState(String name)
         {
-            if (states.ContainsKey(name))
+            if (!States.ContainsKey(name))
             {
-                states.Remove(name);
-                return;
+                throw new IndexOutOfRangeException();
             }
-            throw new IndexOutOfRangeException();
+
+            States.Remove(name);
         }
 
         /// <summary>
@@ -749,35 +856,37 @@ namespace Kopernicus
         /// </summary>
         public static T GetState<T>(String name)
         {
-            if (states.ContainsKey(name))
+            if (!States.ContainsKey(name))
             {
-                return (T) states[name]();
+                throw new IndexOutOfRangeException();
             }
-            throw new IndexOutOfRangeException();
+
+            return (T) States[name]();
         }
 
         // Custom Assembly query since AppDomain and Assembly loader are not quite what we want in 1.1
-        private static List<Type> _ModTypes;
+        private static List<Type> _modTypes;
+
         public static List<Type> ModTypes
         {
             get
             {
-                if (_ModTypes == null)
+                if (_modTypes == null)
                     GetModTypes();
-                return _ModTypes;
+                return _modTypes;
             }
         }
 
         private static void GetModTypes()
         {
-            _ModTypes = new List<Type>();
+            _modTypes = new List<Type>();
             List<Assembly> asms = new List<Assembly>();
             asms.AddRange(AssemblyLoader.loadedAssemblies.Select(la => la.assembly));
             asms.AddUnique(typeof(PQSMod_VertexSimplexHeightAbsolute).Assembly);
             asms.AddUnique(typeof(PQSLandControl).Assembly);
             foreach (Type t in asms.SelectMany(a => a.GetTypes()))
             {
-                _ModTypes.Add(t);
+                _modTypes.Add(t);
             }
         }
     }

@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Kopernicus
@@ -35,6 +36,7 @@ namespace Kopernicus
     /// Simple parser for numerics
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class NumericParser<T> : IParsable, ITypeParser<T>
     {
         /// <summary>

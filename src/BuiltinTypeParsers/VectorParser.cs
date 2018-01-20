@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Kopernicus
@@ -35,6 +36,8 @@ namespace Kopernicus
     /// Parser for vec2 
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Vector2Parser : IParsable, ITypeParser<Vector2>
     {
         /// <summary>
@@ -87,6 +90,8 @@ namespace Kopernicus
     /// Parser for vec3
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Vector3Parser : IParsable, ITypeParser<Vector3>
     {
         /// <summary>
@@ -139,6 +144,8 @@ namespace Kopernicus
     /// Parser for vec3d
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Vector3DParser : IParsable, ITypeParser<Vector3d>
     {
         /// <summary>
@@ -191,6 +198,8 @@ namespace Kopernicus
     /// Parser for vec4
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Vector4Parser : IParsable, ITypeParser<Vector4>
     {
         /// <summary>

@@ -42,28 +42,32 @@ namespace Kopernicus
             /// <summary>
             /// The function that should be used for log output
             /// </summary>
-            public Action<String> logCallback = Debug.Log;
+            public Action<String> LogCallback = Debug.Log;
 
             /// <summary>
             /// The function that should be used for error output
             /// </summary>
-            public Action<Exception> errorCallback = Debug.LogException;
+            public Action<Exception> ErrorCallback = Debug.LogException;
         }
 
         /// <summary>
         /// The data for each mod
         /// </summary>
-        internal static Dictionary<String, Data> options = new Dictionary<String, Data> { { "Default", new Data() } };
+        internal static readonly Dictionary<String, Data> Options = new Dictionary<String, Data> { { "Default", new Data() } };
 
         /// <summary>
         /// Registers the settings for a mod
         /// </summary>
         public static void Register(String modName, Data data)
         {
-            if (options.ContainsKey(modName))
-                options[modName] = data;
+            if (Options.ContainsKey(modName))
+            {
+                Options[modName] = data;
+            }
             else
-                options.Add(modName, data);
+            {
+                Options.Add(modName, data);
+            }
         }
     }
 }

@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Kopernicus
@@ -36,6 +37,7 @@ namespace Kopernicus
     /// Simple parser for numeric collections 
     /// </summary>
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class NumericCollectionParser<T> : IParsable, ITypeParser<List<T>>
     {
         /// <summary>

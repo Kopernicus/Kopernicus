@@ -26,6 +26,8 @@
  * https://kerbalspaceprogram.com
  */
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Kopernicus
 {
     /// <summary>
@@ -39,7 +41,8 @@ namespace Kopernicus
     /// <summary>
     /// An interface that supports implementing a custom constructor
     /// </summary>
-    public interface ICreatable<T> : ICreatable
+    [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
+    public interface ICreatable<in T> : ICreatable
     {
         void Create(T value);
     }

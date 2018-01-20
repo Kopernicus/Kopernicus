@@ -39,11 +39,11 @@ namespace Kopernicus
         /// <summary>
         /// The type of config node data the class can be loaded from
         /// </summary>
-        public ConfigType type { get; set; }
+        public readonly ConfigType Type;
 
         public RequireConfigType(ConfigType type)
         {
-            this.type = type;
+            Type = type;
         }
     }
 }

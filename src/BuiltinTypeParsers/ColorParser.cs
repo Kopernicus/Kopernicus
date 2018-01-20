@@ -42,7 +42,7 @@ namespace Kopernicus
         /// The value that is being parsed
         /// </summary>
         public Color Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -55,7 +55,8 @@ namespace Kopernicus
                 str = str.Replace(" ", "");
                 String[] colorArray = str.Split(',');
 
-                Value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, Single.Parse(colorArray[3]) / 255);
+                Value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255,
+                    Single.Parse(colorArray[2]) / 255, Single.Parse(colorArray[3]) / 255);
             }
             else if (str.StartsWith("RGB("))
             {
@@ -64,7 +65,8 @@ namespace Kopernicus
                 str = str.Replace(" ", "");
                 String[] colorArray = str.Split(',');
 
-                Value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255, Single.Parse(colorArray[2]) / 255, 1);
+                Value = new Color(Single.Parse(colorArray[0]) / 255, Single.Parse(colorArray[1]) / 255,
+                    Single.Parse(colorArray[2]) / 255, 1);
             }
             else if (str.StartsWith("HSBA("))
             {
@@ -80,7 +82,7 @@ namespace Kopernicus
 
                 // RGB
                 Color value = new Color(b, b, b, Single.Parse(colorArray[3]) / 255f);
-                if (s != 0)
+                if (Math.Abs(s) > 0)
                 {
                     Single max = b;
                     Single dif = b * s;
@@ -131,12 +133,15 @@ namespace Kopernicus
                         value.b = 0;
                     }
                 }
+
                 Value = value;
             }
             else if (str.StartsWith("XKCD."))
             {
-                PropertyInfo color = typeof(XKCDColors).GetProperty(str.Replace("XKCD.", ""), BindingFlags.Static | BindingFlags.Public);
-                Value = (Color)color.GetValue(null, null);
+                PropertyInfo color = typeof(XKCDColors).GetProperty(str.Replace("XKCD.", ""),
+                    BindingFlags.Static | BindingFlags.Public);
+                if (color != null)
+                    Value = (Color) color.GetValue(null, null);
             }
             else if (str.StartsWith("#"))
             {
@@ -147,7 +152,7 @@ namespace Kopernicus
                 Value = ConfigNode.ParseColor(str);
             }
         }
-        
+
         /// <summary>
         /// Create a new ColorParser
         /// </summary>
@@ -155,7 +160,7 @@ namespace Kopernicus
         {
             Value = Color.white;
         }
-        
+
         /// <summary>
         /// Create a new ColorParser from an already existing Color
         /// </summary>
@@ -171,7 +176,7 @@ namespace Kopernicus
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>

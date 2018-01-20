@@ -26,11 +26,14 @@
  * https://kerbalspaceprogram.com
  */
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Kopernicus
 {
     /// <summary>
     /// Provides basic members for type parsers
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
     public interface ITypeParser<T>
     {
         T Value { get; set; }
