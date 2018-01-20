@@ -34,15 +34,15 @@ namespace Kopernicus
         /// <summary>
         /// A list that allows us to edit newly added elements
         /// </summary>
-        public class CallbackList<T> : IList<T>
+        public class CallbackList<T> : IList<T>, IList
         {
-            private List<T> _list;
-            private Action<T> callback;
+            private readonly List<T> _list;
+            private readonly Action<T> _callback;
 
             public CallbackList(Action<T> callback)
             {
                 _list = new List<T>();
-                this.callback = callback;
+                _callback = callback;
             }
 
             public IEnumerator<T> GetEnumerator()
@@ -58,7 +58,7 @@ namespace Kopernicus
             public void Add(T item)
             {
                 _list.Add(item);
-                callback(item);
+                _callback(item);
             }
 
             public void Add(T item, Boolean call)
@@ -66,13 +66,40 @@ namespace Kopernicus
                 _list.Add(item);
                 if (call)
                 {
-                    callback(item);
+                    _callback(item);
                 }
+            }
+
+            Int32 IList.Add(Object value)
+            {
+                Add((T) value);
+                return IndexOf((T) value);
             }
 
             public void Clear()
             {
                 _list.Clear();
+                _callback(default(T));
+            }
+
+            Boolean IList.Contains(Object value)
+            {
+                return Contains((T) value);
+            }
+
+            Int32 IList.IndexOf(Object value)
+            {
+                return IndexOf((T) value);
+            }
+
+            void IList.Insert(Int32 index, Object value)
+            {
+                Insert(index, (T) value);
+            }
+
+            void IList.Remove(Object value)
+            {
+                Remove((T) value);
             }
 
             public Boolean Contains(T item)
@@ -88,8 +115,13 @@ namespace Kopernicus
             public Boolean Remove(T item)
             {
                 Boolean val = _list.Remove(item);
-                callback(default(T));
+                _callback(default(T));
                 return val;
+            }
+
+            void ICollection.CopyTo(Array array, Int32 index)
+            {
+                throw new NotImplementedException();
             }
 
             public Int32 Count
@@ -97,9 +129,25 @@ namespace Kopernicus
                 get { return _list.Count; }
             }
 
+            Boolean ICollection.IsSynchronized
+            {
+                get { return ((IList)_list).IsSynchronized; }
+            }
+
+            Object ICollection.SyncRoot
+            {
+                get { return ((IList)_list).SyncRoot; }
+            }
+
             public Boolean IsReadOnly
             {
                 get { return ((IList<T>) _list).IsReadOnly; }
+            }
+
+            Object IList.this[Int32 index]
+            {
+                get { return _list[index]; }
+                set { _list[index] = (T) value; _callback((T) value); }
             }
 
             public Int32 IndexOf(T item)
@@ -109,20 +157,25 @@ namespace Kopernicus
 
             public void Insert(Int32 index, T item)
             {
-                callback(item);
+                _callback(item);
                 _list.Insert(index, item);
             }
 
             public void RemoveAt(Int32 index)
             {
                 _list.RemoveAt(index);
-                callback(default(T));
+                _callback(default(T));
+            }
+
+            Boolean IList.IsFixedSize
+            {
+                get { return ((IList)_list).IsFixedSize; }
             }
 
             public T this[Int32 index]
             {
                 get { return _list[index]; }
-                set { _list[index] = value; callback(value); }
+                set { _list[index] = value; _callback(value); }
             }
         }
     }
