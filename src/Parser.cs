@@ -238,9 +238,6 @@ namespace Kopernicus
                     return;
                 }
 
-                data.LogCallback("isNode: " + isNode);
-                data.LogCallback("isValue: " + isValue);
-
                 // If we are dealing with a generic collection
                 if (targetType.IsGenericType)
                 {
@@ -341,8 +338,6 @@ namespace Kopernicus
                     // If the target is a generic collection
                     else if (typeof(IList).IsAssignableFrom(targetType))
                     {
-                        data.LogCallback(targetType.ToString());
-
                         // We need a node for this decoding
                         if (!isNode)
                         {
@@ -374,7 +369,6 @@ namespace Kopernicus
                         if (attributes.Length > 0 || genericType == typeof(String))
                         {
                             ConfigType type = genericType == typeof(String) ? ConfigType.Value : attributes[0].Type;
-                            data.LogCallback(type.ToString());
                             if (type == ConfigType.Node)
                             {
                                 // Iterate over all of the nodes in this node
@@ -482,13 +476,9 @@ namespace Kopernicus
                             }
                             else
                             {
-                                data.LogCallback(node.name);
-
                                 // Iterate over all of the nodes in this node
                                 foreach (ConfigNode.Value value in targetNode.values)
                                 {
-                                    data.LogCallback(value.value);
-
                                     // Check for the name significance
                                     switch (target.NameSignificance)
                                     {
@@ -496,8 +486,6 @@ namespace Kopernicus
 
                                             // Just processes the contents of the node
                                             collection?.Add(ProcessValue(genericType, value.value));
-                                            data.LogCallback(value.value);
-                                            data.LogCallback(ProcessValue(genericType, value.value).ToString());
                                             break;
 
                                         case NameSignificance.Type:
