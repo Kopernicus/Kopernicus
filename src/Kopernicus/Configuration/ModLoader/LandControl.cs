@@ -56,6 +56,7 @@ namespace Kopernicus
                     
                     // The value we are editing
                     public PQSLandControl.LandClassScatter Value { get; set; }
+                    public ModularScatter Scatter { get; set; }
 
                     /// <summary>
                     /// Returns the currently edited PQS
@@ -265,16 +266,16 @@ namespace Kopernicus
                         
                         // Get the Scatter-Parent
                         GameObject scatterParent = new GameObject("Scatter");
-                        scatterParent.transform.parent = Parser.GetState<PQSLandControl>("Kopernicus:mod").transform;
+                        scatterParent.transform.parent = Utility.Deactivator;
                         
                         // Add the scatter module
-                        ModularScatter scatter = scatterParent.AddOrGetComponent<ModularScatter>();
-                        scatter.scatter = Value;
+                        Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
+                        Scatter.scatter = Value;
                 
                         // Create the Component callback
                         Components = new CallbackList<ComponentLoader<ModularScatter>> (e =>
                         {
-                            scatter.Components = Components.Select(c => c.Value).ToList();
+                            Scatter.Components = Components.Select(c => c.Value).ToList();
                         });
                     }
 
@@ -309,22 +310,21 @@ namespace Kopernicus
                         if (scatterParent == null)
                         {
                             scatterParent = new GameObject("Scatter");
-                            scatterParent.transform.parent =
-                                Parser.GetState<PQSLandControl>("Kopernicus:mod").transform;
+                            scatterParent.transform.parent = Utility.Deactivator;
                         }
                         
                         // Add the scatter module
-                        ModularScatter scatter = scatterParent.AddOrGetComponent<ModularScatter>();
-                        scatter.scatter = Value;
+                        Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
+                        Scatter.scatter = Value;
                 
                         // Create the Component callback
                         Components = new CallbackList<ComponentLoader<ModularScatter>> (e =>
                         {
-                            scatter.Components = Components.Select(c => c.Value).ToList();
+                            Scatter.Components = Components.Select(c => c.Value).ToList();
                         });
                 
                         // Load existing Modules
-                        foreach (IComponent<ModularScatter> component in scatter.Components)
+                        foreach (IComponent<ModularScatter> component in Scatter.Components)
                         {
                             Type componentType = component.GetType();
                             foreach (Type loaderType in Parser.ModTypes)
@@ -1122,19 +1122,18 @@ namespace Kopernicus
                     mod.longitudePersistance = 1;
                     mod.longitudeFrequency = 1;
                     
-                    // Share this mod
-                    Parser.SetState("Kopernicus:mod", () => mod);
-                    
                     // Create the callback list for Scatters
                     scatters = new CallbackList<LandClassScatterLoader>(e =>
                     {
+                        foreach (LandClassScatterLoader loader in scatters)
+                        {
+                            loader.Scatter.transform.parent = mod.transform;
+                        }
+
                         mod.scatters = scatters.Where(scatter => !scatter.delete)
                             .Select(scatter => scatter.Value).ToArray();
                     });
                     mod.scatters = new PQSLandControl.LandClassScatter[0];
-                    
-                    // Clear the mod state
-                    Parser.ClearState("Kopernicus:mod");
                     
                     // Create the callback list for LandClasses
                     landClasses = new CallbackList<LandClassLoader> (e =>
@@ -1171,12 +1170,14 @@ namespace Kopernicus
                     // Create the callback list for Scatters
                     scatters = new CallbackList<LandClassScatterLoader>(e =>
                     {
+                        foreach (LandClassScatterLoader loader in scatters)
+                        {
+                            loader.Scatter.transform.parent = mod.transform;
+                        }
+
                         mod.scatters = scatters.Where(scatter => !scatter.delete)
                             .Select(scatter => scatter.Value).ToArray();
                     });
-                    
-                    // Share this mod
-                    Parser.SetState("Kopernicus:mod", () => mod);
                     
                     // Load Scatters
                     if (mod.scatters != null)
@@ -1191,9 +1192,6 @@ namespace Kopernicus
                     {
                         mod.scatters = new PQSLandControl.LandClassScatter[0];
                     }
-                    
-                    // Clear the mod state
-                    Parser.ClearState("Kopernicus:mod");
                     
                     // Create the callback list for LandClasses
                     landClasses = new CallbackList<LandClassLoader> (e =>
