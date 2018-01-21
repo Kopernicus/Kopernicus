@@ -36,7 +36,7 @@ namespace Kopernicus
         /// <summary>
         /// A Scatter Component that can add colliders to a scatter object
         /// </summary>
-        public class ScatterColliders : IComponent<ModularScatter>
+        public class ScatterCollidersComponent : IComponent<ModularScatter>
         {
             /// <summary>
             /// Contains a List of colliders for the scatter

@@ -34,9 +34,15 @@ namespace Kopernicus
             /// <summary>
             /// The loader for collideable scatter objects
             /// </summary>
-            public class ScatterColliders : ComponentLoader<ModularScatter, Components.ScatterColliders>
+            public class ScatterExperiment : ComponentLoader<ModularScatter, ScatterExperimentComponent>, IParserEventSubscriber
             {
-                
+                void IParserEventSubscriber.Apply(ConfigNode node) { }
+
+                void IParserEventSubscriber.PostApply(ConfigNode node)
+                {
+                    // Simply assign this node as the experiment config
+                    Value.experimentNode = node;
+                }
             }
         }
     }

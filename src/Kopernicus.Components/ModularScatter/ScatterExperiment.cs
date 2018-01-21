@@ -36,7 +36,7 @@ namespace Kopernicus
         /// <summary>
         /// A Scatter Component that can add science results to a scatter object
         /// </summary>
-        public class ScatterExperiment : IComponent<ModularScatter>
+        public class ScatterExperimentComponent : IComponent<ModularScatter>
         {
             /// <summary>
             /// Contains the patched vessels (=> Kerbals)
