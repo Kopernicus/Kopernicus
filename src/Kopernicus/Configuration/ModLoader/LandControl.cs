@@ -731,7 +731,7 @@ namespace Kopernicus
                     }
 
                     // List of scatters used
-                    [ParserTargetCollection("scatters", NameSignificance = NameSignificance.None)]
+                    [ParserTargetCollection("scatters", AllowMerge = true)]
                     public CallbackList<LandClassScatterAmountLoader> scatter { get; set; }
 
                     // Default constructor
