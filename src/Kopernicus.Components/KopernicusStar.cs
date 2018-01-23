@@ -350,7 +350,7 @@ namespace Kopernicus
             public Single GetOccludedPercentage()
             {
                 const Int32 resolution = 100;
-                if (target == null || (!HighLogic.LoadedSceneIsFlight && HighLogic.LoadedScene != GameScenes.SPACECENTER))
+                //if (target == null || (!HighLogic.LoadedSceneIsFlight && HighLogic.LoadedScene != GameScenes.SPACECENTER))
                     return 1f;
                 Int32 amount = 0;
                 Mesh mesh = sun.scaledBody.GetComponent<MeshFilter>().sharedMesh;
