@@ -25,9 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-using LibNoise;
 using UnityEngine;
-using Random = System.Random;
 
 namespace Kopernicus
 {
@@ -36,13 +34,8 @@ namespace Kopernicus
         /// <summary>
         /// Class to render a ring around a planet
         /// </summary>
-        public class Ring : MonoBehaviour, IComponentSystem<Ring>
+        public class Ring : MonoBehaviour
         {
-            /// <summary>
-            /// Components that can be added to the Ring
-            /// </summary>
-            public List<IComponent<Ring>> Components { get; set; }
-            
             // Settings
             public Single innerRadius;
             public Single outerRadius;
@@ -108,6 +101,22 @@ namespace Kopernicus
             /// </summary>
             private Single innerShadeOffsetRate = 0;
 
+            //Contains all detail setup values
+            #region ringDetail
+            /// <summary>
+            /// The detail texture
+            /// </summary>
+            public Texture2D detailTex;
+            /// <summary>
+            /// X: min distance for pass 1. Y: scale for pass 1
+            /// </summary>
+            public Vector2 pass1;
+            /// <summary>
+            /// X: min distance for pass 2. Y: scale for pass 2
+            /// </summary>
+            public Vector2 pass2;
+            #endregion
+
             /// <summary>
             /// The body around which this ring is located.
             /// Used to get rotation data to set the LAN.
@@ -115,14 +124,6 @@ namespace Kopernicus
             public CelestialBody referenceBody;
 
             public MeshRenderer ringMR;
-
-            /// <summary>
-            /// Create the module list
-            /// </summary>
-            void Awake()
-            {
-                Components = new List<IComponent<Ring>>();
-            }
 
             /// <summary>
             /// Create the Ring Mesh
@@ -138,10 +139,6 @@ namespace Kopernicus
             /// </summary>
             public void BuildRing()
             {
-                // Call the modules
-                Components.ForEach(m => m.Apply(this));
-                
-                // Create the ring mesh
                 GameObject parent = transform.parent.gameObject;
                 List<Vector3> vertices = new List<Vector3>();
                 List<Vector2> Uvs = new List<Vector2>();
@@ -196,6 +193,14 @@ namespace Kopernicus
                     ringMR.material.SetFloat("planetRadius", planetRadius);
                     ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
 
+                    //Detail setup
+                    ringMR.material.SetTexture("_DetailTex", detailTex);
+                    ringMR.material.SetFloat("_Div1", pass1.y);
+                    ringMR.material.SetFloat("_Div2", pass2.y);
+                    ringMR.material.SetFloat("_Pass1", pass1.x);
+                    ringMR.material.SetFloat("_Pass2", pass2.x);
+                    
+
                     if (innerShadeTexture != null) {
                         ringMR.material.SetTexture("_InnerShadeTexture", innerShadeTexture);
                     }
@@ -210,30 +215,23 @@ namespace Kopernicus
                 }
 
                 ringMR.material.color = color;
+
                 ringMR.material.renderQueue = parentRenderer.material.renderQueue;
                 parentRenderer.material.renderQueue--;
-                
-                // Call the modules
-                Components.ForEach(m => m.PostApply(this));
             }
 
-            /// <summary>
-            /// The shaders used by the ring mesh
-            /// </summary>
             private const String newShader = "Kopernicus/Rings",
                                  unlitShader = "Unlit/Transparent",
                                  diffuseShader = "Transparent/Diffuse";
 
-            /// <summary>
-            /// Queries the shader the material should use
-            /// </summary>
             private Shader getShader()
             {
                 if (useNewShader)
                     return ShaderLoader.GetShader(newShader);
-                if (unlit)
+                else if (unlit)
                     return Shader.Find(unlitShader);
-                return Shader.Find(diffuseShader);
+                else
+                    return Shader.Find(diffuseShader);
             }
 
             /// <summary>
@@ -261,7 +259,7 @@ namespace Kopernicus
                 Single         outerScale)
             {
                 // Mesh wrapping
-                for (Single i = 0f; i < 360f; i += degreeStep)
+                for (Single i = 0f; i < 360f; i += (360f / steps))
                 {
                     // Rotation
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
@@ -274,7 +272,7 @@ namespace Kopernicus
                     vertices.Add(eVert * outerScale);
                     Uvs.Add(Vector2.zero);
                 }
-                for (Single i = 0f; i < 360f; i += degreeStep)
+                for (Single i = 0f; i < 360f; i += (360f / steps))
                 {
                     // Rotation
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
@@ -500,23 +498,21 @@ namespace Kopernicus
             /// </summary>
             void Update()
             {
-                transform.localScale = transform.parent.localScale;
-                SetRotation();
+                if (transform?.parent != null) {
+                    transform.localScale = transform.parent.localScale;
+                    SetRotation();
+                }
 
                 if (useNewShader && ringMR?.material != null
-                    && KopernicusStar.Current?.sun?.transform != null)
+                        && KopernicusStar.Current?.sun?.transform != null)
                 {
                     ringMR.material.SetFloat("sunRadius",
                         (Single) KopernicusStar.Current.sun.Radius);
                     ringMR.material.SetVector("sunPosRelativeToPlanet",
-                        (Vector3) (KopernicusStar.Current.sun.transform.position -
-                                   ScaledSpace.ScaledToLocalSpace(transform.position)));
+                        (Vector3) (KopernicusStar.Current.sun.transform.position - ScaledSpace.ScaledToLocalSpace(transform.position)));
                     ringMR.material.SetFloat("innerShadeOffset",
                         (Single) (Planetarium.GetUniversalTime() * innerShadeOffsetRate));
                 }
-
-                // Call Modules
-                Components.ForEach(m => m.Update(this));
             }
 
             /// <summary>
@@ -526,9 +522,6 @@ namespace Kopernicus
             {
                 transform.localScale = transform.parent.localScale;
                 SetRotation();
-                
-                // Call Modules
-                Components.ForEach(m => m.Update(this));
             }
 
             /// <summary>
@@ -538,9 +531,6 @@ namespace Kopernicus
             {
                 transform.localScale = transform.parent.localScale;
                 SetRotation();
-                
-                // Call Modules
-                Components.ForEach(m => m.Update(this));
             }
 
             /// <summary>
@@ -571,6 +561,7 @@ namespace Kopernicus
                     }
                 }
             }
+
         }
     }
 }
