@@ -101,6 +101,22 @@ namespace Kopernicus
             /// </summary>
             private Single innerShadeOffsetRate = 0;
 
+            //Contains all detail setup values
+            #region ringDetail
+            /// <summary>
+            /// The detail texture
+            /// </summary>
+            public Texture2D detailTex;
+            /// <summary>
+            /// X: min distance for pass 1. Y: scale for pass 1
+            /// </summary>
+            public Vector2 pass1;
+            /// <summary>
+            /// X: min distance for pass 2. Y: scale for pass 2
+            /// </summary>
+            public Vector2 pass2;
+            #endregion
+
             /// <summary>
             /// The body around which this ring is located.
             /// Used to get rotation data to set the LAN.
@@ -176,6 +192,14 @@ namespace Kopernicus
                 {
                     ringMR.material.SetFloat("planetRadius", planetRadius);
                     ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
+
+                    //Detail setup
+                    ringMR.material.SetTexture("_DetailTex", detailTex);
+                    ringMR.material.SetFloat("_Div1", pass1.y);
+                    ringMR.material.SetFloat("_Div2", pass2.y);
+                    ringMR.material.SetFloat("_Pass1", pass1.x);
+                    ringMR.material.SetFloat("_Pass2", pass2.x);
+                    
 
                     if (innerShadeTexture != null) {
                         ringMR.material.SetTexture("_InnerShadeTexture", innerShadeTexture);
