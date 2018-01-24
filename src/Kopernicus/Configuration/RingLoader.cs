@@ -191,6 +191,25 @@ namespace Kopernicus
                 set { ring.innerShadeRotationPeriod = value; }
             }
 
+            [ParserTarget("detailTex")]
+            public Texture2DParser detTex
+            {
+                get { return ring.detailTex; }
+                set { ring.detailTex = value; }
+            }
+            [ParserTarget("pass1")]
+            public Vector2Parser p1
+            {
+                get { return ring.pass1; }
+                set { ring.pass1 = value; }
+            }
+            [ParserTarget("pass2")]
+            public Vector2Parser p2
+            {
+                get { return ring.pass2; }
+                set { ring.pass2 = value; }
+            }
+
             // Initialize the RingLoader
             public RingLoader()
             {
