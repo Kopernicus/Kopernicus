@@ -244,14 +244,16 @@ namespace Kopernicus
                     // Restore backed up coronas if no custom ones were specified
                     if (!coronas.Any())
                     {
-                        foreach (SunCoronas corona in Utility.Deactivator.GetComponentsInChildren<SunCoronas>(true))
+                        foreach (SunCoronas corona in Utility.Deactivator.GetComponentsInChildren<SunCoronas>(true)
+                            .Where(c => c.transform.parent == Utility.Deactivator))
                         {
                             corona.transform.parent = Value.scaledBody.transform;
                         }
                     }
                     else
                     {
-                        foreach (SunCoronas corona in Utility.Deactivator.GetComponentsInChildren<SunCoronas>(true))
+                        foreach (SunCoronas corona in Utility.Deactivator.GetComponentsInChildren<SunCoronas>(true)
+                            .Where(c => c.transform.parent == Utility.Deactivator))
                         {
                             corona.transform.parent = null;
                             UnityEngine.Object.Destroy(corona.gameObject);
