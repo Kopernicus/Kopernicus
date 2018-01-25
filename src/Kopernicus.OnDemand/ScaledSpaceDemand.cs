@@ -69,15 +69,21 @@ namespace Kopernicus
             {
                 // If we are rendered, load the textures
                 Boolean isInView = IsInView(ScaledCamera.Instance.cam, body);
-                if (isInView && (!isLoaded || isLoaded && unloadTime != 0))
+                if (isInView)
                 {
-                    // It is supposed to be loaded now so clear the unload time
-                    unloadTime = 0;
+                    if (isLoaded && unloadTime != 0)
+                    {
+                        // It is supposed to be loaded now so clear the unload time
+                        unloadTime = 0;
+                    }
 
-                    // Load it
-                    LoadTextures();
+                    if (!isLoaded)
+                    {
+                        // The texture is visible but not loaded, so load it
+                        LoadTextures();
+                    }
                 }
-                else if (!isInView && isLoaded && unloadTime == 0)
+                else if (isLoaded && unloadTime == 0)
                 {
                     // Set the time at which to unload
                     unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
