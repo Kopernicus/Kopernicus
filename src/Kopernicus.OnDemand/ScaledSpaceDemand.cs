@@ -56,6 +56,9 @@ namespace Kopernicus
             // The body we're attached to
             private CelestialBody body;
 
+            // Whether the body was visible in the last frame
+            private Boolean lastIsInView;
+
             // Start(), get the scaled Mesh renderer
             void Start()
             {
@@ -63,31 +66,22 @@ namespace Kopernicus
                 scaledRenderer = GetComponent<MeshRenderer>();
                 body = PSystemManager.Instance.localBodies.Find(b => b.scaledBody == gameObject);
                 UnloadTextures();
+                lastIsInView = false;
             }
-
+                
             void LateUpdate()
             {
                 // If we are rendered, load the textures
                 Boolean isInView = IsInView(ScaledCamera.Instance.cam, body);
-                if (isInView)
+                if (isInView && !lastIsInView)
                 {
-                    if (isLoaded && unloadTime != 0)
-                    {
-                        // It is supposed to be loaded now so clear the unload time
-                        unloadTime = 0;
-                    }
-
-                    if (!isLoaded)
-                    {
-                        // The texture is visible but not loaded, so load it
-                        LoadTextures();
-                    }
+                    OnBodyBecameVisible();
                 }
-                else if (isLoaded && unloadTime == 0)
+                else if (!isInView && lastIsInView)
                 {
-                    // Set the time at which to unload
-                    unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
+                    OnBodyBecameInvisible();
                 }
+                lastIsInView = isInView;
 
                 // If we aren't loaded or we're not wanting to unload then do nothing
                 if (!isLoaded || unloadTime == 0)
@@ -98,10 +92,35 @@ namespace Kopernicus
                     UnloadTextures();
             }
 
+            // OnBecameVisible(), load the texture
+            void OnBodyBecameVisible()
+            {
+                // It is supposed to be loaded now so clear the unload time
+                unloadTime = 0;
+
+                // If it is already loaded then do nothing
+                if (isLoaded)
+                    return;
+
+                // Otherwise we load it
+                LoadTextures();
+            }
+
+            // OnBecameInvisible(), kill the texture
+            void OnBodyBecameInvisible()
+            {
+                // If it's not loaded then do nothing
+                if (!isLoaded)
+                    return;
+
+                // Set the time at which to unload
+                unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
+            }
+
             void LoadTextures()
             {
                 Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
-                
+
                 // Load Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
@@ -126,7 +145,7 @@ namespace Kopernicus
             void UnloadTextures()
             {
                 Debug.Log("[OD] <--- ScaledSpaceDemand.UnloadTextures destroying " + texture + " and " + normals);
-                
+
                 // Kill Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
@@ -150,7 +169,7 @@ namespace Kopernicus
             {
                 if (body == null)
                     return false;
-                
+
                 Vector3 pointOnScreen =
                     cam.WorldToScreenPoint(body.scaledBody.GetComponentInChildren<Renderer>().bounds.center);
 
@@ -176,10 +195,11 @@ namespace Kopernicus
                         return false;
                     }
                 }
+
                 Single pixelSize = (Single) body.Radius * 2 * Mathf.Rad2Deg * Screen.height /
-                                  (Vector3.Distance(cam.transform.position,
-                                       body.scaledBody.GetComponentInChildren<Renderer>().bounds.center) *
-                                   cam.fieldOfView);
+                                   (Vector3.Distance(cam.transform.position,
+                                        body.scaledBody.GetComponentInChildren<Renderer>().bounds.center) *
+                                    cam.fieldOfView);
                 return pixelSize >= 1;
             }
         }
