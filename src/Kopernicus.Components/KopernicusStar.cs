@@ -268,14 +268,15 @@ namespace Kopernicus
                 sunRotationPrecision = MapView.MapIsEnabled ? sunRotationPrecisionMapView : sunRotationPrecisionDefault;
                 
                 // Occlusion
-                Single occlusion = GetOccludedPercentage();
+                // KopernicusStarOcclusion occlusion = gameObject.AddOrGetComponent<KopernicusStarOcclusion>();
 
                 // Apply light settings
                 Vector3d localSpace = ScaledSpace.ScaledToLocalSpace(target.position);
                 if (light)
                 {
                     light.color = shifter.sunlightColor;
-                    light.intensity = shifter.intensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, localSpace)) * occlusion;
+                    light.intensity =
+                        shifter.intensityCurve.Evaluate((Single) Vector3d.Distance(sun.position, localSpace));// * occlusion.VisibleArea;
                     light.shadowStrength = shifter.sunlightShadowStrength;
                 }
 
@@ -283,13 +284,13 @@ namespace Kopernicus
                 if (scaledSunLight)
                 {
                     scaledSunLight.color = shifter.scaledSunlightColor;
-                    scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate((Single)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position)) * occlusion;
+                    scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate((Single)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));// * occlusion.VisibleArea;
                 }
 
                 if (HighLogic.LoadedSceneIsFlight && iva?.GetComponent<Light>())
                 {
                     iva.GetComponent<Light>().color = shifter.IVASunColor;
-                    iva.GetComponent<Light>().intensity = shifter.ivaIntensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, localSpace)) * occlusion;
+                    iva.GetComponent<Light>().intensity = shifter.ivaIntensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, localSpace));// * occlusion.VisibleArea;
                 }
 
                 // Set SunFlare color
@@ -300,7 +301,7 @@ namespace Kopernicus
                 lensFlare.brightnessCurve = shifter.brightnessCurve.Curve;
                 lensFlare.sun = sun;
                 lensFlare.target = target;
-                lensFlare.occlusionMultiplier = occlusion;
+                lensFlare.occlusionMultiplier = 1;// * occlusion.VisibleArea;
 
                 // States
                 Boolean lightsOn = (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER);
@@ -345,35 +346,6 @@ namespace Kopernicus
                 if (angle > Math.PI * 2)
                     angle -= Math.PI * 2;
                 return angle;
-            }
-
-            public Single GetOccludedPercentage()
-            {
-                const Int32 resolution = 100;
-                //if (target == null || (!HighLogic.LoadedSceneIsFlight && HighLogic.LoadedScene != GameScenes.SPACECENTER))
-                    return 1f;
-                Int32 amount = 0;
-                Mesh mesh = sun.scaledBody.GetComponent<MeshFilter>().sharedMesh;
-                for (Int32 i = 0; i < mesh.vertexCount; i += resolution)
-                {
-                    Vector3d vertexPos = sun.scaledBody.transform.position + new Vector3(
-                                             mesh.vertices[i].x * sun.scaledBody.transform.localScale.x,
-                                             mesh.vertices[i].y * sun.scaledBody.transform.localScale.y,
-                                             mesh.vertices[i].z * sun.scaledBody.transform.localScale.z);
-                    Vector3 sunVector = vertexPos - target.position;
-                    Ray ray = new Ray(target.position, sunVector);
-                    if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue,
-                        ModularFlightIntegrator.SunLayerMask))
-                    {
-                        amount++;
-                    }
-                    else if (raycastHit.transform == sun.scaledBody.transform)
-                    {
-                        amount++;
-                    }
-                }
-
-                return Mathf.Clamp01(amount * resolution / (Single)mesh.vertexCount);
             }
         }
     }

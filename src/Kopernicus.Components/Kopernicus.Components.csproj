@@ -61,6 +61,7 @@
     <Compile Include="KopernicusBuoyancy.cs" />
     <Compile Include="KopernicusOrbitRendererData.cs" />
     <Compile Include="KopernicusSolarPanel.cs" />
+    <Compile Include="KopernicusStarOcclusion.cs" />
     <Compile Include="KSC.cs" />
     <Compile Include="LightShifter.cs" />
     <Compile Include="MaterialWrapper\AerialTransCutout.cs" />
