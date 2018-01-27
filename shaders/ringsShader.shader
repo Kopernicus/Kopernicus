@@ -51,6 +51,13 @@ Shader "Kopernicus/Rings"
 
       #define M_PI 3.1415926535897932384626
 
+	  //Detail data
+	  uniform sampler2D _DetailTex; uniform float4 _DetailTex_ST;
+	  uniform float _Div1;
+	  uniform float _Div2;
+	  uniform float _Pass1;
+	  uniform float _Pass2;
+
       // This structure defines the inputs for each pixel
       struct v2f
       {
@@ -163,11 +170,34 @@ Shader "Kopernicus/Rings"
 
         // Look up the texture color
         float4 color = tex2D(_MainTex, i.texCoord);
+
+
+		//Detail processing
+
+		//Process textures w. UV edits
+		float4 detail_1 = tex2D(_DetailTex, TRANSFORM_TEX((i.texCoord*_Div1), _DetailTex)); // Pass 1
+		float4 detail_2 = tex2D(_DetailTex, TRANSFORM_TEX((i.texCoord*_Div2), _DetailTex)); // Pass 2
+
+		//The distance
+		float frac = distance(i.worldPos.rgb, _WorldSpaceCameraPos); //Stores the distance from vert pos to camera
+		float Dist_1 = saturate((frac / _Pass1)); //Get float control for detail pass 1
+		float Dist_2 = saturate((frac / _Pass2));
+		
+		//Here, we only use the rgb of the main tex, not the alpha channel
+		float3 P_1 = lerp(saturate((detail_1.r > 0.5 ? (1.0 - (1.0 - 2.0*(detail_1.r - 0.5))*(1.0 - color.rgb)) : (2.0*detail_1.r*color.rgb))), color.rgb, Dist_1); //Apply detail pass 1
+		P_1 = lerp(saturate((detail_2.r > 0.5 ? (1.0 - (1.0 - 2.0*(detail_2.r - 0.5))*(1.0 - P_1)) : (2.0*detail_2.r*P_1))), P_1, Dist_2); //Apply detail pass 2
+
         // Combine material color with texture color and shadow
-        color.xyz = _Color * shadow * (color.xyz * dotLight + color.xyz * mieScattering);
+        P_1 = _Color * shadow * (P_1.xyz * dotLight + P_1.xyz * mieScattering);
+
+		//NOW we process the alpha channel
+		float Alpha = lerp((color.a*detail_1.g), color.a, Dist_1);
+		Alpha = lerp((Alpha*detail_2.g), Alpha, Dist_2);
+
+		float4 finalRGBA = float4(P_1.xyz, Alpha);
 
         // I'm kinda proud of this shader so far, it's short and clean
-        return color;
+		return finalRGBA;
       }
       ENDCG
     }
