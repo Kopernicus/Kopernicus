@@ -65,14 +65,18 @@ namespace Kopernicus
                 unloadDelay = System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
                 scaledRenderer = GetComponent<MeshRenderer>();
                 body = PSystemManager.Instance.localBodies.Find(b => b.scaledBody == gameObject);
-                UnloadTextures();
                 lastIsInView = false;
+                UnloadTextures();
             }
-                
+
             void LateUpdate()
             {
                 // If we are rendered, load the textures
-                Boolean isInView = IsInView(ScaledCamera.Instance.cam, body);
+                Boolean isInView =
+                    IsInView(
+                        HighLogic.LoadedSceneHasPlanetarium || MapView.MapIsEnabled
+                            ? PlanetariumCamera.Camera
+                            : ScaledCamera.Instance.cam, body);
                 if (isInView && !lastIsInView)
                 {
                     OnBodyBecameVisible();
@@ -117,7 +121,7 @@ namespace Kopernicus
                 unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
             }
 
-            void LoadTextures()
+            internal void LoadTextures()
             {
                 Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
 
@@ -142,7 +146,7 @@ namespace Kopernicus
                 isLoaded = true;
             }
 
-            void UnloadTextures()
+            internal void UnloadTextures()
             {
                 Debug.Log("[OD] <--- ScaledSpaceDemand.UnloadTextures destroying " + texture + " and " + normals);
 
