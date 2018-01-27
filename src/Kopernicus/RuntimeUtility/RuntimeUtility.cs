@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Kopernicus.OnDemand;
 using UnityEngine;
 
 namespace Kopernicus
@@ -432,7 +431,6 @@ namespace Kopernicus
 
             // Clone the scaledVersion and attach it to the Scene
             GameObject menuPlanet = Instantiate(planet.scaledVersion) as GameObject;
-            DestroyImmediate(menuPlanet.GetComponentInChildren<ScaledSpaceDemand>());
             menuPlanet.transform.parent = space.transform;
 
             // Destroy stuff
