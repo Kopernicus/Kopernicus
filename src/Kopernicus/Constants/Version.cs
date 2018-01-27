@@ -88,7 +88,7 @@ namespace Kopernicus
                 Int32 secondsSince1970 = BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
                 DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 dt = dt.AddSeconds(secondsSince1970);
-                dt = dt.ToLocalTime();
+                dt = dt.ToUniversalTime();
                 return dt;
             }
         }
