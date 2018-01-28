@@ -147,6 +147,17 @@
     <Compile Include="Configuration\Parser\BaseLoader.cs" />
     <Compile Include="Configuration\Parser\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\BurstLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\CollisionModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\ColorBySpeedModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\ColorOverLifetimeModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\EmissionModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\ExternalForcesModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\ForceOverLifetimeModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\InheritVelocityModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\MinMaxCurveLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\MinMaxGradientLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\ShurikenLoader.cs" />
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Configuration\RingSystem\DebrisFieldLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
@@ -106,6 +107,24 @@ namespace Kopernicus
                 // Calculate the color
                 Single k = (p - ap) / (bp - ap);
                 return Color.Lerp(a, b, k);
+            }
+
+            public static implicit operator UnityEngine.Gradient(Gradient gradient)
+            {
+                UnityEngine.Gradient grad = new UnityEngine.Gradient();
+                grad.SetKeys(gradient.points.Select(p => new GradientColorKey(p.Value, p.Key)).ToArray(),
+                    gradient.points.Select(p => new GradientAlphaKey(p.Value.a, p.Key)).ToArray());
+                return grad;
+            }
+
+            public static implicit operator Gradient(UnityEngine.Gradient gradient)
+            {
+                Gradient grad = new Gradient();
+                for (Int32 i = 0; i < gradient.colorKeys.Length; i++)
+                {
+                    grad.Add(gradient.colorKeys[i].time, gradient.colorKeys[i].color);
+                }
+                return grad;
             }
         }
     }
