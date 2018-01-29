@@ -58,6 +58,7 @@ namespace Kopernicus
             {
                 unloadDelay = System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
                 scaledRenderer = GetComponent<MeshRenderer>();
+                GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
                 UnloadTextures();
             }
 
@@ -102,10 +103,12 @@ namespace Kopernicus
                 Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
 
                 // Load Diffuse
+                Debug.Log(texture);
                 if (OnDemandStorage.TextureExists(texture))
                 {
                     scaledRenderer.material.SetTexture("_MainTex",
                         OnDemandStorage.LoadTexture(texture, false, true, true));
+                    Debug.Log(scaledRenderer.material.GetTexture("_MainTex"));
                 }
 
                 // Load Normals
@@ -143,6 +146,17 @@ namespace Kopernicus
 
                 // Flags
                 isLoaded = false;
+            }
+
+            // Unload all textures when we switch to a new scene
+            void OnGameSceneLoadRequested(GameScenes scene)
+            {
+                UnloadTextures();
+            }
+
+            void OnDestroy()
+            {
+                GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequested);
             }
         }
     }
