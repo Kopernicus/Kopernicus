@@ -81,18 +81,6 @@ namespace Kopernicus
             }
 
             // atmosphere cutoff altitude (x3, for backwards compatibility)
-            [KittopiaHideOption]
-            public NumericParser<Double> maxAltitude
-            {
-                get { return Value.atmosphereDepth; }
-                set { Value.atmosphereDepth = value; }
-            }
-            [KittopiaHideOption]
-            public NumericParser<Double> altitude
-            {
-                get { return Value.atmosphereDepth; }
-                set { Value.atmosphereDepth = value; }
-            }
             [ParserTarget("atmosphereDepth")]
             [ParserTarget("altitude")]
             [ParserTarget("maxAltitude")]
