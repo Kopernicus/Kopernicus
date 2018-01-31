@@ -168,6 +168,12 @@ namespace Kopernicus
                 set { Value.colorAnimation = value.Select(c => c.Value).ToArray(); }
             }
 
+            [KittopiaDestructor]
+            public void Destroy()
+            {
+                UnityEngine.Object.Destroy(Value.gameObject);
+            }
+
             /// <summary>
             /// Creates a new Particle Loader from the Injector context.
             /// </summary>

@@ -24,6 +24,7 @@
  */
 
 using System;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -92,6 +93,12 @@ namespace Kopernicus
                 {
                     get { return mod.name; }
                     set { mod.name = value; }
+                }
+
+                [KittopiaDestructor]
+                public void Destroy()
+                {
+                    UnityEngine.Object.Destroy(mod);
                 }
 
                 // Creates the a PQSMod of type T

@@ -1096,10 +1096,12 @@ namespace Kopernicus
                 }
 
                 // List of scatters
-                [ParserTargetCollection("scatters", AllowMerge = true)] // TODO(TMSP): Explore the possibilities of capitalizing this
+                [ParserTargetCollection("Scatters", AllowMerge = true)] 
+                [ParserTargetCollection("scatters", AllowMerge = true)] 
                 public CallbackList<LandClassScatterLoader> scatters { get; set; }
 
                 // List of landclasses
+                [ParserTargetCollection("LandClasses", AllowMerge = true)]
                 [ParserTargetCollection("landClasses", AllowMerge = true)]
                 public CallbackList<LandClassLoader> landClasses { get; set; }
 
