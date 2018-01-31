@@ -103,12 +103,10 @@ namespace Kopernicus
                 Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
 
                 // Load Diffuse
-                Debug.Log(texture);
                 if (OnDemandStorage.TextureExists(texture))
                 {
                     scaledRenderer.material.SetTexture("_MainTex",
                         OnDemandStorage.LoadTexture(texture, false, true, true));
-                    Debug.Log(scaledRenderer.material.GetTexture("_MainTex"));
                 }
 
                 // Load Normals
