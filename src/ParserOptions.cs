@@ -53,7 +53,11 @@ namespace Kopernicus
         /// <summary>
         /// The data for each mod
         /// </summary>
-        internal static readonly Dictionary<String, Data> Options = new Dictionary<String, Data> { { "Default", new Data() } };
+        internal static readonly Dictionary<String, Data> Options = new Dictionary<String, Data>
+        {
+            {"Default", new Data()},
+            {"Internal", new Data {LogCallback = s => { }, ErrorCallback = s => { }}}
+        };
 
         /// <summary>
         /// Registers the settings for a mod

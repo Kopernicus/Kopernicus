@@ -235,7 +235,7 @@ namespace Kopernicus
                     }
 
                     // Nothing to do, so return
-                    return;
+                    continue;
                 }
 
                 // If we are dealing with a generic collection
@@ -404,7 +404,7 @@ namespace Kopernicus
                                                         continue;
                                                     IPatchable patchable = (IPatchable) obj;
                                                     PatchData patchData =
-                                                        CreateObjectFromConfigNode<PatchData>(subnode);
+                                                        CreateObjectFromConfigNode<PatchData>(subnode, "Internal");
                                                     if (patchData.name == patchable.name)
                                                     {
                                                         // Name matches, check for an index
@@ -552,6 +552,7 @@ namespace Kopernicus
         {
             // Get the parser targets
             ParserTarget[] targets = (ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true);
+            ParserOptions.Options[configName].LogCallback(targets.Length.ToString());
 
             // Process the targets
             foreach (ParserTarget target in targets)
@@ -600,7 +601,7 @@ namespace Kopernicus
                     }
 
                     // Nothing to do, so DONT return!
-                    return;
+                    continue;
                 }
 
                 // Does this node have a required config source type (and if so, check if valid)
@@ -627,7 +628,7 @@ namespace Kopernicus
                     {
                         data.LogCallback("[Kopernicus]: Configuration.Parser: ParserTarget \"" + target.FieldName +
                                          "\" is a non parsable type: " + targetType);
-                        return;
+                        continue;
                     }
 
                     targetValue = val;
