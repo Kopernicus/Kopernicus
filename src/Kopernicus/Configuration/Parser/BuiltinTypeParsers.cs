@@ -160,6 +160,7 @@ namespace Kopernicus
         }
 
         // Parser for a MapSO
+        [RequireConfigType(ConfigType.Value)]
         public class MapSOParser_GreyScale<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
         {
             /// <summary>
@@ -262,6 +263,7 @@ namespace Kopernicus
         }
 
         // Parser for a MapSO
+        [RequireConfigType(ConfigType.Value)]
         public class MapSOParser_RGB<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
         {
             /// <summary>
