@@ -66,7 +66,7 @@ namespace Kopernicus
         /// <summary>
         /// Name of the acceptable values for NameSigificance.Key
         /// </summary>
-        public readonly String Key;
+        public String Key;
 
         // Constructor sets name
         public ParserTarget(String fieldName)

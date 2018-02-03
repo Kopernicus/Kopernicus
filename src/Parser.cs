@@ -33,6 +33,7 @@ using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Smooth.Algebraics;
 using Object = System.Object;
 
 namespace Kopernicus
@@ -552,7 +553,6 @@ namespace Kopernicus
         {
             // Get the parser targets
             ParserTarget[] targets = (ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true);
-            ParserOptions.Options[configName].LogCallback(targets.Length.ToString());
 
             // Process the targets
             foreach (ParserTarget target in targets)
@@ -606,7 +606,7 @@ namespace Kopernicus
 
                 // Does this node have a required config source type (and if so, check if valid)
                 RequireConfigType[] attributes =
-                    (RequireConfigType[]) member.GetCustomAttributes(typeof(RequireConfigType), true);
+                    (RequireConfigType[]) targetType.GetCustomAttributes(typeof(RequireConfigType), true);
                 if (attributes.Length > 0)
                 {
                     if (attributes[0].Type == ConfigType.Node && !isNode ||
@@ -651,6 +651,7 @@ namespace Kopernicus
                         if (!targetType.IsAbstract)
                         {
                             targetValue = Activator.CreateInstance(targetType);
+                            
                         }
                     }
 

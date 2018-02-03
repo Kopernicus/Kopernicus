@@ -42,7 +42,7 @@ namespace Kopernicus
             /// <summary>
             /// The function that should be used for log output
             /// </summary>
-            public Action<String> LogCallback = Debug.Log;
+            public Action<System.Object> LogCallback = Debug.Log;
 
             /// <summary>
             /// The function that should be used for error output

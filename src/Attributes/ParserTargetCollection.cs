@@ -33,7 +33,7 @@ namespace Kopernicus
     /// <summary>
     /// Attribute indicating a target collection
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
     public class ParserTargetCollection : ParserTarget
     {
         // Constructor sets name
