@@ -288,7 +288,7 @@ namespace Kopernicus
                     generatedBody.orbitDriver = generatedBody.celestialBody.gameObject.AddComponent<OrbitDriver>();
                     generatedBody.orbitRenderer = generatedBody.celestialBody.gameObject.AddComponent<OrbitRenderer>();
                 }
-                generatedBody.celestialBody.gameObject.AddComponent<OrbitRendererUpdater>();
+                generatedBody.celestialBody.gameObject.AddOrGetComponent<OrbitRendererUpdater>();
                 generatedBody.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
 
                 // Store values
@@ -316,10 +316,12 @@ namespace Kopernicus
                 }
 
                 // Add the rendering updater to the celestial body
-                body.gameObject.AddComponent<OrbitRendererUpdater>();
+                body.gameObject.AddOrGetComponent<OrbitRendererUpdater>();
                 
                 // Update the OrbitRenderer data
-                KopernicusOrbitRendererData data = new KopernicusOrbitRendererData(body, body.orbitDriver.Renderer);
+                KopernicusOrbitRendererData data = body.orbitDriver.Renderer == null
+                    ? new KopernicusOrbitRendererData(body, PSystemManager.OrbitRendererDataCache[body])
+                    : new KopernicusOrbitRendererData(body, body.orbitDriver.Renderer);
                 if (PSystemManager.OrbitRendererDataCache.ContainsKey(body))
                 {
                     PSystemManager.OrbitRendererDataCache[body] = data;

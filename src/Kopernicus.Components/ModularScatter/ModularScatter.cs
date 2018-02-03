@@ -23,7 +23,6 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -36,12 +35,16 @@ namespace Kopernicus
         /// <summary>
         /// Component to add other Components to Scatter objects easily
         /// </summary>
-        public class ModularScatter : MonoBehaviour, IComponentSystem<ModularScatter>
+        public class ModularScatter : SerializableMonoBehaviour, IComponentSystem<ModularScatter>
         {
             /// <summary>
             /// Components that can be added to the Ring
             /// </summary>
-            public List<IComponent<ModularScatter>> Components { get; set; }
+            public List<IComponent<ModularScatter>> Components
+            {
+                get { return _components; }
+                set { _components = value; }
+            }
 
             /// <summary>
             /// The mod we are attached to
@@ -52,7 +55,10 @@ namespace Kopernicus
             /// The scatter instance we are attached to
             /// </summary>
             public PQSLandControl.LandClassScatter scatter;
-            
+
+            [SerializeField] 
+            private List<IComponent<ModularScatter>> _components;
+
             /// <summary>
             /// Create a new ScatterExtension
             /// </summary>

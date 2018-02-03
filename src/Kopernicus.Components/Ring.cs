@@ -36,13 +36,17 @@ namespace Kopernicus
         /// <summary>
         /// Class to render a ring around a planet
         /// </summary>
-        public class Ring : MonoBehaviour, IComponentSystem<Ring>
+        public class Ring : SerializableMonoBehaviour, IComponentSystem<Ring>
         {
             /// <summary>
             /// Components that can be added to the Ring
             /// </summary>
-            public List<IComponent<Ring>> Components { get; set; }
-            
+            public List<IComponent<Ring>> Components
+            {
+                get { return _components; }
+                set { _components = value; }
+            }
+
             // Settings
             public Single innerRadius;
             public Single outerRadius;
@@ -115,6 +119,9 @@ namespace Kopernicus
             public CelestialBody referenceBody;
 
             public MeshRenderer ringMR;
+            
+            [SerializeField] 
+            private List<IComponent<Ring>> _components;
 
             /// <summary>
             /// Create the module list
