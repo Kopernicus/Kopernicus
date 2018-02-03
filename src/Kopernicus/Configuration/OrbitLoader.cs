@@ -57,7 +57,6 @@ namespace Kopernicus
                 }
                 set
                 {
-                    Logger.Active.Log(Injector.IsInPrefab);
                     if (Injector.IsInPrefab)
                     {
                         _referenceBody = value;
