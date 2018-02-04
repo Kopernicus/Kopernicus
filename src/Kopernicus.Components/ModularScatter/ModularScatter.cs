@@ -78,6 +78,7 @@ namespace Kopernicus
                 transform.localPosition = Vector3.zero;
                 transform.localRotation = Quaternion.identity;
                 transform.localScale = Vector3.one;
+                scatter = landControl.scatters.FirstOrDefault(s => s.scatterName == scatter.scatterName); // I hate Unity
                 typeof(PQSLandControl.LandClassScatter).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                     .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
 
