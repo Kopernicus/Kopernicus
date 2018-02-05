@@ -33,7 +33,7 @@ namespace Kopernicus
         /// <summary>
         /// Class to load ScaledSpace Textures on Demand
         /// </summary>
-        public class ScaledSpaceDemand : MonoBehaviour
+        public class ScaledSpaceOnDemand : MonoBehaviour
         {
             // Path to the Texture
             public String texture;

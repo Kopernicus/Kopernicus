@@ -268,11 +268,11 @@ namespace Kopernicus
                         Value.scaledBody.GetComponent<Renderer>().material.GetTexture("_MainTex") as Texture2D;
                     Texture2D normals =
                         Value.scaledBody.GetComponent<Renderer>().material.GetTexture("_BumpMap") as Texture2D;
-                    ScaledSpaceDemand demand = Value.scaledBody.AddComponent<ScaledSpaceDemand>();
+                    ScaledSpaceOnDemand onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
                     if (texture != null)
-                        demand.texture = texture.name;
+                        onDemand.texture = texture.name;
                     if (normals != null)
-                        demand.normals = normals.name;
+                        onDemand.normals = normals.name;
                 }
 
                 // Event

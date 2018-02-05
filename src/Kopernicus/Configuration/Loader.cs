@@ -117,6 +117,14 @@ namespace Kopernicus
                 set { OnDemand.OnDemandStorage.onDemandUnloadDelay = value; }
             }
 
+            // Whether the experimental memory management in OD should be used
+            [ParserTarget("useManualMemoryManagement")]
+            public NumericParser<Boolean> useManualMemoryManagement
+            {
+                get { return OnDemand.OnDemandStorage.useManualMemoryManagement; }
+                set { OnDemand.OnDemandStorage.useManualMemoryManagement = value; }
+            }
+
             // The body that is displayed at main menu
             [ParserTarget("mainMenuBody")]
             public String mainMenuBody

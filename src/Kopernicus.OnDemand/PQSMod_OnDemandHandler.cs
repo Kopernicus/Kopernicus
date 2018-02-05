@@ -62,7 +62,7 @@ namespace Kopernicus
                     return;
 
                 // Enable the maps
-                if (OnDemandStorage.EnableBody(sphere.name))
+                if (OnDemandStorage.EnableBodyPQS(sphere.name))
                 {
                     isLoaded = true;
                     Debug.Log("[OD] Enabling Body " + base.sphere.name + ": " + isLoaded);
@@ -79,7 +79,7 @@ namespace Kopernicus
                 if (System.Diagnostics.Stopwatch.GetTimestamp() > unloadTime)
                 {
                     // Disable the maps
-                    if (OnDemandStorage.DisableBody(sphere.name))
+                    if (OnDemandStorage.DisableBodyPQS(sphere.name))
                     {
                         Debug.Log("[OD] Disabling Body " + base.sphere.name + ": " + isLoaded);
                     }

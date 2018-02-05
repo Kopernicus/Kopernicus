@@ -26,6 +26,7 @@
 using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
+using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
 
@@ -275,6 +276,9 @@ namespace Kopernicus
                 {
                     CreateBarycenter();
                 }
+                
+                // Add an OnDemand CBMap trigger
+                celestialBody.gameObject.AddComponent<CBMapTrigger>();
 
                 // Loads external parser targets
                 Parser.LoadParserTargetsExternal(node, "Kopernicus", configName: "Kopernicus");

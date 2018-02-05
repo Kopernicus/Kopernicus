@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 
 namespace Kopernicus
 {
-    public unsafe class NativeDoubleArray
+    public unsafe class NativeByteArray
     {
         /// <summary>
         /// The size of the array
@@ -45,12 +45,12 @@ namespace Kopernicus
         /// Create a new Array using unmanaged memory
         /// </summary>
         /// <param name="size"></param>
-        public NativeDoubleArray(Int32 size)
+        public NativeByteArray(Int32 size)
         {
             Size = size;
 
             // Allocate a pointer to the custom array
-            _items = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Double)) * Size);
+            _items = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Byte)) * Size);
         }
 
         /// <summary>
@@ -68,12 +68,12 @@ namespace Kopernicus
         public void Resize(Int32 newSize)
         {
             // Allocate a new array
-            IntPtr newitems = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Double)) * newSize);
+            IntPtr newitems = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Byte)) * newSize);
             
             // Copy the old one
             for (Int32 i = 0; i < Size; i++)
             {
-                ((Double*) newitems)[i] = this[i];
+                ((Byte*) newitems)[i] = this[i];
             }
             
             // Free the old memory
@@ -84,9 +84,9 @@ namespace Kopernicus
             _items = newitems;
         }
         
-        public ref Double this[Int32 index]
+        public ref Byte this[Int32 index]
         {
-            get { return ref ((Double*) _items)[index]; }
+            get { return ref ((Byte*) _items)[index]; }
         }
     }
 }

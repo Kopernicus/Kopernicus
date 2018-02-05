@@ -53,14 +53,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CBAttributeMapSODemand.cs" />
+    <Compile Include="CBMapTrigger.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="ILoadOnDemand.cs" />
     <Compile Include="MapSODemand.cs" />
-    <Compile Include="NativeDoubleArray.cs" />
+    <Compile Include="NativeByteArray.cs" />
     <Compile Include="OnDemandStorage.cs" />
     <Compile Include="PQSMod_OnDemandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScaledSpaceDemand.cs" />
+    <Compile Include="ScaledSpaceOnDemand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -49,9 +49,9 @@ namespace Kopernicus
             public static EventData<CBAttributeMapSODemand> OnCBMapSOUnload { get; private set; }
 
             [Description("OnDemand.ScaledSpace.Load")]
-            public static EventData<ScaledSpaceDemand> OnScaledSpaceLoad { get; private set; }
+            public static EventData<ScaledSpaceOnDemand> OnScaledSpaceLoad { get; private set; }
             [Description("OnDemand.ScaledSpace.Unload")]
-            public static EventData<ScaledSpaceDemand> OnScaledSpaceUnload { get; private set; }
+            public static EventData<ScaledSpaceOnDemand> OnScaledSpaceUnload { get; private set; }
             
             [Description("OnDemand.MapSO.Load.NR")]
             private static EventVoid OnMapSOLoadNR { get; set; }

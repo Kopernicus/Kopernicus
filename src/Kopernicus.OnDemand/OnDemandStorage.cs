@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
@@ -51,6 +52,8 @@ namespace Kopernicus
             public static Boolean onDemandLoadOnMissing = true;
             public static Boolean onDemandLogOnMissing = true;
             public static Int32 onDemandUnloadDelay = 10;
+
+            public static Boolean useManualMemoryManagement = false;
 
             // Add the management handler to the PQS
             public static void AddHandler(PQS pqsVersion)
@@ -157,6 +160,7 @@ namespace Kopernicus
             {
                 if (maps.ContainsKey(body))
                 {
+                    Debug.Log("[OD] --> OnDemandStorage.EnableBody loading " + body);
                     EnableMapList(maps[body]);
                     return true;
                 }
@@ -169,7 +173,52 @@ namespace Kopernicus
             {
                 if (maps.ContainsKey(body))
                 {
+                    Debug.Log("[OD] <--- OnDemandStorage.DisableBody destroying " + body);
                     DisableMapList(maps[body]);
+                    return true;
+                }
+                return false;
+            }
+
+            public static Boolean EnableBodyPQS(String body)
+            {
+                if (maps.ContainsKey(body))
+                {
+                    Debug.Log("[OD] --> OnDemandStorage.EnableBodyPQS loading " + body);
+                    EnableMapList(maps[body].Where(m => m is MapSODemand).ToList());
+                    return true;
+                }
+                return false;
+            }
+
+            public static Boolean DisableBodyPQS(String body)
+            {
+                if (maps.ContainsKey(body))
+                {
+                    Debug.Log("[OD] <--- OnDemandStorage.DisableBodyPQS destroying " + body);
+                    DisableMapList(maps[body].Where(m => m is MapSODemand).ToList());
+                    return true;
+                }
+                return false;
+            }
+
+            public static Boolean EnableBodyCBMaps(String body)
+            {
+                if (maps.ContainsKey(body))
+                {
+                    Debug.Log("[OD] --> OnDemandStorage.EnableBodyCBMaps loading " + body);
+                    EnableMapList(maps[body].Where(m => m is CBAttributeMapSODemand).ToList());
+                    return true;
+                }
+                return false;
+            }
+
+            public static Boolean DisableBodyCBMaps(String body)
+            {
+                if (maps.ContainsKey(body))
+                {
+                    Debug.Log("[OD] <--- OnDemandStorage.DisableBodyCBMaps destroying " + body);
+                    DisableMapList(maps[body].Where(m => m is CBAttributeMapSODemand).ToList());
                     return true;
                 }
                 return false;

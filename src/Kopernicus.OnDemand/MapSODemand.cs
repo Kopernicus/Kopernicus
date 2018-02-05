@@ -24,6 +24,9 @@
  */
 
 using System;
+using System.IO;
+using KSP.UI;
+using KSP.UI.Screens.SpaceCenter;
 using UnityEngine;
 
 namespace Kopernicus
@@ -35,11 +38,9 @@ namespace Kopernicus
         /// </summary>
         public class MapSODemand : MapSO, ILoadOnDemand
         {
-            // BitPerPixels is always 4
-            protected new const Int32 _bpp = 4;
-
             // Representation of the map
             protected new Texture2D _data { get; set; }
+            protected NativeByteArray _image { get; set; }
 
             // States
             public Boolean IsLoaded { get; set; }
@@ -87,7 +88,14 @@ namespace Kopernicus
                     return;
 
                 // Nuke the map
-                DestroyImmediate(_data);
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    _image.Free();
+                }
+                else
+                {
+                    DestroyImmediate(_data);
+                }
 
                 // Set flags
                 IsLoaded = false;
@@ -111,17 +119,121 @@ namespace Kopernicus
                     return;
                 }
 
-                // Set _data
-                _data = tex;
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    _name = tex.name;
+                    _width = tex.width;
+                    _height = tex.height;
+                    _bpp = (Int32)depth;
+                    _rowWidth = _width * _bpp;
+                    switch (depth)
+                    {
+                        case MapDepth.Greyscale:
+                        {
+                            if (tex.format != TextureFormat.Alpha8)
+                            {
+                                CreateGreyscaleFromRGB(tex);
+                            }
+                            else
+                            {
+                                CreateGreyscaleFromAlpha(tex);
+                            }
+                            break;
+                        }
+                        case MapDepth.HeightAlpha:
+                        {
+                            CreateHeightAlpha(tex);
+                            break;
+                        }
+                        case MapDepth.RGB:
+                        {
+                            CreateRGB(tex);
+                            break;
+                        }
+                        case MapDepth.RGBA:
+                        {
+                            CreateRGBA(tex);
+                            break;
+                        }
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(depth), depth, null);
+                    }
+                    _isCompiled = true;
+                    
+                    // Clean up what we don't need anymore
+                    DestroyImmediate(tex);
+                }
+                else
+                {
+                    // Set _data
+                    _data = tex;
 
-                // Variables
-                _width = tex.width;
-                _height = tex.height;
-                Depth = depth;
-                _rowWidth = _width * _bpp;
+                    // Variables
+                    _width = tex.width;
+                    _height = tex.height;
+                    Depth = depth;
+                    _bpp = 4;
+                    _rowWidth = _width * _bpp;
 
-                // We're compiled
-                _isCompiled = true;
+                    // We're compiled
+                    _isCompiled = true;
+                }
+            }
+            
+            protected new void CreateGreyscaleFromAlpha(Texture2D tex)
+            {
+                Color32[] pixels32 = tex.GetPixels32();
+                _image = new NativeByteArray(pixels32.Length);
+                for (Int32 i = 0; i < pixels32.Length; i++)
+                {
+                    _image[i] = pixels32[i].a;
+                }
+            }
+            
+            protected new void CreateGreyscaleFromRGB(Texture2D tex)
+            {
+                Color32[] pixels32 = tex.GetPixels32();
+                _image = new NativeByteArray(pixels32.Length);
+                for (Int32 i = 0; i < pixels32.Length; i++)
+                {
+                    _image[i] = pixels32[i].r;
+                }
+            }
+
+            protected new void CreateHeightAlpha(Texture2D tex)
+            {
+                Color32[] pixels32 = tex.GetPixels32();
+                _image = new NativeByteArray(pixels32.Length * 2);
+                for (Int32 i = 0; i < pixels32.Length; i++)
+                {
+                    _image[i * 2] = pixels32[i].r;
+                    _image[i * 2 + 1] = pixels32[i].a;
+                }
+            }
+
+            protected new void CreateRGB(Texture2D tex)
+            {
+                Color32[] pixels32 = tex.GetPixels32();
+                _image = new NativeByteArray(pixels32.Length * 3);
+                for (Int32 i = 0; i < pixels32.Length; i++)
+                {
+                    _image[i * 3] = pixels32[i].r;
+                    _image[i * 3 + 1] = pixels32[i].g;
+                    _image[i * 3 + 2] = pixels32[i].b;
+                }
+            }
+
+            protected new void CreateRGBA(Texture2D tex)
+            {
+                Color32[] pixels32 = tex.GetPixels32();
+                _image = new NativeByteArray(pixels32.Length * 4);
+                for (Int32 i = 0; i < pixels32.Length; i++)
+                {
+                    _image[i * 3] = pixels32[i].r;
+                    _image[i * 3 + 1] = pixels32[i].g;
+                    _image[i * 3 + 2] = pixels32[i].b;
+                    _image[i * 3 + 3] = pixels32[i].a;
+                }
             }
 
             public MapSODemand()
@@ -132,7 +244,7 @@ namespace Kopernicus
             }
 
             // GetPixelByte
-            public override byte GetPixelByte(Int32 x, Int32 y)
+            public override Byte GetPixelByte(Int32 x, Int32 y)
             {
                 // If we aren't loaded....
                 if (!IsLoaded)
@@ -141,7 +253,28 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0;
                 }
-                return (byte)(_data.GetPixel(x, y).r * Float2Byte);
+
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    if (x < 0)
+                    {
+                        x = Width - x;
+                    }
+                    else if (x >= Width)
+                    {
+                        x -= Width;
+                    }
+                    if (y < 0)
+                    {
+                        y = Height - y;
+                    }
+                    else if (y >= Height)
+                    {
+                        y -= Height;
+                    }
+                    return _image[PixelIndex(x, y)];
+                }
+                return (Byte)(_data.GetPixel(x, y).r * Float2Byte);
             }
 
             // GetPixelColor - Double
@@ -154,17 +287,7 @@ namespace Kopernicus
                     else return Color.black;
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return Color.Lerp(
-                    Color.Lerp(
-                        GetPixelColor(coords.xFloor, coords.yFloor),
-                        GetPixelColor(coords.xCeiling, coords.yFloor), 
-                        coords.u), 
-                    Color.Lerp(
-                        GetPixelColor(coords.xFloor, coords.yCeiling),
-                        GetPixelColor(coords.xCeiling, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelColor(x, y);
             }
 
             // GetPixelColor - Float
@@ -177,17 +300,7 @@ namespace Kopernicus
                     else return Color.black;
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return Color.Lerp(
-                    Color.Lerp(
-                        GetPixelColor(coords.xFloor, coords.yFloor),
-                        GetPixelColor(coords.xCeiling, coords.yFloor),
-                        coords.u),
-                    Color.Lerp(
-                        GetPixelColor(coords.xFloor, coords.yCeiling),
-                        GetPixelColor(coords.xCeiling, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelColor(x, y);
             }
 
             // GetPixelColor - Int
@@ -198,6 +311,28 @@ namespace Kopernicus
                     if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelColI with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
                     if (AutoLoad) Load();
                     else return Color.black;
+                }
+
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    index = PixelIndex(x, y);
+                    if (_bpp == 3)
+                    {
+                        return new Color(Byte2Float * _image[index], Byte2Float * _image[index + 1],
+                            Byte2Float * _image[index + 2], 1f);
+                    }
+                    if (_bpp == 4)
+                    {
+                        return new Color(Byte2Float * _image[index], Byte2Float * _image[index + 1],
+                            Byte2Float * _image[index + 2], Byte2Float * _image[index + 3]);
+                    }
+                    if (_bpp != 2)
+                    {
+                        retVal = Byte2Float * _image[index];
+                        return new Color(retVal, retVal, retVal, 1f);
+                    }
+                    retVal = Byte2Float * _image[index];
+                    return new Color(retVal, retVal, retVal, Byte2Float * _image[index + 1]);
                 }
                 return _data.GetPixel(x, y);
             }
@@ -212,17 +347,7 @@ namespace Kopernicus
                     else return Color.black;
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return Color32.Lerp(
-                    Color32.Lerp(
-                        GetPixelColor32(coords.xFloor, coords.yFloor),
-                        GetPixelColor32(coords.xCeiling, coords.yFloor),
-                        coords.u),
-                    Color32.Lerp(
-                        GetPixelColor32(coords.xFloor, coords.yCeiling),
-                        GetPixelColor32(coords.xCeiling, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelColor32(x, y);
             }
 
             // GetPixelColor32 - Float - Honestly Squad, why are they named GetPixelColor32, but return normal Colors instead of Color32?
@@ -235,17 +360,7 @@ namespace Kopernicus
                     else return Color.black;
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return Color32.Lerp(
-                    Color32.Lerp(
-                        GetPixelColor32(coords.xFloor, coords.yFloor),
-                        GetPixelColor32(coords.xCeiling, coords.yFloor),
-                        coords.u),
-                    Color32.Lerp(
-                        GetPixelColor32(coords.xFloor, coords.yCeiling),
-                        GetPixelColor32(coords.xCeiling, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelColor32(x, y);
             }
 
             // GetPixelColor32 - Int
@@ -256,6 +371,26 @@ namespace Kopernicus
                     if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelCol32I with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
                     if (AutoLoad) Load();
                     else return new Color32();
+                }
+
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    index = PixelIndex(x, y);
+                    if (_bpp == 3)
+                    {
+                        return new Color32(_image[index], _image[index + 1], _image[index + 2], 255);
+                    }
+                    if (_bpp == 4)
+                    {
+                        return new Color32(_image[index], _image[index + 1], _image[index + 2], _image[index + 3]);
+                    }
+                    if (_bpp != 2)
+                    {
+                        val = _image[index];
+                        return new Color32(val, val, val, 255);
+                    }
+                    val = _image[index];
+                    return new Color32(val, val, val, _image[index + 1]);
                 }
                 return _data.GetPixel(x, y);
             }
@@ -270,17 +405,7 @@ namespace Kopernicus
                     else return 0f;
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return Mathf.Lerp(
-                    Mathf.Lerp(
-                        GetPixelFloat(coords.xFloor, coords.yFloor), 
-                        GetPixelFloat(coords.xCeiling, coords.yFloor), 
-                        coords.u), 
-                    Mathf.Lerp(
-                        GetPixelFloat(coords.xFloor, coords.yCeiling), 
-                        GetPixelFloat(coords.xCeiling, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelFloat(x, y);
             }
 
             // GetPixelFloat - Float
@@ -293,17 +418,7 @@ namespace Kopernicus
                     else return 0f;
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return Mathf.Lerp(
-                    Mathf.Lerp(
-                        GetPixelFloat(coords.xFloor, coords.yFloor),
-                        GetPixelFloat(coords.xCeiling, coords.yFloor),
-                        coords.u),
-                    Mathf.Lerp(
-                        GetPixelFloat(coords.xFloor, coords.yCeiling),
-                        GetPixelFloat(coords.xCeiling, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelFloat(x, y);
             }
 
             // GetPixelFloat - Integer
@@ -311,9 +426,25 @@ namespace Kopernicus
             {
                 if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelFloatI with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing)
+                        Debug.Log("[OD] ERROR: getting pixelFloatI with unloaded map " + name + " of path " + Path +
+                                  ", autoload = " + AutoLoad);
                     if (AutoLoad) Load();
                     else return 0f;
+                }
+
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    retVal = 0f;
+                    index = PixelIndex(x, y);
+                    for (Int32 i = 0; i < _bpp; i++)
+                    {
+                        retVal += _image[index + i];
+                    }
+
+                    retVal /= _bpp;
+                    retVal *= Byte2Float;
+                    return retVal;
                 }
 
                 Color pixel = _data.GetPixel(x, y);
@@ -331,7 +462,7 @@ namespace Kopernicus
                 if (_data.format == TextureFormat.Alpha8)
                     value = pixel.a;
 
-                return value / (Int32)Depth;
+                return value / (Int32) Depth;
             }
 
             // GetPixelHeightAlpha - Double
@@ -344,17 +475,7 @@ namespace Kopernicus
                     else return new HeightAlpha(0f, 0f);
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return HeightAlpha.Lerp(
-                    HeightAlpha.Lerp(
-                        GetPixelHeightAlpha(coords.xFloor, coords.yFloor), 
-                        GetPixelHeightAlpha(coords.xCeiling, coords.yFloor), 
-                        coords.u), 
-                    HeightAlpha.Lerp(
-                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling), 
-                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelHeightAlpha(x, y);
             }
 
             // GetPixelHeightAlpha - Float
@@ -367,17 +488,7 @@ namespace Kopernicus
                     else return new HeightAlpha(0f, 0f);
                 }
 
-                BilinearCoords coords = ConstructBilinearCoords(x, y);
-                return HeightAlpha.Lerp(
-                    HeightAlpha.Lerp(
-                        GetPixelHeightAlpha(coords.xFloor, coords.yFloor),
-                        GetPixelHeightAlpha(coords.xCeiling, coords.yFloor),
-                        coords.u),
-                    HeightAlpha.Lerp(
-                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling),
-                        GetPixelHeightAlpha(coords.xFloor, coords.yCeiling),
-                        coords.u),
-                    coords.v);
+                return base.GetPixelHeightAlpha(x, y);
             }
 
             // GetPixelHeightAlpha - Int
@@ -385,20 +496,38 @@ namespace Kopernicus
             {
                 if (!IsLoaded)
                 {
-                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (OnDemandStorage.onDemandLogOnMissing)
+                        Debug.Log("[OD] ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " +
+                                  Path + ", autoload = " + AutoLoad);
                     if (AutoLoad) Load();
                     else return new HeightAlpha(0f, 0f);
                 }
 
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    index = PixelIndex(x, y);
+                    if (_bpp == 2)
+                    {
+                        return new HeightAlpha(Byte2Float * _image[index], Byte2Float * _image[index + 1]);
+                    }
+
+                    if (_bpp != 4)
+                    {
+                        return new HeightAlpha(Byte2Float * _image[index], 1f);
+                    }
+
+                    val = _image[index];
+                    return new HeightAlpha(Byte2Float * _image[index], Byte2Float * _image[index + 3]);
+                }
+
                 Color pixel = _data.GetPixel(x, y);
-                if (Depth == (MapDepth.HeightAlpha | MapDepth.RGBA))
+                if (Depth == MapDepth.HeightAlpha || Depth == MapDepth.RGBA)
                     return new HeightAlpha(pixel.r, pixel.a);
-                else
-                    return new HeightAlpha(pixel.r, 1f);
+                return new HeightAlpha(pixel.r, 1f);
             }
 
             // GreyByte
-            public override byte GreyByte(Int32 x, Int32 y)
+            public override Byte GreyByte(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
@@ -406,7 +535,12 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0;
                 }
-                return (byte)(Float2Byte * _data.GetPixel(x, y).r);
+
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    return _image[PixelIndex(x, y)];
+                }
+                return (Byte)(Float2Byte * _data.GetPixel(x, y).r);
             }
 
             // GreyFloat
@@ -418,32 +552,48 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return 0f;
                 }
+
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    return Byte2Float * _image[PixelIndex(x, y)];
+                }
                 return _data.GetPixel(x, y).grayscale;
             }
 
             // PixelByte
-            public override byte[] PixelByte(Int32 x, Int32 y)
+            public override Byte[] PixelByte(Int32 x, Int32 y)
             {
                 if (!IsLoaded)
                 {
                     if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: getting pixelByte with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
                     if (AutoLoad) Load();
-                    else return new byte[_bpp];
+                    else return new Byte[_bpp];
+                }
+
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    Byte[] numArray = new Byte[this._bpp];
+                    index = PixelIndex(x, y);
+                    for (Int32 i = 0; i < _bpp; i++)
+                    {
+                        numArray[i] = _image[index + i];
+                    }
+                    return numArray;
                 }
 
                 Color c = _data.GetPixel(x, y);
                 if (Depth == MapDepth.Greyscale)
-                    return new byte[] { (byte)c.r };
+                    return new Byte[] { (Byte)c.r };
                 else if (Depth == MapDepth.HeightAlpha)
-                    return new byte[] { (byte)c.r, (byte)c.a };
+                    return new Byte[] { (Byte)c.r, (Byte)c.a };
                 else if (Depth == MapDepth.RGB)
-                    return new byte[] { (byte)c.r, (byte)c.g, (byte)c.b };
+                    return new Byte[] { (Byte)c.r, (Byte)c.g, (Byte)c.b };
                 else
-                    return new byte[] { (byte)c.r, (byte)c.g, (byte)c.b, (byte)c.a };
+                    return new Byte[] { (Byte)c.r, (Byte)c.g, (Byte)c.b, (Byte)c.a };
             }
 
             // CompileToTexture
-            public override Texture2D CompileToTexture()
+            public override Texture2D CompileToTexture(Byte filter)
             {
                 if (!IsLoaded)
                 {
@@ -451,52 +601,191 @@ namespace Kopernicus
                     if (AutoLoad) Load();
                     else return new Texture2D(_width, _height);
                 }
-                Texture2D compiled = Instantiate(_data) as Texture2D;
-                compiled.Apply(false, true);
-                return compiled;
+                
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    Color32[] color32 = new Color32[Size];
+                    for (Int32 i = 0; i < Size; i++)
+                    {
+                        val = (Byte)((_image[i] & filter) == 0 ? 0 : 255);
+                        color32[i] = new Color32(val, val, val, 255);
+                    }
+                    Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                    compiled.SetPixels32(color32);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
+                else
+                {
+                    Texture2D compiled = Instantiate(_data);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
             }
 
-            // ConstructBilinearCoords from Double
-            protected new BilinearCoords ConstructBilinearCoords(Double x, Double y)
+            // Generate a greyscale texture from the stored data
+            public override Texture2D CompileGreyscale()
             {
-                // Create the struct
-                BilinearCoords coords = new BilinearCoords();
-
-                // Floor
-                x = Math.Abs(x - Math.Floor(x));
-                y = Math.Abs(y - Math.Floor(y));
-
-                // X to U
-                coords.x = x * _width;
-                coords.xFloor = (Int32)Math.Floor(coords.x);
-                coords.xCeiling = (Int32)Math.Ceiling(coords.x);
-                coords.u = (Single)(coords.x - coords.xFloor);
-                if (coords.xCeiling == _width) coords.xCeiling = 0;
-
-                // Y to V
-                coords.y = y * _height;
-                coords.yFloor = (Int32)Math.Floor(coords.y);
-                coords.yCeiling = (Int32)Math.Ceiling(coords.y);
-                coords.v = (Single)(coords.y - coords.yFloor);
-                if (coords.yCeiling == _height) coords.yCeiling = 0;
-
-                // We're done
-                return coords;
+                if (!IsLoaded)
+                {
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new Texture2D(_width, _height);
+                }
+                
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    Color32[] color32 = new Color32[Size];
+                    for (Int32 i = 0; i < Size; i++)
+                    {
+                        val = _image[i];
+                        color32[i] = new Color32(val, val, val, 255);
+                    }
+                    Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                    compiled.SetPixels32(color32);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
+                else
+                {
+                    Texture2D compiled = Instantiate(_data);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
             }
 
-            // ConstructBilinearCoords from Single
-            protected new BilinearCoords ConstructBilinearCoords(Single x, Single y)
+            // Generate a height/alpha texture from the stored data
+            public override Texture2D CompileHeightAlpha()
             {
-                return ConstructBilinearCoords((Double)x, (Double)y);
+                if (!IsLoaded)
+                {
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new Texture2D(_width, _height);
+                }
+                
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    Color32[] color32 = new Color32[Width * Height];
+                    for (Int32 i = 0; i < Width * Height; i++)
+                    {
+                        val = _image[i * 2];
+                        color32[i] = new Color32(val, val, val, _image[i * 2 + 1]);
+                    }
+                    Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                    compiled.SetPixels32(color32);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
+                else
+                {
+                    Texture2D compiled = Instantiate(_data);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
             }
 
-            // BilinearCoords
-            public struct BilinearCoords
+            // Generate an RGB texture from the stored data
+            public override Texture2D CompileRGB()
             {
-                public Double x, y;
-                public Int32 xCeiling, xFloor, yCeiling, yFloor;
-                public Single u, v;
+                if (!IsLoaded)
+                {
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new Texture2D(_width, _height);
+                }
+                
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    Color32[] color32 = new Color32[Width * Height];
+                    for (Int32 i = 0; i < Width * Height; i++)
+                    {
+                        color32[i] = new Color32(_image[i * 3], _image[i * 3 + 1], _image[i * 3 + 2], 255);
+                    }
+                    Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                    compiled.SetPixels32(color32);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
+                else
+                {
+                    Texture2D compiled = Instantiate(_data);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
             }
+
+            // Generate an RGBA texture from the stored data
+            public override Texture2D CompileRGBA()
+            {
+                if (!IsLoaded)
+                {
+                    if (OnDemandStorage.onDemandLogOnMissing) Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " + AutoLoad);
+                    if (AutoLoad) Load();
+                    else return new Texture2D(_width, _height);
+                }
+                
+                if (OnDemandStorage.useManualMemoryManagement)
+                {
+                    Color32[] color32 = new Color32[Width * Height];
+                    for (Int32 i = 0; i < Width * Height; i++)
+                    {
+                        color32[i] = new Color32(_image[i * 3], _image[i * 3 + 1], _image[i * 3 + 2], _image[i * 3 + 3]);
+                    }
+                    Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                    compiled.SetPixels32(color32);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
+                else
+                {
+                    Texture2D compiled = Instantiate(_data);
+                    compiled.Apply(false, true);
+                    return compiled;
+                }
+            }
+
+//            // ConstructBilinearCoords from Double
+//            protected new BilinearCoords ConstructBilinearCoords(Double x, Double y)
+//            {
+//                // Create the struct
+//                BilinearCoords coords = new BilinearCoords();
+//
+//                // Floor
+//                x = Math.Abs(x - Math.Floor(x));
+//                y = Math.Abs(y - Math.Floor(y));
+//
+//                // X to U
+//                coords.x = x * _width;
+//                coords.xFloor = (Int32)Math.Floor(coords.x);
+//                coords.xCeiling = (Int32)Math.Ceiling(coords.x);
+//                coords.u = (Single)(coords.x - coords.xFloor);
+//                if (coords.xCeiling == _width) coords.xCeiling = 0;
+//
+//                // Y to V
+//                coords.y = y * _height;
+//                coords.yFloor = (Int32)Math.Floor(coords.y);
+//                coords.yCeiling = (Int32)Math.Ceiling(coords.y);
+//                coords.v = (Single)(coords.y - coords.yFloor);
+//                if (coords.yCeiling == _height) coords.yCeiling = 0;
+//
+//                // We're done
+//                return coords;
+//            }
+//
+//            // ConstructBilinearCoords from Single
+//            protected new BilinearCoords ConstructBilinearCoords(Single x, Single y)
+//            {
+//                return ConstructBilinearCoords((Double)x, (Double)y);
+//            }
+//
+//            // BilinearCoords
+//            public struct BilinearCoords
+//            {
+//                public Double x, y;
+//                public Int32 xCeiling, xFloor, yCeiling, yFloor;
+//                public Single u, v;
+//            }
         }
     }
 }
