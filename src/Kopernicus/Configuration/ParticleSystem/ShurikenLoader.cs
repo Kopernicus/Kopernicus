@@ -102,6 +102,70 @@ namespace Kopernicus
                 set { Utility.CopyObjectProperties(value.Value, Value.inheritVelocity, false); }
             }
             
+            // Access the particle system limit velocity over lifetime module.
+            [ParserTarget("LimitVelocityOverLifetime")]
+            public LimitVelocityOverLifetimeModuleLoader limitVelocityOverLifetime
+            {
+                get { return Value.limitVelocityOverLifetime; }
+                set { Utility.CopyObjectProperties(value.Value, Value.limitVelocityOverLifetime, false); }
+            }
+            
+            [ParserTarget("loop")]
+            [KittopiaDescription("Is the particle system looping?")]
+            public NumericParser<Boolean> loop
+            {
+                get { return Value.loop; }
+                set { Value.loop = value; }
+            }
+            
+            [ParserTarget("maxParticles")]
+            [KittopiaDescription("The maximum number of particles to emit.")]
+            public NumericParser<Int32> maxParticles
+            {
+                get { return Value.maxParticles; }
+                set { Value.maxParticles = value; }
+            }
+            
+            [ParserTarget("playbackSpeed")]
+            [KittopiaDescription("The playback speed of the particle system. 1 is normal playback speed.")]
+            public NumericParser<Single> playbackSpeed
+            {
+                get { return Value.playbackSpeed; }
+                set { Value.playbackSpeed = value; }
+            }
+            
+            [ParserTarget("randomSeed")]
+            [KittopiaDescription("Override the random seed used for the particle system emission.")]
+            public NumericParser<UInt32> randomSeed
+            {
+                get { return Value.randomSeed; }
+                set { Value.randomSeed = value; }
+            }
+            
+            // Access the particle system rotation by speed module.
+            [ParserTarget("RotationBySpeed")]
+            public RotationBySpeedModuleLoader rotationBySpeed
+            {
+                get { return Value.rotationBySpeed; }
+                set { Utility.CopyObjectProperties(value.Value, Value.rotationBySpeed, false); }
+            }
+            
+            // Access the particle system rotation over lifetime module.
+            [ParserTarget("RotationOverLifetime")]
+            public RotationOverLifetimeModuleLoader rotationOverLifetime
+            {
+                get { return Value.rotationOverLifetime; }
+                set { Utility.CopyObjectProperties(value.Value, Value.rotationOverLifetime, false); }
+            }
+            
+            [ParserTarget("scalingMode")]
+            [KittopiaDescription("The scaling mode applied to particle sizes and positions.")]
+            public EnumParser<ParticleSystemScalingMode> scalingMode
+            {
+                get { return Value.scalingMode; }
+                set { Value.scalingMode = value; }
+            }
+            
             /// <summary>
             /// Creates a new Shuriken Loader from the Injector context.
             /// </summary>

@@ -155,8 +155,12 @@
     <Compile Include="Configuration\ParticleSystem\ExternalForcesModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\ForceOverLifetimeModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\InheritVelocityModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\LimitVelocityOverLifetimeModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\MinMaxCurveLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\MinMaxGradientLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\RotationBySpeedModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\RotationOverLifetimeModuleLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\ShapeModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\ShurikenLoader.cs" />
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Configuration\RingSystem\DebrisFieldLoader.cs" />
