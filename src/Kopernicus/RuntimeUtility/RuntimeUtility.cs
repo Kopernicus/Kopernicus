@@ -32,6 +32,7 @@ using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using ModularFI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -118,7 +119,7 @@ namespace Kopernicus
         {
             previous = PlanetariumCamera.fetch.initialTarget;
             PlanetariumCamera.fetch.targets
-                .Where(m => m.celestialBody != null && (m.celestialBody.Has("barycenter") || m.celestialBody.Has("notSelectable")))
+                .Where(m => m.celestialBody != null && (m.celestialBody.Has("barycenter") || !m.celestialBody.Get("selectable", true)))
                 .ToList()
                 .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
 
@@ -244,6 +245,7 @@ namespace Kopernicus
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
+            
 
             // Remove buttons in map view for barycenters
             if (MapView.MapIsEnabled)
@@ -266,7 +268,7 @@ namespace Kopernicus
                         OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit)fields[2].GetValue(targeter);
                         CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or?.discoveryInfo?.name?.Value);
                         if (body == null) return;
-                        if (body.Has("barycenter") || body.Has("notSelectable"))
+                        if (body.Has("barycenter") || !body.Get("selectable", true))
                         {
                             if (cast.driver?.Targetable == null) return;
                             MapContextMenu context = MapContextMenu.Create(body.name, new Rect(0.5f, 0.5f, 300f, 50f), cast, () =>

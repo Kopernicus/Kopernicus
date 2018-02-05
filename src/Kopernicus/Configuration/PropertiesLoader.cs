@@ -232,7 +232,7 @@ namespace Kopernicus
             [ParserTarget("exactSearch")]
             public NumericParser<Boolean> exactSearch
             {
-                get { return Value.BiomeMap != null ? Value.BiomeMap.exactSearch : false; }
+                get { return Value.BiomeMap != null && Value.BiomeMap.exactSearch; }
                 set { Value.BiomeMap.exactSearch = value; }
             }
 
@@ -271,8 +271,8 @@ namespace Kopernicus
             [ParserTarget("selectable")]
             public NumericParser<Boolean> selectable
             {
-                get { return Value.Get("notSelectable", false); }
-                set { Value.Set("notSelectable", value.Value); }
+                get { return Value.Get("selectable", true); }
+                set { Value.Set("selectable", value.Value); }
             }
 
             // If the body should be hidden in RD

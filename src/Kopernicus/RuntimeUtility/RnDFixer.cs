@@ -257,7 +257,7 @@ namespace Kopernicus
                 }
 
                 // Barycenter
-                if (body.Has("barycenter") || body.Has("notSelectable"))
+                if (body.Has("barycenter") || !body.Get("selectable", true))
                 {
                     planetItem.planet.SetActive(false);
                     planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineLeft;
