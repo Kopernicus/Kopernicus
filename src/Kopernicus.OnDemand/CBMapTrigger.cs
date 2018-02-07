@@ -37,9 +37,10 @@ namespace Kopernicus
             {
                 _body = GetComponent<CelestialBody>();
                 GameEvents.onVesselSOIChanged.Add(OnVesselSOIChanged);
+                GameEvents.onVesselLoaded.Add(OnVesselLoad);
                 GameEvents.OnMapEntered.Add(OnMapEntered);
                 GameEvents.OnMapExited.Add(OnMapExited);
-                GameEvents.onLevelWasLoaded.Add(OnLevelWasLoaded);
+                GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
             }
 
             private void OnVesselSOIChanged(GameEvents.HostedFromToAction<Vessel, CelestialBody> action)
@@ -57,17 +58,25 @@ namespace Kopernicus
 
             private void OnMapEntered()
             {
-                OnDemandStorage.EnableBodyCBMaps(_body.transform.name);
+                // OnDemandStorage.EnableBodyCBMaps(_body.transform.name);
             }
 
             private void OnMapExited()
             {
+                if (_body != FlightGlobals.currentMainBody)
+                {
+                    OnDemandStorage.DisableBodyCBMaps(_body.transform.name);
+                }
+            }
+
+            private void OnGameSceneLoadRequested(GameScenes scene)
+            {
                 OnDemandStorage.DisableBodyCBMaps(_body.transform.name);
             }
 
-            private void OnLevelWasLoaded(GameScenes scene)
+            private void OnVesselLoad(Vessel vessel)
             {
-                if (scene == GameScenes.TRACKSTATION)
+                if (vessel.mainBody == _body)
                 {
                     OnDemandStorage.EnableBodyCBMaps(_body.transform.name);
                 }
@@ -80,9 +89,10 @@ namespace Kopernicus
             private void OnDestroy()
             {
                 GameEvents.onVesselSOIChanged.Remove(OnVesselSOIChanged);
+                GameEvents.onVesselLoaded.Remove(OnVesselLoad);
                 GameEvents.OnMapEntered.Remove(OnMapEntered);
                 GameEvents.OnMapExited.Remove(OnMapExited);
-                GameEvents.onLevelWasLoaded.Remove(OnLevelWasLoaded);
+                GameEvents.onLevelWasLoaded.Remove(OnGameSceneLoadRequested);
             }
         }
     }
