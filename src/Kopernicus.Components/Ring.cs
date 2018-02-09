@@ -112,6 +112,28 @@ namespace Kopernicus
             /// </summary>
             private Single innerShadeOffsetRate = 0;
 
+            //Contains all detail setup values
+            #region ringDetail
+            /// <summary>
+            /// The detail texture
+            /// </summary>
+            public Texture2D detailTex;
+            /// <summary>
+            /// X: min distance for pass 1. Y: scale for pass 1
+            /// </summary>
+            public Vector2 pass1;
+            /// <summary>
+            /// X: min distance for pass 2. Y: scale for pass 2
+            /// </summary>
+            public Vector2 pass2;
+            public Vector3 pass3;
+            public Texture2D dustTex;
+            public Vector3 dustControl;
+            public Vector3 cull;
+            public Vector2 MTS;
+            public Vector2 MTO;
+            #endregion
+
             /// <summary>
             /// The body around which this ring is located.
             /// Used to get rotation data to set the LAN.
@@ -202,6 +224,27 @@ namespace Kopernicus
                 {
                     ringMR.material.SetFloat("planetRadius", planetRadius);
                     ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
+
+                    //Detail setup
+                    ringMR.material.SetTexture("_DetailTex", detailTex);
+                    ringMR.material.SetFloat("_Div1", pass1.y);
+                    ringMR.material.SetFloat("_Div2", pass2.y);
+                    ringMR.material.SetFloat("_Pass1", pass1.x);
+                    ringMR.material.SetFloat("_Pass2", pass2.x);
+                    ringMR.material.SetFloat("_CullDistance", cull.x);
+                    ringMR.material.SetFloat("_Dust", pass3.x);
+                    ringMR.material.SetTexture("_DustTex", dustTex);
+                    ringMR.material.SetFloat("_DivDU", pass3.y);
+                    ringMR.material.SetFloat("_DivDV", pass3.z);
+                    ringMR.material.SetFloat("_DustMult", dustControl.x);
+                    ringMR.material.SetFloat("_CullRough", cull.z);
+                    ringMR.material.SetFloat("_CullGain", cull.y);
+                    ringMR.material.SetFloat("_DustGain", dustControl.y);
+                    ringMR.material.SetFloat("_DustAlpha", dustControl.z);
+                    ringMR.material.SetFloat("_MainScaleU", MTS.x);
+                    ringMR.material.SetFloat("_MainScaleV", MTS.y);
+                    ringMR.material.SetFloat("_MainOffsetU", MTO.x);
+                    ringMR.material.SetFloat("_MainOffsetV", MTO.y);
 
                     if (innerShadeTexture != null) {
                         ringMR.material.SetTexture("_InnerShadeTexture", innerShadeTexture);

@@ -201,6 +201,63 @@ namespace Kopernicus
                 set { Value.innerShadeTiles = value; }
             }
 
+            #region DetailData
+            [ParserTarget("detailTex")]
+            public Texture2DParser detTex
+            {
+                get { return ring.detailTex; }
+                set { ring.detailTex = value; }
+            }
+            [ParserTarget("pass1")]
+            public Vector2Parser p1
+            {
+                get { return ring.pass1; }
+                set { ring.pass1 = value; }
+            }
+            [ParserTarget("pass2")]
+            public Vector2Parser p2
+            {
+                get { return ring.pass2; }
+                set { ring.pass2 = value; }
+            }
+            [ParserTarget("pass3")]
+            public Vector3Parser p3
+            {
+                get { return ring.pass3; }
+                set { ring.pass3 = value; }
+            }
+            [ParserTarget("dustTex")]
+            public Texture2DParser dustTex
+            {
+                get { return ring.dustTex; }
+                set { ring.dustTex = value; }
+            }
+            [ParserTarget("dustControl")]
+            public Vector3Parser dustContrl
+            {
+                get { return ring.dustControl; }
+                set { ring.dustControl = value; }
+            }
+            [ParserTarget("cull")]
+            public Vector3Parser cull
+            {
+                get { return ring.cull; }
+                set { ring.cull = value; }
+            }
+            [ParserTarget("mainTexScale")]
+            public Vector2Parser MTS
+            {
+                get { return ring.MTS; }
+                set { ring.MTS = value; }
+            }
+            [ParserTarget("mainTexOffset")]
+            public Vector2Parser MTO
+            {
+                get { return ring.MTO; }
+                set { ring.MTO = value; }
+            }
+            #endregion
+            
             /// <summary>
             /// Number of seconds the inner shade texture takes to complete one rotation
             /// </summary>
