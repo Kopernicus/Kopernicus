@@ -205,56 +205,56 @@ namespace Kopernicus
             [ParserTarget("detailTex")]
             public Texture2DParser detTex
             {
-                get { return ring.detailTex; }
-                set { ring.detailTex = value; }
+                get { return Value.detailTex; }
+                set { Value.detailTex = value; }
             }
             [ParserTarget("pass1")]
             public Vector2Parser p1
             {
-                get { return ring.pass1; }
-                set { ring.pass1 = value; }
+                get { return Value.pass1; }
+                set { Value.pass1 = value; }
             }
             [ParserTarget("pass2")]
             public Vector2Parser p2
             {
-                get { return ring.pass2; }
-                set { ring.pass2 = value; }
+                get { return Value.pass2; }
+                set { Value.pass2 = value; }
             }
             [ParserTarget("pass3")]
             public Vector3Parser p3
             {
-                get { return ring.pass3; }
-                set { ring.pass3 = value; }
+                get { return Value.pass3; }
+                set { Value.pass3 = value; }
             }
             [ParserTarget("dustTex")]
             public Texture2DParser dustTex
             {
-                get { return ring.dustTex; }
-                set { ring.dustTex = value; }
+                get { return Value.dustTex; }
+                set { Value.dustTex = value; }
             }
             [ParserTarget("dustControl")]
             public Vector3Parser dustContrl
             {
-                get { return ring.dustControl; }
-                set { ring.dustControl = value; }
+                get { return Value.dustControl; }
+                set { Value.dustControl = value; }
             }
             [ParserTarget("cull")]
             public Vector3Parser cull
             {
-                get { return ring.cull; }
-                set { ring.cull = value; }
+                get { return Value.cull; }
+                set { Value.cull = value; }
             }
             [ParserTarget("mainTexScale")]
             public Vector2Parser MTS
             {
-                get { return ring.MTS; }
-                set { ring.MTS = value; }
+                get { return Value.MTS; }
+                set { Value.MTS = value; }
             }
             [ParserTarget("mainTexOffset")]
             public Vector2Parser MTO
             {
-                get { return ring.MTO; }
-                set { ring.MTO = value; }
+                get { return Value.MTO; }
+                set { Value.MTO = value; }
             }
             #endregion
             
