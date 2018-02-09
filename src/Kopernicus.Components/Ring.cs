@@ -121,17 +121,17 @@ namespace Kopernicus
             /// <summary>
             /// X: min distance for pass 1. Y: scale for pass 1
             /// </summary>
-            public Vector2 pass1;
+            public Vector2 pass1 = new Vector2(150, 50);
             /// <summary>
             /// X: min distance for pass 2. Y: scale for pass 2
             /// </summary>
-            public Vector2 pass2;
-            public Vector3 pass3;
+            public Vector2 pass2 = new Vector2(25, 150);
+            public Vector3 pass3 = new Vector3(15, 1200, 4);
             public Texture2D dustTex;
-            public Vector3 dustControl;
-            public Vector3 cull;
-            public Vector2 MTS;
-            public Vector2 MTO;
+            public Vector3 dustControl = new Vector3(6, 1.25f, 3.42f);
+            public Vector3 cull = new Vector3(7, -1.24f, 6.55f);
+            public Vector2 MTS = new Vector2(1,1);
+            public Vector2 MTO = new Vector2(0,0);
             #endregion
 
             /// <summary>
