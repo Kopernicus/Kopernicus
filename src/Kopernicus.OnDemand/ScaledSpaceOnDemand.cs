@@ -54,7 +54,7 @@ namespace Kopernicus
             private long unloadDelay;
 
             // Start(), get the scaled Mesh renderer
-            void Start()
+            public void Start()
             {
                 unloadDelay = System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.onDemandUnloadDelay;
                 scaledRenderer = GetComponent<MeshRenderer>();
@@ -98,7 +98,7 @@ namespace Kopernicus
                 unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + unloadDelay;
             }
 
-            void LoadTextures()
+            public void LoadTextures()
             {
                 Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
 
@@ -123,7 +123,7 @@ namespace Kopernicus
                 isLoaded = true;
             }
 
-            void UnloadTextures()
+            public void UnloadTextures()
             {
                 Debug.Log("[OD] <--- ScaledSpaceDemand.UnloadTextures destroying " + texture + " and " + normals);
 

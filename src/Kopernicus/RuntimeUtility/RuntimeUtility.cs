@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Kopernicus.OnDemand;
 using UnityEngine;
 
 namespace Kopernicus
@@ -430,6 +431,14 @@ namespace Kopernicus
                 return;
             }
             mun.gameObject.SetActive(false);
+            
+            // Activate the textures
+            ScaledSpaceOnDemand od = planet.scaledVersion.GetComponentInChildren<ScaledSpaceOnDemand>();
+            if (od != null)
+            {
+                od.Start();
+                od.LoadTextures();
+            }
 
             // Clone the scaledVersion and attach it to the Scene
             GameObject menuPlanet = Instantiate(planet.scaledVersion) as GameObject;
@@ -487,6 +496,14 @@ namespace Kopernicus
                 Rotato munRotato = menuMoonPivot.AddComponent<Rotato>();
                 Rotato refRotato = mun.GetComponent<Rotato>();
                 munRotato.speed = (refRotato.speed / 542.494239600754f) * (Single)moonCB.GetOrbit().getOrbitalSpeedAtDistance(moonCB.GetOrbit().semiMajorAxis);
+            
+                // Activate the textures
+                ScaledSpaceOnDemand odMoon = moon.scaledVersion.GetComponentInChildren<ScaledSpaceOnDemand>();
+                if (odMoon != null)
+                {
+                    odMoon.Start();
+                    odMoon.LoadTextures();
+                }
 
                 // Clone the scaledVersion and attach it to the pivot
                 GameObject menuMoon = Instantiate(moon.scaledVersion) as GameObject;
