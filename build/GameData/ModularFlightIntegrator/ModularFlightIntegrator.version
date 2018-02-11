@@ -1,6 +1,6 @@
 {
     "NAME": "ModularFlightIntegrator",
-    "URL": "https://ksp.sarbian.com/jenkins/job/ModularFlightIntegrator/lastSuccessfulBuild/artifact/ModularFlightIntegrator/ModularFlightIntegrator.version",
+    "URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/GameData/ModularFlightIntegrator/ModularFlightIntegrator.version",
     "DOWNLOAD": "http://forum.kerbalspaceprogram.com/threads/118088",
     "VERSION":{
         "MAJOR": 1,
