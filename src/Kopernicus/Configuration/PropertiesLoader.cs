@@ -316,7 +316,7 @@ namespace Kopernicus
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
                 // Replace biomes
-                if (Value.Get("removeBiomes", false) && Value.BiomeMap != null)
+                if (Value.Get("removeBiomes", true) && node.HasNode("Biomes") && Value.BiomeMap != null)
                     Value.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
                 
                 // Event
