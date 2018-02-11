@@ -6,27 +6,9 @@ February 11, 2018
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.1-4)
+New in this version (1.3.1-5)
 -------------------
-- Fixed RAM usage while generating ScaledSpace meshes
-- Fixed the PhysicsMaterial Loader
-- Fixed PQSCity Deletion
-- Standardized the Loading System in preparation for having the Kittopia Logic entirely in Kopernicus
-- Added the generic Noise Parser from KopernicusExpansion
-- Added the ability to load other noises than RidgedMultifractal in VertexPlanet. To keep the previous behaviour, rename the `Noise` node in `SharpnessNoise` to `Noise:RidgedMultifractal` and change `octaveCount` to `octaves`
-- Fixed issues in MeshScatter, VertexHeightNoiseHeightMap and VertexPlanet 
-- Fixed the bug that causes orbit lines to flicker at a certain angle / distance
-- Made the ring and scatter systems modular, so third parties can add their own components to them. While rings don't have built-in components at the moment, the Scatter colliders and experiments were moved into components. To keep the old behaviour, change `collides = true` to `Components { ScatterColliders { } }` and move the contents of the `Experiment` node to `Components { ScatterExperiment { } }`
-- Unload Scaled Space textures on scene change
-- Fixed the yellow-stripes bug that occured when trying to load textures from PluginData in OpenGL environments
-- Added an experimental OnDemand setting, that manages memory manually and only stores the channels of the texture that are neccessary instead of the whole texture. (`useManualMemoryManagement = true` in the `Kopernicus` node)
-- Added proper OnDemand load management for Biome maps
-- The `scatter` and `landClass` nodes from LandControl are now named `Scatter` and `LandClass`. The old values still work, but they are deprecated.
-------
-_A Scatterer update fixed compatibility between ScaledSpace OnDemand Loading and Scatterer itself. The planets should no longer stay completely white._
-
-_This updates introduces quite significant code changes, so mods that depend on Kopernicus may stop working (Sigmas Mods, KopernicusExpansion etc.). Please be patient and wait for an update._
-
+- Fixed a critical bug that removed all biome attributes
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
