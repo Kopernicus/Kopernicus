@@ -1,16 +1,32 @@
 ﻿Kopernicus
 ==============================
-November 30, 2017
+February 11, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.1-3)
+New in this version (1.3.1-4)
 -------------------
-- Kopernicus now tracks vessel orbits using a custom identifier (for example a GUID) instead of the FGI. The identifier is loaded from the "identifier" option in the Body node. If no identifier is specified, the body name is used. This should make it possible to install or remove planet packs mid-game without messing up all of the orbits. **Make a backup of your save before installing this version!**
-- Fixed IntensityCurve and IVAIntensityCurve. Their values were never used.
-- Updated the MFI .version file
+- Fixed RAM usage while generating ScaledSpace meshes
+- Fixed the PhysicsMaterial Loader
+- Fixed PQSCity Deletion
+- Standardized the Loading System in preparation for having the Kittopia Logic entirely in Kopernicus
+- Added the generic Noise Parser from KopernicusExpansion
+- Added the ability to load other noises than RidgedMultifractal in VertexPlanet. To keep the previous behaviour, rename the `Noise` node in `SharpnessNoise` to `Noise:RidgedMultifractal` and change `octaveCount` to `octaves`
+- Fixed issues in MeshScatter, VertexHeightNoiseHeightMap and VertexPlanet 
+- Fixed the bug that causes orbit lines to flicker at a certain angle / distance
+- Made the ring and scatter systems modular, so third parties can add their own components to them. While rings don't have built-in components at the moment, the Scatter colliders and experiments were moved into components. To keep the old behaviour, change `collides = true` to `Components { ScatterColliders { } }` and move the contents of the `Experiment` node to `Components { ScatterExperiment { } }`
+- Unload Scaled Space textures on scene change
+- Fixed the yellow-stripes bug that occured when trying to load textures from PluginData in OpenGL environments
+- Added an experimental OnDemand setting, that manages memory manually and only stores the channels of the texture that are neccessary instead of the whole texture. (`useManualMemoryManagement = true` in the `Kopernicus` node)
+- Added proper OnDemand load management for Biome maps
+- The `scatter` and `landClass` nodes from LandControl are now named `Scatter` and `LandClass`. The old values still work, but they are deprecated.
+------
+_A Scatterer update fixed compatibility between ScaledSpace OnDemand Loading and Scatterer itself. The planets should no longer stay completely white._
+
+_This updates introduces quite significant code changes, so mods that depend on Kopernicus may stop working (Sigmas Mods, KopernicusExpansion etc.). Please be patient and wait for an update._
+
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
