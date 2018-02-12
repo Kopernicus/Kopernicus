@@ -98,8 +98,7 @@ namespace Kopernicus
                     // Runtime constructor
                     public SimplexLoader(PQSMod_VertexPlanet.SimplexWrapper simplex)
                     {
-                        Value = new KopernicusSimplexWrapper(simplex.deformity, simplex.octaves, simplex.persistance,
-                            simplex.frequency);
+                        Value = new KopernicusSimplexWrapper(simplex);
                     }
 
                     // Runtime constructor
@@ -578,7 +577,7 @@ namespace Kopernicus
                     }
                     else if (mod.continentalRuggedness.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
                     {
-                        continental = new SimplexLoader(mod.continentalRuggedness);
+                        continentalRuggedness = new SimplexLoader(mod.continentalRuggedness);
                     }
                     if (continentalSharpness == null)
                     {
@@ -590,7 +589,7 @@ namespace Kopernicus
                     }
                     else if (mod.continentalSharpnessMap.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
                     {
-                        continental = new SimplexLoader(mod.continentalSharpnessMap);
+                        continentalSharpnessMap = new SimplexLoader(mod.continentalSharpnessMap);
                     }
                     if (terrainType == null)
                     {
@@ -598,7 +597,7 @@ namespace Kopernicus
                     }
                     else if (mod.terrainType.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
                     {
-                        continental = new SimplexLoader(mod.terrainType);
+                        terrainType = new SimplexLoader(mod.terrainType);
                     }
                     
                     // Create the callback list

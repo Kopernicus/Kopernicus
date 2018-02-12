@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
@@ -48,8 +49,17 @@ namespace Kopernicus
                 }
             }
 
+            protected PropertyInfo _simplex = typeof(PQSMod_VertexPlanet.SimplexWrapper).GetProperty("simplex");
+
+            public new Simplex simplex
+            {
+                get { return (Simplex)_simplex.GetValue(this, null); }
+                set { _simplex.SetValue(this, value, null); }
+            }
+
             public KopernicusSimplexWrapper(PQSMod_VertexPlanet.SimplexWrapper copyFrom) : base(copyFrom)
             {
+                simplex = copyFrom.simplex;
             }
 
             public KopernicusSimplexWrapper(Double deformity, Double octaves, Double persistance, Double frequency) :
