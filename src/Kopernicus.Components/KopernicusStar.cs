@@ -310,7 +310,8 @@ namespace Kopernicus
                 sunFlare.enabled = false;
                 if (useLocalSpaceSunLight && Sun.Instance.useLocalSpaceSunLight)
                     scaledSunLight.enabled = shifter.givesOffLight && lightsOn;
-                SunFlare.Instance = Current.lensFlare;
+                if (Current?.lensFlare != null)
+                    SunFlare.Instance = Current.lensFlare;
 
                 // Update Scaled Space Light
                 if (!useLocalSpaceSunLight) return;
