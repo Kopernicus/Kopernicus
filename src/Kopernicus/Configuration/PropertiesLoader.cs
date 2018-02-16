@@ -305,8 +305,11 @@ namespace Kopernicus
             {
                 // Replace biomes
                 if (Value.Get("removeBiomes", true) && node.HasNode("Biomes") && Value.BiomeMap != null)
+                {
+                    Value.BiomeMap = UnityEngine.Object.Instantiate(Value.BiomeMap);
                     Value.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
-                
+                }
+
                 // Event
                 Events.OnPropertiesLoaderApply.Fire(this, node);
             }
