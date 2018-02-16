@@ -237,20 +237,8 @@ namespace Kopernicus
             }
 
             // Biomes of this body
-            [ParserTargetCollection("Biomes", NameSignificance = NameSignificance.None)]
-            public List<BiomeLoader> biomes
-            {
-                get { return Value.BiomeMap?.Attributes?.Select(a => new BiomeLoader(a)).ToList(); }
-                set
-                {
-                    // Check biome map
-                    if (Value.BiomeMap == null)
-                        throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
-
-                    // Replace the old biomes list with the new one
-                    Value.BiomeMap.Attributes = value.Select(a => a.Value).ToArray();
-                }
-            }
+            [ParserTargetCollection("Biomes", NameSignificance = NameSignificance.None, AllowMerge = true)]
+            public CallbackList<BiomeLoader> biomes;
 
             // If the body name should be prefixed with "the" in some situations
             [ParserTarget("useTheInName")]
@@ -376,6 +364,17 @@ namespace Kopernicus
                 
                 // isHomeWorld Check
                 Value.isHomeWorld = Value.transform.name == "Kerbin";
+                
+                // Biomes
+                biomes = new CallbackList<BiomeLoader>(e =>
+                {
+                    // Check biome map
+                    if (Value.BiomeMap == null)
+                        throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
+
+                    // Replace the old biomes list with the new one
+                    Value.BiomeMap.Attributes = biomes.Select(b => b.Value).ToArray();
+                });
             }
 
             /// <summary>
@@ -399,6 +398,17 @@ namespace Kopernicus
                 
                 // isHomeWorld Check
                 Value.isHomeWorld = Value.transform.name == "Kerbin";
+                
+                // Biomes
+                biomes = new CallbackList<BiomeLoader>(e =>
+                {
+                    // Check biome map
+                    if (Value.BiomeMap == null)
+                        throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
+
+                    // Replace the old biomes list with the new one
+                    Value.BiomeMap.Attributes = biomes.Select(b => b.Value).ToArray();
+                });
             }
 
             // Mass converters
