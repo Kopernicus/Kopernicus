@@ -82,7 +82,6 @@ namespace Kopernicus
                     {
                         get
                         {
-                            Logger.Active.Log(customMaterial?.GetType());
                             if (customMaterial == null)
                                 return null;
                             if (NormalDiffuse.UsesSameShader(customMaterial))
@@ -101,7 +100,6 @@ namespace Kopernicus
                         }
                         set
                         {
-                            Logger.Active.Log(customMaterial?.GetType());
                             if (value == ScatterMaterialType.Diffuse)
                                 customMaterial = new NormalDiffuseLoader();
                             else if (value == ScatterMaterialType.BumpedDiffuse)
@@ -114,7 +112,6 @@ namespace Kopernicus
                                 customMaterial = new AlphaTestDiffuseLoader();
                             else if (value == ScatterMaterialType.AerialCutout)
                                 customMaterial = new AerialTransCutoutLoader();
-                            Logger.Active.Log(customMaterial?.GetType());
                         }
                     }
 
@@ -236,7 +233,7 @@ namespace Kopernicus
                     public String name
                     {
                         get { return Value.scatterName; }
-                        set { Value.scatterName = value; Utility.DumpObjectFields(Value); }
+                        set { Value.scatterName = value; }
                     }
                     
                     // The value we are editing
@@ -303,7 +300,6 @@ namespace Kopernicus
                             else if (AerialTransCutout.UsesSameShader(customMaterial))
                                 customMaterial = new AerialTransCutoutLoader(customMaterial);
                         }
-                        Logger.Active.Log(customMaterial.GetType());
                         
                         // Get the Scatter-Parent
                         GameObject scatterParent = typeof(PQSLandControl.LandClassScatter)
@@ -1191,8 +1187,6 @@ namespace Kopernicus
                         for (Int32 i = 0; i < mod.scatters.Length; i++)
                         {
                             // Only activate the callback if we are adding the last loader
-                            Logger.Active.Log(scatters.Count);
-                            Logger.Active.Log(mod.scatters.Length);
                             scatters.Add(new LandClassScatterLoader(mod.scatters[i]), i == mod.scatters.Length - 1);
                         }
                     }
@@ -1239,12 +1233,6 @@ namespace Kopernicus
                     {
                         mod.landClasses = new PQSLandControl.LandClass[0];
                     }
-                    
-                    foreach (LandClassScatterLoader landClassScatterLoader in scatters)
-                    {
-                        Utility.DumpObjectFields(landClassScatterLoader.Value);
-                    }
-                    
                 }
             }
         }
