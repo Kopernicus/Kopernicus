@@ -82,6 +82,7 @@ namespace Kopernicus
                     {
                         get
                         {
+                            Logger.Active.Log(customMaterial?.GetType());
                             if (customMaterial == null)
                                 return null;
                             if (NormalDiffuse.UsesSameShader(customMaterial))
@@ -100,6 +101,7 @@ namespace Kopernicus
                         }
                         set
                         {
+                            Logger.Active.Log(customMaterial?.GetType());
                             if (value == ScatterMaterialType.Diffuse)
                                 customMaterial = new NormalDiffuseLoader();
                             else if (value == ScatterMaterialType.BumpedDiffuse)
@@ -112,6 +114,7 @@ namespace Kopernicus
                                 customMaterial = new AlphaTestDiffuseLoader();
                             else if (value == ScatterMaterialType.AerialCutout)
                                 customMaterial = new AerialTransCutoutLoader();
+                            Logger.Active.Log(customMaterial?.GetType());
                         }
                     }
 
@@ -233,7 +236,7 @@ namespace Kopernicus
                     public String name
                     {
                         get { return Value.scatterName; }
-                        set { Value.scatterName = value; }
+                        set { Value.scatterName = value; Utility.DumpObjectFields(Value); }
                     }
                     
                     // The value we are editing
@@ -285,21 +288,22 @@ namespace Kopernicus
                     {
                         Value = value;
 
-                        if (value.material)
+                        if (customMaterial)
                         {
-                            if (NormalDiffuse.UsesSameShader(value.material))
-                                customMaterial = new NormalDiffuseLoader(value.material);
-                            else if (NormalBumped.UsesSameShader(value.material))
-                                customMaterial = new NormalBumpedLoader(value.material);
-                            else if (NormalDiffuseDetail.UsesSameShader(value.material))
-                                customMaterial = new NormalDiffuseDetailLoader(value.material);
-                            else if (DiffuseWrap.UsesSameShader(value.material))
-                                customMaterial = new DiffuseWrapLoader(value.material);
-                            else if (AlphaTestDiffuse.UsesSameShader(value.material))
-                                customMaterial = new AlphaTestDiffuseLoader(value.material);
-                            else if (AerialTransCutout.UsesSameShader(value.material))
-                                customMaterial = new AerialTransCutoutLoader(value.material);
+                            if (NormalDiffuse.UsesSameShader(customMaterial))
+                                customMaterial = new NormalDiffuseLoader(customMaterial);
+                            else if (NormalBumped.UsesSameShader(customMaterial))
+                                customMaterial = new NormalBumpedLoader(customMaterial);
+                            else if (NormalDiffuseDetail.UsesSameShader(customMaterial))
+                                customMaterial = new NormalDiffuseDetailLoader(customMaterial);
+                            else if (DiffuseWrap.UsesSameShader(customMaterial))
+                                customMaterial = new DiffuseWrapLoader(customMaterial);
+                            else if (AlphaTestDiffuse.UsesSameShader(customMaterial))
+                                customMaterial = new AlphaTestDiffuseLoader(customMaterial);
+                            else if (AerialTransCutout.UsesSameShader(customMaterial))
+                                customMaterial = new AerialTransCutoutLoader(customMaterial);
                         }
+                        Logger.Active.Log(customMaterial.GetType());
                         
                         // Get the Scatter-Parent
                         GameObject scatterParent = typeof(PQSLandControl.LandClassScatter)
@@ -1176,7 +1180,7 @@ namespace Kopernicus
                         {
                             loader.Scatter.transform.parent = mod.transform;
                         }
-
+                        
                         mod.scatters = scatters.Where(scatter => !scatter.delete)
                             .Select(scatter => scatter.Value).ToArray();
                     });
@@ -1187,7 +1191,9 @@ namespace Kopernicus
                         for (Int32 i = 0; i < mod.scatters.Length; i++)
                         {
                             // Only activate the callback if we are adding the last loader
-                            scatters.Add(new LandClassScatterLoader(mod.scatters[i]), i == mod.landClasses.Length - 1);
+                            Logger.Active.Log(scatters.Count);
+                            Logger.Active.Log(mod.scatters.Length);
+                            scatters.Add(new LandClassScatterLoader(mod.scatters[i]), i == mod.scatters.Length - 1);
                         }
                     }
                     else
@@ -1232,6 +1238,11 @@ namespace Kopernicus
                     else
                     {
                         mod.landClasses = new PQSLandControl.LandClass[0];
+                    }
+                    
+                    foreach (LandClassScatterLoader landClassScatterLoader in scatters)
+                    {
+                        Utility.DumpObjectFields(landClassScatterLoader.Value);
                     }
                     
                 }

@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Kopernicus.Components;
 using Kopernicus.UI;
 using UnityEngine;
@@ -216,17 +217,17 @@ namespace Kopernicus
 
             // Orbit rendering bounds
             [ParserTarget("cameraSmaRatioBounds")]
-            public Vector2Parser cameraSmaRatioBounds
+            public NumericCollectionParser<Single> cameraSmaRatioBounds
             {
                 get
                 {
                     if (Injector.IsInPrefab)
                     {
-                        return new Vector2(generatedBody.orbitRenderer.lowerCamVsSmaRatio,
-                            generatedBody.orbitRenderer.upperCamVsSmaRatio);
+                        return new List<Single> { generatedBody.orbitRenderer.lowerCamVsSmaRatio,
+                            generatedBody.orbitRenderer.upperCamVsSmaRatio };
                     }
                     OrbitRendererData data = PSystemManager.OrbitRendererDataCache[Value];
-                    return new Vector2(data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio);
+                    return new List<Single> { data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio };
                 }
                 set
                 {
