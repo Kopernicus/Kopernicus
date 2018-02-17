@@ -379,10 +379,72 @@ namespace Kopernicus
                                     switch (target.NameSignificance)
                                     {
                                         case NameSignificance.None:
+                                        case NameSignificance.Key when subnode.name == target.Key:
+                                            
+                                            // Check if the type represents patchable data
+                                            Object current = null;
+                                            if (typeof(IPatchable).IsAssignableFrom(genericType) &&
+                                                collection.Count > 0)
+                                            {
+                                                foreach (Object obj in collection)
+                                                {
+                                                    if (obj.GetType() != genericType)
+                                                        continue;
+                                                    if (patched.Contains(obj))
+                                                        continue;
+                                                    IPatchable patchable = (IPatchable) obj;
+                                                    PatchData patchData =
+                                                        CreateObjectFromConfigNode<PatchData>(subnode, "Internal");
+                                                    if (patchData.name == patchable.name)
+                                                    {
+                                                        // Name matches, check for an index
+                                                        if (patchData.index == collection.IndexOf(obj))
+                                                        {
+                                                            // Both values match
+                                                            current = obj;
+                                                            break;
+                                                        }
 
-                                            // Just processes the contents of the node
-                                            collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName,
-                                                target.GetChild));
+                                                        if (patchData.index > -1)
+                                                        {
+                                                            // Index doesn't match, continue
+                                                            continue;
+                                                        }
+
+                                                        // Name matches, and no index exists
+                                                        current = obj;
+                                                        break;
+
+                                                    }
+
+                                                    if (patchData.name != null)
+                                                    {
+                                                        // The name doesn't match, continue the search
+                                                        continue;
+                                                    }
+
+                                                    // We found the first object that wasn't patched yet
+                                                    current = obj;
+                                                    break;
+                                                }
+                                            }
+
+                                            // If no object was found, check if the type implements custom constructors
+                                            if (current == null)
+                                            {
+                                                current = Activator.CreateInstance(genericType);
+                                                collection?.Add(current);
+                                            }
+
+                                            // Parse the config node into the object
+                                            LoadObjectFromConfigurationNode(current, subnode, configName,
+                                                target.GetChild);
+                                            patched.Add(current);
+                                            if (collection != null)
+                                            {
+                                                collection[collection.IndexOf(current)] = current;
+                                            }
+
                                             break;
 
                                         case NameSignificance.Type:
@@ -393,7 +455,7 @@ namespace Kopernicus
                                                 !Equals(t.Assembly, typeof(HighLogic).Assembly));
 
                                             // Check if the type represents patchable data
-                                            Object current = null;
+                                            current = null;
                                             if (typeof(IPatchable).IsAssignableFrom(elementType) &&
                                                 collection.Count > 0)
                                             {
@@ -461,13 +523,6 @@ namespace Kopernicus
                                                 collection[collection.IndexOf(current)] = current;
                                             }
 
-                                            break;
-
-                                        case NameSignificance.Key when subnode.name == target.Key:
-
-                                            // Just processes the contents of the node
-                                            collection?.Add(CreateObjectFromConfigNode(genericType, subnode, configName,
-                                                target.GetChild));
                                             break;
 
                                         default:
