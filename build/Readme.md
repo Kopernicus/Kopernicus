@@ -1,14 +1,16 @@
 ﻿Kopernicus
 ==============================
-February 14, 2018
+February 25, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.3.1-6)
+New in this version (1.3.1-7)
 -------------------
-- Fixed an issue with VertexPlanet that caused Minmus to be extremely spiky
+- Fixed issues with biome loading
+- Fixed issues with scatter material loading
+- Reverted the fix for flickering orbit lines, which caused orbit lines to fade out incorrectly
 -----
 _This is a hotfix release for [Kopernicus 1.3.1-4](https://github.com/Kopernicus/Kopernicus/releases/tag/release-1.3.1-4). Please also check its changelog for new features._
 
