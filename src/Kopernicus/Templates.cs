@@ -45,6 +45,9 @@ namespace Kopernicus
         // Global base epoch
         public static Double epoch { get; set; }
 
+        // Whether the main menu should be edited by Kopernicus
+        public static Boolean kopernicusMainMenu = true;
+
         // The body that should appear in MainMenu
         public static String menuBody { get; set; }
 
