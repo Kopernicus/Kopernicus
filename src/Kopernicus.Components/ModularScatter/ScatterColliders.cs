@@ -83,7 +83,6 @@ namespace Kopernicus
                         if (collider) continue;
                         collider = t.gameObject.AddComponent<MeshCollider>();
                         collider.sharedMesh = t.gameObject.GetComponent<MeshFilter>().sharedMesh;
-                        collider.sharedMesh.Optimize();
                         collider.enabled = true;
                         meshColliders.Add(collider);
                     }

@@ -44,7 +44,7 @@ namespace Kopernicus
                 set { _nodeColor.SetValue(this, value); }
             }
 
-            public KopernicusOrbitRendererData(CelestialBody body, OrbitRenderer renderer) : base(body)
+            public KopernicusOrbitRendererData(CelestialBody body, OrbitRendererBase renderer) : base(body)
             {
                 orbitColor = renderer.orbitColor;
                 nodeColor = renderer.nodeColor;

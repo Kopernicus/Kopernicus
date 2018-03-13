@@ -186,7 +186,6 @@ namespace Kopernicus
                 };
                 meshFilter.mesh.RecalculateNormals();
                 meshFilter.mesh.RecalculateBounds();
-                meshFilter.mesh.Optimize();
                 meshFilter.sharedMesh = meshFilter.mesh;
 
                 // Set texture

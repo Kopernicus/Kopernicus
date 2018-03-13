@@ -54,7 +54,6 @@ public static class ObjImporter
         mesh.triangles = newMesh.triangles;
 
         mesh.RecalculateBounds();
-        mesh.Optimize();
 
         return mesh;
     }
