@@ -50,6 +50,8 @@ namespace Kopernicus
             // Settings
             public Single innerRadius;
             public Single outerRadius;
+            public FloatCurve innerMultCurve;
+            public FloatCurve outerMultCurve;
 
             /// <summary>
             /// Thickness of ring in milliradii
@@ -273,11 +275,11 @@ namespace Kopernicus
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
 
                     // Inner Radius
-                    vertices.Add(eVert * innerScale);
+                    vertices.Add(eVert * innerScale * innerMultCurve.Evaluate(i / 360));
                     Uvs.Add(Vector2.one);
 
                     // Outer Radius
-                    vertices.Add(eVert * outerScale);
+                    vertices.Add(eVert * outerScale * outerMultCurve.Evaluate(i / 360));
                     Uvs.Add(Vector2.zero);
                 }
                 for (Single i = 0f; i < 360f; i += degreeStep)
@@ -286,11 +288,11 @@ namespace Kopernicus
                     Vector3 eVert = Quaternion.Euler(0, i, 0) * Vector3.right;
 
                     // Inner Radius
-                    vertices.Add(eVert * innerScale);
+                    vertices.Add(eVert * innerScale * innerMultCurve.Evaluate(i / 360));
                     Uvs.Add(Vector2.one);
 
                     // Outer Radius
-                    vertices.Add(eVert * outerScale);
+                    vertices.Add(eVert * outerScale * outerMultCurve.Evaluate(i / 360));
                     Uvs.Add(Vector2.zero);
                 }
 
@@ -386,11 +388,11 @@ namespace Kopernicus
                         Vector2 texV  = textureV(tiles, i);
 
                         // Inner Radius
-                        vertices.Add(eVert * innerScale + thicknessOffset);
+                        vertices.Add(eVert * innerScale * innerMultCurve.Evaluate(i / 360) + thicknessOffset);
                         Uvs.Add(sideInnerU + texV);
 
                         // Outer Radius
-                        vertices.Add(eVert * outerScale + thicknessOffset);
+                        vertices.Add(eVert * outerScale * outerMultCurve.Evaluate(i / 360) + thicknessOffset);
                         Uvs.Add(sideOuterU + texV);
                     }
                     // Bottom faces
@@ -401,11 +403,11 @@ namespace Kopernicus
                         Vector2 texV  = textureV(tiles, i);
 
                         // Inner Radius
-                        vertices.Add(eVert * innerScale - thicknessOffset);
+                        vertices.Add(eVert * innerScale * innerMultCurve.Evaluate(i / 360) - thicknessOffset);
                         Uvs.Add(sideInnerU + texV);
 
                         // Outer Radius
-                        vertices.Add(eVert * outerScale - thicknessOffset);
+                        vertices.Add(eVert * outerScale * outerMultCurve.Evaluate(i / 360) - thicknessOffset);
                         Uvs.Add(sideOuterU + texV);
                     }
                     // Tri Wrapping
@@ -446,11 +448,11 @@ namespace Kopernicus
                         Vector2 texV  = textureV(tiles, f);
 
                         // Inner Radius
-                        vertices.Add(eVert * innerScale + thicknessOffset);
+                        vertices.Add(eVert * innerScale * innerMultCurve.Evaluate(i / 360f) + thicknessOffset);
                         Uvs.Add(innerTopU + texV);
 
                         // Outer Radius
-                        vertices.Add(eVert * outerScale + thicknessOffset);
+                        vertices.Add(eVert * outerScale * outerMultCurve.Evaluate(i / 360f) + thicknessOffset);
                         Uvs.Add(outerTopU + texV);
                     }
                     // Mesh wrapping - bottom faces
@@ -463,11 +465,11 @@ namespace Kopernicus
                         Vector2 texV  = textureV(tiles, f);
 
                         // Inner Radius
-                        vertices.Add(eVert * innerScale - thicknessOffset);
+                        vertices.Add(eVert * innerScale * innerMultCurve.Evaluate(i / 360f) - thicknessOffset);
                         Uvs.Add(innerBottomU + texV);
 
                         // Outer Radius
-                        vertices.Add(eVert * outerScale - thicknessOffset);
+                        vertices.Add(eVert * outerScale * outerMultCurve.Evaluate(i / 360f) - thicknessOffset);
                         Uvs.Add(outerBottomU + texV);
                     }
                     // Tri Wrapping

@@ -58,6 +58,24 @@ namespace Kopernicus
                 get { return Value.outerRadius; }
                 set { Value.outerRadius = value; }
             }
+            
+            // Inner Radius multiplier of the ring
+            [ParserTarget("InnerRadiusMultiplier")]
+            [KittopiaDescription("A curve that defines a multiplier for the inner radius, using an angle (degree).")]
+            public FloatCurveParser innerRadiusMultiplier
+            {
+                get { return Value.innerMultCurve; }
+                set { Value.innerMultCurve = value; }
+            }
+            
+            // Outer Radius multiplier of the ring
+            [ParserTarget("OuterRadiusMultiplier")]
+            [KittopiaDescription("A curve that defines a multiplier for the outer radius, using an angle (degree).")]
+            public FloatCurveParser outerRadiusMultiplier
+            {
+                get { return Value.outerMultCurve; }
+                set { Value.outerMultCurve = value; }
+            }
 
             /// <summary>
             /// Distance between the top and bottom faces in milliradii
@@ -263,6 +281,14 @@ namespace Kopernicus
                 {
                     Value.Components = Components.Select(c => c.Value).ToList();
                 });
+                if (Value.innerMultCurve == null)
+                {
+                    Value.innerMultCurve = new FloatCurve(new Keyframe[] { new Keyframe(0, 1), new Keyframe(1, 1) });
+                }
+                if (Value.outerMultCurve == null)
+                {
+                    Value.outerMultCurve = new FloatCurve(new Keyframe[] { new Keyframe(0, 1), new Keyframe(1, 1) });
+                }
             }
 
             /// <summary>
@@ -313,6 +339,14 @@ namespace Kopernicus
                         Components.Add(loader);
                     }
                 }
+                if (Value.innerMultCurve == null)
+                {
+                    Value.innerMultCurve = new FloatCurve(new Keyframe[] { new Keyframe(0, 1), new Keyframe(1, 1) });
+                }
+                if (Value.outerMultCurve == null)
+                {
+                    Value.outerMultCurve = new FloatCurve(new Keyframe[] { new Keyframe(0, 1), new Keyframe(1, 1) });
+                }
             }
 
             // Initialize the RingLoader
@@ -349,6 +383,14 @@ namespace Kopernicus
                         loader.Create(component);
                         Components.Add(loader);
                     }
+                }
+                if (Value.innerMultCurve == null)
+                {
+                    Value.innerMultCurve = new FloatCurve(new Keyframe[] { new Keyframe(0, 1), new Keyframe(1, 1) });
+                }
+                if (Value.outerMultCurve == null)
+                {
+                    Value.outerMultCurve = new FloatCurve(new Keyframe[] { new Keyframe(0, 1), new Keyframe(1, 1) });
                 }
             }
         }
