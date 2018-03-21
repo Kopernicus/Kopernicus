@@ -54,7 +54,7 @@ namespace Kopernicus
                 Debug.Log("[Kopernicus] Trying to store AFG, but planet null!");
                 return false;
             }
-            atmospheres[afg.planet.bodyName] = new AFGInfo(afg);
+            atmospheres[afg.planet.transform.name] = new AFGInfo(afg);
             return true;
         }
 
@@ -73,7 +73,7 @@ namespace Kopernicus
         public static Boolean PatchAFG(AtmosphereFromGround afg)
         {
             AFGInfo info = null;
-            if (atmospheres.TryGetValue(afg.planet.bodyName, out info))
+            if (atmospheres.TryGetValue(afg.planet.transform.name, out info))
             {
                 try
                 {
