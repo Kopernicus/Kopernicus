@@ -13,9 +13,9 @@
     <copyright>Copyright Kopernicus Project 2018</copyright>
     <tags>Kopernicus, Planetary, System, Modifier, Parser, config-parser</tags>
     <dependencies>
-      <dependency id="Assembly-CSharp" version="[1.3.1]" />
-      <dependency id="UnityEngine" version="[1.3.1]" />
-      <dependency id="UnityEngine.UI" version="[1.3.1]" />
+      <dependency id="Assembly-CSharp" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine.UI" version="[{KSP-VERSION}]" />
     </dependencies>
   </metadata>
   <files>
