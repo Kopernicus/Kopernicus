@@ -55,7 +55,7 @@ namespace Kopernicus
             /// <summary>
             /// The star component we are attached to
             /// </summary>
-            private KopernicusStar _star;
+            public KopernicusStar Star;
 
             /// <summary>
             /// The colliders that are used to detect occlusion
@@ -64,15 +64,14 @@ namespace Kopernicus
 
             void Start()
             {
-                _star = GetComponent<KopernicusStar>();
-                Mesh mesh = _star.sun.scaledBody.GetComponent<MeshFilter>().sharedMesh;
+                Mesh mesh = Star.sun.scaledBody.GetComponent<MeshFilter>().sharedMesh;
                 _colliders = new OcclusionNetComponent[mesh.vertexCount / Resolution];
                 for (Int32 i = 0; i < mesh.vertexCount; i += Resolution)
                 {
                     OcclusionNetComponent component = new GameObject().AddComponent<OcclusionNetComponent>();
-                    component.transform.parent = _star.transform.parent;
-                    component.Body = _star.sun;
-                    component.Target = _star.target;
+                    component.transform.parent = Star.transform.parent;
+                    component.Body = Star.sun;
+                    component.Target = Star.target;
                     component.Vertex = mesh.vertices[i];
                     _colliders[i / Resolution] = component;
                 }
@@ -80,14 +79,16 @@ namespace Kopernicus
 
             void Update()
             {
+                if (!HighLogic.LoadedSceneIsFlight || MapView.MapIsEnabled)
+                {
+                    VisibleArea = 1;
+                    return;
+                }
                 Int32 amount = 0;
                 for (Int32 i = 0; i < _colliders.Length; i++)
                 {
-                    _colliders[i].Target = _star.target;
-                    _colliders[i].enabled =
-                        _star.shifter.intensityCurve.Evaluate((Single) Vector3d.Distance(_star.sun.position,
-                            ScaledSpace.ScaledToLocalSpace(_star.target.position))) > IntensityThreshold;
-                    if (_colliders[i].IsOccluded || !_colliders[i].enabled)
+                    _colliders[i].Target = Star.target;
+                    if (!_colliders[i].IsOccluded)
                     {
                         amount++;
                     }
@@ -119,37 +120,41 @@ namespace Kopernicus
                     // the star is fully visible there, until someone comes up with a better solution
                     if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
                     {
-                        IsOccluded = true;
+                        IsOccluded = false;
                         return;
                     }
 
-                    Vector3 vertexPos = Body.scaledBody.transform.position + new Vector3(
-                                            Vertex.x * Body.scaledBody.transform.localScale.x,
-                                            Vertex.y * Body.scaledBody.transform.localScale.y,
-                                            Vertex.z * Body.scaledBody.transform.localScale.z);
-                    Collider[] colliders = Physics.OverlapCapsule(Target.position, vertexPos, 1f,
-                        ModularFlightIntegrator.SunLayerMask);
-                    IsOccluded = !colliders.Any(c =>
+                    Vector3 vertexPos = ScaledSpace.ScaledToLocalSpace(Body.scaledBody.transform.TransformPoint(Vertex));
+                    for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
                     {
-                        Debug.Log(c);
-                        ScaledMovement m = c.GetComponent<ScaledMovement>();
-                        if (m == null)
+                        CelestialBody body = PSystemManager.Instance.localBodies[i];
+                        if (body == Body)
                         {
-                            return false;
+                            continue;
                         }
 
-                        if (m.celestialBody == FlightGlobals.currentMainBody)
+                        if (IsPositionOccluded(vertexPos, Target, body))
                         {
-                            return false;
+                            IsOccluded = true;
+                            return;
                         }
+                    }
 
-                        if (m.celestialBody != Body)
-                        {
-                            return true;
-                        }
+                    IsOccluded = false;
+                }
+                
+                public static Boolean IsPositionOccluded(Vector3d worldPosition, Transform target, CelestialBody byBody)
+                {
+                    Vector3d camPos = target.position;
+                    Vector3d VC = (byBody.position - camPos) / (byBody.Radius - 100);
+                    Vector3d VT = (worldPosition - camPos) / (byBody.Radius - 100);
 
-                        return false;
-                    });
+                    Double VT_VC = Vector3d.Dot(VT, VC);
+
+                    // In front of the horizon plane
+                    if (VT_VC < VC.sqrMagnitude - 1) return false;
+
+                    return VT_VC * VT_VC / VT.sqrMagnitude > VC.sqrMagnitude - 1;
                 }
             }
         }

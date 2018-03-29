@@ -75,6 +75,23 @@ namespace Kopernicus
             public KopernicusSunFlare lensFlare;
 
             /// <summary>
+            /// Determines how much of the stars surface is blocked by other bodies
+            /// </summary>
+            public KopernicusStarOcclusion occlusion;
+
+            /// <summary>
+            /// Returns how intense the starlight is, compared to stock
+            /// </summary>
+            public Single RelativeIntensity
+            {
+                get
+                {
+                    return shifter.intensityCurve.Evaluate((Single) Vector3d.Distance(sun.position,
+                               ScaledSpace.ScaledToLocalSpace(target.position))) / 0.9f;
+                }
+            }
+
+            /// <summary>
             /// Override for <see cref="FlightIntegrator.CalculateSunBodyFlux"/>
             /// </summary>
             public static void SunBodyFlux(ModularFlightIntegrator flightIntegrator)
@@ -199,6 +216,9 @@ namespace Kopernicus
                 Stars.Add(this);
                 DontDestroyOnLoad(this);
                 light = gameObject.GetComponent<Light>();
+                occlusion = new GameObject().AddComponent<KopernicusStarOcclusion>();
+                occlusion.Star = this;
+                DontDestroyOnLoad(occlusion);
 
                 // Gah
                 typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Last(f => f.FieldType == typeof(Light)).SetValue(this, light);
@@ -266,9 +286,6 @@ namespace Kopernicus
             {
                 // Set precision
                 sunRotationPrecision = MapView.MapIsEnabled ? sunRotationPrecisionMapView : sunRotationPrecisionDefault;
-                
-                // Occlusion
-                // KopernicusStarOcclusion occlusion = gameObject.AddOrGetComponent<KopernicusStarOcclusion>();
 
                 // Apply light settings
                 Vector3d localSpace = ScaledSpace.ScaledToLocalSpace(target.position);
@@ -276,7 +293,7 @@ namespace Kopernicus
                 {
                     light.color = shifter.sunlightColor;
                     light.intensity =
-                        shifter.intensityCurve.Evaluate((Single) Vector3d.Distance(sun.position, localSpace));// * occlusion.VisibleArea;
+                        shifter.intensityCurve.Evaluate((Single) Vector3d.Distance(sun.position, localSpace)) * occlusion.VisibleArea;
                     light.shadowStrength = shifter.sunlightShadowStrength;
                 }
 
@@ -284,13 +301,13 @@ namespace Kopernicus
                 if (scaledSunLight)
                 {
                     scaledSunLight.color = shifter.scaledSunlightColor;
-                    scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate((Single)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));// * occlusion.VisibleArea;
+                    scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate((Single)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position)) * occlusion.VisibleArea;
                 }
 
                 if (HighLogic.LoadedSceneIsFlight && iva?.GetComponent<Light>())
                 {
                     iva.GetComponent<Light>().color = shifter.IVASunColor;
-                    iva.GetComponent<Light>().intensity = shifter.ivaIntensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, localSpace));// * occlusion.VisibleArea;
+                    iva.GetComponent<Light>().intensity = shifter.ivaIntensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, localSpace)) * occlusion.VisibleArea;
                 }
 
                 // Set SunFlare color
@@ -301,7 +318,7 @@ namespace Kopernicus
                 lensFlare.brightnessCurve = shifter.brightnessCurve.Curve;
                 lensFlare.sun = sun;
                 lensFlare.target = target;
-                lensFlare.occlusionMultiplier = 1;// * occlusion.VisibleArea;
+                lensFlare.occlusionMultiplier = 1 * occlusion.VisibleArea;
 
                 // States
                 Boolean lightsOn = (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER);

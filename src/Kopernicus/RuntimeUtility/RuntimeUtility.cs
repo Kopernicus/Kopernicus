@@ -79,6 +79,7 @@ namespace Kopernicus
                         body.afg.sunLight = star;
                     if (body.scaledBody.GetComponent<MaterialSetDirection>() != null)
                         body.scaledBody.GetComponent<MaterialSetDirection>().target = star.transform;
+
                     foreach (PQSMod_MaterialSetDirection msd in body.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true))
                         msd.target = star.transform;
 
@@ -98,8 +99,25 @@ namespace Kopernicus
                         }
                     }
                 }
+                
                 foreach (TimeOfDayAnimation anim in Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>())
                     anim.target = KopernicusStar.GetNearest(FlightGlobals.GetHomeBody()).gameObject.transform;
+#if FALSE
+                foreach (TimeOfDayAnimation anim in Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>())
+                {
+                    anim.gameObject.AddOrGetComponent<KopernicusStarTimeOfDay>();
+                }
+
+                foreach (GalaxyCubeControl control in Resources.FindObjectsOfTypeAll<GalaxyCubeControl>())
+                {
+                    control.gameObject.AddOrGetComponent<KopernicusStarGalaxyCubeControl>();
+                } 
+
+                foreach (SkySphereControl control in Resources.FindObjectsOfTypeAll<SkySphereControl>())
+                {
+                    control.gameObject.AddOrGetComponent<KopernicusStarSkySphereControl>();
+                } 
+#endif
             });
             GameEvents.onProtoVesselLoad.Add(TransformBodyReferencesOnLoad);
             GameEvents.onProtoVesselSave.Add(TransformBodyReferencesOnSave);
@@ -107,7 +125,6 @@ namespace Kopernicus
             // Update Music Logic
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
-
 
             // Log
             Logger.Default.Log("[Kopernicus] RuntimeUtility Started");
@@ -231,6 +248,38 @@ namespace Kopernicus
                 fixes[b.transform.name].Key.orbitingBodies.Add(b);
                 fixes[b.transform.name].Key.orbitingBodies = fixes[b.transform.name].Key.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
             }
+#if FALSE
+            // AFG-Ception
+            foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+            {
+                if (body.afg == null)
+                {
+                    continue;
+                }
+                
+                foreach (KopernicusStar s in KopernicusStar.Stars)
+                {
+                    AtmosphereFromGround afg;
+                    if (s != Sun.Instance)
+                    {
+                        afg = Instantiate(body.afg.gameObject)
+                            .GetComponent<AtmosphereFromGround>();
+                        Utility.CopyObjectFields(body.afg, afg, false);
+                        afg.transform.parent = body.afg.transform.parent;
+                        afg.transform.localPosition = body.afg.transform.localPosition;
+                        afg.transform.localScale = body.afg.transform.localScale;
+                        afg.transform.localRotation = body.afg.transform.localRotation;
+                        afg.gameObject.layer = body.afg.gameObject.layer;
+                    }
+                    else
+                    {
+                        afg = body.afg;
+                    }
+
+                    afg.gameObject.AddComponent<KopernicusStarAFG>().Star = s;
+                }
+            }
+#endif
         }
 
         /// <summary>
@@ -244,7 +293,9 @@ namespace Kopernicus
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
-
+            
+            // Prevent the orbit lines from flickering
+            PlanetariumCamera.Camera.farClipPlane = 1e14f;
 
             // Remove buttons in map view for barycenters
             if (MapView.MapIsEnabled)
@@ -253,7 +304,7 @@ namespace Kopernicus
                 {
                     FieldInfo mode_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType.IsEnum && f.FieldType.IsNested);
                     FieldInfo context_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(MapContextMenu));
-                    FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
+                    FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRendererBase.OrbitCastHit));
                     fields = new FieldInfo[] { mode_f, context_f, cast_f };
                 }
                 if (FlightGlobals.ActiveVessel != null)
@@ -264,7 +315,7 @@ namespace Kopernicus
                     Int32 mode = (Int32)fields[0].GetValue(targeter);
                     if (mode == 2)
                     {
-                        OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit)fields[2].GetValue(targeter);
+                        OrbitRendererBase.OrbitCastHit cast = (OrbitRendererBase.OrbitCastHit)fields[2].GetValue(targeter);
                         CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or?.discoveryInfo?.name?.Value);
                         if (body == null) return;
                         if (body.Has("barycenter") || !body.Get("selectable", true))
@@ -280,7 +331,6 @@ namespace Kopernicus
                     }
                 }
             }
-
 
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)
             {
@@ -302,7 +352,7 @@ namespace Kopernicus
             if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null && !isDone)
             {
                 // Fix the bug via switching away from Home and back immideatly. 
-                // TODO: Check if this still happend
+                // TODO: Check if this still happens
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) + 1) % PlanetariumCamera.fetch.targets.Count]);
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[(PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) + (((PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) - 1) >= 0) ? 0 : PlanetariumCamera.fetch.targets.Count)]);
 
