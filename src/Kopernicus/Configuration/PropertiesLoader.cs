@@ -285,8 +285,8 @@ namespace Kopernicus
             }
 
             // If the body should be hidden in RnD
-            [ParserTarget("RDVisibility")]
             [ParserTarget("RnDVisibility")]
+            [ParserTarget("RDVisibility")]
             public EnumParser<RDVisibility> hiddenRnD
             {
                 get { return Value.Get("hiddenRnD", RDVisibility.VISIBLE); }

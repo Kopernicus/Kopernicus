@@ -35,8 +35,8 @@ namespace Kopernicus
             }
 
             // Base (RGB) Gloss (A), default = "white" { }
-            [ParserTarget("mainTex")]
             [ParserTarget("texture")]
+            [ParserTarget("mainTex")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
@@ -58,8 +58,8 @@ namespace Kopernicus
             }
 
             // Normalmap, default = "bump" { }
-            [ParserTarget("bumpMap")]
             [ParserTarget("normals")]
+            [ParserTarget("bumpMap")]
             public Texture2DParser bumpMapSetter
             {
                 get { return bumpMap; }

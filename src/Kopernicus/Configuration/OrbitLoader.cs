@@ -169,8 +169,8 @@ namespace Kopernicus
             }
 
             // Orbit Icon color
-            [ParserTarget("iconColor")]
             [ParserTarget("nodeColor")]
+            [ParserTarget("iconColor")]
             [KittopiaDescription("The color of the circle that marks the planets current position on the orbit")]
             public ColorParser iconColor
             {

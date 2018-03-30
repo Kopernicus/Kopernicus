@@ -731,6 +731,7 @@ namespace Kopernicus
                     }
 
                     // List of scatters used
+                    [ParserTargetCollection("Scatters", AllowMerge = true)] 
                     [ParserTargetCollection("scatters", AllowMerge = true)]
                     public CallbackList<LandClassScatterAmountLoader> scatter { get; set; }
 
