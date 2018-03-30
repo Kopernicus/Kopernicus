@@ -26,6 +26,7 @@
 using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
@@ -69,7 +70,7 @@ namespace Kopernicus
             [ParserTarget("cacheFile")]
             public String cacheFile
             {
-                get { return celestialBody.Get("cacheFile", ""); }
+                get { return celestialBody.Get<String>("cacheFile", null); }
                 set { celestialBody.Set("cacheFile", value); }
             }
 
@@ -86,7 +87,7 @@ namespace Kopernicus
                 get
                 {
                     NameChanger changer = celestialBody.GetComponent<NameChanger>();
-                    return changer ? changer.newName : "";
+                    return changer ? changer.newName : null;
                 }
                 set
                 {
@@ -337,6 +338,7 @@ namespace Kopernicus
             public Body(CelestialBody celestialBody)
             {
                 this.celestialBody = celestialBody;
+                name = celestialBody.transform.name;
                 
                 // Create the accessors
                 properties = new PropertiesLoader(celestialBody);
@@ -349,8 +351,17 @@ namespace Kopernicus
                 {
                     atmosphere = new AtmosphereLoader(celestialBody);
                 }
-                pqs = new PQSLoader(celestialBody);
-                ocean = new OceanLoader(celestialBody);
+
+                if (celestialBody.pqsController != null)
+                {
+                    pqs = new PQSLoader(celestialBody);
+                    if (celestialBody.pqsController.GetComponentsInChildren<PQS>(true)
+                        .Any(p => p.name.EndsWith("Ocean")))
+                    {
+                        ocean = new OceanLoader(celestialBody);
+                    }
+                }
+
                 rings = new List<RingLoader>();
                 foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
                 {

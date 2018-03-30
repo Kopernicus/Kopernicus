@@ -126,6 +126,24 @@ namespace Kopernicus
                 // Texture was not found
                 Value = null;
             }
+
+            /// <summary>
+            /// Convert the value to a parsable String
+            /// </summary>
+            public String ValueToString()
+            {
+                if (Value == null)
+                {
+                    return null;
+                }
+
+                if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+                {
+                    return Value.name;
+                }
+
+                return "BUILTIN/" + Value.name;
+            }
         
             /// <summary>
             /// Create a new Texture2DParser
@@ -227,6 +245,24 @@ namespace Kopernicus
                         }
                     }
                 }
+            }
+
+            /// <summary>
+            /// Convert the value to a parsable String
+            /// </summary>
+            public String ValueToString()
+            {
+                if (Value == null)
+                {
+                    return null;
+                }
+
+                if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+                {
+                    return Value.name;
+                }
+
+                return "BUILTIN/" + Value.name;
             }
         
             /// <summary>
@@ -332,6 +368,24 @@ namespace Kopernicus
                     }
                 }
             }
+
+            /// <summary>
+            /// Convert the value to a parsable String
+            /// </summary>
+            public String ValueToString()
+            {
+                if (Value == null)
+                {
+                    return null;
+                }
+
+                if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+                {
+                    return Value.name;
+                }
+
+                return "BUILTIN/" + Value.name;
+            }
         
             /// <summary>
             /// Create a new MapSOParser_RGB
@@ -426,9 +480,12 @@ namespace Kopernicus
             /// <summary>
             /// Create a new PhysicsMaterialParser from an already existing PhysicMaterial
             /// </summary>
-            public PhysicsMaterialParser(PhysicMaterial material)
+            public PhysicsMaterialParser(PhysicMaterial material) : this()
             {
-                Value = material;
+                if (material != null)
+                {
+                    Value = material;
+                }
             }
 
             /// <summary>
@@ -474,12 +531,30 @@ namespace Kopernicus
                 if (File.Exists(path))
                 {
                     Value = ObjImporter.ImportFile(path);
-                    Value.name = Path.GetFileNameWithoutExtension(path);
+                    Value.name = s;
                     return;
                 }
 
                 // Mesh was not found
                 Value = null;
+            }
+
+            /// <summary>
+            /// Convert the value to a parsable String
+            /// </summary>
+            public String ValueToString()
+            {
+                if (Value == null)
+                {
+                    return null;
+                }
+
+                if (File.Exists(KSPUtil.ApplicationRootPath + "GameData/" + Value.name))
+                {
+                    return Value.name;
+                }
+
+                return "BUILTIN/" + Value.name;
             }
         
             /// <summary>
@@ -548,6 +623,20 @@ namespace Kopernicus
                 }
                 Value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
                 UnityEngine.Object.DontDestroyOnLoad(Value);
+                Value.name = s;
+            }
+
+            /// <summary>
+            /// Convert the value to a parsable String
+            /// </summary>
+            public String ValueToString()
+            {
+                if (Value == null)
+                {
+                    return null;
+                }
+
+                return Value.name;
             }
         
             /// <summary>
@@ -607,6 +696,24 @@ namespace Kopernicus
                 // Otherwise, set the value to null
                 Value = null;
             }
+
+            /// <summary>
+            /// Convert the value to a parsable String
+            /// </summary>
+            public String ValueToString()
+            {
+                if (Value == null)
+                {
+                    return null;
+                }
+
+                if (GameDatabase.Instance.ExistsModel(Value.name))
+                {
+                    return Value.name;
+                }
+
+                return null;
+            }
         
             /// <summary>
             /// Create a new MuParser
@@ -658,6 +765,19 @@ namespace Kopernicus
                 String materialName = Regex.Replace(s, "BUILTIN/", "");
                 Value = Resources.FindObjectsOfTypeAll<Material>().FirstOrDefault(material => material.name == materialName);
             }
+
+            /// <summary>
+            /// Convert the value to a parsable String
+            /// </summary>
+            public String ValueToString()
+            {
+                if (Value == null)
+                {
+                    return null;
+                }
+
+                return "BUILTIN/" + Value.name;
+            }
         
             /// <summary>
             /// Create a new StockMaterialParser
@@ -690,7 +810,6 @@ namespace Kopernicus
                 if (material == null)
                     return new StockMaterialParser();
                 Material m = new Material(material);
-                m.name = "BUILTIN/" + m.name;
                 return new StockMaterialParser { Value = m };
             }
         }

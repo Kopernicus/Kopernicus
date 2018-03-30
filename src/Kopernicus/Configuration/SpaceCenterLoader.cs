@@ -254,10 +254,12 @@ namespace Kopernicus
                 }
 
                 // Store values
-                Value = UnityEngine.Object.FindObjectsOfType<KSC>().First(k => k.name == "SpaceCenter " + body.transform.name);
+                Value = UnityEngine.Object.FindObjectsOfType<KSC>()
+                    .FirstOrDefault(k => k.name == "SpaceCenter " + body.transform.name);
                 if (Value == null)
                 {
                     Value = new GameObject("SpaceCenter " + body.transform.name).AddComponent<KSC>();
+                    Value.Start();
                     UnityEngine.Object.DontDestroyOnLoad(Value);
                 }
             }

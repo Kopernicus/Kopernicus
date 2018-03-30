@@ -221,8 +221,7 @@ namespace Kopernicus
                 transform.planetFade.secondaryRenderers.Add(Value.gameObject);
                 
                 // Load existing mods
-                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.sphere = Value))
+                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
                 {
                     Type modType = mod.GetType();
                     foreach (Type loaderType in Parser.ModTypes)
@@ -325,14 +324,14 @@ namespace Kopernicus
                 Value.parentSphere = body.pqsController;
 
                 // Add the ocean PQS to the secondary renders of the CelestialBody Transform
-                PQSMod_CelestialBodyTransform transform = body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).FirstOrDefault(m => m.transform.parent == generatedBody.pqsVersion.transform);
+                PQSMod_CelestialBodyTransform transform = body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).FirstOrDefault(m => m.transform.parent == body.pqsController.transform);
                 transform.planetFade.secondaryRenderers.Add(Value.gameObject);
                 
                 // Load existing mods
-                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.sphere = Value))
+                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
                 {
                     Type modType = mod.GetType();
+                    Debug.Log(modType);
                     foreach (Type loaderType in Parser.ModTypes)
                     {
                         if (loaderType.BaseType == null)

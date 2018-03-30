@@ -23,7 +23,7 @@
  * https://kerbalspaceprogram.com
  */
 
-using CommNet;
+/*using CommNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -174,5 +174,5 @@ namespace Kopernicus
             }
         }
     }
-}
+}*/
 

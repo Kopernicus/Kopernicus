@@ -110,42 +110,140 @@ namespace Kopernicus
 
                 // Load new data into the PQSCity
                 if (latitude.HasValue && longitude.HasValue)
+                {
                     ksc.repositionRadial = LLAtoECEF(latitude.Value, longitude.Value, 0, body.Radius);
+                }
                 else if (repositionRadial.HasValue)
+                {
                     ksc.repositionRadial = repositionRadial.Value;
+                }
+                else
+                {
+                    repositionRadial = ksc.repositionRadial;
+                }
+
                 if (reorientInitialUp.HasValue)
+                {
                     ksc.reorientInitialUp = reorientInitialUp.Value;
+                }
+                else
+                {
+                    reorientInitialUp = ksc.reorientInitialUp;
+                }
+
                 if (repositionToSphere.HasValue)
+                {
                     ksc.repositionToSphere = repositionToSphere.Value;
+                }
+                else
+                {
+                    repositionToSphere = ksc.repositionToSphere;
+                }
+
                 if (repositionToSphereSurface.HasValue)
+                {
                     ksc.repositionToSphereSurface = repositionToSphereSurface.Value;
+                }
+                else
+                {
+                    repositionToSphereSurface = ksc.repositionToSphereSurface;
+                }
+
                 if (repositionToSphereSurfaceAddHeight.HasValue)
+                {
                     ksc.repositionToSphereSurfaceAddHeight = repositionToSphereSurfaceAddHeight.Value;
+                }
+                else
+                {
+                    repositionToSphereSurfaceAddHeight = ksc.repositionToSphereSurfaceAddHeight;
+                }
+
                 if (reorientToSphere.HasValue)
+                {
                     ksc.reorientToSphere = reorientToSphere.Value;
+                }
+                else
+                {
+                    reorientToSphere = ksc.reorientToSphere;
+                }
+
                 if (repositionRadiusOffset.HasValue)
+                {
                     ksc.repositionRadiusOffset = repositionRadiusOffset.Value;
+                }
+                else
+                {
+                    repositionRadiusOffset = ksc.repositionRadiusOffset;
+                }
+
                 if (lodvisibleRangeMult.HasValue)
                 {
                     foreach (PQSCity.LODRange lodRange in ksc.lod)
                         lodRange.visibleRange *= (Single)lodvisibleRangeMult.Value;
                 }
+                else
+                {
+                    lodvisibleRangeMult = 1;
+                }
+
                 if (reorientFinalAngle.HasValue)
+                {
                     ksc.reorientFinalAngle = reorientFinalAngle.Value;
+                }
+                else
+                {
+                    reorientFinalAngle = ksc.reorientFinalAngle;
+                }
 
                 // Load new data into the MapDecal
                 if (radius.HasValue)
+                {
                     mapDecal.radius = radius.Value;
+                }
+                else
+                {
+                    radius = mapDecal.radius;
+                }
+
                 if (heightMapDeformity.HasValue)
+                {
                     mapDecal.heightMapDeformity = heightMapDeformity.Value;
+                }
+                else
+                {
+                    heightMapDeformity = mapDecal.heightMapDeformity;
+                }
+
                 if (absoluteOffset.HasValue)
+                {
                     mapDecal.absoluteOffset = absoluteOffset.Value;
+                }
+                else
+                {
+                    absoluteOffset = mapDecal.absoluteOffset;
+                }
+
                 if (absolute.HasValue)
+                {
                     mapDecal.absolute = absolute.Value;
+                }
+                else
+                {
+                    absolute = mapDecal.absolute;
+                }
+
                 if (decalLatitude.HasValue && decalLongitude.HasValue)
+                {
                     mapDecal.position = LLAtoECEF(decalLatitude.Value, decalLongitude.Value, 0, body.Radius);
+                }
                 else if (position.HasValue)
+                {
                     mapDecal.position = position.Value;
+                }
+                else
+                {
+                    position = mapDecal.position;
+                }
 
                 // Move the SpaceCenter
                 if (SpaceCenter.Instance != null)
@@ -157,7 +255,9 @@ namespace Kopernicus
                     SpaceCenter.Instance.Start();
                 }
                 else
+                {
                     Debug.Log("[Kopernicus]: KSC: No SpaceCenter instance!");
+                }
 
                 // Add a material fixer
                 DontDestroyOnLoad(gameObject.AddComponent<MaterialFixer>());
@@ -200,11 +300,19 @@ namespace Kopernicus
                             {
                                 material.mainTexture = ksc.mainTexture;
                             }
+                            else
+                            {
+                                ksc.mainTexture = material.mainTexture as Texture2D;
+                            }
     
                             // Patch the color
                             if (ksc.color.HasValue)
                             {
                                 material.color = ksc.color.Value;
+                            }
+                            else
+                            {
+                                ksc.color = material.color;
                             }
                         }
                     }

@@ -34,15 +34,9 @@ namespace Kopernicus
                 set { shininess = value; }
             }
 
-            [ParserTarget("texture")]
-            public Texture2DParser textureSetter
-            {
-                get { return mainTex; }
-                set { mainTex = value; }
-            }
-
             // Base (RGB) Gloss (A), default = "white" { }
             [ParserTarget("mainTex")]
+            [ParserTarget("texture")]
             public Texture2DParser mainTexSetter
             {
                 get { return mainTex; }
@@ -62,16 +56,10 @@ namespace Kopernicus
                 get { return mainTexOffset; }
                 set { mainTexOffset = value; }
             }
-                       
-            [ParserTarget("normals")]
-            public Texture2DParser normalsSetter
-            {
-                get { return bumpMap; }
-                set { bumpMap = value; }
-            }
 
             // Normalmap, default = "bump" { }
             [ParserTarget("bumpMap")]
+            [ParserTarget("normals")]
             public Texture2DParser bumpMapSetter
             {
                 get { return bumpMap; }
@@ -161,12 +149,12 @@ namespace Kopernicus
             }
 
             // LightDirection, default = (1,0,0,0)
-            [ParserTarget("localLightDirection")]
-            public Vector4Parser localLightDirectionSetter
-            {
-                get { return localLightDirection; }
-                set { localLightDirection = value; }
-            }
+            // [ParserTarget("localLightDirection")]
+            // public Vector4Parser localLightDirectionSetter
+            // {
+            //     get { return localLightDirection; }
+            //     set { localLightDirection = value; }
+            // }
 
             // Resource Map (RGB), default = "black" { }
             [ParserTarget("resourceMap")]

@@ -313,7 +313,7 @@ namespace Kopernicus
                 
                 // Load existing mods
                 foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.sphere = Value))
+                    .Where(m => m.sphere == Value))
                 {
                     Type modType = mod.GetType();
                     foreach (Type loaderType in Parser.ModTypes)
@@ -471,7 +471,7 @@ namespace Kopernicus
                 
                 // Load existing mods
                 foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.sphere = Value))
+                    .Where(m => m.sphere == Value))
                 {
                     Type modType = mod.GetType();
                     foreach (Type loaderType in Parser.ModTypes)

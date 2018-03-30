@@ -64,20 +64,20 @@ namespace Kopernicus
             }
 
             // ESun
-            [ParserTarget("ESun")]
-            public NumericParser<Single> ESun
-            {
-                get { return Value.ESun; }
-                set { Value.ESun = value; }
-            }
+            // [ParserTarget("ESun")]
+            // public NumericParser<Single> ESun
+            // {
+            //     get { return Value.ESun; }
+            //     set { Value.ESun = value; }
+            // }
 
             // g
-            [ParserTarget("g")]
-            public NumericParser<Single> g
-            {
-                get { return Value.g; }
-                set { Value.g = value; }
-            }
+            // [ParserTarget("g")]
+            // public NumericParser<Single> g
+            // {
+            //     get { return Value.g; }
+            //     set { Value.g = value; }
+            // }
 
             // innerRadius
             [ParserTarget("innerRadius")]
@@ -101,20 +101,20 @@ namespace Kopernicus
             }
 
             // Km
-            [ParserTarget("Km")]
-            public NumericParser<Single> Km
-            {
-                get { return Value.Km; }
-                set { Value.Km = value; }
-            }
+            // [ParserTarget("Km")]
+            // public NumericParser<Single> Km
+            // {
+            //     get { return Value.Km; }
+            //     set { Value.Km = value; }
+            // }
 
             // Kr
-            [ParserTarget("Kr")]
-            public NumericParser<Single> Kr
-            {
-                get { return Value.Kr; }
-                set { Value.Kr = value; }
-            }
+            // [ParserTarget("Kr")]
+            // public NumericParser<Single> Kr
+            // {
+            //     get { return Value.Kr; }
+            //     set { Value.Kr = value; }
+            // }
 
             // outerRadius
             [ParserTarget("outerRadius")]
@@ -134,20 +134,20 @@ namespace Kopernicus
             }
 
             // scale
-            [ParserTarget("scale")]
-            public NumericParser<Single> scale
-            {
-                get { return Value.scale; }
-                set { Value.scale = value; }
-            }
+            // [ParserTarget("scale")]
+            // public NumericParser<Single> scale
+            // {
+            //     get { return Value.scale; }
+            //     set { Value.scale = value; }
+            // }
 
             // scaleDepth
-            [ParserTarget("scaleDepth")]
-            public NumericParser<Single> scaleDepth
-            {
-                get { return Value.scaleDepth; }
-                set { Value.scaleDepth = value; }
-            }
+            // [ParserTarget("scaleDepth")]
+            // public NumericParser<Single> scaleDepth
+            // {
+            //    get { return Value.scaleDepth; }
+            //    set { Value.scaleDepth = value; }
+            // }
 
             [ParserTarget("transformScale")]
             [KittopiaDescription("The scale of the atmosphere mesh in all three directions. Automatically set if doScale is enabled.")]

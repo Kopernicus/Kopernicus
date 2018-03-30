@@ -170,12 +170,12 @@ namespace Kopernicus
             }
 
             // Hill Sphere
-            [ParserTarget("hillSphere")]
-            public NumericParser<Double> hillSphere
-            {
-                get { return Value.Get("hillSphere", Value.hillSphere); }
-                set { Value.hillSphere = value; Value.Set("hillSphere", value.Value); }
-            }
+            // [ParserTarget("hillSphere")]
+            // public NumericParser<Double> hillSphere
+            // {
+            //     get { return Value.Get("hillSphere", Value.hillSphere); }
+            //     set { Value.hillSphere = value; Value.Set("hillSphere", value.Value); }
+            // }
 
             // solarRotationPeriod
             [ParserTarget("solarRotationPeriod")]
@@ -216,6 +216,27 @@ namespace Kopernicus
                         Value.BiomeMap = value;
                         Value.BiomeMap.exactSearch = false;
                         Value.BiomeMap.nonExactThreshold = 0.05f;
+                        if (biomes == null)
+                        {
+                            biomes = new CallbackList<BiomeLoader>(e =>
+                            {
+                                // Check biome map
+                                if (Value.BiomeMap == null)
+                                    throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
+
+                                // Replace the old biomes list with the new one
+                                Value.BiomeMap.Attributes = biomes.Select(b => b.Value).ToArray();
+                            });
+                            
+                            if (Value.BiomeMap?.Attributes == null)
+                            {
+                                return;
+                            }
+                            foreach (CBAttributeMapSO.MapAttribute attribute in Value.BiomeMap.Attributes)
+                            {
+                                biomes.Add(new BiomeLoader(attribute), false);
+                            }
+                        }
                     }
                 }
             }
@@ -263,20 +284,13 @@ namespace Kopernicus
                 set { Value.Set("selectable", value.Value); }
             }
 
-            // If the body should be hidden in RD
-            [ParserTarget("RDVisibility")]
-            public EnumParser<RDVisibility> hiddenRD
-            {
-                get { return Value.Get("hiddenRnD", RDVisibility.VISIBLE); }
-                set { Value.Set("hiddenRnD", value.Value); }
-            }
-
             // If the body should be hidden in RnD
+            [ParserTarget("RDVisibility")]
             [ParserTarget("RnDVisibility")]
             public EnumParser<RDVisibility> hiddenRnD
             {
-                get { return hiddenRD; }
-                set { hiddenRD = value; }
+                get { return Value.Get("hiddenRnD", RDVisibility.VISIBLE); }
+                set { Value.Set("hiddenRnD", value.Value); }
             }
 
             // If the body should rotate in RnD
@@ -412,6 +426,14 @@ namespace Kopernicus
                     // Replace the old biomes list with the new one
                     Value.BiomeMap.Attributes = biomes.Select(b => b.Value).ToArray();
                 });
+                if (body.BiomeMap?.Attributes == null)
+                {
+                    return;
+                }
+                foreach (CBAttributeMapSO.MapAttribute attribute in body.BiomeMap.Attributes)
+                {
+                    biomes.Add(new BiomeLoader(attribute), false);
+                }
             }
 
             // Mass converters

@@ -332,6 +332,24 @@ namespace Kopernicus
                     type = BodyType.Atmospheric;
                 else
                     type = BodyType.Vacuum;
+
+                // Assign the proper scaled space loaders
+                if (material == null)
+                {
+                    return;
+                }
+                if (ScaledPlanetSimple.UsesSameShader(material))
+                {
+                    material = new ScaledPlanetSimpleLoader(material);
+                }
+                if (ScaledPlanetRimAerial.UsesSameShader(material))
+                {
+                    material = new ScaledPlanetRimAerialLoader(material);
+                }
+                if (EmissiveMultiRampSunspots.UsesSameShader(material))
+                {
+                    material = new EmissiveMultiRampSunspotsLoader(material);
+                }
             }
         }
     }

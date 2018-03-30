@@ -149,7 +149,7 @@ namespace Kopernicus
                     }
                     KopernicusOrbitRendererData data =
                         (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
-                    return data.nodeColor;
+                    return data.orbitColor;
                 }
                 set
                 {
@@ -170,6 +170,7 @@ namespace Kopernicus
 
             // Orbit Icon color
             [ParserTarget("iconColor")]
+            [ParserTarget("nodeColor")]
             [KittopiaDescription("The color of the circle that marks the planets current position on the orbit")]
             public ColorParser iconColor
             {
@@ -201,17 +202,17 @@ namespace Kopernicus
 
             // Orbit Draw Mode
             [ParserTarget("mode")]
-            public EnumParser<OrbitRenderer.DrawMode> mode
+            public EnumParser<OrbitRendererBase.DrawMode> mode
             {
-                get { return Value.Get("drawMode", OrbitRenderer.DrawMode.REDRAW_AND_RECALCULATE); }
+                get { return Value.Get("drawMode", OrbitRendererBase.DrawMode.REDRAW_AND_RECALCULATE); }
                 set { Value.Set("drawMode", value.Value); }
             }
 
             // Orbit Icon Mode
             [ParserTarget("icon")]
-            public EnumParser<OrbitRenderer.DrawIcons> icon
+            public EnumParser<OrbitRendererBase.DrawIcons> icon
             {
-                get { return Value.Get("drawIcons", OrbitRenderer.DrawIcons.ALL); }
+                get { return Value.Get("drawIcons", OrbitRendererBase.DrawIcons.ALL); }
                 set { Value.Set("drawIcons", value.Value); }
             }
 
