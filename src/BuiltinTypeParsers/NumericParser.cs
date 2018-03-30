@@ -56,6 +56,19 @@ namespace Kopernicus
         {
             Value = (T)_parserMethod.Invoke(null, new Object[] { s });
         }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            if (Value == null)
+            {
+                return null;
+            }
+
+            return Value.ToString();
+        }
         
         /// <summary>
         /// Create a new NumericParser

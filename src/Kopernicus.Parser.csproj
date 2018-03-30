@@ -68,6 +68,7 @@
     <Compile Include="Interfaces\IParserEventSubscriber.cs" />
     <Compile Include="Interfaces\IPatchable.cs" />
     <Compile Include="Interfaces\ITypeParser.cs" />
+    <Compile Include="Interfaces\IWritable.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="ParserOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

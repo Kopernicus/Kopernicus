@@ -28,6 +28,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace Kopernicus
 {
@@ -49,6 +50,14 @@ namespace Kopernicus
         public void SetFromString(String s)
         {
             Value = (T)(Object)ConfigNode.ParseEnum(typeof(T), s);
+        }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return Value.ToString(CultureInfo.InvariantCulture);
         }
         
         /// <summary>

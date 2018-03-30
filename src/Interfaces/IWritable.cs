@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus ConfigNode Parser
  * ====================================
  * Created by: Teknoman117 (aka. Nathaniel R. Lewis)
@@ -31,13 +31,24 @@ using System;
 namespace Kopernicus
 {
     /// <summary>
-    /// Interface a class can implment to support conversion from a String
+    /// Interface a class can implment to support conversion to a String
     /// </summary>
-    public interface IParsable : IWritable
+    public interface IWritable
     {
         /// <summary>
-        /// Set value from String
+        /// Converts the value to a parsable string
         /// </summary>
-        void SetFromString(String s);
+        String ValueToString();
+    }
+    
+    /// <summary>
+    /// Interface a class can implment to support conversion to a ConfigNode
+    /// </summary>
+    public interface IConfigNodeWritable
+    {
+        /// <summary>
+        /// Converts the value to a parsable string
+        /// </summary>
+        ConfigNode ValueToNode();
     }
 }

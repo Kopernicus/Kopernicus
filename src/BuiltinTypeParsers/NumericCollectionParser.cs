@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 
 namespace Kopernicus
@@ -63,6 +64,19 @@ namespace Kopernicus
             {
                 Value.Add((T)_parserMethod.Invoke(null, new Object[] { e }));
             }
+        }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            if (Value == null)
+            {
+                return null;
+            }
+
+            return String.Join(" ", Value.Select(v => v.ToString()).ToArray());
         }
         
         /// <summary>

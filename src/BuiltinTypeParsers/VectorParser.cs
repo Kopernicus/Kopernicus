@@ -52,6 +52,14 @@ namespace Kopernicus
         {
             Value = ConfigNode.ParseVector2(s);
         }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return ConfigNode.WriteVector(Value);
+        }
         
         /// <summary>
         /// Create a new Vector2Parser
@@ -105,6 +113,14 @@ namespace Kopernicus
         public void SetFromString(String s)
         {
             Value = ConfigNode.ParseVector3(s);
+        }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return ConfigNode.WriteVector(Value);
         }
         
         /// <summary>
@@ -160,6 +176,14 @@ namespace Kopernicus
         {
             Value = ConfigNode.ParseVector3D(s);
         }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return ConfigNode.WriteVector(Value);
+        }
         
         /// <summary>
         /// Create a new Vector3DParser
@@ -213,6 +237,14 @@ namespace Kopernicus
         public void SetFromString(String s)
         {
             Value = ConfigNode.ParseVector4(s);
+        }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return ConfigNode.WriteVector(Value);
         }
         
         /// <summary>

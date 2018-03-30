@@ -154,6 +154,14 @@ namespace Kopernicus
         }
 
         /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return ConfigNode.WriteColor(Value);
+        }
+
+        /// <summary>
         /// Create a new ColorParser
         /// </summary>
         public ColorParser()

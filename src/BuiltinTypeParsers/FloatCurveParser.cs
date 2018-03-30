@@ -37,7 +37,7 @@ namespace Kopernicus
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public class FloatCurveParser : IParserEventSubscriber, ITypeParser<FloatCurve>
+    public class FloatCurveParser : IParserEventSubscriber, ITypeParser<FloatCurve>, IConfigNodeWritable
     {
         /// <summary>
         /// The value that is being parsed
@@ -53,6 +53,21 @@ namespace Kopernicus
 
         // We don't use this
         void IParserEventSubscriber.PostApply(ConfigNode node) { }
+
+        /// <summary>
+        /// Interface a class can implment to support conversion to a ConfigNode
+        /// </summary>
+        public ConfigNode ValueToNode()
+        {
+            if (Value == null)
+            {
+                return null;
+            }
+            
+            ConfigNode node = new ConfigNode();
+            Value.Save(node);
+            return node;
+        }
         
         /// <summary>
         /// Create a new FloatCurveParser

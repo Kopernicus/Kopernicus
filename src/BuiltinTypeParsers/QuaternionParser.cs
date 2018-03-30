@@ -51,6 +51,14 @@ namespace Kopernicus
         {
             Value = ConfigNode.ParseQuaternion(s);
         }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return ConfigNode.WriteQuaternion(Value);
+        }
         
         /// <summary>
         /// Create a new QuaternionParser
@@ -103,6 +111,14 @@ namespace Kopernicus
         public void SetFromString(String s)
         {
             Value = ConfigNode.ParseQuaternionD(s);
+        }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            return ConfigNode.WriteQuaternion(Value);
         }
         
         /// <summary>

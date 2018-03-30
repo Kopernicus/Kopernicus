@@ -54,6 +54,19 @@ namespace Kopernicus
             // Need a new list
             Value = new List<String>(s.Split(',').Select(a => a.Trim()));
         }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            if (Value == null)
+            {
+                return null;
+            }
+
+            return String.Join(",", Value.ToArray());
+        }
         
         /// <summary>
         /// Create a new StringCollectionParser
