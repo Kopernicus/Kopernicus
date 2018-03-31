@@ -216,22 +216,15 @@ namespace Kopernicus
                         Value.BiomeMap = value;
                         Value.BiomeMap.exactSearch = false;
                         Value.BiomeMap.nonExactThreshold = 0.05f;
-                        if (biomes == null)
-                        {
-                            biomes = new CallbackList<BiomeLoader>(e =>
-                            {
-                                // Check biome map
-                                if (Value.BiomeMap == null)
-                                    throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
 
-                                // Replace the old biomes list with the new one
-                                Value.BiomeMap.Attributes = biomes.Select(b => b.Value).ToArray();
-                            });
-                            
-                            if (Value.BiomeMap?.Attributes == null)
+                        if (!Injector.IsInPrefab)
+                        {
+                            if (Value.BiomeMap.Attributes == null || !Value.BiomeMap.Attributes.Any())
                             {
                                 return;
                             }
+
+                            biomes.Clear(false);
                             foreach (CBAttributeMapSO.MapAttribute attribute in Value.BiomeMap.Attributes)
                             {
                                 biomes.Add(new BiomeLoader(attribute), false);

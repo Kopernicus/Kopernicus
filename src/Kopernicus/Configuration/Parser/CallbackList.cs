@@ -84,6 +84,15 @@ namespace Kopernicus
                 _callback(default(T));
             }
 
+            public void Clear(Boolean call)
+            {
+                _list.Clear();
+                if (call)
+                {
+                    _callback(default(T));
+                }
+            }
+
             Boolean IList.Contains(Object value)
             {
                 return Contains((T) value);
