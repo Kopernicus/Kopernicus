@@ -71,7 +71,6 @@ namespace Kopernicus
                     OcclusionNetComponent component = new GameObject().AddComponent<OcclusionNetComponent>();
                     component.transform.parent = Star.transform.parent;
                     component.Body = Star.sun;
-                    component.Target = Star.target;
                     component.Vertex = mesh.vertices[i];
                     _colliders[i / Resolution] = component;
                 }
@@ -87,7 +86,7 @@ namespace Kopernicus
                 Int32 amount = 0;
                 for (Int32 i = 0; i < _colliders.Length; i++)
                 {
-                    _colliders[i].Target = Star.target;
+                    _colliders[i].Target = FlightGlobals.ActiveVessel.transform;
                     if (!_colliders[i].IsOccluded)
                     {
                         amount++;
