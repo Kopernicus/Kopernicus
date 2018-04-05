@@ -241,11 +241,7 @@ namespace Kopernicus
                     PSystemBody Laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
                     Utility.CopyObjectFields(Laythe.pqsVersion, Value);
                     Value.surfaceMaterial = Laythe.pqsVersion.surfaceMaterial;
-
-                    // Create the fallback material (always the same shader)
-                    fallbackMaterial = new PQSProjectionFallbackLoader();
-                    Value.fallbackMaterial = fallbackMaterial;
-                    fallbackMaterial.name = Guid.NewGuid().ToString();
+                    Value.fallbackMaterial = Laythe.pqsVersion.fallbackMaterial;
 
                     // Create the celestial body transform
                     GameObject mod = new GameObject("_CelestialBody");
