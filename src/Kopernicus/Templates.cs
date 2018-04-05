@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using KSP.Localization;
 using UnityEngine;
 
 namespace Kopernicus
@@ -53,7 +54,10 @@ namespace Kopernicus
 
         // Whether the main menu body should be randomized
         public static List<String> randomMainMenuBodies { get; set; }
-
+        
+        // The localized names of the presets
+        public static List<String> PresetDisplayNames { get; set; }    
+        
         // Initialisation
         static Templates()
         {
@@ -68,6 +72,14 @@ namespace Kopernicus
             
             // Random Main Menu bodies
             randomMainMenuBodies = new List<String>();
+            
+            // Presets
+            PresetDisplayNames = new List<String>
+            {
+                Localizer.Format("#autoLOC_6001506"),
+                Localizer.Format("#autoLOC_6001507"),
+                Localizer.Format("#autoLOC_6001508")
+            };
         }
     }
 }

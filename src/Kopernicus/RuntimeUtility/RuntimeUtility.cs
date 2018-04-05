@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Kopernicus.OnDemand;
+using KSP.UI.Screens.Settings.Controls;
 using UnityEngine;
 
 namespace Kopernicus
@@ -339,6 +340,13 @@ namespace Kopernicus
                 Vector3 planet2cam = body.scaledBody.transform.position - body.afg.mainCamera.transform.position;
                 body.afg.lightDot = Mathf.Clamp01(Vector3.Dot(planet2cam, body.afg.mainCamera.transform.position - star_.transform.position) * body.afg.dawnFactor);
                 body.afg.GetComponent<Renderer>().material.SetFloat("_lightDot", body.afg.lightDot);
+            }
+            
+            // Update the names of the presets in the settings dialog
+            foreach (SettingsTerrainDetail detail in Resources.FindObjectsOfTypeAll<SettingsTerrainDetail>())
+            {
+                detail.displayStringValue = true;
+                detail.stringValues = Templates.PresetDisplayNames.ToArray();
             }
         }
 

@@ -44,6 +44,9 @@ namespace Kopernicus
             // Name of the config type which holds the asteroid definition
             public const String asteroidNodeName = "Asteroid";
 
+            // Name of the config type which holds the pqs subdivision definitions
+            public const String presetNodeName = "Preset";
+
             // Currently edited body
             public static Body currentBody { get; set; }
 
@@ -244,6 +247,37 @@ namespace Kopernicus
                     Logger.Default.SetAsActive();
                 }
 
+                // Load all of the PQS Presets                
+                foreach (ConfigNode presetNode in node.GetNodes(presetNodeName))
+                {
+                    // Attempt to create the Preset
+                    try
+                    {
+                        PQSCache.PQSPreset preset = new PQSCache.PQSPreset();
+                        preset.Load(presetNode);
+                        if (PQSCache.PresetList.presets.Any(p => p.name == preset.name))
+                        {
+                            Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Preset: " + preset.name);
+                            continue;
+                        }
+                        PQSCache.PresetList.presets.Add(preset);
+                        
+                        // Display name
+                        String displayName = preset.name;
+                        if (presetNode.HasValue("displayName"))
+                        {
+                            displayName = presetNode.GetValue("displayName");
+                        }
+                        Templates.PresetDisplayNames.Add(displayName);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Preset: " + preset.name);
+                    }
+                    catch
+                    {
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Preset: " + presetNode.GetValue("name"));
+                        throw new Exception("Failed to load Asteroid: " + presetNode.GetValue("name"));
+                    }
+                }
+
                 // Glue all the orbits together in the defined pattern
                 foreach (KeyValuePair<String, Body> body in bodies)
                 {
@@ -300,7 +334,7 @@ namespace Kopernicus
 
                 // Sort by distance from parent (discover how this effects local bodies)
                 RecursivelySortBodies(systemPrefab.rootBody);
-
+                
                 // Fix doubled flightGlobals
                 List<Int32> numbers = new List<Int32>() { 0, 1 };
                 Int32 index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
