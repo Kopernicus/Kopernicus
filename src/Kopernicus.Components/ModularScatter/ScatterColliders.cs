@@ -70,7 +70,7 @@ namespace Kopernicus
                                      " colliders");
                     rebuild = true;
                 }
-                else if (meshColliders[0].sharedMesh != system.transform.GetChild(0).GetComponent<MeshFilter>().sharedMesh)
+                else if (meshColliders.Count > 0 && meshColliders[0].sharedMesh != system.transform?.GetChild(0)?.GetComponent<MeshFilter>()?.sharedMesh)
                 {
                     Debug.LogWarning("[Kopernicus] Replacing colliders");
                     rebuild = true;
