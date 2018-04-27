@@ -218,8 +218,8 @@ namespace Kopernicus
                 }
 
                 ringMR.material.color = color;
-                ringMR.material.renderQueue = parentRenderer.material.renderQueue;
-                parentRenderer.material.renderQueue--;
+                ringMR.material.renderQueue = 3010;
+                parent.GetChild("Atmosphere").GetComponent<Renderer>().material.renderQueue = 3020;
                 
                 // Call the modules
                 Components.ForEach(m => m.PostApply(this));
