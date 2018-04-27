@@ -305,7 +305,11 @@ namespace Kopernicus
                 {
                     FieldInfo mode_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType.IsEnum && f.FieldType.IsNested);
                     FieldInfo context_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(MapContextMenu));
+                    #if !KSP131
                     FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRendererBase.OrbitCastHit));
+                    #else
+                    FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
+                    #endif
                     fields = new FieldInfo[] { mode_f, context_f, cast_f };
                 }
                 if (FlightGlobals.ActiveVessel != null)
@@ -316,7 +320,11 @@ namespace Kopernicus
                     Int32 mode = (Int32)fields[0].GetValue(targeter);
                     if (mode == 2)
                     {
+                        #if !KSP131
                         OrbitRendererBase.OrbitCastHit cast = (OrbitRendererBase.OrbitCastHit)fields[2].GetValue(targeter);
+                        #else
+                        OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
+                        #endif
                         CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or?.discoveryInfo?.name?.Value);
                         if (body == null) return;
                         if (body.Has("barycenter") || !body.Get("selectable", true))

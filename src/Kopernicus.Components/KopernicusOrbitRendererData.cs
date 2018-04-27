@@ -44,7 +44,11 @@ namespace Kopernicus
                 set { _nodeColor.SetValue(this, value); }
             }
 
+            #if !KSP131
             public KopernicusOrbitRendererData(CelestialBody body, OrbitRendererBase renderer) : base(body)
+            #else
+            public KopernicusOrbitRendererData(CelestialBody body, OrbitRenderer renderer) : base(body)
+            #endif
             {
                 orbitColor = renderer.orbitColor;
                 nodeColor = renderer.nodeColor;

@@ -58,6 +58,8 @@ namespace Kopernicus
             }
         }
 
+        public const Single kerbinRotationPeriod = 21600f;
+
         // Update the menu body
         void Start()
         {
@@ -72,20 +74,18 @@ namespace Kopernicus
 
                 // Grab the main body
                 CelestialBody planetCB = PSystemManager.Instance.localBodies.Find(b => b.transform.name == Templates.menuBody);
-                PSystemBody planet = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Templates.menuBody);
-                if (planetCB == null || planet == null)
+                if (planetCB == null)
                 {
-                    planet = Utility.FindHomeBody(PSystemManager.Instance.systemPrefab.rootBody);
                     planetCB = PSystemManager.Instance.localBodies.Find(b => b.isHomeWorld);
                 }
-                if (planet == null || planetCB == null)
+                if (planetCB == null)
                 {
                     Debug.LogError("[Kopernicus] Could not find homeworld!");
                     return;
                 }
 
                 // Load Textures
-                OnDemand.OnDemandStorage.EnableBody(Templates.menuBody);
+                OnDemandStorage.EnableBody(Templates.menuBody);
 
                 // Get the MainMenu-Logic
                 MainMenu main = FindObjectOfType<MainMenu>();
@@ -116,16 +116,16 @@ namespace Kopernicus
                 kerbin.gameObject.SetActive(false);
 
                 // Deactivate Muns Transform
-                Transform mun = space.transform.Find("MunPivot");
-                if (mun == null)
+                Transform munPivot = space.transform.Find("MunPivot");
+                if (munPivot == null)
                 {
                     Debug.LogError("[Kopernicus] No MunPivot transform!");
                     return;
                 }
-                mun.gameObject.SetActive(false);
+                munPivot.gameObject.SetActive(false);
 
                 // Activate the textures
-                ScaledSpaceOnDemand od = planet.scaledVersion.GetComponentInChildren<ScaledSpaceOnDemand>();
+                ScaledSpaceOnDemand od = planetCB.scaledBody.GetComponentInChildren<ScaledSpaceOnDemand>();
                 if (od != null)
                 {
                     od.Start();
@@ -133,7 +133,8 @@ namespace Kopernicus
                 }
 
                 // Clone the scaledVersion and attach it to the Scene
-                GameObject menuPlanet = Instantiate(planet.scaledVersion) as GameObject;
+                GameObject menuPlanet = Instantiate(Utility
+                    .FindBody(PSystemManager.Instance.systemPrefab.rootBody, planetCB.transform.name).scaledVersion);
                 menuPlanet.transform.parent = space.transform;
 
                 // Destroy stuff
@@ -145,7 +146,7 @@ namespace Kopernicus
                 // That sounds funny
                 Rotato planetRotato = menuPlanet.AddComponent<Rotato>();
                 Rotato planetRefRotato = kerbin.GetComponent<Rotato>();
-                planetRotato.speed = (planetRefRotato.speed / 9284.50070356553f) * (Single)planetCB.orbitDriver.orbit.orbitalSpeed; // calc.exe for the win
+                planetRotato.speed = planetRefRotato.speed * ((Single)planetCB.rotationPeriod / kerbinRotationPeriod);
 
                 // Scale the body
                 menuPlanet.transform.localScale = kerbin.localScale;
@@ -154,92 +155,7 @@ namespace Kopernicus
 
                 // And set it to layer 0
                 menuPlanet.layer = 0;
-
-                // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
-                menuPlanet.GetComponent<Renderer>().sharedMaterial = planetCB.scaledBody.GetComponent<Renderer>().sharedMaterial;
-
-                // Copy EVE 7.4 clouds / Rings
-                for (Int32 i = 0; i < planetCB.scaledBody.transform.childCount; i++)
-                {
-                    // Just clone everything
-                    Transform t = planetCB.scaledBody.transform.GetChild(i);
-                    if (t.gameObject.GetComponent<AtmosphereFromGround>())
-                        continue;
-                    GameObject newT = Instantiate(t.gameObject) as GameObject;
-                    newT.transform.parent = menuPlanet.transform;
-                    newT.layer = 0;
-                    newT.transform.localPosition = Vector3.zero;
-                    newT.transform.localRotation = Quaternion.identity;
-                    newT.transform.localScale = (Single)(1008 / planetCB.Radius) * Vector3.one;
-                }
-
-                // And now, create the moons
-                foreach (PSystemBody moon in planet.children)
-                {
-                    // Grab the CeletialBody of the moon
-                    CelestialBody moonCB = PSystemManager.Instance.localBodies.Find(b => b.GetTransform().name == moon.name);
-
-                    // Create the Rotation-Transforms
-                    GameObject menuMoonPivot = new GameObject(moon.name + " Pivot");
-                    menuMoonPivot.gameObject.layer = 0;
-                    menuMoonPivot.transform.position = menuPlanet.transform.position;
-
-                    // Still funny...
-                    Rotato munRotato = menuMoonPivot.AddComponent<Rotato>();
-                    Rotato refRotato = mun.GetComponent<Rotato>();
-                    munRotato.speed = (refRotato.speed / 542.494239600754f) * (Single)moonCB.GetOrbit().getOrbitalSpeedAtDistance(moonCB.GetOrbit().semiMajorAxis);
-
-                    // Activate the textures
-                    ScaledSpaceOnDemand odMoon = moon.scaledVersion.GetComponentInChildren<ScaledSpaceOnDemand>();
-                    if (odMoon != null)
-                    {
-                        odMoon.Start();
-                        odMoon.LoadTextures();
-                    }
-
-                    // Clone the scaledVersion and attach it to the pivot
-                    GameObject menuMoon = Instantiate(moon.scaledVersion) as GameObject;
-                    menuMoon.transform.parent = menuMoonPivot.transform;
-
-                    // Move and scale the menuMoon correctly
-                    menuMoon.transform.localPosition = new Vector3(-5000f * (Single)(moonCB.GetOrbit().semiMajorAxis / 12000000.0), 0f, 0f);
-                    menuMoon.transform.localScale *= 7f;
-
-                    // Destroy stuff
-                    DestroyImmediate(menuMoon.GetComponent<ScaledSpaceFader>());
-                    DestroyImmediate(menuMoon.GetComponent<SphereCollider>());
-                    DestroyImmediate(menuMoon.GetComponentInChildren<AtmosphereFromGround>());
-                    DestroyImmediate(menuMoon.GetComponent<MaterialSetDirection>());
-
-                    // More Rotato
-                    Rotato moonRotato = menuMoon.AddComponent<Rotato>();
-                    moonRotato.speed = -0.005f / (Single)(moonCB.rotationPeriod / 400.0);
-
-                    // Apply orbital stuff
-                    menuMoon.transform.Rotate(0f, (Single)moonCB.orbitDriver.orbit.LAN, 0f);
-                    menuMoon.transform.Rotate(0f, 0f, (Single)moonCB.orbitDriver.orbit.inclination);
-                    menuMoon.transform.Rotate(0f, (Single)moonCB.orbitDriver.orbit.argumentOfPeriapsis, 0f);
-
-                    // And set the layer to 0
-                    menuMoon.layer = 0;
-
-                    // Patch the material, because Mods like TextureReplacer run post spawn, and we'd overwrite their changes
-                    menuMoon.GetComponent<Renderer>().sharedMaterial = moonCB.scaledBody.GetComponent<Renderer>().sharedMaterial;
-
-                    // Copy EVE 7.4 clouds / Rings
-                    for (Int32 i = 0; i < moonCB.scaledBody.transform.childCount; i++)
-                    {
-                        Transform t = moonCB.scaledBody.transform.GetChild(i);
-                        if (t.gameObject.GetComponent<AtmosphereFromGround>())
-                            continue;
-                        GameObject newT = Instantiate(t.gameObject) as GameObject;
-                        newT.transform.parent = menuMoon.transform;
-                        newT.layer = 0;
-                        newT.transform.localPosition = Vector3.zero;
-                        newT.transform.localRotation = Quaternion.identity;
-                        newT.transform.localScale = (Single)(1008 / moonCB.Radius) * Vector3.one;
-                    }
-                }
+                
                 Events.OnRuntimeUtilityUpdateMenu.Fire();
             }
         }

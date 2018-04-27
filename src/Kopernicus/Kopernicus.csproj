@@ -29,11 +29,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\Assembly-CSharp.1.4.2\lib\net35\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\packages\Assembly-CSharp.1.4.3\lib\net35\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ModularFlightIntegrator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\ModularFlightIntegrator.1.2.4.2\lib\net35\ModularFlightIntegrator.dll</HintPath>
+      <HintPath>..\..\packages\ModularFlightIntegrator.1.2.5.0\lib\net35\ModularFlightIntegrator.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
@@ -43,11 +43,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.1.4.2\lib\net35\UnityEngine.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.1.4.3\lib\net35\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.UI.1.4.2\lib\net35\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.UI.1.4.3\lib\net35\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -158,6 +158,7 @@
     <Compile Include="Configuration\ParticleSystem\LimitVelocityOverLifetimeModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\MinMaxCurveLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\MinMaxGradientLoader.cs" />
+    <Compile Include="Configuration\ParticleSystem\NoiseModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\RotationBySpeedModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\RotationOverLifetimeModuleLoader.cs" />
     <Compile Include="Configuration\ParticleSystem\ShapeModuleLoader.cs" />

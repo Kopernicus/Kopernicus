@@ -202,17 +202,33 @@ namespace Kopernicus
 
             // Orbit Draw Mode
             [ParserTarget("mode")]
+            #if !KSP131
             public EnumParser<OrbitRendererBase.DrawMode> mode
+            #else
+            public EnumParser<OrbitRenderer.DrawMode> mode
+            #endif
             {
+                #if !KSP131
                 get { return Value.Get("drawMode", OrbitRendererBase.DrawMode.REDRAW_AND_RECALCULATE); }
+                #else
+                get { return Value.Get("drawMode", OrbitRenderer.DrawMode.REDRAW_AND_RECALCULATE); }
+                #endif
                 set { Value.Set("drawMode", value.Value); }
             }
 
             // Orbit Icon Mode
             [ParserTarget("icon")]
+            #if !KSP131
             public EnumParser<OrbitRendererBase.DrawIcons> icon
+            #else
+            public EnumParser<OrbitRenderer.DrawIcons> icon
+            #endif
             {
+                #if !KSP131
                 get { return Value.Get("drawIcons", OrbitRendererBase.DrawIcons.ALL); }
+                #else
+                get { return Value.Get("drawIcons", OrbitRenderer.DrawIcons.ALL); }
+                #endif
                 set { Value.Set("drawIcons", value.Value); }
             }
 
