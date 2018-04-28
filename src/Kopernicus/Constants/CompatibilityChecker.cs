@@ -114,6 +114,12 @@ namespace Kopernicus
             UnityEngine.Object mm = FindObjectOfType(moduleManager);
             nyan.SetValue(mm, true);
             ncats.SetValue(mm, true);
+            
+            // Nobody can read that popup
+            ScreenMessages.PostScreenMessage(
+                "Kopernicus will not work on this version of KSP!\nPlease don't try to open your savegames!",
+                Single.MaxValue,
+                ScreenMessageStyle.UPPER_LEFT, true);
         }
 
         public void Start()
