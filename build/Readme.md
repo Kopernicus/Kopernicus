@@ -1,19 +1,19 @@
 ﻿Kopernicus
 ==============================
-March 31, 2018
+April 28, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.4.2-1)
+New in this version (1.4.3-1)
 -------------------
-- Updated for KSP 1.4.2
-- Added a way to deform rings, you can add two curves called InnerRadiusMultiplier and OuterRadiusMultiplier to the ring config (the keys are degrees)
-- Fixed a bug that prevented editing an AtmosphereFromGround on cbNameLater bodies
-- Changed starlight so it is affected by bodies that block the star in flight mode
-- Fixed the clipping orbit lines differently than last time
-- Removed the broken and unuseable PQSCity loaders. 
+- Removed the sun occlusion code again, it will be rereleased in KopernicusExpansion
+- Fixed the NullReferenceException spam with terrain scatters
+- Updated ModularFlightIntegrator
+- Fixed the rings rendering over EVE clouds
+- Bodies that are orbiting the main menu body are no longer shown in the main menu
+- Updated to KSP 1.4.3
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
