@@ -116,10 +116,17 @@ namespace Kopernicus
             ncats.SetValue(mm, true);
             
             // Nobody can read that popup
+            #if !KSP131
             ScreenMessages.PostScreenMessage(
                 "Kopernicus will not work on this version of KSP!\nPlease don't try to open your savegames!",
                 Single.MaxValue,
                 ScreenMessageStyle.UPPER_LEFT, true);
+            #else
+            DontDestroyOnLoad(ScreenMessages.PostScreenMessage(
+                "Kopernicus will not work on this version of KSP!\nPlease don't try to open your savegames!",
+                Single.MaxValue,
+                ScreenMessageStyle.UPPER_LEFT).textInstance);
+            #endif
         }
 
         public void Start()
