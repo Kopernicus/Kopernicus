@@ -288,6 +288,11 @@ namespace Kopernicus
         /// </summary>
         private FieldInfo[] fields;
 
+        /// <summary>
+        /// All display names for the terrain detail
+        /// </summary>
+        private String[] _details;
+
         // Stuff
         void LateUpdate()
         {
@@ -351,10 +356,10 @@ namespace Kopernicus
             }
             
             // Update the names of the presets in the settings dialog
-            foreach (SettingsTerrainDetail detail in Resources.FindObjectsOfTypeAll<SettingsTerrainDetail>())
+            foreach (SettingsTerrainDetail detail in FindObjectsOfType<SettingsTerrainDetail>())
             {
                 detail.displayStringValue = true;
-                detail.stringValues = Templates.PresetDisplayNames.ToArray();
+                detail.stringValues = _details ?? (_details = Templates.PresetDisplayNames.ToArray());
             }
         }
 
