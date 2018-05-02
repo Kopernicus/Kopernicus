@@ -58,6 +58,9 @@ namespace Kopernicus
         // The localized names of the presets
         public static List<String> PresetDisplayNames { get; set; }    
         
+        // The launch sites that should get removed
+        public static List<String> RemoveLaunchSites { get; set; }
+        
         // Initialisation
         static Templates()
         {
@@ -80,6 +83,9 @@ namespace Kopernicus
                 Localizer.Format("#autoLOC_6001507"),
                 Localizer.Format("#autoLOC_6001508")
             };
+            
+            // Launch Sites
+            RemoveLaunchSites = new List<String>();
         }
     }
 }

@@ -151,6 +151,18 @@ namespace Kopernicus
                 get { return ScaledSpaceFader.faderMult; }
                 set { ScaledSpaceFader.faderMult = value; }
             }
+            
+            // Remove Launch Sites added by DLCs
+            // * Island_Airfield
+            // * Woomerang_Launch_Site
+            // * Desert_Launch_Site
+            // * Desert_Airfield
+            [ParserTargetCollection("self", Key = "removeLaunchSites", AllowMerge = false, NameSignificance = NameSignificance.Key)]
+            public List<StringCollectionParser> removeLaunchSites
+            {
+                get { return new List<StringCollectionParser> { new StringCollectionParser(Templates.RemoveLaunchSites)}; }
+                set { Templates.RemoveLaunchSites = value.SelectMany(v => v.Value).ToList(); }
+            }
 
             // Instance
             public Loader()

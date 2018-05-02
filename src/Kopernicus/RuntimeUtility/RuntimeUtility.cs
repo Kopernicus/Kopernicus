@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Expansions;
 using Kopernicus.OnDemand;
 using KSP.UI.Screens.Settings.Controls;
 using UnityEngine;
@@ -248,6 +249,14 @@ namespace Kopernicus
                 fixes[b.transform.name].Value.orbitingBodies.Remove(b);
                 fixes[b.transform.name].Key.orbitingBodies.Add(b);
                 fixes[b.transform.name].Key.orbitingBodies = fixes[b.transform.name].Key.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
+            }
+
+            if (ExpansionsLoader.IsExpansionInstalled("MakingHistory"))
+            {
+                foreach (String site in Templates.RemoveLaunchSites)
+                {
+                    PSystemSetup.Instance.RemoveLaunchSite(site);
+                }
             }
 #if FALSE
             // AFG-Ception
