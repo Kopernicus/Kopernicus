@@ -47,8 +47,12 @@ namespace Kopernicus
             {
                 foreach (CelestialBody b in FlightGlobals.Bodies.Where(b => b.bodyName == oldName))
                 {
+                    OrbitRendererData data = PSystemManager.OrbitRendererDataCache[b];
+                    PSystemManager.OrbitRendererDataCache.Remove(b);
                     b.bodyName = newName;
                     PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
+                    data.cb = b;
+                    PSystemManager.OrbitRendererDataCache.Add(b, data);
                     Events.OnApplyNameChange.Fire(this, b);
                 }
             }
