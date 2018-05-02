@@ -526,7 +526,7 @@ namespace Kopernicus
                                             break;
 
                                         default:
-                                            throw new ArgumentOutOfRangeException();
+                                            continue;
                                     }
                                 }
                             }
@@ -562,7 +562,7 @@ namespace Kopernicus
                                             break;
 
                                         default:
-                                            throw new ArgumentOutOfRangeException();
+                                            continue;
                                     }
                                 }
                             }
