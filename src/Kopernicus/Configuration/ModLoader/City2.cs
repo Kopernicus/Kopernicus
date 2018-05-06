@@ -66,12 +66,14 @@ namespace Kopernicus
                     }
 
                     // keepActive
+                    #if !KSP131
                     [ParserTarget("keepActive")]
                     public NumericParser<Boolean> keepActive 
                     {
                         get { return Value.KeepActive; }
                         set { Value.KeepActive = value; }
                     }
+                    #endif
 
                     // The mesh for the mod
                     [ParserTarget("model")]
