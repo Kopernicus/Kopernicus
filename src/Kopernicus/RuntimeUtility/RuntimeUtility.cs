@@ -35,7 +35,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if !KSP131
 using Expansions;
+#endif
 using Kopernicus.OnDemand;
 using KSP.UI.Screens.Settings;
 using KSP.UI.Screens.Settings.Controls;
@@ -252,6 +254,8 @@ namespace Kopernicus
                 fixes[b.transform.name].Key.orbitingBodies = fixes[b.transform.name].Key.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
             }
 
+            
+            #if !KSP131
             if (ExpansionsLoader.IsExpansionInstalled("MakingHistory"))
             {
                 PQSCity2[] cities = FindObjectsOfType<PQSCity2>();
@@ -273,6 +277,7 @@ namespace Kopernicus
                     }
                 }
             }
+            #endif
 #if FALSE
             // AFG-Ception
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)
