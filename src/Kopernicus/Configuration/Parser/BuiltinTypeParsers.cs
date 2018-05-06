@@ -686,6 +686,16 @@ namespace Kopernicus
             /// </summary>
             public void SetFromString(String s)
             {
+                // Check if we are attempting to load a builtin gameobject
+                if (s.StartsWith("BUILTIN/"))
+                {
+                    String objName = Regex.Replace(s, "BUILTIN/", "");
+                    Value = UnityEngine.Object.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>()
+                        .First(obj => obj.name == objName));
+                    Value.name = objName;
+                    return;
+                }
+
                 // If there's a model, import it
                 if (GameDatabase.Instance.ExistsModel(s))
                 {
@@ -712,7 +722,7 @@ namespace Kopernicus
                     return Value.name;
                 }
 
-                return null;
+                return "BUILTIN/" + Value.name;
             }
         
             /// <summary>
