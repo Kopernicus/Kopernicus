@@ -37,6 +37,7 @@ using System.Linq;
 using System.Reflection;
 using Expansions;
 using Kopernicus.OnDemand;
+using KSP.UI.Screens.Settings;
 using KSP.UI.Screens.Settings.Controls;
 using UnityEngine;
 
@@ -127,7 +128,7 @@ namespace Kopernicus
             // Update Music Logic
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
-
+            
             // Log
             Logger.Default.Log("[Kopernicus] RuntimeUtility Started");
             Logger.Default.Flush();
@@ -255,7 +256,10 @@ namespace Kopernicus
             {
                 foreach (String site in Templates.RemoveLaunchSites)
                 {
-                    PSystemSetup.Instance.RemoveLaunchSite(site);
+                    if (PSystemSetup.Instance.LaunchSites.Any(s => s.name == site))
+                    {
+                        PSystemSetup.Instance.RemoveLaunchSite(site);
+                    }
                 }
             }
 #if FALSE
@@ -365,10 +369,14 @@ namespace Kopernicus
             }
             
             // Update the names of the presets in the settings dialog
-            foreach (SettingsTerrainDetail detail in FindObjectsOfType<SettingsTerrainDetail>())
+            if (HighLogic.LoadedScene == GameScenes.SETTINGS)
             {
-                detail.displayStringValue = true;
-                detail.stringValues = _details ?? (_details = Templates.PresetDisplayNames.ToArray());
+                foreach (SettingsTerrainDetail detail in Resources.FindObjectsOfTypeAll<SettingsTerrainDetail>())
+                {
+                    detail.displayStringValue = true;
+                    detail.stringValues = _details ?? (_details = Templates.PresetDisplayNames.ToArray());
+                    Debug.Log(detail);
+                }
             }
         }
 
