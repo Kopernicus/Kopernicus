@@ -254,11 +254,22 @@ namespace Kopernicus
 
             if (ExpansionsLoader.IsExpansionInstalled("MakingHistory"))
             {
+                PQSCity2[] cities = FindObjectsOfType<PQSCity2>();
                 foreach (String site in Templates.RemoveLaunchSites)
                 {
+                    // Remove the launch site from the list if it exists
                     if (PSystemSetup.Instance.LaunchSites.Any(s => s.name == site))
                     {
                         PSystemSetup.Instance.RemoveLaunchSite(site);
+                    }
+                    
+                    PQSCity2 city = cities.FirstOrDefault(c =>
+                        c.gameObject.name == site || c.gameObject.name == site + "(Clone)");
+                    
+                    // Kill the PQSCity if it exists
+                    if (city != null)
+                    {
+                        Destroy(city.gameObject);
                     }
                 }
             }

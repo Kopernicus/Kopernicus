@@ -155,8 +155,10 @@ namespace Kopernicus
             // Remove Launch Sites added by DLCs
             // * Island_Airfield
             // * Woomerang_Launch_Site
+            // * Woomerang_GroundObjects
             // * Desert_Launch_Site
             // * Desert_Airfield
+            // * Desert_GroundObjects
             [ParserTargetCollection("self", Key = "removeLaunchSites", AllowMerge = false, NameSignificance = NameSignificance.Key)]
             public List<StringCollectionParser> removeLaunchSites
             {
