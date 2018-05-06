@@ -1,19 +1,17 @@
 ﻿Kopernicus
 ==============================
-April 28, 2018
+May 06, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.4.3-1)
+New in this version (1.4.3-2)
 -------------------
-- Removed the sun occlusion code again, it will be rereleased in KopernicusExpansion
-- Fixed the NullReferenceException spam with terrain scatters
-- Updated ModularFlightIntegrator
-- Fixed the rings rendering over EVE clouds
-- Bodies that are orbiting the main menu body are no longer shown in the main menu
-- Updated to KSP 1.4.3
+- Fixed a huge FPS drop when Kopernicus is installed
+- Fixed cbNameLater breaking orbit line colors
+- Added the ability to remove launch sites added by MakingHistory (removeLaunchSites in the Kopernicus node)
+- Readded and fixed the PQSCity modloaders
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
