@@ -445,13 +445,8 @@ namespace Kopernicus
                                                     image[(i - 4 * colors) * 2 + 1] = palette[data[i] % 16];
                                             }
 
-                                            map = new Texture2D(width, height);
+                                            map = new Texture2D(width, height, TextureFormat.ARGB32, mipmap);
                                             map.SetPixels(image);
-
-                                            // This is to check that the image has been loaded correctly
-                                            byte[] png = map.EncodeToPNG();
-                                            Directory.CreateDirectory("GameData/Sigma");
-                                            File.WriteAllBytes("GameData/Sigma/test.png", png);
                                         }
                                     }
                                     else
