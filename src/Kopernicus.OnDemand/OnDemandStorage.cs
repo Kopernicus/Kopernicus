@@ -444,7 +444,7 @@ namespace Kopernicus
                                                 {
                                                     image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
                                                     if (bpp == 4)
-                                                        image[(i - 4 * colors) * 2 + 1] = palette[data[i] % 16];
+                                                        image[(i - 64) * 2 + 1] = palette[data[i] % 16];
                                                 }
 
                                                 map = new Texture2D(width, height, TextureFormat.ARGB32, mipmap);
