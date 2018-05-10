@@ -421,38 +421,48 @@ namespace Kopernicus
                                     }
                                     else if (dDSHeader.ddspf.dwRGBBitCount == 4 || dDSHeader.ddspf.dwRGBBitCount == 8)
                                     {
-                                        byte[] data = File.ReadAllBytes(path).Skip(128).ToArray(); // I tried using    data = LoadRestOfReader(binaryReader)   but it doesn't work
-
-                                        int bpp = (int)dDSHeader.ddspf.dwRGBBitCount;
-                                        int colors = (int)Math.Pow(2, bpp);
-                                        int width = (int)dDSHeader.dwWidth;
-                                        int height = (int)dDSHeader.dwHeight;
-
-                                        if (data.Length == width * height * bpp / 8 + 4 * colors)
+                                        try
                                         {
-                                            Color[] palette = new Color[colors];
-                                            Color[] image = new Color[width * height];
+                                            byte[] data = File.ReadAllBytes(path).Skip(128).ToArray(); // I tried using    data = LoadRestOfReader(binaryReader)   but it doesn't work
 
-                                            for (int i = 0; i < 4 * colors; i = i + 4)
+                                            int bpp = (int)dDSHeader.ddspf.dwRGBBitCount;
+                                            int colors = (int)Math.Pow(2, bpp);
+                                            int width = (int)dDSHeader.dwWidth;
+                                            int height = (int)dDSHeader.dwHeight;
+
+                                            if (data.Length == width * height * bpp / 8 + 4 * colors)
                                             {
-                                                palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2], data[i + 3]);
-                                            }
+                                                Color[] palette = new Color[colors];
+                                                Color[] image = new Color[width * height];
 
-                                            for (int i = 4 * colors; i < data.Length; i++)
+                                                for (int i = 0; i < 4 * colors; i = i + 4)
+                                                {
+                                                    palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2], data[i + 3]);
+                                                }
+
+                                                for (int i = 4 * colors; i < data.Length; i++)
+                                                {
+                                                    image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
+                                                    if (bpp == 4)
+                                                        image[(i - 4 * colors) * 2 + 1] = palette[data[i] % 16];
+                                                }
+
+                                                map = new Texture2D(width, height, TextureFormat.ARGB32, mipmap);
+                                                map.SetPixels(image);
+                                            }
+                                            else
                                             {
-                                                image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
-                                                if (bpp == 4)
-                                                    image[(i - 4 * colors) * 2 + 1] = palette[data[i] % 16];
+                                                fourcc = false;
                                             }
-
-                                            map = new Texture2D(width, height, TextureFormat.ARGB32, mipmap);
-                                            map.SetPixels(image);
+                                        }
+                                        catch
+                                        {
+                                            fourcc = false;
                                         }
                                     }
                                     else
                                     {
                                         fourcc = false;
-                                        Debug.Log("[Kopernicus]: fourcc was true but we changed it to false");
                                     }
                                 }
                                 if (!fourcc)
