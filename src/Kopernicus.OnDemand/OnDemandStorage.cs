@@ -415,8 +415,50 @@ namespace Kopernicus
                                     {
                                         Debug.Log("[Kopernicus]: DX10 dds not supported: " + path);
                                     }
+                                    else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintMagic)
+                                    {
+                                        Debug.Log("[Kopernicus]: Magic dds not supported: " + path);
+                                    }
+                                    else if (dDSHeader.ddspf.dwRGBBitCount == 4 || dDSHeader.ddspf.dwRGBBitCount == 8)
+                                    {
+                                        byte[] data = File.ReadAllBytes(path).Skip(128).ToArray(); // I tried using    data = LoadRestOfReader(binaryReader)   but it doesn't work
+
+                                        int bpp = (int)dDSHeader.ddspf.dwRGBBitCount;
+                                        int colors = (int)Math.Pow(2, bpp);
+                                        int width = (int)dDSHeader.dwWidth;
+                                        int height = (int)dDSHeader.dwHeight;
+
+                                        if (data.Length == width * height * bpp / 8 + 4 * colors)
+                                        {
+                                            Color[] palette = new Color[colors];
+                                            Color[] image = new Color[width * height];
+
+                                            for (int i = 0; i < 4 * colors; i = i + 4)
+                                            {
+                                                palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2], data[i + 3]);
+                                            }
+
+                                            for (int i = 4 * colors; i < data.Length; i++)
+                                            {
+                                                image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
+                                                if (bpp == 4)
+                                                    image[(i - 4 * colors) * 2 + 1] = palette[data[i] % 16];
+                                            }
+
+                                            map = new Texture2D(width, height);
+                                            map.SetPixels(image);
+
+                                            // This is to check that the image has been loaded correctly
+                                            byte[] png = map.EncodeToPNG();
+                                            Directory.CreateDirectory("GameData/Sigma");
+                                            File.WriteAllBytes("GameData/Sigma/test.png", png);
+                                        }
+                                    }
                                     else
+                                    {
                                         fourcc = false;
+                                        Debug.Log("[Kopernicus]: fourcc was true but we changed it to false");
+                                    }
                                 }
                                 if (!fourcc)
                                 {
