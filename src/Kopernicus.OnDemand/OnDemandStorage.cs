@@ -423,7 +423,7 @@ namespace Kopernicus
                                     {
                                         try
                                         {
-                                            byte[] data = File.ReadAllBytes(path).Skip(128).ToArray(); // I tried using    data = LoadRestOfReader(binaryReader)   but it doesn't work
+                                            byte[] data = LoadRestOfReader(binaryReader);
 
                                             int bpp = (int)dDSHeader.ddspf.dwRGBBitCount;
                                             int colors = (int)Math.Pow(2, bpp);
