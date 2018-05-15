@@ -165,7 +165,7 @@ namespace Kopernicus
                     return true;
                 }
                 return false;
-                
+
             }
 
             // Unload all maps of a body
@@ -498,7 +498,7 @@ namespace Kopernicus
                                     else
                                     {
                                         ok = false;
-                                        Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
+                                        Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
                                     }
                                     if (ok)
                                     {
