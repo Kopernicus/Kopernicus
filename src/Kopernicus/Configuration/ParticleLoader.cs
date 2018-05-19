@@ -193,7 +193,7 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Particle Loader on a spawned CelestialBody.
             /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Create)]
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
             public ParticleLoader(CelestialBody body)
             {
                 // Is this a spawned body?
@@ -210,7 +210,6 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Particle Loader from an already existing emitter
             /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public ParticleLoader(PlanetParticleEmitter particle)
             {
                 // Store values

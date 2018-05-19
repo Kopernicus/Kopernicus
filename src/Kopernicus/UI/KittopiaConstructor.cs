@@ -41,33 +41,17 @@ namespace Kopernicus
             public enum Parameter
             {
                 CelestialBody,
-                Element,
                 Empty
-            }
-
-            /// <summary>
-            /// Describes how the constructor is used
-            /// </summary>
-            public enum Purpose
-            {
-                Create = 1,
-                Edit = 2,
-                Both = Create | Edit
             }
             
             /// <summary>
-            /// The parameters for the constructor
+            /// The parameter for the constructor
             /// </summary>
-            public Parameter[] parameters;
+            public Parameter parameter;
 
-            /// <summary>
-            /// Describes how the constructor is used
-            /// </summary>
-            public Purpose purpose = Purpose.Both;
-
-            public KittopiaConstructor(params Parameter[] parameters)
+            public KittopiaConstructor(Parameter parameter)
             {
-                this.parameters = parameters;
+                this.parameter = parameter;
             }
         }
     }

@@ -89,14 +89,13 @@ namespace Kopernicus
                         set { Value.lerpToNext = value; }
                     }
 
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LandClassLoader ()
                     {
                         // Initialize the land class
                         Value = new PQSMod_HeightColorMap.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
                     }
 
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassLoader(PQSMod_HeightColorMap.LandClass c)
                     {
                         Value = c;

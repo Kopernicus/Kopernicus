@@ -294,7 +294,7 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Ring Loader from a spawned CelestialBody.
             /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Create)]
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
             public RingLoader(CelestialBody body)
             {
                 // Is this a spawned body?
@@ -350,7 +350,6 @@ namespace Kopernicus
             }
 
             // Initialize the RingLoader
-            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public RingLoader(Ring value)
             {
                 Value = value;

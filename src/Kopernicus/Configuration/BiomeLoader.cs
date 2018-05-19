@@ -89,14 +89,13 @@ namespace Kopernicus
             }
 
             // Allocate the biome descriptor
-            [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+            [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
             public BiomeLoader()
             {
                 Value = new CBAttributeMapSO.MapAttribute();
             }
 
             // Get reference to existing biome descriptor
-            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public BiomeLoader(CBAttributeMapSO.MapAttribute attribute)
             {
                 Value = attribute;

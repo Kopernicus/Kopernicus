@@ -131,7 +131,7 @@ namespace Kopernicus
                         }
                     } 
 
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LODRangeLoader ()
                     {
                         // Initialize the LOD range
@@ -139,7 +139,6 @@ namespace Kopernicus
                         Value.objects = new GameObject[0];
                     }
 
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LODRangeLoader(PQSCity2.LodObject c)
                     {
                         Value = c;

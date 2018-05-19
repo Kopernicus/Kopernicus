@@ -146,7 +146,7 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Corona Loader for an already existing body.
             /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Create)]
+            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
             public CoronaLoader(CelestialBody body)
             {
                 // Is this a spawned body?
@@ -184,7 +184,6 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Corona Loader from an already existing corona
             /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
             public CoronaLoader(SunCoronas component)
             {
                 Value = component;

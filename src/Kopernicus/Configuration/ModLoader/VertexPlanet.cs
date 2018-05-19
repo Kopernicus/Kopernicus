@@ -89,7 +89,7 @@ namespace Kopernicus
                     }
 
                     // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public SimplexLoader()
                     {
                         Value = new KopernicusSimplexWrapper(0, 0, 0, 0);
@@ -102,7 +102,6 @@ namespace Kopernicus
                     }
 
                     // Runtime constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public SimplexLoader(KopernicusSimplexWrapper simplex)
                     {
                         Value = simplex;
@@ -220,14 +219,13 @@ namespace Kopernicus
                     }
 
                     // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public NoiseModLoader()
                     {
                         Value = new PQSMod_VertexPlanet.NoiseModWrapper(0, 0, 0, 0);
                     }
 
                     // Runtime Constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public NoiseModLoader(PQSMod_VertexPlanet.NoiseModWrapper noise)
                     {
                         Value = noise;
@@ -350,14 +348,13 @@ namespace Kopernicus
                     }
                     
                     // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LandClassLoader()
                     {
                         Value = new PQSMod_VertexPlanet.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
                     }
 
                     // Runtime constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassLoader(PQSMod_VertexPlanet.LandClass land)
                     {
                         Value = land;

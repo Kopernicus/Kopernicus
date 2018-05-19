@@ -125,7 +125,6 @@ namespace Kopernicus
             }
 
             // Standard constructor takes a science parameters object
-            [KittopiaConstructor(KittopiaConstructor.Parameter.Element)]
             public ScienceValuesLoader(CelestialBodyScienceParams value)
             {
                 Value = value;

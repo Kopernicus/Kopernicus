@@ -254,7 +254,7 @@ namespace Kopernicus
                     }
 
                     // Default Constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LandClassScatterLoader()
                     {
                         Value = new PQSLandControl.LandClassScatter();
@@ -280,7 +280,6 @@ namespace Kopernicus
                     }
 
                     // Runtime constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassScatterLoader(PQSLandControl.LandClassScatter value)
                     {
                         Value = value;
@@ -394,14 +393,13 @@ namespace Kopernicus
                     }
 
                     // Default Constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LandClassScatterAmountLoader()
                     {
                         Value = new PQSLandControl.LandClassScatterAmount();
                     }
 
                     // Runtime Constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassScatterAmountLoader(PQSLandControl.LandClassScatterAmount amount)
                     {
                          Value = amount;
@@ -464,14 +462,13 @@ namespace Kopernicus
                     }
 
                     // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LerpRangeLoader()
                     {
                         Value = new PQSLandControl.LerpRange();
                     }
 
                     // Runtime Constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LerpRangeLoader(PQSLandControl.LerpRange lerp)
                     {
                         Value = lerp;
@@ -736,7 +733,7 @@ namespace Kopernicus
                     public CallbackList<LandClassScatterAmountLoader> scatter { get; set; }
 
                     // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty, purpose = KittopiaConstructor.Purpose.Create)]
+                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LandClassLoader()
                     {
                         Value = new PQSLandControl.LandClass();
@@ -794,7 +791,6 @@ namespace Kopernicus
                     }
 
                     // Runtime constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Element, purpose = KittopiaConstructor.Purpose.Edit)]
                     public LandClassLoader(PQSLandControl.LandClass value)
                     {
                         Value = value;

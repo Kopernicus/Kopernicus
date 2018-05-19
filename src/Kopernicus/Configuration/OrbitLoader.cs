@@ -318,7 +318,6 @@ namespace Kopernicus
             /// <summary>
             /// Creates a new Orbit Loader from a spawned CelestialBody.
             /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody, purpose = KittopiaConstructor.Purpose.Edit)]
             public OrbitLoader(CelestialBody body)
             {
                 // Is this a spawned body?
