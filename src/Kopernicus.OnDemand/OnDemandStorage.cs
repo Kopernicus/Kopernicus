@@ -165,7 +165,7 @@ namespace Kopernicus
                     return true;
                 }
                 return false;
-                
+
             }
 
             // Unload all maps of a body
@@ -415,8 +415,55 @@ namespace Kopernicus
                                     {
                                         Debug.Log("[Kopernicus]: DX10 dds not supported: " + path);
                                     }
+                                    else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintMagic)
+                                    {
+                                        Debug.Log("[Kopernicus]: Magic dds not supported: " + path);
+                                    }
+                                    else if (dDSHeader.ddspf.dwRGBBitCount == 4 || dDSHeader.ddspf.dwRGBBitCount == 8)
+                                    {
+                                        try
+                                        {
+                                            byte[] data = LoadRestOfReader(binaryReader);
+
+                                            int bpp = (int)dDSHeader.ddspf.dwRGBBitCount;
+                                            int colors = (int)Math.Pow(2, bpp);
+                                            int width = (int)dDSHeader.dwWidth;
+                                            int height = (int)dDSHeader.dwHeight;
+
+                                            if (data.Length == width * height * bpp / 8 + 4 * colors)
+                                            {
+                                                Color[] palette = new Color[colors];
+                                                Color[] image = new Color[width * height];
+
+                                                for (int i = 0; i < 4 * colors; i = i + 4)
+                                                {
+                                                    palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2], data[i + 3]);
+                                                }
+
+                                                for (int i = 4 * colors; i < data.Length; i++)
+                                                {
+                                                    image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
+                                                    if (bpp == 4)
+                                                        image[(i - 64) * 2 + 1] = palette[data[i] % 16];
+                                                }
+
+                                                map = new Texture2D(width, height, TextureFormat.ARGB32, mipmap);
+                                                map.SetPixels(image);
+                                            }
+                                            else
+                                            {
+                                                fourcc = false;
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            fourcc = false;
+                                        }
+                                    }
                                     else
+                                    {
                                         fourcc = false;
+                                    }
                                 }
                                 if (!fourcc)
                                 {
@@ -451,7 +498,7 @@ namespace Kopernicus
                                     else
                                     {
                                         ok = false;
-                                        Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
+                                        Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
                                     }
                                     if (ok)
                                     {
