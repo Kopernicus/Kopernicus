@@ -42,6 +42,7 @@ namespace Kopernicus
             [PreApply]
             [ParserTarget("enabled")]
             [KittopiaDescription("Whether the body has an atmosphere.")]
+            [KittopiaHideOption]
             public NumericParser<Boolean> enabled 
             {
                 get { return Value.atmosphere; }
@@ -253,24 +254,9 @@ namespace Kopernicus
                 }
             }
 
-            [KittopiaAction("Remove Atmosphere", destructive = true)]
-            [KittopiaDescription("Removes the Atmosphere of this body.")]
-            public void RemoveAtmosphere()
+            [KittopiaDestructor]
+            public void Destroy()
             {
-                // Remove the Atmosphere from Ground
-                AtmosphereFromGround[] afgs = Value.GetComponentsInChildren<AtmosphereFromGround>();
-                foreach (AtmosphereFromGround afg in afgs)
-                {
-                    UnityEngine.Object.Destroy(afg.gameObject);
-                }
-
-                // Disable the Light controller
-                MaterialSetDirection[] msds = Value.GetComponentsInChildren<MaterialSetDirection>();
-                foreach (MaterialSetDirection msd in msds)
-                {
-                    UnityEngine.Object.Destroy(msd.gameObject);
-                }
-
                 // No Atmosphere :(
                 Value.atmosphere = false;
             }
@@ -336,6 +322,7 @@ namespace Kopernicus
                 {
                     atmosphereFromGround = new AtmosphereFromGroundLoader(Value);
                 }
+                Value.atmosphere = true;
             }
         }
     }

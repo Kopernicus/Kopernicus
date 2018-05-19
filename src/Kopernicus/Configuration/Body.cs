@@ -164,6 +164,7 @@ namespace Kopernicus
             public OrbitLoader orbit { get; set; }
 
             // Wrapper around the settings for the world's scaled version
+            [KittopiaUntouchable]
             [ParserTarget("ScaledVersion", AllowMerge = true)]
             public ScaledVersionLoader scaledVersion { get; set; }
 
@@ -188,10 +189,12 @@ namespace Kopernicus
             public List<ParticleLoader> particles { get; set; }
 
             // Wrapper around the settings for the SpaceCenter
+            [KittopiaUntouchable]
             [ParserTarget("SpaceCenter", AllowMerge = true)]
             public SpaceCenterLoader spaceCenter { get; set; }
 
             // Wrapper around DebugMode settings
+            [KittopiaUntouchable]
             [ParserTarget("Debug")]
             public DebugLoader debug { get; set; }
 

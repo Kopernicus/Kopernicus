@@ -216,6 +216,7 @@
     <Compile Include="UI\KittopiaDescription.cs" />
     <Compile Include="UI\KittopiaDestructor.cs" />
     <Compile Include="UI\KittopiaHideOption.cs" />
+    <Compile Include="UI\KittopiaUntouchable.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

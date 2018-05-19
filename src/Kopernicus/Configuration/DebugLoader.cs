@@ -76,7 +76,7 @@ namespace Kopernicus
             /// <summary>
             /// Toggles the wireframe that gets added to the planet to show it's sphere of influence
             /// </summary>
-            [ContextMenu("Toggle SOI Visibility")]
+            [KittopiaAction("Toggle SOI Visibility")]
             [KittopiaDescription("Visualizes the SOI of the planet.")]
             public void ShowSOI()
             {

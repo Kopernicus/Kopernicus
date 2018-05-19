@@ -391,7 +391,6 @@ namespace Kopernicus
                 {
                     detail.displayStringValue = true;
                     detail.stringValues = _details ?? (_details = Templates.PresetDisplayNames.ToArray());
-                    Debug.Log(detail);
                 }
             }
         }

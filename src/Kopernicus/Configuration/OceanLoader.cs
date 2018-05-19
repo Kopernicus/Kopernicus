@@ -131,9 +131,14 @@ namespace Kopernicus
 
             // Killer-Ocean
             [ParserTarget("HazardousOcean", AllowMerge = true)]
-            public FloatCurveParser hazardousOcean;
+            public FloatCurveParser hazardousOcean
+            {
+                get { return Value.gameObject.GetComponent<HazardousOcean>()?.heatCurve; }
+                set { Value.gameObject.AddOrGetComponent<HazardousOcean>().heatCurve = value; }
+            }
 
             // Ocean-Fog
+            [KittopiaUntouchable]
             [ParserTarget("Fog", AllowMerge = true)]
             public FogLoader fog;
             
@@ -201,11 +206,6 @@ namespace Kopernicus
                     uvs.requirements = PQS.ModiferRequirements.Default;
                     uvs.modEnabled = true;
                     uvs.order = 999999;
-
-                    // Create the fallback material (always the same shader)
-                    fallbackMaterial = new PQSProjectionFallbackLoader();
-                    Value.fallbackMaterial = fallbackMaterial;
-                    fallbackMaterial.name = Guid.NewGuid().ToString();
                 }
 
                 // Assing the new PQS
@@ -308,11 +308,6 @@ namespace Kopernicus
                     uvs.requirements = PQS.ModiferRequirements.Default;
                     uvs.modEnabled = true;
                     uvs.order = 999999;
-
-                    // Create the fallback material (always the same shader)
-                    fallbackMaterial = new PQSProjectionFallbackLoader();
-                    Value.fallbackMaterial = fallbackMaterial;
-                    fallbackMaterial.name = Guid.NewGuid().ToString();
                 }
 
                 // Assing the new PQS
@@ -331,7 +326,6 @@ namespace Kopernicus
                 foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
                 {
                     Type modType = mod.GetType();
-                    Debug.Log(modType);
                     foreach (Type loaderType in Parser.ModTypes)
                     {
                         if (loaderType.BaseType == null)
@@ -368,12 +362,6 @@ namespace Kopernicus
             // Post Apply
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
-                // Load the Killer Ocean, if it is there
-                if (hazardousOcean != null)
-                {
-                    Value.gameObject.AddComponent<HazardousOcean>().heatCurve = hazardousOcean;
-                }
-                
                 // Reset the PQS state
                 Parser.ClearState("Kopernicus:pqsVersion");
 

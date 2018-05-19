@@ -78,6 +78,7 @@ namespace Kopernicus
             }
 
             // Create the Kopernicus LightShifter
+            [KittopiaUntouchable]
             [ParserTarget("Light", AllowMerge = true)]
             public LightShifterLoader lightShifter
             {
@@ -121,7 +122,28 @@ namespace Kopernicus
             [ParserTarget("Material", AllowMerge = true)]
             public Material material
             {
-                get { return Value.scaledBody.GetComponent<Renderer>().sharedMaterial; }
+                get
+                {
+                    Renderer r = Value.scaledBody.GetComponent<Renderer>();
+                    if (r.sharedMaterial != null)
+                    {
+                        if (ScaledPlanetSimple.UsesSameShader(r.sharedMaterial) && !(r.sharedMaterial is ScaledPlanetSimple))
+                        {
+                            r.sharedMaterial = new ScaledPlanetSimpleLoader(r.sharedMaterial);
+                        }
+
+                        if (ScaledPlanetRimAerial.UsesSameShader(r.sharedMaterial) && !(r.sharedMaterial is ScaledPlanetRimAerial))
+                        {
+                            r.sharedMaterial = new ScaledPlanetRimAerialLoader(r.sharedMaterial);
+                        }
+
+                        if (EmissiveMultiRampSunspots.UsesSameShader(r.sharedMaterial) && !(r.sharedMaterial is EmissiveMultiRampSunspots))
+                        {
+                            r.sharedMaterial = new EmissiveMultiRampSunspotsLoader(r.sharedMaterial);
+                        }
+                    }
+                    return r.sharedMaterial;
+                }
                 set { Value.scaledBody.GetComponent<Renderer>().sharedMaterial = value; }
             }
 

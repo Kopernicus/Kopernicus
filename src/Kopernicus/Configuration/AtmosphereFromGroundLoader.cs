@@ -51,7 +51,15 @@ namespace Kopernicus
             public NumericParser<Boolean> DEBUG_alwaysUpdateAll
             {
                 get { return Value.DEBUG_alwaysUpdateAll; }
-                set { Value.DEBUG_alwaysUpdateAll = value; }
+                set
+                {
+                    Value.DEBUG_alwaysUpdateAll = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
             }
 
             // doScale
@@ -60,7 +68,15 @@ namespace Kopernicus
             public NumericParser<Boolean> doScale
             {
                 get { return Value.doScale; }
-                set { Value.doScale = value; }
+                set
+                {
+                    Value.doScale = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
             }
 
             // ESun
@@ -85,7 +101,15 @@ namespace Kopernicus
             public NumericParser<Single> innerRadius
             {
                 get { return Value.innerRadius / Invscalefactor; }
-                set { Value.innerRadius = value * Invscalefactor; }
+                set
+                {
+                    Value.innerRadius = value * Invscalefactor;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
             }
 
             // invWaveLength
@@ -96,7 +120,14 @@ namespace Kopernicus
                 set
                 {
                     Value.invWaveLength = value;
-                    Value.waveLength = new Color((Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[0])), (Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[1])), (Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[2])), 0.5f);
+                    Value.waveLength = new Color((Single) Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[0])),
+                        (Single) Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[1])),
+                        (Single) Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[2])), 0.5f);
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
                 }
             }
 
@@ -122,7 +153,15 @@ namespace Kopernicus
             public NumericParser<Single> outerRadius
             {
                 get { return Value.outerRadius / Invscalefactor; }
-                set { Value.outerRadius = value * Invscalefactor; }
+                set
+                {
+                    Value.outerRadius = value * Invscalefactor;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
             }
 
             // samples
@@ -130,7 +169,15 @@ namespace Kopernicus
             public NumericParser<Single> samples
             {
                 get { return Value.samples; }
-                set { Value.samples = value; }
+                set
+                {
+                    Value.samples = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
             }
 
             // scale
@@ -150,11 +197,21 @@ namespace Kopernicus
             // }
 
             [ParserTarget("transformScale")]
-            [KittopiaDescription("The scale of the atmosphere mesh in all three directions. Automatically set if doScale is enabled.")]
+            [KittopiaDescription(
+                "The scale of the atmosphere mesh in all three directions. Automatically set if doScale is enabled.")]
             public Vector3Parser transformScale
             {
                 get { return Value.doScale ? Vector3.zero : Value.transform.localScale; }
-                set { Value.transform.localScale = value; Value.doScale = false; }
+                set
+                {
+                    Value.transform.localScale = value;
+                    Value.doScale = false;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
             }
 
             // waveLength
@@ -165,7 +222,14 @@ namespace Kopernicus
                 set
                 {
                     Value.waveLength = value;
-                    Value.invWaveLength = new Color((Single)(1d / Math.Pow(Value.waveLength[0], 4)), (Single)(1d / Math.Pow(Value.waveLength[1], 4)), (Single)(1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);
+                    Value.invWaveLength = new Color((Single) (1d / Math.Pow(Value.waveLength[0], 4)),
+                        (Single) (1d / Math.Pow(Value.waveLength[1], 4)),
+                        (Single) (1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
                 }
             }
 
@@ -174,8 +238,16 @@ namespace Kopernicus
             [KittopiaDescription("A multiplier that automatically sets outerRadius based on the planets radius.")]
             public NumericParser<Single> outerRadiusMult
             {
-                get { return Value.outerRadius / Invscalefactor / (Single)Value.planet.Radius; }
-                set { Value.outerRadius = (Single)Value.planet.Radius * value * Invscalefactor; }
+                get { return Value.outerRadius / Invscalefactor / (Single) Value.planet.Radius; }
+                set
+                {
+                    Value.outerRadius = (Single) Value.planet.Radius * value * Invscalefactor;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
             }
 
             // innerRadiusMult
@@ -184,7 +256,36 @@ namespace Kopernicus
             public NumericParser<Single> innerRadiusMult
             {
                 get { return Value.innerRadius / Value.outerRadius; }
-                set { Value.innerRadius = Value.outerRadius * value; }
+                set
+                {
+                    Value.innerRadius = Value.outerRadius * value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        CalculatedMembers(Value);
+                        AFGInfo.StoreAFG(Value);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Removes the atmosphere from ground
+            /// </summary>
+            [KittopiaDestructor]
+            public void Destroy()
+            {
+                // Remove the Atmosphere from Ground
+                AtmosphereFromGround[] afgs = Value.transform.parent.GetComponentsInChildren<AtmosphereFromGround>();
+                foreach (AtmosphereFromGround afg in afgs)
+                {
+                    UnityEngine.Object.Destroy(afg.gameObject);
+                }
+
+                // Disable the Light controller
+                MaterialSetDirection[] msds = Value.transform.parent.GetComponentsInChildren<MaterialSetDirection>();
+                foreach (MaterialSetDirection msd in msds)
+                {
+                    UnityEngine.Object.Destroy(msd.gameObject);
+                }
             }
 
             /// <summary>
@@ -204,31 +305,14 @@ namespace Kopernicus
                 {
                     Value.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
                 }
-                Value.outerRadius = (Single)Value.planet.Radius * 1.025f * Invscalefactor;
+
+                Value.outerRadius = (Single) Value.planet.Radius * 1.025f * Invscalefactor;
                 Value.innerRadius = Value.outerRadius * 0.975f;
                 Value.scaleDepth = -0.25f;
-                Value.invWaveLength = new Color((Single)(1d / Math.Pow(Value.waveLength[0], 4)), (Single)(1d / Math.Pow(Value.waveLength[1], 4)), (Single)(1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);
-            }
-
-            /// <summary>
-            /// Calculates the default members for the AFG
-            /// </summary>
-            [KittopiaAction("Calculate Members")]
-            [KittopiaDescription("Calculates values that are based on changeable values.")]
-            public void CalculateMembers()
-            {
+                Value.invWaveLength = new Color((Single) (1d / Math.Pow(Value.waveLength[0], 4)),
+                    (Single) (1d / Math.Pow(Value.waveLength[1], 4)), (Single) (1d / Math.Pow(Value.waveLength[2], 4)),
+                    0.5f);
                 CalculatedMembers(Value);
-            }
-
-            /// <summary>
-            /// Stores the members for the AFG
-            /// </summary>
-            [KittopiaAction("Store AFG")]
-            [KittopiaDescription("Stores the parameters of the AtmosphereFromGround so they are applied on top of the default ones.")]
-            public void Store()
-            {
-                CalculateMembers();
-                AFGInfo.StoreAFG(Value);
             }
 
             /// <summary>
@@ -255,9 +339,6 @@ namespace Kopernicus
             {
                 // Set defaults
                 SetDefaultValues();
-                
-                // Calculate the remaining values
-                CalculateMembers();
 
                 // Fire event
                 Events.OnAFGLoaderApply.Fire(this, node);
@@ -267,7 +348,8 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 // Recalculate with the new values and store
-                Store();
+                CalculatedMembers(Value);
+                AFGInfo.StoreAFG(Value);
 
                 // Fire event
                 Events.OnAFGLoaderPostApply.Fire(this, node);
@@ -283,12 +365,14 @@ namespace Kopernicus
                     throw new InvalidOperationException("Must be executed in Injector context.");
 
                 // Store values
-                Value = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)?.FirstOrDefault();
+                Value = generatedBody.scaledVersion.GetComponentsInChildren<AtmosphereFromGround>(true)
+                    ?.FirstOrDefault();
 
                 if (Value == null)
                 {
                     // Add the material light direction behavior
-                    MaterialSetDirection materialLightDirection = generatedBody.scaledVersion.AddComponent<MaterialSetDirection>();
+                    MaterialSetDirection materialLightDirection =
+                        generatedBody.scaledVersion.AddComponent<MaterialSetDirection>();
                     materialLightDirection.valueName = "_localLightDirection";
 
                     // Create the atmosphere shell game object
@@ -301,6 +385,7 @@ namespace Kopernicus
                     meshFilter.sharedMesh = Templates.ReferenceGeosphere;
                     Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
                 }
+
                 Value.planet = generatedBody.celestialBody;
             }
 
@@ -332,7 +417,11 @@ namespace Kopernicus
                     MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh = Templates.ReferenceGeosphere;
                     Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+
+                    // Set defaults
+                    SetDefaultValues();
                 }
+
                 Value.planet = body;
             }
         }

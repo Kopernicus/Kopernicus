@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kopernicus.UI;
 
 namespace Kopernicus
 {
@@ -201,6 +202,7 @@ namespace Kopernicus
             }
 
             // Science values of this body
+            [KittopiaUntouchable]
             [ParserTarget("ScienceValues", AllowMerge = true)]
             public ScienceValuesLoader scienceValues { get; set; }
 
@@ -259,7 +261,17 @@ namespace Kopernicus
             public NumericParser<Boolean> useTheInName
             {
                 get { return Value.bodyDisplayName.StartsWith("The", StringComparison.InvariantCultureIgnoreCase); }
-                set { Value.bodyDisplayName = "The " + Value.bodyName; }
+                set
+                {
+                    if (value)
+                    {
+                        Value.bodyDisplayName = "The " + Value.bodyName;
+                    }
+                    else
+                    {
+                        Value.bodyDisplayName = Value.bodyName;
+                    }
+                }
             }
 
             [ParserTarget("displayName")]

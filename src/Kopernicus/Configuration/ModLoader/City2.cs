@@ -91,7 +91,7 @@ namespace Kopernicus
                                     UnityEngine.Object.Instantiate(subobj).transform.parent = obj.transform;
                                 }
                             }
-                            else
+                            else if (Value.objects.Length == 1)
                             {
                                 obj = Value.objects[0];
                             }
@@ -279,8 +279,8 @@ namespace Kopernicus
                         {
                             obj.transform.parent = mod.transform;
                             obj.transform.localPosition = Vector3.zero;
+                            obj.SetLayerRecursive(GameLayers.LocalSpace);
                         }
-                        mod.gameObject.SetLayerRecursive(GameLayers.LocalSpace);
                     });
                     mod.objects = new PQSCity2.LodObject[0];
                 }
@@ -299,8 +299,8 @@ namespace Kopernicus
                         {
                             obj.transform.parent = mod.transform;
                             obj.transform.localPosition = Vector3.zero;
+                            obj.SetLayerRecursive(GameLayers.LocalSpace);
                         }
-                        mod.gameObject.SetLayerRecursive(GameLayers.LocalSpace);
                     });
                     
                     // Load LandClasses
