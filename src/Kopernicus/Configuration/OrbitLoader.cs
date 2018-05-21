@@ -149,7 +149,7 @@ namespace Kopernicus
                     }
                     KopernicusOrbitRendererData data =
                         (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
-                    return data.orbitColor;
+                    return data.nodeColor;
                 }
                 set
                 {

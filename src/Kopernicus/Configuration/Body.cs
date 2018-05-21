@@ -26,6 +26,7 @@
 using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;
@@ -157,15 +158,17 @@ namespace Kopernicus
 
             // Celestial body properties (description, mass, etc.)
             [ParserTarget("Properties", AllowMerge = true)]
+            [KittopiaUntouchable]
             public PropertiesLoader properties { get; set; }
 
             // Wrapper around KSP's Orbit class for editing/loading
             [ParserTarget("Orbit", AllowMerge = true)]
+            [KittopiaUntouchable]
             public OrbitLoader orbit { get; set; }
 
             // Wrapper around the settings for the world's scaled version
-            [KittopiaUntouchable]
             [ParserTarget("ScaledVersion", AllowMerge = true)]
+            [KittopiaUntouchable]
             public ScaledVersionLoader scaledVersion { get; set; }
 
             // Wrapper around the settings for the world's atmosphere
@@ -189,21 +192,38 @@ namespace Kopernicus
             public List<ParticleLoader> particles { get; set; }
 
             // Wrapper around the settings for the SpaceCenter
-            [KittopiaUntouchable]
             [ParserTarget("SpaceCenter", AllowMerge = true)]
+            [KittopiaUntouchable]
             public SpaceCenterLoader spaceCenter { get; set; }
 
             // Wrapper around DebugMode settings
-            [KittopiaUntouchable]
             [ParserTarget("Debug")]
+            [KittopiaUntouchable]
             public DebugLoader debug { get; set; }
 
             // Post spawn orbit patcher
             [ParserTarget("PostSpawnOrbit")]
+            [KittopiaHideOption]
             public ConfigNode postSpawnOrbit
             {
                 get { return celestialBody.Get<ConfigNode>("orbitPatches", null); }
                 set { celestialBody.Set("orbitPatches", value); }
+            }
+
+            [KittopiaAction("Export Body")]
+            [KittopiaDescription("Exports the body as a Kopernicus config file.")]
+            public void ExportConfig()
+            {
+                ConfigNode config = PlanetConfigExporter.CreateConfig(this);
+                ConfigNode kopernicus = new ConfigNode("@Kopernicus:NEEDS[!Kopernicus]");
+                kopernicus.AddNode(config);
+                ConfigNode wrapper = new ConfigNode();
+                wrapper.AddNode(kopernicus);
+                
+                // Save the node
+                Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "GameData/KittopiaTech/PluginData");
+                wrapper.Save("GameData/KittopiaTech/PluginData/" + name + ".cfg",
+                    "KittopiaTech - a Kopernicus Visual Editor");
             }
 
             // Parser Apply Event

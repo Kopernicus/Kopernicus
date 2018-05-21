@@ -30,6 +30,7 @@ using System.Linq;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.UI;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Kopernicus
 {
@@ -111,6 +112,7 @@ namespace Kopernicus
 
             // Surface Material of the PQS
             [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+            [KittopiaUntouchable]
             public Material surfaceMaterial
             {
                 get { return Value.surfaceMaterial; }
@@ -119,6 +121,7 @@ namespace Kopernicus
 
             // Fallback Material of the PQS (its always the same material)
             [ParserTarget("FallbackMaterial", AllowMerge = true)]
+            [KittopiaUntouchable]
             public Material fallbackMaterial
             {
                 get { return Value.fallbackMaterial; }
@@ -127,19 +130,45 @@ namespace Kopernicus
 
             // PQSMod loader
             [ParserTargetCollection("Mods", AllowMerge = true, NameSignificance = NameSignificance.Type)]
+            [KittopiaUntouchable]
             public List<IModLoader> mods = new List<IModLoader>();
 
             // Killer-Ocean
             [ParserTarget("HazardousOcean", AllowMerge = true)]
             public FloatCurveParser hazardousOcean
             {
-                get { return Value.gameObject.GetComponent<HazardousOcean>()?.heatCurve; }
-                set { Value.gameObject.AddOrGetComponent<HazardousOcean>().heatCurve = value; }
+                get
+                {
+                    HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
+                    if (ocean == null)
+                    {
+                        return null;
+                    }
+                    return ocean.heatCurve;
+                }
+                set
+                {
+                    HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
+                    if (value == null && ocean != null)
+                    {
+                        UnityEngine.Object.Destroy(ocean);
+                        return;
+                    }
+                    if (value != null && ocean == null)
+                    {
+                        ocean = Value.gameObject.AddComponent<HazardousOcean>();
+                    }
+
+                    if (value != null)
+                    {
+                        ocean.heatCurve = value;
+                    }
+                }
             }
 
             // Ocean-Fog
-            [KittopiaUntouchable]
             [ParserTarget("Fog", AllowMerge = true)]
+            [KittopiaUntouchable]
             public FogLoader fog;
             
             /// <summary>

@@ -58,6 +58,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -75,6 +76,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -108,6 +110,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -127,6 +130,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -160,6 +164,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -176,6 +181,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -201,7 +207,7 @@ namespace Kopernicus
                 "The scale of the atmosphere mesh in all three directions. Automatically set if doScale is enabled.")]
             public Vector3Parser transformScale
             {
-                get { return Value.doScale ? Vector3.zero : Value.transform.localScale; }
+                get { return Value.transform.localScale; }
                 set
                 {
                     Value.transform.localScale = value;
@@ -210,6 +216,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -229,6 +236,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -246,6 +254,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -263,6 +272,7 @@ namespace Kopernicus
                     {
                         CalculatedMembers(Value);
                         AFGInfo.StoreAFG(Value);
+                        AFGInfo.PatchAFG(Value);
                     }
                 }
             }
@@ -274,6 +284,8 @@ namespace Kopernicus
             public void Destroy()
             {
                 // Remove the Atmosphere from Ground
+                Value.planet.afg = null;
+                AFGInfo.atmospheres.Remove(Value.planet.transform.name);
                 AtmosphereFromGround[] afgs = Value.transform.parent.GetComponentsInChildren<AtmosphereFromGround>();
                 foreach (AtmosphereFromGround afg in afgs)
                 {
@@ -284,7 +296,7 @@ namespace Kopernicus
                 MaterialSetDirection[] msds = Value.transform.parent.GetComponentsInChildren<MaterialSetDirection>();
                 foreach (MaterialSetDirection msd in msds)
                 {
-                    UnityEngine.Object.Destroy(msd.gameObject);
+                    UnityEngine.Object.Destroy(msd);
                 }
             }
 
@@ -416,12 +428,17 @@ namespace Kopernicus
                     renderer.sharedMaterial = new MaterialWrapper.AtmosphereFromGround();
                     MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                     meshFilter.sharedMesh = Templates.ReferenceGeosphere;
-                    Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+                    Value = body.afg = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+                    Value.planet = body;
+                    Value.sunLight = Sun.Instance.gameObject;
+                    Value.mainCamera = ScaledCamera.Instance.transform;
+                    AFGInfo.StoreAFG(Value);
+                    AFGInfo.PatchAFG(Value);
 
                     // Set defaults
                     SetDefaultValues();
                 }
-
+                
                 Value.planet = body;
             }
         }

@@ -202,8 +202,8 @@ namespace Kopernicus
             }
 
             // Science values of this body
-            [KittopiaUntouchable]
             [ParserTarget("ScienceValues", AllowMerge = true)]
+            [KittopiaUntouchable]
             public ScienceValuesLoader scienceValues { get; set; }
 
             // Biome definition via MapSO parser

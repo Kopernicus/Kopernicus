@@ -26,6 +26,7 @@
 using Kopernicus.MaterialWrapper;
 using Kopernicus.OnDemand;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Kopernicus.Components;
@@ -78,8 +79,8 @@ namespace Kopernicus
             }
 
             // Create the Kopernicus LightShifter
-            [KittopiaUntouchable]
             [ParserTarget("Light", AllowMerge = true)]
+            [KittopiaUntouchable]
             public LightShifterLoader lightShifter
             {
                 get
@@ -103,6 +104,7 @@ namespace Kopernicus
 
             // Coronas for a star's scaled version
             [ParserTargetCollection("Coronas", NameSignificance = NameSignificance.None)]
+            [KittopiaUntouchable]
             public List<CoronaLoader> coronas = new List<CoronaLoader>();
 
             [ParserTarget("sphericalModel")]
@@ -120,6 +122,7 @@ namespace Kopernicus
             }
 
             [ParserTarget("Material", AllowMerge = true)]
+            [KittopiaUntouchable]
             public Material material
             {
                 get
@@ -152,6 +155,12 @@ namespace Kopernicus
             {
                 Utility.UpdateScaledMesh(Value.scaledBody, Value.pqsController, Value, Body.ScaledSpaceCacheDirectory,
                     Value.Get("cacheFile", ""), Value.Get("exportMesh", true), sphericalModel);
+            }
+            
+            [KittopiaAction("Rebuild ScaledSpace Textures")]
+            public IEnumerator RebuildTextures()
+            {
+                return PlanetTextureExporter.UpdateTextures(Value, new PlanetTextureExporter.TextureOptions());
             }
 
             // Parser apply event
@@ -346,6 +355,10 @@ namespace Kopernicus
                 Value = body;
                 coronas = Value.scaledBody.GetComponentsInChildren<SunCoronas>(true).Select(c => new CoronaLoader(c))
                     .ToList();
+                if (!coronas.Any())
+                {
+                    coronas = null;
+                }
 
                 // Figure out what kind of body we are
                 if (Value.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0)

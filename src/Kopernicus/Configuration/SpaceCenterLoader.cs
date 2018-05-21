@@ -45,7 +45,14 @@ namespace Kopernicus
             public NumericParser<Double> latitude
             {
                 get { return Value.latitude; }
-                set { Value.latitude = value; }
+                set
+                {
+                    Value.latitude = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // longitude
@@ -54,14 +61,28 @@ namespace Kopernicus
             public NumericParser<Double> longitude
             {
                 get { return Value.longitude; }
-                set { Value.longitude = value; }
+                set
+                {
+                    Value.longitude = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             [ParserTarget("repositionRadial")]
             public Vector3Parser repositionRadial
             {
                 get { return Value.repositionRadial; }
-                set { Value.repositionRadial = value; }
+                set
+                {
+                    Value.repositionRadial = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // decalLatitude
@@ -70,7 +91,14 @@ namespace Kopernicus
             public NumericParser<Double> decalLatitude
             {
                 get { return Value.decalLatitude; }
-                set { Value.decalLatitude = value; }
+                set
+                {
+                    Value.decalLatitude = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // decalLongitude
@@ -79,7 +107,14 @@ namespace Kopernicus
             public NumericParser<Double> decalLongitude
             {
                 get { return Value.decalLongitude; }
-                set { Value.decalLongitude = value; }
+                set
+                {
+                    Value.decalLongitude = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // lodvisibleRangeMultipler
@@ -87,7 +122,14 @@ namespace Kopernicus
             public NumericParser<Double> lodvisibleRangeMultipler
             {
                 get { return Value.lodvisibleRangeMult; }
-                set { Value.lodvisibleRangeMult = value; }
+                set
+                {
+                    Value.lodvisibleRangeMult = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // reorientFinalAngle
@@ -95,7 +137,14 @@ namespace Kopernicus
             public NumericParser<Single> reorientFinalAngle
             {
                 get { return Value.reorientFinalAngle; }
-                set { Value.reorientFinalAngle = value; }
+                set
+                {
+                    Value.reorientFinalAngle = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // reorientInitialUp
@@ -103,7 +152,14 @@ namespace Kopernicus
             public Vector3Parser reorientInitialUp
             {
                 get { return Value.reorientInitialUp; }
-                set { Value.reorientInitialUp = value; }
+                set
+                {
+                    Value.reorientInitialUp = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // reorientToSphere
@@ -111,7 +167,14 @@ namespace Kopernicus
             public NumericParser<Boolean> reorientToSphere
             {
                 get { return Value.reorientToSphere; }
-                set { Value.reorientToSphere = value; }
+                set
+                {
+                    Value.reorientToSphere = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // repositionRadiusOffset
@@ -119,7 +182,14 @@ namespace Kopernicus
             public NumericParser<Double> repositionRadiusOffset
             {
                 get { return Value.repositionRadiusOffset; }
-                set { Value.repositionRadiusOffset = value; }
+                set
+                {
+                    Value.repositionRadiusOffset = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // repositionToSphere
@@ -127,7 +197,14 @@ namespace Kopernicus
             public NumericParser<Boolean> repositionToSphere
             {
                 get { return Value.repositionToSphere; }
-                set { Value.repositionToSphere = value; }
+                set
+                {
+                    Value.repositionToSphere = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // repositionToSphereSurface
@@ -135,7 +212,14 @@ namespace Kopernicus
             public NumericParser<Boolean> repositionToSphereSurface
             {
                 get { return Value.repositionToSphereSurface; }
-                set { Value.repositionToSphereSurface = value; }
+                set
+                {
+                    Value.repositionToSphereSurface = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // repositionToSphereSurfaceAddHeight
@@ -143,7 +227,14 @@ namespace Kopernicus
             public NumericParser<Boolean> repositionToSphereSurfaceAddHeight
             {
                 get { return Value.repositionToSphereSurfaceAddHeight; }
-                set { Value.repositionToSphereSurfaceAddHeight = value; }
+                set
+                {
+                    Value.repositionToSphereSurfaceAddHeight = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // position
@@ -152,7 +243,14 @@ namespace Kopernicus
             public Vector3Parser position
             {
                 get { return Value.position; }
-                set { Value.position = value; }
+                set
+                {
+                    Value.position = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // radius
@@ -161,7 +259,14 @@ namespace Kopernicus
             public NumericParser<Double> radius
             {
                 get { return Value.radius; }
-                set { Value.radius = value; }
+                set
+                {
+                    Value.radius = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // heightMapDeformity
@@ -169,7 +274,14 @@ namespace Kopernicus
             public NumericParser<Double> heightMapDeformity
             {
                 get { return Value.heightMapDeformity; }
-                set { Value.heightMapDeformity = value; }
+                set
+                {
+                    Value.heightMapDeformity = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // absoluteOffset
@@ -177,7 +289,14 @@ namespace Kopernicus
             public NumericParser<Double> absoluteOffset
             {
                 get { return Value.absoluteOffset; }
-                set { Value.absoluteOffset = value; }
+                set
+                {
+                    Value.absoluteOffset = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // absolute
@@ -185,7 +304,14 @@ namespace Kopernicus
             public NumericParser<Boolean> absolute
             {
                 get { return Value.absolute; }
-                set { Value.absolute = value; }
+                set
+                {
+                    Value.absolute = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // groundColor
@@ -194,7 +320,14 @@ namespace Kopernicus
             public ColorParser groundColorParser
             {
                 get { return Value.color; }
-                set { Value.color = value; }
+                set
+                {
+                    Value.color = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // Texture
@@ -203,14 +336,14 @@ namespace Kopernicus
             public Texture2DParser groundTextureParser
             {
                 get { return Value.mainTexture; }
-                set { Value.mainTexture = value; }
-            }
-
-            [KittopiaAction("Update KSC")]
-            [KittopiaDescription("Updates and applies the parameters of the KSC object")]
-            public void UpdateKSC()
-            {
-                Value.Start();
+                set
+                {
+                    Value.mainTexture = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
             }
 
             // Apply event

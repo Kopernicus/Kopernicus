@@ -217,6 +217,9 @@
     <Compile Include="UI\KittopiaDestructor.cs" />
     <Compile Include="UI\KittopiaHideOption.cs" />
     <Compile Include="UI\KittopiaUntouchable.cs" />
+    <Compile Include="UI\PlanetConfigExporter.cs" />
+    <Compile Include="UI\PlanetTextureExporter.cs" />
+    <Compile Include="UI\Tools.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

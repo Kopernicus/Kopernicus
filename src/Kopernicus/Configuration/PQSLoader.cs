@@ -159,6 +159,7 @@ namespace Kopernicus
 
             // Surface Material of the PQS
             [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+            [KittopiaUntouchable]
             public Material surfaceMaterial
             {
                 get { return Value.surfaceMaterial; }
@@ -167,6 +168,7 @@ namespace Kopernicus
 
             // Fallback Material of the PQS (its always the same material)
             [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
+            [KittopiaUntouchable]
             public Material fallbackMaterial
             {
                 get { return Value.fallbackMaterial; }
@@ -175,6 +177,7 @@ namespace Kopernicus
 
             // PQSMod loader
             [ParserTargetCollection("Mods", AllowMerge = true, NameSignificance = NameSignificance.Type)]
+            [KittopiaUntouchable]
             public List<IModLoader> mods = new List<IModLoader>();
 
             /// <summary>
@@ -487,6 +490,12 @@ namespace Kopernicus
                         mods.Add(loader);
                     }
                 }
+            }
+
+            [KittopiaDestructor]
+            public void Destroy()
+            {
+                UnityEngine.Object.Destroy(Value.gameObject);
             }
 
             // Apply Event
