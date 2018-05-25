@@ -60,9 +60,9 @@ namespace Kopernicus
             Value = new List<T>();
 
             // Get the tokens of this String
-            foreach (String e in s.Split(' '))
+            foreach (String e in s.Split(new[] { ' ', ',', ';', '\t' }, StringSplitOptions.RemoveEmptyEntries))
             {
-                Value.Add((T)_parserMethod.Invoke(null, new Object[] { e }));
+                Value.Add((T) _parserMethod.Invoke(null, new Object[] {e}));
             }
         }
 

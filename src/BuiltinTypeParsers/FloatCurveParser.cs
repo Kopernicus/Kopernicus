@@ -26,7 +26,10 @@
  * https://kerbalspaceprogram.com
  */
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using UnityEngine;
 
 namespace Kopernicus
@@ -37,22 +40,53 @@ namespace Kopernicus
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public class FloatCurveParser : IParserEventSubscriber, ITypeParser<FloatCurve>, IConfigNodeWritable
+    public class FloatCurveParser : ITypeParser<FloatCurve>
     {
         /// <summary>
         /// The value that is being parsed
         /// </summary>
         public FloatCurve Value { get; set; }
-        
-        // Build the curve from the data found in the node
-        void IParserEventSubscriber.Apply(ConfigNode node)
-        {
-            Value = new FloatCurve();
-            Value.Load(node);
-        }
 
-        // We don't use this
-        void IParserEventSubscriber.PostApply(ConfigNode node) { }
+        [ParserTargetCollection("self", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> keys
+        {
+            get
+            {
+                return Value.Curve.keys.Select(k =>
+                        new NumericCollectionParser<Single>(new List<Single>
+                        {
+                            k.time,
+                            k.value,
+                            k.inTangent,
+                            k.outTangent
+                        }))
+                    .ToList();
+            }
+            set
+            {
+                if (value == null)
+                {
+                    Value = null;
+                    return;
+                }
+                Value.Curve.keys = new Keyframe[0];
+                foreach (NumericCollectionParser<Single> key in value)
+                {
+                    if (key.Value.Count < 2)
+                    {
+                        Debug.LogError("FloatCurve: Invalid line. Requires two values, 'time' and 'value'");
+                    }
+                    if (key.Value.Count == 4)
+                    {
+                        Value.Add(key.Value[0], key.Value[1], key.Value[2], key.Value[3]);
+                    }
+                    else
+                    {
+                        Value.Add(key.Value[0], key.Value[1]);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Interface a class can implment to support conversion to a ConfigNode
@@ -74,7 +108,7 @@ namespace Kopernicus
         /// </summary>
         public FloatCurveParser()
         {
-            Value = null;
+            Value = new FloatCurve();
         }
         
         /// <summary>
