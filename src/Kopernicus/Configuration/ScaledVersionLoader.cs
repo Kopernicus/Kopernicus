@@ -125,29 +125,17 @@ namespace Kopernicus
             [KittopiaUntouchable]
             public Material material
             {
-                get
-                {
-                    Renderer r = Value.scaledBody.GetComponent<Renderer>();
-                    if (r.sharedMaterial != null)
-                    {
-                        if (ScaledPlanetSimple.UsesSameShader(r.sharedMaterial) && !(r.sharedMaterial is ScaledPlanetSimple))
-                        {
-                            r.sharedMaterial = new ScaledPlanetSimpleLoader(r.sharedMaterial);
-                        }
-
-                        if (ScaledPlanetRimAerial.UsesSameShader(r.sharedMaterial) && !(r.sharedMaterial is ScaledPlanetRimAerial))
-                        {
-                            r.sharedMaterial = new ScaledPlanetRimAerialLoader(r.sharedMaterial);
-                        }
-
-                        if (EmissiveMultiRampSunspots.UsesSameShader(r.sharedMaterial) && !(r.sharedMaterial is EmissiveMultiRampSunspots))
-                        {
-                            r.sharedMaterial = new EmissiveMultiRampSunspotsLoader(r.sharedMaterial);
-                        }
-                    }
-                    return r.sharedMaterial;
-                }
+                get { return Value.scaledBody.GetComponent<Renderer>().sharedMaterial; }
                 set { Value.scaledBody.GetComponent<Renderer>().sharedMaterial = value; }
+            }
+
+            [ParserTarget("TextureOptions", AllowMerge = true)]
+            [KittopiaHideOption(export = false, show = true)]
+            [KittopiaUntouchable]
+            public PlanetTextureExporter.TextureOptions options
+            {
+                get { return Value.Get("textureOptions", new PlanetTextureExporter.TextureOptions()); }
+                set { Value.Set("textureOptions", value); }
             }
 
             [KittopiaAction("Rebuild ScaledSpace Mesh")]
@@ -160,7 +148,7 @@ namespace Kopernicus
             [KittopiaAction("Rebuild ScaledSpace Textures")]
             public IEnumerator RebuildTextures()
             {
-                return PlanetTextureExporter.UpdateTextures(Value, new PlanetTextureExporter.TextureOptions());
+                return PlanetTextureExporter.UpdateTextures(Value, options);
             }
 
             // Parser apply event
@@ -179,11 +167,17 @@ namespace Kopernicus
                 if (type.Value != BodyType.Star)
                 {
                     // If we are not a star, we need a scaled space fader and a sphere collider
-                    if (Value.scaledBody.GetComponent<ScaledSpaceFader>() == null)
+                    ScaledSpaceFader fader = Value.scaledBody.GetComponent<ScaledSpaceFader>();
+                    if (fader == null)
                     {
-                        ScaledSpaceFader fader = Value.scaledBody.AddComponent<ScaledSpaceFader>();
+                        fader = Value.scaledBody.AddComponent<SharedScaledSpaceFader>();
                         fader.floatName = "_Opacity";
                         fader.celestialBody = Value;
+                    }
+                    else if (!(fader is SharedScaledSpaceFader))
+                    {
+                        Utility.CopyObjectFields(fader, Value.scaledBody.AddComponent<SharedScaledSpaceFader>());
+                        UnityEngine.Object.DestroyImmediate(fader);
                     }
 
                     // Add a sphere collider if we need one
@@ -227,8 +221,16 @@ namespace Kopernicus
                 else
                 {
                     // Add the SunShaderController behavior
-                    if (Value.scaledBody.GetComponent<SunShaderController>() == null)
-                        Value.scaledBody.AddComponent<SunShaderController>();
+                    SunShaderController controller = Value.scaledBody.GetComponent<SunShaderController>();
+                    if (controller == null)
+                    {
+                        Value.scaledBody.AddComponent<SharedSunShaderController>();
+                    }
+                    else if (!(controller is SharedSunShaderController))
+                    {
+                        Utility.CopyObjectFields(controller, Value.scaledBody.AddComponent<SharedSunShaderController>());
+                        UnityEngine.Object.DestroyImmediate(controller);
+                    }
 
                     // Add the ScaledSun behavior
                     // TODO - apparently there can only be one of these (or it destroys itself)
@@ -367,6 +369,25 @@ namespace Kopernicus
                     type = BodyType.Atmospheric;
                 else
                     type = BodyType.Vacuum;
+
+                if (type != BodyType.Star)
+                {
+                    ScaledSpaceFader fader = Value.scaledBody.GetComponent<ScaledSpaceFader>();
+                    if (!(fader is SharedScaledSpaceFader))
+                    {
+                        Utility.CopyObjectFields(fader, Value.scaledBody.AddComponent<SharedScaledSpaceFader>());
+                        UnityEngine.Object.Destroy(fader);
+                    }
+                }
+                else
+                {
+                    SunShaderController controller = Value.scaledBody.GetComponent<SunShaderController>();
+                    if (controller != null && !(controller is SharedSunShaderController))
+                    {
+                        Utility.CopyObjectFields(controller, Value.scaledBody.AddComponent<SharedSunShaderController>());
+                        UnityEngine.Object.Destroy(controller);
+                    }
+                }
 
                 // Assign the proper scaled space loaders
                 if (material == null)

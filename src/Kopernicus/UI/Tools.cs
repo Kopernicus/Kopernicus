@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -166,7 +167,8 @@ namespace Kopernicus
             /// <summary>
             /// Return whether the member has an ignore marker attached
             /// </summary>
-            public static Boolean HasAttribute<T>(MemberInfo memberInfo) where T : Attribute
+            public static Boolean HasAttribute<T>(MemberInfo memberInfo)
+                where T : Attribute
             {
                 Object[] values =
                     memberInfo.GetCustomAttributes(typeof(T), false);
@@ -256,6 +258,50 @@ namespace Kopernicus
             }
 
             /// <summary>
+            /// Sets the value of a parsertarget using a string
+            /// </summary>
+            public static Object SetValueFromString(Type memberType, Object current, String value)
+            {
+                // Get the current value
+                Object backup = current;
+
+                try
+                {
+                    // Is the member a string member?
+                    if (memberType == typeof(String))
+                    {
+                        // Simply assign the new value
+                        return current = value;
+                    }
+
+                    // Is the member a parsable type?
+                    if (typeof(IParsable).IsAssignableFrom(memberType))
+                    {
+                        // Is the member null?
+                        if (current == null)
+                        {
+                            current = Activator.CreateInstance(memberType);
+                        }
+
+                        // Now we can parse the value
+                        IParsable parser = (IParsable) current;
+                        parser.SetFromString(value);
+
+                        // Reapply
+                        return current = parser;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    return current = backup;
+                }
+
+                // The member wasn't parsable
+                throw new InvalidOperationException("The member wasn't parsable");
+            }
+
+            /// <summary>
             /// Parses and applies the user input to a ParserTarget
             /// </summary>
             public static String ApplyInput(MemberInfo member, String input, Object reference)
@@ -292,6 +338,8 @@ namespace Kopernicus
                 ConstructorInfo[] methods =
                     type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
+                Object value = null;
+
                 for (Int32 i = 0; i < methods.Length; i++)
                 {
                     // Is the method a KittopiaDestructor?
@@ -300,17 +348,34 @@ namespace Kopernicus
                         KittopiaConstructor attr = GetAttributes<KittopiaConstructor>(methods[i])[0];
                         if (attr.parameter == KittopiaConstructor.Parameter.Empty)
                         {
-                            return methods[i].Invoke(null);
+                            value = methods[i].Invoke(null);
                         }
 
                         if (attr.parameter == KittopiaConstructor.Parameter.CelestialBody)
                         {
-                            return methods[i].Invoke(new Object[] {body});
+                            value = methods[i].Invoke(new Object[] {body});
                         }
                     }
                 }
 
-                return null;
+                if (value == null)
+                {
+                    value = Activator.CreateInstance(type);
+                }
+                            
+                // Check if the object implements other constructors
+                if (typeof(ICreatable<CelestialBody>).IsAssignableFrom(type))
+                {
+                    ICreatable<CelestialBody> creatable = (ICreatable<CelestialBody>) value;
+                    creatable.Create(body);
+                }
+                else if (typeof(ICreatable).IsAssignableFrom(type))
+                {
+                    ICreatable creatable = (ICreatable) value;
+                    creatable.Create();
+                }
+
+                return value;
             }
 
             /// <summary>

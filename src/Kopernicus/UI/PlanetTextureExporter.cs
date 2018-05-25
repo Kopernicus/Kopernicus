@@ -183,8 +183,8 @@ namespace Kopernicus
                 }
 
                 // Serialize the maps to disk
-                String path = KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/PluginData/" +
-                              celestialBody.transform.name + "/";
+                String name = "KittopiaTech/PluginData/" + celestialBody.transform.name + "/";
+                String path = KSPUtil.ApplicationRootPath + "/GameData/" + name;
                 Directory.CreateDirectory(path);
 
                 // Colormap
@@ -197,6 +197,7 @@ namespace Kopernicus
                     if (options.SaveToDisk)
                     {
                         File.WriteAllBytes(path + celestialBody.transform.name + "_Color.png", colorMap.EncodeToPNG());
+                        colorMap.name = name + celestialBody.transform.name + "_Color.png";
                         yield return null;
                     }
 
@@ -230,6 +231,7 @@ namespace Kopernicus
                         {
                             File.WriteAllBytes(path + celestialBody.transform.name + "_Normal.png",
                                 normalMap.EncodeToPNG());
+                            normalMap.name = name + celestialBody.transform.name + "_Normal.png";
                             yield return null;
                         }
 

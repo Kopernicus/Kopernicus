@@ -78,6 +78,13 @@ namespace Kopernicus
                 {
                     ParserTarget parserTarget = keyValuePair.Key;
                     MemberInfo memberInfo = keyValuePair.Value;
+                    
+                    // Is this value hidden?
+                    if (Tools.HasAttribute<KittopiaHideOption>(memberInfo) &&
+                        !Tools.GetAttributes<KittopiaHideOption>(memberInfo)[0].export)
+                    {
+                        continue;
+                    }
 
                     // Is this a collection or a single value?
                     if (Tools.IsCollection(parserTarget))
@@ -119,7 +126,21 @@ namespace Kopernicus
                         name += ":" + value.GetType().Name;
                     }
 
-                    ConfigNode valueNode = node.AddNode(name);
+                    ConfigNode valueNode;
+
+                    // Get a description
+                    String description = Tools.GetDescription(memberInfo);
+
+                    // Add it to the config
+                    if (String.IsNullOrEmpty(description))
+                    {
+                        valueNode = node.AddNode(name);
+                    }
+                    else
+                    {
+                        valueNode = node.AddNode(name, description);
+                    }
+                    
                     WriteToConfig(value, ref valueNode);
                 }
             }
@@ -162,7 +183,18 @@ namespace Kopernicus
                             targetNode = node;
                             if (parserTarget.FieldName != "self")
                             {
-                                targetNode = node.AddNode(parserTarget.FieldName);
+                                // Get a description
+                                String description = Tools.GetDescription(memberInfo);
+
+                                // Add it to the config
+                                if (String.IsNullOrEmpty(description))
+                                {
+                                    targetNode = node.AddNode(parserTarget.FieldName);
+                                }
+                                else
+                                {
+                                    targetNode = node.AddNode(parserTarget.FieldName, description);
+                                }
                             }
                         }
 
@@ -209,7 +241,18 @@ namespace Kopernicus
                             targetNode = node;
                             if (parserTarget.FieldName != "self")
                             {
-                                targetNode = node.AddNode(parserTarget.FieldName);
+                                // Get a description
+                                String description = Tools.GetDescription(memberInfo);
+
+                                // Add it to the config
+                                if (String.IsNullOrEmpty(description))
+                                {
+                                    targetNode = node.AddNode(parserTarget.FieldName);
+                                }
+                                else
+                                {
+                                    targetNode = node.AddNode(parserTarget.FieldName, description);
+                                }
                             }
                         }
 

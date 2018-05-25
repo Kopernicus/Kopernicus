@@ -180,6 +180,13 @@ namespace Kopernicus
             [KittopiaUntouchable]
             public List<IModLoader> mods = new List<IModLoader>();
 
+            [KittopiaAction("Rebuild Sphere")]
+            [KittopiaDescription("Rebuilds the surface of the planet.")]
+            public void Rebuild()
+            {
+                Value.RebuildSphere();
+            }
+
             /// <summary>
             /// Creates a new PQS Loader from the Injector context.
             /// </summary>

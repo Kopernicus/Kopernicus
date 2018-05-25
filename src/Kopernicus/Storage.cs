@@ -109,6 +109,7 @@ namespace Kopernicus
             {
                 return body.Get<T>(id);
             }
+            body.Set(id, defaultValue);
             return defaultValue;
         }
 

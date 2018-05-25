@@ -34,7 +34,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class ModLoader<T> : BaseLoader, IModLoader, IPatchable, ICreatable<T>, ITypeParser<T> where T : PQSMod
+            public abstract class ModLoader<T> : BaseLoader, IModLoader, IPatchable, ICreatable<PQSMod>, ICreatable<CelestialBody>, ITypeParser<T> where T : PQSMod
             {
                 // The mod loader must always be able to return a mod
                 public T mod { get; set; }
@@ -60,6 +60,10 @@ namespace Kopernicus
                 {
                     get
                     {
+                        if (_pqsVersionOverride != null)
+                        {
+                            return _pqsVersionOverride;
+                        }
                         try
                         {
                             return Parser.GetState<PQS>("Kopernicus:pqsVersion");
@@ -70,6 +74,8 @@ namespace Kopernicus
                         }
                     }
                 }
+
+                private PQS _pqsVersionOverride;
 
                 // Mod loader provides basic PQS mod loading functions
                 [ParserTarget("order")]
@@ -108,9 +114,16 @@ namespace Kopernicus
                 }
 
                 // Creates the a PQSMod of type T
-                void ICreatable<T>.Create(T value)
+                void ICreatable<PQSMod>.Create(PQSMod value)
                 {
-                    Create(value, pqsVersion);
+                    Create((T)value, pqsVersion);
+                }
+
+                // Creates the a PQSMod from the specified body
+                void ICreatable<CelestialBody>.Create(CelestialBody value)
+                {
+                    _pqsVersionOverride = value.pqsController;
+                    Create(pqsVersion);
                 }
 
                 // Creates the a PQSMod of type T with given PQS

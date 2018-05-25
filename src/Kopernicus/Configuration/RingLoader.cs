@@ -237,8 +237,8 @@ namespace Kopernicus
             [KittopiaDescription("Updates the mesh of the planetary ring.")]
             public void RebuildRing()
             {
-                UnityEngine.Object.Destroy(Value.GetComponent<MeshRenderer>());
-                UnityEngine.Object.Destroy(Value.GetComponent<MeshFilter>());
+                UnityEngine.Object.DestroyImmediate(Value.GetComponent<MeshRenderer>());
+                UnityEngine.Object.DestroyImmediate(Value.GetComponent<MeshFilter>());
                 Value.BuildRing();
             }
 
