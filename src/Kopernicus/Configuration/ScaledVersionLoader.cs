@@ -134,7 +134,7 @@ namespace Kopernicus
             [KittopiaUntouchable]
             public PlanetTextureExporter.TextureOptions options
             {
-                get { return Value.Get("textureOptions", new PlanetTextureExporter.TextureOptions()); }
+                get { return Value.Get<PlanetTextureExporter.TextureOptions>("textureOptions", null); }
                 set { Value.Set("textureOptions", value); }
             }
 
@@ -340,6 +340,11 @@ namespace Kopernicus
                     Value.scaledBody.AddComponent<MeshRenderer>();
                     Value.scaledBody.GetComponent<Renderer>().material = null;
                 }
+
+                if (options == null)
+                {
+                    options = new PlanetTextureExporter.TextureOptions();
+                }
             }
 
             /// <summary>
@@ -405,6 +410,11 @@ namespace Kopernicus
                 if (EmissiveMultiRampSunspots.UsesSameShader(material))
                 {
                     material = new EmissiveMultiRampSunspotsLoader(material);
+                }
+
+                if (options == null)
+                {
+                    options = new PlanetTextureExporter.TextureOptions();
                 }
             }
         }
