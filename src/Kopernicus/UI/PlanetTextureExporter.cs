@@ -222,7 +222,7 @@ namespace Kopernicus
                     if (options.ExportNormal)
                     {
                         // Bump to Normal Map
-                        Texture2D normalMap = Utility.BumpToNormalMap(heightMap, options.NormalStrength);
+                        Texture2D normalMap = Utility.BumpToNormalMap(heightMap, pqsVersion.radius, options.NormalStrength);
                         yield return null;
                         
                         if (options.SaveToDisk)

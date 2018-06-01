@@ -107,11 +107,11 @@ namespace Kopernicus
 
                     System.Object sourceValue = property.GetValue(source, null);
                     System.Object destValue = property.GetValue(destination, null);
-                    
+
                     // Check if both values are equal
                     if (sourceValue == destValue)
                         continue;
-                    
+
                     // Log the fields
                     if (log)
                     {
@@ -341,7 +341,7 @@ namespace Kopernicus
             // Compute scale between Jool and this body
             Single scale = (Single)(body.Radius / rJool);
             scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
-            
+
             // Attempt to load a cached version of the scale space
             String cacheDirectory = KSPUtil.ApplicationRootPath + "GameData/" + path;
             if (!String.IsNullOrEmpty(cacheFile))
@@ -390,11 +390,11 @@ namespace Kopernicus
         {
             // We need to get the body for Jool (to steal it's mesh)
             const Double rScaledJool = 1000.0f;
-            Double rMetersToScaledUnits = (Single) (rScaledJool / body.Radius);
+            Double rMetersToScaledUnits = (Single)(rScaledJool / body.Radius);
 
             // Generate a duplicate of the Jool mesh
             Mesh mesh = DuplicateMesh(Templates.ReferenceGeosphere);
-            
+
             Logger.Active.Log(body);
             Logger.Active.Log(pqs);
             Logger.Active.Log(body.pqsController);
@@ -425,7 +425,7 @@ namespace Kopernicus
                 PQS pqsOcean = pqs.ChildSpheres?.FirstOrDefault();
 
                 // Deactivate blacklisted Mods
-                Type[] blacklist = {typeof(PQSMod_OnDemandHandler)};
+                Type[] blacklist = { typeof(PQSMod_OnDemandHandler) };
                 foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true)
                     .Where(m => m.enabled && blacklist.Contains(m.GetType())))
                 {
@@ -504,7 +504,7 @@ namespace Kopernicus
                         }
 
                         // Adjust the displacement
-                        vertices[i] = direction * (Single) (vertex.vertHeight * rMetersToScaledUnits);
+                        vertices[i] = direction * (Single)(vertex.vertHeight * rMetersToScaledUnits);
                     }
                     mesh.vertices = vertices;
                     mesh.RecalculateNormals();
@@ -774,22 +774,38 @@ namespace Kopernicus
             return m;
         }
 
-        // Credit goes to Kragrathea.
-        public static Texture2D BumpToNormalMap(Texture2D source, Single strength)
+        // Credit goes to Sigma88.
+        public static Texture2D BumpToNormalMap(Texture2D source, Double radius, Single strength)
         {
-            strength = Mathf.Clamp(strength, 0.0F, 10.0F);
+            double dS = radius * 2 * Math.PI / source.width;
+
+            if (!(strength > 0)) strength = 1;
+
             Texture2D result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
             for (Int32 by = 0; by < result.height; by++)
             {
                 for (Int32 bx = 0; bx < result.width; bx++)
                 {
-                    Single xLeft = source.GetPixel(bx - 1, by).grayscale * strength;
-                    Single xRight = source.GetPixel(bx + 1, by).grayscale * strength;
-                    Single yUp = source.GetPixel(bx, by - 1).grayscale * strength;
-                    Single yDown = source.GetPixel(bx, by + 1).grayscale * strength;
-                    Single xDelta = (xLeft - xRight + 1) * 0.5f;
-                    Single yDelta = (yUp - yDown + 1) * 0.5f;
-                    result.SetPixel(bx, by, new Color(yDelta, yDelta, yDelta, xDelta));
+                    if (by == 0 || by == result.height - 1 || source.GetPixel(bx, by).r == 0)
+                    {
+                        result.SetPixel(bx, by, new Color(0.5f, 0.5f, 0.5f, 0.5f));
+                    }
+                    else
+                    {
+                        int xN = (bx + result.width - 1) % result.width;
+                        int xP = (bx + result.width + 1) % result.width;
+
+                        int yN = by - 1;
+                        int yP = by + 1;
+
+                        float dX = source.GetPixel(xP, by).r - source.GetPixel(xN, by).r;
+                        float dY = source.GetPixel(bx, yP).r - source.GetPixel(bx, yN).r;
+
+                        double slopeX = (1 + dX / Math.Pow(dX * dX + dS * dS, 0.5) * strength) / 2;
+                        double slopeY = (1 - dY / Math.Pow(dY * dY + dS * dS, 0.5) * strength) / 2;
+
+                        result.SetPixel(bx, by, new Color((float)slopeY, (float)slopeY, (float)slopeY, (float)slopeX));
+                    }
                 }
             }
             result.Apply();
@@ -964,7 +980,7 @@ namespace Kopernicus
                             }
                         }
                         cpMods.Remove(delMod);
-                        
+
                         // If no mod is left, delete the game object too
                         GameObject gameObject = delMod.gameObject;
                         UnityEngine.Object.DestroyImmediate(delMod);
