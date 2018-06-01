@@ -73,8 +73,7 @@ namespace Kopernicus
                 }
 
                 // Tell the PQS that we are going to build maps
-                pqsVersion.isBuildingMaps = true;
-                pqsVersion.isFakeBuild = true;
+                pqsVersion.SetupExternalRender();
 
                 // Get the mod building methods from the PQS
                 Action<PQS.VertexBuildData> modOnVertexBuildHeight =
@@ -88,12 +87,12 @@ namespace Kopernicus
                     pqsVersion,
                     typeof(PQS).GetMethod("Mod_OnVertexBuild", BindingFlags.Instance | BindingFlags.NonPublic));
 
-                // Disable the PQS
-                pqsVersion.gameObject.SetActive(false);
-
                 // Get all mods the PQS is connected to
                 PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>()
-                    .Where(m => m.sphere == pqsVersion && m.modEnabled).ToArray();
+                    .Where(m => m.sphere == pqsVersion && m.modEnabled).OrderBy(m => m.order).ToArray();
+                
+                // Prevent the PQS from updating
+                pqsVersion.enabled = false;
 
                 // Create the Textures
                 Texture2D colorMap = new Texture2D(pqsVersion.mapFilesize, pqsVersion.mapFilesize / 2,
@@ -106,7 +105,6 @@ namespace Kopernicus
                 // Arrays
                 Color[] colorMapValues = new Color[pqsVersion.mapFilesize * (pqsVersion.mapFilesize / 2)];
                 Color[] heightMapValues = new Color[pqsVersion.mapFilesize * (pqsVersion.mapFilesize / 2)];
-
 
                 // Create a VertexBuildData
                 PQS.VertexBuildData data = new PQS.VertexBuildData();
@@ -246,8 +244,8 @@ namespace Kopernicus
                 }
 
                 // Close the Renderer
-                pqsVersion.isBuildingMaps = false;
-                pqsVersion.isFakeBuild = false;
+                pqsVersion.enabled = true;
+                pqsVersion.CloseExternalRender();
                 
                 // Declare that we're done
                 ScreenMessages.RemoveMessage(message);
