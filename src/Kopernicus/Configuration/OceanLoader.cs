@@ -30,7 +30,6 @@ using System.Linq;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.UI;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Kopernicus
 {
