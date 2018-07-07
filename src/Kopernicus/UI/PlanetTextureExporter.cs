@@ -76,12 +76,21 @@ namespace Kopernicus
                 pqsVersion.SetupExternalRender();
 
                 // Get the mod building methods from the PQS
+                #if !KSP131
+                Action<PQS.VertexBuildData, Boolean> modOnVertexBuildHeight = 
+                    (Action<PQS.VertexBuildData, Boolean>) Delegate.CreateDelegate(
+                        typeof(Action<PQS.VertexBuildData, Boolean>),
+                        pqsVersion,
+                        typeof(PQS).GetMethod("Mod_OnVertexBuildHeight",
+                            BindingFlags.Instance | BindingFlags.NonPublic));
+                #else
                 Action<PQS.VertexBuildData> modOnVertexBuildHeight =
                     (Action<PQS.VertexBuildData>) Delegate.CreateDelegate(
                         typeof(Action<PQS.VertexBuildData>),
                         pqsVersion,
                         typeof(PQS).GetMethod("Mod_OnVertexBuildHeight",
                             BindingFlags.Instance | BindingFlags.NonPublic));
+                #endif
                 Action<PQS.VertexBuildData> modOnVertexBuild = (Action<PQS.VertexBuildData>) Delegate.CreateDelegate(
                     typeof(Action<PQS.VertexBuildData>),
                     pqsVersion,
@@ -135,7 +144,11 @@ namespace Kopernicus
                         Double height = Double.MinValue;
                         if (options.ExportHeight)
                         {
+                            #if !KSP131
+                            modOnVertexBuildHeight(data, true);
+                            #else
                             modOnVertexBuildHeight(data);
+                            #endif
 
                             // Adjust the height
                             height = (data.vertHeight - pqsVersion.radius) * (1d / pqsVersion.mapMaxHeight);
