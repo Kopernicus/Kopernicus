@@ -34,20 +34,3 @@ Instructions
 Examples
 ----------
 Selectively copy folders inside of [KopernicusExamples/](https://github.com/Kopernicus/KopernicusExamples/) into a GameData/KopernicusExamples/ folder.  There are a number of examples of how to use Kopernicus.
-
-Information
------------
-Coming Soon
-
-Compiling
-----------
-To compile Kopernicus you need to add the following assemblies from your KSP_Data/Managed folder into the toplevel directory of the repository:
-
-* Assembly-CSharp.dll
-* Assembly-CSharp-firstpass.dll
-* KSPUtil.dll
-* ModularFlightIntegrator.dll
-* UnityEngine.dll
-* UnityEngine.UI.dll
-
-After that you can compile the .sln file with VS, MonoDevelop or other build tools. If you have Linux experience you can use Makefiles too, however, you will need Microsofts Roslyn compiler for it. 
