@@ -775,9 +775,9 @@ namespace Kopernicus
         }
 
         // Credit goes to Sigma88.
-        public static Texture2D BumpToNormalMap(Texture2D source, Double radius, Single strength)
+        public static Texture2D BumpToNormalMap(Texture2D source, PQS pqs, Single strength)
         {
-            double dS = radius * 2 * Math.PI / source.width;
+            double dS = pqs.radius * 2 * Math.PI / source.width;
 
             if (!(strength > 0)) strength = 1;
 
@@ -798,8 +798,8 @@ namespace Kopernicus
                         int yN = by - 1;
                         int yP = by + 1;
 
-                        float dX = source.GetPixel(xP, by).r - source.GetPixel(xN, by).r;
-                        float dY = source.GetPixel(bx, yP).r - source.GetPixel(bx, yN).r;
+                        double dX = (source.GetPixel(xP, by).r - source.GetPixel(xN, by).r) * pqs.radiusDelta;
+                        double dY = (source.GetPixel(bx, yP).r - source.GetPixel(bx, yN).r) * pqs.radiusDelta;
 
                         double slopeX = (1 + dX / Math.Pow(dX * dX + dS * dS, 0.5) * strength) / 2;
                         double slopeY = (1 - dY / Math.Pow(dY * dY + dS * dS, 0.5) * strength) / 2;
