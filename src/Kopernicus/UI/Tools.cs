@@ -115,8 +115,7 @@ namespace Kopernicus
 
                 if (configTypes == null || !configTypes.Any())
                 {
-                    Debug.Log(memberType);
-                    throw new InvalidOperationException("Member needs to have a parsable type.");
+                    throw new InvalidOperationException("Member needs to have a parsable type: " + memberType);
                 }
 
                 return configTypes[0].Type;

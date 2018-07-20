@@ -194,7 +194,7 @@ namespace Kopernicus
                 }
 
                 // Serialize the maps to disk
-                String name = "KittopiaTech/PluginData/" + celestialBody.transform.name + "/";
+                String name = "KittopiaTech/PluginData/" + celestialBody.transform.name + "/" + DateTime.Now.ToString("s") + "/";
                 String path = KSPUtil.ApplicationRootPath + "/GameData/" + name;
                 Directory.CreateDirectory(path);
 
@@ -235,7 +235,7 @@ namespace Kopernicus
                     if (options.ExportNormal)
                     {
                         // Bump to Normal Map
-                        Texture2D normalMap = Utility.BumpToNormalMap(heightMap, pqsVersion.radius, options.NormalStrength);
+                        Texture2D normalMap = Utility.BumpToNormalMap(heightMap, pqsVersion, options.NormalStrength);
                         yield return null;
                         
                         if (options.SaveToDisk)
