@@ -216,7 +216,7 @@ namespace Kopernicus
                     if (options.ApplyToScaled)
                     {
                         colorMap.Apply();
-                        celestialBody.scaledBody.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", colorMap);
+                        celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex", colorMap);
                     }
                 }
 
@@ -250,7 +250,7 @@ namespace Kopernicus
                         if (options.ApplyToScaled)
                         {
                             normalMap.Apply();
-                            celestialBody.scaledBody.GetComponent<MeshRenderer>().material
+                            celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial
                                 .SetTexture("_BumpMap", normalMap);
                         }
                     }

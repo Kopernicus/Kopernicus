@@ -105,7 +105,7 @@ namespace Kopernicus
                 if (!GetComponent<ParticleRenderer>())
                 {
                     renderer = gameObject.AddComponent<ParticleRenderer>();
-                    renderer.material = new Material(Shader.Find("Particles/Alpha Blended"));
+                    renderer.sharedMaterial = new Material(Shader.Find("Particles/Alpha Blended"));
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace Kopernicus
                 emitter.maxSize = maxSize;
                 animator.sizeGrow = sizeGrow;
                 animator.colorAnimation = colorAnimation;
-                renderer.material.mainTexture = mainTexture;
+                renderer.sharedMaterial.mainTexture = mainTexture;
                 filter.mesh = filter.sharedMesh = mesh ?? transform.parent.GetComponent<MeshFilter>().sharedMesh;
                 animator.force = force;
                 

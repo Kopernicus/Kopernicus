@@ -293,7 +293,7 @@ namespace Kopernicus
                     // Loop through all Materials and change their settings
                     try
                     {
-                        foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString()))
+                        foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.HasProperty("_Color") && m.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString()))
                         {
                             // Patch the texture
                             if (ksc.mainTexture != null)

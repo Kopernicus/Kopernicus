@@ -193,22 +193,22 @@ namespace Kopernicus
                 // Set texture
                 ringMR = gameObject.AddComponent<MeshRenderer>();
                 Renderer parentRenderer = parent.GetComponent<Renderer>();
-                ringMR.material = new Material(getShader());
-                ringMR.material.SetTexture("_MainTex", texture);
+                ringMR.sharedMaterial = new Material(getShader());
+                ringMR.sharedMaterial.SetTexture("_MainTex", texture);
 
-                ringMR.material.SetFloat("innerRadius", innerRadius * parent.transform.localScale.x);
-                ringMR.material.SetFloat("outerRadius", outerRadius * parent.transform.localScale.x);
+                ringMR.sharedMaterial.SetFloat("innerRadius", innerRadius * parent.transform.localScale.x);
+                ringMR.sharedMaterial.SetFloat("outerRadius", outerRadius * parent.transform.localScale.x);
 
                 if (useNewShader)
                 {
-                    ringMR.material.SetFloat("planetRadius", planetRadius);
-                    ringMR.material.SetFloat("penumbraMultiplier", penumbraMultiplier);
+                    ringMR.sharedMaterial.SetFloat("planetRadius", planetRadius);
+                    ringMR.sharedMaterial.SetFloat("penumbraMultiplier", penumbraMultiplier);
 
                     if (innerShadeTexture != null) {
-                        ringMR.material.SetTexture("_InnerShadeTexture", innerShadeTexture);
+                        ringMR.sharedMaterial.SetTexture("_InnerShadeTexture", innerShadeTexture);
                     }
                     if (innerShadeTiles > 0) {
-                        ringMR.material.SetFloat("innerShadeTiles", tiles / innerShadeTiles);
+                        ringMR.sharedMaterial.SetFloat("innerShadeTiles", tiles / innerShadeTiles);
                     }
                     if (innerShadeRotationPeriod > 0 && rotationPeriod > 0) {
                         innerShadeOffsetRate = innerShadeTiles * (
@@ -217,11 +217,11 @@ namespace Kopernicus
                     }
                 }
 
-                ringMR.material.color = color;
-                ringMR.material.renderQueue = 3010;
+                ringMR.sharedMaterial.color = color;
+                ringMR.sharedMaterial.renderQueue = 3010;
                 if (parent.GetChild("Atmosphere") != null)
                 {
-                    parent.GetChild("Atmosphere").GetComponent<Renderer>().material.renderQueue = 3020;
+                    parent.GetChild("Atmosphere").GetComponent<Renderer>().sharedMaterial.renderQueue = 3020;
                 }
                 
                 // Call the modules
@@ -514,15 +514,15 @@ namespace Kopernicus
                 transform.localScale = transform.parent.localScale;
                 SetRotation();
 
-                if (useNewShader && ringMR?.material != null
+                if (useNewShader && ringMR?.sharedMaterial != null
                     && KopernicusStar.Current?.sun?.transform != null)
                 {
-                    ringMR.material.SetFloat("sunRadius",
+                    ringMR.sharedMaterial.SetFloat("sunRadius",
                         (Single) KopernicusStar.Current.sun.Radius);
-                    ringMR.material.SetVector("sunPosRelativeToPlanet",
+                    ringMR.sharedMaterial.SetVector("sunPosRelativeToPlanet",
                         (Vector3) (KopernicusStar.Current.sun.transform.position -
                                    ScaledSpace.ScaledToLocalSpace(transform.position)));
-                    ringMR.material.SetFloat("innerShadeOffset",
+                    ringMR.sharedMaterial.SetFloat("innerShadeOffset",
                         (Single) (Planetarium.GetUniversalTime() * innerShadeOffsetRate));
                 }
 

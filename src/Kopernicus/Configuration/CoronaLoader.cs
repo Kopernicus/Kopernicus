@@ -139,7 +139,7 @@ namespace Kopernicus
                 Value = corona.GetComponent<SunCoronas> ();
 
                 // Setup the material loader
-                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().material);
+                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().sharedMaterial);
                 material.name = Guid.NewGuid().ToString();
             }
 
@@ -177,7 +177,7 @@ namespace Kopernicus
                 Value = corona.GetComponent<SunCoronas> ();
 
                 // Setup the material loader
-                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().material);
+                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().sharedMaterial);
                 material.name = Guid.NewGuid().ToString();
             }
 
@@ -187,9 +187,9 @@ namespace Kopernicus
             public CoronaLoader(SunCoronas component)
             {
                 Value = component;
-                if (!(Value.GetComponent<Renderer>().material is ParticleAddSmoothLoader))
+                if (!(Value.GetComponent<Renderer>().sharedMaterial is ParticleAddSmoothLoader))
                 {
-                    material = new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().material);
+                    material = new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().sharedMaterial);
                 }
             }
         }

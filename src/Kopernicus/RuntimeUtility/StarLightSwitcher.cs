@@ -187,7 +187,7 @@ namespace Kopernicus
         {
             // Debug the scaled space size of the star
             Utility.PrintTransform (scaledVersion.transform, " " + scaledVersion.name + " Transform ");
-            Utility.DumpObjectProperties (scaledVersion.GetComponent<Renderer>().material);
+            Utility.DumpObjectProperties (scaledVersion.GetComponent<Renderer>().sharedMaterial);
 
             // Get the sun corona objects in scaled space
             foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
@@ -195,7 +195,7 @@ namespace Kopernicus
                 Logger.Active.Log ("---- Sun Corona ----");
                 Utility.PrintTransform (corona.transform);
                 Utility.DumpObjectProperties (corona);
-                Utility.DumpObjectProperties (corona.GetComponent<Renderer>().material);
+                Utility.DumpObjectProperties (corona.GetComponent<Renderer>().sharedMaterial);
                 Logger.Active.Log ("--------------------");
             }
         }

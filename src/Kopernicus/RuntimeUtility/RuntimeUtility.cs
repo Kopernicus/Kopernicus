@@ -381,7 +381,7 @@ namespace Kopernicus
                 GameObject star_ = KopernicusStar.GetNearest(body).gameObject;
                 Vector3 planet2cam = body.scaledBody.transform.position - body.afg.mainCamera.transform.position;
                 body.afg.lightDot = Mathf.Clamp01(Vector3.Dot(planet2cam, body.afg.mainCamera.transform.position - star_.transform.position) * body.afg.dawnFactor);
-                body.afg.GetComponent<Renderer>().material.SetFloat("_lightDot", body.afg.lightDot);
+                body.afg.GetComponent<Renderer>().sharedMaterial.SetFloat("_lightDot", body.afg.lightDot);
             }
             
             // Update the names of the presets in the settings dialog

@@ -298,9 +298,9 @@ namespace Kopernicus
                 if (OnDemandStorage.useOnDemand && type.Value != BodyType.Star)
                 {
                     Texture2D texture =
-                        Value.scaledBody.GetComponent<Renderer>().material.GetTexture("_MainTex") as Texture2D;
+                        Value.scaledBody.GetComponent<Renderer>().sharedMaterial.GetTexture("_MainTex") as Texture2D;
                     Texture2D normals =
-                        Value.scaledBody.GetComponent<Renderer>().material.GetTexture("_BumpMap") as Texture2D;
+                        Value.scaledBody.GetComponent<Renderer>().sharedMaterial.GetTexture("_BumpMap") as Texture2D;
                     ScaledSpaceOnDemand onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
                     if (texture != null)
                         onDemand.texture = texture.name;
@@ -338,7 +338,7 @@ namespace Kopernicus
                 if (Value.scaledBody.GetComponent<MeshRenderer>() == null)
                 {
                     Value.scaledBody.AddComponent<MeshRenderer>();
-                    Value.scaledBody.GetComponent<Renderer>().material = null;
+                    Value.scaledBody.GetComponent<Renderer>().sharedMaterial = null;
                 }
 
                 if (options == null)

@@ -105,14 +105,14 @@ namespace Kopernicus
                 // Load Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
-                    scaledRenderer.material.SetTexture("_MainTex",
+                    scaledRenderer.sharedMaterial.SetTexture("_MainTex",
                         OnDemandStorage.LoadTexture(texture, false, true, true));
                 }
 
                 // Load Normals
                 if (OnDemandStorage.TextureExists(normals))
                 {
-                    scaledRenderer.material.SetTexture("_BumpMap",
+                    scaledRenderer.sharedMaterial.SetTexture("_BumpMap",
                         OnDemandStorage.LoadTexture(normals, false, true, false));
                 }
 
@@ -130,13 +130,13 @@ namespace Kopernicus
                 // Kill Diffuse
                 if (OnDemandStorage.TextureExists(texture))
                 {
-                    DestroyImmediate(scaledRenderer.material.GetTexture("_MainTex"));
+                    DestroyImmediate(scaledRenderer.sharedMaterial.GetTexture("_MainTex"));
                 }
 
                 // Kill Normals
                 if (OnDemandStorage.TextureExists(normals))
                 {
-                    DestroyImmediate(scaledRenderer.material.GetTexture("_BumpMap"));
+                    DestroyImmediate(scaledRenderer.sharedMaterial.GetTexture("_BumpMap"));
                 }
 
                 // Events
