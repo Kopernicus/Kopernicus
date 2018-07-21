@@ -221,8 +221,10 @@ namespace Kopernicus
                 wrapper.AddNode(kopernicus);
                 
                 // Save the node
-                Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "GameData/KittopiaTech/PluginData");
-                wrapper.Save("GameData/KittopiaTech/PluginData/" + name + ".cfg",
+                String dir = "GameData/KittopiaTech/PluginData/" + celestialBody.transform.name + "/" +
+                             DateTime.Now.ToString("s");
+                Directory.CreateDirectory(KSPUtil.ApplicationRootPath + dir);
+                wrapper.Save(dir + "/" + name + ".cfg",
                     "KittopiaTech - a Kopernicus Visual Editor");
             }
 
