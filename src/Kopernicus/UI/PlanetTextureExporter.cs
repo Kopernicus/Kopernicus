@@ -70,7 +70,7 @@ namespace Kopernicus
                 // If the PQS is null, abort
                 if (pqsVersion == null)
                 {
-                    throw new InvalidOperationException();
+                    yield break;
                 }
 
                 // Tell the PQS that we are going to build maps
