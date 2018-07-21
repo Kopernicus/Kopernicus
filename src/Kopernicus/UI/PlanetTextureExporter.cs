@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Kopernicus.OnDemand;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -48,7 +49,7 @@ namespace Kopernicus
                     TransparentMaps = true;
                     SaveToDisk = true;
                     ApplyToScaled = true;
-                    NormalStrength = 7;
+                    NormalStrength = 10;
                 }
             }
 
@@ -217,6 +218,11 @@ namespace Kopernicus
                     {
                         colorMap.Apply();
                         celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex", colorMap);
+                        ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
+                        if (od != null)
+                        {
+                            od.normals = colorMap.name;
+                        }
                     }
                 }
 
@@ -235,7 +241,7 @@ namespace Kopernicus
                     if (options.ExportNormal)
                     {
                         // Bump to Normal Map
-                        Texture2D normalMap = Utility.BumpToNormalMap(heightMap, pqsVersion, options.NormalStrength);
+                        Texture2D normalMap = Utility.BumpToNormalMap(heightMap, pqsVersion, options.NormalStrength / 10);
                         yield return null;
                         
                         if (options.SaveToDisk)
@@ -252,6 +258,11 @@ namespace Kopernicus
                             normalMap.Apply();
                             celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial
                                 .SetTexture("_BumpMap", normalMap);
+                            ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
+                            if (od != null)
+                            {
+                                od.normals = normalMap.name;
+                            }
                         }
                     }
                 }
