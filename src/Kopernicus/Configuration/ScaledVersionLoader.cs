@@ -344,6 +344,10 @@ namespace Kopernicus
                 if (options == null)
                 {
                     options = new PlanetTextureExporter.TextureOptions();
+                    if (generatedBody.pqsVersion != null)
+                    {
+                        options.Resolution = generatedBody.pqsVersion.mapFilesize;
+                    }
                 }
             }
 
@@ -415,6 +419,10 @@ namespace Kopernicus
                 if (options == null)
                 {
                     options = new PlanetTextureExporter.TextureOptions();
+                    if (body.pqsController != null)
+                    {
+                        options.Resolution = body.pqsController.mapFilesize;
+                    }
                 }
             }
         }

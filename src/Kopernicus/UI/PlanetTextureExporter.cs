@@ -41,6 +41,9 @@ namespace Kopernicus
                 [ParserTarget("normalStrength")] 
                 public NumericParser<Single> NormalStrength;
 
+                [ParserTarget("resolution")]
+                public NumericParser<Int32> Resolution;
+
                 public TextureOptions()
                 {
                     ExportColor = true;
@@ -50,6 +53,7 @@ namespace Kopernicus
                     SaveToDisk = true;
                     ApplyToScaled = true;
                     NormalStrength = 10;
+                    Resolution = 2048;
                 }
             }
 
@@ -105,16 +109,16 @@ namespace Kopernicus
                 pqsVersion.enabled = false;
 
                 // Create the Textures
-                Texture2D colorMap = new Texture2D(pqsVersion.mapFilesize, pqsVersion.mapFilesize / 2,
+                Texture2D colorMap = new Texture2D(options.Resolution, options.Resolution / 2,
                     TextureFormat.ARGB32,
                     true);
-                Texture2D heightMap = new Texture2D(pqsVersion.mapFilesize, pqsVersion.mapFilesize / 2,
+                Texture2D heightMap = new Texture2D(options.Resolution, options.Resolution / 2,
                     TextureFormat.RGB24,
                     true);
 
                 // Arrays
-                Color[] colorMapValues = new Color[pqsVersion.mapFilesize * (pqsVersion.mapFilesize / 2)];
-                Color[] heightMapValues = new Color[pqsVersion.mapFilesize * (pqsVersion.mapFilesize / 2)];
+                Color[] colorMapValues = new Color[options.Resolution * (options.Resolution / 2)];
+                Color[] heightMapValues = new Color[options.Resolution * (options.Resolution / 2)];
 
                 // Create a VertexBuildData
                 PQS.VertexBuildData data = new PQS.VertexBuildData();
@@ -124,20 +128,20 @@ namespace Kopernicus
                 yield return null;
 
                 // Loop through the pixels
-                for (Int32 y = 0; y < pqsVersion.mapFilesize / 2; y++)
+                for (Int32 y = 0; y < options.Resolution / 2; y++)
                 {
-                    for (Int32 x = 0; x < pqsVersion.mapFilesize; x++)
+                    for (Int32 x = 0; x < options.Resolution; x++)
                     {
                         // Update Message
-                        Double percent = (Double) (y * pqsVersion.mapFilesize + x) /
-                                         (pqsVersion.mapFilesize / 2 * pqsVersion.mapFilesize) * 100;
+                        Double percent = (Double) (y * options.Resolution + x) /
+                                         (options.Resolution / 2 * options.Resolution) * 100;
                         while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
                         message.textInstance.text.text = "Generating Planet-Maps: " + percent.ToString("0.00") + "%";
 
                         // Update the VertexBuildData
                         data.directionFromCenter =
-                            QuaternionD.AngleAxis(360d / pqsVersion.mapFilesize * x, Vector3d.up) *
-                            QuaternionD.AngleAxis(90d - 180d / (pqsVersion.mapFilesize / 2f) * y, Vector3d.right)
+                            QuaternionD.AngleAxis(360d / options.Resolution * x, Vector3d.up) *
+                            QuaternionD.AngleAxis(90d - 180d / (options.Resolution / 2f) * y, Vector3d.right)
                             * Vector3d.forward;
                         data.vertHeight = pqsVersion.radius;
 
@@ -163,7 +167,7 @@ namespace Kopernicus
                             }
 
                             // Set the Pixels
-                            heightMapValues[y * pqsVersion.mapFilesize + x] =
+                            heightMapValues[y * options.Resolution + x] =
                                 new Color((Single) height, (Single) height, (Single) height);
                         }
 
@@ -187,7 +191,7 @@ namespace Kopernicus
                             }
 
                             // Set the Pixels
-                            colorMapValues[y * pqsVersion.mapFilesize + x] = color;
+                            colorMapValues[y * options.Resolution + x] = color;
                         }
                     }
                         
