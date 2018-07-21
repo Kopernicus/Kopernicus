@@ -152,7 +152,7 @@ namespace Kopernicus
                             #endif
 
                             // Adjust the height
-                            height = (data.vertHeight - pqsVersion.radius) * (1d / pqsVersion.mapMaxHeight);
+                            height = (data.vertHeight - pqsVersion.radius) * (1d / pqsVersion.radiusDelta);
                             if (height < 0)
                             {
                                 height = 0;
