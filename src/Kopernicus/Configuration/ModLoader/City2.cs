@@ -104,7 +104,7 @@ namespace Kopernicus
                     }
                     
                     // scale
-                    [ParserTarget("visibleRange")]
+                    [ParserTarget("scale")]
                     public Vector3Parser scale
                     {
                         get

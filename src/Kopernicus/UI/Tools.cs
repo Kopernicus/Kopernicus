@@ -39,7 +39,7 @@ namespace Kopernicus
                     }
 
                     // And add them to the dictionary
-                    targets.Add(parserTargets[parserTargets.Length - 1], memberInfo);
+                    targets.Add(parserTargets[0], memberInfo);
                 }
 
                 return targets;
