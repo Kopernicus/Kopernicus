@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Channels;
 using System.Threading;
 using Kopernicus.OnDemand;
 using UnityEngine;
@@ -221,12 +222,26 @@ namespace Kopernicus
                     if (options.ApplyToScaled)
                     {
                         colorMap.Apply();
-                        celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex", colorMap);
                         ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
                         if (od != null)
                         {
-                            od.normals = colorMap.name;
+                            od.texture = colorMap.name;
+                            UnityEngine.Object.DestroyImmediate(colorMap);
+                                
+                            if (od.isLoaded)
+                            {
+                                od.UnloadTextures();
+                                od.LoadTextures();
+                            }
                         }
+                        else
+                        {
+                            celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex", colorMap);
+                        }
+                    }
+                    else
+                    {
+                        UnityEngine.Object.DestroyImmediate(colorMap);
                     }
                 }
 
@@ -260,15 +275,31 @@ namespace Kopernicus
                         if (options.ApplyToScaled)
                         {
                             normalMap.Apply();
-                            celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial
-                                .SetTexture("_BumpMap", normalMap);
                             ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
                             if (od != null)
                             {
                                 od.normals = normalMap.name;
+                                UnityEngine.Object.DestroyImmediate(normalMap);
+                                
+                                if (od.isLoaded)
+                                {
+                                    od.UnloadTextures();
+                                    od.LoadTextures();
+                                }
+                            }
+                            else
+                            {
+                                celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial
+                                    .SetTexture("_BumpMap", normalMap);
                             }
                         }
+                        else
+                        {
+                            UnityEngine.Object.DestroyImmediate(normalMap);
+                        }
                     }
+                    
+                    UnityEngine.Object.DestroyImmediate(heightMap);
                 }
 
                 // Close the Renderer
