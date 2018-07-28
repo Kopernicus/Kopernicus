@@ -355,8 +355,8 @@ namespace Kopernicus
                 if (File.Exists(path))
                 {
                     Boolean uncaught = true;
-                    try
-                    {
+                   // try
+                   // {
                         if (path.ToLower().EndsWith(".dds"))
                         {
                             // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
@@ -423,15 +423,16 @@ namespace Kopernicus
                                     {
                                         try
                                         {
-                                            byte[] data = LoadRestOfReader(binaryReader);
-
                                             int bpp = (int)dDSHeader.ddspf.dwRGBBitCount;
                                             int colors = (int)Math.Pow(2, bpp);
                                             int width = (int)dDSHeader.dwWidth;
-                                            int height = (int)dDSHeader.dwHeight;
+                                            int height = (int)dDSHeader.dwHeight; 
+                                            long length = new FileInfo(path).Length;
 
-                                            if (data.Length == width * height * bpp / 8 + 4 * colors)
+                                            if (length == width * height * bpp / 8 + 4 * colors)
                                             {
+                                                byte[] data = LoadRestOfReader(binaryReader);
+                                                
                                                 Color[] palette = new Color[colors];
                                                 Color[] image = new Color[width * height];
 
@@ -527,12 +528,12 @@ namespace Kopernicus
                             if (upload)
                                 map.Apply(false, unreadable);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        uncaught = false;
-                        Debug.Log("[Kopernicus]: failed to load " + path + " with exception " + ex.Message);
-                    }
+                   // }
+                   // catch (Exception ex)
+                   // {
+                    //    uncaught = false;
+                   //     Debug.Log("[Kopernicus]: failed to load " + path + " with exception " + ex.Message);
+                  //  }
                     if (map == null && uncaught)
                     {
                         Debug.Log("[Kopernicus]: failed to load " + path);
