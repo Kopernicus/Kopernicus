@@ -1,17 +1,16 @@
 ﻿Kopernicus
 ==============================
-May 06, 2018
+July 30, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.4.3-2)
+New in this version (1.4.5-1)
 -------------------
-- Fixed a huge FPS drop when Kopernicus is installed
-- Fixed cbNameLater breaking orbit line colors
-- Added the ability to remove launch sites added by MakingHistory (removeLaunchSites in the Kopernicus node)
-- Readded and fixed the PQSCity modloaders
+- Updated to KSP 1.4.5
+- Moved the whole logic needed for KittopiaTech into Kopernicus
+- New normalmap algorithm, thanks to Sigma88
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
@@ -37,20 +36,3 @@ Instructions
 Examples
 ----------
 Selectively copy folders inside of [KopernicusExamples/](https://github.com/Kopernicus/KopernicusExamples/) into a GameData/KopernicusExamples/ folder.  There are a number of examples of how to use Kopernicus.
-
-Information
------------
-Coming Soon
-
-Compiling
-----------
-To compile Kopernicus you need to add the following assemblies from your KSP_Data/Managed folder into the toplevel directory of the repository:
-
-* Assembly-CSharp.dll
-* Assembly-CSharp-firstpass.dll
-* KSPUtil.dll
-* ModularFlightIntegrator.dll
-* UnityEngine.dll
-* UnityEngine.UI.dll
-
-After that you can compile the .sln file with VS, MonoDevelop or other build tools. If you have Linux experience you can use Makefiles too, however, you will need Microsofts Roslyn compiler for it. 
