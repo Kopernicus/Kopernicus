@@ -16,7 +16,7 @@
       <dependency id="Assembly-CSharp" version="[{KSP-VERSION}]" />
       <dependency id="UnityEngine" version="[{KSP-VERSION}]" />
       <dependency id="UnityEngine.UI" version="[{KSP-VERSION}]" />
-      <dependency id="ModularFlightIntegrator" version="[1.2.5.0]" />
+      <dependency id="ModularFlightIntegrator" version="[1.2.5.2]" />
     </dependencies>
   </metadata>
   <files>
