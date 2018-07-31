@@ -28,6 +28,7 @@ using Kopernicus.MaterialWrapper;
 using System;
 using System.Linq;
 using System.Reflection;
+using Kopernicus.Components.PatchedMods;
 using Kopernicus.UI;
 using UnityEngine;
 
@@ -38,7 +39,7 @@ namespace Kopernicus
         namespace ModLoader
         {
             [RequireConfigType(ConfigType.Node)]
-            public class LandControl : ModLoader<PQSLandControl>
+            public class LandControl : ModLoader<PQSLandControlPatched>
             {
                 // Loader for a Ground Scatter
                 [RequireConfigType(ConfigType.Node)]
@@ -936,16 +937,18 @@ namespace Kopernicus
                 [ParserTarget("createColors")]
                 public NumericParser<Boolean> createColors
                 {
-                    get { return mod.createColors; }
-                    set { mod.createColors = value; }
+                    // Yes, really do what we want!
+                    get { return mod.reallyCreateColors; }
+                    set { mod.reallyCreateColors = value; }
                 }
 
                 // createScatter
                 [ParserTarget("createScatter")]
                 public NumericParser<Boolean> createScatter
                 {
-                    get { return mod.createScatter; }
-                    set { mod.createScatter = value; }
+                    // Yes, really do what we want!
+                    get { return mod.reallyCreateScatter; }
+                    set { mod.reallyCreateScatter = value; }
                 }
 
                 // heightMap
@@ -1162,7 +1165,7 @@ namespace Kopernicus
                 }
 
                 // Grabs a PQSMod of type T from a parameter with a given PQS
-                public override void Create(PQSLandControl _mod, PQS pqsVersion)
+                public override void Create(PQSLandControlPatched _mod, PQS pqsVersion)
                 {
                     base.Create(_mod, pqsVersion);
                     

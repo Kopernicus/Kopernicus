@@ -89,6 +89,7 @@
     <Compile Include="ModularScatter\ScatterExperiment.cs" />
     <Compile Include="NameChanger.cs" />
     <Compile Include="OrbitRendererUpdater.cs" />
+    <Compile Include="PatchedMods\PQSLandControlPatched.cs" />
     <Compile Include="PQS\KopernicusSimplexWrapper.cs" />
     <Compile Include="Ring.cs" />
     <Compile Include="RingSystem\DebrisField.cs" />
