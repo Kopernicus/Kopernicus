@@ -147,13 +147,7 @@ namespace Kopernicus
 
                 // Write an opening message
                 String logVersion = "//=====  " + version + "  =====//";
-
-                // Create the header this way, because I'm maybe too stupid to find the "fill" function
-                String logHeader = "";
-                for (Int32 i = 0; i < (logVersion.Length - 4); i++)
-                {
-                    logHeader += "=";
-                }
+                String logHeader = new string('=',logVersion.Length-4);
                 logHeader = "//" + logHeader + "//";
 
                 loggerStream.WriteLine(logHeader + "\n" + logVersion + "\n" + logHeader); // Don't use Log() because we don't want a date time in front of the Versioning.
