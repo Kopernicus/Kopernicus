@@ -206,42 +206,29 @@ namespace Kopernicus
                 // Load all of the bodies
                 foreach (ConfigNode bodyNode in node.GetNodes(bodyNodeName))
                 {
+                    // Create a logger for this body
+                    Logger bodyLogger = new Logger(bodyNode.GetValue("name") + ".Body");
+                    bodyLogger.SetAsActive();
+
                     // Attempt to create the body
                     try
                     {
-                        // Create a logger for this body
-                        Logger bodyLogger = new Logger(bodyNode.GetValue("name") + ".Body");
-                        bodyLogger.SetAsActive();
-
                         currentBody = new Body();
                         Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode, "Kopernicus");
-                        if (bodies.ContainsKey(currentBody.name) )
-                        {
-                            bodyLogger.Log("Duplicate planet name: Ignoring");
-                            Logger.Default.Log("[Kopernicus]: Configuration.Loader: Skipped Duplicate Body: " + currentBody.name);
-                        }
-                        else
-                        {
-                            bodies.Add(currentBody.name, currentBody);
-                            Events.OnLoaderLoadBody.Fire(currentBody, bodyNode);
-                            Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.name);
-                        }
-
-                        bodyLogger.Flush();
+                        bodies.Add(currentBody.name, currentBody);
+                        Events.OnLoaderLoadBody.Fire(currentBody, bodyNode);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.name);
                     }
                     catch (Exception e)
                     {
-                        //bodyLogger.LogException(e);
-                        Logger.Default.LogException(e);
+                        bodyLogger.LogException(e);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue("name"));
                         throw new Exception("Failed to load Body: " + bodyNode.GetValue("name"));
                     }
-                    finally
-                    {
-                        // Restore default logger
-                        Logger.Default.SetAsActive();
-                    }
 
+                    // Restore default logger
+                    bodyLogger.Flush();
+                    Logger.Default.SetAsActive();
                 }
 
                 // Event
