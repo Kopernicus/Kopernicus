@@ -200,66 +200,97 @@ namespace Kopernicus
             // Generates the system prefab from the configuration 
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
+                //Set of items seen while loading, to prevent duplicate loggers being created (throws IOExceptions)
+                HashSet<String> seen = new HashSet<String>();
+
                 // Dictionary of bodies generated
                 Dictionary<String, Body> bodies = new Dictionary<String, Body>();
+
+                Logger logger = new Logger();
 
                 // Load all of the bodies
                 foreach (ConfigNode bodyNode in node.GetNodes(bodyNodeName))
                 {
-                    // Create a logger for this body
-                    Logger bodyLogger = new Logger(bodyNode.GetValue("name") + ".Body");
-                    bodyLogger.SetAsActive();
+                    if ( seen.Contains(bodyNode.GetValue("name")) )
+                    {
+                        Logger.Default.Log("[Kopernicus::PostApply] Skipped duplicate body " + bodyNode.GetValue("name"));
+                        continue; //next body, please
+                    }
+                    else
+                    {
+                        seen.Add(bodyNode.GetValue("name"));
+                    }
 
-                    // Attempt to create the body
                     try
                     {
+                        // Create a logfile for this body
+                        logger.SetFilename(bodyNode.GetValue("name") + ".Body");
+                        logger.SetAsActive();
+
+                        // Attempt to create the body
                         currentBody = new Body();
-                        Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode, "Kopernicus");
+                        Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode, "Kopernicus"); //logs to active logger
                         bodies.Add(currentBody.name, currentBody);
                         Events.OnLoaderLoadBody.Fire(currentBody, bodyNode);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.name);
-                    }
-                    catch (Exception e)
-                    {
-                        bodyLogger.LogException(e);
-                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue("name"));
-                        throw new Exception("Failed to load Body: " + bodyNode.GetValue("name"));
-                    }
 
-                    // Restore default logger
-                    bodyLogger.Flush();
-                    Logger.Default.SetAsActive();
-                }
-
-                // Event
-                Events.OnLoaderLoadedAllBodies.Fire(this, node);
-
-                // Load all of the asteroids                
-                foreach (ConfigNode asteroidNode in node.GetNodes(asteroidNodeName))
-                {
-                    // Create a logger for this asteroid
-                    Logger logger = new Logger(asteroidNode.GetValue("name") + ".Asteroid");
-                    logger.SetAsActive();
-
-                    // Attempt to create the Asteroid
-                    try
-                    {
-                        Asteroid asteroid = Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus");
-                        DiscoverableObjects.asteroids.Add(asteroid);
-                        Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
-                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.name);
+                        // Restore default logger
+                        Logger.Default.SetAsActive();
+                        logger.Close(); //implicit flush
                     }
                     catch (Exception e)
                     {
                         logger.LogException(e);
-                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Asteroid: " + asteroidNode.GetValue("name"));
+                        logger.Close(); //implicit flush
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue("name") + ": " + e.Message); 
+                        throw new Exception("Failed to load Body: " + bodyNode.GetValue("name"));
+                    }
+                }
+                seen.Clear();
+
+                // Event
+                Events.OnLoaderLoadedAllBodies.Fire(this, node);
+
+                // Load all of the asteroids
+                foreach (ConfigNode asteroidNode in node.GetNodes(asteroidNodeName))
+                {
+                    if (seen.Contains(asteroidNode.GetValue("name")))
+                    {
+                        Logger.Default.Log("[Kopernicus::PostApply] Skipped duplicate asteroid " + asteroidNode.GetValue("name"));
+                        continue; //next roid, please
+                    }
+                    else
+                    {
+                        seen.Add(asteroidNode.GetValue("name"));
+                    }
+                    try
+                    {
+                        // Create a logfile for this asteroid
+                        logger.SetFilename(asteroidNode.GetValue("name") + ".Asteroid");
+                        logger.SetAsActive();
+
+                        // Attempt to create the Asteroid
+                        Asteroid asteroid = Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus"); //logs to active logger
+                        DiscoverableObjects.asteroids.Add(asteroid);
+                        Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.name);
+
+                        // Restore default logger
+                        Logger.Default.SetAsActive();
+                        logger.Close(); //implicit flush
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Asteroid: " + asteroidNode.GetValue("name") + ": " + e.Message);
+                        logger.LogException(e);
+                        logger.Close();
                         throw new Exception("Failed to load Asteroid: " + asteroidNode.GetValue("name"));
                     }
 
-                    // Restore default logger
-                    logger.Flush();
-                    Logger.Default.SetAsActive();
                 }
+                seen.Clear();
+                logger.Close();
+                logger = null;
 
                 // Load all of the PQS Presets                
                 foreach (ConfigNode presetNode in node.GetNodes(presetNodeName))

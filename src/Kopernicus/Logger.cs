@@ -56,8 +56,10 @@ namespace Kopernicus
         {
             get
             {
-                if (_DefaultLogger == null)
-                    _DefaultLogger = new Logger();
+                if (_DefaultLogger == null) {
+                    _DefaultLogger = new Logger(LogFileName: typeof(Logger).Assembly.GetName().Name);
+                    Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
+                }
                 return _DefaultLogger;
             }
         }
@@ -132,11 +134,19 @@ namespace Kopernicus
         // Create a logger
         public Logger([Optional] String LogFileName)
         {
+            SetFilename(LogFileName);
+        }
+
+        // Set/Change the filename we log to
+        public void SetFilename(String LogFileName)
+        {
+            Close();
+
             if (!isInitialized)
                 return;
-            if (String.IsNullOrEmpty(LogFileName))
-                LogFileName = typeof(Logger).Assembly.GetName().Name;
 
+            if (String.IsNullOrEmpty(LogFileName))
+                return; //effectively makes this logger a black hole
 
             try
             {
@@ -147,23 +157,22 @@ namespace Kopernicus
 
                 // Write an opening message
                 String logVersion = "//=====  " + version + "  =====//";
-                String logHeader = new string('=',logVersion.Length-4);
+                String logHeader = new string('=', logVersion.Length - 4);
                 logHeader = "//" + logHeader + "//";
 
                 loggerStream.WriteLine(logHeader + "\n" + logVersion + "\n" + logHeader); // Don't use Log() because we don't want a date time in front of the Versioning.
-                Log ("Logger \"" + LogFileName + "\" was created");
+                Log("Logger \"" + LogFileName + "\" was created");
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
-                Debug.LogException (e);
+                Debug.LogException(e);
             }
         }
 
         // Cleanup the logger
         ~Logger()
         {
-            loggerStream.Flush ();
-            loggerStream.Close ();
+            Close();
         }
 
         // Initialize the Logger (i.e. delete old logs) 
@@ -183,7 +192,7 @@ namespace Kopernicus
             }
             catch (Exception e) 
             {
-                Debug.LogException (e);
+                Debug.LogException(e);
                 return;
             }
 
