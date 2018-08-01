@@ -206,6 +206,8 @@ namespace Kopernicus
                 // Dictionary of bodies generated
                 Dictionary<String, Body> bodies = new Dictionary<String, Body>();
 
+                Logger logger = new Logger();
+
                 // Load all of the bodies
                 foreach (ConfigNode bodyNode in node.GetNodes(bodyNodeName))
                 {
@@ -221,9 +223,9 @@ namespace Kopernicus
 
                     try
                     {
-                        // Create a logger for this body
-                        Logger bodyLogger = new Logger(bodyNode.GetValue("name") + ".Body");
-                        bodyLogger.SetAsActive();
+                        // Create a logfile for this body
+                        logger.SetFilename(bodyNode.GetValue("name") + ".Body");
+                        logger.SetAsActive();
 
                         // Attempt to create the body
                         currentBody = new Body();
@@ -233,16 +235,16 @@ namespace Kopernicus
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.name);
 
                         // Restore default logger
-                        bodyLogger.Flush();
                         Logger.Default.SetAsActive();
+                        logger.Close(); //implicit flush
                     }
                     catch (Exception e)
                     {
-                        //bodyLogger.LogException(e);  -- This would be nice but becomes a problem when duplicate loggers are created: can't log then
+                        logger.LogException(e);
+                        logger.Close(); //implicit flush
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + bodyNode.GetValue("name") + ": " + e.Message); 
                         throw new Exception("Failed to load Body: " + bodyNode.GetValue("name"));
                     }
-
                 }
                 seen.Clear();
 
@@ -263,8 +265,8 @@ namespace Kopernicus
                     }
                     try
                     {
-                        // Create a logger for this asteroid
-                        Logger logger = new Logger(asteroidNode.GetValue("name") + ".Asteroid");
+                        // Create a logfile for this asteroid
+                        logger.SetFilename(asteroidNode.GetValue("name") + ".Asteroid");
                         logger.SetAsActive();
 
                         // Attempt to create the Asteroid
@@ -274,17 +276,21 @@ namespace Kopernicus
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.name);
 
                         // Restore default logger
-                        logger.Flush();
                         Logger.Default.SetAsActive();
+                        logger.Close(); //implicit flush
                     }
                     catch (Exception e)
                     {
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Asteroid: " + asteroidNode.GetValue("name") + ": " + e.Message);
+                        logger.LogException(e);
+                        logger.Close();
                         throw new Exception("Failed to load Asteroid: " + asteroidNode.GetValue("name"));
                     }
 
                 }
                 seen.Clear();
+                logger.Close();
+                logger = null;
 
                 // Load all of the PQS Presets                
                 foreach (ConfigNode presetNode in node.GetNodes(presetNodeName))
