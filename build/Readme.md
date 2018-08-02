@@ -1,16 +1,18 @@
 ﻿Kopernicus
 ==============================
-July 30, 2018
+August 02, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.4.5-1)
+New in this version (1.4.5-2)
 -------------------
-- Updated to KSP 1.4.5
-- Moved the whole logic needed for KittopiaTech into Kopernicus
-- New normalmap algorithm, thanks to Sigma88
+- Fixed LandControl, because the stock version doesn't allow to set createColors and createScatter anymore
+- Refactored the logging, should be more hardened against duplicated bodies now. (thanks to @Corfiot)
+- Added an experimental setting to specify a custom orbital period (Orbit { period = ... })
+-----
+_This is a hotfix release for [Kopernicus 1.4.5-1](https://github.com/Kopernicus/Kopernicus/releases/tag/release-1.4.5-1). Please also check its changelog for new features._ 
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
