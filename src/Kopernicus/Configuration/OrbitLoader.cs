@@ -273,6 +273,14 @@ namespace Kopernicus
                 FinalizeOrbit(Value);
             }
 
+            // OrbitalPeriod
+            [ParserTarget("period")]
+            public NumericParser<Double> period
+            {
+                get { return Value.orbit.period; }
+                set { OrbitalPeriod(Value, value); }
+            }
+
             // Parser apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {
@@ -403,6 +411,34 @@ namespace Kopernicus
                 catch (Exception e)
                 {
                     UnityEngine.Debug.Log("CBUpdate for " + body.name + " failed: " + e.Message);
+                }
+            }
+
+            // Set Orbital Period
+            public static void OrbitalPeriod(CelestialBody body, Double period)
+            {
+                if (body.orbitDriver != null && body.referenceBody != null)
+                {
+                    body.orbit.period = period;
+                    body.orbit.meanMotion =
+                        2 * Math.PI / body.orbit.period; // in theory this should work but I haven't tested it
+
+                    if (body.orbit.eccentricity <= 1.0)
+                    {
+                        body.orbit.meanAnomaly = body.orbit.meanAnomalyAtEpoch;
+                        body.orbit.orbitPercent = body.orbit.meanAnomalyAtEpoch / (Math.PI * 2);
+                        body.orbit.ObTAtEpoch = body.orbit.orbitPercent * body.orbit.period;
+                    }
+                    else
+                    {
+                        // ignores this body's own mass for this one...
+                        body.orbit.meanAnomaly = body.orbit.meanAnomalyAtEpoch;
+                        body.orbit.ObT =
+                            Math.Pow(
+                                Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3.0) /
+                                body.orbit.referenceBody.gravParameter, 0.5) * body.orbit.meanAnomaly;
+                        body.orbit.ObTAtEpoch = body.orbit.ObT;
+                    }
                 }
             }
         }
