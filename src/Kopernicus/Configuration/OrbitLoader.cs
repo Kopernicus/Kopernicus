@@ -72,12 +72,12 @@ namespace Kopernicus
 
             // How inclined is the orbit
             [ParserTarget("inclination")]
-            public NumericParser<Double> inclination 
+            public NumericParser<Double> inclination
             {
                 get { return Value.orbit.inclination; }
                 set { Value.orbit.inclination = value; }
             }
-            
+
             // How excentric is the orbit
             [ParserTarget("eccentricity")]
             public NumericParser<Double> eccentricity
@@ -135,7 +135,7 @@ namespace Kopernicus
                 get { return Value.orbit.epoch; }
                 set { Value.orbit.epoch = value; }
             }
-            
+
             // Orbit renderer color
             [ParserTarget("color")]
             [KittopiaDescription("The color of the orbit line in the Tracking Station")]
@@ -148,7 +148,7 @@ namespace Kopernicus
                         return generatedBody.orbitRenderer.nodeColor;
                     }
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                        (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                     return data.nodeColor;
                 }
                 set
@@ -160,7 +160,7 @@ namespace Kopernicus
                     else
                     {
                         KopernicusOrbitRendererData data =
-                            (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                            (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                         data.nodeColor = value;
                         data.orbitColor = (value.Value * 0.5f).A(data.nodeColor.a);
                         PSystemManager.OrbitRendererDataCache[Value] = data;
@@ -181,7 +181,7 @@ namespace Kopernicus
                         return generatedBody.orbitRenderer.nodeColor;
                     }
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                        (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                     return data.nodeColor;
                 }
                 set
@@ -193,7 +193,7 @@ namespace Kopernicus
                     else
                     {
                         KopernicusOrbitRendererData data =
-                            (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                            (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                         data.nodeColor = value;
                         PSystemManager.OrbitRendererDataCache[Value] = data;
                     }
@@ -263,6 +263,14 @@ namespace Kopernicus
                 }
             }
 
+            // OrbitalPeriod
+            [ParserTarget("period")]
+            public NumericParser<Double> period
+            {
+                get { return Value.orbit.period; }
+                set { generatedBody.celestialBody.Set("customOrbitalPeriod", value.Value); }
+            }
+
             /// <summary>
             /// Recalculates some of the orbital parameters to be more realistic
             /// </summary>
@@ -271,14 +279,6 @@ namespace Kopernicus
             public void FinalizeOrbit()
             {
                 FinalizeOrbit(Value);
-            }
-
-            // OrbitalPeriod
-            [ParserTarget("period")]
-            public NumericParser<Double> period
-            {
-                get { return Value.orbit.period; }
-                set { OrbitalPeriod(Value, value); }
             }
 
             // Parser apply event
@@ -293,7 +293,7 @@ namespace Kopernicus
             {
                 if (epoch != null)
                     Value.orbit.epoch += Templates.epoch;
-                
+
                 Events.OnOrbitLoaderPostApply.Fire(this, node);
             }
 
@@ -342,7 +342,7 @@ namespace Kopernicus
 
                 // Add the rendering updater to the celestial body
                 body.gameObject.AddOrGetComponent<OrbitRendererUpdater>();
-                
+
                 // Update the OrbitRenderer data
                 KopernicusOrbitRendererData data = body.orbitDriver.Renderer == null
                     ? new KopernicusOrbitRendererData(body, PSystemManager.OrbitRendererDataCache[body])
@@ -415,9 +415,11 @@ namespace Kopernicus
             }
 
             // Set Orbital Period
-            public static void OrbitalPeriod(CelestialBody body, Double period)
+            public static void OrbitalPeriod(CelestialBody body)
             {
-                if (body.orbitDriver != null && body.referenceBody != null)
+                double period = body.Get<double>("customOrbitalPeriod");
+
+                if (period > 0 && body.orbitDriver != null && body.referenceBody != null)
                 {
                     body.orbit.period = period;
                     body.orbit.meanMotion =
@@ -444,4 +446,3 @@ namespace Kopernicus
         }
     }
 }
-
