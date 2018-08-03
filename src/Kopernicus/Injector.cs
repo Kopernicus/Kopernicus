@@ -47,7 +47,7 @@ namespace Kopernicus
 
         // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
         public static PSystem StockSystemPrefab { get; set; }
-        
+
         // Whether the injector is currently patching the prefab
         public static Boolean IsInPrefab { get; private set; }
 
@@ -166,6 +166,10 @@ namespace Kopernicus
                     // Finalize the Orbit
                     if (body.Get("finalizeBody", false))
                         OrbitLoader.FinalizeOrbit(body);
+
+                    // Set Custom OrbitalPeriod
+                    if (body.Has("customOrbitalPeriod"))
+                        OrbitLoader.OrbitalPeriod(body);
 
                     // Patch the SOI
                     if (body.Has("sphereOfInfluence"))
