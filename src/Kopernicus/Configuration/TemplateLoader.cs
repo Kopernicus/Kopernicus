@@ -159,7 +159,7 @@ namespace Kopernicus
                     body.celestialBody.atmosphere = false;
                 }
                 
-                Logger.Active.Log("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
+                Logger.Active.Log("Using Template \"" + body.celestialBody.bodyName + "\"");
 
                 // If we have a PQS
                 if (body.pqsVersion != null)
@@ -286,10 +286,12 @@ namespace Kopernicus
                         // Remove all mods
                         Utility.RemoveModsOfType(null, body.pqsVersion);
                     }
+                    
+                    Logger.Active.Log("Patching PQSLandControl");
 
                     foreach (PQSLandControl landControl in body.pqsVersion.GetComponentsInChildren<PQSLandControl>())
                     {
-                        Utility.CopyObjectFields(landControl, landControl.gameObject.AddComponent<PQSLandControlPatched>());
+                        Utility.CopyObjectFields(landControl, landControl.gameObject.AddComponent<PQSLandControlPatched>(), false);
                         UnityEngine.Object.Destroy(landControl);
                     }
                 }
