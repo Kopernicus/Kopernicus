@@ -126,14 +126,6 @@ namespace Kopernicus
             });
             GameEvents.onProtoVesselLoad.Add(TransformBodyReferencesOnLoad);
             GameEvents.onProtoVesselSave.Add(TransformBodyReferencesOnSave);
-            GameEvents.OnMapEntered.Add(ApplyOrbitIcons);
-            GameEvents.onLevelWasLoaded.Add(level =>
-            {
-                if (level == GameScenes.TRACKSTATION)
-                {
-                    ApplyOrbitIcons();
-                }
-            });
 
             // Update Music Logic
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
@@ -382,7 +374,6 @@ namespace Kopernicus
                     }
                 }
                 
-                
                 // Apply orbit icon customization
                 foreach (MapNode node in Resources.FindObjectsOfTypeAll<MapNode>())
                 {
@@ -473,10 +464,6 @@ namespace Kopernicus
                         body.orbitDriver.Renderer.drawIcons = body.Get<OrbitRenderer.DrawIcons>("drawIcons");
                 }
             }
-        }
-
-        void ApplyOrbitIcons()
-        {
         }
 
         // Fix the buoyancy
