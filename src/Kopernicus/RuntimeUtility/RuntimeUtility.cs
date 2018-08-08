@@ -373,6 +373,19 @@ namespace Kopernicus
                         }
                     }
                 }
+                
+                // Apply orbit icon customization
+                foreach (MapNode node in Resources.FindObjectsOfTypeAll<MapNode>())
+                {
+                    if (node.mapObject != null && node.mapObject.celestialBody != null && node.mapObject.celestialBody.Has("iconTexture"))
+                    {
+                        Texture2D texture = node.mapObject.celestialBody.Get<Texture2D>("iconTexture");
+                        node.SetIcon(Sprite.Create(texture,
+                            new Rect(0, 0, texture.width, texture.height),
+                            new Vector2(0.5f, 0.5f), 100, 1, SpriteMeshType.Tight,
+                            Vector4.zero));
+                    }
+                }
             }
 
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)

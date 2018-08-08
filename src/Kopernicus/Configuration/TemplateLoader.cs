@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kopernicus.Components.PatchedMods;
 using UnityEngine;
 
 namespace Kopernicus
@@ -157,12 +158,12 @@ namespace Kopernicus
                     // No more atmosphere :(
                     body.celestialBody.atmosphere = false;
                 }
+                
+                Logger.Active.Log("Using Template \"" + body.celestialBody.bodyName + "\"");
 
                 // If we have a PQS
                 if (body.pqsVersion != null)
                 {
-                    Logger.Active.Log("[Kopernicus]: Configuration.Template: Using Template \"" + body.celestialBody.bodyName + "\"");
-
                     // Should we remove the ocean?
                     if (body.celestialBody.ocean && removeOcean.Value)
                     {
@@ -284,6 +285,14 @@ namespace Kopernicus
                     {
                         // Remove all mods
                         Utility.RemoveModsOfType(null, body.pqsVersion);
+                    }
+                    
+                    Logger.Active.Log("Patching PQSLandControl");
+
+                    foreach (PQSLandControl landControl in body.pqsVersion.GetComponentsInChildren<PQSLandControl>())
+                    {
+                        Utility.CopyObjectFields(landControl, landControl.gameObject.AddComponent<PQSLandControlPatched>(), false);
+                        UnityEngine.Object.Destroy(landControl);
                     }
                 }
 

@@ -271,6 +271,13 @@ namespace Kopernicus
                 set { generatedBody.celestialBody.Set("customOrbitalPeriod", value.Value); }
             }
 
+            [ParserTarget("iconTexture")]
+            public Texture2DParser iconTexture
+            {
+                get { return Value.Has("iconTexture") ? Value.Get<Texture2D>("iconTexture") : null; }
+                set { Value.Set("iconTexture", value.Value); }
+            }
+
             /// <summary>
             /// Recalculates some of the orbital parameters to be more realistic
             /// </summary>
