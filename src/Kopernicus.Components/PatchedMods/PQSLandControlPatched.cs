@@ -34,8 +34,8 @@ namespace Kopernicus
             public class PQSLandControlPatched : PQSLandControl
             {
                 // Where is the point in having variables if they are set to true automatically anyway?
-                public Boolean reallyCreateColors;
-                public Boolean reallyCreateScatter;
+                public Boolean reallyCreateColors = true;
+                public Boolean reallyCreateScatter = true;
 
                 public override void OnVertexBuild(PQS.VertexBuildData data)
                 {
