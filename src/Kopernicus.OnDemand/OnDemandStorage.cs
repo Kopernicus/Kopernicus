@@ -355,8 +355,8 @@ namespace Kopernicus
                 if (File.Exists(path))
                 {
                     Boolean uncaught = true;
-                   // try
-                   // {
+                    try
+                    {
                         if (path.ToLower().EndsWith(".dds"))
                         {
                             // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
@@ -378,29 +378,44 @@ namespace Kopernicus
                                 Boolean rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
                                 Boolean alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
                                 Boolean luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
-                                Boolean rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
+                                Boolean rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff &&
+                                                 dDSHeader.ddspf.dwGBitMask == 0x0000ff00 &&
+                                                 dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
                                 //Boolean bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
-                                Boolean rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
-                                Boolean argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
-                                Boolean rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
+                                Boolean rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 &&
+                                                 dDSHeader.ddspf.dwGBitMask == 0x000007E0 &&
+                                                 dDSHeader.ddspf.dwBBitMask == 0x0000001F;
+                                Boolean argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 &&
+                                                   dDSHeader.ddspf.dwRBitMask == 0x00000f00 &&
+                                                   dDSHeader.ddspf.dwGBitMask == 0x000000f0 &&
+                                                   dDSHeader.ddspf.dwBBitMask == 0x0000000f;
+                                Boolean rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f &&
+                                                   dDSHeader.ddspf.dwRBitMask == 0x0000f000 &&
+                                                   dDSHeader.ddspf.dwGBitMask == 0x000000f0 &&
+                                                   dDSHeader.ddspf.dwBBitMask == 0x00000f00;
 
-                                Boolean mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
-                                Boolean isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
+                                Boolean mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) !=
+                                                 (DDSHeaders.DDSPixelFormatCaps) 0u;
+                                Boolean isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u ||
+                                                       (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
                                 if (fourcc)
                                 {
                                     if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
                                     {
-                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                                        map = new Texture2D((Int32) dDSHeader.dwWidth, (Int32) dDSHeader.dwHeight,
+                                            TextureFormat.DXT1, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
                                     {
-                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                                        map = new Texture2D((Int32) dDSHeader.dwWidth, (Int32) dDSHeader.dwHeight,
+                                            (TextureFormat) 11, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
                                     {
-                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                                        map = new Texture2D((Int32) dDSHeader.dwWidth, (Int32) dDSHeader.dwHeight,
+                                            TextureFormat.DXT5, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
                                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
@@ -423,22 +438,23 @@ namespace Kopernicus
                                     {
                                         try
                                         {
-                                            int bpp = (int)dDSHeader.ddspf.dwRGBBitCount;
-                                            int colors = (int)Math.Pow(2, bpp);
-                                            int width = (int)dDSHeader.dwWidth;
-                                            int height = (int)dDSHeader.dwHeight; 
+                                            int bpp = (int) dDSHeader.ddspf.dwRGBBitCount;
+                                            int colors = (int) Math.Pow(2, bpp);
+                                            int width = (int) dDSHeader.dwWidth;
+                                            int height = (int) dDSHeader.dwHeight;
                                             long length = new FileInfo(path).Length;
 
                                             if (length == width * height * bpp / 8 + 4 * colors)
                                             {
                                                 byte[] data = LoadRestOfReader(binaryReader);
-                                                
+
                                                 Color[] palette = new Color[colors];
                                                 Color[] image = new Color[width * height];
 
                                                 for (int i = 0; i < 4 * colors; i = i + 4)
                                                 {
-                                                    palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2], data[i + 3]);
+                                                    palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2],
+                                                        data[i + 3]);
                                                 }
 
                                                 for (int i = 4 * colors; i < data.Length; i++)
@@ -466,6 +482,7 @@ namespace Kopernicus
                                         fourcc = false;
                                     }
                                 }
+
                                 if (!fourcc)
                                 {
                                     TextureFormat textureFormat = TextureFormat.ARGB32;
@@ -474,8 +491,8 @@ namespace Kopernicus
                                     {
                                         // RGB or RGBA format
                                         textureFormat = alphapixel
-                                        ? TextureFormat.RGBA32
-                                        : TextureFormat.RGB24;
+                                            ? TextureFormat.RGBA32
+                                            : TextureFormat.RGB24;
                                     }
                                     else if (rgb && rgb565)
                                     {
@@ -499,21 +516,23 @@ namespace Kopernicus
                                     else
                                     {
                                         ok = false;
-                                        Debug.Log("[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
+                                        Debug.Log(
+                                            "[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
                                     }
+
                                     if (ok)
                                     {
-                                        map = new Texture2D((Int32)dDSHeader.dwWidth, (Int32)dDSHeader.dwHeight, textureFormat, mipmap);
+                                        map = new Texture2D((Int32) dDSHeader.dwWidth, (Int32) dDSHeader.dwHeight,
+                                            textureFormat, mipmap);
                                         map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                     }
 
                                 }
-                                if (map != null)
-                                    if (upload)
-                                        map.Apply(false, unreadable);
                             }
                             else
+                            {
                                 Debug.Log("[Kopernicus]: Bad DDS header.");
+                            }
                         }
                         else
                         {
@@ -523,25 +542,37 @@ namespace Kopernicus
                                 throw new Exception("LoadWholeFile failed");
 
                             map.LoadImage(data);
-                            if (compress)
-                                map.Compress(true);
-                            if (upload)
-                                map.Apply(false, unreadable);
                         }
-                   // }
-                   // catch (Exception ex)
-                   // {
-                    //    uncaught = false;
-                   //     Debug.Log("[Kopernicus]: failed to load " + path + " with exception " + ex.Message);
-                  //  }
+                    }
+                    catch (Exception ex)
+                    {
+                        uncaught = false;
+                        Debug.Log("[Kopernicus]: failed to load " + path + " with exception " + ex.Message);
+                    }
+
                     if (map == null && uncaught)
                     {
                         Debug.Log("[Kopernicus]: failed to load " + path);
                     }
-                    map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
+                    else
+                    {
+                        map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
+
+                        if (compress)
+                        {
+                            map.Compress(true);
+                        }
+
+                        if (upload)
+                        {
+                            map.Apply(false, unreadable);
+                        }
+                    }
                 }
                 else
+                {
                     Debug.Log("[Kopernicus]: texture does not exist! " + path);
+                }
 
                 return map;
             }
