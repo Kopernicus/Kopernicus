@@ -200,7 +200,7 @@ namespace Kopernicus
                 }
 
                 // Serialize the maps to disk
-                String name = "KittopiaTech/PluginData/" + celestialBody.transform.name + "/" + DateTime.Now.ToString("s") + "/";
+                String name = "KittopiaTech/PluginData/" + celestialBody.transform.name + "/" + DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss") + "/";
                 String path = KSPUtil.ApplicationRootPath + "/GameData/" + name;
                 Directory.CreateDirectory(path);
 
