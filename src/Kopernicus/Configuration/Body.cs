@@ -222,7 +222,7 @@ namespace Kopernicus
                 
                 // Save the node
                 String dir = "GameData/KittopiaTech/PluginData/" + celestialBody.transform.name + "/" +
-                             DateTime.Now.ToString("s");
+                             DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss");
                 Directory.CreateDirectory(KSPUtil.ApplicationRootPath + dir);
                 wrapper.Save(dir + "/" + name + ".cfg",
                     "KittopiaTech - a Kopernicus Visual Editor");
