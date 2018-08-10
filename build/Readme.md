@@ -6,12 +6,11 @@ August 10, 2018
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.4.5-3)
+New in this version (1.4.5-4)
 -------------------
-- More fixes to LandControl
-- Fixed the custom period setting
-- Added the possibility to set a custom orbit icon (`Orbit { iconTexture = ... }`)
-- Fixed an issue with the Kittopia exporter that prevented exports on windows.
+- Fixed even more issues with LandControl (that were partially introduced by the last release)
+-----
+_This is a hotfix release for [Kopernicus 1.4.5-3](https://github.com/Kopernicus/Kopernicus/releases/tag/release-1.4.5-3). Please also check its changelog for new features._ 
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
