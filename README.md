@@ -1,18 +1,17 @@
 ﻿Kopernicus
 ==============================
-August 02, 2018
+August 10, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.4.5-2)
+New in this version (1.4.5-3)
 -------------------
-- Fixed LandControl, because the stock version doesn't allow to set createColors and createScatter anymore
-- Refactored the logging, should be more hardened against duplicated bodies now. (thanks to @Corfiot)
-- Added an experimental setting to specify a custom orbital period (Orbit { period = ... })
------
-_This is a hotfix release for [Kopernicus 1.4.5-1](https://github.com/Kopernicus/Kopernicus/releases/tag/release-1.4.5-1). Please also check its changelog for new features._ 
+- More fixes to LandControl
+- Fixed the custom period setting
+- Added the possibility to set a custom orbit icon (`Orbit { iconTexture = ... }`)
+- Fixed an issue with the Kittopia exporter that prevented exports on windows.
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
