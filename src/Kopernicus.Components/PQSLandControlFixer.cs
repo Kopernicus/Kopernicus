@@ -24,32 +24,21 @@
 */
 
 using System;
+using System.Linq;
+using System.Reflection;
 
 namespace Kopernicus
 {
     namespace Components
     {
-        namespace PatchedMods
+        public class PQSLandControlFixer : PQSMod
         {
-            public class PQSLandControlPatched : PQSLandControl
+            // I have no idea what Squad did to LandControl but it worked just fine before
+            public override void OnSetup()
             {
-                // Where is the point in having variables if they are set to true automatically anyway?
-                public Boolean reallyCreateColors = true;
-                public Boolean reallyCreateScatter = true;
-
-                public override void OnVertexBuild(PQS.VertexBuildData data)
-                {
-                    createColors = reallyCreateColors;
-
-                    base.OnVertexBuild(data);
-                }
-
-                public override void OnQuadPreBuild(PQ quad)
-                {
-                    createScatter = reallyCreateScatter;
-                    
-                    base.OnQuadPreBuild(quad);
-                }
+                typeof(PQS).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
+                base.OnSetup();
             }
         }
     }

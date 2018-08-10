@@ -26,7 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kopernicus.Components.PatchedMods;
+using Kopernicus.Components;
 using UnityEngine;
 
 namespace Kopernicus
@@ -289,11 +289,11 @@ namespace Kopernicus
                     
                     Logger.Active.Log("Patching PQSLandControl");
 
-                    foreach (PQSLandControl landControl in body.pqsVersion.GetComponentsInChildren<PQSLandControl>())
-                    {
-                        Utility.CopyObjectFields(landControl, landControl.gameObject.AddComponent<PQSLandControlPatched>(), false);
-                        UnityEngine.Object.Destroy(landControl);
-                    }
+                    GameObject modObj = new GameObject("LandControlFixer");
+                    PQSLandControlFixer fixer = modObj.AddComponent<PQSLandControlFixer>();
+                    fixer.modEnabled = true;
+                    fixer.order = 0;
+                    modObj.transform.parent = body.pqsVersion.transform;
                 }
 
                 // Should we remove the progress tree
