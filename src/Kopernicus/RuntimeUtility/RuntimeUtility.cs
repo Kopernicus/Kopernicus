@@ -276,9 +276,9 @@ namespace Kopernicus
                         Destroy(city.gameObject);
                     }
                 }
-                var stockLaunchSitesField = PSystemSetup.Instance.GetType().GetField("stocklaunchsites", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo stockLaunchSitesField = typeof(PSystemSetup).GetField("stocklaunchsites", BindingFlags.NonPublic | BindingFlags.Instance);
                 LaunchSite[] stockLaunchSites = (LaunchSite[])stockLaunchSitesField.GetValue(PSystemSetup.Instance);
-                var updateStockLaunchSites = stockLaunchSites.Where(site => !Templates.RemoveLaunchSites.Contains(site.name)).ToArray() ;
+                LaunchSite[] updateStockLaunchSites = stockLaunchSites.Where(site => !Templates.RemoveLaunchSites.Contains(site.name)).ToArray();
                 if (stockLaunchSites.Length != updateStockLaunchSites.Length)
                 {
                     stockLaunchSitesField.SetValue(PSystemSetup.Instance, updateStockLaunchSites);
