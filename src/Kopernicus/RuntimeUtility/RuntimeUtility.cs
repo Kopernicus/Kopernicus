@@ -276,13 +276,24 @@ namespace Kopernicus
                         Destroy(city.gameObject);
                     }
                 }
-                FieldInfo stockLaunchSitesField = typeof(PSystemSetup).GetField("stocklaunchsites", BindingFlags.NonPublic | BindingFlags.Instance);
-                LaunchSite[] stockLaunchSites = (LaunchSite[])stockLaunchSitesField.GetValue(PSystemSetup.Instance);
-                LaunchSite[] updateStockLaunchSites = stockLaunchSites.Where(site => !Templates.RemoveLaunchSites.Contains(site.name)).ToArray();
-                if (stockLaunchSites.Length != updateStockLaunchSites.Length)
+                // PSystemSetup.RemoveLaunchSite does not remove launch sites from PSystemSetup.StockLaunchSites
+                // Currently an ArgumentOutOfRangeException can result when they are different lists because of a bug in stock code
+                try
                 {
-                    stockLaunchSitesField.SetValue(PSystemSetup.Instance, updateStockLaunchSites);
+                    FieldInfo stockLaunchSitesField = typeof(PSystemSetup).GetField("stocklaunchsites", BindingFlags.NonPublic | BindingFlags.Instance);
+                    LaunchSite[] stockLaunchSites = (LaunchSite[])stockLaunchSitesField.GetValue(PSystemSetup.Instance);
+                    LaunchSite[] updateStockLaunchSites = stockLaunchSites.Where(site => !Templates.RemoveLaunchSites.Contains(site.name)).ToArray();
+                    if (stockLaunchSites.Length != updateStockLaunchSites.Length)
+                    {
+                        stockLaunchSitesField.SetValue(PSystemSetup.Instance, updateStockLaunchSites);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Logger.Default.Log("Failed to remove launch sites from 'stockLaunchSites' field. Exception information follows.");
+                    Logger.Default.LogException(ex);
+                }
+
             }
             #endif
 #if FALSE
