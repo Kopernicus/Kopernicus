@@ -136,6 +136,14 @@ namespace Kopernicus
                 set { Templates.menuBody = value; }
             }
 
+            // The color of the light at main menu
+            [ParserTarget("mainMenuLightColor")]
+            public ColorParser mainMenuLightColor
+            {
+                get { return Templates.mainMenuLightColor; }
+                set { Templates.mainMenuLightColor = value; }
+            }
+
             // The maximum viewing distance in tracking station
             [ParserTarget("maxViewingDistance")]
             public NumericParser<Double> maxViewDistance

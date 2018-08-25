@@ -161,7 +161,7 @@ namespace Kopernicus
             SunFlare.Instance = star.lensFlare = flare;
 
             // Bodies
-            Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
+            Dictionary <String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
 
             foreach (CelestialBody body in PSystemManager.Instance.localBodies)
             {
@@ -423,6 +423,20 @@ namespace Kopernicus
                     detail.displayStringValue = true;
                     detail.stringValues = _details ?? (_details = Templates.PresetDisplayNames.ToArray());
                 }
+            }
+
+            // Change main menu light color
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                // I have to check two times if the game object exists, if i don't a nullref appears, and no-one likes nullref.
+                if(GameObject.Find("Directional light"))
+                {
+                    Light mainMenuLight = GameObject.Find("Directional light").GetComponent<Light>();
+                    if (mainMenuLight)
+                    {
+                        mainMenuLight.color = Templates.mainMenuLightColor;
+                    }
+                }     
             }
         }
 

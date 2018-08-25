@@ -52,6 +52,9 @@ namespace Kopernicus
         // The body that should appear in MainMenu
         public static String menuBody { get; set; }
 
+        // The main menu color
+        public static ColorParser mainMenuLightColor = new ColorParser(new Color(1, 1, 1, 1));
+
         // Whether the main menu body should be randomized
         public static List<String> randomMainMenuBodies { get; set; }
         
