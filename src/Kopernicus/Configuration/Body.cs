@@ -190,6 +190,9 @@ namespace Kopernicus
             // Wrapper around Particle class for editing/loading
             [ParserTargetCollection("Particles", AllowMerge = true)]
             public List<ParticleLoader> particles { get; set; }
+            
+            [ParserTarget("HazardousBody")]
+            public HazardousBodyLoader hazardousBody { get; set; }
 
             // Wrapper around the settings for the SpaceCenter
             [ParserTarget("SpaceCenter", AllowMerge = true)]

@@ -58,6 +58,7 @@
     <Compile Include="Configuration\DebugLoader.cs" />
     <Compile Include="Configuration\Enumerations\KopernicusNoiseQuality.cs" />
     <Compile Include="Configuration\Enumerations\KopernicusNoiseType.cs" />
+    <Compile Include="Configuration\HazardousBodyLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\DiffuseWrapLoader.cs" />

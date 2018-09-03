@@ -33,6 +33,8 @@ namespace Kopernicus
     {
         /// <summary>
         /// Class to create a dangerous ocean that destroys ships
+        ///
+        /// Obsolete. Nothing to see here. Look at the shiny new things in HazardousBody instead.
         /// </summary>
         public class HazardousOcean : MonoBehaviour
         {
