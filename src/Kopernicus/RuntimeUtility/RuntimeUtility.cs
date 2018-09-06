@@ -51,6 +51,7 @@ namespace Kopernicus
     {
         // Variables
         public MapObject previous;
+        private readonly Dictionary<CelestialBody, Sprite> _spriteCache = new Dictionary<CelestialBody, Sprite>();
 
         // Awake() - flag this class as don't destroy on load and register delegates
         void Awake()
@@ -391,17 +392,28 @@ namespace Kopernicus
                         }
                     }
                 }
-                
+
                 // Apply orbit icon customization
-                foreach (MapNode node in Resources.FindObjectsOfTypeAll<MapNode>())
+                foreach (CelestialBody body in FlightGlobals.Bodies)
                 {
-                    if (node.mapObject != null && node.mapObject.celestialBody != null && node.mapObject.celestialBody.Has("iconTexture"))
+                    if (body.MapObject != null && body.MapObject.uiNode != null && body.Has("iconTexture"))
                     {
-                        Texture2D texture = node.mapObject.celestialBody.Get<Texture2D>("iconTexture");
-                        node.SetIcon(Sprite.Create(texture,
-                            new Rect(0, 0, texture.width, texture.height),
-                            new Vector2(0.5f, 0.5f), 100, 1, SpriteMeshType.Tight,
-                            Vector4.zero));
+                        _spriteCache.TryGetValue(body, out Sprite sprite);
+                        if (sprite == null)
+                        {
+                            Texture2D texture = body.Get<Texture2D>("iconTexture");
+                            sprite = Sprite.Create(
+                                texture,
+                                new Rect(0, 0, texture.width, texture.height),
+                                new Vector2(0.5f, 0.5f),
+                                100,
+                                1,
+                                SpriteMeshType.Tight,
+                                Vector4.zero
+                            );
+                            _spriteCache[body] = sprite;
+                        }
+                        body.MapObject.uiNode.SetIcon(sprite);
                     }
                 }
             }
