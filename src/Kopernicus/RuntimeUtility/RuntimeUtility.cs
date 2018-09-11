@@ -52,6 +52,7 @@ namespace Kopernicus
         // Variables
         public MapObject previous;
         private readonly Dictionary<CelestialBody, Sprite> _spriteCache = new Dictionary<CelestialBody, Sprite>();
+        private bool _mapDirty = false;
 
         // Awake() - flag this class as don't destroy on load and register delegates
         void Awake()
@@ -72,6 +73,7 @@ namespace Kopernicus
             // Add handlers
             GameEvents.onPartUnpack.Add(OnPartUnpack);
             GameEvents.onLevelWasLoaded.Add(FixCameras);
+            GameEvents.OnMapEntered.Add(delegate { _mapDirty = true; });
             GameEvents.onLevelWasLoaded.Add(delegate (GameScenes scene)
             {
                 //if (MapView.fetch != null)
@@ -347,7 +349,8 @@ namespace Kopernicus
             FixZooming();
             ApplyOrbitVisibility();
             RDFixer();
-            
+            ApplyOrbitIconCustomization();
+
             // Prevent the orbit lines from flickering
             PlanetariumCamera.Camera.farClipPlane = 1e14f;
 
@@ -390,30 +393,6 @@ namespace Kopernicus
                             }, new SetAsTarget(cast.driver.Targetable, () => FlightGlobals.fetch.VesselTarget));
                             fields[1].SetValue(targeter, context);
                         }
-                    }
-                }
-
-                // Apply orbit icon customization
-                foreach (CelestialBody body in FlightGlobals.Bodies)
-                {
-                    if (body.MapObject != null && body.MapObject.uiNode != null && body.Has("iconTexture"))
-                    {
-                        _spriteCache.TryGetValue(body, out Sprite sprite);
-                        if (sprite == null)
-                        {
-                            Texture2D texture = body.Get<Texture2D>("iconTexture");
-                            sprite = Sprite.Create(
-                                texture,
-                                new Rect(0, 0, texture.width, texture.height),
-                                new Vector2(0.5f, 0.5f),
-                                100,
-                                1,
-                                SpriteMeshType.Tight,
-                                Vector4.zero
-                            );
-                            _spriteCache[body] = sprite;
-                        }
-                        body.MapObject.uiNode.SetIcon(sprite);
                     }
                 }
             }
@@ -528,6 +507,35 @@ namespace Kopernicus
             else
             {
                 isDone2 = false;
+            }
+        }
+
+        void ApplyOrbitIconCustomization()
+        {
+            bool nodesReady = FlightGlobals.Bodies.Any(b => b.MapObject?.uiNode != null);
+            if (_mapDirty && nodesReady)
+            {
+                IEnumerable<CelestialBody> customOrbitalIcons = FlightGlobals.Bodies.Where(b => b.MapObject?.uiNode != null && b.Has("iconTexture"));
+                foreach (CelestialBody body in customOrbitalIcons)
+                {
+                    _spriteCache.TryGetValue(body, out Sprite sprite);
+                    if (sprite == null)
+                    {
+                        Texture2D texture = body.Get<Texture2D>("iconTexture");
+                        sprite = Sprite.Create(
+                            texture,
+                            new Rect(0, 0, texture.width, texture.height),
+                            new Vector2(0.5f, 0.5f),
+                            100,
+                            1,
+                            SpriteMeshType.Tight,
+                            Vector4.zero
+                        );
+                        _spriteCache[body] = sprite;
+                    }
+                    body.MapObject.uiNode.SetIcon(sprite);
+                }
+                _mapDirty = false;
             }
         }
 
