@@ -53,7 +53,10 @@ namespace Kopernicus
         public static String menuBody { get; set; }
 
         // The main menu color
-        public static ColorParser mainMenuLightColor = new ColorParser(new Color(1, 1, 1, 1));
+        public static Color mainMenuLightColor;
+
+        // Cache for main menu light
+        public static GameObject mainMenuLightGameObject;
 
         // Whether the main menu body should be randomized
         public static List<String> randomMainMenuBodies { get; set; }

@@ -428,15 +428,61 @@ namespace Kopernicus
             // Change main menu light color
             if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
-                // I have to check two times if the game object exists, if i don't a nullref appears, and no-one likes nullref.
-                if(GameObject.Find("Directional light"))
+                if(Templates.mainMenuLightGameObject)
                 {
-                    Light mainMenuLight = GameObject.Find("Directional light").GetComponent<Light>();
-                    if (mainMenuLight)
+                    // Check if user intentionally set a value for the color, if not, take it from closest star
+                    try
                     {
-                        mainMenuLight.color = Templates.mainMenuLightColor;
+                        // Force alpha to 1
+                        Templates.mainMenuLightColor.a = 1;
+
+                        if(Templates.mainMenuLightColor == Color.black && Templates.kopernicusMainMenu)
+                        {
+                            // Get main menu body's CelestialBody
+                            CelestialBody mainCB = null;
+                            foreach(CelestialBody c in FlightGlobals.Bodies)
+                            {
+                                if (c.name == Templates.menuBody)
+                                {
+                                    mainCB = c;
+                                }
+                            }
+
+                            if(mainCB)
+                            {
+                                Templates.mainMenuLightColor = KopernicusStar.GetNearest(mainCB).light.color;
+                            }
+                            
+                            else
+                            {
+                                Logger.Default.Log("Unable to find main menu body's celestialbody componant!");
+                            }
+                        }
+
+                        Templates.mainMenuLightGameObject.GetComponent<Light>().color = Templates.mainMenuLightColor;
                     }
-                }     
+
+                    catch(Exception e)
+                    {
+                        Logger.Default.LogException(e);
+                    }
+                }
+
+                // Check and cache the light object
+                else
+                {
+                    GameObject g = GameObject.Find("Directional light");
+
+                    if(g != null)
+                    {
+                        Templates.mainMenuLightGameObject = g;
+                    }
+
+                    else
+                    {
+                        Logger.Default.Log("Main menu's light was not found! Unable to apply the light color!");
+                    }
+                }
             }
         }
 
