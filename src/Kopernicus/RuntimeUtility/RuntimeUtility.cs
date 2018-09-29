@@ -357,11 +357,11 @@ namespace Kopernicus
                 {
                     FieldInfo mode_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType.IsEnum && f.FieldType.IsNested);
                     FieldInfo context_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(MapContextMenu));
-                    #if !KSP131
+#if !KSP131
                     FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRendererBase.OrbitCastHit));
-                    #else
+#else
                     FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
-                    #endif
+#endif
                     fields = new FieldInfo[] { mode_f, context_f, cast_f };
                 }
                 if (FlightGlobals.ActiveVessel != null)
@@ -372,11 +372,11 @@ namespace Kopernicus
                     Int32 mode = (Int32)fields[0].GetValue(targeter);
                     if (mode == 2)
                     {
-                        #if !KSP131
+#if !KSP131
                         OrbitRendererBase.OrbitCastHit cast = (OrbitRendererBase.OrbitCastHit)fields[2].GetValue(targeter);
-                        #else
+#else
                         OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit) fields[2].GetValue(targeter);
-                        #endif
+#endif
                         CelestialBody body = PSystemManager.Instance.localBodies.Find(b => b.name == cast.or?.discoveryInfo?.name?.Value);
                         if (body == null) return;
                         if (body.Has("barycenter") || !body.Get("selectable", true))
@@ -391,7 +391,7 @@ namespace Kopernicus
                         }
                     }
                 }
-                
+
                 // Apply orbit icon customization
                 foreach (MapNode node in Resources.FindObjectsOfTypeAll<MapNode>())
                 {
@@ -414,7 +414,7 @@ namespace Kopernicus
                 body.afg.lightDot = Mathf.Clamp01(Vector3.Dot(planet2cam, body.afg.mainCamera.transform.position - star_.transform.position) * body.afg.dawnFactor);
                 body.afg.GetComponent<Renderer>().sharedMaterial.SetFloat("_lightDot", body.afg.lightDot);
             }
-            
+
             // Update the names of the presets in the settings dialog
             if (HighLogic.LoadedScene == GameScenes.SETTINGS)
             {
@@ -434,6 +434,7 @@ namespace Kopernicus
                     {
                         Light mainMenuLight = GameObject.Find("Directional light").GetComponent<Light>();
                         if (mainMenuLight)
+                        {
                             // Check if user intentionally set a value for the color, if not, take it from closest star
                             try
                             {
@@ -463,27 +464,29 @@ namespace Kopernicus
                                 }
                                 Templates.mainMenuLightGameObject.GetComponent<Light>().color = Templates.mainMenuLightColor;
                             }
-                }
-                    catch (Exception e)
-                {
-                    Logger.Default.LogException(e);
-                }
-            }
-            // Check and cache the light object
-            else
-            {
-                GameObject g = GameObject.Find("Directional light");
-                if (g != null)
-                {
-                    Templates.mainMenuLightGameObject = g;
-                }
-                else
-                {
-                    Logger.Default.Log("Main menu's light was not found! Unable to apply the light color!");
-                }
+                            catch (Exception e)
+                            {
+                                Logger.Default.LogException(e);
+                            }
+                        }   
+                    }
+                    // Check and cache the light object
+                    else
+                    {
+                        GameObject g = GameObject.Find("Directional light");
+                        if (g != null)
+                        {
+                            Templates.mainMenuLightGameObject = g;
+                        }
+                        else
+                        {
+                            Logger.Default.Log("Main menu's light was not found! Unable to apply the light color!");
+                        }
+                    }
+                    
+            
             }
         }
-
         // Status
         Boolean isDone = false;
         Boolean isDone2 = false;
