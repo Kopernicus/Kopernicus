@@ -357,7 +357,7 @@ namespace Kopernicus
                 {
                     FieldInfo mode_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType.IsEnum && f.FieldType.IsNested);
                     FieldInfo context_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(MapContextMenu));
-#if !KSP131
+                    #if !KSP131
                     FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRendererBase.OrbitCastHit));
 #else
                     FieldInfo cast_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
@@ -430,6 +430,7 @@ namespace Kopernicus
             {
                 // I have to check two times if the game object exists, if i don't a nullref appears, and no-one likes nullref.
                 if (GameObject.Find("Directional light"))
+                {
                     if (Templates.mainMenuLightGameObject)
                     {
                         Light mainMenuLight = GameObject.Find("Directional light").GetComponent<Light>();
@@ -480,11 +481,10 @@ namespace Kopernicus
                         }
                         else
                         {
-                            Logger.Default.Log("Main menu's light was not found! Unable to apply the light color!");
+                            Logger.Active.Log("Main menu's light was not found! Unable to apply the light color!");
                         }
                     }
-                    
-            
+                }
             }
         }
         // Status
