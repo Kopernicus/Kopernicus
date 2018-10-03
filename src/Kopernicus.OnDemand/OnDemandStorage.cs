@@ -447,7 +447,7 @@ namespace Kopernicus
 
                                             if (length - 128 >= pixels)
                                             {
-                                                byte[] data = LoadRestOfReader(binaryReader);
+                                                byte[] data = binaryReader.ReadBytes(pixels);
 
                                                 Color[] palette = new Color[colors];
                                                 Color[] image = new Color[width * height];
@@ -458,7 +458,7 @@ namespace Kopernicus
                                                         data[i + 3]);
                                                 }
 
-                                                for (int i = 4 * colors; i < pixels; i++)
+                                                for (int i = 4 * colors; i < data.Length; i++)
                                                 {
                                                     image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
                                                     if (bpp == 4)
