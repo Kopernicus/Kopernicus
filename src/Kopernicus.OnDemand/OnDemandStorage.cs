@@ -443,8 +443,9 @@ namespace Kopernicus
                                             int width = (int) dDSHeader.dwWidth;
                                             int height = (int) dDSHeader.dwHeight;
                                             long length = new FileInfo(path).Length;
+                                            int pixels = width * height * bpp / 8 + 4 * colors;
 
-                                            if (length == width * height * bpp / 8 + 4 * colors + 128)
+                                            if (length - 128 >= pixels)
                                             {
                                                 byte[] data = LoadRestOfReader(binaryReader);
 
@@ -457,14 +458,14 @@ namespace Kopernicus
                                                         data[i + 3]);
                                                 }
 
-                                                for (int i = 4 * colors; i < data.Length; i++)
+                                                for (int i = 4 * colors; i < pixels; i++)
                                                 {
                                                     image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
                                                     if (bpp == 4)
                                                         image[(i - 64) * 2 + 1] = palette[data[i] % 16];
                                                 }
 
-                                                map = new Texture2D(width, height, TextureFormat.ARGB32, mipmap);
+                                                map = new Texture2D(width, height, TextureFormat.ARGB32, false);
                                                 map.SetPixels(image);
                                             }
                                             else
