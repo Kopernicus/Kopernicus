@@ -444,7 +444,7 @@ namespace Kopernicus
                                             int height = (int) dDSHeader.dwHeight;
                                             long length = new FileInfo(path).Length;
 
-                                            if (length == width * height * bpp / 8 + 4 * colors)
+                                            if (length == width * height * bpp / 8 + 4 * colors + 128)
                                             {
                                                 byte[] data = LoadRestOfReader(binaryReader);
 
