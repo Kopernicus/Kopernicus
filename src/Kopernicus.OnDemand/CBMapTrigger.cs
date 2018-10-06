@@ -58,7 +58,7 @@ namespace Kopernicus
 
             private void OnMapEntered()
             {
-                // OnDemandStorage.EnableBodyCBMaps(_body.transform.name);
+                OnDemandStorage.EnableBodyCBMaps(_body.transform.name);
             }
 
             private void OnMapExited()
@@ -71,7 +71,14 @@ namespace Kopernicus
 
             private void OnGameSceneLoadRequested(GameScenes scene)
             {
-                OnDemandStorage.DisableBodyCBMaps(_body.transform.name);
+                if (scene == GameScenes.TRACKSTATION)
+                {
+                    OnDemandStorage.EnableBodyCBMaps(_body.transform.name);
+                }
+                else
+                {
+                    OnDemandStorage.DisableBodyCBMaps(_body.transform.name);
+                }
             }
 
             private void OnVesselLoad(Vessel vessel)
