@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
@@ -117,13 +118,20 @@ namespace Kopernicus
             // }
             // Kill this with fire. I mean, it's not 2013 anymore
 
-            // An identifier that is used for referencing the orbiting body. 
-            // This must be unique!
+            // The main UBI (Unique Body Identifier) that is assigned to the body
             [ParserTarget("identifier")]
             public String identifier
             {
-                get { return celestialBody.Get("identifier", celestialBody.transform.name); }
+                get { return celestialBody.Get<String>("identifier", null); }
                 set { celestialBody.Set("identifier", value); }
+            }
+
+            // All other UBIs the body implements
+            [ParserTargetCollection("self", Key = "implements", AllowMerge = false, NameSignificance = NameSignificance.Key)]
+            public List<StringCollectionParser> implements
+            {
+                get { return new List<StringCollectionParser> { new StringCollectionParser(celestialBody.Get("implements", new List<String>()))}; }
+                set { celestialBody.Set("implements", value.SelectMany(v => v.Value).ToList()); }
             }
 
             // Finalize the orbit of the body?

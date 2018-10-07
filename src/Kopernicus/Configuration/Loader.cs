@@ -322,6 +322,26 @@ namespace Kopernicus
                         throw new Exception("Failed to load Asteroid: " + presetNode.GetValue("name"));
                     }
                 }
+                
+                // Register UBIs for all bodies
+                CelestialBody[] localBodies = bodies.Values.Select(b => b.generatedBody.celestialBody).ToArray();
+                foreach (KeyValuePair<String, Body> body in bodies)
+                {
+                    // Register the primary UBI
+                    if (!String.IsNullOrEmpty(body.Value.identifier))
+                    {
+                        UBI.RegisterUBI(body.Value.celestialBody, body.Value.identifier, localBodies: localBodies);
+                    }
+
+                    // Register all implemented UBIs
+                    foreach (String ubi in body.Value.implements.SelectMany(u => u.Value).Distinct())
+                    {
+                        if (!String.IsNullOrEmpty(ubi))
+                        {
+                            UBI.RegisterUBI(body.Value.celestialBody, ubi, isAbstract: true, localBodies: localBodies);
+                        }
+                    }
+                }
 
                 // Glue all the orbits together in the defined pattern
                 foreach (KeyValuePair<String, Body> body in bodies)
@@ -329,8 +349,11 @@ namespace Kopernicus
                     // If this body is in orbit around another body
                     if (body.Value.orbit != null)
                     {
+                        // Convert a UBI reference into a normal one
+                        String referenceBody = UBI.GetName(body.Value.orbit.referenceBody, localBodies: localBodies);
+                        
                         // Get the Body object for the reference body
-                        if (!bodies.TryGetValue(body.Value.orbit.referenceBody, out Body parent))
+                        if (!bodies.TryGetValue(referenceBody, out Body parent))
                         {
                             throw new Exception("Reference body for \"" + body.Key + "\" could not be found. Missing body name is \"" + body.Value.orbit.referenceBody + "\".");
                         }
@@ -357,12 +380,6 @@ namespace Kopernicus
                         }
                     }
 
-                    // Set an unique identifier if there is noone
-                    if (!body.Value.generatedBody.Has("identifier"))
-                    {
-                        body.Value.generatedBody.Set("identifier", body.Value.name);
-                    }
-
                     // Event
                     Events.OnLoaderFinalizeBody.Fire(body.Value);
                 }
@@ -384,12 +401,6 @@ namespace Kopernicus
                 List<Int32> numbers = new List<Int32>() { 0, 1 };
                 Int32 index = bodies.Sum(b => b.Value.generatedBody.flightGlobalsIndex);
                 PatchFGI(ref numbers, ref index, systemPrefab.rootBody);
-
-                // Check if all bodies have an unique identifier
-                if (bodies.Any(b => bodies.Count(body => body.Value.identifier == b.Value.identifier) > 1))
-                {
-                    throw new InvalidOperationException("Found duplicated body identifiers!");
-                }
 
                 // We're done
                 currentBody.generatedBody = null;
