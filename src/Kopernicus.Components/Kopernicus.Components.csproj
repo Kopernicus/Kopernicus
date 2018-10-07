@@ -103,6 +103,7 @@
     <Compile Include="SharedScaledSpaceFader.cs" />
     <Compile Include="SharedSunShaderController.cs" />
     <Compile Include="StorageComponent.cs" />
+    <Compile Include="UBI.cs" />
     <Compile Include="Wiresphere.cs" />
     <Compile Include="PlanetaryParticle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

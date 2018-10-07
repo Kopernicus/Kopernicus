@@ -203,7 +203,7 @@ namespace Kopernicus
                     CelestialBody oldRef = body.referenceBody;
                     body.referenceBody.orbitingBodies.Remove(body);
 
-                    CelestialBody newRef = PSystemManager.Instance.localBodies.FirstOrDefault(b => b.transform.name == loader.referenceBody);
+                    CelestialBody newRef = UBI.GetBody(loader.referenceBody);
                     if (newRef != null)
                     {
                         body.orbit.referenceBody = body.orbitDriver.referenceBody = newRef;
@@ -678,7 +678,7 @@ namespace Kopernicus
                 return;
             ConfigNode orbit = data.to.GetNode("ORBIT");
             String bodyIdent = orbit.GetValue("IDENT");
-            CelestialBody body = PSystemManager.Instance.localBodies.FirstOrDefault(b => b.Get<String>("identifier") == bodyIdent);
+            CelestialBody body = UBI.GetBody(bodyIdent);
             if (body == null)
                 return;
             orbit.SetValue("REF", body.flightGlobalsIndex);
@@ -694,7 +694,7 @@ namespace Kopernicus
             CelestialBody body = PSystemManager.Instance.localBodies.FirstOrDefault(b => b.flightGlobalsIndex == data.from.orbitSnapShot.ReferenceBodyIndex);
             if (body == null)
                 return;
-            orbit.AddValue("IDENT", body.Get<String>("identifier"));
+            orbit.AddValue("IDENT", UBI.GetUBI(body));
         }
 
         // Remove the Handlers
