@@ -36,9 +36,11 @@ namespace Kopernicus
             // I have no idea what Squad did to LandControl but it worked just fine before
             public override void OnSetup()
             {
+                #if !KSP131
                 typeof(PQS).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                     .First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
                 base.OnSetup();
+                #endif
             }
         }
     }
