@@ -317,6 +317,19 @@ namespace Kopernicus
                     OnDemandStorage.AddHandler(Value);
                 }
                 
+                // hacky hack
+                if (generatedBody.celestialBody.isHomeWorld && Value.gameObject.GetChild("KSC") == null)
+                {
+                    PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
+                    GameObject scTree = kerbinTemplate.pqsVersion.gameObject.GetChild("KSC");
+                    GameObject newSCTree = UnityEngine.Object.Instantiate(scTree);
+                    newSCTree.transform.parent = Value.transform;
+                    newSCTree.transform.localPosition = scTree.transform.localPosition;
+                    newSCTree.transform.localScale = scTree.transform.localScale;
+                    newSCTree.transform.localRotation = scTree.transform.localRotation;
+                    newSCTree.name = "KSC";
+                }
+                
                 // Load existing mods
                 foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true)
                     .Where(m => m.sphere == Value))

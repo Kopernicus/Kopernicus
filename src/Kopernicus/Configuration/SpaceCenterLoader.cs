@@ -356,6 +356,12 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 Events.OnSpaceCenterLoaderPostApply.Fire(this, node);
+                
+                // Only keep the space center settings if the body is the homeworld
+                if (!generatedBody.celestialBody.isHomeWorld)
+                {
+                    UnityEngine.Object.Destroy(Value.gameObject);
+                }
             }
 
             /// <summary>
