@@ -1,16 +1,20 @@
 ﻿Kopernicus
 ==============================
-August 10, 2018
+October 16, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.4.5-4)
+New in this version (1.5.0-1)
 -------------------
-- Fixed even more issues with LandControl (that were partially introduced by the last release)
------
-_This is a hotfix release for [Kopernicus 1.4.5-3](https://github.com/Kopernicus/Kopernicus/releases/tag/release-1.4.5-3). Please also check its changelog for new features._ 
+- Updated to KSP 1.5.0
+- Improved performance of orbit icons, thanks to marr75
+- Fixed the DDS palette loader
+- fixed biome maps not loading in the tracking station
+- Automatically inject the KSC transform into Kerbin, this makes it possible to change the template to something different
+- fixed the 1.3.1 backport
+- added a 1.4.5 backport
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
