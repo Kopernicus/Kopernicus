@@ -19,7 +19,7 @@
  * remove the line after this comment block
  */
 
-#define LOG_FALLBACK_NAME
+// #define LOG_FALLBACK_NAME
 
 using System;
 using System.Collections.Generic;
