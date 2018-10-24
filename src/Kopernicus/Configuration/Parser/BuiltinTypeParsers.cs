@@ -193,6 +193,7 @@ namespace Kopernicus
             {
                 // Should we use OnDemand?
                 Boolean useOnDemand = OnDemandStorage.useOnDemand;
+                Boolean useOnDemandBiomes = OnDemandStorage.useOnDemandBiomes;
 
                 if (s.StartsWith("BUILTIN/"))
                 {
@@ -202,7 +203,7 @@ namespace Kopernicus
                 else
                 {
                     // are we on-demand? Don't load now.
-                    if (useOnDemand)
+                    if (useOnDemand && typeof(T) == typeof(MapSO) || useOnDemandBiomes && typeof(T) == typeof(CBAttributeMapSO))
                     {
                         if (Utility.TextureExists(s))
                         {
@@ -314,7 +315,8 @@ namespace Kopernicus
             {
                 // Should we use OnDemand?
                 Boolean useOnDemand = OnDemandStorage.useOnDemand;
-
+                Boolean useOnDemandBiomes = OnDemandStorage.useOnDemandBiomes;
+                
                 if (s.StartsWith("BUILTIN/"))
                 {
                     s = s.Substring(8);
@@ -323,7 +325,7 @@ namespace Kopernicus
                 else
                 {
                     // check if OnDemand.
-                    if (useOnDemand)
+                    if (useOnDemand && typeof(T) == typeof(MapSO) || useOnDemandBiomes && typeof(T) == typeof(CBAttributeMapSO))
                     {
                         if (Utility.TextureExists(s))
                         {
