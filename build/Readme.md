@@ -1,20 +1,15 @@
 ﻿Kopernicus
 ==============================
-October 16, 2018
+October 24, 2018
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.5.0-1)
+New in this version (1.5.1-1)
 -------------------
-- Updated to KSP 1.5.0
-- Improved performance of orbit icons, thanks to marr75
-- Fixed the DDS palette loader
-- fixed biome maps not loading in the tracking station
-- Automatically inject the KSC transform into Kerbin, this makes it possible to change the template to something different
-- fixed the 1.3.1 backport
-- added a 1.4.5 backport
+- Updated to KSP 1.5.1
+- Fixed a bug where BiomeMap OnDemand Loading would lag a lot in MapView. BiomeMap OD is now disabled by default.
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
