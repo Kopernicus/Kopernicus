@@ -157,7 +157,7 @@ namespace Kopernicus
                 Boolean directSunlight = false;
                 Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(fi.Vessel.CoMD);
                 Double scale = Math.Max((star.sun.scaledBody.transform.position - scaledSpace).magnitude, 1);
-                Vector3 sunVector = (star.sun.position - scaledSpace) / scale;
+                Vector3d sunVector = (star.sun.position - scaledSpace) / scale;
                 Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(fi.Vessel.CoMD), sunVector);
 
                 // Get Solar Flux
