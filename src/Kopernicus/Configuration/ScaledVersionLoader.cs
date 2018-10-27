@@ -326,9 +326,8 @@ namespace Kopernicus
                 // Get the scaled version object
                 Value = generatedBody.celestialBody;
                 Value.scaledBody = generatedBody.scaledVersion;
-                type = new EnumParser<BodyType>(Loader.currentBody.template == null
-                    ? BodyType.Atmospheric
-                    : Loader.currentBody.template.type);
+                Body currentBody = Parser.GetState<Body>("Kopernicus:currentBody");
+                type = new EnumParser<BodyType>(currentBody.template?.type ?? BodyType.Atmospheric);
 
                 // Ensure scaled version at least has a mesh filter and mesh renderer
                 if (Value.scaledBody.GetComponent<MeshFilter>() == null)

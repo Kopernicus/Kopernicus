@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using Kopernicus.Components;
 using UnityEngine;
 using Object = System.Object;
 
@@ -34,27 +35,17 @@ namespace Kopernicus
     /// A component that stores data in a planet
     /// </summary>
     [RequireComponent(typeof(CelestialBody))]
-    public class StorageComponent : MonoBehaviour
+    public class StorageComponent : SerializableMonoBehaviour
     {
         /// <summary>
         /// The data stored by the component
         /// </summary>
-        private static Dictionary<String, Dictionary<String, System.Object>> data { get; set; }
-
-        static StorageComponent()
-        {
-            data = new Dictionary<String, Dictionary<String, Object>>();
-        }
+        [SerializeField]
+        private Dictionary<String, System.Object> data = new Dictionary<String, Object>();
 
         private CelestialBody body
         {
             get { return GetComponent<CelestialBody>(); }
-        }
-
-        void Awake()
-        {
-            if (!data.ContainsKey(Unify(body.transform.name)))
-                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
         }
 
         /// <summary>
@@ -62,10 +53,8 @@ namespace Kopernicus
         /// </summary>
         public T Get<T>(String id)
         {
-            if (!data.ContainsKey(Unify(body.transform.name)))
-                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
-            if (data[Unify(body.transform.name)].ContainsKey(id))
-                return (T) data[Unify(body.transform.name)][id];
+            if (data.ContainsKey(id))
+                return (T) data[id];
             throw new IndexOutOfRangeException();
         }
 
@@ -74,9 +63,7 @@ namespace Kopernicus
         /// </summary>
         public Boolean Has(String id)
         {
-            if (!data.ContainsKey(Unify(body.transform.name)))
-                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
-            return data[Unify(body.transform.name)].ContainsKey(id);
+            return data.ContainsKey(id);
         }
 
         /// <summary>
@@ -84,12 +71,10 @@ namespace Kopernicus
         /// </summary>
         public void Set<T>(String id, T value)
         {
-            if (!data.ContainsKey(Unify(body.transform.name)))
-                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
-            if (data[Unify(body.transform.name)].ContainsKey(id))
-                data[Unify(body.transform.name)][id] = value;
+            if (data.ContainsKey(id))
+                data[id] = value;
             else
-                data[Unify(body.transform.name)].Add(id, value);
+                data.Add(id, value);
         }
 
         /// <summary>
@@ -97,17 +82,10 @@ namespace Kopernicus
         /// </summary>
         public void Remove(String id)
         {
-            if (!data.ContainsKey(Unify(body.transform.name)))
-                data.Add(Unify(body.transform.name), new Dictionary<String, Object>());
-            if(data[Unify(body.transform.name)].ContainsKey(id))
-                data[Unify(body.transform.name)].Remove(id);
+            if(data.ContainsKey(id))
+                data.Remove(id);
             else
                 throw new IndexOutOfRangeException();
-        }
-
-        private String Unify(String id)
-        {
-            return id.Replace("(Clone)", "").Trim();
         }
     }
 }

@@ -36,13 +36,13 @@ namespace Kopernicus
             /// Provides an override for the currently edited body
             /// </summary>
             private PSystemBody currentBody = null;
-
+            
             /// <summary>
             /// Singleton of the currently edited body
             /// </summary>
             protected PSystemBody generatedBody
             {
-                get { return currentBody ?? Loader.currentBody?.generatedBody; }
+                get { return currentBody ?? (currentBody = Parser.GetState<Body>("Kopernicus:currentBody")?.generatedBody); }
                 set { currentBody = value; }
             }
         }

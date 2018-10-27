@@ -62,7 +62,8 @@ namespace Kopernicus
             // Convert
             public static implicit operator Vector3(PositionParser parser)
             {
-                Double? radius = Loader.currentBody?.generatedBody?.celestialBody?.Radius;
+                PSystemBody generatedBody = Parser.GetState<Body>("Kopernicus:currentBody")?.generatedBody;
+                Double? radius = generatedBody?.celestialBody?.Radius;
                 return Utility.LLAtoECEF(parser.latitude, parser.longitude, parser.altitude, radius > 0 ? (Double)radius : 0);
             }
         }

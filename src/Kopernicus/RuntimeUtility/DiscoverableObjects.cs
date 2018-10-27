@@ -126,7 +126,7 @@ namespace Kopernicus
                 // Around
                 IEnumerable<Location.AroundLoader> arounds = GetProbabilityList(asteroid.location.around, asteroid.location.around.Select(a => a.probability.Value));
                 Location.AroundLoader around = arounds.ElementAt(Random.Range(0, arounds.Count()));
-                body = PSystemManager.Instance.localBodies.Find(b => b.name == around.body);
+                body = UBI.GetBody(around.body);
                 if (!body) return;
                 if (around.reached && !ReachedBody(body)) return;
                 orbit = new Orbit();
@@ -145,7 +145,7 @@ namespace Kopernicus
                 // Nearby
                 Location.NearbyLoader[] nearbys = GetProbabilityList(asteroid.location.nearby, asteroid.location.nearby.Select(a => a.probability.Value)).ToArray();
                 Location.NearbyLoader nearby = nearbys[Random.Range(0, nearbys.Length)];
-                body = PSystemManager.Instance.localBodies.Find(b => b.name == nearby.body);
+                body = UBI.GetBody(nearby.body);
                 if (!body) return;
                 if (nearby.reached && !ReachedBody(body)) return;
                 orbit = new Orbit();
@@ -164,7 +164,7 @@ namespace Kopernicus
                 // Flyby
                 Location.FlybyLoader[] flybys = GetProbabilityList(asteroid.location.flyby, asteroid.location.flyby.Select(a => a.probability.Value)).ToArray();
                 Location.FlybyLoader flyby = flybys[Random.Range(0, flybys.Length)];
-                body = PSystemManager.Instance.localBodies.Find(b => b.name == flyby.body);
+                body = UBI.GetBody(flyby.body);
                 if (!body) return;
                 if (flyby.reached && !ReachedBody(body)) return;
                 orbit = Orbit.CreateRandomOrbitFlyBy(body, Random.Range(flyby.minDuration, flyby.maxDuration));
