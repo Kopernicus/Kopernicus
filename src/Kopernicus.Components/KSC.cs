@@ -26,6 +26,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Kopernicus
 {
@@ -34,32 +35,52 @@ namespace Kopernicus
         /// <summary>
         /// Stores information about the KSC
         /// </summary>
-        public class KSC : MonoBehaviour
+        public class KSC : SerializableMonoBehaviour
         {
             // PQSCity
+            [SerializeField]
             public Double? latitude;
+            [SerializeField]
             public Double? longitude;
+            [SerializeField]
             public Vector3? reorientInitialUp;
+            [SerializeField]
             public Vector3? repositionRadial;
+            [SerializeField]
             public Boolean? repositionToSphere;
+            [SerializeField]
             public Boolean? repositionToSphereSurface;
+            [SerializeField]
             public Boolean? repositionToSphereSurfaceAddHeight;
+            [SerializeField]
             public Boolean? reorientToSphere;
+            [SerializeField]
             public Double? repositionRadiusOffset;
+            [SerializeField]
             public Double? lodvisibleRangeMult;
+            [SerializeField]
             public Single? reorientFinalAngle;
 
             // PQSMod_MapDecalTangent
+            [SerializeField]
             public Vector3? position;
+            [SerializeField]
             public Double? radius;
+            [SerializeField]
             public Double? heightMapDeformity;
+            [SerializeField]
             public Double? absoluteOffset;
+            [SerializeField]
             public Boolean? absolute;
+            [SerializeField]
             public Double? decalLatitude;
+            [SerializeField]
             public Double? decalLongitude;
 
             // Material
+            [SerializeField]
             public Texture2D mainTexture;
+            [SerializeField]
             public Color? color;
 
             // Mods
@@ -70,41 +91,31 @@ namespace Kopernicus
             // Apply the patches
             public void Start()
             {
-                // Get the KSC-object from Kerbins PQS
-                if (FlightGlobals.Bodies != null)
+                body = GetComponent<CelestialBody>();
+                Debug.Log(body);
+                if (!body.isHomeWorld)
                 {
-                    body = FlightGlobals.Bodies.First(b => b.isHomeWorld);
-                    ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
-                    mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true).First(m => m.name == "KSC");
+                    Destroy(this);
+                    return;
                 }
-                else
-                {
-                    CelestialBody[] bodies = Resources.FindObjectsOfTypeAll<CelestialBody>();
-                    foreach (CelestialBody b in bodies)
-                    {
-                        if (!b.isHomeWorld)
-                            continue;
 
-                        if (b.pqsController == null)
-                            continue;
+                Debug.Log(this + " " + body);
+                Debug.Log(radius);
+                
+                ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
+                mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true)
+                    .First(m => m.name == "KSC");
 
-                        ksc = b.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
-                        if (ksc != null)
-                        {
-                            body = b;
-                            mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true).First(m => m.name == "KSC");
-                            break;
-                        }
-                    }
-                }
                 if (ksc == null)
                 {
                     Debug.LogError("[Kopernicus] KSC: Unable to find homeworld body with PQSCity named KSC");
                     return;
                 }
+
                 if (mapDecal == null)
                 {
-                    Debug.LogError("[Kopernicus] KSC: Unable to find homeworld body with PQSMod_MapDecalTangent named KSC");
+                    Debug.LogError(
+                        "[Kopernicus] KSC: Unable to find homeworld body with PQSMod_MapDecalTangent named KSC");
                     return;
                 }
 
@@ -179,7 +190,7 @@ namespace Kopernicus
                 if (lodvisibleRangeMult.HasValue)
                 {
                     foreach (PQSCity.LODRange lodRange in ksc.lod)
-                        lodRange.visibleRange *= (Single)lodvisibleRangeMult.Value;
+                        lodRange.visibleRange *= (Single) lodvisibleRangeMult.Value;
                 }
                 else
                 {

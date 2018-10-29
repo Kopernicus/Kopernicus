@@ -356,12 +356,6 @@ namespace Kopernicus
             void IParserEventSubscriber.PostApply(ConfigNode node)
             {
                 Events.OnSpaceCenterLoaderPostApply.Fire(this, node);
-                
-                // Only keep the space center settings if the body is the homeworld
-                if (!generatedBody.celestialBody.isHomeWorld)
-                {
-                    UnityEngine.Object.Destroy(Value.gameObject);
-                }
             }
 
             /// <summary>
@@ -376,7 +370,7 @@ namespace Kopernicus
                 }
 
                 // Store values
-                Value = new GameObject("SpaceCenter " + generatedBody.name).AddComponent<KSC>();
+                Value = generatedBody.celestialBody.gameObject.AddComponent<KSC>();
                 UnityEngine.Object.DontDestroyOnLoad(Value);
             }
 
@@ -393,11 +387,10 @@ namespace Kopernicus
                 }
 
                 // Store values
-                Value = UnityEngine.Object.FindObjectsOfType<KSC>()
-                    .FirstOrDefault(k => k.name == "SpaceCenter " + body.transform.name);
+                Value = body.GetComponent<KSC>();
                 if (Value == null)
                 {
-                    Value = new GameObject("SpaceCenter " + body.transform.name).AddComponent<KSC>();
+                    Value = generatedBody.celestialBody.gameObject.AddComponent<KSC>();
                     Value.Start();
                     UnityEngine.Object.DontDestroyOnLoad(Value);
                 }
