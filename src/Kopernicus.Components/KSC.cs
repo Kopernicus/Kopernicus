@@ -92,15 +92,11 @@ namespace Kopernicus
             public void Start()
             {
                 body = GetComponent<CelestialBody>();
-                Debug.Log(body);
                 if (!body.isHomeWorld)
                 {
                     Destroy(this);
                     return;
                 }
-
-                Debug.Log(this + " " + body);
-                Debug.Log(radius);
                 
                 ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
                 mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true)
