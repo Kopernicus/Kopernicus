@@ -38,11 +38,6 @@ namespace Kopernicus
         /// </summary>
         public class KopernicusSunFlare : SunFlare
         {
-            /// <summary>
-            /// How much of the Sun is visible from the current position?
-            /// </summary>
-            public Single occlusionMultiplier;
-            
             protected override void Awake()
             {
                 // sun flare
@@ -53,19 +48,6 @@ namespace Kopernicus
                     if (sunDirection != Vector3d.zero)
                         transform.forward = sunDirection;
                 };
-            }
-            
-            // Overload the stock LateUpdate function
-            void LateUpdate()
-            {
-                sunDirection = ((Vector3d) target.position - ScaledSpace.LocalToScaledSpace(sun.position)).normalized;
-                transform.forward = sunDirection;
-                sunFlare.brightness = brightnessMultiplier *
-                                      brightnessCurve.Evaluate(
-                                          (Single) (1.0 / (Vector3d.Distance(target.position,
-                                                               ScaledSpace.LocalToScaledSpace(sun.position)) /
-                                                           (AU * ScaledSpace.InverseScaleFactor)))) *
-                                      occlusionMultiplier;
             }
         }
     }

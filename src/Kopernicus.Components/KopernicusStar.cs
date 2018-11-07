@@ -298,7 +298,6 @@ namespace Kopernicus
                 lensFlare.brightnessCurve = shifter.brightnessCurve.Curve;
                 lensFlare.sun = sun;
                 lensFlare.target = target;
-                lensFlare.occlusionMultiplier = 1;
 
                 // States
                 Boolean lightsOn = (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER);
