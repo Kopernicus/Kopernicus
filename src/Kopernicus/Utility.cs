@@ -792,17 +792,17 @@ namespace Kopernicus
                     }
                     else
                     {
-                        int xN = (bx + result.width - 1) % result.width;
-                        int xP = (bx + result.width + 1) % result.width;
+                        int xN = bx - 1;
+                        int xP = bx + 1;
 
                         int yN = by - 1;
                         int yP = by + 1;
 
-                        double dX = (source.GetPixel(xP, by).r - source.GetPixel(xN, by).r) * pqs.radiusDelta;
-                        double dY = (source.GetPixel(bx, yP).r - source.GetPixel(bx, yN).r) * pqs.radiusDelta;
+                        double dX = (source.GetPixel(xN, by).r - source.GetPixel(xP, by).r) * pqs.radiusDelta;
+                        double dY = (source.GetPixel(bx, yN).r - source.GetPixel(bx, yP).r) * pqs.radiusDelta;
 
                         double slopeX = (1 + dX / Math.Pow(dX * dX + dS * dS, 0.5) * strength) / 2;
-                        double slopeY = (1 - dY / Math.Pow(dY * dY + dS * dS, 0.5) * strength) / 2;
+                        double slopeY = (1 + dY / Math.Pow(dY * dY + dS * dS, 0.5) * strength) / 2;
 
                         result.SetPixel(bx, by, new Color((float)slopeY, (float)slopeY, (float)slopeY, (float)slopeX));
                     }
