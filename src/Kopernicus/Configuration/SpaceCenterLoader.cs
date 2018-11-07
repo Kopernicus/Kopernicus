@@ -390,7 +390,7 @@ namespace Kopernicus
                 Value = body.GetComponent<KSC>();
                 if (Value == null)
                 {
-                    Value = generatedBody.celestialBody.gameObject.AddComponent<KSC>();
+                    Value = body.gameObject.AddComponent<KSC>();
                     Value.Start();
                     UnityEngine.Object.DontDestroyOnLoad(Value);
                 }
