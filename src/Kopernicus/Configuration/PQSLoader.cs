@@ -210,28 +210,34 @@ namespace Kopernicus
                         .FirstOrDefault(Mod => Mod.transform.parent == Value.transform);
 
                     // Clone the surface material of the PQS
-                    if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
+                    if (materialType == PQSMaterialType.AtmosphericOptimized)
                     {
                         PQSMainOptimisedLoader loader = new PQSMainOptimisedLoader(surfaceMaterial);
                         loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
-                    else if (PQSMainShader.UsesSameShader(surfaceMaterial))
+                    else if (materialType == PQSMaterialType.AtmosphericMain)
                     {
                         PQSMainShaderLoader loader = new PQSMainShaderLoader(surfaceMaterial);
                         loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
-                    else if (PQSProjectionAerialQuadRelative.UsesSameShader(surfaceMaterial))
+                    else if (materialType == PQSMaterialType.AtmosphericMain)
                     {
                         PQSProjectionAerialQuadRelativeLoader loader =
                             new PQSProjectionAerialQuadRelativeLoader(surfaceMaterial);
                         loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
-                    else if (PQSProjectionSurfaceQuad.UsesSameShader(surfaceMaterial))
+                    else if (materialType == PQSMaterialType.Vacuum)
                     {
                         surfaceMaterial = new PQSProjectionSurfaceQuadLoader(surfaceMaterial);
+                    }
+                    else if (materialType == PQSMaterialType.AtmosphericExtra)
+                    {
+                        PQSMainExtrasLoader loader = new PQSMainExtrasLoader(surfaceMaterial);
+                        loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
+                        surfaceMaterial = loader;
                     }
                     surfaceMaterial.name = Guid.NewGuid().ToString();
 
@@ -378,28 +384,34 @@ namespace Kopernicus
                         .FirstOrDefault(Mod => Mod.transform.parent == Value.transform);
 
                     // Clone the surface material of the PQS
-                    if (PQSMainOptimised.UsesSameShader(surfaceMaterial))
+                    if (materialType == PQSMaterialType.AtmosphericOptimized)
                     {
                         PQSMainOptimisedLoader loader = new PQSMainOptimisedLoader(surfaceMaterial);
                         loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
-                    else if (PQSMainShader.UsesSameShader(surfaceMaterial))
+                    else if (materialType == PQSMaterialType.AtmosphericMain)
                     {
                         PQSMainShaderLoader loader = new PQSMainShaderLoader(surfaceMaterial);
                         loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
-                    else if (PQSProjectionAerialQuadRelative.UsesSameShader(surfaceMaterial))
+                    else if (materialType == PQSMaterialType.AtmosphericMain)
                     {
                         PQSProjectionAerialQuadRelativeLoader loader =
                             new PQSProjectionAerialQuadRelativeLoader(surfaceMaterial);
                         loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
                         surfaceMaterial = loader;
                     }
-                    else if (PQSProjectionSurfaceQuad.UsesSameShader(surfaceMaterial))
+                    else if (materialType == PQSMaterialType.Vacuum)
                     {
                         surfaceMaterial = new PQSProjectionSurfaceQuadLoader(surfaceMaterial);
+                    }
+                    else if (materialType == PQSMaterialType.AtmosphericExtra)
+                    {
+                        PQSMainExtrasLoader loader = new PQSMainExtrasLoader(surfaceMaterial);
+                        loader.globalDensity = loader.globalDensity < 2 ? (Single) (-8E-06) : loader.globalDensity;
+                        surfaceMaterial = loader;
                     }
                     surfaceMaterial.name = Guid.NewGuid().ToString();
 
