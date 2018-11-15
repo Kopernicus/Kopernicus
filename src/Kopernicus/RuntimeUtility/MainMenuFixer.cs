@@ -136,7 +136,8 @@ namespace Kopernicus
                 GameObject menuPlanet = Instantiate(Utility
                     .FindBody(PSystemManager.Instance.systemPrefab.rootBody, planetCB.transform.name).scaledVersion);
                 menuPlanet.transform.parent = space.transform;
-
+                menuPlanet.name = planetCB.transform.name;
+                    
                 // Destroy stuff
                 DestroyImmediate(menuPlanet.GetComponent<ScaledSpaceFader>());
                 DestroyImmediate(menuPlanet.GetComponent<SphereCollider>());
