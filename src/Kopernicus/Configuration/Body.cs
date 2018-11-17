@@ -199,8 +199,8 @@ namespace Kopernicus
             [ParserTargetCollection("Particles", AllowMerge = true)]
             public List<ParticleLoader> particles { get; set; }
             
-            [ParserTarget("HazardousBody")]
-            public HazardousBodyLoader hazardousBody { get; set; }
+            [ParserTargetCollection("HazardousBody", AllowMerge = true)]
+            public List<HazardousBodyLoader> hazardousBody { get; set; }
 
             // Wrapper around the settings for the SpaceCenter
             [ParserTarget("SpaceCenter", AllowMerge = true)]
@@ -408,6 +408,11 @@ namespace Kopernicus
                     .GetComponentsInChildren<PlanetParticleEmitter>(true))
                 {
                     particles.Add(new ParticleLoader(particle));
+                }
+                hazardousBody = new List<HazardousBodyLoader>();
+                foreach (HazardousBody body in celestialBody.GetComponents<HazardousBody>())
+                {
+                    hazardousBody.Add(new HazardousBodyLoader(body));
                 }
                 if (celestialBody.isHomeWorld)
                 {

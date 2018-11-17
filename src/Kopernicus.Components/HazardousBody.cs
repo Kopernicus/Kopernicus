@@ -61,6 +61,11 @@ namespace Kopernicus
             /// </summary>
             public FloatCurve AltitudeCurve;
 
+            /// <summary>
+            /// Controls the amount of heat that is applied on each spot of the planet
+            /// </summary>
+            public MapSO HeatMap;
+
             private CelestialBody _body;
             
             /// <summary>
@@ -102,8 +107,12 @@ namespace Kopernicus
                             AltitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
                         Double latitude = LatitudeCurve.Evaluate((Single)vessel.latitude);
                         Double longitude = LongitudeCurve.Evaluate((Single)vessel.longitude);
-
+                        
                         Double heat = altitude * latitude * longitude * HeatRate;
+                        if (HeatMap != null)
+                        {
+                            heat *= HeatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
+                        }
                         foreach (Part part in vessel.Parts)
                             part.temperature += heat;
                     }

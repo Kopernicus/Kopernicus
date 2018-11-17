@@ -26,6 +26,7 @@
 using Kopernicus.Components;
 using System;
 using Kopernicus.UI;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -81,6 +82,16 @@ namespace Kopernicus
                 get { return Value.LongitudeCurve; }
                 set { Value.LongitudeCurve = value; }
             }
+            
+            // Controls the how much of the average heat gets applied at a certain longitude
+            [ParserTarget("HeatMap")]
+            [KittopiaDescription("Greyscale map for fine control of the heat on a planet. black = 0, white = 1")]
+            public MapSOParser_GreyScale<MapSO> heatMap
+            {
+                get { return Value.HeatMap; }
+                set { Value.HeatMap = value; }
+            }
+            
 
             [KittopiaDestructor]
             public void Destroy()
@@ -89,7 +100,7 @@ namespace Kopernicus
             }
 
             /// <summary>
-            /// Creates a new Particle Loader from the Injector context.
+            /// Creates a new HazardousBody Loader from the Injector context.
             /// </summary>
             public HazardousBodyLoader()
             {
@@ -98,13 +109,16 @@ namespace Kopernicus
                 {
                     throw new InvalidOperationException("Must be executed in Injector context.");
                 }
-                
+
                 // Store values
-                Value = generatedBody.celestialBody.gameObject.AddOrGetComponent<HazardousBody>();
+                Value = generatedBody.celestialBody.gameObject.AddComponent<HazardousBody>();
+                Value.AltitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.LatitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.LongitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
             }
 
             /// <summary>
-            /// Creates a new Particle Loader on a spawned CelestialBody.
+            /// Creates a new HazardousBody Loader on a spawned CelestialBody.
             /// </summary>
             [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
             public HazardousBodyLoader(CelestialBody body)
@@ -116,7 +130,33 @@ namespace Kopernicus
                 }
 
                 // Store values
-                Value = body.gameObject.AddOrGetComponent<HazardousBody>();
+                Value = body.gameObject.AddComponent<HazardousBody>();
+                Value.AltitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.LatitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.LongitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            }
+
+            /// <summary>
+            /// Creates a new HazardousBody Loader from an already existing component
+            /// </summary>
+            public HazardousBodyLoader(HazardousBody value)
+            {
+                // Store values
+                Value = value;
+
+                // Null safe
+                if (Value.AltitudeCurve == null)
+                {
+                    Value.AltitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                }
+                if (Value.LatitudeCurve == null)
+                {
+                    Value.LatitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                }
+                if (Value.LongitudeCurve == null)
+                {
+                    Value.LongitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                }
             }
         }
     }

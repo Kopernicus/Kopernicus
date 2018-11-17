@@ -350,7 +350,7 @@ namespace Kopernicus
             ApplyOrbitVisibility();
             RDFixer();
             ApplyOrbitIconCustomization();
-
+            
             // Prevent the orbit lines from flickering
             PlanetariumCamera.Camera.farClipPlane = 1e14f;
 
