@@ -38,16 +38,30 @@ namespace Kopernicus
         /// </summary>
         public class KopernicusSunFlare : SunFlare
         {
+            Camera.CameraCallback cam;
+
             protected override void Awake()
             {
-                // sun flare
-                Camera.onPreCull += cam =>
+                // Create CameraCallback
+                cam = callback =>
                 {
                     Vector3d scaledSpace = target.transform.position - ScaledSpace.LocalToScaledSpace(sun.position);
                     sunDirection = scaledSpace.normalized;
                     if (sunDirection != Vector3d.zero)
                         transform.forward = sunDirection;
                 };
+
+                // Add CameraCallback
+                Camera.onPreCull += cam;
+            }
+
+            protected override void OnDestroy()
+            {
+                // Remove CameraCallback
+                Camera.onPreCull -= cam;
+
+                // Run base OnDestroy()
+                base.OnDestroy();
             }
         }
     }
