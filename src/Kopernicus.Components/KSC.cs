@@ -328,7 +328,7 @@ namespace Kopernicus
                         {
                             Material material = materials[i];
 
-                            if (material?.name == "ksc_exterior_terrain_grass_02")
+                            if (material?.HasProperty("_Color") == true && material?.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString())
                             {
                                 if (ksc.groundMaterial != null)
                                 {
