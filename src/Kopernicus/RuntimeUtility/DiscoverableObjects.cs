@@ -215,6 +215,7 @@ namespace Kopernicus
             Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
             protoVessel.Load(HighLogic.CurrentGame.flightState);
             GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
+            GameEvents.onAsteroidSpawned.Fire(protoVessel.vesselRef);
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
         }
 
