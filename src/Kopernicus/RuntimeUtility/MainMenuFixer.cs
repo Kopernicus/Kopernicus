@@ -41,7 +41,7 @@ namespace Kopernicus
                 MainMenu main = FindObjectOfType<MainMenu>();
                 if (main == null)
                 {
-                    Debug.LogError("[SigmaLog] No main menu object!");
+                    Debug.LogError("[Kopernicus] No main menu object!");
                     return;
                 }
                 MainMenuEnvLogic logic = main.envLogic;
@@ -49,7 +49,7 @@ namespace Kopernicus
                 // Set it to Space, because the Mun-Area won't work with sth else than Mun
                 if (logic.areas.Length < 2)
                 {
-                    Debug.LogError("[SigmaLog] Not enough scenes");
+                    Debug.LogError("[Kopernicus] Not enough scenes");
                     return;
                 }
 

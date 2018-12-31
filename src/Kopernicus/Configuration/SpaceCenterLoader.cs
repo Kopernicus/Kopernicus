@@ -346,6 +346,66 @@ namespace Kopernicus
                 }
             }
 
+            // Editor Ground Color
+            [ParserTarget("editorGroundColor")]
+            [KittopiaDescription("The color of the grass all around the KSC (editor only).")]
+            public ColorParser editorGroundColorParser
+            {
+                get { return Value.editorGroundColor; }
+                set
+                {
+                    Value.editorGroundColor = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
+            }
+
+            // Editor Ground Texture
+            [ParserTarget("editorGroundTex")]
+            [KittopiaDescription("The surface texture of the grass all around the KSC (editor only).")]
+            public Texture2DParser editorGroundTexParser
+            {
+                get { return Value.editorGroundTex; }
+                set
+                {
+                    Value.editorGroundTex = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
+            }
+            [ParserTarget("editorGroundTexScale")]
+            [KittopiaDescription("The scale of the surface texture of the grass all around the KSC (editor only).")]
+            public Vector2Parser editorGroundTexScaleParser
+            {
+                get { return Value.editorGroundTexScale; }
+                set
+                {
+                    Value.editorGroundTexScale = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
+            }
+            [ParserTarget("editorGroundTexOffset")]
+            [KittopiaDescription("The offset of the surface texture of the grass all around the KSC (editor only).")]
+            public Vector2Parser editorGroundTexOffsetParser
+            {
+                get { return Value.editorGroundTexOffset; }
+                set
+                {
+                    Value.editorGroundTexOffset = value;
+                    if (!Injector.IsInPrefab)
+                    {
+                        Value.Start();
+                    }
+                }
+            }
+
             // Apply event
             void IParserEventSubscriber.Apply(ConfigNode node)
             {

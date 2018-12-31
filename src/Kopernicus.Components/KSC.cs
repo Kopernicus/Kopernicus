@@ -77,11 +77,31 @@ namespace Kopernicus
             [SerializeField]
             public Double? decalLongitude;
 
-            // Material
+            // PQSCity Ground Material
             [SerializeField]
             public Texture2D mainTexture;
             [SerializeField]
             public Color? color;
+
+            // Editor Ground Material
+            [SerializeField]
+            public Texture2D editorGroundTex;
+            [SerializeField]
+            public Color? editorGroundColor;
+            [SerializeField]
+            public Vector2? editorGroundTexScale;
+            [SerializeField]
+            public Vector2? editorGroundTexOffset;
+
+            public Material groundMaterial;
+
+            // Current Instance
+            public static KSC Instance = null;
+
+            void Awake()
+            {
+                Instance = this;
+            }
 
             // Mods
             private CelestialBody body;
@@ -97,7 +117,7 @@ namespace Kopernicus
                     Destroy(this);
                     return;
                 }
-                
+
                 ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
                 mapDecal = body.pqsController.GetComponentsInChildren<PQSMod_MapDecalTangent>(true)
                     .First(m => m.name == "KSC");
@@ -186,7 +206,7 @@ namespace Kopernicus
                 if (lodvisibleRangeMult.HasValue)
                 {
                     foreach (PQSCity.LODRange lodRange in ksc.lod)
-                        lodRange.visibleRange *= (Single) lodvisibleRangeMult.Value;
+                        lodRange.visibleRange *= (Single)lodvisibleRangeMult.Value;
                 }
                 else
                 {
@@ -300,26 +320,46 @@ namespace Kopernicus
                     // Loop through all Materials and change their settings
                     try
                     {
-                        foreach (Material material in Resources.FindObjectsOfTypeAll<Material>().Where(m => m.HasProperty("_Color") && m.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString()))
+                        Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
+
+                        int? n = materials?.Length;
+
+                        for (int i = 0; i < n; i++)
                         {
-                            // Patch the texture
-                            if (ksc.mainTexture != null)
+                            Material material = materials[i];
+
+                            if (material?.HasProperty("_Color") == true && material?.color.ToString() == new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString())
                             {
-                                material.mainTexture = ksc.mainTexture;
-                            }
-                            else
-                            {
-                                ksc.mainTexture = material.mainTexture as Texture2D;
-                            }
-    
-                            // Patch the color
-                            if (ksc.color.HasValue)
-                            {
-                                material.color = ksc.color.Value;
-                            }
-                            else
-                            {
-                                ksc.color = material.color;
+                                if (ksc.groundMaterial != null)
+                                {
+                                    material.shader = ksc.groundMaterial.shader;
+                                    material.CopyPropertiesFromMaterial(ksc.groundMaterial);
+                                }
+                                else
+                                {
+                                    // Remember this material
+                                    ksc.groundMaterial = material;
+
+                                    // Patch the texture
+                                    if (ksc.mainTexture != null)
+                                    {
+                                        material.mainTexture = ksc.mainTexture;
+                                    }
+                                    else
+                                    {
+                                        ksc.mainTexture = material.mainTexture as Texture2D;
+                                    }
+
+                                    // Patch the color
+                                    if (ksc.color.HasValue)
+                                    {
+                                        material.color = ksc.color.Value;
+                                    }
+                                    else
+                                    {
+                                        ksc.color = material.color;
+                                    }
+                                }
                             }
                         }
                     }
@@ -328,6 +368,77 @@ namespace Kopernicus
                         Debug.Log("[Kopernicus]: MaterialFixer: Exception " + e);
                     }
                     Destroy(this);
+                }
+            }
+        }
+
+        [KSPAddon(KSPAddon.Startup.EditorAny, false)]
+        public class EditorMaterialFixer : MonoBehaviour
+        {
+            EditorFacility editor;
+
+            void Update()
+            {
+                if (editor != EditorDriver.editorFacility)
+                {
+                    editor = EditorDriver.editorFacility;
+                    FixMaterials();
+                }
+            }
+
+            void FixMaterials()
+            {
+                KSC ksc = KSC.Instance;
+
+                if (ksc == null) return;
+
+                Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
+
+                int? n = materials?.Length;
+
+                for (int i = 0; i < n; i++)
+                {
+                    Material material = materials[i];
+
+                    if (material?.name == "ksc_exterior_terrain_grass_02")
+                    {
+                        if (ksc.groundMaterial != null)
+                        {
+                            material.shader = ksc.groundMaterial.shader;
+                            material.CopyPropertiesFromMaterial(ksc.groundMaterial);
+                        }
+                    }
+
+                    else
+
+                    if (material?.name == "ksc_terrain_TX")
+                    {
+                        if (ksc.groundMaterial != null)
+                        {
+                            material.shader = ksc.groundMaterial.shader;
+                            material.CopyPropertiesFromMaterial(ksc.groundMaterial);
+                        }
+
+                        if (ksc.editorGroundColor.HasValue)
+                        {
+                            material.color = ksc.editorGroundColor.Value;
+                        }
+
+                        if (ksc.editorGroundTex != null)
+                        {
+                            material.mainTexture = ksc.editorGroundTex;
+                        }
+
+                        if (ksc.editorGroundTexScale.HasValue)
+                        {
+                            material.mainTextureScale = ksc.editorGroundTexScale.Value;
+                        }
+
+                        if (ksc.editorGroundTexOffset.HasValue)
+                        {
+                            material.mainTextureOffset = ksc.editorGroundTexOffset.Value;
+                        }
+                    }
                 }
             }
         }
