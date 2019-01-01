@@ -1,15 +1,22 @@
 ﻿Kopernicus
 ==============================
-October 24, 2018
+January 01, 2019
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.5.1-1)
+New in this version (1.6.0-1)
 -------------------
-- Updated to KSP 1.5.1
-- Fixed a bug where BiomeMap OnDemand Loading would lag a lot in MapView. BiomeMap OD is now disabled by default.
+- Reworked some of the code to allow a plugin for Interstellar Consortium
+- Fix the Sun shining through Jool
+- Fix Kittopia Normal Map Generation
+- Fix Kittopia not being able to edit bodies who use AtmosphericExtra
+- Allow to add multiple HazardousBody configs
+- Allow to controls HazardousBody using a greyscale map for heat distribution
+- Fix the .version file
+- Added the ability to recolor the editor grass
+- Spawning a Kopernicus asteroid triggers the stock onAsteroidSpawned event now
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
