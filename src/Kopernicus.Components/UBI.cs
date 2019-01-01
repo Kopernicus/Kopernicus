@@ -14,9 +14,9 @@
  * It includes backwards compatibility with the internal names to maintain
  * config comatibility.
  *
- * In case a internal name gets queried the functions will log a warning that they
- * encountered a non-UBI name. If you want to disable that warning,
- * remove the line after this comment block
+ * In case a internal name gets queried the functions can log a warning that they
+ * encountered a non-UBI name. If you want to enable that warning,
+ * uncomment the line after this block
  */
 
 // #define LOG_FALLBACK_NAME
@@ -30,9 +30,10 @@ using UnityEngine;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "CheckNamespace")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class UBI
 {
-    private static Regex Parser = new Regex(@"^.+/.+$");
+    private static readonly Regex Parser = new Regex(@"^.+/.+$");
     
     /// <summary>
     /// Returns the name of the first found body implementing a UBI
@@ -217,7 +218,10 @@ public static class UBI
             foreach (Transform ident in ubiParent.transform)
             {
                 String[] split = ident.name.Split(';');
-                idents.Add(new UBIIdent { System = split[0], Body = split[1], IsAbstract = Boolean.Parse(split[2])});
+                idents.Add(new UBIIdent
+                {
+                    System = split[0], Body = split[1], IsAbstract = Boolean.Parse(split[2]), Object = ident.gameObject
+                });
             }
         }
 
