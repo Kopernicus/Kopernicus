@@ -154,6 +154,14 @@ namespace Kopernicus
                 set { ScaledSpaceFader.faderMult = value; }
             }
             
+            // Whether to force enable 3D rendering of orbit lines
+            [ParserTarget("force3DOrbits")]
+            public NumericParser<Boolean> force3DOrbits
+            {
+                get { return Templates.force3DOrbits; }
+                set { Templates.force3DOrbits = value; }
+            }
+
             // Remove Launch Sites added by DLCs
             // * Island_Airfield
             // * Woomerang_Launch_Site

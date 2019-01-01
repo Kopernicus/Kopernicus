@@ -129,7 +129,7 @@ namespace Kopernicus
             });
             GameEvents.onProtoVesselLoad.Add(TransformBodyReferencesOnLoad);
             GameEvents.onProtoVesselSave.Add(TransformBodyReferencesOnSave);
-
+            
             // Update Music Logic
             if (MusicLogic.fetch != null && FlightGlobals.fetch != null && FlightGlobals.GetHomeBody() != null)
                 MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
@@ -353,10 +353,9 @@ namespace Kopernicus
             
             // Prevent the orbit lines from flickering
             PlanetariumCamera.Camera.farClipPlane = 1e14f;
-
-            // Remove buttons in map view for barycenters
             if (MapView.MapIsEnabled)
             {
+                // Remove buttons in map view for barycenters
                 if (fields == null)
                 {
                     FieldInfo mode_f = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType.IsEnum && f.FieldType.IsNested);
@@ -394,6 +393,13 @@ namespace Kopernicus
                             fields[1].SetValue(targeter, context);
                         }
                     }
+                }
+                
+                // If 3D rendering of orbits is forced, enable it
+                if (Templates.force3DOrbits)
+                {
+                    MapView.fetch.max3DlineDrawDist = Single.MaxValue;
+                    GameSettings.MAP_MAX_ORBIT_BEFORE_FORCE2D = Int32.MaxValue;
                 }
             }
 

@@ -60,6 +60,9 @@ namespace Kopernicus
         
         // The launch sites that should get removed
         public static List<String> RemoveLaunchSites { get; set; }
+
+        // Whether to force 3D rendering on orbits.
+        public static Boolean force3DOrbits = false;
         
         // Initialisation
         static Templates()
