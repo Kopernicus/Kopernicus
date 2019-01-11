@@ -24,9 +24,6 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
@@ -54,8 +51,63 @@ namespace Kopernicus
             protected override void OnDestroy()
             {
                 Camera.onPreCull -= OnPreCull;
-
                 base.OnDestroy();
+            }
+            
+            // Overload the stock LateUpdate function
+            void LateUpdate()
+            {
+                Vector3d position = target.position;
+                sunDirection = (position - ScaledSpace.LocalToScaledSpace(sun.position)).normalized;
+                transform.forward = sunDirection;
+                sunFlare.brightness = brightnessMultiplier *
+                                      brightnessCurve.Evaluate(
+                                          (Single) (1.0 / (Vector3d.Distance(position,
+                                                               ScaledSpace.LocalToScaledSpace(sun.position)) /
+                                                           (AU * ScaledSpace.InverseScaleFactor))));
+                
+                if (PlanetariumCamera.fetch.target != null && (HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT))
+                {
+                    Boolean state = true;
+                    for (Int32 index = 0; index < PlanetariumCamera.fetch.targets.Count; index++)
+                    {
+                        MapObject mapTarget = PlanetariumCamera.fetch.targets[index];
+                        if (mapTarget.type != MapObject.ObjectType.CelestialBody)
+                        {
+                            continue;
+                        }
+
+                        if (mapTarget.GetComponent<SphereCollider>() == null)
+                        {
+                            continue;
+                        }
+
+                        if (!mapTarget.GetComponent<MeshRenderer>().enabled)
+                        {
+                            continue;
+                        }
+
+                        if (mapTarget.celestialBody == sun)
+                        {
+                            continue;
+                        }
+                        
+                        Vector3d targetDistance = PlanetariumCamera.fetch.transform.position - mapTarget.transform.position;
+                        Single radius = mapTarget.GetComponent<SphereCollider>().radius;
+                        Double num1 = 2.0 * Vector3d.Dot(-sunDirection, targetDistance);
+                        Double num2 = Vector3d.Dot(targetDistance, targetDistance) - radius * (Double) radius;
+                        Double d = num1 * num1 - 4.0 * num2;
+                        if (d >= 0.0)
+                        {
+                            Double num3 = (-num1 + Math.Sqrt(d)) * 0.5;
+                            Double num4 = (-num1 - Math.Sqrt(d)) * 0.5;
+                            if (num3 >= 0.0 && num4 >= 0.0)
+                                state = false;
+                        }
+                    }
+
+                    SunlightEnabled(state);
+                }
             }
         }
     }

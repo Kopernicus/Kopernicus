@@ -241,7 +241,6 @@ namespace Kopernicus
                     Value.scaledBody.AddComponent<StarComponent>();
 
                     // Generate a new material for the star
-                    EmissiveMultiRampSunspotsLoader newMaterial = null;
                     if (material != null && EmissiveMultiRampSunspots.UsesSameShader(material))
                     {
                         material = new EmissiveMultiRampSunspotsLoader(material);

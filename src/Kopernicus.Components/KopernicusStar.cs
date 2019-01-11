@@ -300,7 +300,7 @@ namespace Kopernicus
                 lensFlare.target = target;
 
                 // States
-                Boolean lightsOn = (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER);
+                Boolean lightsOn = HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER;
                 light.enabled = shifter.givesOffLight && lightsOn;
                 lensFlare.sunFlare.enabled = shifter.givesOffLight && lightsOn;
                 sunFlare.enabled = false;
