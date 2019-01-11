@@ -184,6 +184,7 @@ namespace Kopernicus
                 .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
         }
 
+        [SuppressMessage("ReSharper", "RedundantCast")]
         void ApplyStarPatches(CelestialBody body)
         {
             if (body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length <= 0)
@@ -192,7 +193,7 @@ namespace Kopernicus
             }
             
             // Copy the Sun component and transform it into a Kopernicus one
-            GameObject starObject = Instantiate(Sun.Instance.gameObject, Sun.Instance.transform.parent, true);
+            GameObject starObject = (GameObject)Instantiate(Sun.Instance.gameObject, Sun.Instance.transform.parent, true);
             Sun sunComponent = starObject.GetComponent<Sun>();
             KopernicusStar star = starObject.AddComponent<KopernicusStar>();
             Utility.CopyObjectFields(sunComponent, star, false);
@@ -208,7 +209,7 @@ namespace Kopernicus
             starObject.transform.rotation = body.rotation;
 
             // Copy the SunFlare component and transform it into a Kopernicus one
-            GameObject flareObj = Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
+            GameObject flareObj = (GameObject)Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
             SunFlare sunFlareComponent = flareObj.GetComponent<SunFlare>();
             KopernicusSunFlare flare = flareObj.AddComponent<KopernicusSunFlare>();
             Utility.CopyObjectFields(sunFlareComponent, flare, false);
