@@ -65,7 +65,9 @@
     <Compile Include="Attributes\ParserTargetExternal.cs" />
     <Compile Include="Interfaces\ICreatable.cs" />
     <Compile Include="Interfaces\IParsable.cs" />
+    <Compile Include="Interfaces\IParserApplyEventSubscriber.cs" />
     <Compile Include="Interfaces\IParserEventSubscriber.cs" />
+    <Compile Include="Interfaces\IParserPostApplyEventSubscriber.cs" />
     <Compile Include="Interfaces\IPatchable.cs" />
     <Compile Include="Interfaces\ITypeParser.cs" />
     <Compile Include="Interfaces\IWritable.cs" />

@@ -29,11 +29,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using Smooth.Algebraics;
 using Object = System.Object;
 
 namespace Kopernicus
@@ -111,6 +109,8 @@ namespace Kopernicus
         {
             // Get the object as a parser event subscriber (will be null if 'o' does not conform)
             IParserEventSubscriber subscriber = o as IParserEventSubscriber;
+            IParserApplyEventSubscriber applySubscriber = o as IParserApplyEventSubscriber;
+            IParserPostApplyEventSubscriber postApplySubscriber = o as IParserPostApplyEventSubscriber;
 
             // Generate two lists -> those tagged preapply and those not
             List<KeyValuePair<Boolean, MemberInfo>> preapplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
@@ -153,6 +153,7 @@ namespace Kopernicus
             }
 
             // Call Apply
+            applySubscriber?.Apply(node);
             subscriber?.Apply(node);
 
             // Process the postapply members
@@ -169,6 +170,7 @@ namespace Kopernicus
             }
 
             // Call PostApply
+            postApplySubscriber?.PostApply(node);
             subscriber?.PostApply(node);
         }
 
@@ -452,7 +454,8 @@ namespace Kopernicus
                                             // Generate the type from the name
                                             Type elementType = ModTypes.FirstOrDefault(t =>
                                                 t.Name == subnode.name &&
-                                                !Equals(t.Assembly, typeof(HighLogic).Assembly));
+                                                !Equals(t.Assembly, typeof(HighLogic).Assembly) &&
+                                                genericType.IsAssignableFrom(t));
 
                                             // Check if the type represents patchable data
                                             current = null;
@@ -549,7 +552,8 @@ namespace Kopernicus
                                             // Generate the type from the name
                                             Type elementType = ModTypes.FirstOrDefault(t =>
                                                 t.Name == value.name &&
-                                                !Equals(t.Assembly, typeof(HighLogic).Assembly));
+                                                !Equals(t.Assembly, typeof(HighLogic).Assembly) &&
+                                                genericType.IsAssignableFrom(t));
 
                                             // Add the object to the collection
                                             collection?.Add(ProcessValue(elementType, value.value));
@@ -726,7 +730,8 @@ namespace Kopernicus
                             ConfigNode subnode = node.GetNodes().First(n => n.name.StartsWith(target.FieldName));
                             String[] split = subnode.name.Split(':');
                             Type elementType = ModTypes.FirstOrDefault(t =>
-                                t.Name == split[1] && t.Assembly != typeof(HighLogic).Assembly);
+                                t.Name == split[1] && !Equals(t.Assembly, typeof(HighLogic).Assembly) &&
+                                targetType.IsAssignableFrom(t));
 
                             // If no object was found, check if the type implements custom constructors
                             targetValue = Activator.CreateInstance(elementType);
@@ -844,7 +849,7 @@ namespace Kopernicus
                             data.LogCallback("Parsing ParserTarget " + nodeName + " in node " +
                                              external.ParentNodeName + " from Assembly " + type.Assembly.FullName);
                             ConfigNode nodeToLoad = node.GetNode(nodeName);
-                            Object obj = CreateObjectFromConfigNode(type, nodeToLoad, configName, getChilds);
+                            CreateObjectFromConfigNode(type, nodeToLoad, configName, getChilds);
                         }
                         catch (MissingMethodException missingMethod)
                         {
