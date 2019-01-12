@@ -207,7 +207,7 @@ namespace Kopernicus
         [SuppressMessage("ReSharper", "RedundantCast")]
         void ApplyStarPatches(CelestialBody body)
         {
-            if (body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length <= 0 || body.flightGlobalsIndex != 0)
+            if (body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length <= 0 || body.flightGlobalsIndex == 0)
             {
                 return;
             }
