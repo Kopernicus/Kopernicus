@@ -91,6 +91,11 @@ namespace Kopernicus
                         {
                             continue;
                         }
+
+                        if (mapTarget.transform.localScale.x < 1.0 || mapTarget.transform.localScale.x >= 3.0)
+                        {
+                            continue;
+                        }
                         
                         Vector3d targetDistance = PlanetariumCamera.fetch.transform.position - mapTarget.transform.position;
                         Single radius = mapTarget.GetComponent<SphereCollider>().radius;
