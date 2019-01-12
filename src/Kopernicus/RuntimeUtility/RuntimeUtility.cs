@@ -85,6 +85,7 @@ namespace Kopernicus
             ApplyMusicAltitude();
             ApplyInitialTarget();
             ApplyOrbitPatches();
+            ApplyStarPatchSun();
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -183,55 +184,55 @@ namespace Kopernicus
                 .ToList()
                 .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
         }
+        
+        // Apply the star patch to the center body
+        void ApplyStarPatchSun()
+        {
+            // Sun
+            GameObject gob = Sun.Instance.gameObject;
+            KopernicusStar star = gob.AddComponent<KopernicusStar>();
+            Utility.CopyObjectFields(Sun.Instance, star, false);
+            DestroyImmediate(Sun.Instance);
+            Sun.Instance = star;
 
+            // SunFlare
+            gob = SunFlare.Instance.gameObject;
+            KopernicusSunFlare flare = gob.AddComponent<KopernicusSunFlare>();
+            gob.name = star.sun.name;
+            Utility.CopyObjectFields(SunFlare.Instance, flare, false);
+            DestroyImmediate(SunFlare.Instance);
+            SunFlare.Instance = star.lensFlare = flare;
+        }
+        
         [SuppressMessage("ReSharper", "RedundantCast")]
         void ApplyStarPatches(CelestialBody body)
         {
-            if (body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length <= 0)
+            if (body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length <= 0 || body.flightGlobalsIndex != 0)
             {
                 return;
             }
             
-            // Copy the Sun component and transform it into a Kopernicus one
-            GameObject starObject = (GameObject)Instantiate(Sun.Instance.gameObject, Sun.Instance.transform.parent, true);
-            Sun sunComponent = starObject.GetComponent<Sun>();
-            KopernicusStar star = starObject.AddComponent<KopernicusStar>();
-            Utility.CopyObjectFields(sunComponent, star, false);
-            DestroyImmediate(sunComponent);
-            
-            // Configure the new star
+            GameObject starObj = Instantiate(Sun.Instance.gameObject);
+            KopernicusStar star = starObj.GetComponent<KopernicusStar>();
             star.sun = body;
-            starObject.name = body.name;
-            starObject.transform.localPosition = Vector3.zero;
-            starObject.transform.localRotation = Quaternion.identity;
-            starObject.transform.localScale = Vector3.one;
-            starObject.transform.position = body.position;
-            starObject.transform.rotation = body.rotation;
+            starObj.transform.parent = Sun.Instance.transform.parent;
+            starObj.name = body.name;
+            starObj.transform.localPosition = Vector3.zero;
+            starObj.transform.localRotation = Quaternion.identity;
+            starObj.transform.localScale = Vector3.one;
+            starObj.transform.position = body.position;
+            starObj.transform.rotation = body.rotation;
 
-            // Copy the SunFlare component and transform it into a Kopernicus one
-            GameObject flareObj = (GameObject)Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
-            SunFlare sunFlareComponent = flareObj.GetComponent<SunFlare>();
-            KopernicusSunFlare flare = flareObj.AddComponent<KopernicusSunFlare>();
-            Utility.CopyObjectFields(sunFlareComponent, flare, false);
-            DestroyImmediate(sunFlareComponent);
-            
-            // Configure the new flare
+            GameObject flareObj = Instantiate(SunFlare.Instance.gameObject);
+            KopernicusSunFlare flare = flareObj.GetComponent<KopernicusSunFlare>();
             star.lensFlare = flare;
+            flareObj.transform.parent = SunFlare.Instance.transform.parent;
             flareObj.name = body.name;
             flareObj.transform.localPosition = Vector3.zero;
             flareObj.transform.localRotation = Quaternion.identity;
             flareObj.transform.localScale = Vector3.one;
             flareObj.transform.position = body.position;
             flareObj.transform.rotation = body.rotation;
-            
-            // If we edited the center update global variables
-            if (body.flightGlobalsIndex != 0)
-            {
-                return;
-            }
-            
-            Sun.Instance = star;
-            SunFlare.Instance = flare;
         }
 
         void ApplyLaunchSitePatches()
