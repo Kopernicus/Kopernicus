@@ -51,7 +51,7 @@ namespace Kopernicus
                     #else
                     const Boolean developmentBuild = false;
                     #endif
-                    return "Kopernicus " + VersionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime().ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
+                    return "Kopernicus " + VersionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime(Assembly.GetCallingAssembly()).ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
                 }
             }
 
@@ -63,9 +63,9 @@ namespace Kopernicus
             }
 
             // Returns the time when the assembly was built
-            public static DateTime BuiltTime()
+            public static DateTime BuiltTime(Assembly assembly)
             {
-                String filePath = Assembly.GetCallingAssembly().Location;
+                String filePath = assembly.Location;
                 const Int32 c_PeHeaderOffset = 60;
                 const Int32 c_LinkerTimestampOffset = 8;
                 Byte[] b = new Byte[2048];
