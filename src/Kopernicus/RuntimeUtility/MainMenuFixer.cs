@@ -73,7 +73,7 @@ namespace Kopernicus
                 }
 
                 // Grab the main body
-                CelestialBody planetCB = PSystemManager.Instance.localBodies.Find(b => b.transform.name == Templates.menuBody);
+                CelestialBody planetCB = UBI.GetBody(Templates.menuBody);
                 if (planetCB == null)
                 {
                     planetCB = PSystemManager.Instance.localBodies.Find(b => b.isHomeWorld);

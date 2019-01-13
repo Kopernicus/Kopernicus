@@ -137,7 +137,7 @@ namespace Kopernicus
                 // We have a target
                 if (target != "None")
                 {
-                    if (targetTransform == null) targetTransform = PSystemManager.Instance.localBodies.Find(b => b.transform.name == target).scaledBody.transform;
+                    if (targetTransform == null) targetTransform = UBI.GetBody(target).scaledBody.transform;
                     Vector3 speed = targetTransform.position;
                     speed -= transform.parent.position;
                     speed *= speedScale;

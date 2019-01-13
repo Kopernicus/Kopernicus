@@ -63,8 +63,8 @@ namespace Kopernicus
                         _referenceBody = value;
                         return;
                     }
-                    Value.orbitDriver.referenceBody = Value.orbit.referenceBody =
-                        PSystemManager.Instance.localBodies.Find(b => b.transform.name == value);
+
+                    Value.orbitDriver.referenceBody = Value.orbit.referenceBody = UBI.GetBody(value);
                 }
             }
 

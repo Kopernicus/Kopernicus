@@ -336,16 +336,11 @@ namespace Kopernicus
 
                 ConfigNode orbitNode = body.Get<ConfigNode>("orbitPatches");
                 OrbitLoader loader = new OrbitLoader(body);
-                Parser.LoadObjectFromConfigurationNode(loader, orbitNode, "Kopernicus");
                 CelestialBody oldRef = body.referenceBody;
-                body.referenceBody.orbitingBodies.Remove(body);
-
-                CelestialBody newRef = UBI.GetBody(loader.referenceBody);
-                if (newRef != null)
-                {
-                    body.orbit.referenceBody = body.orbitDriver.referenceBody = newRef;
-                }
-                else
+                Parser.LoadObjectFromConfigurationNode(loader, orbitNode, "Kopernicus");
+                oldRef.orbitingBodies.Remove(body);
+                
+                if (body.referenceBody == null)
                 {
                     // Log the exception
                     Debug.Log("Exception: PostSpawnOrbit reference body for \"" + body.name +
@@ -353,6 +348,8 @@ namespace Kopernicus
 
                     // Open the Warning popup
                     Injector.DisplayWarning();
+                    Destroy(this);
+                    return;
                 }
 
                 fixes.Add(body.transform.name,
