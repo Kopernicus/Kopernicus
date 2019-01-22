@@ -148,6 +148,7 @@ namespace Kopernicus
                 Rotato planetRotato = menuPlanet.AddComponent<Rotato>();
                 Rotato planetRefRotato = kerbin.GetComponent<Rotato>();
                 planetRotato.speed = planetRefRotato.speed * ((Single)planetCB.rotationPeriod / kerbinRotationPeriod);
+                menuPlanet.transform.Rotate(0f, (Single)planetCB.initialRotation, 0f);
 
                 // Scale the body
                 menuPlanet.transform.localScale = kerbin.localScale;
