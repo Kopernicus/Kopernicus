@@ -286,7 +286,15 @@ namespace Kopernicus
             public NumericParser<Boolean> selectable
             {
                 get { return Value.Get("selectable", true); }
-                set { Value.Set("selectable", value.Value); }
+                set
+                {
+                    Value.Set("selectable", value.Value);
+                    if (!Injector.IsInPrefab)
+                    {
+                        PlanetariumCamera.fetch.targets = Templates.mapTargets.Where(m =>
+                            m.celestialBody != null && m.celestialBody.Get("selectable", true)).ToList();
+                    }
+                }
             }
 
             // If the body should be hidden in RnD

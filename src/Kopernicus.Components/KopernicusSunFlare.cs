@@ -72,6 +72,10 @@ namespace Kopernicus
                     for (Int32 index = 0; index < PlanetariumCamera.fetch.targets.Count; index++)
                     {
                         MapObject mapTarget = PlanetariumCamera.fetch.targets[index];
+                        if (mapTarget == null)
+                        {
+                            continue;
+                        }
                         if (mapTarget.type != MapObject.ObjectType.CelestialBody)
                         {
                             continue;

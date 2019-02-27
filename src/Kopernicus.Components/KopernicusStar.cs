@@ -302,7 +302,7 @@ namespace Kopernicus
                 // States
                 Boolean lightsOn = HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneHasPlanetarium || HighLogic.LoadedScene == GameScenes.SPACECENTER;
                 light.enabled = shifter.givesOffLight && lightsOn;
-                lensFlare.sunFlare.enabled = shifter.givesOffLight && lightsOn;
+                lensFlare.gameObject.SetActive(shifter.givesOffLight && lightsOn);
                 sunFlare.enabled = false;
                 if (useLocalSpaceSunLight && Sun.Instance.useLocalSpaceSunLight)
                     scaledSunLight.enabled = shifter.givesOffLight && lightsOn;

@@ -77,10 +77,17 @@ namespace Kopernicus
             }
 
             [ParserTarget("barycenter")]
+            [KittopiaHideOption]
             public NumericParser<Boolean> barycenter
             {
                 get { return celestialBody.Get("barycenter", false); }
-                set { celestialBody.Set("barycenter", value.Value); }
+                set
+                {
+                    celestialBody.Set("barycenter", value.Value);
+                    
+                    // Reuse the selectable option, to reduce the amount of boilerplate code we need.
+                    celestialBody.Set("selectable", value.Value);
+                }
             }
 
             [ParserTarget("cbNameLater")]

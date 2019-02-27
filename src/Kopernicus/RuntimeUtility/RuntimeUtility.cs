@@ -179,10 +179,13 @@ namespace Kopernicus
         // Removes unselectable map targets from the list
         void RemoveUnselectableObjects()
         {
-            PlanetariumCamera.fetch.targets
-                .Where(m => m.celestialBody != null && (m.celestialBody.Has("barycenter") || !m.celestialBody.Get("selectable", true)))
-                .ToList()
-                .ForEach(map => PlanetariumCamera.fetch.targets.Remove(map));
+            if (Templates.mapTargets == null)
+            {
+                Templates.mapTargets = PlanetariumCamera.fetch.targets;
+            }
+
+            PlanetariumCamera.fetch.targets = Templates.mapTargets.Where(m =>
+                m.celestialBody != null && m.celestialBody.Get("selectable", true)).ToList();
         }
         
         // Apply the star patch to the center body

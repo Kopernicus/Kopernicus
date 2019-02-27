@@ -121,6 +121,17 @@ namespace Kopernicus
                 set { Value.Set("deferMesh", value.Value); }
             }
 
+            [ParserTarget("invisible")]
+            public NumericParser<Boolean> invisible
+            {
+                get { return Value.Get("invisibleScaledSpace", false); }
+                set
+                {
+                    Value.Set("invisibleScaledSpace", value.Value);
+                    deferMesh = value.Value;
+                }
+            }
+
             [ParserTarget("Material", AllowMerge = true)]
             [KittopiaUntouchable]
             public Material material

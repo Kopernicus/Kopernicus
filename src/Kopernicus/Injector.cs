@@ -182,6 +182,13 @@ namespace Kopernicus
                     // Make the Body a barycenter
                     if (body.Get("barycenter", false))
                         body.scaledBody.SetActive(false);
+                    
+                    // Make the bodies scaled space invisible 
+                    if (body.Get("invisibleScaledSpace", false))
+                    {
+                        foreach (Renderer renderer in body.scaledBody.GetComponentsInChildren<Renderer>(true))
+                            renderer.enabled = false;
+                    }
 
                     // Event
                     Events.OnPostBodyFixing.Fire(body);

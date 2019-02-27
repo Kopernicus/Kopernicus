@@ -64,6 +64,9 @@ namespace Kopernicus
         // Whether to force 3D rendering on orbits.
         public static Boolean force3DOrbits = false;
         
+        // A backup of all targets available in MapView
+        public static List<MapObject> mapTargets { get; set; }
+        
         // Initialisation
         static Templates()
         {
