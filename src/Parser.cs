@@ -388,22 +388,22 @@ namespace Kopernicus
                                             if (typeof(IPatchable).IsAssignableFrom(genericType) &&
                                                 collection.Count > 0)
                                             {
-                                                foreach (Object obj in collection)
+                                                for (Int32 i = 0; i < collection.Count; i++)
                                                 {
-                                                    if (obj.GetType() != genericType)
+                                                    if (collection[i].GetType() != genericType)
                                                         continue;
-                                                    if (patched.Contains(obj))
+                                                    if (patched.Contains(collection[i]))
                                                         continue;
-                                                    IPatchable patchable = (IPatchable) obj;
+                                                    IPatchable patchable = (IPatchable) collection[i];
                                                     PatchData patchData =
                                                         CreateObjectFromConfigNode<PatchData>(subnode, "Internal");
                                                     if (patchData.name == patchable.name)
                                                     {
                                                         // Name matches, check for an index
-                                                        if (patchData.index == collection.IndexOf(obj))
+                                                        if (patchData.index == collection.IndexOf(collection[i]))
                                                         {
                                                             // Both values match
-                                                            current = obj;
+                                                            current = collection[i];
                                                             break;
                                                         }
 
@@ -414,7 +414,7 @@ namespace Kopernicus
                                                         }
 
                                                         // Name matches, and no index exists
-                                                        current = obj;
+                                                        current = collection[i];
                                                         break;
 
                                                     }
@@ -426,7 +426,7 @@ namespace Kopernicus
                                                     }
 
                                                     // We found the first object that wasn't patched yet
-                                                    current = obj;
+                                                    current = collection[i];
                                                     break;
                                                 }
                                             }
@@ -462,22 +462,22 @@ namespace Kopernicus
                                             if (typeof(IPatchable).IsAssignableFrom(elementType) &&
                                                 collection.Count > 0)
                                             {
-                                                foreach (Object obj in collection)
+                                                for (Int32 i = 0; i < collection.Count; i++)
                                                 {
-                                                    if (obj.GetType() != elementType)
+                                                    if (collection[i].GetType() != elementType)
                                                         continue;
-                                                    if (patched.Contains(obj))
+                                                    if (patched.Contains(collection[i]))
                                                         continue;
-                                                    IPatchable patchable = (IPatchable) obj;
+                                                    IPatchable patchable = (IPatchable) collection[i];
                                                     PatchData patchData =
                                                         CreateObjectFromConfigNode<PatchData>(subnode, "Internal");
                                                     if (patchData.name == patchable.name)
                                                     {
                                                         // Name matches, check for an index
-                                                        if (patchData.index == collection.IndexOf(obj))
+                                                        if (patchData.index == i)
                                                         {
                                                             // Both values match
-                                                            current = obj;
+                                                            current = collection[i];
                                                             break;
                                                         }
 
@@ -488,7 +488,7 @@ namespace Kopernicus
                                                         }
 
                                                         // Name matches, and no index exists
-                                                        current = obj;
+                                                        current = collection[i];
                                                         break;
 
                                                     }
@@ -500,7 +500,7 @@ namespace Kopernicus
                                                     }
 
                                                     // We found the first object that wasn't patched yet
-                                                    current = obj;
+                                                    current = collection[i];
                                                     break;
                                                 }
                                             }
