@@ -213,14 +213,14 @@ namespace Kopernicus
 
             public Vector2 mainTexScale
             {
-                get { return GetTextureScale (Properties.Instance.mainTexID); }
-                set { SetTextureScale (Properties.Instance.mainTexID, value); }
+                get { return GetTextureScale (Properties.mainTexKey); }
+                set { SetTextureScale (Properties.mainTexKey, value); }
             }
 
             public Vector2 mainTexOffset
             {
-                get { return GetTextureOffset (Properties.Instance.mainTexID); }
-                set { SetTextureOffset (Properties.Instance.mainTexID, value); }
+                get { return GetTextureOffset (Properties.mainTexKey); }
+                set { SetTextureOffset (Properties.mainTexKey, value); }
             }
 
             // Alpha Cutoff, default = 0.500000
@@ -267,14 +267,14 @@ namespace Kopernicus
 
             public Vector2 metallicGlossMapScale
             {
-                get { return GetTextureScale (Properties.Instance.metallicGlossMapID); }
-                set { SetTextureScale (Properties.Instance.metallicGlossMapID, value); }
+                get { return GetTextureScale (Properties.metallicGlossMapKey); }
+                set { SetTextureScale (Properties.metallicGlossMapKey, value); }
             }
 
             public Vector2 metallicGlossMapOffset
             {
-                get { return GetTextureOffset (Properties.Instance.metallicGlossMapID); }
-                set { SetTextureOffset (Properties.Instance.metallicGlossMapID, value); }
+                get { return GetTextureOffset (Properties.metallicGlossMapKey); }
+                set { SetTextureOffset (Properties.metallicGlossMapKey, value); }
             }
 
             // Specular Highlights, default = 1.000000
@@ -301,14 +301,14 @@ namespace Kopernicus
             // Normal Map, default = "bump" { }
             public Texture2D bumpMap
             {
-                get { return GetTexture (Properties.Instance.bumpMapID) as Texture2D; }
-                set { SetTexture (Properties.Instance.bumpMapID, value); }
+                get { return GetTexture (Properties.bumpMapKey) as Texture2D; }
+                set { SetTexture (Properties.bumpMapKey, value); }
             }
 
             public Vector2 bumpMapScale
             {
-                get { return GetTextureScale (Properties.Instance.bumpMapID); }
-                set { SetTextureScale (Properties.Instance.bumpMapID, value); }
+                get { return GetTextureScale (Properties.bumpMapKey); }
+                set { SetTextureScale (Properties.bumpMapKey, value); }
             }
 
             public Vector2 bumpMapOffset
@@ -333,14 +333,14 @@ namespace Kopernicus
 
             public Vector2 parallaxMapScale
             {
-                get { return GetTextureScale (Properties.Instance.parallaxMapID); }
-                set { SetTextureScale (Properties.Instance.parallaxMapID, value); }
+                get { return GetTextureScale (Properties.parallaxMapKey); }
+                set { SetTextureScale (Properties.parallaxMapKey, value); }
             }
 
             public Vector2 parallaxMapOffset
             {
-                get { return GetTextureOffset (Properties.Instance.parallaxMapID); }
-                set { SetTextureOffset (Properties.Instance.parallaxMapID, value); }
+                get { return GetTextureOffset (Properties.parallaxMapKey); }
+                set { SetTextureOffset (Properties.parallaxMapKey, value); }
             }
 
             // Strength, default = 1.000000
@@ -359,14 +359,14 @@ namespace Kopernicus
 
             public Vector2 occlusionMapScale
             {
-                get { return GetTextureScale (Properties.Instance.occlusionMapID); }
-                set { SetTextureScale (Properties.Instance.occlusionMapID, value); }
+                get { return GetTextureScale (Properties.occlusionMapKey); }
+                set { SetTextureScale (Properties.occlusionMapKey, value); }
             }
 
             public Vector2 occlusionMapOffset
             {
-                get { return GetTextureOffset (Properties.Instance.occlusionMapID); }
-                set { SetTextureOffset (Properties.Instance.occlusionMapID, value); }
+                get { return GetTextureOffset (Properties.occlusionMapKey); }
+                set { SetTextureOffset (Properties.occlusionMapKey, value); }
             }
 
             // Color, default = (0.000000,0.000000,0.000000,1.000000)
@@ -385,14 +385,14 @@ namespace Kopernicus
 
             public Vector2 emissionMapScale
             {
-                get { return GetTextureScale (Properties.Instance.emissionMapID); }
-                set { SetTextureScale (Properties.Instance.emissionMapID, value); }
+                get { return GetTextureScale (Properties.emissionMapKey); }
+                set { SetTextureScale (Properties.emissionMapKey, value); }
             }
 
             public Vector2 emissionMapOffset
             {
-                get { return GetTextureOffset (Properties.Instance.emissionMapID); }
-                set { SetTextureOffset (Properties.Instance.emissionMapID, value); }
+                get { return GetTextureOffset (Properties.emissionMapKey); }
+                set { SetTextureOffset (Properties.emissionMapKey, value); }
             }
 
             // Detail Mask, default = "white" { }
@@ -404,14 +404,14 @@ namespace Kopernicus
 
             public Vector2 detailMaskScale
             {
-                get { return GetTextureScale (Properties.Instance.detailMaskID); }
-                set { SetTextureScale (Properties.Instance.detailMaskID, value); }
+                get { return GetTextureScale (Properties.detailMaskKey); }
+                set { SetTextureScale (Properties.detailMaskKey, value); }
             }
 
             public Vector2 detailMaskOffset
             {
-                get { return GetTextureOffset (Properties.Instance.detailMaskID); }
-                set { SetTextureOffset (Properties.Instance.detailMaskID, value); }
+                get { return GetTextureOffset (Properties.detailMaskKey); }
+                set { SetTextureOffset (Properties.detailMaskKey, value); }
             }
 
             // Detail Albedo x2, default = "grey" { }
@@ -423,8 +423,8 @@ namespace Kopernicus
 
             public Vector2 detailAlbedoMapScale
             {
-                get { return GetTextureScale (Properties.Instance.detailAlbedoMapID); }
-                set { SetTextureScale (Properties.Instance.detailAlbedoMapID, value); }
+                get { return GetTextureScale (Properties.detailAlbedoMapKey); }
+                set { SetTextureScale (Properties.detailAlbedoMapKey, value); }
             }
 
             public Vector2 detailAlbedoMapOffset
@@ -443,14 +443,14 @@ namespace Kopernicus
             // Scale, default = 1.000000
             public Single detailNormalMapScale
             {
-                get { return GetFloat (Properties.Instance.detailNormalMapScaleID); }
-                set { SetFloat (Properties.Instance.detailNormalMapScaleID, value); }
+                get { return GetFloat (Properties.detailNormalMapScaleKey); }
+                set { SetFloat (Properties.detailNormalMapScaleKey, value); }
             }
 
             public Vector2 detailNormalMapOffset
             {
-                get { return GetTextureOffset (Properties.Instance.detailNormalMapScaleID); }
-                set { SetTextureOffset (Properties.Instance.detailNormalMapScaleID, value); }
+                get { return GetTextureOffset (Properties.detailNormalMapScaleKey); }
+                set { SetTextureOffset (Properties.detailNormalMapScaleKey, value); }
             }
 
             // UV Set for secondary textures, default = 0.000000
