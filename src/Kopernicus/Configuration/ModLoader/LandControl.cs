@@ -261,10 +261,22 @@ namespace Kopernicus
                     [ParserTarget("instancing")]
                     public NumericParser<Boolean> instancing
                     {
-                        get { return Value.material.enableInstancing; }
-                        set { Value.material.enableInstancing = value; }
+                        get
+                        {
+                            #if !KSP131
+                            return Value.material.enableInstancing;
+                            #else
+                            return false;
+                            #endif
+                        }
+                        set
+                        {
+                            #if !KSP131
+                            Value.material.enableInstancing = value;
+                            #endif 
+                        }
                     }
-
+                    
                     // Default Constructor
                     [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LandClassScatterLoader()
