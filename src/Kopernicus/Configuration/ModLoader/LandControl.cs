@@ -128,6 +128,14 @@ namespace Kopernicus
                     [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
                     public CallbackList<ComponentLoader<ModularScatter>> Components { get; set; }
 
+                    // Stock material
+                    [ParserTarget("material")]
+                    public StockMaterialParser material
+                    {
+                        get { return Value.material; }
+                        set { Value.material = value; }
+                    }
+
                     // Custom scatter material
                     [ParserTarget("Material", AllowMerge = true, GetChild = false)]
                     public Material customMaterial
@@ -158,14 +166,6 @@ namespace Kopernicus
                     {
                         get { return Value.densityFactor; }
                         set { Value.densityFactor = value; }
-                    }
-
-                    // Stock material
-                    [ParserTarget("material")]
-                    public StockMaterialParser material
-                    {
-                        get { return Value.material; }
-                        set { Value.material = value; }
                     }
 
                     // maxCache
