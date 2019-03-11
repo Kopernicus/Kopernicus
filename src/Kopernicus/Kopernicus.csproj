@@ -66,6 +66,7 @@
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseDetailLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainExtrasLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\StandardLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
     <Compile Include="Configuration\ModLoader\City.cs" />
     <Compile Include="Configuration\ModLoader\IModLoader.cs" />

@@ -51,7 +51,8 @@ namespace Kopernicus
                         DiffuseDetail,
                         DiffuseWrapped,
                         CutoutDiffuse,
-                        AerialCutout
+                        AerialCutout,
+                        Standard
                     };
                     
                     // The value we are editing
@@ -96,6 +97,8 @@ namespace Kopernicus
                                 return ScatterMaterialType.CutoutDiffuse;
                             if (AerialTransCutout.UsesSameShader(customMaterial))
                                 return ScatterMaterialType.AerialCutout;
+                            if (Standard.UsesSameShader(customMaterial))
+                                return ScatterMaterialType.Standard;
                             return null;
                         }
                         set
@@ -112,6 +115,8 @@ namespace Kopernicus
                                 customMaterial = new AlphaTestDiffuseLoader();
                             else if (value == ScatterMaterialType.AerialCutout)
                                 customMaterial = new AerialTransCutoutLoader();
+                            else if (value == ScatterMaterialType.Standard)
+                                customMaterial = new StandardLoader();
                         }
                     }
 
@@ -298,6 +303,8 @@ namespace Kopernicus
                                 customMaterial = new AlphaTestDiffuseLoader(customMaterial);
                             else if (AerialTransCutout.UsesSameShader(customMaterial))
                                 customMaterial = new AerialTransCutoutLoader(customMaterial);
+                            else if (Standard.UsesSameShader(customMaterial)) 
+                                customMaterial = new StandardLoader(customMaterial);
                         }
                         
                         // Get the Scatter-Parent
