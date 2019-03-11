@@ -258,6 +258,13 @@ namespace Kopernicus
                         set { Value.verticalOffset = value; }
                     }
 
+                    [ParserTarget("instancing")]
+                    public NumericParser<Boolean> instancing
+                    {
+                        get { return Value.material.enableInstancing; }
+                        set { Value.material.enableInstancing = value; }
+                    }
+
                     // Default Constructor
                     [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
                     public LandClassScatterLoader()
