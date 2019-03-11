@@ -313,8 +313,8 @@ namespace Kopernicus
 
             public Vector2 bumpMapOffset
             {
-                get { return GetTextureOffset (Properties.Instance.bumpMapID); }
-                set { SetTextureOffset (Properties.Instance.bumpMapID, value); }
+                get { return GetTextureOffset (Properties.bumpMapKey); }
+                set { SetTextureOffset (Properties.bumpMapKey, value); }
             }
 
             // Height Scale, default = 0.020000
@@ -429,8 +429,8 @@ namespace Kopernicus
 
             public Vector2 detailAlbedoMapOffset
             {
-                get { return GetTextureOffset (Properties.Instance.detailAlbedoMapID); }
-                set { SetTextureOffset (Properties.Instance.detailAlbedoMapID, value); }
+                get { return GetTextureOffset (Properties.detailAlbedoMapKey); }
+                set { SetTextureOffset (Properties.detailAlbedoMapKey, value); }
             }
 
             // Normal Map, default = "bump" { }
