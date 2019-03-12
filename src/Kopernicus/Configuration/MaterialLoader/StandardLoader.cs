@@ -319,7 +319,7 @@ namespace Kopernicus
 
             // __mode, default = 0.000000
             [ParserTarget("mode", Optional = true)]
-            public NumericParser<Single> modeSetter
+            public EnumParser<BlendMode> modeSetter
             {
                 get { return mode; }
                 set { mode = value; }
