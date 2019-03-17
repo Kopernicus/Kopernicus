@@ -12,6 +12,7 @@ namespace Kopernicus
     {
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [RequireConfigType(ConfigType.Node)]
         public class StandardLoader : Standard
         {
             // Color, default = (1.000000,1.000000,1.000000,1.000000)
