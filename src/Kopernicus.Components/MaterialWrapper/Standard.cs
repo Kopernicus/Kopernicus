@@ -106,10 +106,6 @@ namespace Kopernicus
                 public const String detailAlbedoMapKey = "_DetailAlbedoMap";
                 public Int32 detailAlbedoMapID { get; private set; }
 
-                // Scale, default = 1.000000
-                public const String detailNormalMapScaleKey = "_DetailNormalMapScale";
-                public Int32 detailNormalMapScaleID { get; private set; }
-
                 // Normal Map, default = "bump" { }
                 public const String detailNormalMapKey = "_DetailNormalMap";
                 public Int32 detailNormalMapID { get; private set; }
@@ -170,7 +166,6 @@ namespace Kopernicus
                     emissionMapID = Shader.PropertyToID(emissionMapKey);
                     detailMaskID = Shader.PropertyToID(detailMaskKey);
                     detailAlbedoMapID = Shader.PropertyToID(detailAlbedoMapKey);
-                    detailNormalMapScaleID = Shader.PropertyToID(detailNormalMapScaleKey);
                     detailNormalMapID = Shader.PropertyToID(detailNormalMapKey);
                     UVSecID = Shader.PropertyToID(UVSecKey);
                     modeID = Shader.PropertyToID(modeKey);
@@ -483,14 +478,14 @@ namespace Kopernicus
             // Scale, default = 1.000000
             public Vector2 detailNormalMapScale
             {
-                get { return GetTextureScale(Properties.detailNormalMapScaleKey); }
-                set { SetTextureScale (Properties.detailNormalMapScaleKey, value); }
+                get { return GetTextureScale(Properties.detailNormalMapKey); }
+                set { SetTextureScale (Properties.detailNormalMapKey, value); }
             }
 
             public Vector2 detailNormalMapOffset
             {
-                get { return GetTextureOffset (Properties.detailNormalMapScaleKey); }
-                set { SetTextureOffset (Properties.detailNormalMapScaleKey, value); }
+                get { return GetTextureOffset (Properties.detailNormalMapKey); }
+                set { SetTextureOffset (Properties.detailNormalMapKey, value); }
             }
 
             // UV Set for secondary textures, default = 0.000000
