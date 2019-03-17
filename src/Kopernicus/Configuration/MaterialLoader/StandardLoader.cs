@@ -297,7 +297,7 @@ namespace Kopernicus
 
             // Scale, default = 1.000000
             [ParserTarget("detailNormalMapScale", Optional = true)]
-            public NumericParser<Single> detailNormalMapScaleSetter
+            public Vector2Parser detailNormalMapScaleSetter
             {
                 get { return detailNormalMapScale; }
                 set { detailNormalMapScale = value; }

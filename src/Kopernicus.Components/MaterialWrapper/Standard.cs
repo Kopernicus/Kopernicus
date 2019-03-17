@@ -481,10 +481,10 @@ namespace Kopernicus
             }
 
             // Scale, default = 1.000000
-            public Single detailNormalMapScale
+            public Vector2 detailNormalMapScale
             {
-                get { return GetFloat (Properties.detailNormalMapScaleKey); }
-                set { SetFloat (Properties.detailNormalMapScaleKey, value); }
+                get { return GetTextureScale(Properties.detailNormalMapScaleKey); }
+                set { SetTextureScale (Properties.detailNormalMapScaleKey, value); }
             }
 
             public Vector2 detailNormalMapOffset
