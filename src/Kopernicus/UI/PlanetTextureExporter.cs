@@ -16,7 +16,7 @@ namespace Kopernicus
         /// <summary>
         /// Exports the celestial body maps of a body
         /// </summary>
-        public class PlanetTextureExporter
+        public static class PlanetTextureExporter
         {
             [RequireConfigType(ConfigType.Node)]
             public class TextureOptions
@@ -125,19 +125,21 @@ namespace Kopernicus
                 PQS.VertexBuildData data = new PQS.VertexBuildData();
                 
                 // Display
-                ScreenMessage message = ScreenMessages.PostScreenMessage("Generating Planet-Maps", Single.MaxValue, ScreenMessageStyle.UPPER_CENTER);
+                ScreenMessage message = ScreenMessages.PostScreenMessage("Generating terrain data", Single.MaxValue, ScreenMessageStyle.UPPER_CENTER);
                 yield return null;
+                
+                Double[] heightValues = new Double[options.Resolution * (options.Resolution / 2)];
 
                 // Loop through the pixels
                 for (Int32 y = 0; y < options.Resolution / 2; y++)
                 {
+                    // Update Message
+                    Double percent = y / (options.Resolution / 2d) * 100;
+                    while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
+                    message.textInstance.text.text = "Generating terrain data: " + percent.ToString("0.00") + "%";
+                    
                     for (Int32 x = 0; x < options.Resolution; x++)
                     {
-                        // Update Message
-                        Double percent = (Double) (y * options.Resolution + x) /
-                                         (options.Resolution / 2 * options.Resolution) * 100;
-                        while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
-                        message.textInstance.text.text = "Generating Planet-Maps: " + percent.ToString("0.00") + "%";
 
                         // Update the VertexBuildData
                         data.directionFromCenter =
@@ -145,39 +147,62 @@ namespace Kopernicus
                             QuaternionD.AngleAxis(90d - 180d / (options.Resolution / 2f) * y, Vector3d.right)
                             * Vector3d.forward;
                         data.vertHeight = pqsVersion.radius;
-
+                        
+                        #if !KSP131
+                        modOnVertexBuildHeight(data, true);
+                        #else
+                        modOnVertexBuildHeight(data);
+                        #endif
+                        modOnVertexBuild(data);
+                        
+                        // Cache the results
+                        heightValues[y * options.Resolution + x] = data.vertHeight;
+                        colorMapValues[y * options.Resolution + x] = data.vertColor;
+                    }
+                    yield return null;
+                }
+                
+                // Update Message
+                while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
+                message.textInstance.text.text = "Calculating height difference";
+                
+                // Figure out the delta radius ourselves
+                Double minHeight = Double.MaxValue;
+                Double maxHeight = Double.MinValue;
+                for (Int32 i = 0; i < heightValues.Length; i++)
+                {
+                    if (heightValues[i] > maxHeight)
+                    {
+                        maxHeight = heightValues[i];
+                    }
+                    else if (heightValues[i] < minHeight)
+                    {
+                        minHeight = heightValues[i];
+                    }
+                }
+                Double deltaRadius = maxHeight - minHeight;
+                yield return null;
+                
+                // Update Message
+                while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
+                message.textInstance.text.text = "Calculating color data";
+                
+                // Apply the values
+                for (Int32 y = 0; y < options.Resolution / 2; y++)
+                {
+                    // Update Message
+                    Double percent = y / (options.Resolution / 2d) * 100;
+                    while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
+                    message.textInstance.text.text = "Calculating color data: " + percent.ToString("0.00") + "%";
+                    
+                    for (Int32 x = 0; x < options.Resolution; x++)
+                    {
                         // Build from the Mods 
-                        Double height = Double.MinValue;
-                        if (options.ExportHeight)
-                        {
-                            #if !KSP131
-                            modOnVertexBuildHeight(data, true);
-                            #else
-                            modOnVertexBuildHeight(data);
-                            #endif
-
-                            // Adjust the height
-                            height = (data.vertHeight - pqsVersion.radius) * (1d / pqsVersion.radiusDelta);
-                            if (height < 0)
-                            {
-                                height = 0;
-                            }
-                            else if (height > 1)
-                            {
-                                height = 1;
-                            }
-
-                            // Set the Pixels
-                            heightMapValues[y * options.Resolution + x] =
-                                new Color((Single) height, (Single) height, (Single) height);
-                        }
-
+                        Double height = heightValues[y * options.Resolution + x] - pqsVersion.radius;
                         if (options.ExportColor)
                         {
-                            modOnVertexBuild(data);
-
                             // Adjust the Color
-                            Color color = data.vertColor;
+                            Color color = colorMapValues[y * options.Resolution + x];
                             if (!pqsVersion.mapOcean)
                             {
                                 color.a = 1f;
@@ -194,6 +219,23 @@ namespace Kopernicus
                             // Set the Pixels
                             colorMapValues[y * options.Resolution + x] = color;
                         }
+                        if (options.ExportHeight)
+                        {
+                            // Adjust the height
+                            height = height / deltaRadius;
+                            if (height < 0)
+                            {
+                                height = 0;
+                            }
+                            else if (height > 1)
+                            {
+                                height = 1;
+                            }
+
+                            // Set the Pixels
+                            heightMapValues[y * options.Resolution + x] =
+                                new Color((Single) height, (Single) height, (Single) height);
+                        }
                     }
                         
                     yield return null;
@@ -207,6 +249,10 @@ namespace Kopernicus
                 // Colormap
                 if (options.ExportColor)
                 {
+                    // Update Message
+                    while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
+                    message.textInstance.text.text = "Exporting planet maps: Color";
+                    
                     // Save it
                     colorMap.SetPixels(colorMapValues);
                     yield return null;
@@ -221,7 +267,6 @@ namespace Kopernicus
                     // Apply it
                     if (options.ApplyToScaled)
                     {
-                        colorMap.Apply();
                         ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
                         if (od != null)
                         {
@@ -236,6 +281,7 @@ namespace Kopernicus
                         }
                         else
                         {
+                            colorMap.Apply();
                             celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial.SetTexture("_MainTex", colorMap);
                         }
                     }
@@ -247,6 +293,10 @@ namespace Kopernicus
 
                 if (options.ExportHeight)
                 {
+                    // Update Message
+                    while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
+                    message.textInstance.text.text = "Exporting planet maps: Height";
+                    
                     heightMap.SetPixels(heightMapValues);
                     yield return null;
                     
@@ -259,6 +309,10 @@ namespace Kopernicus
 
                     if (options.ExportNormal)
                     {
+                        // Update Message
+                        while (CanvasUpdateRegistry.IsRebuildingLayout()) Thread.Sleep(10);
+                        message.textInstance.text.text = "Exporting planet maps: Normal";
+                        
                         // Bump to Normal Map
                         Texture2D normalMap = Utility.BumpToNormalMap(heightMap, pqsVersion, options.NormalStrength / 10);
                         yield return null;
@@ -274,7 +328,6 @@ namespace Kopernicus
                         // Apply it
                         if (options.ApplyToScaled)
                         {
-                            normalMap.Apply();
                             ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
                             if (od != null)
                             {
@@ -289,6 +342,7 @@ namespace Kopernicus
                             }
                             else
                             {
+                                normalMap.Apply();
                                 celestialBody.scaledBody.GetComponent<MeshRenderer>().sharedMaterial
                                     .SetTexture("_BumpMap", normalMap);
                             }
