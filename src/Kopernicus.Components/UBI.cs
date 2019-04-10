@@ -147,7 +147,7 @@ public static class UBI
         }
         
         // Check if the body already has a primary UBI
-        if (!FetchUBIs(body).All(u => u.IsAbstract) && isAbstract)
+        if (FetchUBIs(body).All(u => u.IsAbstract) && isAbstract)
         {
             throw new InvalidOperationException("The body has no primary UBI assigned to it!");
         }
