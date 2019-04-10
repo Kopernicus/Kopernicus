@@ -98,15 +98,11 @@ namespace Kopernicus
                 String[] filePaths = kvP.Value;
                 
                 // Does the file already exist?
-                String path = KSPUtil.ApplicationRootPath + "Logs/" + "Logs-" + modName + "-latest.zip";
+                String path = KSPUtil.ApplicationRootPath + "Logs/" + "Logs-" + modName + ".zip";
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
                 if (File.Exists(path))
                 {
-                    String creationTime = File.GetCreationTime(path).ToString("yyyy-MM-dd_hh-mm-ss");
-                    String backupPath = KSPUtil.ApplicationRootPath + "Logs/LAG/" + "Logs-" + modName + "-" +
-                                        creationTime + ".zip";
-                    Directory.CreateDirectory(Path.GetDirectoryName(backupPath));
-                    File.Move(path, backupPath);
+                    File.Delete(path);
                 }
 
                 using (ZipStorer zip = ZipStorer.Create(path, ""))
