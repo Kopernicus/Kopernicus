@@ -1,16 +1,20 @@
 ﻿Kopernicus
 ==============================
-February 01, 2019
+April 11, 2019
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.6.1-2)
+New in this version (1.7.0-1)
 -------------------
-- Fix a broken starlight occlusion check
-- Add UBI to some places, also fix PostSpawnOrbit not using UBI properly
-- Make the main menu respect the initial rotation value
+- Deprecated the barycenter config option. The same functionality can be archived by using the selectable option in Properties, the invisible option in ScaledVersion and givesOffLight in ScaledVersion/Light. Barycenter caused all sorts of bugs that don't exist with the new, more fine grained, mechanism
+- Added the ability to use the Unity "Standard" shader for terrain scatters
+- Added an option to enable GPU instancing on scatterer materials. The actual effects are to be determined
+- Improved the texture exporter. It has a more useful output, and should correctly calculate the min and max altitude of the planet, to clamp the heightmap correctly.
+- Fixed assigning multiple UBIs to a body through the implements option
+- Updated to KSP 1.7.0
+- Don't archive previous log zips anymore, since that caused some problems on Windows that I cannot debug properly. It didn't seem to be used anyway.
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
