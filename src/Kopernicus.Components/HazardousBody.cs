@@ -67,6 +67,13 @@ namespace Kopernicus
             public MapSO HeatMap;
 
             private CelestialBody _body;
+			
+			// How far is the script in the HeatInterval cycle?
+			private Single IntervalPosition = 0f;
+			
+			// precompute the division: typically you can run 100 multiplications in the time it takes for one division operator to finish.
+			// we might as well allocate 32 more bits per planet for the sake of performance.
+			private Single Frequency;
             
             /// <summary>
             /// Get the body
@@ -74,27 +81,24 @@ namespace Kopernicus
             void Start()
             {
                 _body = GetComponent<CelestialBody>();
-                
-                StartCoroutine(Worker());
+				
+				// precompute interval frequency
+				Frequency = 1f / HeatInterval;
             }
-
-            void OnLevelWasLoaded(Int32 level)
-            {
-                StartCoroutine(Worker());
-            }
-
-            /// <summary>
-            /// Update the heat
-            /// </summary>
-            /// <returns></returns>
-            private IEnumerator<WaitForSeconds> Worker()
-            {
-                while (true)
-                {
-                    if (!FlightGlobals.ready)
+			
+			void Update()
+			{
+				// check how much time passed since the last routine
+				if(IntervalPosition > HeatInterval)
+				{
+					// update time: both the general progression of time (Time.deltaTime) as well as reset the counter by subtracting by HeatInterval
+					IntervalPosition += Time.deltaTime - HeatInterval;
+					
+					
+					if (!FlightGlobals.ready)
                     {
-                        yield return new WaitForSeconds(HeatInterval);
-                        continue;
+						// abort the routine here.
+						return;
                     }
 
                     // Get all vessels
@@ -103,25 +107,31 @@ namespace Kopernicus
                     // Loop through them
                     foreach (Vessel vessel in vessels)
                     {
-                        Double altitude =
-                            AltitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
+                        Double altitude = AltitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
                         Double latitude = LatitudeCurve.Evaluate((Single)vessel.latitude);
                         Double longitude = LongitudeCurve.Evaluate((Single)vessel.longitude);
                         
                         Double heat = altitude * latitude * longitude * HeatRate;
                         if (HeatMap != null)
                         {
-                            heat *= HeatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
+                            //heat *= HeatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
+							
+							// let's avoid division operators.
+							// 1f / 360f = ~0.002777778f
+							// 1f / 180f = ~0.005555556
+							// not 100% precise but it's accurate enough to be an insignificant difference, yet it's a huge performance boost.
+							// especially if we take into account that this code will be run multiple times per frame depending on the amount of hazardous planets...
+							heat *= HeatMap.GetPixelFloat((longitude + 180) * 0.002777778f, (latitude + 90) * 0.005555556f);
                         }
                         foreach (Part part in vessel.Parts)
-                            part.temperature += heat * Time.deltaTime;
+                            part.temperature += heat * Frequency;
                     }
-                    
-                    // Wait
-                    yield return new WaitForSeconds(HeatInterval);
-                }
-                // ReSharper disable once IteratorNeverReturns
-            }
+					
+					// we already reset the counter.
+				}
+				else
+					IntervalPosition += Time.deltaTime; // progress the counter
+			}
         }
     }
 }
