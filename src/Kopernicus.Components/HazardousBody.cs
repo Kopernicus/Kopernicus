@@ -114,7 +114,7 @@ namespace Kopernicus
                             heat *= HeatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
                         }
                         foreach (Part part in vessel.Parts)
-                            part.temperature += heat;
+                            part.temperature += heat * Time.deltaTime;
                     }
                     
                     // Wait
