@@ -68,12 +68,12 @@ namespace Kopernicus
 
             private CelestialBody _body;
 			
-			// How far is the script in the HeatInterval cycle?
-			private Single IntervalPosition = 0f;
+            // How far is the script in the HeatInterval cycle?
+            private Single IntervalPosition = 0f;
 			
-			// precompute the division: typically you can run 100 multiplications in the time it takes for one division operator to finish.
-			// we might as well allocate 32 more bits per planet for the sake of performance.
-			private Single Frequency;
+            // precompute the division: typically you can run 100 multiplications in the time it takes for one division operator to finish.
+            // we might as well allocate 32 more bits per planet for the sake of performance.
+            private Single Frequency;
             
             /// <summary>
             /// Get the body
@@ -82,25 +82,23 @@ namespace Kopernicus
             {
                 _body = GetComponent<CelestialBody>();
 				
-				// precompute interval frequency
-				Frequency = 1f / HeatInterval;
+                // precompute interval frequency
+                Frequency = 1f / HeatInterval;
             }
 			
-			void Update()
-			{
-				// check how much time passed since the last routine
-				if(IntervalPosition > HeatInterval)
-				{
-					// update time: both the general progression of time (Time.deltaTime) as well as reset the counter by subtracting by HeatInterval
-					IntervalPosition += Time.deltaTime - HeatInterval;
-					
-					
-					if (!FlightGlobals.ready)
+            void Update()
+            {
+                // check how much time passed since the last routine
+                if(IntervalPosition > HeatInterval)
+                {
+                    // update time: both the general progression of time (Time.deltaTime) as well as reset the counter by subtracting by HeatInterval
+                    IntervalPosition += Time.deltaTime - HeatInterval;
+                    
+                    if (!FlightGlobals.ready)
                     {
-						// abort the routine here.
-						return;
+                        // abort the routine here.
+                        return;
                     }
-
                     // Get all vessels
                     List<Vessel> vessels = FlightGlobals.Vessels.FindAll(v => v.mainBody == _body);
 
@@ -115,23 +113,22 @@ namespace Kopernicus
                         if (HeatMap != null)
                         {
                             //heat *= HeatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
-							
-							// let's avoid division operators.
-							// 1f / 360f = ~0.002777778f
-							// 1f / 180f = ~0.005555556
-							// not 100% precise but it's accurate enough to be an insignificant difference, yet it's a huge performance boost.
-							// especially if we take into account that this code will be run multiple times per frame depending on the amount of hazardous planets...
-							heat *= HeatMap.GetPixelFloat((longitude + 180) * 0.002777778f, (latitude + 90) * 0.005555556f);
+
+                            // let's avoid division operators.
+                            // 1f / 360f = ~0.002777778f
+                            // 1f / 180f = ~0.005555556
+                            // not 100% precise but it's accurate enough to be an insignificant difference, yet it's a huge performance boost.
+                            // especially if we take into account that this code will be run multiple times per frame depending on the amount of hazardous planets...
+                            heat *= HeatMap.GetPixelFloat((longitude + 180) * 0.002777778f, (latitude + 90) * 0.005555556f);
                         }
                         foreach (Part part in vessel.Parts)
                             part.temperature += heat * Frequency;
                     }
-					
-					// we already reset the counter.
-				}
-				else
-					IntervalPosition += Time.deltaTime; // progress the counter
-			}
+                    // we already reset the counter.
+                }
+                else
+                    IntervalPosition += Time.deltaTime; // progress the counter
+            }
         }
     }
 }
