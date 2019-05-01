@@ -210,7 +210,7 @@ namespace Kopernicus
             void Update()
             {
                 // check how much time passed since the last routine
-                if(IntervalPosition > HeatInterval)
+                if(IntervalPosition >= HeatInterval)
                 {
                     // update time: both the general progression of time (Time.deltaTime) as well as reset the counter by subtracting by HeatInterval
                     IntervalPosition += Time.deltaTime - HeatInterval;
