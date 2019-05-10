@@ -56,7 +56,7 @@ namespace Kopernicus
                 
                 GameObject deactivatorObject = new GameObject("__deactivator");
                 deactivatorObject.SetActive(false);
-                UnityEngine.Object.DontDestroyOnLoad(_deactivator);
+                UnityEngine.Object.DontDestroyOnLoad(deactivatorObject);
                 return _deactivator = deactivatorObject.transform;
             }
         }
