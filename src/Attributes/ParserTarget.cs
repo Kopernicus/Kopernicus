@@ -1,8 +1,5 @@
 /**
  * Kopernicus ConfigNode Parser
- * ====================================
- * Created by: Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P.
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,15 +17,16 @@
  * MA 02110-1301  USA
  *
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2016 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  *
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.ConfigParser.Attributes
 {
     /// <summary>
     /// Attribute used to tag a property or field which can be targeted by the parser
@@ -42,14 +40,14 @@ namespace Kopernicus
         public readonly String FieldName;
 
         /// <summary>
-        /// Flag indiciating whether the presence of this value is required
+        /// Flag indicating whether the presence of this value is required
         /// </summary>
         public Boolean Optional = true;
 
         /// <summary>
-        /// Flag indiciating whether the contents of the config tree can be merged
+        /// Flag indicating whether the contents of the config tree can be merged
         /// via reflection with a potentially present field.  If the field is null,
-        /// this flag is disregarged
+        /// this flag is ignored
         /// </summary>
         public Boolean AllowMerge = false;
 
@@ -64,7 +62,7 @@ namespace Kopernicus
         public NameSignificance NameSignificance = NameSignificance.None;
 
         /// <summary>
-        /// Name of the acceptable values for NameSigificance.Key
+        /// Name of the acceptable values for NameSignificance.Key
         /// </summary>
         public String Key;
 

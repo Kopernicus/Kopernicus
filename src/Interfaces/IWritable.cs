@@ -1,8 +1,5 @@
 ﻿/**
  * Kopernicus ConfigNode Parser
- * ====================================
- * Created by: Teknoman117 (aka. Nathaniel R. Lewis)
- * Maintained by: Thomas P.
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +17,7 @@
  * MA 02110-1301  USA
  *
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2016 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  *
  * https://kerbalspaceprogram.com
@@ -28,10 +25,10 @@
 
 using System;
 
-namespace Kopernicus
+namespace Kopernicus.ConfigParser.Interfaces
 {
     /// <summary>
-    /// Interface a class can implment to support conversion to a String
+    /// Interface a class can implement to support conversion to a String
     /// </summary>
     public interface IWritable
     {
@@ -42,7 +39,7 @@ namespace Kopernicus
     }
     
     /// <summary>
-    /// Interface a class can implment to support conversion to a ConfigNode
+    /// Interface a class can implement to support conversion to a ConfigNode
     /// </summary>
     public interface IConfigNodeWritable
     {
