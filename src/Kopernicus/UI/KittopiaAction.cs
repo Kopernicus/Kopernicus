@@ -17,38 +17,39 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Kopernicus
+namespace Kopernicus.UI
 {
-    namespace UI
+    /// <summary>
+    /// Describes an action that can be executed by the Kittopia user.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class KittopiaAction : Attribute
     {
         /// <summary>
-        /// Describes an action that can be executed by the Kittopia user.
+        /// The name of the action
         /// </summary>
-        [AttributeUsage(AttributeTargets.Method)]
-        public class KittopiaAction : Attribute
+        public String Name;
+
+        /// <summary>
+        /// Whether this action makes the currently edited object unusable
+        /// </summary>
+        public Boolean Destructive;
+
+        public KittopiaAction(String name)
         {
-            /// <summary>
-            /// The name of the action
-            /// </summary>
-            public String name;
-
-            /// <summary>
-            /// Whether this action makes the currently edited object unuseable
-            /// </summary>
-            public Boolean destructive;
-
-            public KittopiaAction(String name)
-            {
-                this.name = name;
-            }
+            Name = name;
         }
     }
 }

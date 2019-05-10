@@ -17,28 +17,27 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components.ModularScatter;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModularScatterLoader
 {
-    namespace Configuration
+    /// <summary>
+    /// The loader for collideable scatter objects
+    /// </summary>
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class ScatterColliders : ComponentLoader<ModularScatter, ScatterCollidersComponent>
     {
-        namespace ModularScatterLoader
-        {
-            /// <summary>
-            /// The loader for collideable scatter objects
-            /// </summary>
-            [RequireConfigType(ConfigType.Node)]
-            public class ScatterColliders : ComponentLoader<ModularScatter, ScatterCollidersComponent>
-            {
-                
-            }
-        }
+
     }
 }

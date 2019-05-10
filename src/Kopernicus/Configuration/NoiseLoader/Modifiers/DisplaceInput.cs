@@ -17,44 +17,44 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Modifiers
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class DisplaceInput : NoiseLoader<LibNoise.Modifiers.DisplaceInput>
     {
-        namespace NoiseLoader
+        [PreApply] 
+        [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader SourceModule { get; set; }
+
+        [PreApply] 
+        [ParserTarget("DisplaceX", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader DisplaceXModule { get; set; }
+
+        [PreApply] 
+        [ParserTarget("DisplaceY", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader DisplaceYModule { get; set; }
+
+        [PreApply] 
+        [ParserTarget("DisplaceZ", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader DisplaceZModule { get; set; }
+
+        public override void Apply(ConfigNode node)
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class DisplaceInput : NoiseLoader<LibNoise.Modifiers.DisplaceInput>
-            {
-                [PreApply]
-                [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModule;
-
-                [PreApply]
-                [ParserTarget("DisplaceX", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader displaceXModule;
-
-                [PreApply]
-                [ParserTarget("DisplaceY", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader displaceYModule;
-
-                [PreApply]
-                [ParserTarget("DisplaceZ", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader displaceZModule;
-
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Modifiers.DisplaceInput(sourceModule.Noise, displaceXModule.Noise, displaceYModule.Noise, displaceZModule.Noise);
-                }
-            }
+            Noise = new LibNoise.Modifiers.DisplaceInput(SourceModule.Noise, DisplaceXModule.Noise,
+                DisplaceYModule.Noise, DisplaceZModule.Noise);
         }
     }
 }

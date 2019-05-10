@@ -17,89 +17,93 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.UI;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class BiomeLoader : IParserEventSubscriber, ITypeParser<CBAttributeMapSO.MapAttribute>
     {
-        [RequireConfigType(ConfigType.Node)]
-        public class BiomeLoader : IParserEventSubscriber, ITypeParser<CBAttributeMapSO.MapAttribute>
+        // The map attribute object we are creating
+        public CBAttributeMapSO.MapAttribute Value { get; set; }
+
+        // The name of this biome
+        [ParserTarget("name")]
+        [KittopiaDescription("The name of this biome.")]
+        public String Name
         {
-            // The map attribute object we are creating
-            public CBAttributeMapSO.MapAttribute Value { get; set; }
-
-            // The name of this biome
-            [ParserTarget("name")]
-            [KittopiaDescription("The name of this biome.")]
-            public String name
+            get { return Value.name; }
+            set
             {
-                get { return Value.name; }
-                set
-                {
-                    Value.name = value;
-                    Value.localizationTag = value; // This is not displayName because of reasons
-                }
+                Value.name = value;
+                Value.localizationTag = value; // This is not displayName because of reasons
             }
+        }
 
-            // The displayName of this biome
-            [ParserTarget("displayName")]
-            [KittopiaDescription("The displayed name of the biome. Can be a localization tag.")]
-            public String displayName
-            {
-                get { return Value.localizationTag; } // This is not displayName because of reasons
-                set { Value.localizationTag = value; }
-            }
+        // The displayName of this biome
+        [ParserTarget("displayName")]
+        [KittopiaDescription("The displayed name of the biome. Can be a localization tag.")]
+        public String DisplayName
+        {
+            get { return Value.localizationTag; } // This is not displayName because of reasons
+            set { Value.localizationTag = value; }
+        }
 
-            // The science multiplier for this biome
-            [ParserTarget("value")]
-            [KittopiaDescription("A value that gets multiplied with every amount of science that is returned in the biome.")]
-            public NumericParser<Single> value
-            {
-                get { return Value.value; }
-                set { Value.value = value; }
-            }
+        // The science multiplier for this biome
+        [ParserTarget("value")]
+        [KittopiaDescription(
+            "A value that gets multiplied with every amount of science that is returned in the biome.")]
+        public NumericParser<Single> ScienceValue
+        {
+            get { return Value.value; }
+            set { Value.value = value; }
+        }
 
-            // The color in the map for this attribute
-            [ParserTarget("color")]
-            [KittopiaDescription("The color of the biome on the biome map.")]
-            public ColorParser color
-            {
-                get { return Value.mapColor; }
-                set { Value.mapColor = value; }
-            }
+        // The color in the map for this attribute
+        [ParserTarget("color")]
+        [KittopiaDescription("The color of the biome on the biome map.")]
+        public ColorParser Color
+        {
+            get { return Value.mapColor; }
+            set { Value.mapColor = value; }
+        }
 
-            // Parser apply event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-                Events.OnBiomeLoaderApply.Fire(this, node);
-            }
+        // Parser apply event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            Events.OnBiomeLoaderApply.Fire(this, node);
+        }
 
-            // Parser post apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-                Events.OnBiomeLoaderPostApply.Fire(this, node);
-            }
+        // Parser post apply event
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            Events.OnBiomeLoaderPostApply.Fire(this, node);
+        }
 
-            // Allocate the biome descriptor
-            [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
-            public BiomeLoader()
-            {
-                Value = new CBAttributeMapSO.MapAttribute();
-            }
+        // Allocate the biome descriptor
+        [KittopiaConstructor(KittopiaConstructor.ParameterType.Empty)]
+        public BiomeLoader()
+        {
+            Value = new CBAttributeMapSO.MapAttribute();
+        }
 
-            // Get reference to existing biome descriptor
-            public BiomeLoader(CBAttributeMapSO.MapAttribute attribute)
-            {
-                Value = attribute;
-            }
+        // Get reference to existing biome descriptor
+        public BiomeLoader(CBAttributeMapSO.MapAttribute attribute)
+        {
+            Value = attribute;
         }
     }
 }

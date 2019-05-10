@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,143 +25,155 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using Object = System.Object;
 
 namespace Kopernicus
 {
-    // A message logging class to replace Debug.Log
+    // A generic message logging class to replace Debug.Log
     public class Logger
     {
         // Is the logger initialized?
-        private static Boolean isInitialized = false;
+        private static readonly Boolean IsInitialized;
 
         // Logger output path
-        public static String LogDirectory
+        private static String LogDirectory
         {
             get { return KSPUtil.ApplicationRootPath + "Logs/" + typeof (Logger).Assembly.GetName().Name + "/"; }
         }
 
         // ==> Implement own version
-        public static String version
+        private static String Version
         {
-            get { return Constants.Version.VersionID; }
+            get { return Constants.Version.VersionId; }
         }
 
         // Default logger
-        private static Logger _DefaultLogger = null;
+        private static Logger _defaultLogger;
 
         public static Logger Default
         {
             get
             {
-                if (_DefaultLogger == null) {
-                    _DefaultLogger = new Logger(LogFileName: typeof(Logger).Assembly.GetName().Name);
-                    Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
+                if (_defaultLogger != null)
+                {
+                    return _defaultLogger;
                 }
-                return _DefaultLogger;
+                
+                _defaultLogger = new Logger(typeof(Logger).Assembly.GetName().Name);
+                Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
+                return _defaultLogger;
             }
         }
 
         // Currently active logger
-        private static Logger _ActiveLogger = null;
+        private static Logger _activeLogger;
 
         public static Logger Active
         {
-            get
-            {
-                if (_ActiveLogger.loggerStream == null)
-                    return _DefaultLogger;
-                return _ActiveLogger;
-            }
-            private set { _ActiveLogger = value; }
+            get { return _activeLogger._loggerStream == null ? _defaultLogger : _activeLogger; }
+            private set { _activeLogger = value; }
         }
 
         // The complete path of this log
-        TextWriter loggerStream = null;
+        private TextWriter _loggerStream;
 
         // Write text to the log
         public void Log(Object o)
         {
-            if (loggerStream == null)
+            if (_loggerStream == null)
+            {
                 return;
+            }
 
-            loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: " + o);
-            loggerStream.Flush();
+            _loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: " + o);
+            _loggerStream.Flush();
         }
 
         // Write text to the log
         public void LogException(Exception e)
         {
-            if (loggerStream == null)
+            if (_loggerStream == null)
+            {
                 return;
+            }
 
-            loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: Exception Was Recorded: " +
+            _loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: Exception Was Recorded: " +
                                    e.Message + "\n" + e.StackTrace);
 
             if (e.InnerException != null)
-                loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: Inner Exception Was Recorded: " +
+            {
+                _loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") +
+                                       "]: Inner Exception Was Recorded: " +
                                        e.InnerException.Message + "\n" + e.InnerException.StackTrace);
-            loggerStream.Flush();
+            }
+            _loggerStream.Flush();
         }
 
         // Set logger as the active logger
         public void SetAsActive()
         {
-            Logger.Active = this;
+            Active = this;
         }
 
         public void Flush()
         {
-            if (loggerStream == null)
+            if (_loggerStream == null)
+            {
                 return;
+            }
 
-            loggerStream.Flush();
+            _loggerStream.Flush();
         }
 
         // Close the logger
         public void Close()
         {
-            if (loggerStream == null)
+            if (_loggerStream == null)
+            {
                 return;
+            }
 
-            loggerStream.Flush();
-            loggerStream.Close();
-            loggerStream = null;
+            _loggerStream.Flush();
+            _loggerStream.Close();
+            _loggerStream = null;
         }
 
         // Create a logger
-        public Logger([Optional] String LogFileName)
+        public Logger(String logFileName = null)
         {
-            SetFilename(LogFileName);
+            SetFilename(logFileName);
         }
 
         // Set/Change the filename we log to
-        public void SetFilename(String LogFileName)
+        public void SetFilename(String logFileName)
         {
             Close();
 
-            if (!isInitialized)
+            if (!IsInitialized)
+            {
                 return;
+            }
 
-            if (String.IsNullOrEmpty(LogFileName))
-                return; //effectively makes this logger a black hole
+            if (String.IsNullOrEmpty(logFileName))
+            {
+                return; // effectively makes this logger a black hole
+            }
 
             try
             {
                 // Open the log file (overwrite existing logs)
-                String LogFile = Logger.LogDirectory + LogFileName + ".log";
-                Directory.CreateDirectory(Path.GetDirectoryName(LogFile));
-                loggerStream = new StreamWriter(LogFile);
+                String logFile = LogDirectory + logFileName + ".log";
+                Directory.CreateDirectory(Path.GetDirectoryName(logFile));
+                _loggerStream = new StreamWriter(logFile);
 
                 // Write an opening message
-                String logVersion = "//=====  " + version + "  =====//";
-                String logHeader = new string('=', logVersion.Length - 4);
+                String logVersion = "//=====  " + Version + "  =====//";
+                String logHeader = new String('=', logVersion.Length - 4);
                 logHeader = "//" + logHeader + "//";
 
-                loggerStream.WriteLine(logHeader + "\n" + logVersion + "\n" + logHeader); // Don't use Log() because we don't want a date time in front of the Versioning.
-                Log("Logger \"" + LogFileName + "\" was created");
+                _loggerStream.WriteLine(logHeader + "\n" + logVersion + "\n" + logHeader); // Don't use Log() because we don't want a date time in front of the version.
+                Log("Logger \"" + logFileName + "\" was created");
             }
             catch (Exception e)
             {
@@ -182,7 +194,9 @@ namespace Kopernicus
             try
             {
                 if (!Directory.Exists(LogDirectory))
+                {
                     Directory.CreateDirectory(LogDirectory);
+                }
 
                 // Clear out the old log files
                 foreach(String file in Directory.GetFiles(LogDirectory))
@@ -196,7 +210,7 @@ namespace Kopernicus
                 return;
             }
 
-            isInitialized = true;
+            IsInitialized = true;
         }
     }
 }

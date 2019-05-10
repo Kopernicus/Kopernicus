@@ -17,180 +17,196 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.MaterialLoader;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class CoronaLoader : BaseLoader, IParserEventSubscriber, ITypeParser<SunCoronas>
     {
-        [RequireConfigType(ConfigType.Node)]
-        public class CoronaLoader : BaseLoader, IParserEventSubscriber, ITypeParser<SunCoronas>
+        // The generated corona
+        public SunCoronas Value { get; set; }
+
+        // Material definition for the Corona
+        [ParserTarget("scaleSpeed", AllowMerge = true)]
+        public NumericParser<Single> ScaleSpeed
         {
-            // The generated corona
-            public SunCoronas Value { get; set; }
+            get { return Value.scaleSpeed; }
+            set { Value.scaleSpeed = value; }
+        }
 
-            // Material definition for the Corona
-            [ParserTarget("scaleSpeed", AllowMerge = true)]
-            public NumericParser<Single> scaleSpeed
+        [ParserTarget("scaleLimitY", AllowMerge = true)]
+        public NumericParser<Single> ScaleLimitY
+        {
+            get { return Value.scaleLimitY; }
+            set { Value.scaleLimitY = value; }
+        }
+
+        [ParserTarget("scaleLimitX", AllowMerge = true)]
+        public NumericParser<Single> ScaleLimitX
+        {
+            get { return Value.scaleLimitX; }
+            set { Value.scaleLimitX = value; }
+        }
+
+        [ParserTarget("updateInterval", AllowMerge = true)]
+        public NumericParser<Single> UpdateInterval
+        {
+            get { return Value.updateInterval; }
+            set { Value.updateInterval = value; }
+        }
+
+        [ParserTarget("speed", AllowMerge = true)]
+        public NumericParser<Int32> Speed
+        {
+            get { return Value.Speed; }
+            set { Value.Speed = value; }
+        }
+
+        [ParserTarget("rotation", AllowMerge = true)]
+        public NumericParser<Single> Rotation
+        {
+            get { return Value.Rotation; }
+            set { Value.Rotation = value; }
+        }
+
+        [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public ParticleAddSmoothLoader Material
+        {
+            get { return (ParticleAddSmoothLoader) Value.GetComponent<Renderer>().sharedMaterial; }
+            set { Value.GetComponent<Renderer>().sharedMaterial = value; }
+        }
+
+        [KittopiaDestructor]
+        public void Destroy()
+        {
+            UnityEngine.Object.Destroy(Value.gameObject);
+        }
+
+        // Parser apply event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            Events.OnCoronaLoaderApply.Fire(this, node);
+        }
+
+        // Parser post apply event
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            Events.OnCoronaLoaderPostApply.Fire(this, node);
+        }
+
+        /// <summary>
+        /// Creates a new Corona Loader from the Injector context.
+        /// </summary>
+        [SuppressMessage("ReSharper", "Unity.InstantiateWithoutParent")]
+        public CoronaLoader()
+        {
+            // Is this the parser context?
+            if (!Injector.IsInPrefab)
             {
-                get { return Value.scaleSpeed; }
-                set { Value.scaleSpeed = value; }
+                throw new InvalidOperationException("Must be executed in Injector context.");
             }
 
-            [ParserTarget("scaleLimitY", AllowMerge = true)]
-            public NumericParser<Single> scaleLimitY 
+            // We need to get the body for the Sun (to steal it's corona mesh)
+            PSystemBody sun = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Sun");
+
+            // Clone a default Corona
+            GameObject corona =
+                Utility.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First()
+                    .gameObject);
+
+            // Backup local transform parameters 
+            Vector3 localPosition = corona.transform.localPosition;
+            Vector3 localScale = corona.transform.localScale;
+            Quaternion localRotation = corona.transform.rotation;
+
+            // Parent the new corona
+            corona.transform.parent = generatedBody.scaledVersion.transform;
+
+            // Restore the local transform settings
+            corona.transform.localPosition = localPosition;
+            corona.transform.localScale = localScale;
+            corona.transform.localRotation = localRotation;
+
+            Value = corona.GetComponent<SunCoronas>();
+
+            // Setup the material loader
+            Material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().sharedMaterial)
             {
-                get { return Value.scaleLimitY; }
-                set { Value.scaleLimitY = value; }
+                name = Guid.NewGuid().ToString()
+            };
+        }
+
+        /// <summary>
+        /// Creates a new Corona Loader for an already existing body.
+        /// </summary>
+        [KittopiaConstructor(KittopiaConstructor.ParameterType.CelestialBody)]
+        [SuppressMessage("ReSharper", "Unity.InstantiateWithoutParent")]
+        public CoronaLoader(CelestialBody body)
+        {
+            // Is this a spawned body?
+            if (body.scaledBody == null || Injector.IsInPrefab)
+            {
+                throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
             }
 
-            [ParserTarget("scaleLimitX", AllowMerge = true)]
-            public NumericParser<Single> scaleLimitX
+            // We need to get the body for the Sun (to steal it's corona mesh)
+            PSystemBody sun = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Sun");
+
+            // Clone a default Corona
+            GameObject corona =
+                Utility.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First()
+                    .gameObject);
+
+            // Backup local transform parameters 
+            Vector3 localPosition = corona.transform.localPosition;
+            Vector3 localScale = corona.transform.localScale;
+            Quaternion localRotation = corona.transform.rotation;
+
+            // Parent the new corona
+            corona.transform.parent = body.scaledBody.transform;
+
+            // Restore the local transform settings
+            corona.transform.localPosition = localPosition;
+            corona.transform.localScale = localScale;
+            corona.transform.localRotation = localRotation;
+
+            Value = corona.GetComponent<SunCoronas>();
+
+            // Setup the material loader
+            Material = new ParticleAddSmoothLoader(corona.GetComponent<Renderer>().sharedMaterial)
             {
-                get { return Value.scaleLimitX; }
-                set { Value.scaleLimitX = value; }
-            }
+                name = Guid.NewGuid().ToString()
+            };
+        }
 
-            [ParserTarget("updateInterval", AllowMerge = true)]
-            public NumericParser<Single> updateInterval
+        /// <summary>
+        /// Creates a new Corona Loader from an already existing corona
+        /// </summary>
+        public CoronaLoader(SunCoronas component)
+        {
+            Value = component;
+            if (!(Value.GetComponent<Renderer>().sharedMaterial is ParticleAddSmoothLoader))
             {
-                get { return Value.updateInterval; }
-                set { Value.updateInterval = value; }
-            }
-
-            [ParserTarget("speed", AllowMerge = true)]
-            public NumericParser<Int32> speed
-            {
-                get { return Value.Speed; }
-                set { Value.Speed = value; }
-            }
-
-            [ParserTarget("rotation", AllowMerge = true)]
-            public NumericParser<Single> rotation
-            {
-                get { return Value.Rotation; }
-                set { Value.Rotation = value; }
-            }
-
-            [ParserTarget("Material", AllowMerge = true, GetChild = false)]
-            public ParticleAddSmoothLoader material
-            {
-                get { return (ParticleAddSmoothLoader)Value.GetComponent<Renderer>().sharedMaterial; }
-                set { Value.GetComponent<Renderer>().sharedMaterial = value; }
-            }
-
-            [KittopiaDestructor]
-            public void Destroy()
-            {
-                UnityEngine.Object.Destroy(Value.gameObject);
-            }
-
-            // Parser apply event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-                Events.OnCoronaLoaderApply.Fire(this, node);
-            }
-
-            // Parser post apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-                Events.OnCoronaLoaderPostApply.Fire(this, node);
-            }
-
-            /// <summary>
-            /// Creates a new Corona Loader from the Injector context.
-            /// </summary>
-            public CoronaLoader()
-            {
-                // Is this the parser context?
-                if (!Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("Must be executed in Injector context.");
-                }
-                
-                // We need to get the body for the Sun (to steal it's corona mesh)
-                PSystemBody sun = Utility.FindBody (Injector.StockSystemPrefab.rootBody, "Sun");
-
-                // Clone a default Corona
-                GameObject corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
-                
-                // Backup local transform parameters 
-                Vector3 position = corona.transform.localPosition;
-                Vector3 scale = corona.transform.localScale;
-                Quaternion rotation = corona.transform.rotation;
-
-                // Parent the new corona
-                corona.transform.parent = generatedBody.scaledVersion.transform;
-
-                // Restore the local transform settings
-                corona.transform.localPosition = position;
-                corona.transform.localScale = scale;
-                corona.transform.localRotation = rotation;
-                
-                Value = corona.GetComponent<SunCoronas> ();
-
-                // Setup the material loader
-                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().sharedMaterial);
-                material.name = Guid.NewGuid().ToString();
-            }
-
-            /// <summary>
-            /// Creates a new Corona Loader for an already existing body.
-            /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
-            public CoronaLoader(CelestialBody body)
-            {
-                // Is this a spawned body?
-                if (body?.scaledBody == null || Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
-                }
-                
-                // We need to get the body for the Sun (to steal it's corona mesh)
-                PSystemBody sun = Utility.FindBody (Injector.StockSystemPrefab.rootBody, "Sun");
-
-                // Clone a default Corona
-                GameObject corona = UnityEngine.Object.Instantiate(sun.scaledVersion.GetComponentsInChildren<SunCoronas>(true).First().gameObject) as GameObject;
-                
-                // Backup local transform parameters 
-                Vector3 position = corona.transform.localPosition;
-                Vector3 scale = corona.transform.localScale;
-                Quaternion rotation = corona.transform.rotation;
-
-                // Parent the new corona
-                corona.transform.parent = body.scaledBody.transform;
-
-                // Restore the local transform settings
-                corona.transform.localPosition = position;
-                corona.transform.localScale = scale;
-                corona.transform.localRotation = rotation;
-                
-                Value = corona.GetComponent<SunCoronas> ();
-
-                // Setup the material loader
-                material = new ParticleAddSmoothLoader (corona.GetComponent<Renderer>().sharedMaterial);
-                material.name = Guid.NewGuid().ToString();
-            }
-
-            /// <summary>
-            /// Creates a new Corona Loader from an already existing corona
-            /// </summary>
-            public CoronaLoader(SunCoronas component)
-            {
-                Value = component;
-                if (!(Value.GetComponent<Renderer>().sharedMaterial is ParticleAddSmoothLoader))
-                {
-                    material = new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().sharedMaterial);
-                }
+                Material = new ParticleAddSmoothLoader(Value.GetComponent<Renderer>().sharedMaterial);
             }
         }
     }

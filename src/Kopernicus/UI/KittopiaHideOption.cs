@@ -17,33 +17,33 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Kopernicus
+namespace Kopernicus.UI
 {
-    namespace UI
+    /// <summary>
+    /// Hides a Kopernicus config option from the KittopiaTech UI
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class KittopiaHideOption : Attribute
     {
         /// <summary>
-        /// Hides a Kopernicus config option from the KittopiaTech UI
+        /// Whether this option should end up in a cfg file.
         /// </summary>
-        [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-        public class KittopiaHideOption : Attribute
-        {
-            /// <summary>
-            /// Whether this option should end up in a cfg file.
-            /// </summary>
-            public Boolean export = true;
+        public Boolean Export = true;
 
-            /// <summary>
-            /// Whether this option should be visible in the UI
-            /// </summary>
-            public Boolean show = false;
-        }
+        /// <summary>
+        /// Whether this option should be visible in the UI
+        /// </summary>
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+        public Boolean Show = false;
+
     }
 }

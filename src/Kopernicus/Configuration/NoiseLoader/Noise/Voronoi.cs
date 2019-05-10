@@ -17,51 +17,50 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Noise
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class Voronoi : NoiseLoader<LibNoise.Voronoi>
     {
-        namespace NoiseLoader
+        [ParserTarget("displacement")]
+        public NumericParser<Double> Displacement
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class Voronoi : NoiseLoader<LibNoise.Voronoi>
-            {
-                [ParserTarget("displacement")]
-                public NumericParser<Double> displacement
-                {
-                    get { return noise.Displacement; }
-                    set { noise.Displacement = value; }
-                }
+            get { return Noise.Displacement; }
+            set { Noise.Displacement = value; }
+        }
 
-                [ParserTarget("frequency")]
-                public NumericParser<Double> frequency
-                {
-                    get { return noise.Frequency; }
-                    set { noise.Frequency = value; }
-                }
+        [ParserTarget("frequency")]
+        public NumericParser<Double> Frequency
+        {
+            get { return Noise.Frequency; }
+            set { Noise.Frequency = value; }
+        }
 
-                [ParserTarget("distanceEnabled")]
-                public NumericParser<Boolean> distanceEnabled
-                {
-                    get { return noise.DistanceEnabled; }
-                    set { noise.DistanceEnabled = value; }
-                }
+        [ParserTarget("distanceEnabled")]
+        public NumericParser<Boolean> DistanceEnabled
+        {
+            get { return Noise.DistanceEnabled; }
+            set { Noise.DistanceEnabled = value; }
+        }
 
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return noise.Seed; }
-                    set { noise.Seed = value; }
-                }
-            }
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Noise.Seed; }
+            set { Noise.Seed = value; }
         }
     }
 }

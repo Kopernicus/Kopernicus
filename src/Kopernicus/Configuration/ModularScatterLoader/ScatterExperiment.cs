@@ -17,34 +17,36 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components.ModularScatter;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModularScatterLoader
 {
-    namespace Configuration
+    /// <summary>
+    /// The loader for experiments on scatter objects
+    /// </summary>
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class ScatterExperiment : ComponentLoader<ModularScatter, ScatterExperimentComponent>, IParserEventSubscriber
     {
-        namespace ModularScatterLoader
+        void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            /// <summary>
-            /// The loader for collideable scatter objects
-            /// </summary>
-            [RequireConfigType(ConfigType.Node)]
-            public class ScatterExperiment : ComponentLoader<ModularScatter, ScatterExperimentComponent>, IParserEventSubscriber
-            {
-                void IParserEventSubscriber.Apply(ConfigNode node) { }
+        }
 
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-                    // Simply assign this node as the experiment config
-                    Value.experimentNode = node;
-                }
-            }
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            // Simply assign this node as the experiment config
+            Value.ExperimentNode = node;
         }
     }
 }

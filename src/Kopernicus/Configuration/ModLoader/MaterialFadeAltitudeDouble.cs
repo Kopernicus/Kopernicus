@@ -17,79 +17,78 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class MaterialFadeAltitudeDouble : ModLoader<PQSMod_MaterialFadeAltitudeDouble>
     {
-        namespace ModLoader
+        // inFadeEnd
+        [ParserTarget("inFadeEnd")]
+        public NumericParser<Single> InFadeEnd
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class MaterialFadeAltitudeDouble : ModLoader<PQSMod_MaterialFadeAltitudeDouble>
-            {
-                // inFadeEnd
-                [ParserTarget("inFadeEnd")]
-                public NumericParser<Single> inFadeEnd
-                {
-                    get { return mod.inFadeEnd; }
-                    set { mod.inFadeEnd = value; }
-                }
+            get { return Mod.inFadeEnd; }
+            set { Mod.inFadeEnd = value; }
+        }
 
-                // inFadeStart
-                [ParserTarget("inFadeStart")]
-                public NumericParser<Single> inFadeStart
-                {
-                    get { return mod.inFadeStart; }
-                    set { mod.inFadeStart = value; }
-                }
+        // inFadeStart
+        [ParserTarget("inFadeStart")]
+        public NumericParser<Single> InFadeStart
+        {
+            get { return Mod.inFadeStart; }
+            set { Mod.inFadeStart = value; }
+        }
 
-                // outFadeEnd
-                [ParserTarget("outFadeEnd")]
-                public NumericParser<Single> outFadeEnd
-                {
-                    get { return mod.outFadeEnd; }
-                    set { mod.outFadeEnd = value; }
-                }
+        // outFadeEnd
+        [ParserTarget("outFadeEnd")]
+        public NumericParser<Single> OutFadeEnd
+        {
+            get { return Mod.outFadeEnd; }
+            set { Mod.outFadeEnd = value; }
+        }
 
-                // outFadeStart
-                [ParserTarget("outFadeStart")]
-                public NumericParser<Single> outFadeStart
-                {
-                    get { return mod.outFadeStart; }
-                    set { mod.outFadeStart = value; }
-                }
+        // outFadeStart
+        [ParserTarget("outFadeStart")]
+        public NumericParser<Single> OutFadeStart
+        {
+            get { return Mod.outFadeStart; }
+            set { Mod.outFadeStart = value; }
+        }
 
-                // valueEnd
-                [ParserTarget("valueEnd")]
-                public NumericParser<Single> valueEnd
-                {
-                    get { return mod.valueEnd; }
-                    set { mod.valueEnd = value; }
-                }
+        // valueEnd
+        [ParserTarget("valueEnd")]
+        public NumericParser<Single> ValueEnd
+        {
+            get { return Mod.valueEnd; }
+            set { Mod.valueEnd = value; }
+        }
 
-                // valueMid
-                [ParserTarget("valueMid")]
-                public NumericParser<Single> valueMid
-                {
-                    get { return mod.valueMid; }
-                    set { mod.valueMid = value; }
-                }
+        // valueMid
+        [ParserTarget("valueMid")]
+        public NumericParser<Single> ValueMid
+        {
+            get { return Mod.valueMid; }
+            set { Mod.valueMid = value; }
+        }
 
-                // valueStart
-                [ParserTarget("valueStart")]
-                public NumericParser<Single> valueStart
-                {
-                    get { return mod.valueStart; }
-                    set { mod.valueStart = value; }
-                }
-            }
+        // valueStart
+        [ParserTarget("valueStart")]
+        public NumericParser<Single> ValueStart
+        {
+            get { return Mod.valueStart; }
+            set { Mod.valueStart = value; }
         }
     }
 }

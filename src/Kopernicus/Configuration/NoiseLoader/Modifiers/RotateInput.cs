@@ -17,47 +17,47 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Modifiers
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class RotateInput : NoiseLoader<LibNoise.Modifiers.RotateInput>
     {
-        namespace NoiseLoader
+        [ParserTarget("xAngle")] 
+        public NumericParser<Double> XAngle { get; set; }
+
+        [ParserTarget("yAngle")] 
+        public NumericParser<Double> YAngle { get; set; }
+
+        [ParserTarget("zAngle")] 
+        public NumericParser<Double> ZAngle { get; set; }
+
+        [PreApply] 
+        [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader SourceModule { get; set; }
+
+        public override void Apply(ConfigNode node)
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class RotateInput : NoiseLoader<LibNoise.Modifiers.RotateInput>
-            {
-                [ParserTarget("xAngle")]
-                public NumericParser<Double> xAngle;
+            Noise = new LibNoise.Modifiers.RotateInput(SourceModule.Noise, 0, 0, 0);
+        }
 
-                [ParserTarget("yAngle")]
-                public NumericParser<Double> yAngle;
-
-                [ParserTarget("zAngle")]
-                public NumericParser<Double> zAngle;
-
-                [PreApply]
-                [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModule;
-
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Modifiers.RotateInput(sourceModule.Noise, 0, 0 ,0);
-                }
-
-                public override void PostApply(ConfigNode node)
-                {
-                    noise.SetAngles(xAngle, yAngle, zAngle);
-                }
-            }
+        public override void PostApply(ConfigNode node)
+        {
+            Noise.SetAngles(XAngle, YAngle, ZAngle);
         }
     }
 }

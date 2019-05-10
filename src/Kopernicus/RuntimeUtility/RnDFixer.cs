@@ -17,112 +17,130 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Configuration;
-using KSP.UI.Screens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.Configuration;
+using KSP.UI.Screens;
 using TMPro;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.RuntimeUtility
 {
     /// <summary>
     /// A small class to fix the science archives
     /// </summary>
     public class RnDFixer : MonoBehaviour
     {
-        internal static List<RDPlanetListItemContainer> RnDRotationKill = new List<RDPlanetListItemContainer>();
+        private static readonly List<RDPlanetListItemContainer> RnDRotationKill = new List<RDPlanetListItemContainer>();
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             // Kill the rotation of selected planet thumbnails
-            for (Int32 i = 0; i < RnDRotationKill.Count(); i++)
+            for (Int32 i = 0; i < RnDRotationKill.Count; i++)
             {
                 RDPlanetListItemContainer planetItem = RnDRotationKill[i];
                 planetItem.planet.transform.rotation = Quaternion.identity;
             }
         }
 
-        void Start()
+        private void Start()
         {
-            //  FIX BODIES MOVED POSTSPAWN  //
+            //  FIX BODIES MOVED POST SPAWN  //
             Boolean postSpawnChanges = false;
 
             // Replaced 'foreach' with 'for' to improve performance
-            CelestialBody[] postSpawnBodies = PSystemManager.Instance?.localBodies?.Where(b => b.Has("orbitPatches"))?.ToArray();
+            CelestialBody[] postSpawnBodies = PSystemManager.Instance.localBodies.Where(b => b.Has("orbitPatches")).ToArray();
 
-            for (Int32 i = 0; i < postSpawnBodies?.Length; i++)
+            for (Int32 i = 0; i < postSpawnBodies.Length; i++)
             {
                 CelestialBody cb = postSpawnBodies[i];
 
                 // Fix position if the body gets moved PostSpawn
                 ConfigNode patch = cb.Get<ConfigNode>("orbitPatches");
-                if (patch.GetValue("referenceBody") != null || patch.GetValue("semiMajorAxis") != null)
+                if (patch == null)
                 {
-                    // Get the body
-                    PSystemBody body = PSystemManager.Instance?.systemPrefab?.GetComponentsInChildren<PSystemBody>(true)?.FirstOrDefault(b => b.name == cb.transform.name);
-                    if (body == null)
-                    {
-                        Debug.Log("[Kopernicus]: RnDFixer: Could not find PSystemBody => " + cb.transform.name);
-                        continue;
-                    }
+                    continue;
+                }
+                if (patch.GetValue("referenceBody") == null && patch.GetValue("semiMajorAxis") == null)
+                {
+                    continue;
+                }
+                if (cb.orbitDriver == null)
+                {
+                    continue;
+                }
+                
+                // Get the body
+                PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).FirstOrDefault(b => b.name == cb.transform.name);
+                if (body == null)
+                {
+                    Debug.Log("[Kopernicus]: RnDFixer: Could not find PSystemBody => " + cb.transform.name);
+                    continue;
+                }
 
-                    // Get the parent
-                    PSystemBody oldParent = PSystemManager.Instance?.systemPrefab?.GetComponentsInChildren<PSystemBody>(true)?.FirstOrDefault(b => b.children.Contains(body));
-                    if (oldParent == null)
-                    {
-                        Debug.Log("[Kopernicus]: RnDFixer: Could not find referenceBody of CelestialBody => " + cb.transform.name);
-                        continue;
-                    }
+                // Get the parent
+                PSystemBody oldParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).FirstOrDefault(b => b.children.Contains(body));
+                if (oldParent == null)
+                {
+                    Debug.Log("[Kopernicus]: RnDFixer: Could not find referenceBody of CelestialBody => " + cb.transform.name);
+                    continue;
+                }
 
-                    // Check if PostSpawnOrbit changes referenceBody
-                    PSystemBody newParent = oldParent;
-                    if (patch.GetValue("referenceBody") != null)
-                        newParent = PSystemManager.Instance?.systemPrefab?.GetComponentsInChildren<PSystemBody>(true).FirstOrDefault(b => b.name == patch.GetValue("referenceBody"));
-                    if (oldParent == null)
-                    {
-                        Debug.Log("[Kopernicus]: RnDFixer: Could not find PostSpawn referenceBody of CelestialBody => " + cb.transform.name);
-                        newParent = oldParent;
-                    }
+                // Check if PostSpawnOrbit changes referenceBody
+                PSystemBody newParent = oldParent;
+                if (patch.GetValue("referenceBody") != null)
+                {
+                    newParent = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true)
+                        .FirstOrDefault(b => b.name == patch.GetValue("referenceBody"));
+                }
+                if (oldParent == null)
+                {
+                    Debug.Log("[Kopernicus]: RnDFixer: Could not find PostSpawn referenceBody of CelestialBody => " + cb.transform.name);
+                    newParent = oldParent;
+                }
+                NumericParser<Double> newSemiMajorAxis = body.orbitDriver.orbit.semiMajorAxis;
+                if (patch.GetValue("semiMajorAxis") != null)
+                {
+                    newSemiMajorAxis.SetFromString(patch.GetValue("semiMajorAxis"));
+                }
 
-                    // Check if PostSpawnOrbit changes semiMajorAxis
-                    if (body?.orbitDriver?.orbit?.semiMajorAxis == null)
-                    {
-                        Debug.Log("[Kopernicus]: RnDFixer: Could not find PostSpawn semiMajorAxis of CelestialBody => " + cb.transform.name);
-                        continue;
-                    }
-                    NumericParser<Double> newSMA = body.orbitDriver.orbit.semiMajorAxis;
-                    if (patch.GetValue("semiMajorAxis") != null)
-                        newSMA.SetFromString(patch.GetValue("semiMajorAxis"));
+                // Remove the body from oldParent.children
+                oldParent.children.Remove(body);
 
-                    // Remove the body from oldParent.children
-                    oldParent.children.Remove(body);
-
-                    // Find the index of the body in newParent.children
-                    Int32 index = newParent.children.FindAll(c => c.orbitDriver.orbit.semiMajorAxis < newSMA.Value).Count;
+                // Find the index of the body in newParent.children
+                if (newParent != null)
+                {
+                    Int32 index = newParent.children.FindAll(c => c.orbitDriver.orbit.semiMajorAxis < newSemiMajorAxis.Value).Count;
 
                     // Add the body to newParent.children
                     if (index > newParent.children.Count)
+                    {
                         newParent.children.Add(body);
+                    }
                     else
+                    {
                         newParent.children.Insert(index, body);
-
-                    // Signal that the system has PostSpawn changes
-                    postSpawnChanges = true;
+                    }
                 }
+
+                // Signal that the system has PostSpawn changes
+                postSpawnChanges = true;
             }
 
             // Rebuild Archives
             if (postSpawnChanges)
+            {
                 AddPlanets();
+            }
 
 
 
@@ -130,43 +148,54 @@ namespace Kopernicus
 
             // Create a list with body to hide and their parent
             List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>> hideList = new List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>>();
+            
             // Create a list with body to skip and their parent
             List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
             // Replaced 'foreach' with 'for' to improve performance
             PSystemBody[] bodies = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true);
-            CelestialBody[] hideBodies = PSystemManager.Instance?.localBodies?.Where(cb => cb.Has("hiddenRnD"))?.ToArray();
+            CelestialBody[] hideBodies = PSystemManager.Instance.localBodies.Where(cb => cb.Has("hiddenRnD")).ToArray();
 
-            for (Int32 i = 0; i < hideBodies?.Length; i++)
+            for (Int32 i = 0; i < hideBodies.Length; i++)
             {
                 CelestialBody body = hideBodies[i];
-                PropertiesLoader.RDVisibility visibility = body.Get<PropertiesLoader.RDVisibility>("hiddenRnD");
+                PropertiesLoader.RnDVisibility visibility = body.Get<PropertiesLoader.RnDVisibility>("hiddenRnD");
 
-                if (visibility == PropertiesLoader.RDVisibility.HIDDEN || visibility == PropertiesLoader.RDVisibility.SKIP)
+                if (visibility != PropertiesLoader.RnDVisibility.Hidden &&
+                    visibility != PropertiesLoader.RnDVisibility.Skip)
                 {
-                    PSystemBody hidden = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name);
-                    PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
-                    if (parent != null)
+                    continue;
+                }
+
+                PSystemBody hidden =
+                    Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name);
+                PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
+                if (parent == null)
+                {
+                    continue;
+                }
+
+                // Hide
+                if (hidden.children.Count == 0 || visibility == PropertiesLoader.RnDVisibility.Hidden)
+                {
+                    body.Set("hiddenRnd", PropertiesLoader.RnDVisibility.Hidden);
+                    hideList.Add(new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden,
+                        new KeyValuePair<PSystemBody, Int32>(parent, 0)));
+                }
+                // Skip
+                else
+                {
+                    if (skipList.Any(b => b.Key == parent))
                     {
-                        // Hide
-                        if (hidden.children.Count == 0 || visibility == PropertiesLoader.RDVisibility.HIDDEN)
-                        {
-                            body.Set("hiddenRnd", PropertiesLoader.RDVisibility.HIDDEN);
-                            hideList.Add(new KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>(hidden, new KeyValuePair<PSystemBody, Int32>(parent, 0)));
-                        }
-                        // Skip
-                        else
-                        {
-                            if (skipList.Any(b => b.Key == parent))
-                            {
-                                Int32 index = skipList.IndexOf(skipList.FirstOrDefault(b => b.Key == parent));
-                                skipList.Insert(index, new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
-                            }
-                            else
-                                skipList.Add(new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
-                        }
+                        Int32 index = skipList.IndexOf(skipList.FirstOrDefault(b => b.Key == parent));
+                        skipList.Insert(index, new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
+                    }
+                    else
+                    {
+                        skipList.Add(new KeyValuePair<PSystemBody, PSystemBody>(hidden, parent));
                     }
                 }
+
             }
 
             // Skip bodies
@@ -196,6 +225,11 @@ namespace Kopernicus
                 // Get hidden body and parent
                 PSystemBody hidden = pair.Key;
                 PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
+                
+                if (parent == null)
+                {
+                    continue;
+                }
 
                 // Find where the hidden body is
                 Int32 index = parent.children.IndexOf(hidden);
@@ -208,7 +242,7 @@ namespace Kopernicus
             }
 
             // Apply changes and revert to the original PSystem
-            if (hideList.Count > 0 || skipList?.Count > 0)
+            if (hideList.Count > 0 || skipList.Count > 0)
             {
                 // Rebuild Archives
                 AddPlanets();
@@ -234,7 +268,9 @@ namespace Kopernicus
                         PSystemBody child = hidden.children[j];
 
                         if (parent.children.Contains(child))
+                        {
                             parent.children.Remove(child);
+                        }
                     }
                 }
             }
@@ -244,12 +280,12 @@ namespace Kopernicus
             //  RDVisibility = NOICON  //  Kill Rotation //
             // Loop through the Containers
             RDPlanetListItemContainer[] containers = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
-            for (Int32 i = 0; i < containers?.Count(); i++)
+            for (Int32 i = 0; i < containers.Length; i++)
             {
                 RDPlanetListItemContainer planetItem = containers[i];
 
                 // The label text is set from the CelestialBody's displayName
-                CelestialBody body = PSystemManager.Instance?.localBodies?.FirstOrDefault(cb => cb.transform.name == planetItem.name);
+                CelestialBody body = PSystemManager.Instance.localBodies.FirstOrDefault(cb => cb.transform.name == planetItem.name);
                 if (body == null)
                 {
                     Debug.Log("[Kopernicus]: RnDFixer: Could not find CelestialBody for the label => " + planetItem.name);
@@ -266,8 +302,8 @@ namespace Kopernicus
                 // RD Visibility
                 if (body.Has("hiddenRnD"))
                 {
-                    PropertiesLoader.RDVisibility visibility = body.Get<PropertiesLoader.RDVisibility>("hiddenRnD");
-                    if (visibility == PropertiesLoader.RDVisibility.NOICON)
+                    PropertiesLoader.RnDVisibility visibility = body.Get<PropertiesLoader.RnDVisibility>("hiddenRnD");
+                    if (visibility == PropertiesLoader.RnDVisibility.Noicon)
                     {
                         planetItem.planet.SetActive(false);
                         planetItem.label_planetName.alignment = TextAlignmentOptions.MidlineLeft;
@@ -280,15 +316,18 @@ namespace Kopernicus
                 }
 
                 // Add planetItems to 'RnDRotationKill'
-                if (planetItem?.planet?.transform?.rotation == null) continue;
-                if (body.Has("RnDRotation") ? !body.Get<Boolean>("RnDRotation") : body?.scaledBody?.GetComponentInChildren<SunCoronas>(true) != null)
+                if (planetItem.planet.transform == null)
+                {
+                    continue;
+                }
+                if (body.Has("RnDRotation") ? !body.Get<Boolean>("RnDRotation") : body.scaledBody.GetComponentInChildren<SunCoronas>(true) != null)
                 {
                     RnDRotationKill.Add(planetItem);
                 }
             }
         }
 
-        public static void AddPlanets()
+        private static void AddPlanets()
         {
             RDPlanetListItemContainer[] planetItems = Resources.FindObjectsOfTypeAll<RDPlanetListItemContainer>().Where(i => i.label_planetName.text != "Planet name").ToArray();
             for (Int32 i = 0; i < planetItems.Length; i++)
@@ -298,14 +337,14 @@ namespace Kopernicus
 
             // Stuff needed for AddPlanets
             FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).FirstOrDefault();
-            MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)?.Skip(26)?.FirstOrDefault();
-            RDArchivesController RDAC = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
+            MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Skip(26).FirstOrDefault();
+            RDArchivesController rdac = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
 
             // AddPlanets requires this list to be empty when triggered
-            list.SetValue(RDAC, new Dictionary<String, List<RDArchivesController.Filter>>());
+            list.SetValue(rdac, new Dictionary<String, List<RDArchivesController.Filter>>());
 
             // AddPlanets!
-            add.Invoke(RDAC, null);
+            add.Invoke(rdac, null);
         }
     }
 }

@@ -17,79 +17,78 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexSimplexNoiseColor : ModLoader<PQSMod_VertexSimplexNoiseColor>
     {
-        namespace ModLoader
+        // The deformity of the simplex terrain
+        [ParserTarget("blend")]
+        public NumericParser<Single> Blend
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexSimplexNoiseColor : ModLoader<PQSMod_VertexSimplexNoiseColor>
-            {
-                // The deformity of the simplex terrain
-                [ParserTarget("blend")]
-                public NumericParser<Single> blend
-                {
-                    get { return mod.blend; }
-                    set { mod.blend = value; }
-                }
+            get { return Mod.blend; }
+            set { Mod.blend = value; }
+        }
 
-                // Color of the class
-                [ParserTarget("colorStart")]
-                public ColorParser colorStart
-                {
-                    get { return mod.colorStart; }
-                    set { mod.colorStart = value; }
-                }
+        // Color of the class
+        [ParserTarget("colorStart")]
+        public ColorParser ColorStart
+        {
+            get { return Mod.colorStart; }
+            set { Mod.colorStart = value; }
+        }
 
-                // Color of the class
-                [ParserTarget("colorEnd")]
-                public ColorParser colorEnd
-                {
-                    get { return mod.colorEnd; }
-                    set { mod.colorEnd = value; }
-                }
+        // Color of the class
+        [ParserTarget("colorEnd")]
+        public ColorParser ColorEnd
+        {
+            get { return Mod.colorEnd; }
+            set { Mod.colorEnd = value; }
+        }
 
-                // The frequency of the simplex terrain
-                [ParserTarget("frequency")]
-                public NumericParser<Double> frequency
-                {
-                    get { return mod.frequency; }
-                    set { mod.frequency = value; }
-                }
+        // The frequency of the simplex terrain
+        [ParserTarget("frequency")]
+        public NumericParser<Double> Frequency
+        {
+            get { return Mod.frequency; }
+            set { Mod.frequency = value; }
+        }
 
-                // Octaves of the simplex height
-                [ParserTarget("octaves")]
-                public NumericParser<Double> octaves
-                {
-                    get { return mod.octaves; }
-                    set { mod.octaves = value; }
-                }
+        // Octaves of the simplex height
+        [ParserTarget("octaves")]
+        public NumericParser<Double> Octaves
+        {
+            get { return Mod.octaves; }
+            set { Mod.octaves = value; }
+        }
 
-                // Persistence of the simplex height
-                [ParserTarget("persistence")]
-                public NumericParser<Double> persistence
-                {
-                    get { return mod.persistence; }
-                    set { mod.persistence = value; }
-                }
+        // Persistence of the simplex height
+        [ParserTarget("persistence")]
+        public NumericParser<Double> Persistence
+        {
+            get { return Mod.persistence; }
+            set { Mod.persistence = value; }
+        }
 
-                // The seed of the simplex height
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return mod.seed; }
-                    set { mod.seed = value; }
-                }
-            }
+        // The seed of the simplex height
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.seed; }
+            set { Mod.seed = value; }
         }
     }
 }

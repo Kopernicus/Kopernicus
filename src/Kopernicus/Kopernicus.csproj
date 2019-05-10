@@ -18,6 +18,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -26,6 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -52,6 +54,57 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\DrawTools.cs" />
+    <Compile Include="Components\HazardousBody.cs" />
+    <Compile Include="Components\HazardousOcean.cs" />
+    <Compile Include="Components\KopernicusBuoyancy.cs" />
+    <Compile Include="Components\KopernicusOrbitRendererData.cs" />
+    <Compile Include="Components\KopernicusSimplexWrapper.cs" />
+    <Compile Include="Components\KopernicusSolarPanel.cs" />
+    <Compile Include="Components\KopernicusStar.cs" />
+    <Compile Include="Components\KopernicusSunFlare.cs" />
+    <Compile Include="Components\KSC.cs" />
+    <Compile Include="Components\LightShifter.cs" />
+    <Compile Include="Components\MaterialWrapper\AerialTransCutout.cs" />
+    <Compile Include="Components\MaterialWrapper\AlphaTestDiffuse.cs" />
+    <Compile Include="Components\MaterialWrapper\AtmosphereFromGround.cs" />
+    <Compile Include="Components\MaterialWrapper\DiffuseWrap.cs" />
+    <Compile Include="Components\MaterialWrapper\EmissiveMultiRampSunspots.cs" />
+    <Compile Include="Components\MaterialWrapper\NormalBumped.cs" />
+    <Compile Include="Components\MaterialWrapper\NormalDiffuse.cs" />
+    <Compile Include="Components\MaterialWrapper\NormalDiffuseDetail.cs" />
+    <Compile Include="Components\MaterialWrapper\ParticleAddSmooth.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSMainExtras.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSMainOptimised.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSMainShader.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSOceanSurfaceQuad.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSOceanSurfaceQuadFallback.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSProjectionFallback.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
+    <Compile Include="Components\MaterialWrapper\ScaledPlanetRimAerial.cs" />
+    <Compile Include="Components\MaterialWrapper\ScaledPlanetSimple.cs" />
+    <Compile Include="Components\MaterialWrapper\Standard.cs" />
+    <Compile Include="Components\ModularComponentSystem\IComponent.cs" />
+    <Compile Include="Components\ModularComponentSystem\IComponentSystem.cs" />
+    <Compile Include="Components\ModularScatter\ModularScatter.cs" />
+    <Compile Include="Components\ModularScatter\ScatterColliders.cs" />
+    <Compile Include="Components\ModularScatter\ScatterExperiment.cs" />
+    <Compile Include="Components\NameChanger.cs" />
+    <Compile Include="Components\NativeByteArray.cs" />
+    <Compile Include="Components\OrbitRendererUpdater.cs" />
+    <Compile Include="Components\PlanetaryParticle.cs" />
+    <Compile Include="Components\PQSLandControlFixer.cs" />
+    <Compile Include="Components\Ring.cs" />
+    <Compile Include="Components\Serialization\SerializableMonoBehaviour.cs" />
+    <Compile Include="Components\Serialization\SerializableObject.cs" />
+    <Compile Include="Components\Serialization\SerializablePQSMod.cs" />
+    <Compile Include="Components\ShaderLoader.cs" />
+    <Compile Include="Components\SharedScaledSpaceFader.cs" />
+    <Compile Include="Components\SharedSunShaderController.cs" />
+    <Compile Include="Components\StorageComponent.cs" />
+    <Compile Include="Components\UBI.cs" />
+    <Compile Include="Components\Wiresphere.cs" />
     <Compile Include="Configuration\Asteroids\Asteroid.cs" />
     <Compile Include="Configuration\Asteroids\Location.cs" />
     <Compile Include="Configuration\AtmosphereFromGroundLoader.cs" />
@@ -142,15 +195,12 @@
     <Compile Include="Configuration\NoiseLoader\Noise\Spheres.cs" />
     <Compile Include="Configuration\NoiseLoader\Noise\Turbulence.cs" />
     <Compile Include="Configuration\NoiseLoader\Noise\Voronoi.cs" />
-    <Compile Include="Configuration\Parser\CallbackList.cs" />
-    <Compile Include="Configuration\Parser\ComponentLoader.cs" />
-    <Compile Include="Configuration\Parser\ExternalParserTarget.cs" />
-    <Compile Include="Configuration\Parser\ExternalParserTargetLoader.cs" />
-    <Compile Include="Configuration\Parser\BaseLoader.cs" />
-    <Compile Include="Configuration\Parser\ObjImporter.cs" />
+    <Compile Include="Configuration\Parsing\CallbackList.cs" />
+    <Compile Include="Configuration\Parsing\ComponentLoader.cs" />
+    <Compile Include="Configuration\Parsing\BaseLoader.cs" />
+    <Compile Include="Configuration\Parsing\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
     <Compile Include="Configuration\RingLoader.cs" />
-    <Compile Include="Configuration\RingSystem\DebrisFieldLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />
     <Compile Include="Configuration\LightShifterLoader.cs" />
     <Compile Include="Configuration\ModLoader\MapDecalTangent.cs" />
@@ -173,6 +223,13 @@
     <Compile Include="Constants\CompatibilityChecker.cs" />
     <Compile Include="Constants\Version.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="OnDemand\CBAttributeMapSODemand.cs" />
+    <Compile Include="OnDemand\CBMapTrigger.cs" />
+    <Compile Include="OnDemand\ILoadOnDemand.cs" />
+    <Compile Include="OnDemand\MapSODemand.cs" />
+    <Compile Include="OnDemand\OnDemandStorage.cs" />
+    <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />
+    <Compile Include="OnDemand\ScaledSpaceOnDemand.cs" />
     <Compile Include="RuntimeUtility\LogAggregator.cs" />
     <Compile Include="RuntimeUtility\RnDFixer.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
@@ -191,7 +248,7 @@
     <Compile Include="Configuration\OrbitLoader.cs" />
     <Compile Include="Configuration\ScienceValuesLoader.cs" />
     <Compile Include="Configuration\BiomeLoader.cs" />
-    <Compile Include="Configuration\Parser\BuiltinTypeParsers.cs" />
+    <Compile Include="Configuration\Parsing\BuiltinTypeParsers.cs" />
     <Compile Include="Configuration\ScaledVersionLoader.cs" />
     <Compile Include="Constants\GameLayers.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialLoader.cs" />
@@ -201,7 +258,7 @@
     <Compile Include="Configuration\Enumerations\BodyType.cs" />
     <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
     <Compile Include="Configuration\CoronaLoader.cs" />
-    <Compile Include="Configuration\Parser\Gradient.cs" />
+    <Compile Include="Configuration\Parsing\Gradient.cs" />
     <Compile Include="Configuration\MaterialLoader\ParticleAddSmoothLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSOceanSurfaceQuadFallbackLoader.cs" />
@@ -229,16 +286,6 @@
     <ProjectReference Include="..\external\config-parser\src\Kopernicus.Parser.csproj">
       <Project>{f9968d87-83da-453c-8e28-b632367eacd3}</Project>
       <Name>Kopernicus.Parser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kopernicus.Components\Kopernicus.Components.csproj">
-      <Project>{19117d57-f9d4-4a88-9bb9-ac95549a25a8}</Project>
-      <Name>Kopernicus.Components</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Kopernicus.OnDemand\Kopernicus.OnDemand.csproj">
-      <Project>{659697ab-2d61-40c8-8a43-06fe6542623e}</Project>
-      <Name>Kopernicus.OnDemand</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

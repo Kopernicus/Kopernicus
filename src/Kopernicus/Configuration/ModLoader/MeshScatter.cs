@@ -17,220 +17,264 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using Kopernicus.MaterialWrapper;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components.MaterialWrapper;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.MaterialLoader;
+using Kopernicus.Configuration.Parsing;
 using UnityEngine;
-
 using static Kopernicus.Configuration.ModLoader.LandControl.LandClassScatterLoader;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class MeshScatter : ModLoader<PQSMod_MeshScatter>, IParserEventSubscriber
     {
-        namespace ModLoader
+        [PreApply]
+        [ParserTarget("materialType")]
+        public EnumParser<ScatterMaterialType> MaterialType
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class MeshScatter : ModLoader<PQSMod_MeshScatter>, IParserEventSubscriber
+            get
             {
-                [PreApply]
-                [ParserTarget("materialType")]
-                public EnumParser<ScatterMaterialType> materialType
+                if (CustomMaterial == null)
                 {
-                    get
-                    {
-                        if (customMaterial == null)
-                            return null;
-                        if (NormalDiffuse.UsesSameShader(customMaterial))
-                            return ScatterMaterialType.Diffuse;
-                        if (NormalBumped.UsesSameShader(customMaterial))
-                            return ScatterMaterialType.BumpedDiffuse;
-                        if (NormalDiffuseDetail.UsesSameShader(customMaterial))
-                            return ScatterMaterialType.DiffuseDetail;
-                        if (DiffuseWrap.UsesSameShader(customMaterial))
-                            return ScatterMaterialType.DiffuseWrapped;
-                        if (AlphaTestDiffuse.UsesSameShader(customMaterial))
-                            return ScatterMaterialType.CutoutDiffuse;
-                        if (AerialTransCutout.UsesSameShader(customMaterial))
-                            return ScatterMaterialType.AerialCutout;
-                        return null;
-                    }
-                    set
-                    {
-                        if (value == ScatterMaterialType.Diffuse)
-                            customMaterial = new NormalDiffuseLoader();
-                        else if (value == ScatterMaterialType.BumpedDiffuse)
-                            customMaterial = new NormalBumpedLoader();
-                        else if (value == ScatterMaterialType.DiffuseDetail)
-                            customMaterial = new NormalDiffuseDetailLoader();
-                        else if (value == ScatterMaterialType.DiffuseWrapped)
-                            customMaterial = new DiffuseWrapLoader();
-                        else if (value == ScatterMaterialType.CutoutDiffuse)
-                            customMaterial = new AlphaTestDiffuseLoader();
-                        else if (value == ScatterMaterialType.AerialCutout)
-                            customMaterial = new AerialTransCutoutLoader();
-                    }
+                    return null;
                 }
-
-                // Should we add colliders to the scatter=
-                [ParserTarget("collide")]
-                public NumericParser<Boolean> collide = new NumericParser<Boolean>(false);
-
-                // Should we add Science to the Scatter?
-                [ParserTarget("science")]
-                public NumericParser<Boolean> science = new NumericParser<Boolean>(false);
-
-                // ConfigNode that stores the Experiment
-                [ParserTarget("Experiment")]
-                public ConfigNode experiment;
-
-                // Custom scatter material                
-                [ParserTarget("Material", AllowMerge = true)]
-                public Material customMaterial;
-
-                // The name of the scatter
-                [ParserTarget("scatterName")]
-                public String scatterName
+                if (NormalDiffuse.UsesSameShader(CustomMaterial))
                 {
-                    get { return mod.scatterName; }
-                    set { mod.scatterName = value; }
+                    return ScatterMaterialType.Diffuse;
                 }
-
-                // The seed that is used to generate the scatters
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
+                if (NormalBumped.UsesSameShader(CustomMaterial))
                 {
-                    get { return mod.seed; }
-                    set { mod.seed = value; }
+                    return ScatterMaterialType.BumpedDiffuse;
                 }
-
-                // maxCache
-                [ParserTarget("maxCache")]
-                public NumericParser<Int32> maxCache
+                if (NormalDiffuseDetail.UsesSameShader(CustomMaterial))
                 {
-                    get { return mod.maxCache; }
-                    set { mod.maxCache = value; }
+                    return ScatterMaterialType.DiffuseDetail;
                 }
-
-                // Maximum amount of scatters
-                [ParserTarget("maxScatter")]
-                public NumericParser<Int32> maxScatter
+                if (DiffuseWrap.UsesSameShader(CustomMaterial))
                 {
-                    get { return mod.maxScatter; }
-                    set { mod.maxScatter = value; }
+                    return ScatterMaterialType.DiffuseWrapped;
                 }
-
-                // Stock material
-                [ParserTarget("material", AllowMerge = true)]
-                public StockMaterialParser material
+                if (AlphaTestDiffuse.UsesSameShader(CustomMaterial))
                 {
-                    get { return mod.material; }
-                    set { mod.material = value; }
+                    return ScatterMaterialType.CutoutDiffuse;
                 }
-
-                // A concentration map. white is many, black is less
-                [ParserTarget("map")]
-                public Texture2DParser scatterMap
+                if (AerialTransCutout.UsesSameShader(CustomMaterial))
                 {
-                    get { return mod.scatterMap; }
-                    set { mod.scatterMap = value; }
+                    return ScatterMaterialType.AerialCutout;
                 }
-
-                // The mesh
-                [ParserTarget("mesh")]
-                public MeshParser baseMesh
+                return null;
+            }
+            set
+            {
+                if (value == ScatterMaterialType.Diffuse)
                 {
-                    get { return mod.baseMesh; }
-                    set { mod.baseMesh = value; }
+                    CustomMaterial = new NormalDiffuseLoader();
                 }
-
-                // min subdivision
-                [ParserTarget("minSubdivision")]
-                public NumericParser<Int32> minSubdivision
+                else if (value == ScatterMaterialType.BumpedDiffuse)
                 {
-                    get { return mod.minSubdivision; }
-                    set { mod.minSubdivision = value; }
+                    CustomMaterial = new NormalBumpedLoader();
                 }
-
-                // countPerSqM
-                [ParserTarget("countPerSqM")]
-                public NumericParser<Single> countPerSqM
+                else if (value == ScatterMaterialType.DiffuseDetail)
                 {
-                    get { return mod.countPerSqM; }
-                    set { mod.countPerSqM = value; }
+                    CustomMaterial = new NormalDiffuseDetailLoader();
                 }
-
-                // verticalOffset
-                [ParserTarget("verticalOffset")]
-                public NumericParser<Single> verticalOffset
+                else if (value == ScatterMaterialType.DiffuseWrapped)
                 {
-                    get { return mod.verticalOffset; }
-                    set { mod.verticalOffset = value; }
+                    CustomMaterial = new DiffuseWrapLoader();
                 }
-
-                // minimum Scale of the scatter
-                [ParserTarget("minScale")]
-                public Vector3Parser minScale
+                else if (value == ScatterMaterialType.CutoutDiffuse)
                 {
-                    get { return mod.minScale; }
-                    set { mod.minScale = value; }
+                    CustomMaterial = new AlphaTestDiffuseLoader();
                 }
-
-                // maximum Scale of the scatter
-                [ParserTarget("maxScale")]
-                public Vector3Parser maxScale
+                else if (value == ScatterMaterialType.AerialCutout)
                 {
-                    get { return mod.maxScale; }
-                    set { mod.maxScale = value; }
+                    CustomMaterial = new AerialTransCutoutLoader();
                 }
+            }
+        }
 
-                // castShadows
-                [ParserTarget("castShadows")]
-                public NumericParser<Boolean> castShadows
-                {
-                    get { return mod.castShadows; }
-                    set { mod.castShadows = value; }
-                }
+        // Should we add colliders to the scatter=
+        [ParserTarget("collide")]
+        public NumericParser<Boolean> Collide = new NumericParser<Boolean>(false);
 
-                // recieveShadows
-                [ParserTarget("recieveShadows")]
-                public NumericParser<Boolean> recieveShadows
-                {
-                    get { return mod.recieveShadows; }
-                    set { mod.recieveShadows = value; }
-                }
+        // Should we add Science to the Scatter?
+        [ParserTarget("science")]
+        public NumericParser<Boolean> Science = new NumericParser<Boolean>(false);
 
-                // Apply event
-                void IParserEventSubscriber.Apply(ConfigNode node)
-                {
-                    if (!customMaterial && mod.material)
-                    {
-                        if (mod.material.shader == new NormalDiffuse().shader)
-                            customMaterial = new NormalDiffuseLoader(mod.material);
-                        else if (mod.material.shader == new NormalBumped().shader)
-                            customMaterial = new NormalBumpedLoader(mod.material);
-                        else if (mod.material.shader == new NormalDiffuseDetail().shader)
-                            customMaterial = new NormalDiffuseDetailLoader(mod.material);
-                        else if (mod.material.shader == new DiffuseWrapLoader().shader)
-                            customMaterial = new DiffuseWrapLoader(mod.material);
-                        else if (mod.material.shader == new AlphaTestDiffuse().shader)
-                            customMaterial = new AlphaTestDiffuseLoader(mod.material);
-                        else if (mod.material.shader == new AerialTransCutout().shader)
-                            customMaterial = new AerialTransCutoutLoader(mod.material);
-                    }
-                }
+        // ConfigNode that stores the Experiment
+        [ParserTarget("Experiment")]
+        public ConfigNode Experiment;
 
-                // Post Apply event
-                void IParserEventSubscriber.PostApply(ConfigNode node)
-                {
-                    // If defined, use custom material
-                    if (customMaterial != null) mod.material = customMaterial;
-                }
+        // Custom scatter material                
+        [ParserTarget("Material", AllowMerge = true)]
+        public Material CustomMaterial { get; set; }
+
+        // The name of the scatter
+        [ParserTarget("scatterName")]
+        public String ScatterName
+        {
+            get { return Mod.scatterName; }
+            set { Mod.scatterName = value; }
+        }
+
+        // The seed that is used to generate the scatters
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.seed; }
+            set { Mod.seed = value; }
+        }
+
+        // maxCache
+        [ParserTarget("maxCache")]
+        public NumericParser<Int32> MaxCache
+        {
+            get { return Mod.maxCache; }
+            set { Mod.maxCache = value; }
+        }
+
+        // Maximum amount of scatters
+        [ParserTarget("maxScatter")]
+        public NumericParser<Int32> MaxScatter
+        {
+            get { return Mod.maxScatter; }
+            set { Mod.maxScatter = value; }
+        }
+
+        // Stock material
+        [ParserTarget("material", AllowMerge = true)]
+        public StockMaterialParser Material
+        {
+            get { return Mod.material; }
+            set { Mod.material = value; }
+        }
+
+        // A concentration map. white is many, black is less
+        [ParserTarget("map")]
+        public Texture2DParser ScatterMap
+        {
+            get { return Mod.scatterMap; }
+            set { Mod.scatterMap = value; }
+        }
+
+        // The mesh
+        [ParserTarget("mesh")]
+        public MeshParser BaseMesh
+        {
+            get { return Mod.baseMesh; }
+            set { Mod.baseMesh = value; }
+        }
+
+        // min subdivision
+        [ParserTarget("minSubdivision")]
+        public NumericParser<Int32> MinSubdivision
+        {
+            get { return Mod.minSubdivision; }
+            set { Mod.minSubdivision = value; }
+        }
+
+        // countPerSqM
+        [ParserTarget("countPerSqM")]
+        public NumericParser<Single> CountPerSqM
+        {
+            get { return Mod.countPerSqM; }
+            set { Mod.countPerSqM = value; }
+        }
+
+        // verticalOffset
+        [ParserTarget("verticalOffset")]
+        public NumericParser<Single> VerticalOffset
+        {
+            get { return Mod.verticalOffset; }
+            set { Mod.verticalOffset = value; }
+        }
+
+        // minimum Scale of the scatter
+        [ParserTarget("minScale")]
+        public Vector3Parser MinScale
+        {
+            get { return Mod.minScale; }
+            set { Mod.minScale = value; }
+        }
+
+        // maximum Scale of the scatter
+        [ParserTarget("maxScale")]
+        public Vector3Parser MaxScale
+        {
+            get { return Mod.maxScale; }
+            set { Mod.maxScale = value; }
+        }
+
+        // castShadows
+        [ParserTarget("castShadows")]
+        public NumericParser<Boolean> CastShadows
+        {
+            get { return Mod.castShadows; }
+            set { Mod.castShadows = value; }
+        }
+
+        // recieveShadows
+        [ParserTarget("recieveShadows")]
+        public NumericParser<Boolean> RecieveShadows
+        {
+            get { return Mod.recieveShadows; }
+            set { Mod.recieveShadows = value; }
+        }
+
+        // Apply event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            if (CustomMaterial || !Mod.material)
+            {
+                return;
+            }
+            if (Mod.material.shader == new NormalDiffuse().shader)
+            {
+                CustomMaterial = new NormalDiffuseLoader(Mod.material);
+            }
+            else if (Mod.material.shader == new NormalBumped().shader)
+            {
+                CustomMaterial = new NormalBumpedLoader(Mod.material);
+            }
+            else if (Mod.material.shader == new NormalDiffuseDetail().shader)
+            {
+                CustomMaterial = new NormalDiffuseDetailLoader(Mod.material);
+            }
+            else if (Mod.material.shader == new DiffuseWrapLoader().shader)
+            {
+                CustomMaterial = new DiffuseWrapLoader(Mod.material);
+            }
+            else if (Mod.material.shader == new AlphaTestDiffuse().shader)
+            {
+                CustomMaterial = new AlphaTestDiffuseLoader(Mod.material);
+            }
+            else if (Mod.material.shader == new AerialTransCutout().shader)
+            {
+                CustomMaterial = new AerialTransCutoutLoader(Mod.material);
+            }
+        }
+
+        // Post Apply event
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            // If defined, use custom material
+            if (CustomMaterial != null)
+            {
+                Mod.material = CustomMaterial;
             }
         }
     }

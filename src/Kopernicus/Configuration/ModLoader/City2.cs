@@ -17,305 +17,310 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using CommNet;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CommNet;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.Constants;
 using Kopernicus.UI;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class City2 : ModLoader<PQSCity2>
     {
-        namespace ModLoader
+        // LODRange loader
+        [RequireConfigType(ConfigType.Node)]
+        public class LodRangeLoader : IPatchable, ITypeParser<PQSCity2.LodObject>
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class City2 : ModLoader<PQSCity2>
+            // LOD object
+            public PQSCity2.LodObject Value { get; set; }
+
+            // Fake property to allow patching by index
+            public String name
             {
-                // LODRange loader
-                [RequireConfigType(ConfigType.Node)]
-                public class LODRangeLoader : IPatchable, ITypeParser<PQSCity2.LodObject>
+                get { return null; }
+                set { }
+            }
+
+            // Delete the lod range
+            [ParserTarget("delete")]
+            [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+            public NumericParser<Boolean> Delete = false;
+
+            // visibleRange
+            [ParserTarget("visibleRange")]
+            public NumericParser<Single> VisibleRange
+            {
+                get { return Value.visibleRange; }
+                set { Value.visibleRange = value; }
+            }
+
+            // keepActive
+#if !KSP131
+            [ParserTarget("keepActive")]
+            public NumericParser<Boolean> KeepActive
+            {
+                get { return Value.KeepActive; }
+                set { Value.KeepActive = value; }
+            }
+#endif
+
+            // The mesh for the mod
+            [ParserTarget("model")]
+            public MuParser Model
+            {
+                get
                 {
-                    // LOD object
-                    public PQSCity2.LodObject Value { get; set; }
-                    
-                    // Fake property to allow patching by index
-                    public String name
+                    GameObject obj = null;
+                    if (Value.objects.Length > 1)
                     {
-                        get { return null; }
-                        set {}
-                    }
-
-                    // Delete the lod range
-                    [ParserTarget("delete")]
-                    public NumericParser<Boolean> delete = false;
-
-                    // visibleRange
-                    [ParserTarget("visibleRange")]
-                    public NumericParser<Single> visibleRange 
-                    {
-                        get { return Value.visibleRange; }
-                        set { Value.visibleRange = value; }
-                    }
-
-                    // keepActive
-                    #if !KSP131
-                    [ParserTarget("keepActive")]
-                    public NumericParser<Boolean> keepActive 
-                    {
-                        get { return Value.KeepActive; }
-                        set { Value.KeepActive = value; }
-                    }
-                    #endif
-
-                    // The mesh for the mod
-                    [ParserTarget("model")]
-                    public MuParser model
-                    {
-                        get
+                        obj = new GameObject();
+                        obj.transform.parent = Utility.Deactivator;
+                        foreach (GameObject subobj in Value.objects)
                         {
-                            GameObject obj = null;
-                            if (Value.objects.Length > 1)
-                            {
-                                obj = new GameObject();
-                                obj.transform.parent = Utility.Deactivator;
-                                foreach (GameObject subobj in Value.objects)
-                                {
-                                    UnityEngine.Object.Instantiate(subobj).transform.parent = obj.transform;
-                                }
-                            }
-                            else if (Value.objects.Length == 1)
-                            {
-                                obj = Value.objects[0];
-                            }
-                            return new MuParser(obj);
-                        }
-                        set
-                        {
-                            Value.objects = new[] {value.Value};
+                            Utility.Instantiate(subobj).transform.parent = obj.transform;
                         }
                     }
-                    
-                    // scale
-                    [ParserTarget("scale")]
-                    public Vector3Parser scale
+                    else if (Value.objects.Length == 1)
                     {
-                        get
-                        {
-                            Single x = 0;
-                            Single y = 0;
-                            Single z = 0;
-                            Single count = Value.objects.Length > 0 ? Value.objects.Length : 1;
-                            foreach (GameObject obj in Value.objects)
-                            {
-                                x += obj.transform.localScale.x;
-                                y += obj.transform.localScale.y;
-                                z += obj.transform.localScale.z;
-                            }
-
-                            return new Vector3(x / count, y / count, z / count);
-                        }
-                        set
-                        {
-                            foreach (GameObject obj in Value.objects)
-                            {
-                                obj.transform.localScale = value;
-                            }
-                        }
-                    } 
-
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
-                    public LODRangeLoader ()
-                    {
-                        // Initialize the LOD range
-                        Value = new PQSCity2.LodObject();
-                        Value.objects = new GameObject[0];
+                        obj = Value.objects[0];
                     }
 
-                    public LODRangeLoader(PQSCity2.LodObject c)
+                    return new MuParser(obj);
+                }
+                set { Value.objects = new[] {value.Value}; }
+            }
+
+            // scale
+            [ParserTarget("scale")]
+            public Vector3Parser Scale
+            {
+                get
+                {
+                    Single x = 0;
+                    Single y = 0;
+                    Single z = 0;
+                    Single count = Value.objects.Length > 0 ? Value.objects.Length : 1;
+                    foreach (GameObject obj in Value.objects)
                     {
-                        Value = c;
-                        if (Value.objects == null)
-                        {
-                            Value.objects = new GameObject[0];
-                        }
+                        Vector3 localScale = obj.transform.localScale;
+                        x += localScale.x;
+                        y += localScale.y;
+                        z += localScale.z;
                     }
 
-                    /// <summary>
-                    /// Convert Parser to Value
-                    /// </summary>
-                    public static implicit operator PQSCity2.LodObject(LODRangeLoader parser)
+                    return new Vector3(x / count, y / count, z / count);
+                }
+                set
+                {
+                    foreach (GameObject obj in Value.objects)
                     {
-                        return parser.Value;
-                    }
-        
-                    /// <summary>
-                    /// Convert Value to Parser
-                    /// </summary>
-                    public static implicit operator LODRangeLoader(PQSCity2.LodObject value)
-                    {
-                        return new LODRangeLoader(value);
+                        obj.transform.localScale = value;
                     }
                 }
-                // snapToSurface
-                [ParserTarget("snapToSurface")]
-                public NumericParser<Boolean> snapToSurface
-                {
-                    get { return mod.snapToSurface; }
-                    set { mod.snapToSurface = value; }
-                }
+            }
 
-                // alt
-                [ParserTarget("alt")]
-                public NumericParser<Double> alt
-                {
-                    get { return mod.alt; }
-                    set { mod.alt = value; }
-                }
+            [KittopiaConstructor(KittopiaConstructor.ParameterType.Empty)]
+            public LodRangeLoader()
+            {
+                // Initialize the LOD range
+                Value = new PQSCity2.LodObject {objects = new GameObject[0]};
+            }
 
-                // lat
-                [ParserTarget("lat")]
-                public NumericParser<Double> lat
+            public LodRangeLoader(PQSCity2.LodObject c)
+            {
+                Value = c;
+                if (Value.objects == null)
                 {
-                    get { return mod.lat; }
-                    set { mod.lat = value; }
+                    Value.objects = new GameObject[0];
                 }
+            }
 
-                // lon
-                [ParserTarget("lon")]
-                public NumericParser<Double> lon
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
+            public static implicit operator PQSCity2.LodObject(LodRangeLoader parser)
+            {
+                return parser.Value;
+            }
+
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator LodRangeLoader(PQSCity2.LodObject value)
+            {
+                return new LodRangeLoader(value);
+            }
+        }
+
+        // snapToSurface
+        [ParserTarget("snapToSurface")]
+        public NumericParser<Boolean> SnapToSurface
+        {
+            get { return Mod.snapToSurface; }
+            set { Mod.snapToSurface = value; }
+        }
+
+        // alt
+        [ParserTarget("alt")]
+        public NumericParser<Double> Alt
+        {
+            get { return Mod.alt; }
+            set { Mod.alt = value; }
+        }
+
+        // lat
+        [ParserTarget("lat")]
+        public NumericParser<Double> Lat
+        {
+            get { return Mod.lat; }
+            set { Mod.lat = value; }
+        }
+
+        // lon
+        [ParserTarget("lon")]
+        public NumericParser<Double> Lon
+        {
+            get { return Mod.lon; }
+            set { Mod.lon = value; }
+        }
+
+        // objectName
+        [ParserTarget("objectName")]
+        public String ObjectName
+        {
+            get { return Mod.objectName; }
+            set { Mod.objectName = value; }
+        }
+
+        // up
+        [ParserTarget("up")]
+        public Vector3Parser Up
+        {
+            get { return Mod.up; }
+            set { Mod.up = value; }
+        }
+
+        // rotation
+        [ParserTarget("rotation")]
+        public NumericParser<Double> Rotation
+        {
+            get { return Mod.rotation; }
+            set { Mod.rotation = value; }
+        }
+
+        // snapHeightOffset
+        [ParserTarget("snapHeightOffset")]
+        public NumericParser<Double> SnapHeightOffset
+        {
+            get { return Mod.snapHeightOffset; }
+            set { Mod.snapHeightOffset = value; }
+        }
+
+        // Commnet Station
+        [ParserTarget("commnetStation")]
+        public NumericParser<Boolean> CommnetStation
+        {
+            get { return Mod.gameObject.GetComponentInChildren<CommNetHome>() != null; }
+            set
+            {
+                if (!value)
                 {
-                    get { return mod.lon; }
-                    set { mod.lon = value; }
+                    return;
                 }
+                CommNetHome station = Mod.gameObject.AddComponent<CommNetHome>();
+                station.isKSC = false;
+            }
+        }
 
-                // objectName
-                [ParserTarget("objectName")]
-                public String objectName
+        // Commnet Station
+        [ParserTarget("isKSC")]
+        public NumericParser<Boolean> IsKsc
+        {
+            get
+            {
+                CommNetHome home = Mod.gameObject.GetComponentInChildren<CommNetHome>();
+                return home != null && home.isKSC;
+            }
+            set
+            {
+                CommNetHome home = Mod.gameObject.GetComponentInChildren<CommNetHome>();
+                if (home != null)
                 {
-                    get { return mod.objectName; }
-                    set { mod.objectName = value; }
+                    home.isKSC = value;
                 }
+            }
+        }
 
-                // up
-                [ParserTarget("up")]
-                public Vector3Parser up
+        // The land classes
+        [ParserTargetCollection("LOD", AllowMerge = true)]
+        public CallbackList<LodRangeLoader> LodRanges { get; set; }
+
+        // Creates the a PQSMod of type T with given PQS
+        public override void Create(PQS pqsVersion)
+        {
+            base.Create(pqsVersion);
+
+            // Create the callback list
+            LodRanges = new CallbackList<LodRangeLoader>(e =>
+            {
+                Mod.objects = LodRanges.Where(lodRange => !lodRange.Delete)
+                    .Select(lodRange => lodRange.Value).ToArray();
+                foreach (GameObject obj in e.Value.objects)
                 {
-                    get { return mod.up; }
-                    set { mod.up = value; }
+                    obj.transform.parent = Mod.transform;
+                    obj.transform.localPosition = Vector3.zero;
+                    obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
                 }
+            });
+            Mod.objects = new PQSCity2.LodObject[0];
+        }
 
-                // rotation
-                [ParserTarget("rotation")]
-                public NumericParser<Double> rotation
+        // Grabs a PQSMod of type T from a parameter with a given PQS
+        public override void Create(PQSCity2 mod, PQS pqsVersion)
+        {
+            base.Create(mod, pqsVersion);
+
+            // Create the callback list
+            LodRanges = new CallbackList<LodRangeLoader>(e =>
+            {
+                Mod.objects = LodRanges.Where(lodRange => !lodRange.Delete)
+                    .Select(lodRange => lodRange.Value).ToArray();
+                foreach (GameObject obj in e.Value.objects)
                 {
-                    get { return mod.rotation; }
-                    set { mod.rotation = value; }
+                    obj.transform.parent = Mod.transform;
+                    obj.transform.localPosition = Vector3.zero;
+                    obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
                 }
+            });
 
-                // snapHeightOffset
-                [ParserTarget("snapHeightOffset")]
-                public NumericParser<Double> snapHeightOffset
+            // Load LandClasses
+            if (Mod.objects != null)
+            {
+                for (Int32 i = 0; i < Mod.objects.Length; i++)
                 {
-                    get { return mod.snapHeightOffset; }
-                    set { mod.snapHeightOffset = value; }
+                    // Only activate the callback if we are adding the last loader
+                    LodRanges.Add(new LodRangeLoader(Mod.objects[i]), i == Mod.objects.Length - 1);
                 }
-
-                // Commnet Station
-                [ParserTarget("commnetStation")]
-                public NumericParser<Boolean> commnetStation
-                {
-                    get { return mod.gameObject.GetComponentInChildren<CommNetHome>() != null; }
-                    set
-                    {
-                        if (!value) return;
-                        CommNetHome station = mod.gameObject.AddComponent<CommNetHome>();
-                        station.isKSC = false;
-                    }
-                }
-
-                // Commnet Station
-                [ParserTarget("isKSC")]
-                public NumericParser<Boolean> isKSC
-                {
-                    get 
-                    { 
-                        CommNetHome home = mod.gameObject.GetComponentInChildren<CommNetHome>();
-                        return home != null && home.isKSC;
-                    }
-                    set
-                    {
-                        CommNetHome home = mod.gameObject.GetComponentInChildren<CommNetHome>();
-                        if (home != null)
-                        {
-                            home.isKSC = value;
-                        }
-                    }
-                }
-
-                // The land classes
-                [ParserTargetCollection("LOD", AllowMerge = true)]
-                public CallbackList<LODRangeLoader> lodRanges { get; set; }
-
-                // Creates the a PQSMod of type T with given PQS
-                public override void Create(PQS pqsVersion)
-                {
-                    base.Create(pqsVersion);
-                    
-                    // Create the callback list
-                    lodRanges = new CallbackList<LODRangeLoader> ((e) =>
-                    {
-                        mod.objects = lodRanges.Where(lodRange => !lodRange.delete)
-                            .Select(lodRange => lodRange.Value).ToArray();
-                        foreach (GameObject obj in e.Value.objects)
-                        {
-                            obj.transform.parent = mod.transform;
-                            obj.transform.localPosition = Vector3.zero;
-                            obj.SetLayerRecursive(GameLayers.LocalSpace);
-                        }
-                    });
-                    mod.objects = new PQSCity2.LodObject[0];
-                }
-
-                // Grabs a PQSMod of type T from a parameter with a given PQS
-                public override void Create(PQSCity2 _mod, PQS pqsVersion)
-                {
-                    base.Create(_mod, pqsVersion);
-                    
-                    // Create the callback list
-                    lodRanges = new CallbackList<LODRangeLoader> (e =>
-                    {
-                        mod.objects = lodRanges.Where(lodRange => !lodRange.delete)
-                            .Select(lodRange => lodRange.Value).ToArray();
-                        foreach (GameObject obj in e.Value.objects)
-                        {
-                            obj.transform.parent = mod.transform;
-                            obj.transform.localPosition = Vector3.zero;
-                            obj.SetLayerRecursive(GameLayers.LocalSpace);
-                        }
-                    });
-                    
-                    // Load LandClasses
-                    if (mod.objects != null)
-                    {
-                        for (Int32 i = 0; i < mod.objects.Length; i++)
-                        {
-                            // Only activate the callback if we are adding the last loader
-                            lodRanges.Add(new LODRangeLoader(mod.objects[i]), i == mod.objects.Length - 1);
-                        }
-                    }
-                    else
-                    {
-                        mod.objects = new PQSCity2.LodObject[0];
-                    }
-                }
+            }
+            else
+            {
+                Mod.objects = new PQSCity2.LodObject[0];
             }
         }
     }

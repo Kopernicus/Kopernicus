@@ -17,37 +17,36 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class QuadEnhanceCoast : ModLoader<PQSMod_QuadEnhanceCoast>
     {
-        namespace ModLoader
+        [ParserTarget("coastLessThan")]
+        public NumericParser<Double> CoastLessThan
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class QuadEnhanceCoast : ModLoader<PQSMod_QuadEnhanceCoast>
-            {
-                [ParserTarget("coastLessThan")]
-                public NumericParser<Double> coastLessThan
-                {
-                    get { return mod.coastLessThan; }
-                    set { mod.coastLessThan = value; }
-                }
+            get { return Mod.coastLessThan; }
+            set { Mod.coastLessThan = value; }
+        }
 
-                [ParserTarget("oceanFactor")]
-                public NumericParser<Double> oceanFactor
-                {
-                    get { return mod.oceanFactor; }
-                    set { mod.oceanFactor = value; }
-                }
-            }
+        [ParserTarget("oceanFactor")]
+        public NumericParser<Double> OceanFactor
+        {
+            get { return Mod.oceanFactor; }
+            set { Mod.oceanFactor = value; }
         }
     }
 }

@@ -17,113 +17,113 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using LibNoise;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Enumerations;
+using LibNoise;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexColorNoiseRgb : ModLoader<PQSMod_VertexColorNoiseRGB>
     {
-        namespace ModLoader
+        // Amount of color that will be applied
+        [ParserTarget("blend")]
+        public NumericParser<Single> Blend
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexColorNoiseRGB : ModLoader<PQSMod_VertexColorNoiseRGB>
-            {
-                // Amount of color that will be applied
-                [ParserTarget("blend")]
-                public NumericParser<Single> blend
-                {
-                    get { return mod.blend; }
-                    set { mod.blend = value; }
-                }
+            get { return Mod.blend; }
+            set { Mod.blend = value; }
+        }
 
-                // Amount of red
-                [ParserTarget("rBlend")]
-                public NumericParser<Single> rBlend
-                {
-                    get { return mod.rBlend; }
-                    set { mod.rBlend = value; }
-                }
+        // Amount of red
+        [ParserTarget("rBlend")]
+        public NumericParser<Single> RBlend
+        {
+            get { return Mod.rBlend; }
+            set { Mod.rBlend = value; }
+        }
 
-                // Amount of green
-                [ParserTarget("gBlend")]
-                public NumericParser<Single> gBlend
-                {
-                    get { return mod.gBlend; }
-                    set { mod.gBlend = value; }
-                }
+        // Amount of green
+        [ParserTarget("gBlend")]
+        public NumericParser<Single> GBlend
+        {
+            get { return Mod.gBlend; }
+            set { Mod.gBlend = value; }
+        }
 
-                // Amount of blue
-                [ParserTarget("bBlend")]
-                public NumericParser<Single> bBlend
-                {
-                    get { return mod.bBlend; }
-                    set { mod.bBlend = value; }
-                }
+        // Amount of blue
+        [ParserTarget("bBlend")]
+        public NumericParser<Single> BBlend
+        {
+            get { return Mod.bBlend; }
+            set { Mod.bBlend = value; }
+        }
 
-                // The frequency of the noise
-                [ParserTarget("frequency")]
-                public NumericParser<Single> frequency
-                {
-                    get { return mod.frequency; }
-                    set { mod.frequency = value; }
-                }
+        // The frequency of the noise
+        [ParserTarget("frequency")]
+        public NumericParser<Single> Frequency
+        {
+            get { return Mod.frequency; }
+            set { Mod.frequency = value; }
+        }
 
-                // Lacunarity of the noise
-                [ParserTarget("lacunarity")]
-                public NumericParser<Single> lacunarity
-                {
-                    get { return mod.lacunarity; }
-                    set { mod.lacunarity = value; }
-                }
+        // Lacunarity of the noise
+        [ParserTarget("lacunarity")]
+        public NumericParser<Single> Lacunarity
+        {
+            get { return Mod.lacunarity; }
+            set { Mod.lacunarity = value; }
+        }
 
-                // Noise quality
-                [ParserTarget("mode")]
-                public EnumParser<KopernicusNoiseQuality> mode
-                {
-                    get { return (KopernicusNoiseQuality) (Int32) mod.mode; }
-                    set { mod.mode = (NoiseQuality) (Int32) value.Value; }
-                }
+        // Noise quality
+        [ParserTarget("mode")]
+        public EnumParser<KopernicusNoiseQuality> Mode
+        {
+            get { return (KopernicusNoiseQuality) (Int32) Mod.mode; }
+            set { Mod.mode = (NoiseQuality) (Int32) value.Value; }
+        }
 
-                // Noise algorithm
-                [ParserTarget("noiseType")]
-                public EnumParser<KopernicusNoiseType> noiseType
-                {
-                    get { return (KopernicusNoiseType) (Int32) mod.noiseType; }
-                    set { mod.noiseType = (PQSMod_VertexColorNoiseRGB.NoiseType) (Int32) value.Value; }
-                }
+        // Noise algorithm
+        [ParserTarget("noiseType")]
+        public EnumParser<KopernicusNoiseType> NoiseType
+        {
+            get { return (KopernicusNoiseType) (Int32) Mod.noiseType; }
+            set { Mod.noiseType = (PQSMod_VertexColorNoiseRGB.NoiseType) (Int32) value.Value; }
+        }
 
-                // Octaves of the noise
-                [ParserTarget("octaves")]
-                public NumericParser<Int32> octaves
-                {
-                    get { return mod.octaves; }
-                    set { mod.octaves = Mathf.Clamp(value, 1, 30); }
-                }
+        // Octaves of the noise
+        [ParserTarget("octaves")]
+        public NumericParser<Int32> Octaves
+        {
+            get { return Mod.octaves; }
+            set { Mod.octaves = Mathf.Clamp(value, 1, 30); }
+        }
 
-                // Persistance of the noise
-                [ParserTarget("persistance")]
-                public NumericParser<Single> persistance
-                {
-                    get { return mod.persistance; }
-                    set { mod.persistance = value; }
-                }
+        // Persistance of the noise
+        [ParserTarget("persistance")]
+        public NumericParser<Single> Persistance
+        {
+            get { return Mod.persistance; }
+            set { Mod.persistance = value; }
+        }
 
-                // The seed of the noise
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return mod.seed; }
-                    set { mod.seed = value; }
-                }
-            }
+        // The seed of the noise
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.seed; }
+            set { Mod.seed = value; }
         }
     }
 }

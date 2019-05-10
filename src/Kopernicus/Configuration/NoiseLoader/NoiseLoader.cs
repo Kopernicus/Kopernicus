@@ -17,67 +17,68 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using LibNoise;
 using System;
-using UnityEngine;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using LibNoise;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class NoiseLoader<T> : INoiseLoader, ICreatable<T>, ITypeParser<T> where T : IModule
     {
-        namespace NoiseLoader
+        // The noise we are loading
+        public T Noise { get; set; }
+
+        // The noise we are loading
+        T ITypeParser<T>.Value
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class NoiseLoader<T> : INoiseLoader, ICreatable<T>, ITypeParser<T> where T : IModule
-            {
-                // The noise we are loading
-                public T noise { get; set; }
-                
-                // The noise we are loading
-                T ITypeParser<T>.Value
-                {
-                    get { return noise; }
-                    set { noise = value; }
-                }
+            get { return Noise; }
+            set { Noise = value; }
+        }
 
-                // The noise we are loading
-                IModule INoiseLoader.Noise
-                {
-                    get { return noise; }
-                    set { noise = (T) value; }
-                }
+        // The noise we are loading
+        IModule INoiseLoader.Noise
+        {
+            get { return Noise; }
+            set { Noise = (T) value; }
+        }
 
-                public virtual void Apply(ConfigNode node)
-                {
-                    noise = Activator.CreateInstance<T>();
-                }
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+        public virtual void Apply(ConfigNode node)
+        {
+            Noise = Activator.CreateInstance<T>();
+        }
 
-                public virtual void PostApply(ConfigNode node)
-                {
-                    
-                }
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
+        public virtual void PostApply(ConfigNode node)
+        {
 
-                public void Create(T value)
-                {
-                    noise = value;
-                }
+        }
 
-                public void Create()
-                {
-                    Apply(null);
-                }
-                
-                public void Create(IModule value)
-                {
-                    Create((T)value);
-                }
-            }
+        public void Create(T value)
+        {
+            Noise = value;
+        }
+
+        public void Create()
+        {
+            Apply(null);
+        }
+
+        public void Create(IModule value)
+        {
+            Create((T) value);
         }
     }
 }

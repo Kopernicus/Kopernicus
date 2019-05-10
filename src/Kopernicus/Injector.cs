@@ -17,16 +17,17 @@
  * MA 02110-1301  USA
  *
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  *
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Configuration;
 using System;
 using System.Linq;
-using System.Collections.Generic;
+using Kopernicus.ConfigParser;
+using Kopernicus.Configuration;
+using Kopernicus.Constants;
 using UnityEngine;
 
 namespace Kopernicus
@@ -36,17 +37,10 @@ namespace Kopernicus
     public class Injector : MonoBehaviour
     {
         // Name of the config node group which manages Kopernicus
-        public const String rootNodeName = "Kopernicus";
-
-        // Custom Assembly query since AppDomain and Assembly loader are not quite what we want in 1.1
-        [Obsolete("Please use Parser.ModTypes", true)]
-        public static List<Type> ModTypes
-        {
-            get { return Parser.ModTypes; }
-        }
+        private const String ROOT_NODE_NAME = "Kopernicus";
 
         // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
-        public static PSystem StockSystemPrefab { get; set; }
+        public static PSystem StockSystemPrefab { get; private set; }
 
         // Whether the injector is currently patching the prefab
         public static Boolean IsInPrefab { get; private set; }
@@ -58,21 +52,26 @@ namespace Kopernicus
             // Abort, if KSP isn't compatible
             if (!CompatibilityChecker.IsCompatible())
             {
-                String supported = CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision;
+                String supported = CompatibilityChecker.VERSION_MAJOR + "." + CompatibilityChecker.VERSION_MINOR + "." +
+                                   CompatibilityChecker.REVISION;
                 String current = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
-                Debug.LogWarning("[Kopernicus] Detected incompatible install.\nCurrent version of KSP: " + current + ".\nSupported version of KSP: " + supported + ".\nPlease wait, until Kopernicus gets updated to match your version of KSP.");
+                Debug.LogWarning("[Kopernicus] Detected incompatible install.\nCurrent version of KSP: " + current +
+                                 ".\nSupported version of KSP: " + supported +
+                                 ".\nPlease wait, until Kopernicus gets updated to match your version of KSP.");
                 Debug.Log("[Kopernicus] Aborting...");
 
                 // Abort
                 Destroy(this);
                 return;
             }
-            else
-            {
-                String kopernicusVersion = CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision + "-" + CompatibilityChecker.Kopernicus;
-                String kspVersion = Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision;
-                Debug.Log("[Kopernicus] Running Kopernicus " + kopernicusVersion + " on KSP " + kspVersion);
-            }
+
+            // Log the current version to the log
+            String kopernicusVersion = CompatibilityChecker.VERSION_MAJOR + "." +
+                                       CompatibilityChecker.VERSION_MINOR + "." + CompatibilityChecker.REVISION +
+                                       "-" + CompatibilityChecker.KOPERNICUS;
+            String kspVersion = Versioning.version_major + "." + Versioning.version_minor + "." +
+                                Versioning.Revision;
+            Debug.Log("[Kopernicus] Running Kopernicus " + kopernicusVersion + " on KSP " + kspVersion);
 
             // Wrap this in a try - catch block so we can display a warning if Kopernicus fails to load for some reason
             try
@@ -83,7 +82,9 @@ namespace Kopernicus
                 Logger.Default.Log("Injector.Awake(): Begin");
 
                 // Parser Config
-                ParserOptions.Register("Kopernicus", new ParserOptions.Data { ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s) });
+                ParserOptions.Register("Kopernicus",
+                    new ParserOptions.Data
+                        {ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s)});
 
                 // Yo garbage collector - we have work to do man
                 DontDestroyOnLoad(this);
@@ -107,10 +108,11 @@ namespace Kopernicus
                 DateTime start = DateTime.Now;
 
                 // Get the configNode
-                ConfigNode kopernicus = GameDatabase.Instance.GetConfigs(rootNodeName)[0].config;
+                ConfigNode kopernicus = GameDatabase.Instance.GetConfigs(ROOT_NODE_NAME)[0].config;
 
                 // THIS IS WHERE THE MAGIC HAPPENS - OVERWRITE THE SYSTEM PREFAB SO KSP ACCEPTS OUR CUSTOM SOLAR SYSTEM AS IF IT WERE FROM SQUAD
-                PSystemManager.Instance.systemPrefab = Parser.CreateObjectFromConfigNode<Loader>(kopernicus, "Kopernicus").systemPrefab;
+                PSystemManager.Instance.systemPrefab =
+                    Parser.CreateObjectFromConfigNode<Loader>(kopernicus, "Kopernicus").SystemPrefab;
 
                 // Clear space center instance so it will accept nouveau Kerbin
                 SpaceCenter.Instance = null;
@@ -122,7 +124,7 @@ namespace Kopernicus
                 Events.OnPostLoad.Fire(PSystemManager.Instance.systemPrefab);
 
                 // Done executing the awake function
-                TimeSpan duration = (DateTime.Now - start);
+                TimeSpan duration = DateTime.Now - start;
                 Logger.Default.Log("Injector.Awake(): Completed in: " + duration.TotalMilliseconds + " ms");
                 Logger.Default.Flush();
                 IsInPrefab = false;
@@ -150,8 +152,12 @@ namespace Kopernicus
                 Events.OnPreFixing.Fire();
 
                 // Fix the SpaceCenter
-                SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.isHomeWorld).GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
-                SpaceCenter.Instance.Start();
+                SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.isHomeWorld)
+                    .GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
+                if (SpaceCenter.Instance != null)
+                {
+                    SpaceCenter.Instance.Start();
+                }
 
                 // Fix the flight globals index of each body and patch it's SOI
                 Int32 counter = 0;
@@ -165,41 +171,54 @@ namespace Kopernicus
 
                     // Finalize the Orbit
                     if (body.Get("finalizeBody", false))
+                    {
                         OrbitLoader.FinalizeOrbit(body);
+                    }
 
                     // Set Custom OrbitalPeriod
                     if (body.Has("customOrbitalPeriod"))
+                    {
                         OrbitLoader.OrbitalPeriod(body);
+                    }
 
                     // Patch the SOI
                     if (body.Has("sphereOfInfluence"))
+                    {
                         body.sphereOfInfluence = body.Get<Double>("sphereOfInfluence");
+                    }
 
                     // Patch the Hill Sphere
                     if (body.Has("hillSphere"))
+                    {
                         body.hillSphere = body.Get<Double>("hillSphere");
+                    }
 
                     // Make the Body a barycenter
                     if (body.Get("barycenter", false))
+                    {
                         body.scaledBody.SetActive(false);
-                    
+                    }
+
                     // Make the bodies scaled space invisible 
                     if (body.Get("invisibleScaledSpace", false))
                     {
                         foreach (Renderer renderer in body.scaledBody.GetComponentsInChildren<Renderer>(true))
+                        {
                             renderer.enabled = false;
+                        }
                     }
 
                     // Event
                     Events.OnPostBodyFixing.Fire(body);
 
                     // Log
-                    Logger.Default.Log("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " + body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
+                    Logger.Default.Log("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " +
+                                       body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
                 }
 
                 // Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
                 PSystemBody rootBody = PSystemManager.Instance.systemPrefab.rootBody;
-                Double maximumDistance = 1000d; // rootBody.children.Max(b => (b.orbitDriver != null) ? b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity) : 0);
+                Double maximumDistance = 1000d;
                 if (rootBody != null)
                 {
                     maximumDistance = rootBody.celestialBody.Radius * 100d;
@@ -208,24 +227,38 @@ namespace Kopernicus
                         foreach (PSystemBody body in rootBody.children)
                         {
                             if (body.orbitDriver != null)
-                                maximumDistance = Math.Max(maximumDistance, body.orbitDriver.orbit.semiMajorAxis * (1d + body.orbitDriver.orbit.eccentricity));
+                            {
+                                maximumDistance = Math.Max(maximumDistance,
+                                    body.orbitDriver.orbit.semiMajorAxis * (1d + body.orbitDriver.orbit.eccentricity));
+                            }
                             else
-                                Debug.Log("[Kopernicus]: Body " + body.name + " has no orbitdriver!");
+                            {
+                                Debug.Log("[Kopernicus]: Body " + body.name + " has no Orbit driver!");
+                            }
                         }
                     }
                     else
+                    {
                         Debug.Log("[Kopernicus]: Root body children null or 0");
+                    }
                 }
                 else
-                    Debug.Log("[Kopernicus]: Root body null!");
-                if (Templates.maxViewDistance >= 0)
                 {
-                    maximumDistance = Templates.maxViewDistance;
+                    Debug.Log("[Kopernicus]: Root body null!");
+                }
+
+                if (Templates.MaxViewDistance >= 0)
+                {
+                    maximumDistance = Templates.MaxViewDistance;
                     Debug.Log("Found max distance override " + maximumDistance);
                 }
                 else
+                {
                     Debug.Log("Found max distance " + maximumDistance);
-                PlanetariumCamera.fetch.maxDistance = ((Single)maximumDistance * 3.0f) / ScaledSpace.Instance.scaleFactor;
+                }
+
+                PlanetariumCamera.fetch.maxDistance =
+                    (Single) maximumDistance * 3.0f / ScaledSpace.Instance.scaleFactor;
 
                 // Call the event
                 Events.OnPostFixing.Fire();
@@ -249,9 +282,11 @@ namespace Kopernicus
         // Displays a warning if Kopernicus failed to load for some reason
         public static void DisplayWarning()
         {
-            PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "KopernicusFail", "Warning", "Kopernicus was not able to load the custom planetary system due to an exception in the loading process.\n" +
-                "Loading your savegame is NOT recommended, because the missing planets could corrupt it and delete your progress.\n\n" +
-                "Please contact the planet pack author or the Kopernicus team about the issue and send them a valid bugreport, including your KSP.log, your ModuleManager.ConfigCache file and the folder Logs/Kopernicus/ from your KSP root directory.\n\n", "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
+            PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "KopernicusFail", "Warning",
+                "Kopernicus was not able to load the custom planetary system due to an exception in the loading process.\n" +
+                "Loading your saved game is NOT recommended, because the missing planets could corrupt it and delete your progress.\n\n" +
+                "Please contact the planet pack author or the Kopernicus team about the issue and send them a valid bug report, including your KSP.log, your ModuleManager.ConfigCache file and the folder Logs/Kopernicus/ from your KSP root directory.\n\n",
+                "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
         }
 
         // Log the destruction of the injector

@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -35,18 +36,11 @@ using Object = System.Object;
 
 namespace Kopernicus
 {
-    public class Utility
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public static class Utility
     {
-        /// <summary>
-        /// Local Space Game Object
-        /// </summary>
-        public static GameObject LocalSpace
-        {
-            get { return GameObject.Find(PSystemManager.Instance.localSpaceName); }
-        }
-
         // Static object representing the deactivator
-        private static GameObject deactivator;
+        private static Transform _deactivator;
 
         /// <summary>
         /// Get an object which is deactivated, essentially, and children are prefabs
@@ -55,13 +49,15 @@ namespace Kopernicus
         {
             get
             {
-                if (deactivator == null)
+                if (_deactivator != null)
                 {
-                    deactivator = new GameObject("__deactivator");
-                    deactivator.SetActive(false);
-                    UnityEngine.Object.DontDestroyOnLoad(deactivator);
+                    return _deactivator;
                 }
-                return deactivator.transform;
+                
+                GameObject deactivatorObject = new GameObject("__deactivator");
+                deactivatorObject.SetActive(false);
+                UnityEngine.Object.DontDestroyOnLoad(_deactivator);
+                return _deactivator = deactivatorObject.transform;
             }
         }
 
@@ -77,92 +73,22 @@ namespace Kopernicus
             foreach (FieldInfo field in typeof(T).GetFields())
             {
                 // Only copy non static fields
-                if (!field.IsStatic)
+                if (field.IsStatic)
                 {
-                    if (log)
-                    {
-                        Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
-                    }
-                    field.SetValue(destination, field.GetValue(source));
+                    continue;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Copy one objects properties to another object via reflection
-        /// </summary>
-        /// <param name="source">Object to copy fields from</param>
-        /// <param name="destination">Object to copy fields to</param>
-        /// <param name="log">Whether the function should log the actions it performs</param>
-        public static void CopyObjectProperties<T>(T source, T destination, Boolean log = true)
-        {
-            // Reflection based copy
-            foreach (PropertyInfo property in typeof(T).GetProperties())
-            {
-                // Only copy editable
-                if (property.CanRead && property.CanWrite)
+                
+                if (log)
                 {
-                    if (property.GetGetMethod().IsStatic)
-                        continue;
-
-                    System.Object sourceValue = property.GetValue(source, null);
-                    System.Object destValue = property.GetValue(destination, null);
-
-                    // Check if both values are equal
-                    if (sourceValue == destValue)
-                        continue;
-
-                    // Log the fields
-                    if (log)
-                    {
-                        Logger.Active.Log("Copying \"" + property.Name + "\": " + (destValue ?? "<NULL>") + " => " + (sourceValue ?? "<NULL>"));
-                    }
-                    property.SetValue(destination, sourceValue, null);
+                    Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
                 }
+                field.SetValue(destination, field.GetValue(source));
             }
-        }
-
-        /// <summary>
-        /// Recursively searches for a named transform in the Transform heirarchy.  The requirement of
-        /// such a function is sad.This should really be in the Unity3D API.Transform.Find() only
-        /// searches in the immediate children.
-        /// </summary>
-        /// <param name="transform">Transform in which is search for named child</param>
-        /// <param name="name">Name of child to find</param>
-        /// <returns>Desired transform or null if it could not be found</returns>
-        public static Transform FindInChildren(Transform transform, String name)
-        {
-            // Is this null?
-            if (transform == null)
-            {
-                return null;
-            }
-
-            // Are the names equivalent
-            if (transform.name == name)
-            {
-                return transform;
-            }
-
-            // If we did not find a transform, search through the children
-            foreach (Transform child in transform)
-            {
-                // Recurse into the child
-                Transform t = FindInChildren(child, name);
-                if (t != null)
-                {
-                    return t;
-                }
-            }
-
-            // Return the transform (will be null if it was not found)
-            return null;
         }
 
         // Dump an object by reflection
         public static void DumpObjectFields(Object o, String title = "---------")
         {
-            // Dump the raw PQS of Dres (by reflection)
             Logger.Active.Log("---------" + title + "------------");
             foreach (FieldInfo field in o.GetType().GetFields())
             {
@@ -174,6 +100,7 @@ namespace Kopernicus
             Logger.Active.Log("--------------------------------------");
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static void DumpObjectProperties(Object o, String title = "---------")
         {
             // Iterate through all of the properties
@@ -181,7 +108,9 @@ namespace Kopernicus
             foreach (PropertyInfo property in o.GetType().GetProperties())
             {
                 if (property.CanRead)
+                {
                     Logger.Active.Log(property.Name + " = " + property.GetValue(o, null));
+                }
             }
             Logger.Active.Log("--------------------------------------");
         }
@@ -196,57 +125,25 @@ namespace Kopernicus
         {
             // Is this the body wer are looking for?
             if (body.celestialBody.bodyName == name)
+            {
                 return body;
+            }
 
             // Otherwise search children
             foreach (PSystemBody child in body.children)
             {
                 PSystemBody b = FindBody(child, name);
                 if (b != null)
-                    return b;
-            }
-
-            // Return null because we didn't find shit
-            return null;
-        }
-
-        // Copy of above, but finds homeworld
-        public static PSystemBody FindHomeBody(PSystemBody body)
-        {
-            // Is this the body wer are looking for?
-            if (body.celestialBody.isHomeWorld)
-                return body;
-
-            // Otherwise search children
-            foreach (PSystemBody child in body.children)
-            {
-                PSystemBody b = FindHomeBody(child);
-                if (b != null)
-                    return b;
-            }
-
-            // Return null because we didn't find shit
-            return null;
-        }
-
-        // Print out a tree containing all the objects in the game
-        public static void PerformObjectDump()
-        {
-            Logger.Active.Log("--------- Object Dump -----------");
-            foreach (GameObject b in UnityEngine.Object.FindObjectsOfType<GameObject>())
-            {
-                // Essentially, we iterate through all game objects currently alive and search for 
-                // the ones without a parent.  Extrememly inefficient and terrible, but its just for
-                // exploratory purposes
-                if (b.transform.parent == null)
                 {
-                    // Print out the tree of child objects
-                    GameObjectWalk(b, "");
+                    return b;
                 }
             }
-            Logger.Active.Log("---------------------------------");
+
+            // Return null because we didn't find shit
+            return null;
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static void PrintTransform(Transform t, String title = "")
         {
             Logger.Active.Log("------" + title + "------");
@@ -261,7 +158,9 @@ namespace Kopernicus
         {
             // If null, don't do anything
             if (o == null)
+            {
                 return;
+            }
 
             // Print this object
             Logger.Active.Log(prefix + o);
@@ -276,70 +175,20 @@ namespace Kopernicus
             foreach (Transform b in o.transform)
             {
                 if (b != null)
+                {
                     GameObjectWalk(b.gameObject, "    " + prefix);
+                }
             }
         }
 
-        // Print out the celestial bodies
-        public static void PSystemBodyWalk(PSystemBody b, String prefix = "")
+        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, String path,
+            String cacheFile, Boolean exportMesh, Boolean useSpherical)
         {
-            Logger.Active.Log(prefix + b.celestialBody.bodyName + ":" + b.flightGlobalsIndex);
-            foreach (PSystemBody c in b.children)
-            {
-                PSystemBodyWalk(c, prefix + "    ");
-            }
-        }
-
-        // slightly different:
-        public static void DumpUpwards(Transform t, String prefix, Boolean useKLog = true)
-        {
-            String str = prefix + "Transform " + t.name;
-            if (useKLog)
-                Logger.Default.Log(str);
-            else
-                Debug.Log(str);
-
-            foreach (Component c in t.GetComponents<Component>())
-            {
-                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
-                if (useKLog)
-                    Logger.Default.Log(str);
-                else
-                    Debug.Log(str);
-            }
-            if (t.parent != null)
-                DumpUpwards(t.parent, prefix + "  ");
-
-        }
-        public static void DumpDownwards(Transform t, String prefix, Boolean useKLog = true)
-        {
-            String str = prefix + "Transform " + t.name;
-            if (useKLog)
-                Logger.Default.Log(str);
-            else
-                Debug.Log("[Kopernicus] " + str);
-
-            foreach (Component c in t.GetComponents<Component>())
-            {
-                str = prefix + " has component " + c.name + " of type " + c.GetType().FullName;
-                if (useKLog)
-                    Logger.Default.Log(str);
-                else
-                    Debug.Log("[Kopernicus] " + str);
-            }
-            if (t.childCount > 0)
-                for (Int32 i = 0; i < t.childCount; ++i)
-                    DumpDownwards(t.GetChild(i), prefix + "  ");
-
-        }
-
-        public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, String path, String cacheFile, Boolean exportBin, Boolean useSpherical)
-        {
-            const Double rJool = 6000000.0;
-            const Single rScaled = 1000.0f;
+            const Double R_JOOL = 6000000.0;
+            const Single R_SCALED = 1000.0f;
 
             // Compute scale between Jool and this body
-            Single scale = (Single)(body.Radius / rJool);
+            Single scale = (Single) (body.Radius / R_JOOL);
             scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
             // Attempt to load a cached version of the scale space
@@ -355,9 +204,10 @@ namespace Kopernicus
             {
                 cacheFile = cacheDirectory + "/" + body.name + ".bin";
             }
+
             Directory.CreateDirectory(cacheDirectory);
 
-            if (File.Exists(cacheFile) && exportBin)
+            if (File.Exists(cacheFile) && exportMesh)
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
                 Mesh scaledMesh = DeserializeMesh(cacheFile);
@@ -372,25 +222,31 @@ namespace Kopernicus
                 Mesh scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
                 RecalculateTangents(scaledMesh);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
-                if (exportBin)
+                if (exportMesh)
+                {
                     SerializeMesh(scaledMesh, cacheFile);
+                }
             }
 
             // Apply mesh to the body
             SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
-            if (collider != null) collider.radius = rScaled;
+            if (collider != null)
+            {
+                collider.radius = R_SCALED;
+            }
             if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
             {
-                scaledVersion.gameObject.transform.localScale = Vector3.one * (Single)(pqs.radius / rJool);
+                scaledVersion.gameObject.transform.localScale = Vector3.one * (Single) (pqs.radius / R_JOOL);
             }
         }
 
         // Generate the scaled space mesh using PQS (all results use scale of 1)
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
         {
             // We need to get the body for Jool (to steal it's mesh)
-            const Double rScaledJool = 1000.0f;
-            Double rMetersToScaledUnits = (Single)(rScaledJool / body.Radius);
+            const Double R_SCALED_JOOL = 1000.0f;
+            Double rMetersToScaledUnits = (Single)(R_SCALED_JOOL / body.Radius);
 
             // Generate a duplicate of the Jool mesh
             Mesh mesh = DuplicateMesh(Templates.ReferenceGeosphere);
@@ -399,139 +255,121 @@ namespace Kopernicus
             Logger.Active.Log(pqs);
             Logger.Active.Log(body.pqsController);
 
-            // If this body has a PQS, we can create a more detailed object
-            if (pqs != null)
+            // If this body has a PQS, we can create a more detailed object, otherwise just return the generic mesh
+            if (pqs == null)
             {
-                // first we enable all maps
-                OnDemandStorage.EnableBody(body.bodyName);
+                return mesh;
+            }
+            
+            // first we enable all maps
+            OnDemandStorage.EnableBody(body.bodyName);
+                
+            // In order to generate the scaled space we have to enable the mods.  Since this is
+            // a prefab they don't get disabled as kill game performance.  To resolve this we 
+            // clone the PQS, use it, and then delete it when done. At runtime we can simply use
+            // the PQS that is active
+            GameObject pqsVersionGameObject =
+                Injector.IsInPrefab ? Instantiate(pqs.gameObject) : pqs.gameObject;
+            PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
 
-                // The game object the PQS is attached to
-                GameObject pqsVersionGameObject = null;
-                if (Injector.IsInPrefab)
+            // Deactivate blacklisted Mods
+            PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).OrderBy(m => m.order).ToArray();
+            for (Int32 i = 0; i < mods.Length; i++)
+            {
+                // Disable mods that don't belong to us
+                if (mods[i].transform.parent != pqsVersion.transform)
                 {
-                    // In order to generate the scaled space we have to enable the mods.  Since this is
-                    // a prefab they don't get disabled as kill game performance.  To resolve this we 
-                    // clone the PQS, use it, and then delete it when done
-                    pqsVersionGameObject = UnityEngine.Object.Instantiate(pqs.gameObject);
-                }
-                else
-                {
-                    // At runtime we simply use the PQS that is active
-                    pqsVersionGameObject = pqs.gameObject;
-                }
-                PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
-
-                // Load the PQS of the ocean
-                PQS pqsOcean = pqs.ChildSpheres?.FirstOrDefault();
-
-                // Deactivate blacklisted Mods
-                Type[] blacklist = { typeof(PQSMod_OnDemandHandler) };
-                foreach (PQSMod mod in pqsVersion.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.enabled && blacklist.Contains(m.GetType())))
-                {
-                    mod.modEnabled = false;
+                    mods[i].modEnabled = false;
+                    continue;
                 }
 
-                // Find the PQS mods and enable the PQS-sphere
-                PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true)
-                    .Where(m => m.modEnabled && m.transform.parent == pqsVersion.transform).OrderBy(m => m.order).ToArray();
-                foreach (PQSMod flatten in mods.Where(m => m is PQSMod_FlattenArea))
+                switch (mods[i])
                 {
-                    flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                        .First(f => f.FieldType == typeof(Boolean)).SetValue(flatten, true);
+                    // Disable the OnDemand notifier
+                    case PQSMod_OnDemandHandler _:
+                        mods[i].modEnabled = false;
+                        continue;
+                    case PQSMod_FlattenArea _:
+                        typeof(PQSMod_FlattenArea).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                            .First(f => f.FieldType == typeof(Boolean)).SetValue(mods[i], true);
+                        break;
                 }
-                Logger.Active.Log(mods.Length);
+            }
 
-                // Do the same for the ocean
-                PQSMod[] oceanMods = new PQSMod[0];
-                if (pqsOcean != null)
+            pqsVersion.StartUpSphere();
+            pqsVersion.isBuildingMaps = true;
+
+            // If we were able to find PQS mods
+            if (mods.Length > 0)
+            {
+                // Generate the PQS modifications
+                Vector3[] vertices = mesh.vertices;
+                for (Int32 i = 0; i < mesh.vertexCount; i++)
                 {
-                    oceanMods = pqsOcean.GetComponentsInChildren<PQSMod>(true)
-                        .Where(m => m.modEnabled && m.transform.parent == pqsOcean.transform).OrderBy(m => m.order).ToArray();
-                    foreach (PQSMod flatten in oceanMods.Where(m => m is PQSMod_FlattenArea))
+                    // Get the UV coordinate of this vertex
+                    Vector2 uv = mesh.uv[i];
+
+                    // Since this is a geosphere, normalizing the vertex gives the direction from center center
+                    Vector3 direction = vertices[i];
+                    direction.Normalize();
+
+                    // Build the vertex data object for the PQS mods
+                    PQS.VertexBuildData vertex = new PQS.VertexBuildData
                     {
-                        flatten.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                            .First(f => f.FieldType == typeof(Boolean)).SetValue(flatten, true);
-                    }
+                        directionFromCenter = direction, 
+                        vertHeight = body.Radius, 
+                        u = uv.x, 
+                        v = uv.y
+                    };
 
-                    pqsOcean.StartUpSphere();
-                    pqsOcean.isBuildingMaps = true;
-                }
-
-                pqsVersion.StartUpSphere();
-                pqsVersion.isBuildingMaps = true;
-
-                // If we were able to find PQS mods
-                if (mods.Any())
-                {
-                    // Generate the PQS modifications
-                    Vector3[] vertices = mesh.vertices;
-                    for (Int32 i = 0; i < mesh.vertexCount; i++)
+                    // Build from the PQS
+                    for (Int32 m = 0; i < mods.Length; i++)
                     {
-                        // Get the UV coordinate of this vertex
-                        Vector2 uv = mesh.uv[i];
-
-                        // Since this is a geosphere, normalizing the vertex gives the direction from center center
-                        Vector3 direction = vertices[i];
-                        direction.Normalize();
-
-                        // Build the vertex data object for the PQS mods
-                        PQS.VertexBuildData vertex = new PQS.VertexBuildData();
-                        vertex.directionFromCenter = direction;
-                        vertex.vertHeight = body.Radius;
-                        vertex.u = uv.x;
-                        vertex.v = uv.y;
-
-                        // Build from the PQS
-                        foreach (PQSMod mod in mods)
-                            mod.OnVertexBuildHeight(vertex);
-
-                        // Check for sea level
-                        if (pqsOcean != null)
+                        // Don't build disabled mods
+                        if (!mods[m].modEnabled)
                         {
-                            // Build the vertex data object for the ocean
-                            PQS.VertexBuildData vertexOcean = new PQS.VertexBuildData();
-                            vertexOcean.directionFromCenter = direction;
-                            vertexOcean.vertHeight = body.Radius;
-                            vertexOcean.u = uv.x;
-                            vertexOcean.v = uv.y;
-
-                            // Build from the PQS
-                            foreach (PQSMod mod in oceanMods)
-                                mod.OnVertexBuildHeight(vertexOcean);
-
-                            vertex.vertHeight = Math.Max(vertex.vertHeight, vertexOcean.vertHeight);
+                            continue;
                         }
 
-                        // Adjust the displacement
-                        vertices[i] = direction * (Single)(vertex.vertHeight * rMetersToScaledUnits);
+                        // Don't build mods that don't belong to us
+                        if (mods[m].transform.parent != pqsVersion.transform)
+                        {
+                            continue;
+                        }
+                        
+                        mods[m].OnVertexBuildHeight(vertex);
                     }
-                    mesh.vertices = vertices;
-                    mesh.RecalculateNormals();
-                    mesh.RecalculateBounds();
-                }
 
-                // Cleanup
-                if (pqsOcean != null)
-                {
-                    pqsOcean.isBuildingMaps = false;
-                    pqsOcean.DeactivateSphere();
-                }
-                pqsVersion.isBuildingMaps = false;
-                pqsVersion.DeactivateSphere();
+                    // Check for sea level
+                    if (pqsVersion.mapOcean)
+                    {
+                        vertex.vertHeight = Math.Max(vertex.vertHeight, body.Radius);
+                    }
 
-                // If we are working with a copied PQS, clean it up
-                if (Injector.IsInPrefab)
-                {
-                    UnityEngine.Object.Destroy(pqsVersionGameObject);
+                    // Adjust the displacement
+                    vertices[i] = direction * (Single)(vertex.vertHeight * rMetersToScaledUnits);
                 }
-                OnDemandStorage.DisableBody(body.bodyName);
+                mesh.vertices = vertices;
+                mesh.RecalculateNormals();
+                mesh.RecalculateBounds();
             }
+
+            // Cleanup
+            pqsVersion.isBuildingMaps = false;
+            pqsVersion.DeactivateSphere();
+
+            // If we are working with a copied PQS, clean it up
+            if (Injector.IsInPrefab)
+            {
+                UnityEngine.Object.Destroy(pqsVersionGameObject);
+            }
+            OnDemandStorage.DisableBody(body.bodyName);
 
             // Return the generated scaled space mesh
             return mesh;
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static void CopyMesh(Mesh source, Mesh dest)
         {
             Vector3[] verts = new Vector3[source.vertexCount];
@@ -542,13 +380,13 @@ namespace Kopernicus
             source.triangles.CopyTo(tris, 0);
             dest.triangles = tris;
 
-            Vector2[] uvs = new Vector2[source.uv.Length];
-            source.uv.CopyTo(uvs, 0);
-            dest.uv = uvs;
+            Vector2[] uv = new Vector2[source.uv.Length];
+            source.uv.CopyTo(uv, 0);
+            dest.uv = uv;
 
-            Vector2[] uv2s = new Vector2[source.uv2.Length];
-            source.uv2.CopyTo(uv2s, 0);
-            dest.uv2 = uv2s;
+            Vector2[] uv2 = new Vector2[source.uv2.Length];
+            source.uv2.CopyTo(uv2, 0);
+            dest.uv2 = uv2;
 
             Vector3[] normals = new Vector3[source.normals.Length];
             source.normals.CopyTo(normals, 0);
@@ -567,65 +405,22 @@ namespace Kopernicus
             dest.colors32 = colors32;
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static Mesh DuplicateMesh(Mesh source)
         {
             // Create new mesh object
             Mesh dest = new Mesh();
-
-            Vector3[] verts = new Vector3[source.vertexCount];
-            source.vertices.CopyTo(verts, 0);
-            dest.vertices = verts;
-
-            Int32[] tris = new Int32[source.triangles.Length];
-            source.triangles.CopyTo(tris, 0);
-            dest.triangles = tris;
-
-            Vector2[] uvs = new Vector2[source.uv.Length];
-            source.uv.CopyTo(uvs, 0);
-            dest.uv = uvs;
-
-            Vector2[] uv2s = new Vector2[source.uv2.Length];
-            source.uv2.CopyTo(uv2s, 0);
-            dest.uv2 = uv2s;
-
-            Vector3[] normals = new Vector3[source.normals.Length];
-            source.normals.CopyTo(normals, 0);
-            dest.normals = normals;
-
-            Vector4[] tangents = new Vector4[source.tangents.Length];
-            source.tangents.CopyTo(tangents, 0);
-            dest.tangents = tangents;
-
-            Color[] colors = new Color[source.colors.Length];
-            source.colors.CopyTo(colors, 0);
-            dest.colors = colors;
-
-            Color32[] colors32 = new Color32[source.colors32.Length];
-            source.colors32.CopyTo(colors32, 0);
-            dest.colors32 = colors32;
-
+            CopyMesh(source, dest);
             return dest;
         }
 
-        // Taken from Nathankell's RSS Utils.cs; uniformly scaled vertices
-        public static void ScaleVerts(Mesh mesh, Single scaleFactor)
-        {
-            Vector3[] vertices = new Vector3[mesh.vertexCount];
-            for (Int32 i = 0; i < mesh.vertexCount; i++)
-            {
-                Vector3 v = mesh.vertices[i];
-                v *= scaleFactor;
-                vertices[i] = v;
-            }
-            mesh.vertices = vertices;
-        }
-
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static void RecalculateTangents(Mesh theMesh)
         {
             Int32 vertexCount = theMesh.vertexCount;
             Vector3[] vertices = theMesh.vertices;
             Vector3[] normals = theMesh.normals;
-            Vector2[] texcoords = theMesh.uv;
+            Vector2[] uv = theMesh.uv;
             Int32[] triangles = theMesh.triangles;
             Int32 triangleCount = triangles.Length / 3;
 
@@ -645,9 +440,9 @@ namespace Kopernicus
                 Vector3 v2 = vertices[i2];
                 Vector3 v3 = vertices[i3];
 
-                Vector2 w1 = texcoords[i1];
-                Vector2 w2 = texcoords[i2];
-                Vector2 w3 = texcoords[i3];
+                Vector2 w1 = uv[i1];
+                Vector2 w2 = uv[i2];
+                Vector2 w3 = uv[i3];
 
                 Single x1 = v2.x - v1.x;
                 Single x2 = v3.x - v1.x;
@@ -679,8 +474,7 @@ namespace Kopernicus
             {
                 Vector3 n = normals[i];
                 Vector3 t = tan1[i];
-
-                // Gram-Schmidt orthogonalize
+                
                 Vector3.OrthoNormalize(ref n, ref t);
 
                 tangents[i].x = t.x;
@@ -694,9 +488,10 @@ namespace Kopernicus
         }
 
         // Serialize a mesh to disk
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static void SerializeMesh(Mesh mesh, String path)
         {
-            // Open an output filestream
+            // Open an output file stream
             FileStream outputStream = new FileStream(path, FileMode.Create, FileAccess.Write);
             BinaryWriter writer = new BinaryWriter(outputStream);
 
@@ -726,6 +521,7 @@ namespace Kopernicus
         }
 
         // Deserialize a mesh from disk
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static Mesh DeserializeMesh(String path)
         {
             FileStream inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -744,9 +540,9 @@ namespace Kopernicus
             }
 
             // Get the uvs
-            Int32 uv_count = reader.ReadInt32();
-            Vector2[] uvs = new Vector2[uv_count];
-            for (Int32 i = 0; i < uv_count; i++)
+            Int32 uvCount = reader.ReadInt32();
+            Vector2[] uvs = new Vector2[uvCount];
+            for (Int32 i = 0; i < uvCount; i++)
             {
                 Vector2 uv;
                 uv.x = reader.ReadSingle();
@@ -755,20 +551,24 @@ namespace Kopernicus
             }
 
             // Get the triangles
-            Int32 tris_count = reader.ReadInt32();
-            Int32[] triangles = new Int32[tris_count];
-            for (Int32 i = 0; i < tris_count; i++)
+            Int32 trisCount = reader.ReadInt32();
+            Int32[] triangles = new Int32[trisCount];
+            for (Int32 i = 0; i < trisCount; i++)
+            {
                 triangles[i] = reader.ReadInt32();
+            }
 
             // Close
             reader.Close();
             inputStream.Close();
 
             // Create the mesh
-            Mesh m = new Mesh();
-            m.vertices = vertices;
-            m.triangles = triangles;
-            m.uv = uvs;
+            Mesh m = new Mesh
+            {
+                vertices = vertices, 
+                triangles = triangles, 
+                uv = uvs
+            };
             m.RecalculateNormals();
             m.RecalculateBounds();
             return m;
@@ -777,34 +577,37 @@ namespace Kopernicus
         // Credit goes to Sigma88.
         public static Texture2D BumpToNormalMap(Texture2D source, PQS pqs, Single strength)
         {
-            double dS = pqs.radius * 2 * Math.PI / source.width;
+            Double dS = pqs.radius * 2 * Math.PI / source.width;
 
-            if (!(strength > 0)) strength = 1;
+            if (strength <= 0)
+            {
+                strength = 1;
+            }
 
             Texture2D result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
             for (Int32 by = 0; by < result.height; by++)
             {
                 for (Int32 bx = 0; bx < result.width; bx++)
                 {
-                    if (by == 0 || by == result.height - 1 || source.GetPixel(bx, by).r == 0)
+                    if (by == 0 || by == result.height - 1 || Math.Abs(source.GetPixel(bx, by).r) < 0.01)
                     {
                         result.SetPixel(bx, by, new Color(0.5f, 0.5f, 0.5f, 0.5f));
                     }
                     else
                     {
-                        int xN = bx - 1;
-                        int xP = bx + 1;
+                        Int32 xN = bx - 1;
+                        Int32 xP = bx + 1;
 
-                        int yN = by - 1;
-                        int yP = by + 1;
+                        Int32 yN = by - 1;
+                        Int32 yP = by + 1;
 
-                        double dX = (source.GetPixel(xN, by).r - source.GetPixel(xP, by).r) * pqs.radiusDelta;
-                        double dY = (source.GetPixel(bx, yN).r - source.GetPixel(bx, yP).r) * pqs.radiusDelta;
+                        Double dX = (source.GetPixel(xN, by).r - source.GetPixel(xP, by).r) * pqs.radiusDelta;
+                        Double dY = (source.GetPixel(bx, yN).r - source.GetPixel(bx, yP).r) * pqs.radiusDelta;
 
-                        double slopeX = (1 + dX / Math.Pow(dX * dX + dS * dS, 0.5) * strength) / 2;
-                        double slopeY = (1 + dY / Math.Pow(dY * dY + dS * dS, 0.5) * strength) / 2;
+                        Double slopeX = (1 + dX / Math.Pow(dX * dX + dS * dS, 0.5) * strength) / 2;
+                        Double slopeY = (1 + dY / Math.Pow(dY * dY + dS * dS, 0.5) * strength) / 2;
 
-                        result.SetPixel(bx, by, new Color((float)slopeY, (float)slopeY, (float)slopeY, (float)slopeX));
+                        result.SetPixel(bx, by, new Color((Single)slopeY, (Single)slopeY, (Single)slopeY, (Single)slopeX));
                     }
                 }
             }
@@ -813,16 +616,16 @@ namespace Kopernicus
         }
 
         // Convert latitude-longitude-altitude with body radius to a vector.
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public static Vector3 LLAtoECEF(Double lat, Double lon, Double alt, Double radius)
         {
-            const Double degreesToRadians = Math.PI / 180.0;
-            lat = (lat - 90) * degreesToRadians;
-            lon *= degreesToRadians;
-            Double x, y, z;
+            const Double DEGREES_TO_RADIANS = Math.PI / 180.0;
+            lat = (lat - 90) * DEGREES_TO_RADIANS;
+            lon *= DEGREES_TO_RADIANS;
             Double n = radius; // for now, it's still a sphere, so just the radius
-            x = (n + alt) * -1.0 * Math.Sin(lat) * Math.Cos(lon);
-            y = (n + alt) * Math.Cos(lat); // for now, it's still a sphere, so no eccentricity
-            z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
+            Double x = (n + alt) * -1.0 * Math.Sin(lat) * Math.Cos(lon);
+            Double y = (n + alt) * Math.Cos(lat);
+            Double z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
             return new Vector3((Single)x, (Single)y, (Single)z);
         }
 
@@ -837,6 +640,7 @@ namespace Kopernicus
             return OnDemandStorage.LoadTexture(path, compress, upload, unreadable);
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public static T FindMapSO<T>(String url) where T : MapSO
         {
             T retVal = Resources.FindObjectsOfTypeAll<T>().FirstOrDefault(m => m.name == url);
@@ -877,17 +681,27 @@ namespace Kopernicus
                 }
             }
             else
+            {
                 Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but body not found.");
+            }
 
             if (retVal == null)
             {
                 if (modFound)
-                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but mods of correct name and type lack MapSO.");
+                {
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url +
+                                      " but mods of correct name and type lack MapSO.");
+                }
                 else
-                    Logger.Active.Log("MapSO grabber: Tried to grab " + url + " but could not find PQSMod of that type of the given name");
+                {
+                    Logger.Active.Log("MapSO grabber: Tried to grab " + url +
+                                      " but could not find PQSMod of that type of the given name");
+                }
             }
             if (retVal != null)
+            {
                 retVal.name = url;
+            }
             return retVal;
         }
 
@@ -903,19 +717,29 @@ namespace Kopernicus
             List<PQSMod> cpMods = p.GetComponentsInChildren<PQSMod>(true).ToList();
             Boolean addTypes = types == null;
             if (addTypes)
+            {
                 types = new List<Type>();
+            }
             if (blacklist == null)
             {
                 Logger.Active.Log("Creating blacklist");
                 blacklist = new List<Type>();
                 if (!types.Contains(typeof(PQSMod_CelestialBodyTransform)))
+                {
                     blacklist.Add(typeof(PQSMod_CelestialBodyTransform));
+                }
                 if (!types.Contains(typeof(PQSMod_MaterialSetDirection)))
+                {
                     blacklist.Add(typeof(PQSMod_MaterialSetDirection));
+                }
                 if (!types.Contains(typeof(PQSMod_UVPlanetRelativePosition)))
+                {
                     blacklist.Add(typeof(PQSMod_UVPlanetRelativePosition));
+                }
                 if (!types.Contains(typeof(PQSMod_QuadMeshColliders)))
+                {
                     blacklist.Add(typeof(PQSMod_QuadMeshColliders));
+                }
                 Logger.Active.Log("Blacklist count = " + blacklist.Count);
             }
 
@@ -925,11 +749,13 @@ namespace Kopernicus
                 foreach (PQSMod m in cpMods)
                 {
                     Type mType = m.GetType();
-                    if (!types.Contains(mType) && !blacklist.Contains(mType))
+                    if (types.Contains(mType) || blacklist.Contains(mType))
                     {
-                        Logger.Active.Log("Adding to removelist: " + mType);
-                        types.Add(mType);
+                        continue;
                     }
+                    
+                    Logger.Active.Log("Adding to remove list: " + mType);
+                    types.Add(mType);
                 }
             }
             List<GameObject> toCheck = new List<GameObject>();
@@ -938,15 +764,23 @@ namespace Kopernicus
                 List<PQSMod> mods = cpMods.Where(m => m.GetType() == mType).ToList();
                 foreach (PQSMod delMod in mods)
                 {
-                    if (delMod != null)
+                    if (delMod == null)
                     {
-                        Logger.Active.Log("Removed mod " + mType.ToString());
-                        if (!toCheck.Contains(delMod.gameObject))
-                            toCheck.Add(delMod.gameObject);
-                        delMod.sphere = null;
-                        if (delMod is PQSCity)
+                        continue;
+                    }
+                    
+                    Logger.Active.Log("Removed mod " + mType);
+                    if (!toCheck.Contains(delMod.gameObject))
+                    {
+                        toCheck.Add(delMod.gameObject);
+                    }
+                    
+                    delMod.sphere = null;
+                    switch (delMod)
+                    {
+                        case PQSCity mod:
                         {
-                            PQSCity city = delMod as PQSCity;
+                            PQSCity city = mod;
                             if (city.lod != null)
                             {
                                 foreach (PQSCity.LODRange range in city.lod)
@@ -954,114 +788,78 @@ namespace Kopernicus
                                     if (range.objects != null)
                                     {
                                         foreach (GameObject o in range.objects)
+                                        {
                                             UnityEngine.Object.DestroyImmediate(o);
+                                        }
                                     }
-                                    if (range.renderers != null)
+
+                                    if (range.renderers == null)
                                     {
-                                        foreach (GameObject o in range.renderers)
-                                            UnityEngine.Object.DestroyImmediate(o);
+                                        continue;
+                                    }
+                                    foreach (GameObject o in range.renderers)
+                                    {
+                                        UnityEngine.Object.DestroyImmediate(o);
                                     }
                                 }
                             }
+                            break;
                         }
-                        if (delMod is PQSCity2)
+                        case PQSCity2 mod:
                         {
-                            PQSCity2 city = delMod as PQSCity2;
+                            PQSCity2 city = mod;
                             if (city.objects != null)
                             {
                                 foreach (PQSCity2.LodObject range in city.objects)
                                 {
-                                    if (range.objects != null)
+                                    if (range.objects == null)
                                     {
-                                        foreach (GameObject o in range.objects)
-                                            UnityEngine.Object.DestroyImmediate(o);
+                                        continue;
+                                    }
+                                    foreach (GameObject o in range.objects)
+                                    {
+                                        UnityEngine.Object.DestroyImmediate(o);
                                     }
                                 }
                             }
+                            break;
                         }
-                        cpMods.Remove(delMod);
+                    }
 
-                        // If no mod is left, delete the game object too
-                        GameObject gameObject = delMod.gameObject;
-                        UnityEngine.Object.DestroyImmediate(delMod);
-                        PQSMod[] allRemainingMods = gameObject.GetComponentsInChildren<PQSMod>(true);
-                        if (allRemainingMods.Length == 0)
-                        {
-                            UnityEngine.Object.DestroyImmediate(gameObject);
-                        }
+                    cpMods.Remove(delMod);
+
+                    // If no mod is left, delete the game object too
+                    GameObject gameObject = delMod.gameObject;
+                    UnityEngine.Object.DestroyImmediate(delMod);
+                    PQSMod[] allRemainingMods = gameObject.GetComponentsInChildren<PQSMod>(true);
+                    if (allRemainingMods.Length == 0)
+                    {
+                        UnityEngine.Object.DestroyImmediate(gameObject);
                     }
                 }
             }
-            // RemoveEmptyGO(toCheck);
-        }
-
-        public static void RemoveEmptyGO(List<GameObject> toCheck)
-        {
-            Int32 oCount = toCheck.Count;
-            Int32 nCount = oCount;
-            List<GameObject> toDestroy = new List<GameObject>();
-            do
-            {
-                oCount = nCount;
-                foreach (GameObject go in toCheck)
-                {
-                    if (go.transform.childCount == 0)
-                    {
-                        Component[] comps = go.GetComponents<Component>();
-                        if (comps.Length == 0 || comps.Length == 1 && comps[0].GetType() == typeof(Transform))
-                            toDestroy.Add(go);
-                    }
-                }
-                foreach (GameObject go in toDestroy)
-                {
-                    toCheck.Remove(go);
-                    GameObject.DestroyImmediate(go);
-                }
-                toDestroy.Clear();
-                nCount = toCheck.Count;
-            } while (nCount != oCount && nCount > 0);
-        }
-
-        public static void CBTCheck(PSystemBody body)
-        {
-            if (body.pqsVersion != null)
-            {
-                if (body.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>().Length > 0)
-                    Logger.Default.Log("Body " + body.name + " has CBT.");
-                else
-                {
-                    PQSMod_CelestialBodyTransform cbt = body.pqsVersion.GetComponentsInChildren(typeof(PQSMod_CelestialBodyTransform), true).FirstOrDefault() as PQSMod_CelestialBodyTransform;
-                    if (cbt == null)
-                    {
-                        Logger.Default.Log("Body " + body.name + " *** LACKS CBT ***");
-                        DumpDownwards(body.pqsVersion.transform, "*");
-                    }
-                    else
-                    {
-                        cbt.enabled = true;
-                        cbt.modEnabled = true;
-                        cbt.sphere = body.pqsVersion;
-                        Logger.Default.Log("Body " + body.name + " lacks active CBT, activated.");
-                    }
-                }
-            }
-            if (body.children != null)
-                foreach (PSystemBody b in body.children)
-                    CBTCheck(b);
         }
 
         // Converts an unreadable texture into a readable one
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static Texture2D CreateReadable(Texture2D original)
         {
             // Checks
-            if (original == null) return null;
-            if (original.width == 0 || original.height == 0) return null;
+            if (original == null)
+            {
+                return null;
+            }
+            if (original.width == 0 || original.height == 0)
+            {
+                return null;
+            }
 
             // Create the new texture
             Texture2D finalTexture = new Texture2D(original.width, original.height);
 
-            // isn't read or writeable ... we'll have to get tricksy
-            RenderTexture rt = RenderTexture.GetTemporary(original.width, original.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB, 1);
+            // isn't read or writeable ... we'll have to get tricky
+            RenderTexture rt = RenderTexture.GetTemporary(original.width, original.height, 0,
+                RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB, 1);
             Graphics.Blit(original, rt);
             RenderTexture.active = rt;
 
@@ -1077,17 +875,25 @@ namespace Kopernicus
         }
 
         // Runs a function recursively
-        public static TOut DoRecursive<TIn, TOut>(TIn start, Func<TIn, IEnumerable<TIn>> selector, Func<TOut, Boolean> check, Func<TIn, TOut> action)
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public static TOut DoRecursive<TIn, TOut>(TIn start, Func<TIn, IEnumerable<TIn>> selector,
+            Func<TOut, Boolean> check, Func<TIn, TOut> action)
         {
             TOut tout = action(start);
             if (check(tout))
+            {
                 return tout;
+            }
+
             foreach (TIn tin in selector(start))
             {
                 tout = DoRecursive(tin, selector, check, action);
                 if (check(tout))
+                {
                     return tout;
+                }
             }
+
             return default(TOut);
         }
 
@@ -1095,6 +901,53 @@ namespace Kopernicus
         public static void DoRecursive<T>(T start, Func<T, IEnumerable<T>> selector, Action<T> action)
         {
             DoRecursive<T, Object>(start, selector, tout => false, tin => { action(tin); return null; });
+        }
+
+        public static T Instantiate<T>(T original) where T : UnityEngine.Object
+        {
+            #if !KSP131
+            return UnityEngine.Object.Instantiate(original);
+            #else
+            return UnityEngine.Object.Instantiate(original);
+            #endif
+        }
+
+        public static T Instantiate<T>(T original, Vector3 position, Quaternion rotation) where T : UnityEngine.Object
+        {
+            #if !KSP131
+            return UnityEngine.Object.Instantiate(original, position, rotation);
+            #else
+            return UnityEngine.Object.Instantiate(original, position, rotation) as T;
+            #endif
+        }
+
+        public static T Instantiate<T>(T original, Vector3 position, Quaternion rotation, Transform parent)
+            where T : UnityEngine.Object
+        {
+            #if !KSP131
+            return UnityEngine.Object.Instantiate(original, position, rotation, parent);
+            #else
+            return UnityEngine.Object.Instantiate(original, position, rotation, parent) as T;
+            #endif
+        }
+
+        public static T Instantiate<T>(T original, Transform parent) where T : UnityEngine.Object
+        {
+            #if !KSP131
+            return UnityEngine.Object.Instantiate(original, parent);
+            #else
+            return UnityEngine.Object.Instantiate(original, parent) as T;
+            #endif
+        }
+
+        public static T Instantiate<T>(T original, Transform parent, Boolean worldPositionStays)
+            where T : UnityEngine.Object
+        {
+            #if !KSP131
+            return UnityEngine.Object.Instantiate(original, parent, worldPositionStays);
+            #else
+            return UnityEngine.Object.Instantiate(original, parent, worldPositionStays) as T;
+            #endif
         }
     }
 }

@@ -17,122 +17,126 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Kopernicus.Components;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration
+    // Loads Debugging properties for a Body
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class DebugLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
     {
-        // Loads Debugging properties for a Body
-        [RequireConfigType(ConfigType.Node)]
-        public class DebugLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
+        // The Body we're editing
+        public CelestialBody Value { get; set; }
+
+        // If this is set to false, Kopernicus wont save a .bin file with the scaledSpace mesh 
+        [ParserTarget("exportMesh")]
+        [KittopiaDescription("Whether Kopernicus should save a .bin file with the ScaledSpace mesh.")]
+        public NumericParser<Boolean> ExportMesh
         {
-            // The Body we're editing
-            public CelestialBody Value { get; set; }
-            
-            // If this is set to false, Kopernicus wont save a .bin file with the scaledSpace mesh 
-            [ParserTarget("exportMesh")]
-            [KittopiaDescription("Whether Kopernicus should save a .bin file with the ScaledSpace mesh.")]
-            public NumericParser<Boolean> exportMesh
-            {
-                get { return Value.Get("exportMesh", true); }
-                set { Value.Set("exportMesh", value.Value); }
-            }
+            get { return Value.Get("exportMesh", true); }
+            set { Value.Set("exportMesh", value.Value); }
+        }
 
-            // If this is set to true, Kopernicus will update the ScaledSpace mesh, even if the original conditions aren't matched
-            [ParserTarget("update")]
-            [KittopiaDescription("Setting this to true will force Kopernicus to update the ScaledSpace mesh.")]
-            public NumericParser<Boolean> update
-            {
-                get { return Value.Get("update", false); }
-                set { Value.Set("update", value.Value); }
-            }
+        // If this is set to true, Kopernicus will update the ScaledSpace mesh, even if the original conditions aren't matched
+        [ParserTarget("update")]
+        [KittopiaDescription("Setting this to true will force Kopernicus to update the ScaledSpace mesh.")]
+        public NumericParser<Boolean> Update
+        {
+            get { return Value.Get("update", false); }
+            set { Value.Set("update", value.Value); }
+        }
 
-            // If this is set to true, a wireframe will appear to visualize the SOI
-            [ParserTarget("showSOI")]
-            [KittopiaHideOption]
-            public NumericParser<Boolean> showSOI
+        // If this is set to true, a wire frame will appear to visualize the SOI
+        [ParserTarget("showSOI")]
+        [KittopiaHideOption]
+        public NumericParser<Boolean> ShowSoi
+        {
+            get { return Value.Get("showSOI", false); }
+            set
             {
-                get { return Value.Get("showSOI", false); }
-                set
-                {
-                    Value.Set("showSOI", value.Value);
-                    if (value)
-                    {
-                        Value.gameObject.AddComponent<Wiresphere>();
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Toggles the wireframe that gets added to the planet to show it's sphere of influence
-            /// </summary>
-            [KittopiaAction("Toggle SOI Visibility")]
-            [KittopiaDescription("Visualizes the SOI of the planet.")]
-            public void ShowSOI()
-            {
-                Value.Set("showSOI", !Value.Get("showSOI", false));
-                if (Value.Get("showSOI", false))
+                Value.Set("showSOI", value.Value);
+                if (value)
                 {
                     Value.gameObject.AddComponent<Wiresphere>();
                 }
-                else
-                {
-                    UnityEngine.Object.Destroy(Value.GetComponent<Wiresphere>());
-                }
             }
+        }
 
-            // Parser apply event
-            void IParserEventSubscriber.Apply(ConfigNode node)
+        /// <summary>
+        /// Toggles the wire frame that gets added to the planet to show it's sphere of influence
+        /// </summary>
+        [KittopiaAction("Toggle SOI Visibility")]
+        [KittopiaDescription("Visualizes the SOI of the planet.")]
+        public void ToggleSoiVisibility()
+        {
+            Value.Set("showSOI", !Value.Get("showSOI", false));
+            if (Value.Get("showSOI", false))
             {
-                Events.OnDebugLoaderApply.Fire(this, node);
+                Value.gameObject.AddComponent<Wiresphere>();
             }
-
-            // Parser post apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
+            else
             {
-                Events.OnDebugLoaderPostApply.Fire(this, node);
+                Object.Destroy(Value.GetComponent<Wiresphere>());
             }
+        }
 
-            /// <summary>
-            /// Creates a new Debug Loader from the Injector context.
-            /// </summary>
-            public DebugLoader()
+        // Parser apply event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            Events.OnDebugLoaderApply.Fire(this, node);
+        }
+
+        // Parser post apply event
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            Events.OnDebugLoaderPostApply.Fire(this, node);
+        }
+
+        /// <summary>
+        /// Creates a new Debug Loader from the Injector context.
+        /// </summary>
+        public DebugLoader()
+        {
+            // Is this the parser context?
+            if (!Injector.IsInPrefab)
             {
-                // Is this the parser context?
-                if (!Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("Must be executed in Injector context.");
-                }
-
-                // Store values
-                Value = generatedBody.celestialBody;
+                throw new InvalidOperationException("Must be executed in Injector context.");
             }
 
-            /// <summary>
-            /// Creates a new Debug Loader from a spawned CelestialBody.
-            /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
-            public DebugLoader(CelestialBody body)
+            // Store values
+            Value = generatedBody.celestialBody;
+        }
+
+        /// <summary>
+        /// Creates a new Debug Loader from a spawned CelestialBody.
+        /// </summary>
+        [KittopiaConstructor(KittopiaConstructor.ParameterType.CelestialBody)]
+        public DebugLoader(CelestialBody body)
+        {
+            // Is this a spawned body?
+            if (body.scaledBody == null || Injector.IsInPrefab)
             {
-                // Is this a spawned body?
-                if (body?.scaledBody == null || Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
-                }
-
-                // Store values
-                Value = body;
+                throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
             }
+
+            // Store values
+            Value = body;
         }
     }
 }

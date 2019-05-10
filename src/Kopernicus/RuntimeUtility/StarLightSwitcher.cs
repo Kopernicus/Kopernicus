@@ -17,74 +17,55 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using Kopernicus.Components;
+using Kopernicus.Constants;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.RuntimeUtility
 {
     // Class to manage the properties of custom stars
     public class StarComponent : MonoBehaviour
     {
         // Celestial body which represents the star
-        public CelestialBody celestialBody { get; set; }
+        public CelestialBody CelestialBody { get; set; }
 
-        // We need to patch the sun Transform of the Radiators
-        private static FieldInfo radiatorSun { get; set; }
-
-        // get the FieldInfo
-        static StarComponent()
-        {
-            radiatorSun = typeof(ModuleDeployableRadiator).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(Transform));
-        }
-
-        void Start()
+        private void Start()
         {
             // Find the celestial body we are attached to
-            celestialBody = PSystemManager.Instance.localBodies.FirstOrDefault(body => body.scaledBody == gameObject);
-            Logger.Default.Log("StarLightSwitcher.Start() => " + celestialBody?.bodyName);
+            CelestialBody = PSystemManager.Instance.localBodies.FirstOrDefault(body => body.scaledBody == gameObject);
+            if (CelestialBody != null)
+            {
+                Logger.Default.Log("StarLightSwitcher.Start() => " + CelestialBody.bodyName);
+            }
             Logger.Default.Flush();
         }
 
         public void SetAsActive()
         {
             // Set star as active star
-            Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + celestialBody.bodyName);
-            KopernicusStar.Current = KopernicusStar.Stars.Find(s => s.sun == celestialBody);
+            Debug.Log("[Kopernicus]: StarLightSwitcher: Set active star => " + CelestialBody.bodyName);
+            KopernicusStar.Current = KopernicusStar.Stars.Find(s => s.sun == CelestialBody);
 
             // Set custom powerCurve for solar panels and reset Radiators
-            if (FlightGlobals.ActiveVessel != null)
+            if (FlightGlobals.ActiveVessel)
             {
-                /*
-                // SolarPanels
-                foreach (ModuleDeployableSolarPanel sp in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-                {
-                    sp.trackingBody = celestialBody;
-                    sp.trackingTransformLocal = celestialBody.transform;
-                    if (celestialBody.scaledBody)
-                    {
-                        sp.trackingTransformScaled = celestialBody.scaledBody.transform;
-                    }
-                    sp.GetTrackingBodyTransforms();
-                }*/
-
                 // Radiators
                 foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
                 {
-                    rad.trackingBody = celestialBody;
-                    rad.trackingTransformLocal = celestialBody.transform;
-                    if (celestialBody.scaledBody)
+                    rad.trackingBody = CelestialBody;
+                    rad.trackingTransformLocal = CelestialBody.transform;
+                    if (CelestialBody.scaledBody)
                     {
-                        rad.trackingTransformScaled = celestialBody.scaledBody.transform;
+                        rad.trackingTransformScaled = CelestialBody.scaledBody.transform;
                     }
                     rad.GetTrackingBodyTransforms();
                 }
@@ -97,13 +78,15 @@ namespace Kopernicus
             // Apply Sky
             GalaxyCubeControl.Instance.sunRef = KopernicusStar.Current;
             foreach (SkySphereControl c in Resources.FindObjectsOfTypeAll<SkySphereControl>())
+            {
                 c.sunRef = KopernicusStar.Current;
+            }
             Events.OnRuntimeUtilitySwitchStar.Fire(KopernicusStar.Current);
         }
 
         public Boolean IsActiveStar()
         {
-            return (KopernicusStar.Current.sun == celestialBody);
+            return KopernicusStar.Current.sun == CelestialBody;
         }
     }
 
@@ -114,7 +97,7 @@ namespace Kopernicus
         public List<StarComponent> stars;
 
         // On awake(), preserve the star
-        void Awake()
+        private void Awake()
         {
             // Don't run if Kopernicus is incompatible
             if (!CompatibilityChecker.IsCompatible())
@@ -128,7 +111,7 @@ namespace Kopernicus
             DontDestroyOnLoad (this);
         }
 
-        void Start()
+        private void Start()
         {
             // find all the stars in the system
             stars = PSystemManager.Instance.localBodies.SelectMany (body => body.scaledBody.GetComponentsInChildren<StarComponent>(true)).ToList();
@@ -140,64 +123,49 @@ namespace Kopernicus
             GameEvents.onLevelWasLoadedGUIReady.Add(scene => HomeStar().SetAsActive());
         }
 
-        void Update()
+        private void Update()
         {
             StarComponent selectedStar = null;
 
             // If we are in the tracking station, space center or game, 
-            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            if (HighLogic.LoadedScene != GameScenes.TRACKSTATION && HighLogic.LoadedScene != GameScenes.FLIGHT &&
+                HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
-                // Get the current position of the active vessel
-                if (PlanetariumCamera.fetch.enabled) 
-                {
-                    Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
-                    selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
-                } 
-                else if (FlightGlobals.ActiveVessel != null) 
-                {
-                    Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
-                    selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.celestialBody)).First ();
-                }
-                else if (SpaceCenter.Instance != null && SpaceCenter.Instance.SpaceCenterTransform != null)
-                {
-                    Vector3 position = SpaceCenter.Instance.SpaceCenterTransform.position;
-                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.celestialBody)).First();
-                }
+                return;
+            }
+            
+            // Get the current position of the active vessel
+            if (PlanetariumCamera.fetch.enabled) 
+            {
+                Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
+                selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.CelestialBody)).First ();
+            } 
+            else if (FlightGlobals.ActiveVessel) 
+            {
+                Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
+                selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.CelestialBody)).First ();
+            }
+            else if (SpaceCenter.Instance && SpaceCenter.Instance.SpaceCenterTransform)
+            {
+                Vector3 position = SpaceCenter.Instance.SpaceCenterTransform.position;
+                selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody)).First();
+            }
 
-                // If the star has been changed, update everything
-                if (selectedStar != null && !selectedStar.IsActiveStar())
-                {
-                    selectedStar.SetAsActive();
-                }
-                else if (selectedStar == null && !HomeStar().IsActiveStar())
-                {
-                    HomeStar().SetAsActive();
-                }
+            // If the star has been changed, update everything
+            if (selectedStar && !selectedStar.IsActiveStar())
+            {
+                selectedStar.SetAsActive();
+            }
+            else if (!selectedStar && !HomeStar().IsActiveStar())
+            {
+                HomeStar().SetAsActive();
             }
         }
 
         // Select the home star
-        public static StarComponent HomeStar()
+        private static StarComponent HomeStar()
         {
             return PSystemManager.Instance.localBodies.First (body => body.flightGlobalsIndex == 0).scaledBody.GetComponent<StarComponent> ();
-        }
-
-        // Debug a star's coronas
-        public static void DebugSunScaledSpace(GameObject scaledVersion)
-        {
-            // Debug the scaled space size of the star
-            Utility.PrintTransform (scaledVersion.transform, " " + scaledVersion.name + " Transform ");
-            Utility.DumpObjectProperties (scaledVersion.GetComponent<Renderer>().sharedMaterial);
-
-            // Get the sun corona objects in scaled space
-            foreach (SunCoronas corona in scaledVersion.GetComponentsInChildren<SunCoronas>(true)) 
-            {
-                Logger.Active.Log ("---- Sun Corona ----");
-                Utility.PrintTransform (corona.transform);
-                Utility.DumpObjectProperties (corona);
-                Utility.DumpObjectProperties (corona.GetComponent<Renderer>().sharedMaterial);
-                Logger.Active.Log ("--------------------");
-            }
         }
     }
 }

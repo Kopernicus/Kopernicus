@@ -17,62 +17,62 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexHeightMapStep : ModLoader<PQSMod_VertexHeightMapStep>
     {
-        namespace ModLoader
+        // The map texture for the planet
+        [ParserTarget("map", Optional = false)]
+        public Texture2DParser HeightMap
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightMapStep : ModLoader<PQSMod_VertexHeightMapStep>
-            {
-                // The map texture for the planet
-                [ParserTarget("map", Optional = false)]
-                public Texture2DParser heightMap
-                {
-                    get { return mod.heightMap; }
-                    set { mod.heightMap = value; }
-                }
+            get { return Mod.heightMap; }
+            set { Mod.heightMap = value; }
+        }
 
-                // Height map offset
-                [ParserTarget("offset")]
-                public NumericParser<Double> heightMapOffset 
-                {
-                    get { return mod.heightMapOffset; }
-                    set { mod.heightMapOffset = value; }
-                }
+        // Height map offset
+        [ParserTarget("offset")]
+        public NumericParser<Double> HeightMapOffset
+        {
+            get { return Mod.heightMapOffset; }
+            set { Mod.heightMapOffset = value; }
+        }
 
-                // Height map offset
-                [ParserTarget("deformity")]
-                public NumericParser<Double> heightMapDeformity
-                {
-                    get { return mod.heightMapDeformity; }
-                    set { mod.heightMapDeformity = value; }
-                }
+        // Height map offset
+        [ParserTarget("deformity")]
+        public NumericParser<Double> HeightMapDeformity
+        {
+            get { return Mod.heightMapDeformity; }
+            set { Mod.heightMapDeformity = value; }
+        }
 
-                // Height map offset
-                [ParserTarget("scaleDeformityByRadius")]
-                public NumericParser<Boolean> scaleDeformityByRadius
-                {
-                    get { return mod.scaleDeformityByRadius; }
-                    set { mod.scaleDeformityByRadius = value; }
-                }
+        // Height map offset
+        [ParserTarget("scaleDeformityByRadius")]
+        public NumericParser<Boolean> ScaleDeformityByRadius
+        {
+            get { return Mod.scaleDeformityByRadius; }
+            set { Mod.scaleDeformityByRadius = value; }
+        }
 
-                [ParserTarget("coastHeight")]
-                public NumericParser<Double> coastHeight
-                {
-                    get { return mod.coastHeight; }
-                    set { mod.coastHeight = value; }
-                }
-            }
+        [ParserTarget("coastHeight")]
+        public NumericParser<Double> CoastHeight
+        {
+            get { return Mod.coastHeight; }
+            set { Mod.coastHeight = value; }
         }
     }
 }

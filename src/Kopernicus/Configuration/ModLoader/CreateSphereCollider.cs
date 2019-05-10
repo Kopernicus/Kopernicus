@@ -17,31 +17,30 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class CreateSphereCollider : ModLoader<PQSMod_CreateSphereCollider>
     {
-        namespace ModLoader
+        // radiusOffset
+        [ParserTarget("radiusOffset")]
+        public NumericParser<Single> RadiusOffset
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class CreateSphereCollider : ModLoader<PQSMod_CreateSphereCollider>
-            {
-                // radiusOffset
-                [ParserTarget("radiusOffset")]
-                public NumericParser<Single> radiusOffset
-                {
-                    get { return mod.radiusOffset; }
-                    set { mod.radiusOffset = value; }
-                }
-            }
+            get { return Mod.radiusOffset; }
+            set { Mod.radiusOffset = value; }
         }
     }
 }

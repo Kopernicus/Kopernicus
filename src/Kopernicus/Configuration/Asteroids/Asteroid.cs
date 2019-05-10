@@ -17,68 +17,69 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.Asteroids
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class Asteroid
     {
-        namespace Asteroids
-        {
-            [RequireConfigType(ConfigType.Node)]
-            public class Asteroid
-            {
-                // Name
-                [ParserTarget("name")]
-                public String name { get; set; }
+        // Name
+        [ParserTarget("name")]
+        public String Name { get; set; }
 
-                // Spawning Locations
-                [ParserTarget("Locations")]
-                public Location location = new Location();
+        // Spawning Locations
+        [ParserTarget("Locations")]
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+        public Location Location = new Location();
 
-                // Spawn interval
-                [ParserTarget("interval")]
-                public NumericParser<Single> interval { get; set; }
+        // Spawn interval
+        [ParserTarget("interval")]
+        public NumericParser<Single> Interval { get; set; }
 
-                // Maximal untracked lifetime
-                [ParserTarget("maxUntrackedLifetime")]
-                public NumericParser<Single> maxUntrackedLifetime { get; set; }
+        // Maximal untracked lifetime
+        [ParserTarget("maxUntrackedLifetime")]
+        public NumericParser<Single> MaxUntrackedLifetime { get; set; }
 
-                // Minimal untracked lifetime
-                [ParserTarget("minUntrackedLifetime")]
-                public NumericParser<Single> minUntrackedLifetime { get; set; }
+        // Minimal untracked lifetime
+        [ParserTarget("minUntrackedLifetime")]
+        public NumericParser<Single> MinUntrackedLifetime { get; set; }
 
-                // Probability of a spawn
-                [ParserTarget("probability")]
-                public NumericParser<Single> probability { get; set; }
+        // Probability of a spawn
+        [ParserTarget("probability")]
+        public NumericParser<Single> Probability { get; set; }
 
-                // Min Limit
-                [ParserTarget("spawnGroupMinLimit")]
-                public NumericParser<Int32> spawnGroupMinLimit { get; set; }
+        // Min Limit
+        [ParserTarget("spawnGroupMinLimit")]
+        public NumericParser<Int32> SpawnGroupMinLimit { get; set; }
 
-                // Max Limit
-                [ParserTarget("spawnGroupMaxLimit")]
-                public NumericParser<Int32> spawnGroupMaxLimit { get; set; }
+        // Max Limit
+        [ParserTarget("spawnGroupMaxLimit")]
+        public NumericParser<Int32> SpawnGroupMaxLimit { get; set; }
 
-                // Whether the asteroid name should be unique per savegame
-                [ParserTarget("uniqueName")]
-                public NumericParser<Boolean> uniqueName = false;
+        // Whether the asteroid name should be unique per saved game
+        [ParserTarget("uniqueName")]
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+        public NumericParser<Boolean> UniqueName = false;
 
-                // Config Node that overloads the created vessel node
-                // Reason for the Caps: Sigma was messing up his configs
-                [ParserTarget("VESSEL")]
-                public ConfigNode vessel { get; set; }
+        // Config Node that overloads the created vessel node
+        // Reason for the Caps: Sigma was messing up his configs
+        [ParserTarget("VESSEL")]
+        public ConfigNode Vessel { get; set; }
 
-                // Classes of the asteroid
-                [ParserTarget("Size")]
-                public FloatCurveParser size { get; set; }
-            }
-        }
+        // Classes of the asteroid
+        [ParserTarget("Size")]
+        public FloatCurveParser Size { get; set; }
     }
 }

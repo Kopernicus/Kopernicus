@@ -17,77 +17,77 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexSimplexColorRGB : ModLoader<PQSMod_VertexSimplexColorRGB>
     {
-        namespace ModLoader
+        // blendColor
+        [ParserTarget("blendColor")]
+        public ColorParser BlendColor
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexSimplexColorRGB : ModLoader<PQSMod_VertexSimplexColorRGB>
+            get { return new Color(Mod.rBlend, Mod.gBlend, Mod.bBlend, 1); }
+            set
             {
-                // blendColor
-                [ParserTarget("blendColor")]
-                public ColorParser blendColor
-                {
-                    get { return new Color(mod.rBlend, mod.gBlend, mod.bBlend, 1); }
-                    set 
-                    {
-                        mod.bBlend = value.Value.b;
-                        mod.rBlend = value.Value.r;
-                        mod.gBlend = value.Value.g;
-                    }
-                }
-
-                // blend
-                [ParserTarget("blend")]
-                public NumericParser<Single> blend
-                {
-                    get { return mod.blend; }
-                    set { mod.blend = value; }
-                }
-
-                // frequency
-                [ParserTarget("frequency")]
-                public NumericParser<Double> frequency
-                {
-                    get { return mod.frequency; }
-                    set { mod.frequency = value; }
-                }
-
-                // octaves
-                [ParserTarget("octaves")]
-                public NumericParser<Double> octaves
-                {
-                    get { return mod.octaves; }
-                    set { mod.octaves = value; }
-                }
-
-                // persistence
-                [ParserTarget("persistence")]
-                public NumericParser<Double> persistence
-                {
-                    get { return mod.persistence; }
-                    set { mod.persistence = value; }
-                }
-
-                // seed
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return mod.seed; }
-                    set { mod.seed = value; }
-                }
+                Mod.bBlend = value.Value.b;
+                Mod.rBlend = value.Value.r;
+                Mod.gBlend = value.Value.g;
             }
+        }
+
+        // blend
+        [ParserTarget("blend")]
+        public NumericParser<Single> Blend
+        {
+            get { return Mod.blend; }
+            set { Mod.blend = value; }
+        }
+
+        // frequency
+        [ParserTarget("frequency")]
+        public NumericParser<Double> Frequency
+        {
+            get { return Mod.frequency; }
+            set { Mod.frequency = value; }
+        }
+
+        // octaves
+        [ParserTarget("octaves")]
+        public NumericParser<Double> Octaves
+        {
+            get { return Mod.octaves; }
+            set { Mod.octaves = value; }
+        }
+
+        // persistence
+        [ParserTarget("persistence")]
+        public NumericParser<Double> Persistence
+        {
+            get { return Mod.persistence; }
+            set { Mod.persistence = value; }
+        }
+
+        // seed
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.seed; }
+            set { Mod.seed = value; }
         }
     }
 }

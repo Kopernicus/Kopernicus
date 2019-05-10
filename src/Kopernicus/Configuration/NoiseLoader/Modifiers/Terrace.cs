@@ -17,47 +17,47 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Modifiers
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class Terrace : NoiseLoader<LibNoise.Modifiers.Terrace>
     {
-        namespace NoiseLoader
+        [ParserTarget("controlPoints", Optional = false)]
+        public NumericCollectionParser<Double> ControlPoints
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class Terrace : NoiseLoader<LibNoise.Modifiers.Terrace>
-            {
-                [ParserTarget("controlPoints", Optional = false)]
-                public NumericCollectionParser<Double> controlPoints
-                {
-                    get { return noise.ControlPoints; }
-                    set { noise.ControlPoints = value; }
-                }
+            get { return Noise.ControlPoints; }
+            set { Noise.ControlPoints = value; }
+        }
 
-                [ParserTarget("invertTerraces")]
-                public NumericParser<Boolean> invertTerraces
-                {
-                    get { return noise.InvertTerraces; }
-                    set { noise.InvertTerraces = value; }
-                }
+        [ParserTarget("invertTerraces")]
+        public NumericParser<Boolean> InvertTerraces
+        {
+            get { return Noise.InvertTerraces; }
+            set { Noise.InvertTerraces = value; }
+        }
 
-                [PreApply]
-                [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModule;
+        [PreApply] 
+        [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        public INoiseLoader SourceModule { get; set; }
 
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Modifiers.Terrace(sourceModule.Noise);
-                }
-            }
+        public override void Apply(ConfigNode node)
+        {
+            Noise = new LibNoise.Modifiers.Terrace(SourceModule.Noise);
         }
     }
 }

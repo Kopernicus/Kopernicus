@@ -17,40 +17,38 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class AltitudeAlpha : ModLoader<PQSMod_AltitudeAlpha>
     {
-        namespace ModLoader
+        // The depth of the atmosphere
+        [ParserTarget("atmosphereDepth")]
+        public NumericParser<Double> AtmosphereDepth
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class AltitudeAlpha : ModLoader<PQSMod_AltitudeAlpha>
-            {                    
-                // The depth of the athmospere
-                [ParserTarget("atmosphereDepth")]
-                public NumericParser<Double> atmosphereDepth 
-                {
-                    get { return mod.atmosphereDepth; }
-                    set { mod.atmosphereDepth = value; }
-                }
+            get { return Mod.atmosphereDepth; }
+            set { Mod.atmosphereDepth = value; }
+        }
 
-                // Invert?
-                [ParserTarget("invert")]
-                public NumericParser<Boolean> invert
-                {
-                    get { return mod.invert; }
-                    set { mod.invert = value; }
-                }
-            }
+        // Invert?
+        [ParserTarget("invert")]
+        public NumericParser<Boolean> Invert
+        {
+            get { return Mod.invert; }
+            set { Mod.invert = value; }
         }
     }
 }
-

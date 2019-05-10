@@ -17,161 +17,161 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using LibNoise;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Enumerations;
+using LibNoise;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexHeightNoiseVertHeightCurve2 : ModLoader<PQSMod_VertexHeightNoiseVertHeightCurve2>
     {
-        namespace ModLoader
+        // deformity
+        [ParserTarget("deformity")]
+        public NumericParser<Single> Deformity
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightNoiseVertHeightCurve2 : ModLoader<PQSMod_VertexHeightNoiseVertHeightCurve2>
-            {
-                // deformity
-                [ParserTarget("deformity")]
-                public NumericParser<Single> deformity
-                {
-                    get { return mod.deformity; }
-                    set { mod.deformity = value; }
-                }
+            get { return Mod.deformity; }
+            set { Mod.deformity = value; }
+        }
 
-                // ridgedAddFrequency
-                [ParserTarget("ridgedAddFrequency")]
-                public NumericParser<Single> ridgedAddFrequency
-                {
-                    get { return mod.ridgedAddFrequency; }
-                    set { mod.ridgedAddFrequency = value; }
-                }
+        // ridgedAddFrequency
+        [ParserTarget("ridgedAddFrequency")]
+        public NumericParser<Single> RidgedAddFrequency
+        {
+            get { return Mod.ridgedAddFrequency; }
+            set { Mod.ridgedAddFrequency = value; }
+        }
 
-                // ridgedAddLacunarity
-                [ParserTarget("ridgedAddLacunarity")]
-                public NumericParser<Single> ridgedAddLacunarity
-                {
-                    get { return mod.ridgedAddLacunarity; }
-                    set { mod.ridgedAddLacunarity = value; }
-                }
+        // ridgedAddLacunarity
+        [ParserTarget("ridgedAddLacunarity")]
+        public NumericParser<Single> RidgedAddLacunarity
+        {
+            get { return Mod.ridgedAddLacunarity; }
+            set { Mod.ridgedAddLacunarity = value; }
+        }
 
-                // ridgedAddOctaves
-                [ParserTarget("ridgedAddOctaves")]
-                public NumericParser<Int32> ridgedAddOctaves
-                {
-                    get { return mod.ridgedAddOctaves; }
-                    set { mod.ridgedAddOctaves = Mathf.Clamp(value, 1, 30); }
-                }
+        // ridgedAddOctaves
+        [ParserTarget("ridgedAddOctaves")]
+        public NumericParser<Int32> RidgedAddOctaves
+        {
+            get { return Mod.ridgedAddOctaves; }
+            set { Mod.ridgedAddOctaves = Mathf.Clamp(value, 1, 30); }
+        }
 
-                // ridgedAddOctaves
-                [ParserTarget("ridgedAddSeed")]
-                public NumericParser<Int32> ridgedAddSeed
-                {
-                    get { return mod.ridgedAddSeed; }
-                    set { mod.ridgedAddSeed = value; }
-                }
+        // ridgedAddOctaves
+        [ParserTarget("ridgedAddSeed")]
+        public NumericParser<Int32> RidgedAddSeed
+        {
+            get { return Mod.ridgedAddSeed; }
+            set { Mod.ridgedAddSeed = value; }
+        }
 
-                // ridgedMode
-                [ParserTarget("ridgedMode")]
-                public EnumParser<KopernicusNoiseQuality> ridgedMode
-                {
-                    get { return (KopernicusNoiseQuality) (Int32) mod.ridgedMode; }
-                    set { mod.ridgedMode = (NoiseQuality) (Int32) value.Value; }
-                }
+        // ridgedMode
+        [ParserTarget("ridgedMode")]
+        public EnumParser<KopernicusNoiseQuality> RidgedMode
+        {
+            get { return (KopernicusNoiseQuality) (Int32) Mod.ridgedMode; }
+            set { Mod.ridgedMode = (NoiseQuality) (Int32) value.Value; }
+        }
 
-                // ridgedSubFrequency
-                [ParserTarget("ridgedSubFrequency")]
-                public NumericParser<Single> ridgedSubFrequency
-                {
-                    get { return mod.ridgedSubFrequency; }
-                    set { mod.ridgedSubFrequency = value; }
-                }
+        // ridgedSubFrequency
+        [ParserTarget("ridgedSubFrequency")]
+        public NumericParser<Single> RidgedSubFrequency
+        {
+            get { return Mod.ridgedSubFrequency; }
+            set { Mod.ridgedSubFrequency = value; }
+        }
 
-                // ridgedSubLacunarity
-                [ParserTarget("ridgedSubLacunarity")]
-                public NumericParser<Single> ridgedSubLacunarity
-                {
-                    get { return mod.ridgedSubLacunarity; }
-                    set { mod.ridgedSubLacunarity = value; }
-                }
+        // ridgedSubLacunarity
+        [ParserTarget("ridgedSubLacunarity")]
+        public NumericParser<Single> RidgedSubLacunarity
+        {
+            get { return Mod.ridgedSubLacunarity; }
+            set { Mod.ridgedSubLacunarity = value; }
+        }
 
-                // ridgedSubOctaves
-                [ParserTarget("ridgedSubOctaves")]
-                public NumericParser<Int32> ridgedSubOctaves
-                {
-                    get { return mod.ridgedSubOctaves; }
-                    set { mod.ridgedSubOctaves = Mathf.Clamp(value, 1, 30); }
-                }
+        // ridgedSubOctaves
+        [ParserTarget("ridgedSubOctaves")]
+        public NumericParser<Int32> RidgedSubOctaves
+        {
+            get { return Mod.ridgedSubOctaves; }
+            set { Mod.ridgedSubOctaves = Mathf.Clamp(value, 1, 30); }
+        }
 
-                // ridgedSubSeed
-                [ParserTarget("ridgedSubSeed")]
-                public NumericParser<Int32> ridgedSubSeed
-                {
-                    get { return mod.ridgedSubSeed; }
-                    set { mod.ridgedSubSeed = value; }
-                }
+        // ridgedSubSeed
+        [ParserTarget("ridgedSubSeed")]
+        public NumericParser<Int32> RidgedSubSeed
+        {
+            get { return Mod.ridgedSubSeed; }
+            set { Mod.ridgedSubSeed = value; }
+        }
 
-                // simplexCurve
-                [ParserTarget("simplexCurve")]
-                public FloatCurveParser simplexCurve
-                {
-                    get { return mod.simplexCurve; }
-                    set { mod.simplexCurve = value; }
-                }
+        // simplexCurve
+        [ParserTarget("simplexCurve")]
+        public FloatCurveParser SimplexCurve
+        {
+            get { return Mod.simplexCurve; }
+            set { Mod.simplexCurve = value; }
+        }
 
-                // simplexFrequency
-                [ParserTarget("simplexFrequency")]
-                public NumericParser<Double> simplexFrequency
-                {
-                    get { return mod.simplexFrequency; }
-                    set { mod.simplexFrequency = value; }
-                }
+        // simplexFrequency
+        [ParserTarget("simplexFrequency")]
+        public NumericParser<Double> SimplexFrequency
+        {
+            get { return Mod.simplexFrequency; }
+            set { Mod.simplexFrequency = value; }
+        }
 
-                // simplexHeightEnd
-                [ParserTarget("simplexHeightEnd")]
-                public NumericParser<Double> simplexHeightEnd
-                {
-                    get { return mod.simplexHeightEnd; }
-                    set { mod.simplexHeightEnd = value; }
-                }
+        // simplexHeightEnd
+        [ParserTarget("simplexHeightEnd")]
+        public NumericParser<Double> SimplexHeightEnd
+        {
+            get { return Mod.simplexHeightEnd; }
+            set { Mod.simplexHeightEnd = value; }
+        }
 
-                // simplexHeightStart
-                [ParserTarget("simplexHeightStart")]
-                public NumericParser<Double> simplexHeightStart
-                {
-                    get { return mod.simplexHeightStart; }
-                    set { mod.simplexHeightStart = value; }
-                }
+        // simplexHeightStart
+        [ParserTarget("simplexHeightStart")]
+        public NumericParser<Double> SimplexHeightStart
+        {
+            get { return Mod.simplexHeightStart; }
+            set { Mod.simplexHeightStart = value; }
+        }
 
-                // simplexOctaves
-                [ParserTarget("simplexOctaves")]
-                public NumericParser<Double> simplexOctaves
-                {
-                    get { return mod.simplexOctaves; }
-                    set { mod.simplexOctaves = value; }
-                }
+        // simplexOctaves
+        [ParserTarget("simplexOctaves")]
+        public NumericParser<Double> SimplexOctaves
+        {
+            get { return Mod.simplexOctaves; }
+            set { Mod.simplexOctaves = value; }
+        }
 
-                // simplexPersistence
-                [ParserTarget("simplexPersistence")]
-                public NumericParser<Double> simplexPersistence
-                {
-                    get { return mod.simplexPersistence; }
-                    set { mod.simplexPersistence = value; }
-                }
+        // simplexPersistence
+        [ParserTarget("simplexPersistence")]
+        public NumericParser<Double> SimplexPersistence
+        {
+            get { return Mod.simplexPersistence; }
+            set { Mod.simplexPersistence = value; }
+        }
 
-                // simplexSeed
-                [ParserTarget("simplexSeed")]
-                public NumericParser<Int32> simplexSeed
-                {
-                    get { return mod.simplexSeed; }
-                    set { mod.simplexSeed = value; }
-                }
-            }
+        // simplexSeed
+        [ParserTarget("simplexSeed")]
+        public NumericParser<Int32> SimplexSeed
+        {
+            get { return Mod.simplexSeed; }
+            set { Mod.simplexSeed = value; }
         }
     }
 }

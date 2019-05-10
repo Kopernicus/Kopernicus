@@ -17,39 +17,38 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class SmoothLatitudeRange : ModLoader<PQSMod_SmoothLatitudeRange>
     {
-        namespace ModLoader
+        // latitudeRange
+        [ParserTarget("LatitudeRange", AllowMerge = true)]
+        public LandControl.LerpRangeLoader LatitudeRange
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class SmoothLatitudeRange : ModLoader<PQSMod_SmoothLatitudeRange>
-            {
-                // latitudeRange
-                [ParserTarget("LatitudeRange", AllowMerge = true)]
-                public LandControl.LerpRangeLoader latitudeRange
-                {
-                    get { return mod.latitudeRange == null ? null : new LandControl.LerpRangeLoader(mod.latitudeRange); }
-                    set { mod.latitudeRange = value.Value; }
-                }
+            get { return Mod.latitudeRange == null ? null : new LandControl.LerpRangeLoader(Mod.latitudeRange); }
+            set { Mod.latitudeRange = value.Value; }
+        }
 
-                // smoothToAltitude
-                [ParserTarget("smoothToAltitude")]
-                public NumericParser<Double> smoothToAltitude
-                {
-                    get { return mod.smoothToAltitude; }
-                    set { mod.smoothToAltitude = value; }
-                }
-            }
+        // smoothToAltitude
+        [ParserTarget("smoothToAltitude")]
+        public NumericParser<Double> SmoothToAltitude
+        {
+            get { return Mod.smoothToAltitude; }
+            set { Mod.smoothToAltitude = value; }
         }
     }
 }

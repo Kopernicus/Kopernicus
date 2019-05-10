@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,62 +25,65 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using KSP.Localization;
 using UnityEngine;
 
 namespace Kopernicus
 {
     // Globally used values
-    public class Templates
+    public static class Templates
     {
         // The reference mesh for ScaledSpace (Jools Mesh)
-        public static Mesh ReferenceGeosphere { get; set; }
+        public static readonly Mesh ReferenceGeosphere;
 
         // Finalize Orbits stuff
-        public static Double SOIMinRadiusMult = 2.0d;
-        public static Double SOIMinAltitude = 40000d;
+        public const Double SOI_MIN_RADIUS_MULTIPLIER = 2.0d;
+        public const Double SOI_MIN_ALTITUDE = 40000d;
 
         // Max view distance
-        public static Double maxViewDistance = -1d;
+        public static Double MaxViewDistance = -1d;
 
         // Global base epoch
-        public static Double epoch { get; set; }
+        public static Double Epoch;
 
         // Whether the main menu should be edited by Kopernicus
-        public static Boolean kopernicusMainMenu = true;
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")] 
+        [SuppressMessage("ReSharper", "ConvertToConstant.Global")]
+        public static Boolean KopernicusMainMenu = true;
 
         // The body that should appear in MainMenu
-        public static String menuBody { get; set; }
+        public static String MenuBody;
 
         // Whether the main menu body should be randomized
-        public static List<String> randomMainMenuBodies { get; set; }
+        public static readonly List<String> RandomMainMenuBodies;
         
         // The localized names of the presets
-        public static List<String> PresetDisplayNames { get; set; }    
+        public static readonly List<String> PresetDisplayNames;
         
         // The launch sites that should get removed
-        public static List<String> RemoveLaunchSites { get; set; }
+        public static List<String> RemoveLaunchSites;
 
         // Whether to force 3D rendering on orbits.
-        public static Boolean force3DOrbits = false;
+        public static Boolean Force3DOrbits;
         
         // A backup of all targets available in MapView
-        public static List<MapObject> mapTargets { get; set; }
+        public static List<MapObject> MapTargets;
         
         // Initialisation
         static Templates()
         {
             // We need to get the body for Jool (to steal it's mesh)
-            PSystemBody Jool = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Jool");
+            PSystemBody jool = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Jool");
 
             // Return it's mesh
-            ReferenceGeosphere = Jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+            ReferenceGeosphere = jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 
             // Main Menu body
-            menuBody = "Kerbin";
+            MenuBody = "Kerbin";
             
             // Random Main Menu bodies
-            randomMainMenuBodies = new List<String>();
+            RandomMainMenuBodies = new List<String>();
             
             // Presets
             PresetDisplayNames = new List<String>

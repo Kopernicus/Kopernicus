@@ -17,40 +17,38 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexColorSolid : ModLoader<PQSMod_VertexColorSolid>
     {
-        namespace ModLoader
+        // Amount of color that will be applied
+        [ParserTarget("blend")]
+        public NumericParser<Single> Blend
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexColorSolid : ModLoader<PQSMod_VertexColorSolid>
-            {
-                // Amount of color that will be applied
-                [ParserTarget("blend")]
-                public NumericParser<Single> blend
-                {
-                    get { return mod.blend; }
-                    set { mod.blend = value; }
-                }
+            get { return Mod.blend; }
+            set { Mod.blend = value; }
+        }
 
-                // The color used
-                [ParserTarget("color")]
-                public ColorParser color
-                {
-                    get { return mod.color; }
-                    set { mod.color = value; }
-                }
-            }
+        // The color used
+        [ParserTarget("color")]
+        public ColorParser Color
+        {
+            get { return Mod.color; }
+            set { Mod.color = value; }
         }
     }
 }
-

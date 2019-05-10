@@ -17,39 +17,38 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexDefineCoastLine : ModLoader<PQSMod_VertexDefineCoastLine>
     {
-        namespace ModLoader
+        // depthOffset
+        [ParserTarget("depthOffset")]
+        public NumericParser<Double> DepthOffset
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexDefineCoastLine : ModLoader<PQSMod_VertexDefineCoastLine>
-            {
-                // depthOffset
-                [ParserTarget("depthOffset")]
-                public NumericParser<Double> depthOffset
-                {
-                    get { return mod.depthOffset; }
-                    set { mod.depthOffset = value; }
-                }
+            get { return Mod.depthOffset; }
+            set { Mod.depthOffset = value; }
+        }
 
-                // oceanRadiusOffset
-                [ParserTarget("oceanRadiusOffset")]
-                public NumericParser<Double> oceanRadiusOffset
-                {
-                    get { return mod.oceanRadiusOffset; }
-                    set { mod.oceanRadiusOffset = value; }
-                }
-            }
+        // oceanRadiusOffset
+        [ParserTarget("oceanRadiusOffset")]
+        public NumericParser<Double> OceanRadiusOffset
+        {
+            get { return Mod.oceanRadiusOffset; }
+            set { Mod.oceanRadiusOffset = value; }
         }
     }
 }

@@ -17,130 +17,135 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class ScienceValuesLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBodyScienceParams>
     {
-        [RequireConfigType(ConfigType.Node)]
-        public class ScienceValuesLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBodyScienceParams>
+        // Science parameters we are going to be modifying
+        public CelestialBodyScienceParams Value { get; set; }
+
+        // Science multiplier (?) for landed science
+        [ParserTarget("landedDataValue")]
+        [KittopiaDescription("Science multiplier for landed science.")]
+        public NumericParser<Single> LandedDataValue
         {
-            // Science parameters we are going to be modifying
-            public CelestialBodyScienceParams Value { get; set; }
+            get { return Value.LandedDataValue; }
+            set { Value.LandedDataValue = value; }
+        }
 
-            // Science multipler (?) for landed science
-            [ParserTarget("landedDataValue")]
-            [KittopiaDescription("Science multipler for landed science.")]
-            public NumericParser<Single> landedDataValue 
-            {
-                get { return Value.LandedDataValue; }
-                set { Value.LandedDataValue = value; }
-            }
+        // Science multiplier (?) for splashed down science
+        [ParserTarget("splashedDataValue")]
+        [KittopiaDescription("Science multiplier for splashed down science.")]
+        public NumericParser<Single> SplashedDataValue
+        {
+            get { return Value.SplashedDataValue; }
+            set { Value.SplashedDataValue = value; }
+        }
 
-            // Science multipler (?) for splashed down science
-            [ParserTarget("splashedDataValue")]
-            [KittopiaDescription("Science multipler for splashed down science.")]
-            public NumericParser<Single> splashedDataValue 
-            {
-                get { return Value.SplashedDataValue; }
-                set { Value.SplashedDataValue = value; }
-            }
+        // Science multiplier (?) for flying low science
+        [ParserTarget("flyingLowDataValue")]
+        [KittopiaDescription("Science multiplier for flying low science.")]
+        public NumericParser<Single> FlyingLowDataValue
+        {
+            get { return Value.FlyingLowDataValue; }
+            set { Value.FlyingLowDataValue = value; }
+        }
 
-            // Science multipler (?) for flying low science
-            [ParserTarget("flyingLowDataValue")]
-            [KittopiaDescription("Science multipler for flying low science.")]
-            public NumericParser<Single> flyingLowDataValue 
-            {
-                get { return Value.FlyingLowDataValue; }
-                set { Value.FlyingLowDataValue = value; }
-            }
+        // Science multiplier (?) for flying high science
+        [ParserTarget("flyingHighDataValue")]
+        [KittopiaDescription("Science multiplier for flying high science.")]
+        public NumericParser<Single> FlyingHighDataValue
+        {
+            get { return Value.FlyingHighDataValue; }
+            set { Value.FlyingHighDataValue = value; }
+        }
 
-            // Science multipler (?) for flying high science
-            [ParserTarget("flyingHighDataValue")]
-            [KittopiaDescription("Science multipler for flying high science.")]
-            public NumericParser<Single> flyingHighDataValue 
-            {
-                get { return Value.FlyingHighDataValue; }
-                set { Value.FlyingHighDataValue = value; }
-            }
-            
-            // Science multipler (?) for in space low science
-            [ParserTarget("inSpaceLowDataValue")]
-            [KittopiaDescription("Science multipler for in space low science.")]
-            public NumericParser<Single> inSpaceLowDataValue
-            {
-                get { return Value.InSpaceLowDataValue; }
-                set { Value.InSpaceLowDataValue = value; }
-            }
-            
-            // Science multipler (?) for in space high science
-            [ParserTarget("inSpaceHighDataValue")]
-            [KittopiaDescription("Science multipler for in space high science.")]
-            public NumericParser<Single> inSpaceHighDataValue
-            {
-                get { return Value.InSpaceHighDataValue; }
-                set { Value.InSpaceHighDataValue = value; }
-            }
-            
-            // Some number describing recovery value (?) on this body.  Could be a multiplier
-            // for value OR describe a multiplier for recovery of a craft returning from this
-            // body....
-            [ParserTarget("recoveryValue")]
-            public NumericParser<Single> recoveryValue
-            {
-                get { return Value.RecoveryValue; }
-                set { Value.RecoveryValue = value; }
-            }
+        // Science multiplier (?) for in space low science
+        [ParserTarget("inSpaceLowDataValue")]
+        [KittopiaDescription("Science multiplier for in space low science.")]
+        public NumericParser<Single> InSpaceLowDataValue
+        {
+            get { return Value.InSpaceLowDataValue; }
+            set { Value.InSpaceLowDataValue = value; }
+        }
 
-            // Altitude when "flying at <body>" transistions from/to "from <body>'s upper atmosphere"
-            [ParserTarget("flyingAltitudeThreshold")]
-            [KittopiaDescription("Altitude when \"flying at <body>\" transistions from/to \"from <body>'s upper atmosphere\"")]
-            public NumericParser<Single> flyingAltitudeThreshold
-            {
-                get { return Value.flyingAltitudeThreshold; }
-                set { Value.flyingAltitudeThreshold = value; }
-            }
-            
-            // Altitude when "in space low" transistions from/to "in space high"
-            [ParserTarget("spaceAltitudeThreshold")]
-            [KittopiaDescription("Altitude when \"in space low\" transistions from/to \"in space high\"")]
-            public NumericParser<Single> spaceAltitudeThreshold
-            {
-                get { return Value.spaceAltitudeThreshold; }
-                set { Value.spaceAltitudeThreshold = value; }
-            }
+        // Science multiplier (?) for in space high science
+        [ParserTarget("inSpaceHighDataValue")]
+        [KittopiaDescription("Science multiplier for in space high science.")]
+        public NumericParser<Single> InSpaceHighDataValue
+        {
+            get { return Value.InSpaceHighDataValue; }
+            set { Value.InSpaceHighDataValue = value; }
+        }
 
-            // Default constructor
-            public ScienceValuesLoader()
-            {
-                Value = generatedBody.celestialBody.scienceValues;
-            }
+        // Some number describing recovery value (?) on this body.  Could be a multiplier
+        // for value OR describe a multiplier for recovery of a craft returning from this
+        // body....
+        [ParserTarget("recoveryValue")]
+        public NumericParser<Single> RecoveryValue
+        {
+            get { return Value.RecoveryValue; }
+            set { Value.RecoveryValue = value; }
+        }
 
-            // Standard constructor takes a science parameters object
-            public ScienceValuesLoader(CelestialBodyScienceParams value)
-            {
-                Value = value;
-            }
+        // Altitude when "flying at <body>" transitions from/to "from <body>'s upper atmosphere"
+        [ParserTarget("flyingAltitudeThreshold")]
+        [KittopiaDescription(
+            "Altitude when \"flying at <body>\" transitions from/to \"from <body>'s upper atmosphere\"")]
+        public NumericParser<Single> FlyingAltitudeThreshold
+        {
+            get { return Value.flyingAltitudeThreshold; }
+            set { Value.flyingAltitudeThreshold = value; }
+        }
 
-            // Apply event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-                Events.OnScienceValuesLoaderApply.Fire(this, node);
-            }
+        // Altitude when "in space low" transitions from/to "in space high"
+        [ParserTarget("spaceAltitudeThreshold")]
+        [KittopiaDescription("Altitude when \"in space low\" transitions from/to \"in space high\"")]
+        public NumericParser<Single> SpaceAltitudeThreshold
+        {
+            get { return Value.spaceAltitudeThreshold; }
+            set { Value.spaceAltitudeThreshold = value; }
+        }
 
-            // Post-Apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-                Events.OnScienceValuesLoaderPostApply.Fire(this, node);
-            }
+        // Default constructor
+        public ScienceValuesLoader()
+        {
+            Value = generatedBody.celestialBody.scienceValues;
+        }
+
+        // Standard constructor takes a science parameters object
+        public ScienceValuesLoader(CelestialBodyScienceParams value)
+        {
+            Value = value;
+        }
+
+        // Apply event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            Events.OnScienceValuesLoaderApply.Fire(this, node);
+        }
+
+        // Post-Apply event
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            Events.OnScienceValuesLoaderPostApply.Fire(this, node);
         }
     }
 }

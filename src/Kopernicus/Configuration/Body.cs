@@ -17,416 +17,432 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
+using Kopernicus.Components;
+using Kopernicus.ConfigParser;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Constants;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+    [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
+    public class Body : IParserEventSubscriber
     {
-        [RequireConfigType(ConfigType.Node)]
-        public class Body : IParserEventSubscriber
+        // Path of the ScaledSpaceCache (will eventually not matter much)
+        public const String SCALED_SPACE_CACHE_DIRECTORY = "Kopernicus/Cache";
+
+        // Body we are trying to edit
+        public PSystemBody GeneratedBody { get; set; }
+
+        // The CelestialBody component of the body
+        private CelestialBody _celestialBody;
+
+        public CelestialBody CelestialBody
         {
-            // Path of the ScaledSpaceCache (will eventually not matter much)
-            public const String ScaledSpaceCacheDirectory = "Kopernicus/Cache";
-
-            // Body we are trying to edit
-            public PSystemBody generatedBody { get; set; }
-
-            // The CelestialBody component of the body
-            private CelestialBody _celestialBody;
-            public CelestialBody celestialBody
+            get { return Injector.IsInPrefab ? GeneratedBody.celestialBody : _celestialBody; }
+            set
             {
-                get
+                if (!Injector.IsInPrefab)
                 {
-                    if (Injector.IsInPrefab)
-                        return generatedBody?.celestialBody;
-                    return _celestialBody;
-                }
-                set
-                {
-                    if (!Injector.IsInPrefab)
-                        _celestialBody = value;
+                    _celestialBody = value;
                 }
             }
+        }
 
-            // Name of this body
-            [PreApply]
-            [ParserTarget("name", Optional = false)]
-            [KittopiaHideOption]
-            public String name { get; set; }
+        // Name of this body
+        [PreApply]
+        [ParserTarget("name", Optional = false)]
+        [KittopiaHideOption]
+        public String Name { get; set; }
 
-            [ParserTarget("cacheFile")]
-            public String cacheFile
+        [ParserTarget("cacheFile")]
+        public String CacheFile
+        {
+            get { return CelestialBody.Get<String>("cacheFile", null); }
+            set { CelestialBody.Set("cacheFile", value); }
+        }
+
+        [ParserTarget("barycenter")]
+        [KittopiaHideOption]
+        public NumericParser<Boolean> Barycenter
+        {
+            get { return CelestialBody.Get("barycenter", false); }
+            set
             {
-                get { return celestialBody.Get<String>("cacheFile", null); }
-                set { celestialBody.Set("cacheFile", value); }
+                CelestialBody.Set("barycenter", value.Value);
+
+                // Reuse the selectable option, to reduce the amount of boilerplate code we need.
+                CelestialBody.Set("selectable", value.Value);
             }
+        }
 
-            [ParserTarget("barycenter")]
-            [KittopiaHideOption]
-            public NumericParser<Boolean> barycenter
+        [ParserTarget("cbNameLater")]
+        public String CbNameLater
+        {
+            get
             {
-                get { return celestialBody.Get("barycenter", false); }
-                set
+                NameChanger changer = CelestialBody.GetComponent<NameChanger>();
+                return changer ? changer.newName : null;
+            }
+            set
+            {
+                // Change the displayName
+                CelestialBody.bodyDisplayName = value;
+
+                // Set the NameChanger component
+                NameChanger changer = CelestialBody.gameObject.AddOrGetComponent<NameChanger>();
+                changer.oldName = CelestialBody.bodyName;
+                changer.newName = value;
+
+                // Update the name
+                if (!Injector.IsInPrefab)
                 {
-                    celestialBody.Set("barycenter", value.Value);
-                    
-                    // Reuse the selectable option, to reduce the amount of boilerplate code we need.
-                    celestialBody.Set("selectable", value.Value);
+                    changer.Start();
                 }
             }
+        }
 
-            [ParserTarget("cbNameLater")]
-            public String cbNameLater
+        // The main UBI (Unique Body Identifier) that is assigned to the body
+        [ParserTarget("identifier")]
+        public String Identifier
+        {
+            get { return CelestialBody.Get<String>("identifier", null); }
+            set { CelestialBody.Set("identifier", value); }
+        }
+
+        // All other UBIs the body implements
+        [ParserTargetCollection("self", Key = "implements", AllowMerge = false,
+            NameSignificance = NameSignificance.Key)]
+        public List<StringCollectionParser> Implements
+        {
+            get
             {
-                get
+                return new List<StringCollectionParser>
+                    {new StringCollectionParser(CelestialBody.Get("implements", new List<String>()))};
+            }
+            set { CelestialBody.Set("implements", value.SelectMany(v => v.Value).ToList()); }
+        }
+
+        // Finalize the orbit of the body?
+        [ParserTarget("finalizeOrbit")]
+        public NumericParser<Boolean> FinalizeOrbit
+        {
+            get { return CelestialBody.Get("finalizeBody", false); }
+            set { CelestialBody.Set("finalizeBody", value.Value); }
+        }
+
+        // Whether this body should be taken into account for the main menu body stuff
+        [ParserTarget("randomMainMenuBody")]
+        public NumericParser<Boolean> RandomMainMenuBody
+        {
+            get { return Templates.RandomMainMenuBodies.Contains(Name); }
+            set
+            {
+                if (value)
                 {
-                    NameChanger changer = celestialBody.GetComponent<NameChanger>();
-                    return changer ? changer.newName : null;
+                    Templates.RandomMainMenuBodies.Add(Name);
                 }
-                set
+            }
+        }
+
+        // Describes how often contracts should be generated for a body
+        [ParserTarget("contractWeight")]
+        public NumericParser<Int32> ContractWeight
+        {
+            get { return CelestialBody.Get("contractWeight", 30); }
+            set { CelestialBody.Set("contractWeight", value.Value); }
+        }
+
+        // Template property of a body - responsible for generating a PSystemBody from an existing one
+        [PreApply]
+        [ParserTarget("Template")]
+        [KittopiaHideOption]
+        public TemplateLoader Template { get; set; }
+
+        // Celestial body properties (description, mass, etc.)
+        [ParserTarget("Properties", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public PropertiesLoader Properties { get; set; }
+
+        // Wrapper around KSP's Orbit class for editing/loading
+        [ParserTarget("Orbit", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public OrbitLoader Orbit { get; set; }
+
+        // Wrapper around the settings for the world's scaled version
+        [ParserTarget("ScaledVersion", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public ScaledVersionLoader ScaledVersion { get; set; }
+
+        // Wrapper around the settings for the world's atmosphere
+        [ParserTarget("Atmosphere", AllowMerge = true)]
+        public AtmosphereLoader Atmosphere { get; set; }
+
+        // Wrapper around the settings for the PQS
+        [ParserTarget("PQS", AllowMerge = true)]
+        public PQSLoader Pqs { get; set; }
+
+        // Wrapper around the settings for the Ocean
+        [ParserTarget("Ocean", AllowMerge = true)]
+        public OceanLoader Ocean { get; set; }
+
+        // Wrapper around Ring class for editing/loading
+        [ParserTargetCollection("Rings", AllowMerge = true)]
+        public List<RingLoader> Rings { get; set; }
+
+        // Wrapper around Particle class for editing/loading
+        [ParserTargetCollection("Particles", AllowMerge = true)]
+        public List<ParticleLoader> Particles { get; set; }
+
+        [ParserTargetCollection("HazardousBody", AllowMerge = true)]
+        public List<HazardousBodyLoader> HazardousBody { get; set; }
+
+        // Wrapper around the settings for the SpaceCenter
+        [ParserTarget("SpaceCenter", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public SpaceCenterLoader SpaceCenter { get; set; }
+
+        // Wrapper around DebugMode settings
+        [ParserTarget("Debug")]
+        [KittopiaUntouchable]
+        public DebugLoader Debug { get; set; }
+
+        // Post spawn orbit patcher
+        [ParserTarget("PostSpawnOrbit")]
+        [KittopiaHideOption]
+        public ConfigNode PostSpawnOrbit
+        {
+            get { return CelestialBody.Get<ConfigNode>("orbitPatches", null); }
+            set { CelestialBody.Set("orbitPatches", value); }
+        }
+
+        [KittopiaAction("Export Body")]
+        [KittopiaDescription("Exports the body as a Kopernicus config file.")]
+        public void ExportConfig()
+        {
+            ConfigNode config = PlanetConfigExporter.CreateConfig(this);
+            ConfigNode kopernicus = new ConfigNode("@Kopernicus:NEEDS[!Kopernicus]");
+            kopernicus.AddNode(config);
+            ConfigNode wrapper = new ConfigNode();
+            wrapper.AddNode(kopernicus);
+
+            // Save the node
+            String dir = "GameData/KittopiaTech/PluginData/" + CelestialBody.transform.name + "/" +
+                         DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss");
+            Directory.CreateDirectory(KSPUtil.ApplicationRootPath + dir);
+            wrapper.Save(dir + "/" + Name + ".cfg",
+                "KittopiaTech - a Kopernicus Visual Editor");
+        }
+
+        // Parser Apply Event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            // If we have a template, generatedBody *is* the template body
+            if (Template != null && Template.Body)
+            {
+                GeneratedBody = Template.Body;
+
+                // Patch the game object names in the template
+                GeneratedBody.name = Name;
+                GeneratedBody.celestialBody.bodyName = Name;
+                GeneratedBody.celestialBody.transform.name = Name;
+                GeneratedBody.celestialBody.bodyTransform.name = Name;
+                GeneratedBody.scaledVersion.name = Name;
+                if (GeneratedBody.pqsVersion != null)
                 {
-                    // Change the displayName
-                    celestialBody.bodyDisplayName = value;
-
-                    // Set the NameChanger component
-                    NameChanger changer = celestialBody.gameObject.AddOrGetComponent<NameChanger>();
-                    changer.oldName = celestialBody.bodyName;
-                    changer.newName = value;
-
-                    // Update the name
-                    if (!Injector.IsInPrefab)
+                    GeneratedBody.pqsVersion.name = Name;
+                    GeneratedBody.pqsVersion.gameObject.name = Name;
+                    GeneratedBody.pqsVersion.transform.name = Name;
+                    foreach (PQS p in GeneratedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
                     {
-                        changer.Start();
+                        p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
                     }
+                    GeneratedBody.celestialBody.pqsController = GeneratedBody.pqsVersion;
                 }
-            }
 
-            // Flight globals index of this body - for computing reference id
-            // [ParserTarget("flightGlobalsIndex")]
-            // public NumericParser<Int32> flightGlobalsIndex
-            // {
-            //     get { return generatedBody.flightGlobalsIndex; }
-            //     set { generatedBody.flightGlobalsIndex = value.value; }
-            // }
-            // Kill this with fire. I mean, it's not 2013 anymore
-
-            // The main UBI (Unique Body Identifier) that is assigned to the body
-            [ParserTarget("identifier")]
-            public String identifier
-            {
-                get { return celestialBody.Get<String>("identifier", null); }
-                set { celestialBody.Set("identifier", value); }
-            }
-
-            // All other UBIs the body implements
-            [ParserTargetCollection("self", Key = "implements", AllowMerge = false, NameSignificance = NameSignificance.Key)]
-            public List<StringCollectionParser> implements
-            {
-                get { return new List<StringCollectionParser> { new StringCollectionParser(celestialBody.Get("implements", new List<String>()))}; }
-                set { celestialBody.Set("implements", value.SelectMany(v => v.Value).ToList()); }
-            }
-
-            // Finalize the orbit of the body?
-            [ParserTarget("finalizeOrbit")]
-            public NumericParser<Boolean> finalizeOrbit
-            {
-                get { return celestialBody.Get("finalizeBody", false); }
-                set { celestialBody.Set("finalizeBody", value.Value); }
-            }
-
-            // Whether this body should be taken into account for the main menu body stuff
-            [ParserTarget("randomMainMenuBody")]
-            public NumericParser<Boolean> randomMainMenuBody
-            {
-                get { return Templates.randomMainMenuBodies.Contains(name); }
-                set { if (value) Templates.randomMainMenuBodies.Add(name); }
-            }
-
-            // Describes how often contracts should be generated for a body
-            [ParserTarget("contractWeight")]
-            public NumericParser<Int32> contractWeight
-            {
-                get { return celestialBody.Get("contractWeight", 30); }
-                set { celestialBody.Set("contractWeight", value.Value); }
-            }
-
-            // Template property of a body - responsible for generating a PSystemBody from an existing one
-            [PreApply]
-            [ParserTarget("Template")]
-            [KittopiaHideOption]
-            public TemplateLoader template { get; set; }
-
-            // Celestial body properties (description, mass, etc.)
-            [ParserTarget("Properties", AllowMerge = true)]
-            [KittopiaUntouchable]
-            public PropertiesLoader properties { get; set; }
-
-            // Wrapper around KSP's Orbit class for editing/loading
-            [ParserTarget("Orbit", AllowMerge = true)]
-            [KittopiaUntouchable]
-            public OrbitLoader orbit { get; set; }
-
-            // Wrapper around the settings for the world's scaled version
-            [ParserTarget("ScaledVersion", AllowMerge = true)]
-            [KittopiaUntouchable]
-            public ScaledVersionLoader scaledVersion { get; set; }
-
-            // Wrapper around the settings for the world's atmosphere
-            [ParserTarget("Atmosphere", AllowMerge = true)]
-            public AtmosphereLoader atmosphere { get; set; }
-
-            // Wrapper around the settings for the PQS
-            [ParserTarget("PQS", AllowMerge = true)]
-            public PQSLoader pqs { get; set; }
-
-            // Wrapper around the settings for the Ocean
-            [ParserTarget("Ocean", AllowMerge = true)]
-            public OceanLoader ocean { get; set; }
-
-            // Wrapper around Ring class for editing/loading
-            [ParserTargetCollection("Rings", AllowMerge = true)]
-            public List<RingLoader> rings { get; set; }
-
-            // Wrapper around Particle class for editing/loading
-            [ParserTargetCollection("Particles", AllowMerge = true)]
-            public List<ParticleLoader> particles { get; set; }
-            
-            [ParserTargetCollection("HazardousBody", AllowMerge = true)]
-            public List<HazardousBodyLoader> hazardousBody { get; set; }
-
-            // Wrapper around the settings for the SpaceCenter
-            [ParserTarget("SpaceCenter", AllowMerge = true)]
-            [KittopiaUntouchable]
-            public SpaceCenterLoader spaceCenter { get; set; }
-
-            // Wrapper around DebugMode settings
-            [ParserTarget("Debug")]
-            [KittopiaUntouchable]
-            public DebugLoader debug { get; set; }
-
-            // Post spawn orbit patcher
-            [ParserTarget("PostSpawnOrbit")]
-            [KittopiaHideOption]
-            public ConfigNode postSpawnOrbit
-            {
-                get { return celestialBody.Get<ConfigNode>("orbitPatches", null); }
-                set { celestialBody.Set("orbitPatches", value); }
-            }
-
-            [KittopiaAction("Export Body")]
-            [KittopiaDescription("Exports the body as a Kopernicus config file.")]
-            public void ExportConfig()
-            {
-                ConfigNode config = PlanetConfigExporter.CreateConfig(this);
-                ConfigNode kopernicus = new ConfigNode("@Kopernicus:NEEDS[!Kopernicus]");
-                kopernicus.AddNode(config);
-                ConfigNode wrapper = new ConfigNode();
-                wrapper.AddNode(kopernicus);
-                
-                // Save the node
-                String dir = "GameData/KittopiaTech/PluginData/" + celestialBody.transform.name + "/" +
-                             DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss");
-                Directory.CreateDirectory(KSPUtil.ApplicationRootPath + dir);
-                wrapper.Save(dir + "/" + name + ".cfg",
-                    "KittopiaTech - a Kopernicus Visual Editor");
-            }
-
-            // Parser Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-                // If we have a template, generatedBody *is* the template body
-                if (template != null && template.body)
+                // If we've changed the name, reset use_The_InName
+                if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
                 {
-                    generatedBody = template.body;
-
-                    // Patch the game object names in the template
-                    generatedBody.name = name;
-                    generatedBody.celestialBody.bodyName = name;
-                    generatedBody.celestialBody.transform.name = name;
-                    generatedBody.celestialBody.bodyTransform.name = name;
-                    generatedBody.scaledVersion.name = name;
-                    if (generatedBody.pqsVersion != null)
-                    {
-                        generatedBody.pqsVersion.name = name;
-                        generatedBody.pqsVersion.gameObject.name = name;
-                        generatedBody.pqsVersion.transform.name = name;
-                        foreach (PQS p in generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
-                            p.name = p.name.Replace(template.body.celestialBody.bodyName, name);
-                        generatedBody.celestialBody.pqsController = generatedBody.pqsVersion;
-                    }
-
-                    // If we've changed the name, reset use_The_InName
-                    if (generatedBody.name != template.originalBody.celestialBody.bodyName)
-                    {
-                        generatedBody.celestialBody.bodyDisplayName = generatedBody.celestialBody.bodyName;
-                    }
+                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyName;
                 }
-
-                // Otherwise we have to generate all the things for this body
-                else
-                {
-                    // Create the PSystemBody object
-                    GameObject generatedBodyGameObject = new GameObject(name);
-                    generatedBodyGameObject.transform.parent = Utility.Deactivator;
-                    generatedBody = generatedBodyGameObject.AddComponent<PSystemBody>();
-                    generatedBody.flightGlobalsIndex = 0;
-
-                    // Create the celestial body
-                    GameObject generatedBodyProperties = new GameObject(name);
-                    generatedBodyProperties.transform.parent = generatedBodyGameObject.transform;
-                    generatedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody>();
-                    generatedBody.celestialBody.progressTree = null;
-
-                    // Sensible defaults 
-                    generatedBody.celestialBody.bodyName = name;
-                    generatedBody.celestialBody.bodyDisplayName = name;
-                    generatedBody.celestialBody.atmosphere = false;
-                    generatedBody.celestialBody.ocean = false;
-
-                    // Create the scaled version
-                    generatedBody.scaledVersion = new GameObject(name);
-                    generatedBody.scaledVersion.layer = Constants.GameLayers.ScaledSpace;
-                    generatedBody.scaledVersion.transform.parent = Utility.Deactivator;
-                }
-                
-                // Create accessors
-                debug = new DebugLoader();
-                scaledVersion = new ScaledVersionLoader();
-
-                // Event
-                Events.OnBodyApply.Fire(this, node);
             }
 
-            // Parser Post Apply Event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
+            // Otherwise we have to generate all the things for this body
+            else
             {
-                // Create a barycenter
-                if (barycenter.Value)
-                {
-                    CreateBarycenter();
-                }
-                
-                // Add an OnDemand CBMap trigger
-                celestialBody.gameObject.AddComponent<CBMapTrigger>();
+                // Create the PSystemBody object
+                GameObject generatedBodyGameObject = new GameObject(Name);
+                generatedBodyGameObject.transform.parent = Utility.Deactivator;
+                GeneratedBody = generatedBodyGameObject.AddComponent<PSystemBody>();
+                GeneratedBody.flightGlobalsIndex = 0;
 
-                // Loads external parser targets
-                Parser.LoadParserTargetsExternal(node, "Kopernicus", configName: "Kopernicus");
+                // Create the celestial body
+                GameObject generatedBodyProperties = new GameObject(Name);
+                generatedBodyProperties.transform.parent = generatedBodyGameObject.transform;
+                GeneratedBody.celestialBody = generatedBodyProperties.AddComponent<CelestialBody>();
+                GeneratedBody.celestialBody.progressTree = null;
 
-                // Post gen celestial body
-                Utility.DumpObjectFields(generatedBody.celestialBody, " Celestial Body ");
+                // Sensible defaults 
+                GeneratedBody.celestialBody.bodyName = Name;
+                GeneratedBody.celestialBody.bodyDisplayName = Name;
+                GeneratedBody.celestialBody.atmosphere = false;
+                GeneratedBody.celestialBody.ocean = false;
 
-                // Events
-                Events.OnBodyPostApply.Fire(this, node);
-
-                // We need to generate new scaled space meshes if 
-                //   a) we are using a template and we've change either the radius or type of body
-                //   b) we aren't using a template
-                //   c) debug mode is active
-                if (!scaledVersion.deferMesh &&
-                    (template != null && (Math.Abs(template.radius - generatedBody.celestialBody.Radius) > 1.0 || template.type != scaledVersion.type.Value)
-                    || template == null || debug.update))
-                {
-
-                    scaledVersion.RebuildScaledSpace();
-                    Events.OnBodyGenerateScaledSpace.Fire(this, node);
-                }
+                // Create the scaled version
+                GeneratedBody.scaledVersion = new GameObject(Name) {layer = GameLayers.SCALED_SPACE};
+                GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
             }
 
-            [KittopiaAction("Convert Body to Barycenter")]
-            public void CreateBarycenter()
+            // Create accessors
+            Debug = new DebugLoader();
+            ScaledVersion = new ScaledVersionLoader();
+
+            // Event
+            Events.OnBodyApply.Fire(this, node);
+        }
+
+        // Parser Post Apply Event
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            // Create a barycenter
+            if (Barycenter.Value)
             {
-                // Set the value accordingly
-                barycenter = true;
-                
-                // Nuke the PQS
-                if (generatedBody.pqsVersion != null)
-                {
-                    generatedBody.pqsVersion.transform.parent = null;
-                    UnityEngine.Object.Destroy(generatedBody.pqsVersion);
-                    generatedBody.pqsVersion = null;
-                }
-
-                // Stop ScaledSpace Cache
-                scaledVersion.deferMesh = true;
-                celestialBody.scaledBody?.SetActive(false);
+                CreateBarycenter();
             }
 
-            /// <summary>
-            /// Creates a new Body from the Injector context.
-            /// </summary>
-            public Body()
+            // Add an OnDemand CBMap trigger
+            CelestialBody.gameObject.AddComponent<CBMapTrigger>();
+
+            // Loads external parser targets
+            Parser.LoadParserTargetsExternal(node, "Kopernicus", "Kopernicus");
+
+            // Post gen celestial body
+            Utility.DumpObjectFields(GeneratedBody.celestialBody, " Celestial Body ");
+
+            // Events
+            Events.OnBodyPostApply.Fire(this, node);
+
+            // We need to generate new scaled space meshes if 
+            //   a) we are using a template and we've change either the radius or type of body
+            //   b) we aren't using a template
+            //   c) debug mode is active
+            if (ScaledVersion.DeferMesh ||
+                (Template == null || !(Math.Abs(Template.Radius - GeneratedBody.celestialBody.Radius) > 1.0) &&
+                 Template.Type == ScaledVersion.Type.Value) && Template != null &&
+                !Debug.Update)
             {
-                rings = new List<RingLoader>();
-                particles = new List<ParticleLoader>();
+                return;
             }
+            ScaledVersion.RebuildScaledSpace();
+            Events.OnBodyGenerateScaledSpace.Fire(this, node);
+        }
 
-            /// <summary>
-            /// Creates a new Body from a spawned CelestialBody.
-            /// </summary>
-            public Body(CelestialBody celestialBody)
+        [KittopiaAction("Convert Body to Barycenter")]
+        public void CreateBarycenter()
+        {
+            // Set the value accordingly
+            Barycenter = true;
+
+            // Nuke the PQS
+            if (GeneratedBody.pqsVersion != null)
             {
-                this.celestialBody = celestialBody;
-                name = celestialBody.transform.name;
-                
-                // Create the accessors
-                properties = new PropertiesLoader(celestialBody);
-                if (celestialBody.orbitDriver != null)
-                {
-                    orbit = new OrbitLoader(celestialBody);
-                }
-                scaledVersion = new ScaledVersionLoader(celestialBody);
-                if (celestialBody.atmosphere)
-                {
-                    atmosphere = new AtmosphereLoader(celestialBody);
-                }
-
-                if (celestialBody.pqsController != null)
-                {
-                    pqs = new PQSLoader(celestialBody);
-                    if (celestialBody.pqsController.GetComponentsInChildren<PQS>(true)
-                        .Any(p => p.name.EndsWith("Ocean")))
-                    {
-                        ocean = new OceanLoader(celestialBody);
-                    }
-                }
-
-                rings = new List<RingLoader>();
-                foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
-                {
-                    rings.Add(new RingLoader(ring));
-                }
-                particles = new List<ParticleLoader>();
-                foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
-                    .GetComponentsInChildren<PlanetParticleEmitter>(true))
-                {
-                    particles.Add(new ParticleLoader(particle));
-                }
-                hazardousBody = new List<HazardousBodyLoader>();
-                foreach (HazardousBody body in celestialBody.GetComponents<HazardousBody>())
-                {
-                    hazardousBody.Add(new HazardousBodyLoader(body));
-                }
-                if (celestialBody.isHomeWorld)
-                {
-                    spaceCenter = new SpaceCenterLoader(celestialBody);
-                }
-                debug = new DebugLoader(celestialBody);
+                GeneratedBody.pqsVersion.transform.parent = null;
+                Object.Destroy(GeneratedBody.pqsVersion);
+                GeneratedBody.pqsVersion = null;
             }
+
+            // Stop ScaledSpace Cache
+            ScaledVersion.DeferMesh = true;
+            CelestialBody.scaledBody.SetActive(false);
+        }
+
+        /// <summary>
+        /// Creates a new Body from the Injector context.
+        /// </summary>
+        public Body()
+        {
+            Rings = new List<RingLoader>();
+            Particles = new List<ParticleLoader>();
+        }
+
+        /// <summary>
+        /// Creates a new Body from a spawned CelestialBody.
+        /// </summary>
+        public Body(CelestialBody celestialBody)
+        {
+            CelestialBody = celestialBody;
+            Name = celestialBody.transform.name;
+
+            // Create the accessors
+            Properties = new PropertiesLoader(celestialBody);
+            if (celestialBody.orbitDriver != null)
+            {
+                Orbit = new OrbitLoader(celestialBody);
+            }
+
+            ScaledVersion = new ScaledVersionLoader(celestialBody);
+            if (celestialBody.atmosphere)
+            {
+                Atmosphere = new AtmosphereLoader(celestialBody);
+            }
+
+            if (celestialBody.pqsController != null)
+            {
+                Pqs = new PQSLoader(celestialBody);
+                if (celestialBody.pqsController.GetComponentsInChildren<PQS>(true)
+                    .Any(p => p.name.EndsWith("Ocean")))
+                {
+                    Ocean = new OceanLoader(celestialBody);
+                }
+            }
+
+            Rings = new List<RingLoader>();
+            foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
+            {
+                Rings.Add(new RingLoader(ring));
+            }
+
+            Particles = new List<ParticleLoader>();
+            foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
+                .GetComponentsInChildren<PlanetParticleEmitter>(true))
+            {
+                Particles.Add(new ParticleLoader(particle));
+            }
+
+            HazardousBody = new List<HazardousBodyLoader>();
+            foreach (HazardousBody body in celestialBody.GetComponents<HazardousBody>())
+            {
+                HazardousBody.Add(new HazardousBodyLoader(body));
+            }
+
+            if (celestialBody.isHomeWorld)
+            {
+                SpaceCenter = new SpaceCenterLoader(celestialBody);
+            }
+
+            Debug = new DebugLoader(celestialBody);
         }
     }
 }

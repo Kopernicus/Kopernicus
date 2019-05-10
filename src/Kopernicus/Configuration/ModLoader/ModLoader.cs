@@ -17,139 +17,147 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
+using Kopernicus.Constants;
 using Kopernicus.UI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public abstract class ModLoader<T> : BaseLoader, IModLoader, IPatchable, ICreatable<PQSMod>,
+        ICreatable<CelestialBody>, ITypeParser<T> where T : PQSMod
     {
-        namespace ModLoader
+        // The mod loader must always be able to return a mod
+        public T Mod { get; set; }
+
+        // The mod loader must always be able to return a mod
+        T ITypeParser<T>.Value
         {
-            [RequireConfigType(ConfigType.Node)]
-            public abstract class ModLoader<T> : BaseLoader, IModLoader, IPatchable, ICreatable<PQSMod>, ICreatable<CelestialBody>, ITypeParser<T> where T : PQSMod
+            get { return Mod; }
+            set { Mod = value; }
+        }
+
+        // The mod loader must always be able to return a mod
+        PQSMod IModLoader.Mod
+        {
+            get { return Mod; }
+            set { Mod = (T) value; }
+        }
+
+        /// <summary>
+        /// Returns the currently edited PQS
+        /// </summary>
+        protected PQS PqsVersion
+        {
+            get
             {
-                // The mod loader must always be able to return a mod
-                public T mod { get; set; }
-
-                // The mod loader must always be able to return a mod
-                T ITypeParser<T>.Value
+                if (_pqsVersionOverride != null)
                 {
-                    get { return mod; }
-                    set { mod = value; }
+                    return _pqsVersionOverride;
                 }
 
-                // The mod loader must always be able to return a mod
-                PQSMod IModLoader.Mod
+                try
                 {
-                    get { return mod; }
-                    set { mod = (T) value; }
+                    return Parser.GetState<PQS>("Kopernicus:pqsVersion");
                 }
-
-                /// <summary>
-                /// Returns the currently edited PQS
-                /// </summary>
-                protected PQS pqsVersion
+                catch
                 {
-                    get
-                    {
-                        if (_pqsVersionOverride != null)
-                        {
-                            return _pqsVersionOverride;
-                        }
-                        try
-                        {
-                            return Parser.GetState<PQS>("Kopernicus:pqsVersion");
-                        }
-                        catch
-                        {
-                            return null;
-                        }
-                    }
-                }
-
-                private PQS _pqsVersionOverride;
-
-                // Mod loader provides basic PQS mod loading functions
-                [ParserTarget("order")]
-                public NumericParser<Int32> order
-                {
-                    get { return mod.order; }
-                    set { mod.order = value; }
-                }
-
-                // Mod loader provides basic PQS mod loading functions
-                [ParserTarget("enabled")]
-                public NumericParser<Boolean> enabled
-                {
-                    get { return mod.modEnabled; }
-                    set { mod.modEnabled = value; }
-                }
-
-                // The name of the PQSMod
-                [ParserTarget("name")]
-                public String name
-                {
-                    get { return mod.name; }
-                    set { mod.name = value; }
-                }
-
-                [KittopiaDestructor]
-                public void Destroy()
-                {
-                    UnityEngine.Object.Destroy(mod);
-                }
-
-                // Creates the a PQSMod of type T
-                void ICreatable.Create()
-                {
-                    Create(pqsVersion);
-                }
-
-                // Creates the a PQSMod of type T
-                void ICreatable<PQSMod>.Create(PQSMod value)
-                {
-                    Create((T)value, pqsVersion);
-                }
-
-                // Creates the a PQSMod from the specified body
-                void ICreatable<CelestialBody>.Create(CelestialBody value)
-                {
-                    _pqsVersionOverride = value.pqsController;
-                    Create(pqsVersion);
-                }
-
-                // Creates the a PQSMod of type T with given PQS
-                public virtual void Create(PQS pqsVersion)
-                {
-                    mod = new GameObject(typeof(T).Name.Replace("PQSMod_", "").Replace("PQS", "")).AddComponent<T>();
-                    mod.transform.parent = pqsVersion.transform;
-                    mod.sphere = pqsVersion;
-                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
-                }
-
-                // Creates the a PQSMod of type T with given PQS
-                void IModLoader.Create(PQSMod _mod, PQS pqsVersion)
-                {
-                    Create((T)_mod, pqsVersion);
-                }
-
-                // Grabs a PQSMod of type T from a parameter with a given PQS
-                public virtual void Create(T _mod, PQS pqsVersion)
-                {
-                    mod = _mod;
-                    mod.transform.parent = pqsVersion.transform;
-                    mod.sphere = pqsVersion;
-                    mod.gameObject.layer = Constants.GameLayers.LocalSpace;
+                    return null;
                 }
             }
+        }
+
+        private PQS _pqsVersionOverride;
+
+        // Mod loader provides basic PQS mod loading functions
+        [ParserTarget("order")]
+        public NumericParser<Int32> Order
+        {
+            get { return Mod.order; }
+            set { Mod.order = value; }
+        }
+
+        // Mod loader provides basic PQS mod loading functions
+        [ParserTarget("enabled")]
+        public NumericParser<Boolean> Enabled
+        {
+            get { return Mod.modEnabled; }
+            set { Mod.modEnabled = value; }
+        }
+
+        // The name of the PQSMod
+        [ParserTarget("name")]
+        public String name
+        {
+            get { return Mod.name; }
+            set { Mod.name = value; }
+        }
+
+        [KittopiaDestructor]
+        public void Destroy()
+        {
+            Object.Destroy(Mod);
+        }
+
+        // Creates the a PQSMod of type T
+        void ICreatable.Create()
+        {
+            Create(PqsVersion);
+        }
+
+        // Creates the a PQSMod of type T
+        void ICreatable<PQSMod>.Create(PQSMod value)
+        {
+            Create((T) value, PqsVersion);
+        }
+
+        // Creates the a PQSMod from the specified body
+        void ICreatable<CelestialBody>.Create(CelestialBody value)
+        {
+            _pqsVersionOverride = value.pqsController;
+            Create(PqsVersion);
+        }
+
+        // Creates the a PQSMod of type T with given PQS
+        public virtual void Create(PQS pqsVersion)
+        {
+            Mod = new GameObject(typeof(T).Name.Replace("PQSMod_", "").Replace("PQS", "")).AddComponent<T>();
+            Mod.transform.parent = pqsVersion.transform;
+            Mod.sphere = pqsVersion;
+            Mod.gameObject.layer = GameLayers.LOCAL_SPACE;
+        }
+
+        // Creates the a PQSMod of type T with given PQS
+        void IModLoader.Create(PQSMod mod, PQS pqsVersion)
+        {
+            Create((T) mod, pqsVersion);
+        }
+
+        // Grabs a PQSMod of type T from a parameter with a given PQS
+        public virtual void Create(T mod, PQS pqsVersion)
+        {
+            Mod = mod;
+            Mod.transform.parent = pqsVersion.transform;
+            Mod.sphere = pqsVersion;
+            Mod.gameObject.layer = GameLayers.LOCAL_SPACE;
         }
     }
 }

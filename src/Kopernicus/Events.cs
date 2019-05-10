@@ -17,18 +17,20 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Kopernicus.Components;
 using Kopernicus.Configuration;
 using Kopernicus.Configuration.Asteroids;
-using System;
-using System.ComponentModel;
-using System.Reflection;
+using Kopernicus.OnDemand;
 using UnityEngine;
 
 namespace Kopernicus
@@ -37,6 +39,8 @@ namespace Kopernicus
     /// Utility methods for creating custom game events
     /// </summary>
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     public class Events : MonoBehaviour
     {
         [Description("Injector.PreLoad")]
@@ -277,21 +281,61 @@ namespace Kopernicus
         private static EventData<ProtoVessel> OnRuntimeUtilitySpawnAsteroidNR { get; set; }
         [Description("RuntimeUtility.SwitchStar.NR")]
         private static EventVoid OnRuntimeUtilitySwitchStarNR { get; set; }
+        
+        [Description("Components.SwitchKSC")]
+        public static EventData<KSC> OnSwitchKSC { get; private set; }
+        [Description("Components.ApplyNameChange")]
+        public static EventData<NameChanger, CelestialBody> OnApplyNameChange { get; private set; }
 
-        void Awake()
+        [Description("Components.SwitchKSC.NR")]
+        private static EventVoid OnSwitchKSCNR { get; set; }
+        [Description("Components.ApplyNameChange.NR")]
+        private static EventData<CelestialBody> OnApplyNameChangeNR { get; set; }
+        
+        [Description("OnDemand.MapSO.Load")]
+        public static EventData<MapSODemand> OnMapSOLoad { get; private set; }
+        [Description("OnDemand.MapSO.Unload")]
+        public static EventData<MapSODemand> OnMapSOUnload { get; private set; }
+            
+        [Description("OnDemand.CBMapSO.Load")]
+        public static EventData<CBAttributeMapSODemand> OnCBMapSOLoad { get; private set; }
+        [Description("OnDemand.CBMapSO.Unload")]
+        public static EventData<CBAttributeMapSODemand> OnCBMapSOUnload { get; private set; }
+
+        [Description("OnDemand.ScaledSpace.Load")]
+        public static EventData<ScaledSpaceOnDemand> OnScaledSpaceLoad { get; private set; }
+        [Description("OnDemand.ScaledSpace.Unload")]
+        public static EventData<ScaledSpaceOnDemand> OnScaledSpaceUnload { get; private set; }
+            
+        [Description("OnDemand.MapSO.Load.NR")]
+        private static EventVoid OnMapSOLoadNR { get; set; }
+        [Description("OnDemand.MapSO.Unload.NR")]
+        private static EventVoid OnMapSOUnloadNR { get; set; }
+
+        [Description("OnDemand.CBMapSO.Load.NR")]
+        private static EventVoid OnCBMapSOLoadNR { get; set; }
+        [Description("OnDemand.CBMapSO.Unload.NR")]
+        private static EventVoid OnCBMapSOUnloadNR { get; set; }
+
+        [Description("OnDemand.ScaledSpace.Load.NR")]
+        private static EventVoid OnScaledSpaceLoadNR { get; set; }
+        [Description("OnDemand.ScaledSpace.Unload.NR")]
+        private static EventVoid OnScaledSpaceUnloadNR { get; set; }
+
+        private void Awake()
         {
             PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             for (Int32 i = 0; i < events.Length; i++)
             {
                 PropertyInfo info = events[i];
-                DescriptionAttribute description = (info.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[])[0];
-                events[i].SetValue(null, Activator.CreateInstance(events[i].PropertyType, new[] { "Kopernicus." + description.Description }), null);
+                DescriptionAttribute description = ((DescriptionAttribute[]) info.GetCustomAttributes(typeof(DescriptionAttribute), false))[0];
+                events[i].SetValue(null, Activator.CreateInstance(events[i].PropertyType, "Kopernicus." + description.Description), null);
             }
             RegisterNREvents();
             Destroy(this);
         }
 
-        void RegisterNREvents()
+        private static void RegisterNREvents()
         {            
             OnAFGLoaderApply.Add((a, c) => OnAFGLoaderApplyNR.Fire(c));
             OnAFGLoaderPostApply.Add((a, c) => OnAFGLoaderPostApplyNR.Fire(c));
@@ -330,13 +374,22 @@ namespace Kopernicus
             OnLoaderApply.Add((a, c) => OnLoaderApplyNR.Fire(c));
             OnLoaderPostApply.Add((a, c) => OnLoaderPostApplyNR.Fire(c));
             OnLoaderLoadBody.Add((a, c) => OnLoaderLoadBodyNR.Fire(c));
+            OnLoaderLoadedAllBodies.Add((a, c) => OnLoaderLoadedAllBodiesNR.Fire(c));
             OnLoaderLoadAsteroid.Add((a, c) => OnLoaderLoadAsteroidNR.Fire(c));
-            OnLoaderFinalizeBody.Add((a) => OnLoaderFinalizeBodyNR.Fire());
+            OnLoaderFinalizeBody.Add(a => OnLoaderFinalizeBodyNR.Fire());
             OnBodyApply.Add((a, c) => OnBodyApplyNR.Fire(c));
             OnBodyPostApply.Add((a, c) => OnBodyPostApplyNR.Fire(c));
             OnBodyGenerateScaledSpace.Add((a, c) => OnBodyGenerateScaledSpaceNR.Fire(c));
             OnRuntimeUtilitySpawnAsteroid.Add((a, c) => OnRuntimeUtilitySpawnAsteroidNR.Fire(c));
-            OnRuntimeUtilitySwitchStar.Add((a) => OnRuntimeUtilitySwitchStarNR.Fire());
+            OnRuntimeUtilitySwitchStar.Add(a => OnRuntimeUtilitySwitchStarNR.Fire());
+            OnSwitchKSC.Add(a => OnSwitchKSCNR.Fire());
+            OnApplyNameChange.Add((a, c) => OnApplyNameChangeNR.Fire(c));
+            OnMapSOLoad.Add(a => OnMapSOLoadNR.Fire());
+            OnMapSOUnload.Add(a => OnMapSOUnloadNR.Fire());
+            OnCBMapSOLoad.Add(a => OnCBMapSOLoadNR.Fire());
+            OnCBMapSOUnload.Add(a => OnCBMapSOUnloadNR.Fire());
+            OnScaledSpaceLoad.Add(a => OnScaledSpaceLoadNR.Fire());
+            OnScaledSpaceUnload.Add(a => OnScaledSpaceUnloadNR.Fire());
         }
     }
 }

@@ -17,95 +17,94 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexNoise : ModLoader<PQSMod_VertexNoise>
     {
-        namespace ModLoader
+        // falloff
+        [ParserTarget("falloff")]
+        public NumericParser<Single> Falloff
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexNoise : ModLoader<PQSMod_VertexNoise>
-            {
-                // falloff
-                [ParserTarget("falloff")]
-                public NumericParser<Single> falloff
-                {
-                    get { return mod.falloff; }
-                    set { mod.falloff = value; }
-                }
+            get { return Mod.falloff; }
+            set { Mod.falloff = value; }
+        }
 
-                // mesaVsPlainsBias
-                [ParserTarget("mesaVsPlainsBias")]
-                public NumericParser<Single> mesaVsPlainsBias
-                {
-                    get { return mod.mesaVsPlainsBias; }
-                    set { mod.mesaVsPlainsBias = value; }
-                }
+        // mesaVsPlainsBias
+        [ParserTarget("mesaVsPlainsBias")]
+        public NumericParser<Single> MesaVsPlainsBias
+        {
+            get { return Mod.mesaVsPlainsBias; }
+            set { Mod.mesaVsPlainsBias = value; }
+        }
 
-                // noiseDeformity
-                [ParserTarget("noiseDeformity")]
-                public NumericParser<Single> noiseDeformity
-                {
-                    get { return mod.noiseDeformity; }
-                    set { mod.noiseDeformity = value; }
-                }
+        // noiseDeformity
+        [ParserTarget("noiseDeformity")]
+        public NumericParser<Single> NoiseDeformity
+        {
+            get { return Mod.noiseDeformity; }
+            set { Mod.noiseDeformity = value; }
+        }
 
-                // noisePasses
-                [ParserTarget("noisePasses")]
-                public NumericParser<Int32> noisePasses
-                {
-                    get { return mod.noisePasses; }
-                    set { mod.noisePasses = value; }
-                }
+        // noisePasses
+        [ParserTarget("noisePasses")]
+        public NumericParser<Int32> NoisePasses
+        {
+            get { return Mod.noisePasses; }
+            set { Mod.noisePasses = value; }
+        }
 
-                // plainSmoothness
-                [ParserTarget("plainSmoothness")]
-                public NumericParser<Single> plainSmoothness
-                {
-                    get { return mod.plainSmoothness; }
-                    set { mod.plainSmoothness = value; }
-                }
+        // plainSmoothness
+        [ParserTarget("plainSmoothness")]
+        public NumericParser<Single> PlainSmoothness
+        {
+            get { return Mod.plainSmoothness; }
+            set { Mod.plainSmoothness = value; }
+        }
 
-                // plainsVsMountainSmoothness
-                [ParserTarget("plainsVsMountainSmoothness")]
-                public NumericParser<Single> plainsVsMountainSmoothness
-                {
-                    get { return mod.plainsVsMountainSmoothness; }
-                    set { mod.plainsVsMountainSmoothness = value; }
-                }
+        // plainsVsMountainSmoothness
+        [ParserTarget("plainsVsMountainSmoothness")]
+        public NumericParser<Single> PlainsVsMountainSmoothness
+        {
+            get { return Mod.plainsVsMountainSmoothness; }
+            set { Mod.plainsVsMountainSmoothness = value; }
+        }
 
-                // plainsVsMountainThreshold
-                [ParserTarget("plainsVsMountainThreshold")]
-                public NumericParser<Single> plainsVsMountainThreshold
-                {
-                    get { return mod.plainsVsMountainThreshold; }
-                    set { mod.plainsVsMountainThreshold = value; }
-                }
+        // plainsVsMountainThreshold
+        [ParserTarget("plainsVsMountainThreshold")]
+        public NumericParser<Single> PlainsVsMountainThreshold
+        {
+            get { return Mod.plainsVsMountainThreshold; }
+            set { Mod.plainsVsMountainThreshold = value; }
+        }
 
-                // seed
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return mod.seed; }
-                    set { mod.seed = value; }
-                }
+        // seed
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.seed; }
+            set { Mod.seed = value; }
+        }
 
-                // smoothness
-                [ParserTarget("smoothness")]
-                public NumericParser<Single> smoothness
-                {
-                    get { return mod.smoothness; }
-                    set { mod.smoothness = value; }
-                }
-            }
+        // smoothness
+        [ParserTarget("smoothness")]
+        public NumericParser<Single> Smoothness
+        {
+            get { return Mod.smoothness; }
+            set { Mod.smoothness = value; }
         }
     }
 }

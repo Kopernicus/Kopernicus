@@ -17,29 +17,29 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-namespace Kopernicus
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
+
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    /// <summary>
+    /// An interface that allows us to group ModLoaders without falling back to System.Object
+    /// </summary>
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public interface IModLoader
     {
-        namespace ModLoader
-        {
-            /// <summary>
-            /// An interface that allows us to group ModLoaders without falling back to System.Object
-            /// </summary>
-            [RequireConfigType(ConfigType.Node)]
-            public interface IModLoader
-            {
-                void Create(PQS pqsVersion);
-                void Create(PQSMod _mod, PQS pqsVersion);
-                
-                PQSMod Mod { get; set; }
-            }
-        }
+        void Create(PQS pqsVersion);
+        void Create(PQSMod mod, PQS pqsVersion);
+
+        PQSMod Mod { get; set; }
     }
 }

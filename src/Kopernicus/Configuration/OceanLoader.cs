@@ -17,385 +17,406 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Kopernicus.Components;
+using Kopernicus.ConfigParser;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.MaterialLoader;
 using Kopernicus.Configuration.ModLoader;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration 
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+    public class OceanLoader : BaseLoader, IParserEventSubscriber, ITypeParser<PQS>
     {
-        [RequireConfigType(ConfigType.Node)]
-        public class OceanLoader : BaseLoader, IParserEventSubscriber, ITypeParser<PQS>
+        /// <summary>
+        /// The Ocean PQS we're editing
+        /// </summary>
+        public PQS Value { get; set; }
+
+        /// <summary>
+        /// CelestialBody we're editing
+        /// </summary>
+        public CelestialBody Body { get; set; }
+
+        // We have an ocean?
+        [ParserTarget("ocean")]
+        public NumericParser<Boolean> MapOcean
         {
-            /// <summary>
-            /// The Ocean PQS we're editing
-            /// </summary>
-            public PQS Value { get; set; }
+            get { return Value.parentSphere.mapOcean && Body.ocean; }
+            set { Value.parentSphere.mapOcean = Body.ocean = value; }
+        }
 
-            /// <summary>
-            /// CelestialBody we're editing
-            /// </summary>
-            private CelestialBody body { get; set; }
+        // Color of the ocean on the map
+        [ParserTarget("oceanColor")]
+        public ColorParser OceanColor
+        {
+            get { return Value.parentSphere.mapOceanColor; }
+            set { Value.parentSphere.mapOceanColor = value; }
+        }
 
-            // We have an ocean?
-            [ParserTarget("ocean")]
-            public NumericParser<Boolean> mapOcean
+        // Height of the Ocean
+        [ParserTarget("oceanHeight")]
+        public NumericParser<Double> OceanHeight
+        {
+            get { return Value.parentSphere.mapOceanHeight; }
+            set { Value.parentSphere.mapOceanHeight = value; }
+        }
+
+        // Density of the Ocean
+        [ParserTarget("density")]
+        public NumericParser<Double> Density
+        {
+            get { return Body.oceanDensity; }
+            set { Body.oceanDensity = value; }
+        }
+
+        // PQS level of detail settings
+        [ParserTarget("minLevel")]
+        public NumericParser<Int32> MinLevel
+        {
+            get { return Value.minLevel; }
+            set { Value.minLevel = value; }
+        }
+
+        [ParserTarget("maxLevel")]
+        public NumericParser<Int32> MaxLevel
+        {
+            get { return Value.maxLevel; }
+            set { Value.maxLevel = value; }
+        }
+
+        [ParserTarget("minDetailDistance")]
+        public NumericParser<Double> MinDetailDistance
+        {
+            get { return Value.minDetailDistance; }
+            set { Value.minDetailDistance = value; }
+        }
+
+        [ParserTarget("maxQuadLengthsPerFrame")]
+        public NumericParser<Single> MaxQuadLengthsPerFrame
+        {
+            get { return Value.maxQuadLenghtsPerFrame; }
+            set { Value.maxQuadLenghtsPerFrame = value; }
+        }
+
+        // Surface Material of the PQS
+        [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+        [KittopiaUntouchable]
+        public Material SurfaceMaterial
+        {
+            get { return Value.surfaceMaterial; }
+            set { Value.surfaceMaterial = value; }
+        }
+
+        // Fallback Material of the PQS (its always the same material)
+        [ParserTarget("FallbackMaterial", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public Material FallbackMaterial
+        {
+            get { return Value.fallbackMaterial; }
+            set { Value.fallbackMaterial = value; }
+        }
+
+        // PQSMod loader
+        [ParserTargetCollection("Mods", AllowMerge = true, NameSignificance = NameSignificance.Type)]
+        [KittopiaUntouchable]
+        [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
+        public readonly List<IModLoader> Mods = new List<IModLoader>();
+
+        // Killer-Ocean
+        [ParserTarget("HazardousOcean", AllowMerge = true)]
+        public FloatCurveParser HazardousOcean
+        {
+            get
             {
-                get { return Value.parentSphere.mapOcean && body.ocean; }
-                set { Value.parentSphere.mapOcean = body.ocean = value; }
+                HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
+                return ocean == null ? null : ocean.heatCurve;
             }
-
-            // Color of the ocean on the map
-            [ParserTarget("oceanColor")]
-            public ColorParser oceanColor
+            set
             {
-                get { return Value.parentSphere.mapOceanColor; }
-                set { Value.parentSphere.mapOceanColor = value; }
-            }
-
-            // Height of the Ocean
-            [ParserTarget("oceanHeight")]
-            public NumericParser<Double> oceanHeight
-            {
-                get { return Value.parentSphere.mapOceanHeight; }
-                set { Value.parentSphere.mapOceanHeight = value; }
-            }
-
-            // Density of the Ocean
-            [ParserTarget("density")]
-            public NumericParser<Double> density
-            {
-                get { return body.oceanDensity; }
-                set { body.oceanDensity = value; }
-            }
-
-            // PQS level of detail settings
-            [ParserTarget("minLevel")]
-            public NumericParser<Int32> minLevel
-            {
-                get { return Value.minLevel; }
-                set { Value.minLevel = value; }
-            }
-
-            [ParserTarget("maxLevel")]
-            public NumericParser<Int32> maxLevel
-            {
-                get { return Value.maxLevel; }
-                set { Value.maxLevel = value; }
-            }
-
-            [ParserTarget("minDetailDistance")]
-            public NumericParser<Double> minDetailDistance
-            {
-                get { return Value.minDetailDistance; }
-                set { Value.minDetailDistance = value; }
-            }
-
-            [ParserTarget("maxQuadLengthsPerFrame")]
-            public NumericParser<Single> maxQuadLengthsPerFrame
-            {
-                get { return Value.maxQuadLenghtsPerFrame; }
-                set { Value.maxQuadLenghtsPerFrame = value; }
-            }
-
-            // Surface Material of the PQS
-            [ParserTarget("Material", AllowMerge = true, GetChild = false)]
-            [KittopiaUntouchable]
-            public Material surfaceMaterial
-            {
-                get { return Value.surfaceMaterial; }
-                set { Value.surfaceMaterial = value; }
-            }
-
-            // Fallback Material of the PQS (its always the same material)
-            [ParserTarget("FallbackMaterial", AllowMerge = true)]
-            [KittopiaUntouchable]
-            public Material fallbackMaterial
-            {
-                get { return Value.fallbackMaterial; }
-                set { Value.fallbackMaterial = value; }
-            }
-
-            // PQSMod loader
-            [ParserTargetCollection("Mods", AllowMerge = true, NameSignificance = NameSignificance.Type)]
-            [KittopiaUntouchable]
-            public List<IModLoader> mods = new List<IModLoader>();
-
-            // Killer-Ocean
-            [ParserTarget("HazardousOcean", AllowMerge = true)]
-            public FloatCurveParser hazardousOcean
-            {
-                get
+                HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
+                if (value == null && ocean != null)
                 {
-                    HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
-                    if (ocean == null)
-                    {
-                        return null;
-                    }
-                    return ocean.heatCurve;
-                }
-                set
-                {
-                    HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
-                    if (value == null && ocean != null)
-                    {
-                        UnityEngine.Object.Destroy(ocean);
-                        return;
-                    }
-                    if (value != null && ocean == null)
-                    {
-                        ocean = Value.gameObject.AddComponent<HazardousOcean>();
-                    }
-
-                    if (value != null)
-                    {
-                        ocean.heatCurve = value;
-                    }
-                }
-            }
-
-            // Ocean-Fog
-            [ParserTarget("Fog", AllowMerge = true)]
-            [KittopiaUntouchable]
-            public FogLoader fog;
-            
-            /// <summary>
-            /// Creates a new Ocean Loader from the Injector context.
-            /// </summary>
-            public OceanLoader()
-            {
-                // Is this the parser context?
-                if (!Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("Must be executed in Injector context.");
+                    Object.Destroy(ocean);
+                    return;
                 }
 
-                if (generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
+                if (value != null && ocean == null)
                 {
-                    // Save the PQSVersion
-                    Value = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
-
-                    // Get the required PQS information
-                    surfaceMaterial = new PQSOceanSurfaceQuadLoader(surfaceMaterial);
-                    surfaceMaterial.name = Guid.NewGuid().ToString();
-
-                    // Clone the fallback material of the PQS
-                    fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(fallbackMaterial);
-                    fallbackMaterial.name = Guid.NewGuid().ToString();
+                    ocean = Value.gameObject.AddComponent<HazardousOcean>();
                 }
-                else
-                {
-                    // Create a new PQS
-                    GameObject controllerRoot = new GameObject();
-                    controllerRoot.transform.parent = generatedBody.pqsVersion.transform;
-                    Value = controllerRoot.AddComponent<PQS>();
 
-                    // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
-                    // And I (Thomas) am at this time just too lazy to do it differently...
-                    PSystemBody Laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
-                    foreach (PQS oc in Laythe.pqsVersion.GetComponentsInChildren<PQS>(true))
+                if (value != null)
+                {
+                    ocean.heatCurve = value;
+                }
+            }
+        }
+
+        // Ocean-Fog
+        [ParserTarget("Fog", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public FogLoader Fog { get; set; }
+
+        /// <summary>
+        /// Creates a new Ocean Loader from the Injector context.
+        /// </summary>
+        public OceanLoader()
+        {
+            // Is this the parser context?
+            if (!Injector.IsInPrefab)
+            {
+                throw new InvalidOperationException("Must be executed in Injector context.");
+            }
+
+            if (generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
+            {
+                // Save the PQSVersion
+                Value = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true)
+                    .First(p => p.name.EndsWith("Ocean"));
+
+                // Get the required PQS information
+                SurfaceMaterial = new PQSOceanSurfaceQuadLoader(SurfaceMaterial) {name = Guid.NewGuid().ToString()};
+
+                // Clone the fallback material of the PQS
+                FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(FallbackMaterial)
+                {
+                    name = Guid.NewGuid().ToString()
+                };
+            }
+            else
+            {
+                // Create a new PQS
+                GameObject controllerRoot = new GameObject();
+                controllerRoot.transform.parent = generatedBody.pqsVersion.transform;
+                Value = controllerRoot.AddComponent<PQS>();
+
+                // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
+                // And I (Thomas) am at this time just too lazy to do it differently...
+                PSystemBody laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
+                foreach (PQS oc in laythe.pqsVersion.GetComponentsInChildren<PQS>(true))
+                {
+                    if (oc.name != "LaytheOcean")
                     {
-                        if (oc.name == "LaytheOcean")
-                        {
-                            // Copying Laythes Ocean-properties
-                            Utility.CopyObjectFields(oc, Value);
-
-                            // Load Surface material
-                            surfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
-
-                            // Load Fallback-Material
-                            fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oc.fallbackMaterial);
-                            break;
-                        }
+                        continue;
                     }
+                    
+                    // Copying Laythes Ocean-properties
+                    Utility.CopyObjectFields(oc, Value);
 
-                    // Load our new Material into the PQS
-                    surfaceMaterial.name = Guid.NewGuid().ToString();
+                    // Load Surface material
+                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
 
-                    // Load fallback material into the PQS            
-                    fallbackMaterial.name = Guid.NewGuid().ToString();
-
-                    // Create the UV planet relative position
-                    GameObject mod = new GameObject("_Material_SurfaceQuads");
-                    mod.transform.parent = controllerRoot.transform;
-                    PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                    uvs.sphere = Value;
-                    uvs.requirements = PQS.ModiferRequirements.Default;
-                    uvs.modEnabled = true;
-                    uvs.order = 999999;
+                    // Load Fallback-Material
+                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oc.fallbackMaterial);
+                    break;
                 }
 
-                // Assing the new PQS
-                body = generatedBody.celestialBody;
-                Value.name = generatedBody.name + "Ocean";
-                Value.transform.name = generatedBody.name + "Ocean";
-                Value.gameObject.name = generatedBody.name + "Ocean";
-                Value.radius = generatedBody.celestialBody.Radius;
-                Value.parentSphere = generatedBody.pqsVersion;
+                // Load our new Material into the PQS
+                SurfaceMaterial.name = Guid.NewGuid().ToString();
 
-                // Add the ocean PQS to the secondary renders of the CelestialBody Transform
-                PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).FirstOrDefault(m => m.transform.parent == generatedBody.pqsVersion.transform);
+                // Load fallback material into the PQS            
+                FallbackMaterial.name = Guid.NewGuid().ToString();
+
+                // Create the UV planet relative position
+                GameObject mod = new GameObject("_Material_SurfaceQuads");
+                mod.transform.parent = controllerRoot.transform;
+                PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
+                uvs.sphere = Value;
+                uvs.requirements = PQS.ModiferRequirements.Default;
+                uvs.modEnabled = true;
+                uvs.order = 999999;
+            }
+
+            // Assigning the new PQS
+            Body = generatedBody.celestialBody;
+            Value.name = generatedBody.name + "Ocean";
+            Value.transform.name = generatedBody.name + "Ocean";
+            Value.gameObject.name = generatedBody.name + "Ocean";
+            Value.radius = generatedBody.celestialBody.Radius;
+            Value.parentSphere = generatedBody.pqsVersion;
+
+            // Add the ocean PQS to the secondary renders of the CelestialBody Transform
+            PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion
+                .GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
+                .FirstOrDefault(m => m.transform.parent == generatedBody.pqsVersion.transform);
+            if (transform != null)
+            {
                 transform.planetFade.secondaryRenderers.Add(Value.gameObject);
-                
-                // Load existing mods
-                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
-                {
-                    Type modType = mod.GetType();
-                    foreach (Type loaderType in Parser.ModTypes)
-                    {
-                        if (loaderType.BaseType == null)
-                            continue;
-                        if (loaderType.BaseType.Namespace != "Kopernicus.Configuration.ModLoader")
-                            continue;
-                        if (!loaderType.BaseType.Name.StartsWith("ModLoader"))
-                            continue;
-                        if (loaderType.BaseType.GetGenericArguments()[0] != modType)
-                            continue;
-                        
-                        // We found our loader type
-                        IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                        loader.Create(mod, Value);
-                        mods.Add(loader);
-                    }
-                }
             }
 
-            /// <summary>
-            /// Creates a new Ocean Loader from a spawned CelestialBody.
-            /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
-            public OceanLoader(CelestialBody body)
+            // Load existing mods
+            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
             {
-                // Is this a spawned body?
-                if (body?.scaledBody == null || Injector.IsInPrefab)
+                Type modType = mod.GetType();
+                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+                foreach (Type loaderType in Parser.ModTypes)
                 {
-                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
-                }
-                
-                if (body.pqsController.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
-                {
-                    // Save the PQSVersion
-                    Value = body.pqsController.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
-
-                    // Get the required PQS information
-                    surfaceMaterial = new PQSOceanSurfaceQuadLoader(surfaceMaterial);
-                    surfaceMaterial.name = Guid.NewGuid().ToString();
-
-                    // Clone the fallback material of the PQS
-                    fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(fallbackMaterial);
-                    fallbackMaterial.name = Guid.NewGuid().ToString();
-                }
-                else
-                {
-                    // Create a new PQS
-                    GameObject controllerRoot = new GameObject();
-                    controllerRoot.transform.parent = body.pqsController.transform;
-                    Value = controllerRoot.AddComponent<PQS>();
-
-                    // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
-                    // And I (Thomas) am at this time just too lazy to do it differently...
-                    PSystemBody Laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
-                    foreach (PQS oc in Laythe.pqsVersion.GetComponentsInChildren<PQS>(true))
+                    if (!modLoaderType.IsAssignableFrom(loaderType))
                     {
-                        if (oc.name == "LaytheOcean")
-                        {
-                            // Copying Laythes Ocean-properties
-                            Utility.CopyObjectFields(oc, Value);
-
-                            // Load Surface material
-                            surfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
-
-                            // Load Fallback-Material
-                            fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oc.fallbackMaterial);
-                            break;
-                        }
+                        continue;
                     }
 
-                    // Load our new Material into the PQS
-                    surfaceMaterial.name = Guid.NewGuid().ToString();
+                    // We found our loader type
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
+                    loader.Create(mod, Value);
+                    Mods.Add(loader);
+                }
+            }
+        }
 
-                    // Load fallback material into the PQS            
-                    fallbackMaterial.name = Guid.NewGuid().ToString();
+        /// <summary>
+        /// Creates a new Ocean Loader from a spawned CelestialBody.
+        /// </summary>
+        [KittopiaConstructor(KittopiaConstructor.ParameterType.CelestialBody)]
+        public OceanLoader(CelestialBody body)
+        {
+            // Is this a spawned body?
+            if (body.scaledBody == null || Injector.IsInPrefab)
+            {
+                throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+            }
 
-                    // Create the UV planet relative position
-                    GameObject mod = new GameObject("_Material_SurfaceQuads");
-                    mod.transform.parent = controllerRoot.transform;
-                    PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                    uvs.sphere = Value;
-                    uvs.requirements = PQS.ModiferRequirements.Default;
-                    uvs.modEnabled = true;
-                    uvs.order = 999999;
+            if (body.pqsController.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
+            {
+                // Save the PQSVersion
+                Value = body.pqsController.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
+
+                // Get the required PQS information
+                SurfaceMaterial = new PQSOceanSurfaceQuadLoader(SurfaceMaterial) {name = Guid.NewGuid().ToString()};
+
+                // Clone the fallback material of the PQS
+                FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(FallbackMaterial)
+                {
+                    name = Guid.NewGuid().ToString()
+                };
+            }
+            else
+            {
+                // Create a new PQS
+                GameObject controllerRoot = new GameObject();
+                controllerRoot.transform.parent = body.pqsController.transform;
+                Value = controllerRoot.AddComponent<PQS>();
+
+                // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
+                // And I (Thomas) am at this time just too lazy to do it differently...
+                PSystemBody laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
+                foreach (PQS oc in laythe.pqsVersion.GetComponentsInChildren<PQS>(true))
+                {
+                    if (oc.name != "LaytheOcean")
+                    {
+                        continue;
+                    }
+                    
+                    // Copying Laythes Ocean-properties
+                    Utility.CopyObjectFields(oc, Value);
+
+                    // Load Surface material
+                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
+
+                    // Load Fallback-Material
+                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oc.fallbackMaterial);
+                    break;
                 }
 
-                // Assing the new PQS
-                this.body = body;
-                Value.name = body.transform.name + "Ocean";
-                Value.transform.name = body.transform.name + "Ocean";
-                Value.gameObject.name = body.transform.name + "Ocean";
-                Value.radius = body.Radius;
-                Value.parentSphere = body.pqsController;
+                // Load our new Material into the PQS
+                SurfaceMaterial.name = Guid.NewGuid().ToString();
 
-                // Add the ocean PQS to the secondary renders of the CelestialBody Transform
-                PQSMod_CelestialBodyTransform transform = body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).FirstOrDefault(m => m.transform.parent == body.pqsController.transform);
+                // Load fallback material into the PQS            
+                FallbackMaterial.name = Guid.NewGuid().ToString();
+
+                // Create the UV planet relative position
+                GameObject mod = new GameObject("_Material_SurfaceQuads");
+                mod.transform.parent = controllerRoot.transform;
+                PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
+                uvs.sphere = Value;
+                uvs.requirements = PQS.ModiferRequirements.Default;
+                uvs.modEnabled = true;
+                uvs.order = 999999;
+            }
+
+            // Assigning the new PQS
+            Body = body;
+            Transform bodyTransform = body.transform;
+            Value.name = bodyTransform.name + "Ocean";
+            Value.transform.name = bodyTransform.name + "Ocean";
+            Value.gameObject.name = bodyTransform.name + "Ocean";
+            Value.radius = body.Radius;
+            Value.parentSphere = body.pqsController;
+
+            // Add the ocean PQS to the secondary renders of the CelestialBody Transform
+            PQSMod_CelestialBodyTransform transform = body.pqsController
+                .GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
+                .FirstOrDefault(m => m.transform.parent == body.pqsController.transform);
+            if (transform != null)
+            {
                 transform.planetFade.secondaryRenderers.Add(Value.gameObject);
-                
-                // Load existing mods
-                foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
+            }
+
+            // Load existing mods
+            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
+            {
+                Type modType = mod.GetType();
+                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+                foreach (Type loaderType in Parser.ModTypes)
                 {
-                    Type modType = mod.GetType();
-                    foreach (Type loaderType in Parser.ModTypes)
+                    if (!modLoaderType.IsAssignableFrom(loaderType))
                     {
-                        if (loaderType.BaseType == null)
-                            continue;
-                        if (loaderType.BaseType.Namespace != "Kopernicus.Configuration.ModLoader")
-                            continue;
-                        if (!loaderType.BaseType.Name.StartsWith("ModLoader"))
-                            continue;
-                        if (loaderType.BaseType.GetGenericArguments()[0] != modType)
-                            continue;
-                        
-                        // We found our loader type
-                        IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                        loader.Create(mod, Value);
-                        mods.Add(loader);
+                        continue;
                     }
+
+                    // We found our loader type
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
+                    loader.Create(mod, Value);
+                    Mods.Add(loader);
                 }
-
-                fog = new FogLoader(body);
             }
 
-            // Apply Event
-            void IParserEventSubscriber.Apply(ConfigNode node)
-            {
-                // Make assumptions
-                mapOcean = true;
-                
-                // Share the current PQS
-                Parser.SetState("Kopernicus:pqsVersion", () => Value);
-                
-                Events.OnOceanLoaderApply.Fire(this, node);
-            }
+            Fog = new FogLoader(body);
+        }
 
-            // Post Apply
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-                // Reset the PQS state
-                Parser.ClearState("Kopernicus:pqsVersion");
+        // Apply Event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            // Make assumptions
+            MapOcean = true;
 
-                // Event
-                Events.OnOceanLoaderPostApply.Fire(this, node);
-            }
+            // Share the current PQS
+            Parser.SetState("Kopernicus:pqsVersion", () => Value);
+
+            // Event
+            Events.OnOceanLoaderApply.Fire(this, node);
+        }
+
+        // Post Apply
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            // Reset the PQS state
+            Parser.ClearState("Kopernicus:pqsVersion");
+
+            // Event
+            Events.OnOceanLoaderPostApply.Fire(this, node);
         }
     }
 }

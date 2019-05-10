@@ -17,39 +17,39 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexColorMapBlend : ModLoader<PQSMod_VertexColorMapBlend>
     {
-        namespace ModLoader
+        // The map texture for the planet
+        [ParserTarget("map")]
+        public MapSOParserRGB<MapSO> ColorMap
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexColorMapBlend : ModLoader<PQSMod_VertexColorMapBlend>
-            {                    
-                // The map texture for the planet
-                [ParserTarget("map")]
-                public MapSOParser_RGB<MapSO> colorMap 
-                {
-                    get { return mod.vertexColorMap; }
-                    set { mod.vertexColorMap = value; }
-                }
+            get { return Mod.vertexColorMap; }
+            set { Mod.vertexColorMap = value; }
+        }
 
-                // The blend value for the texture
-                [ParserTarget("blend")]
-                public NumericParser<Single> blend
-                {
-                    get { return mod.blend; }
-                    set { mod.blend = value; }
-                }
-            }
+        // The blend value for the texture
+        [ParserTarget("blend")]
+        public NumericParser<Single> Blend
+        {
+            get { return Mod.blend; }
+            set { Mod.blend = value; }
         }
     }
 }

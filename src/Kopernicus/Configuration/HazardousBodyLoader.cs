@@ -17,146 +17,153 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus.Components;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class HazardousBodyLoader : BaseLoader, ITypeParser<HazardousBody>
     {
-        [RequireConfigType(ConfigType.Node)]
-        public class HazardousBodyLoader : BaseLoader, ITypeParser<HazardousBody>
+        // Set-up our parental objects
+        public HazardousBody Value { get; set; }
+
+        // The average heat on the body
+        [ParserTarget("heat")]
+        [KittopiaDescription("The average heat on the body.")]
+        public NumericParser<Double> Heat
         {
-            // Set-up our parental objects
-            public HazardousBody Value { get; set; }
+            get { return Value.heatRate; }
+            set { Value.heatRate = value; }
+        }
 
-            // The average heat on the body
-            [ParserTarget("heat")]
-            [KittopiaDescription("The average heat on the body.")]
-            public NumericParser<Double> heat
+        // How much time passes between applying the heat to a vessel
+        [ParserTarget("interval")]
+        [KittopiaDescription("How much time passes between applying the heat to a vessel.")]
+        public NumericParser<Single> Interval
+        {
+            get { return Value.heatInterval; }
+            set { Value.heatInterval = value; }
+        }
+
+        // Controls the how much of the average heat gets applied at a certain altitude
+        [ParserTarget("AltitudeCurve")]
+        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain altitude.")]
+        public FloatCurveParser AltitudeCurve
+        {
+            get { return Value.altitudeCurve; }
+            set { Value.altitudeCurve = value; }
+        }
+
+        // Controls the how much of the average heat gets applied at a certain latitude
+        [ParserTarget("LatitudeCurve")]
+        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain latitude.")]
+        public FloatCurveParser LatitudeCurve
+        {
+            get { return Value.latitudeCurve; }
+            set { Value.latitudeCurve = value; }
+        }
+
+        // Controls the how much of the average heat gets applied at a certain longitude
+        [ParserTarget("LongitudeCurve")]
+        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain longitude.")]
+        public FloatCurveParser LongitudeCurve
+        {
+            get { return Value.longitudeCurve; }
+            set { Value.longitudeCurve = value; }
+        }
+
+        // Controls the how much of the average heat gets applied at a certain longitude
+        [ParserTarget("HeatMap")]
+        [KittopiaDescription("Greyscale map for fine control of the heat on a planet. black = 0, white = 1")]
+        public MapSOParserGreyScale<MapSO> HeatMap
+        {
+            get { return Value.heatMap; }
+            set { Value.heatMap = value; }
+        }
+
+
+        [KittopiaDestructor]
+        public void Destroy()
+        {
+            Object.Destroy(Value);
+        }
+
+        /// <summary>
+        /// Creates a new HazardousBody Loader from the Injector context.
+        /// </summary>
+        public HazardousBodyLoader()
+        {
+            // Is this the parser context?
+            if (!Injector.IsInPrefab)
             {
-                get { return Value.HeatRate; }
-                set { Value.HeatRate = value; }
+                throw new InvalidOperationException("Must be executed in Injector context.");
             }
 
-            // How much time passes between applying the heat to a vessel
-            [ParserTarget("interval")]
-            [KittopiaDescription("How much time passes between applying the heat to a vessel.")]
-            public NumericParser<Single> interval
+            // Store values
+            Value = generatedBody.celestialBody.gameObject.AddComponent<HazardousBody>();
+            Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+        }
+
+        /// <summary>
+        /// Creates a new HazardousBody Loader on a spawned CelestialBody.
+        /// </summary>
+        [KittopiaConstructor(KittopiaConstructor.ParameterType.CelestialBody)]
+        public HazardousBodyLoader(CelestialBody body)
+        {
+            // Is this a spawned body?
+            if (body.scaledBody == null || Injector.IsInPrefab)
             {
-                get { return Value.HeatInterval; }
-                set { Value.HeatInterval = value; }
+                throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
             }
 
-            // Controls the how much of the average heat gets applied at a certain altitude
-            [ParserTarget("AltitudeCurve")]
-            [KittopiaDescription("Controls the how much of the average heat gets applied at a certain altitude.")]
-            public FloatCurveParser altitudeCurve
+            // Store values
+            Value = body.gameObject.AddComponent<HazardousBody>();
+            Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+        }
+
+        /// <summary>
+        /// Creates a new HazardousBody Loader from an already existing component
+        /// </summary>
+        public HazardousBodyLoader(HazardousBody value)
+        {
+            // Store values
+            Value = value;
+
+            // Null safe
+            if (Value.altitudeCurve == null)
             {
-                get { return Value.AltitudeCurve; }
-                set { Value.AltitudeCurve = value; }
+                Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
             }
 
-            // Controls the how much of the average heat gets applied at a certain latitude
-            [ParserTarget("LatitudeCurve")]
-            [KittopiaDescription("Controls the how much of the average heat gets applied at a certain latitude.")]
-            public FloatCurveParser latitudeCurve
+            if (Value.latitudeCurve == null)
             {
-                get { return Value.LatitudeCurve; }
-                set { Value.LatitudeCurve = value; }
+                Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
             }
 
-            // Controls the how much of the average heat gets applied at a certain longitude
-            [ParserTarget("LongitudeCurve")]
-            [KittopiaDescription("Controls the how much of the average heat gets applied at a certain longitude.")]
-            public FloatCurveParser longitudeCurve
+            if (Value.longitudeCurve == null)
             {
-                get { return Value.LongitudeCurve; }
-                set { Value.LongitudeCurve = value; }
-            }
-            
-            // Controls the how much of the average heat gets applied at a certain longitude
-            [ParserTarget("HeatMap")]
-            [KittopiaDescription("Greyscale map for fine control of the heat on a planet. black = 0, white = 1")]
-            public MapSOParser_GreyScale<MapSO> heatMap
-            {
-                get { return Value.HeatMap; }
-                set { Value.HeatMap = value; }
-            }
-            
-
-            [KittopiaDestructor]
-            public void Destroy()
-            {
-                UnityEngine.Object.Destroy(Value);
-            }
-
-            /// <summary>
-            /// Creates a new HazardousBody Loader from the Injector context.
-            /// </summary>
-            public HazardousBodyLoader()
-            {
-                // Is this the parser context?
-                if (!Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("Must be executed in Injector context.");
-                }
-
-                // Store values
-                Value = generatedBody.celestialBody.gameObject.AddComponent<HazardousBody>();
-                Value.AltitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-                Value.LatitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-                Value.LongitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            }
-
-            /// <summary>
-            /// Creates a new HazardousBody Loader on a spawned CelestialBody.
-            /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
-            public HazardousBodyLoader(CelestialBody body)
-            {
-                // Is this a spawned body?
-                if (body?.scaledBody == null || Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
-                }
-
-                // Store values
-                Value = body.gameObject.AddComponent<HazardousBody>();
-                Value.AltitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-                Value.LatitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-                Value.LongitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            }
-
-            /// <summary>
-            /// Creates a new HazardousBody Loader from an already existing component
-            /// </summary>
-            public HazardousBodyLoader(HazardousBody value)
-            {
-                // Store values
-                Value = value;
-
-                // Null safe
-                if (Value.AltitudeCurve == null)
-                {
-                    Value.AltitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-                }
-                if (Value.LatitudeCurve == null)
-                {
-                    Value.LatitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-                }
-                if (Value.LongitudeCurve == null)
-                {
-                    Value.LongitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-                }
+                Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
             }
         }
     }

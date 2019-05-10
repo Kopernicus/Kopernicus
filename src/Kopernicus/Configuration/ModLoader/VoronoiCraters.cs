@@ -17,178 +17,178 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VoronoiCraters : ModLoader<PQSMod_VoronoiCraters>
     {
-        namespace ModLoader
+        // colorOpacity
+        [ParserTarget("colorOpacity")]
+        public NumericParser<Single> ColorOpacity
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VoronoiCraters : ModLoader<PQSMod_VoronoiCraters>
+            get { return Mod.colorOpacity; }
+            set { Mod.colorOpacity = value; }
+        }
+
+        // DebugColorMapping
+        [ParserTarget("DebugColorMapping")]
+        public NumericParser<Boolean> DebugColorMapping
+        {
+            get { return Mod.DebugColorMapping; }
+            set { Mod.DebugColorMapping = value; }
+        }
+
+        // Deformation of the Voronoi
+        [ParserTarget("deformation")]
+        public NumericParser<Double> Deformation
+        {
+            get { return Mod.deformation; }
+            set { Mod.deformation = value; }
+        }
+
+        // CraterCurve
+        [ParserTarget("CraterCurve")]
+        public FloatCurveParser CraterCurve
+        {
+            get { return Mod.craterCurve; }
+            set { Mod.craterCurve = value; }
+        }
+
+        // jitter
+        [ParserTarget("jitter")]
+        public NumericParser<Single> Jitter
+        {
+            get { return Mod.jitter; }
+            set { Mod.jitter = value; }
+        }
+
+        // JitterCurve
+        [ParserTarget("JitterCurve")]
+        public FloatCurveParser JitterCurve
+        {
+            get { return Mod.jitterCurve; }
+            set { Mod.jitterCurve = value; }
+        }
+
+        // jitterHeight
+        [ParserTarget("jitterHeight")]
+        public NumericParser<Single> JitterHeight
+        {
+            get { return Mod.jitterHeight; }
+            set { Mod.jitterHeight = value; }
+        }
+
+        // rFactor
+        [ParserTarget("rFactor")]
+        public NumericParser<Single> RFactor
+        {
+            get { return Mod.rFactor; }
+            set { Mod.rFactor = value; }
+        }
+
+        // rOffset
+        [ParserTarget("rOffset")]
+        public NumericParser<Single> ROffset
+        {
+            get { return Mod.rOffset; }
+            set { Mod.rOffset = value; }
+        }
+
+        // simplexFrequency
+        [ParserTarget("simplexFrequency")]
+        public NumericParser<Double> SimplexFrequency
+        {
+            get { return Mod.simplexFrequency; }
+            set { Mod.simplexFrequency = value; }
+        }
+
+        // simplexOctaves
+        [ParserTarget("simplexOctaves")]
+        public NumericParser<Double> SimplexOctaves
+        {
+            get { return Mod.simplexOctaves; }
+            set { Mod.simplexOctaves = value; }
+        }
+
+        // simplexPersistence
+        [ParserTarget("simplexPersistence")]
+        public NumericParser<Double> SimplexPersistence
+        {
+            get { return Mod.simplexPersistence; }
+            set { Mod.simplexPersistence = value; }
+        }
+
+        // simplexSeed
+        [ParserTarget("simplexSeed")]
+        public NumericParser<Int32> SimplexSeed
+        {
+            get { return Mod.simplexSeed; }
+            set { Mod.simplexSeed = value; }
+        }
+
+        // voronoiDisplacement
+        [ParserTarget("voronoiDisplacement")]
+        public NumericParser<Double> VoronoiDisplacement
+        {
+            get { return Mod.voronoiDisplacement; }
+            set { Mod.voronoiDisplacement = value; }
+        }
+
+        // voronoiFrequency
+        [ParserTarget("voronoiFrequency")]
+        public NumericParser<Double> VoronoiFrequency
+        {
+            get { return Mod.voronoiFrequency; }
+            set { Mod.voronoiFrequency = value; }
+        }
+
+        // voronoiSeed
+        [ParserTarget("voronoiSeed")]
+        public NumericParser<Int32> VoronoiSeed
+        {
+            get { return Mod.voronoiSeed; }
+            set { Mod.voronoiSeed = value; }
+        }
+
+        // Create the mod
+        public override void Create(PQS pqsVersion)
+        {
+            base.Create(pqsVersion);
+
+            // Create the base mod
+            PQSMod_VoronoiCraters clone =
+                Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Mun").pqsVersion
+                    .GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0];
+            Utility.CopyObjectFields(clone, Mod, false);
+        }
+
+        // Create the mod
+        public override void Create(PQSMod_VoronoiCraters mod, PQS pqsVersion)
+        {
+            base.Create(mod, pqsVersion);
+
+            // Create the base mod if needed
+            if (Mod.craterColourRamp != null)
             {
-                // colorOpacity
-                [ParserTarget("colorOpacity")]
-                public NumericParser<Single> colorOpacity
-                {
-                    get { return mod.colorOpacity; }
-                    set { mod.colorOpacity = value; }
-                }
-                
-                // DebugColorMapping
-                [ParserTarget("DebugColorMapping")]
-                public NumericParser<Boolean> DebugColorMapping
-                {
-                    get { return mod.DebugColorMapping; }
-                    set { mod.DebugColorMapping = value; }
-                }
-
-                // Deformation of the Voronoi
-                [ParserTarget("deformation")]
-                public NumericParser<Double> deformation
-                {
-                    get { return mod.deformation; }
-                    set { mod.deformation = value; }
-                }
-
-                // CraterCurve
-                [ParserTarget("CraterCurve")]
-                public FloatCurveParser craterCurve
-                {
-                    get { return mod.craterCurve; }
-                    set { mod.craterCurve = value; }
-                }
-
-                // jitter
-                [ParserTarget("jitter")]
-                public NumericParser<Single> jitter
-                {
-                    get { return mod.jitter; }
-                    set { mod.jitter = value; }
-                }
-
-                // JitterCurve
-                [ParserTarget("JitterCurve")]
-                public FloatCurveParser jitterCurve
-                {
-                    get { return mod.jitterCurve; }
-                    set { mod.jitterCurve = value; }
-                }
-
-                // jitterHeight
-                [ParserTarget("jitterHeight")]
-                public NumericParser<Single> jitterHeight
-                {
-                    get { return mod.jitterHeight; }
-                    set { mod.jitterHeight = value; }
-                }
-
-                // rFactor
-                [ParserTarget("rFactor")]
-                public NumericParser<Single> rFactor
-                {
-                    get { return mod.rFactor; }
-                    set { mod.rFactor = value; }
-                }
-
-                // rOffset
-                [ParserTarget("rOffset")]
-                public NumericParser<Single> rOffset
-                {
-                    get { return mod.rOffset; }
-                    set { mod.rOffset = value; }
-                }
-
-                // simplexFrequency
-                [ParserTarget("simplexFrequency")]
-                public NumericParser<Double> simplexFrequency
-                {
-                    get { return mod.simplexFrequency; }
-                    set { mod.simplexFrequency = value; }
-                }
-
-                // simplexOctaves
-                [ParserTarget("simplexOctaves")]
-                public NumericParser<Double> simplexOctaves
-                {
-                    get { return mod.simplexOctaves; }
-                    set { mod.simplexOctaves = value; }
-                }
-
-                // simplexPersistence
-                [ParserTarget("simplexPersistence")]
-                public NumericParser<Double> simplexPersistence
-                {
-                    get { return mod.simplexPersistence; }
-                    set { mod.simplexPersistence = value; }
-                }
-
-                // simplexSeed
-                [ParserTarget("simplexSeed")]
-                public NumericParser<Int32> simplexSeed
-                {
-                    get { return mod.simplexSeed; }
-                    set { mod.simplexSeed = value; }
-                }
-
-                // voronoiDisplacement
-                [ParserTarget("voronoiDisplacement")]
-                public NumericParser<Double> voronoiDisplacement
-                {
-                    get { return mod.voronoiDisplacement; }
-                    set { mod.voronoiDisplacement = value; }
-                }
-
-                // voronoiFrequency
-                [ParserTarget("voronoiFrequency")]
-                public NumericParser<Double> voronoiFrequency
-                {
-                    get { return mod.voronoiFrequency; }
-                    set { mod.voronoiFrequency = value; }
-                }
-
-                // voronoiSeed
-                [ParserTarget("voronoiSeed")]
-                public NumericParser<Int32> voronoiSeed
-                {
-                    get { return mod.voronoiSeed; }
-                    set { mod.voronoiSeed = value; }
-                }
-
-                // Create the mod
-                public override void Create(PQS pqsVersion)
-                {
-                    base.Create(pqsVersion);
-
-                    // Create the base mod
-                    PQSMod_VoronoiCraters clone =
-                        Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Mun").pqsVersion
-                            .GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
-                    Utility.CopyObjectFields(clone, base.mod, false);
-                }
-
-                // Create the mod
-                public override void Create(PQSMod_VoronoiCraters _mod, PQS pqsVersion)
-                {
-                    base.Create(_mod, pqsVersion);
-                    
-                    // Create the base mod if needed
-                    if (mod.craterColourRamp == null)
-                    {
-                        PQSMod_VoronoiCraters clone =
-                            Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Mun").pqsVersion
-                                .GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0] as PQSMod_VoronoiCraters;
-                        Utility.CopyObjectFields(clone, base.mod, false);
-                    }
-                }
+                return;
             }
+            PQSMod_VoronoiCraters clone =
+                Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Mun").pqsVersion
+                    .GetComponentsInChildren<PQSMod_VoronoiCraters>(true)[0];
+            Utility.CopyObjectFields(clone, Mod, false);
         }
     }
 }

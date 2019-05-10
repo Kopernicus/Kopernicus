@@ -17,36 +17,35 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Modifiers
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class Power : NoiseLoader<LibNoise.Modifiers.Power>
     {
-        namespace NoiseLoader
+        [PreApply] 
+        [ParserTarget("Base", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader BaseModule { get; set; }
+
+        [PreApply] 
+        [ParserTarget("Power", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader PowerModule { get; set; }
+
+        public override void Apply(ConfigNode node)
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class Power : NoiseLoader<LibNoise.Modifiers.Power>
-            {
-                [PreApply]
-                [ParserTarget("Base", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader baseModule;
-
-                [PreApply]
-                [ParserTarget("Power", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader powerModule;
-
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Modifiers.Power(baseModule.Noise, powerModule.Noise);
-                }
-            }
+            Noise = new LibNoise.Modifiers.Power(BaseModule.Noise, PowerModule.Noise);
         }
     }
 }

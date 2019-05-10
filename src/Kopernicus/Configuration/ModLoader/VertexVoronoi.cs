@@ -17,63 +17,62 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexVoronoi : ModLoader<PQSMod_VertexVoronoi>
     {
-        namespace ModLoader
+        // Deformation of the Voronoi
+        [ParserTarget("deformation")]
+        public NumericParser<Double> Deformation
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexVoronoi : ModLoader<PQSMod_VertexVoronoi>
-            { 
-                // Deformation of the Voronoi
-                [ParserTarget("deformation")]
-                public NumericParser<Double> deformation
-                {
-                    get { return mod.deformation; }
-                    set { mod.deformation = value; }
-                }
+            get { return Mod.deformation; }
+            set { Mod.deformation = value; }
+        }
 
-                // Displacement of the Voronoi
-                [ParserTarget("displacement")]
-                public NumericParser<Double> voronoiDisplacement
-                {
-                    get { return mod.voronoiDisplacement; }
-                    set { mod.voronoiDisplacement = value; }
-                }
+        // Displacement of the Voronoi
+        [ParserTarget("displacement")]
+        public NumericParser<Double> VoronoiDisplacement
+        {
+            get { return Mod.voronoiDisplacement; }
+            set { Mod.voronoiDisplacement = value; }
+        }
 
-                // Enabled distance of the Voronoi
-                [ParserTarget("enableDistance")]
-                public NumericParser<Boolean> voronoiEnableDistance
-                {
-                    get { return mod.voronoiEnableDistance; }
-                    set { mod.voronoiEnableDistance = value; }
-                }
+        // Enabled distance of the Voronoi
+        [ParserTarget("enableDistance")]
+        public NumericParser<Boolean> VoronoiEnableDistance
+        {
+            get { return Mod.voronoiEnableDistance; }
+            set { Mod.voronoiEnableDistance = value; }
+        }
 
-                // Frequency of the Voronoi
-                [ParserTarget("frequency")]
-                public NumericParser<Double> frequency
-                {
-                    get { return mod.voronoiFrequency; }
-                    set { mod.voronoiFrequency = value; }
-                }
+        // Frequency of the Voronoi
+        [ParserTarget("frequency")]
+        public NumericParser<Double> Frequency
+        {
+            get { return Mod.voronoiFrequency; }
+            set { Mod.voronoiFrequency = value; }
+        }
 
-                // Seed of the Voronoi
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return mod.voronoiSeed; }
-                    set { mod.voronoiSeed = value; }
-                }
-            }
+        // Seed of the Voronoi
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.voronoiSeed; }
+            set { Mod.voronoiSeed = value; }
         }
     }
 }

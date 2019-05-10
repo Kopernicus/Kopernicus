@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -28,69 +28,72 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 
-namespace Kopernicus
+namespace Kopernicus.Constants
 {
-    namespace Constants
+    // Information about the current version of Kopernicus
+    public static class Version
     {
-        // Informations about the current version of Kopernicus
-        public class Version
+        // Version information
+        private static String VersionNumber
         {
-            // Versioning information
-            public static String VersionNumber
+            get
             {
-                get { return CompatibilityChecker.version_major + "." + CompatibilityChecker.version_minor + "." + CompatibilityChecker.Revision + "-" + CompatibilityChecker.Kopernicus; }
+                return CompatibilityChecker.VERSION_MAJOR + "." + CompatibilityChecker.VERSION_MINOR + "." +
+                       CompatibilityChecker.REVISION + "-" + CompatibilityChecker.KOPERNICUS;
             }
+        }
 
-            // Get a String for the logging
-            public static String VersionID
+        // Get a String for the logging
+        public static String VersionId
+        {
+            get
             {
-                get
+                #if DEBUG
+                const String DEVELOPMENT_BUILD = " [Development Build]";
+                #else
+                const String DEVELOPMENT_BUILD = "";
+                #endif
+                return "Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
+                       BuiltTime(Assembly.GetCallingAssembly()).ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " +
+                       AssemblyHandle() + ")";
+            }
+        }
+
+        // Returns the SHA1 Hash of the assembly
+        private static String AssemblyHandle()
+        {
+            String filePath = Assembly.GetCallingAssembly().Location;
+            return Convert.ToBase64String(SHA1.Create().ComputeHash(File.ReadAllBytes(filePath)));
+        }
+
+        // Returns the time when the assembly was built
+        public static DateTime BuiltTime(Assembly assembly)
+        {
+            String filePath = assembly.Location;
+            const Int32 PE_HEADER_OFFSET = 60;
+            const Int32 LINKER_TIMESTAMP_OFFSET = 8;
+            Byte[] b = new Byte[2048];
+            Stream s = null;
+
+            try
+            {
+                s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                s.Read(b, 0, 2048);
+            }
+            finally
+            {
+                if (s != null)
                 {
-                    #if DEBUG
-                    const Boolean developmentBuild = true;
-                    #else
-                    const Boolean developmentBuild = false;
-                    #endif
-                    return "Kopernicus " + VersionNumber + (developmentBuild ? " [Development Build]" : "") + " - (BuildDate: " + BuiltTime(Assembly.GetCallingAssembly()).ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " + AssemblyHandle() + ")";
+                    s.Close();
                 }
             }
 
-            // Returns the SHA1 Hash of the assembly
-            public static String AssemblyHandle()
-            {
-                String filePath = Assembly.GetCallingAssembly().Location;
-                return Convert.ToBase64String(SHA1.Create().ComputeHash(File.ReadAllBytes(filePath)));
-            }
-
-            // Returns the time when the assembly was built
-            public static DateTime BuiltTime(Assembly assembly)
-            {
-                String filePath = assembly.Location;
-                const Int32 c_PeHeaderOffset = 60;
-                const Int32 c_LinkerTimestampOffset = 8;
-                Byte[] b = new Byte[2048];
-                Stream s = null;
-
-                try
-                {
-                    s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                    s.Read(b, 0, 2048);
-                }
-                finally
-                {
-                    if (s != null)
-                    {
-                        s.Close();
-                    }
-                }
-
-                Int32 i = BitConverter.ToInt32(b, c_PeHeaderOffset);
-                Int32 secondsSince1970 = BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
-                DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                dt = dt.AddSeconds(secondsSince1970);
-                dt = dt.ToUniversalTime();
-                return dt;
-            }
+            Int32 i = BitConverter.ToInt32(b, PE_HEADER_OFFSET);
+            Int32 secondsSince1970 = BitConverter.ToInt32(b, i + LINKER_TIMESTAMP_OFFSET);
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            dt = dt.AddSeconds(secondsSince1970);
+            dt = dt.ToUniversalTime();
+            return dt;
         }
     }
 }

@@ -17,40 +17,40 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Contracts;
-using Kopernicus.Components;
-using Kopernicus.Configuration;
-using KSP.UI.Screens;
-using KSP.UI.Screens.Mapview;
-using KSP.UI.Screens.Mapview.MapContextMenuOptions;
-using ModularFI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Contracts;
 #if !KSP131
 using Expansions;
 #endif
+using Kopernicus.Components;
+using Kopernicus.ConfigParser;
+using Kopernicus.Configuration;
+using Kopernicus.Constants;
+using KSP.UI.Screens;
+using KSP.UI.Screens.Mapview;
+using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using KSP.UI.Screens.Settings.Controls;
+using ModularFI;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.RuntimeUtility
 {
-    // Mod runtime utilitues
+    // Mod runtime utilities
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
-    [SuppressMessage("ReSharper", "ArrangeTypeMemberModifiers")]
-    [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType")]
     public class RuntimeUtility : MonoBehaviour
     {
         // Awake() - flag this class as don't destroy on load and register delegates
-        void Awake()
+        private void Awake()
         {
             // Don't run if Kopernicus isn't compatible
             if (!CompatibilityChecker.IsCompatible())
@@ -78,7 +78,7 @@ namespace Kopernicus
         }
 
         // Execute MainMenu functions
-        void Start()
+        private void Start()
         {
             RemoveUnselectableObjects();
             ApplyLaunchSitePatches();
@@ -94,10 +94,10 @@ namespace Kopernicus
         }
 
         // Stuff
-        void LateUpdate()
+        private void LateUpdate()
         {
             FixZooming();
-            ApplyRDPatches();
+            ApplyRnDPatches();
             Force3DRendering();
             UpdatePresetNames();
             ApplyMapTargetPatches();
@@ -114,9 +114,9 @@ namespace Kopernicus
 
         // Run patches every time a new scene was loaded
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
-        void OnLevelWasLoaded(GameScenes scene)
+        private static void OnLevelWasLoaded(GameScenes scene)
         {
-            PatchFI();
+            PatchFlightIntegrator();
             FixCameras();
             PatchTimeOfDayAnimation();
 
@@ -128,11 +128,13 @@ namespace Kopernicus
         }
 
         // Fix the buoyancy
-        void OnPartUnpack(Part part)
+        private static void OnPartUnpack(Part part)
         {
             // If there's nothing to do, abort
             if (part.partBuoyancy == null)
+            {
                 return;
+            }
 
             // Replace PartBuoyancy with KopernicusBuoyancy
             KopernicusBuoyancy buoyancy = part.gameObject.AddComponent<KopernicusBuoyancy>();
@@ -141,8 +143,8 @@ namespace Kopernicus
             Destroy(part.GetComponent<PartBuoyancy>());
         }
 
-        // Transforms body references in the savegames
-        void TransformBodyReferencesOnLoad(GameEvents.FromToAction<ProtoVessel, ConfigNode> data)
+        // Transforms body references in the save games
+        private static void TransformBodyReferencesOnLoad(GameEvents.FromToAction<ProtoVessel, ConfigNode> data)
         {
             // Check if the config node is null
             if (data.to == null)
@@ -159,8 +161,8 @@ namespace Kopernicus
             orbit.SetValue("REF", body.flightGlobalsIndex);
         }
 
-        // Transforms body references in the savegames
-        void TransformBodyReferencesOnSave(GameEvents.FromToAction<ProtoVessel, ConfigNode> data)
+        // Transforms body references in the save games
+        private static void TransformBodyReferencesOnSave(GameEvents.FromToAction<ProtoVessel, ConfigNode> data)
         {
             // Save the reference to the real body
             if (data.to == null)
@@ -177,19 +179,19 @@ namespace Kopernicus
         }
 
         // Removes unselectable map targets from the list
-        void RemoveUnselectableObjects()
+        private static void RemoveUnselectableObjects()
         {
-            if (Templates.mapTargets == null)
+            if (Templates.MapTargets == null)
             {
-                Templates.mapTargets = PlanetariumCamera.fetch.targets;
+                Templates.MapTargets = PlanetariumCamera.fetch.targets;
             }
 
-            PlanetariumCamera.fetch.targets = Templates.mapTargets.Where(m =>
+            PlanetariumCamera.fetch.targets = Templates.MapTargets.Where(m =>
                 m.celestialBody != null && m.celestialBody.Get("selectable", true)).ToList();
         }
         
         // Apply the star patch to the center body
-        void ApplyStarPatchSun()
+        private static void ApplyStarPatchSun()
         {
             // Sun
             GameObject gob = Sun.Instance.gameObject;
@@ -208,17 +210,16 @@ namespace Kopernicus
         }
         
         [SuppressMessage("ReSharper", "RedundantCast")]
-        void ApplyStarPatches(CelestialBody body)
+        private static void ApplyStarPatches(CelestialBody body)
         {
             if (body.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length <= 0 || body.flightGlobalsIndex == 0)
             {
                 return;
             }
             
-            GameObject starObj = Instantiate(Sun.Instance.gameObject);
+            GameObject starObj = Utility.Instantiate(Sun.Instance.gameObject, Sun.Instance.transform.parent, true);
             KopernicusStar star = starObj.GetComponent<KopernicusStar>();
             star.sun = body;
-            starObj.transform.parent = Sun.Instance.transform.parent;
             starObj.name = body.name;
             starObj.transform.localPosition = Vector3.zero;
             starObj.transform.localRotation = Quaternion.identity;
@@ -226,10 +227,9 @@ namespace Kopernicus
             starObj.transform.position = body.position;
             starObj.transform.rotation = body.rotation;
 
-            GameObject flareObj = Instantiate(SunFlare.Instance.gameObject);
+            GameObject flareObj = Utility.Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
             KopernicusSunFlare flare = flareObj.GetComponent<KopernicusSunFlare>();
             star.lensFlare = flare;
-            flareObj.transform.parent = SunFlare.Instance.transform.parent;
             flareObj.name = body.name;
             flareObj.transform.localPosition = Vector3.zero;
             flareObj.transform.localRotation = Quaternion.identity;
@@ -238,7 +238,7 @@ namespace Kopernicus
             flareObj.transform.rotation = body.rotation;
         }
 
-        void ApplyLaunchSitePatches()
+        private static void ApplyLaunchSitePatches()
         {
             #if !KSP131
             if (!ExpansionsLoader.IsExpansionInstalled("MakingHistory"))
@@ -247,7 +247,7 @@ namespace Kopernicus
             }
             
             PQSCity2[] cities = FindObjectsOfType<PQSCity2>();
-            for (int i = 0; i < Templates.RemoveLaunchSites.Count; i++)
+            for (Int32 i = 0; i < Templates.RemoveLaunchSites.Count; i++)
             {
                 String site = Templates.RemoveLaunchSites[i];
                 
@@ -258,7 +258,10 @@ namespace Kopernicus
                 }
 
                 PQSCity2 city = cities.FirstOrDefault(c =>
-                    c.gameObject.name == site || c.gameObject.name == site + "(Clone)");
+                {
+                    GameObject o;
+                    return (o = c.gameObject).name == site || o.name == site + "(Clone)";
+                });
 
                 // Kill the PQSCity if it exists
                 if (city != null)
@@ -292,7 +295,7 @@ namespace Kopernicus
         }
 
         // Apply the home atmosphere height as the altitude where space music starts
-        void ApplyMusicAltitude()
+        private static void ApplyMusicAltitude()
         {
             // Update Music Logic
             if (MusicLogic.fetch == null)
@@ -314,7 +317,7 @@ namespace Kopernicus
         }
 
         // Update the initialTarget of the tracking station
-        void ApplyInitialTarget()
+        private static void ApplyInitialTarget()
         {
             CelestialBody home = PSystemManager.Instance.localBodies.Find(b => b.isHomeWorld);
             ScaledMovement movement = home.scaledBody.GetComponentInChildren<ScaledMovement>();
@@ -322,7 +325,7 @@ namespace Kopernicus
         }
         
         // Apply PostSpawnOrbit patches
-        void ApplyOrbitPatches()
+        private void ApplyOrbitPatches()
         {
             // Bodies
             Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>> fixes = new Dictionary<String, KeyValuePair<CelestialBody, CelestialBody>>();
@@ -347,7 +350,7 @@ namespace Kopernicus
                 {
                     // Log the exception
                     Debug.Log("Exception: PostSpawnOrbit reference body for \"" + body.name +
-                              "\" could not be found. Missing body name is \"" + loader.referenceBody + "\".");
+                              "\" could not be found. Missing body name is \"" + loader.ReferenceBody + "\".");
 
                     // Open the Warning popup
                     Injector.DisplayWarning();
@@ -413,11 +416,11 @@ namespace Kopernicus
         private Boolean _fixZoomingIsDone;
 
         // Fix the Zooming-Out bug
-        void FixZooming()
+        private void FixZooming()
         {
-            if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch != null && !_fixZoomingIsDone)
+            if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch && !_fixZoomingIsDone)
             {
-                // Fix the bug via switching away from Home and back immideatly. 
+                // Fix the bug via switching away from Home and back immediately. 
                 // TODO: Check if this still happens
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[
                     (PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) + 1) %
@@ -439,34 +442,43 @@ namespace Kopernicus
             }
             
             MapObject target = PlanetariumCamera.fetch.target;
-            if (target == null || target.celestialBody == null)
+            if (!target || !target.celestialBody)
             {
                 return;
             }
             
             CelestialBody body = target.celestialBody;
             if (body.Has("maxZoom"))
+            {
                 PlanetariumCamera.fetch.minDistance = body.Get<Single>("maxZoom");
+            }
             else
+            {
                 PlanetariumCamera.fetch.minDistance = 10;
+            }
         }
 
         // Whether to apply RD changes next frame
         private Boolean _rdIsDone;
         
-        // Remove the thumbnail for Barycenters in the RD and patch name changes
-        void ApplyRDPatches()
+        // Remove the thumbnail for barycenters in the RD and patch name changes
+        private void ApplyRnDPatches()
         {
             // Only run in SpaceCenter
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 // Done
                 if (_rdIsDone)
+                {
                     return;
+                }
 
                 // Waaah
                 foreach (RDArchivesController controller in Resources.FindObjectsOfTypeAll<RDArchivesController>())
+                {
                     controller.gameObject.AddOrGetComponent<RnDFixer>();
+                }
+
                 _rdIsDone = true;
             }
             else
@@ -476,9 +488,9 @@ namespace Kopernicus
         }
 
         // If 3D rendering of orbits is forced, enable it
-        void Force3DRendering()
+        private static void Force3DRendering()
         {
-            if (!Templates.force3DOrbits)
+            if (!Templates.Force3DOrbits)
             {
                 return;
             }
@@ -491,7 +503,7 @@ namespace Kopernicus
         private String[] _details;
         
         // Update the names of the presets in the settings dialog
-        void UpdatePresetNames()
+        private void UpdatePresetNames()
         {
             if (HighLogic.LoadedScene != GameScenes.SETTINGS)
             {
@@ -508,8 +520,9 @@ namespace Kopernicus
         // Reflection fields for orbit targeting
         private FieldInfo[] _fields;
 
-        // Removes the targetbuttons for barycenters in the MapView
-        void ApplyMapTargetPatches()
+        // Removes the target buttons for barycenters in the MapView
+        [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType")]
+        private void ApplyMapTargetPatches()
         {
             if (!MapView.MapIsEnabled)
             {
@@ -530,13 +543,13 @@ namespace Kopernicus
             }
 
             // Remove buttons in map view for barycenters
-            if (FlightGlobals.ActiveVessel == null)
+            if (!FlightGlobals.ActiveVessel)
             {
                 return;
             }
 
             OrbitTargeter targeter = FlightGlobals.ActiveVessel.orbitTargeter;
-            if (targeter == null)
+            if (!targeter)
             {
                 return;
             }
@@ -550,7 +563,7 @@ namespace Kopernicus
             
             CelestialBody body = PSystemManager.Instance.localBodies.Find(b =>
                 cast.or != null && cast.or.discoveryInfo?.name != null && b.name == cast.or.discoveryInfo.name.Value);
-            if (body == null)
+            if (!body)
             {
                 return;
             }
@@ -560,7 +573,7 @@ namespace Kopernicus
                 return;
             }
 
-            if (cast.driver == null || cast.driver.Targetable == null)
+            if (!cast.driver || cast.driver.Targetable == null)
             {
                 return;
             }
@@ -573,7 +586,7 @@ namespace Kopernicus
             _fields[1].SetValue(targeter, context);
         }
 
-        void FixFlickeringOrbitLines()
+        private static void FixFlickeringOrbitLines()
         {
             // Prevent the orbit lines from flickering
             PlanetariumCamera.Camera.farClipPlane = 1e14f;
@@ -582,7 +595,7 @@ namespace Kopernicus
         // Whether to apply the customizations next frame
         private Boolean _orbitIconsReady;
 
-        void OnMapEntered()
+        private void OnMapEntered()
         {
             _orbitIconsReady = true;
         }
@@ -591,7 +604,7 @@ namespace Kopernicus
         private readonly Dictionary<CelestialBody, Sprite> _spriteCache = new Dictionary<CelestialBody, Sprite>();
 
         // Apply custom orbit icons.
-        void ApplyOrbitIconCustomization()
+        private void ApplyOrbitIconCustomization()
         {
             // Check if the patch is allowed to run
             if (!_orbitIconsReady)
@@ -611,7 +624,7 @@ namespace Kopernicus
             foreach (CelestialBody body in customOrbitalIcons)
             {
                 _spriteCache.TryGetValue(body, out Sprite sprite);
-                if (sprite == null)
+                if (!sprite)
                 {
                     Texture2D texture = body.Get<Texture2D>("iconTexture");
                     sprite = Sprite.Create(
@@ -631,7 +644,8 @@ namespace Kopernicus
         }
 
         // Applies invisible orbits
-        void ApplyOrbitVisibility(CelestialBody body)
+        [SuppressMessage("ReSharper", "AccessToStaticMemberViaDerivedType")]
+        private static void ApplyOrbitVisibility(CelestialBody body)
         {
             if (HighLogic.LoadedScene != GameScenes.TRACKSTATION &&
                 (!HighLogic.LoadedSceneIsFlight || !MapView.MapIsEnabled))
@@ -641,31 +655,35 @@ namespace Kopernicus
 
             // Loop
             // Check for Renderer
-            if (body.orbitDriver == null)
+            if (!body.orbitDriver)
             {
                 return;
             }
-            if (body.orbitDriver.Renderer == null)
+            if (!body.orbitDriver.Renderer)
             {
                 return;
             }
 
             // Apply Orbit mode changes
             if (body.Has("drawMode"))
+            {
                 body.orbitDriver.Renderer.drawMode = body.Get<OrbitRenderer.DrawMode>("drawMode");
+            }
 
             // Apply Orbit icon changes
             if (body.Has("drawIcons"))
+            {
                 body.orbitDriver.Renderer.drawIcons = body.Get<OrbitRenderer.DrawIcons>("drawIcons");
+            }
         }
         
         // Shader accessor for AtmosphereFromGround
         private readonly Int32 _lightDot = Shader.PropertyToID("_lightDot");
 
         // Use the nearest star as the AFG star
-        void AtmosphereLightPatch(CelestialBody body)
+        private void AtmosphereLightPatch(CelestialBody body)
         {
-            if (body.afg == null)
+            if (!body.afg)
             {
                 return;
             }
@@ -678,17 +696,18 @@ namespace Kopernicus
         }
 
         // Patch FlightIntegrator
-        void PatchFI()
+        private static void PatchFlightIntegrator()
         {
-            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
-                Events.OnRuntimeUtilityPatchFI.Fire();
-                ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+                return;
             }
+            Events.OnRuntimeUtilityPatchFI.Fire();
+            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
         }
 
         // Fix the Space Center Cameras
-        void FixCameras()
+        private static void FixCameras()
         {
             // Only run in the space center or the editor
             if (HighLogic.LoadedScene != GameScenes.SPACECENTER && !HighLogic.LoadedSceneIsEditor)
@@ -697,11 +716,7 @@ namespace Kopernicus
             }
             
             // Get the parental body
-            CelestialBody body;
-            if (Planetarium.fetch != null)
-                body = Planetarium.fetch.Home;
-            else
-                body = FlightGlobals.Bodies.Find(b => b.isHomeWorld);
+            CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
 
             // If there's no body, exit.
             if (body == null)
@@ -720,7 +735,7 @@ namespace Kopernicus
                 return;
             }
 
-            // Go throug the SpaceCenterCameras and fix them
+            // Go through the SpaceCenterCameras and fix them
             foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
             {
                 if (ksc.repositionToSphere || ksc.repositionToSphereSurface)
@@ -740,7 +755,7 @@ namespace Kopernicus
                 // re-implement cam.Start()
                 // fields
                 Type camType = cam.GetType();
-                FieldInfo camPQS = null;
+                FieldInfo camSphere = null;
                 FieldInfo transform1 = null;
                 FieldInfo transform2 = null;
                 FieldInfo surfaceObj = null;
@@ -752,7 +767,7 @@ namespace Kopernicus
                     FieldInfo fi = fields[i];
                     if (fi.FieldType == typeof(PQS))
                     {
-                        camPQS = fi;
+                        camSphere = fi;
                     }
                     else if (fi.FieldType == typeof(Transform) && transform1 == null)
                     {
@@ -767,9 +782,9 @@ namespace Kopernicus
                         surfaceObj = fi;
                     }
                 }
-                if (camPQS != null && transform1 != null && transform2 != null && surfaceObj != null)
+                if (camSphere != null && transform1 != null && transform2 != null && surfaceObj != null)
                 {
-                    camPQS.SetValue(cam, body.pqsController);
+                    camSphere.SetValue(cam, body.pqsController);
 
                     Transform initialTransform = body.pqsController.transform.Find(cam.initialPositionTransformName);
                     if (initialTransform != null)
@@ -825,12 +840,14 @@ namespace Kopernicus
                     Logger.Active.Log("[Kopernicus] Fixed SpaceCenterCamera");
                 }
                 else
+                {
                     Logger.Active.Log("[Kopernicus] ERROR fixing space center camera, could not find some fields");
+                }
             }
         }
 
         // Patch the KSC light animation
-        void PatchTimeOfDayAnimation()
+        private static void PatchTimeOfDayAnimation()
         {
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
             for (Int32 i = 0; i < animations.Length; i++)
@@ -840,7 +857,7 @@ namespace Kopernicus
         }
 
         // Patch various references to point to the nearest star
-        void PatchStarReferences(CelestialBody body)
+        private static void PatchStarReferences(CelestialBody body)
         {
             GameObject star = KopernicusStar.GetNearest(body).gameObject;
             if (body.afg != null)
@@ -859,7 +876,7 @@ namespace Kopernicus
         }
 
         // Contract Weight
-        void PatchContractWeight(CelestialBody body)
+        private static void PatchContractWeight(CelestialBody body)
         {
             if (ContractSystem.ContractWeights == null)
             {
@@ -882,7 +899,7 @@ namespace Kopernicus
         }
 
         // Remove the Handlers
-        void OnDestroy()
+        private void OnDestroy()
         {
             GameEvents.onPartUnpack.Remove(OnPartUnpack);
             GameEvents.OnMapEntered.Remove(OnMapEntered);

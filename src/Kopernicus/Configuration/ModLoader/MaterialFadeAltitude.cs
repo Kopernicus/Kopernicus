@@ -17,55 +17,54 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class MaterialFadeAltitude : ModLoader<PQSMod_MaterialFadeAltitude>
     {
-        namespace ModLoader
+        // fadeEnd
+        [ParserTarget("fadeEnd")]
+        public NumericParser<Single> FadeEnd
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class MaterialFadeAltitude : ModLoader<PQSMod_MaterialFadeAltitude>
-            {
-                // fadeEnd
-                [ParserTarget("fadeEnd")]
-                public NumericParser<Single> fadeEnd
-                {
-                    get { return mod.fadeEnd; }
-                    set { mod.fadeEnd = value; }
-                }
+            get { return Mod.fadeEnd; }
+            set { Mod.fadeEnd = value; }
+        }
 
-                // fadeStart
-                [ParserTarget("fadeStart")]
-                public NumericParser<Single> fadeStart
-                {
-                    get { return mod.fadeStart; }
-                    set { mod.fadeStart = value; }
-                }
+        // fadeStart
+        [ParserTarget("fadeStart")]
+        public NumericParser<Single> FadeStart
+        {
+            get { return Mod.fadeStart; }
+            set { Mod.fadeStart = value; }
+        }
 
-                // valueEnd
-                [ParserTarget("valueEnd")]
-                public NumericParser<Single> valueEnd
-                {
-                    get { return mod.valueEnd; }
-                    set { mod.valueEnd = value; }
-                }
+        // valueEnd
+        [ParserTarget("valueEnd")]
+        public NumericParser<Single> ValueEnd
+        {
+            get { return Mod.valueEnd; }
+            set { Mod.valueEnd = value; }
+        }
 
-                // valueStart
-                [ParserTarget("valueStart")]
-                public NumericParser<Single> valueStart
-                {
-                    get { return mod.valueStart; }
-                    set { mod.valueStart = value; }
-                }
-            }
+        // valueStart
+        [ParserTarget("valueStart")]
+        public NumericParser<Single> ValueStart
+        {
+            get { return Mod.valueStart; }
+            set { Mod.valueStart = value; }
         }
     }
 }

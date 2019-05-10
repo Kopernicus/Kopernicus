@@ -17,30 +17,26 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
+using System.Diagnostics.CodeAnalysis;
 using LibNoise;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader
 {
-    namespace Configuration
+    /// <summary>
+    /// An interface that allows us to group NoiseLoaders
+    /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public interface INoiseLoader
     {
-        namespace NoiseLoader
-        {
-            /// <summary>
-            /// An interface that allows us to group NoiseLoaders
-            /// </summary>
-            public interface INoiseLoader
-            {
-                void Create();
-                void Create(IModule value);
-                
-                IModule Noise { get; set; }
-            }
-        }
+        void Create();
+        void Create(IModule value);
+
+        IModule Noise { get; set; }
     }
 }

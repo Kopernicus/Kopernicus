@@ -17,62 +17,62 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Noise
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class Turbulence : NoiseLoader<LibNoise.Turbulence>
     {
-        namespace NoiseLoader
+        [ParserTarget("frequency")]
+        public NumericParser<Double> Frequency
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class Turbulence : NoiseLoader<LibNoise.Turbulence>
-            {
-                [ParserTarget("frequency")]
-                public NumericParser<Double> frequency
-                {
-                    get { return noise.Frequency; }
-                    set { noise.Frequency = value; }
-                }
+            get { return Noise.Frequency; }
+            set { Noise.Frequency = value; }
+        }
 
-                [ParserTarget("roughness")]
-                public NumericParser<Int32> roughness
-                {
-                    get { return noise.Roughness; }
-                    set { noise.Roughness = Mathf.Clamp(value, 1, 30); }
-                }
+        [ParserTarget("roughness")]
+        public NumericParser<Int32> Roughness
+        {
+            get { return Noise.Roughness; }
+            set { Noise.Roughness = Mathf.Clamp(value, 1, 30); }
+        }
 
-                [ParserTarget("power")]
-                public NumericParser<Double> power
-                {
-                    get { return noise.Power; }
-                    set { noise.Power = value; }
-                }
+        [ParserTarget("power")]
+        public NumericParser<Double> Power
+        {
+            get { return Noise.Power; }
+            set { Noise.Power = value; }
+        }
 
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return noise.Seed; }
-                    set { noise.Seed = value; }
-                }
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Noise.Seed; }
+            set { Noise.Seed = value; }
+        }
 
-                [PreApply]
-                [ParserTarget("Source", NameSignificance = NameSignificance.Type)]
-                public INoiseLoader module;
+        [PreApply]
+        [ParserTarget("Source", NameSignificance = NameSignificance.Type)]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        public INoiseLoader Module { get; set; }
 
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Turbulence(module.Noise);
-                }
-            }
+        public override void Apply(ConfigNode node)
+        {
+            Noise = new LibNoise.Turbulence(Module.Noise);
         }
     }
 }

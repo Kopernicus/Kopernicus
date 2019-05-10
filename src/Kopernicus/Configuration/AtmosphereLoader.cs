@@ -17,313 +17,330 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    public class AtmosphereLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
     {
-        [RequireConfigType(ConfigType.Node)]
-        public class AtmosphereLoader : BaseLoader, IParserEventSubscriber, ITypeParser<CelestialBody>
+        /// <summary>
+        /// CelestialBody we're modifying
+        /// </summary>
+        public CelestialBody Value { get; set; }
+
+        // Do we have an atmosphere?
+        [PreApply]
+        [ParserTarget("enabled")]
+        [KittopiaDescription("Whether the body has an atmosphere.")]
+        [KittopiaHideOption]
+        public NumericParser<Boolean> Enabled
         {
-            /// <summary>
-            /// CelestialBody we're modifying
-            /// </summary>
-            public CelestialBody Value { get; set; }
+            get { return Value.atmosphere; }
+            set { Value.atmosphere = value; }
+        }
 
-            // Do we have an atmosphere?
-            [PreApply]
-            [ParserTarget("enabled")]
-            [KittopiaDescription("Whether the body has an atmosphere.")]
-            [KittopiaHideOption]
-            public NumericParser<Boolean> enabled 
+        // Whether an AFG should get added
+        [PreApply]
+        [ParserTarget("addAFG")]
+        [KittopiaHideOption]
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+        public NumericParser<Boolean> AddAfg = true;
+
+        // Does this atmosphere contain oxygen
+        [ParserTarget("oxygen")]
+        [KittopiaDescription("Whether the atmosphere contains oxygen.")]
+        public NumericParser<Boolean> Oxygen
+        {
+            get { return Value.atmosphereContainsOxygen; }
+            set { Value.atmosphereContainsOxygen = value; }
+        }
+
+        // Density at sea level
+        [ParserTarget("staticDensityASL")]
+        [KittopiaDescription(
+            "Atmospheric density at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
+        public NumericParser<Double> AtmDensityAsl
+        {
+            get { return Value.atmDensityASL; }
+            set { Value.atmDensityASL = value; }
+        }
+
+        // atmosphereAdiabaticIndex
+        [ParserTarget("adiabaticIndex")]
+        public NumericParser<Double> AtmosphereAdiabaticIndex
+        {
+            get { return Value.atmosphereAdiabaticIndex; }
+            set { Value.atmosphereAdiabaticIndex = value; }
+        }
+
+        // atmosphere cutoff altitude (x3, for backwards compatibility)
+        [ParserTarget("atmosphereDepth")]
+        [ParserTarget("altitude")]
+        [ParserTarget("maxAltitude")]
+        [KittopiaDescription("The height of the atmosphere.")]
+        public NumericParser<Double> AtmosphereDepth
+        {
+            get { return Value.atmosphereDepth; }
+            set { Value.atmosphereDepth = value; }
+        }
+
+        // atmosphereGasMassLapseRate
+        [ParserTarget("gasMassLapseRate")]
+        public NumericParser<Double> AtmosphereGasMassLapseRate
+        {
+            get { return Value.atmosphereGasMassLapseRate; }
+            set { Value.atmosphereGasMassLapseRate = value; }
+        }
+
+        // atmosphereMolarMass
+        [ParserTarget("atmosphereMolarMass")]
+        public NumericParser<Double> AtmosphereMolarMass
+        {
+            get { return Value.atmosphereMolarMass; }
+            set { Value.atmosphereMolarMass = value; }
+        }
+
+        // Pressure curve
+        [ParserTarget("pressureCurve")]
+        [KittopiaDescription("Assigns a pressure value to a height value inside of the atmosphere.")]
+        public FloatCurveParser PressureCurve
+        {
+            get { return Value.atmosphereUsePressureCurve ? Value.atmospherePressureCurve : null; }
+            set
             {
-                get { return Value.atmosphere; }
-                set { Value.atmosphere = value; }
+                Value.atmospherePressureCurve = value;
+                Value.atmosphereUsePressureCurve = true;
             }
+        }
 
-            // Whether an AFG should get added
-            [PreApply]
-            [ParserTarget("addAFG")]
-            [KittopiaHideOption]
-            public NumericParser<Boolean> addAFG = true;
+        // atmospherePressureCurveIsNormalized
+        [ParserTarget("pressureCurveIsNormalized")]
+        [KittopiaDescription(
+            "Whether the pressure curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
+        public NumericParser<Boolean> AtmospherePressureCurveIsNormalized
+        {
+            get { return Value.atmospherePressureCurveIsNormalized; }
+            set { Value.atmospherePressureCurveIsNormalized = value; }
+        }
 
-            // Does this atmosphere contain oxygen
-            [ParserTarget("oxygen")]
-            [KittopiaDescription("Whether the atmosphere contains oxygen.")]
-            public NumericParser<Boolean> oxygen 
+        // Static pressure at sea level (all worlds are set to 1.0f?)
+        [ParserTarget("staticPressureASL")]
+        [KittopiaDescription(
+            "The static pressure at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
+        public NumericParser<Double> StaticPressureAsl
+        {
+            get { return Value.atmospherePressureSeaLevel; }
+            set { Value.atmospherePressureSeaLevel = value; }
+        }
+
+        // Temperature curve (see below)
+        [ParserTarget("temperatureCurve")]
+        [KittopiaDescription("Assigns a temperature value to a height value inside of the atmosphere.")]
+        public FloatCurveParser TemperatureCurve
+        {
+            get { return Value.atmosphereUseTemperatureCurve ? Value.atmosphereTemperatureCurve : null; }
+            set
             {
-                get { return Value.atmosphereContainsOxygen; }
-                set { Value.atmosphereContainsOxygen = value; }
+                Value.atmosphereTemperatureCurve = value;
+                Value.atmosphereUseTemperatureCurve = true;
             }
+        }
 
-            // Density at sea level
-            [ParserTarget("staticDensityASL")]
-            [KittopiaDescription("Atmospherical density at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
-            public NumericParser<Double> atmDensityASL
-            {
-                get { return Value.atmDensityASL; }
-                set { Value.atmDensityASL = value; }
-            }
+        // atmosphereTemperatureCurveIsNormalized
+        [ParserTarget("temperatureCurveIsNormalized")]
+        [KittopiaDescription(
+            "Whether the temperature curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
+        public NumericParser<Boolean> AtmosphereTemperatureCurveIsNormalized
+        {
+            get { return Value.atmosphereTemperatureCurveIsNormalized; }
+            set { Value.atmosphereTemperatureCurveIsNormalized = value; }
+        }
 
-            // atmosphereAdiabaticIndex
-            [ParserTarget("adiabaticIndex")]
-            public NumericParser<Double> atmosphereAdiabaticIndex
-            {
-                get { return Value.atmosphereAdiabaticIndex; }
-                set { Value.atmosphereAdiabaticIndex = value; }
-            }
+        // atmosphereTemperatureLapseRate
+        [ParserTarget("temperatureLapseRate")]
+        public NumericParser<Double> AtmosphereTemperatureLapseRate
+        {
+            get { return Value.atmosphereTemperatureLapseRate; }
+            set { Value.atmosphereTemperatureLapseRate = value; }
+        }
 
-            // atmosphere cutoff altitude (x3, for backwards compatibility)
-            [ParserTarget("atmosphereDepth")]
-            [ParserTarget("altitude")]
-            [ParserTarget("maxAltitude")]
-            [KittopiaDescription("The height of the atmosphere.")]
-            public NumericParser<Double> atmosphereDepth
-            {
-                get { return Value.atmosphereDepth; }
-                set { Value.atmosphereDepth = value; }
-            }
+        // TemperatureSeaLevel
+        [ParserTarget("temperatureSeaLevel")]
+        [KittopiaDescription(
+            "The static temperature at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
+        public NumericParser<Double> AtmosphereTemperatureSeaLevel
+        {
+            get { return Value.atmosphereTemperatureSeaLevel; }
+            set { Value.atmosphereTemperatureSeaLevel = value; }
+        }
 
-            // atmosphereGasMassLapseRate
-            [ParserTarget("gasMassLapseRate")]
-            public NumericParser<Double> atmosphereGasMassLapseRate
-            {
-                get { return Value.atmosphereGasMassLapseRate; }
-                set { Value.atmosphereGasMassLapseRate = value; }
-            }
+        // atmosphereTemperatureSunMultCurve
+        [ParserTarget("temperatureSunMultCurve")]
+        public FloatCurveParser AtmosphereTemperatureSunMultCurve
+        {
+            get { return Value.atmosphereTemperatureSunMultCurve; }
+            set { Value.atmosphereTemperatureSunMultCurve = value; }
+        }
 
-            // atmosphereMolarMass
-            [ParserTarget("atmosphereMolarMass")]
-            public NumericParser<Double> atmosphereMolarMass
-            {
-                get { return Value.atmosphereMolarMass; }
-                set { Value.atmosphereMolarMass = value; }
-            }
+        // Temperature latitude bias
+        [ParserTarget("temperatureLatitudeBiasCurve")]
+        public FloatCurveParser LatitudeTemperatureBiasCurve
+        {
+            get { return Value.latitudeTemperatureBiasCurve; }
+            set { Value.latitudeTemperatureBiasCurve = value; }
+        }
 
-            // Pressure curve
-            [ParserTarget("pressureCurve")]
-            [KittopiaDescription("Assigns a pressure value to a height value inside of the atmosphere.")]
-            public FloatCurveParser pressureCurve
+        // latitudeTemperatureSunMultCurve
+        [ParserTarget("temperatureLatitudeSunMultCurve")]
+        public FloatCurveParser LatitudeTemperatureSunMultCurve
+        {
+            get { return Value.latitudeTemperatureSunMultCurve; }
+            set { Value.latitudeTemperatureSunMultCurve = value; }
+        }
+
+        // axialTemperatureSunMultCurve
+        [ParserTarget("temperatureAxialSunBiasCurve")]
+        public FloatCurveParser AxialTemperatureSunBiasCurve
+        {
+            get { return Value.axialTemperatureSunBiasCurve; }
+            set { Value.axialTemperatureSunBiasCurve = value; }
+        }
+
+        // axialTemperatureSunMultCurve
+        [ParserTarget("temperatureAxialSunMultCurve")]
+        public FloatCurveParser AxialTemperatureSunMultCurve
+        {
+            get { return Value.axialTemperatureSunMultCurve; }
+            set { Value.axialTemperatureSunMultCurve = value; }
+        }
+
+        // eccentricityTemperatureBiasCurve
+        [ParserTarget("temperatureEccentricityBiasCurve")]
+        public FloatCurveParser EccentricityTemperatureBiasCurve
+        {
+            get { return Value.eccentricityTemperatureBiasCurve; }
+            set { Value.eccentricityTemperatureBiasCurve = value; }
+        }
+
+        // ambient atmosphere color
+        [ParserTarget("ambientColor")]
+        [KittopiaDescription("All objects inside of the atmosphere will slightly shine in this color.")]
+        public ColorParser AmbientColor
+        {
+            get { return Value.atmosphericAmbientColor; }
+            set { Value.atmosphericAmbientColor = value.Value; }
+        }
+
+        // AFG
+        [ParserTarget("AtmosphereFromGround", AllowMerge = true)]
+        [KittopiaDescription("The atmosphere effect that is seen on the horizon.")]
+        public AtmosphereFromGroundLoader AtmosphereFromGround { get; set; }
+
+        // light color
+        [ParserTarget("lightColor")]
+        [KittopiaHideOption]
+        public ColorParser LightColor
+        {
+            get { return AtmosphereFromGround?.WaveLength; }
+            set
             {
-                get { return Value.atmosphereUsePressureCurve ? Value.atmospherePressureCurve : null; }
-                set
+                if (AtmosphereFromGround == null)
                 {
-                    Value.atmospherePressureCurve = value;
-                    Value.atmosphereUsePressureCurve = true;
-                }
-            }
-
-            // atmospherePressureCurveIsNormalized
-            [ParserTarget("pressureCurveIsNormalized")]
-            [KittopiaDescription("Whether the pressure curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
-            public NumericParser<Boolean> atmospherePressureCurveIsNormalized
-            {
-                get { return Value.atmospherePressureCurveIsNormalized; }
-                set { Value.atmospherePressureCurveIsNormalized = value; }
-            }
-
-            // Static pressure at sea level (all worlds are set to 1.0f?)
-            [ParserTarget("staticPressureASL")]
-            [KittopiaDescription("The static pressure at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
-            public NumericParser<Double> staticPressureASL
-            {
-                get { return Value.atmospherePressureSeaLevel; }
-                set { Value.atmospherePressureSeaLevel = value; }
-            }
-
-            // Temperature curve (see below)
-            [ParserTarget("temperatureCurve")]
-            [KittopiaDescription("Assigns a temperature value to a height value inside of the atmosphere.")]
-            public FloatCurveParser temperatureCurve 
-            {
-                get { return Value.atmosphereUseTemperatureCurve ? Value.atmosphereTemperatureCurve : null; }
-                set
-                {
-                    Value.atmosphereTemperatureCurve = value;
-                    Value.atmosphereUseTemperatureCurve = true;
-                }
-            }
-
-            // atmosphereTemperatureCurveIsNormalized
-            [ParserTarget("temperatureCurveIsNormalized")]
-            [KittopiaDescription("Whether the temperature curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
-            public NumericParser<Boolean> atmosphereTemperatureCurveIsNormalized
-            {
-                get { return Value.atmosphereTemperatureCurveIsNormalized; }
-                set { Value.atmosphereTemperatureCurveIsNormalized = value; }
-            }
-
-            // atmosphereTemperatureLapseRate
-            [ParserTarget("temperatureLapseRate")]
-            public NumericParser<Double> atmosphereTemperatureLapseRate
-            {
-                get { return Value.atmosphereTemperatureLapseRate; }
-                set { Value.atmosphereTemperatureLapseRate = value; }
-            }
-
-            // TemperatureSeaLevel
-            [ParserTarget("temperatureSeaLevel")]
-            [KittopiaDescription("The static temperature at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
-            public NumericParser<Double> atmosphereTemperatureSeaLevel
-            {
-                get { return Value.atmosphereTemperatureSeaLevel; }
-                set { Value.atmosphereTemperatureSeaLevel = value; }
-            }
-
-            // atmosphereTemperatureSunMultCurve
-            [ParserTarget("temperatureSunMultCurve")]
-            public FloatCurveParser atmosphereTemperatureSunMultCurve
-            {
-                get { return Value.atmosphereTemperatureSunMultCurve; }
-                set { Value.atmosphereTemperatureSunMultCurve = value; }
-            }
-
-            // Temperature latitude bias
-            [ParserTarget("temperatureLatitudeBiasCurve")]
-            public FloatCurveParser latitudeTemperatureBiasCurve
-            {
-                get { return Value.latitudeTemperatureBiasCurve; }
-                set { Value.latitudeTemperatureBiasCurve = value; }
-            }
-
-            // latitudeTemperatureSunMultCurve
-            [ParserTarget("temperatureLatitudeSunMultCurve")]
-            public FloatCurveParser latitudeTemperatureSunMultCurve
-            {
-                get { return Value.latitudeTemperatureSunMultCurve; }
-                set { Value.latitudeTemperatureSunMultCurve = value; }
-            }
-
-            // axialTemperatureSunMultCurve
-            [ParserTarget("temperatureAxialSunBiasCurve")]
-            public FloatCurveParser axialTemperatureSunBiasCurve
-            {
-                get { return Value.axialTemperatureSunBiasCurve; }
-                set { Value.axialTemperatureSunBiasCurve = value; }
-            }
-            
-            // axialTemperatureSunMultCurve
-            [ParserTarget("temperatureAxialSunMultCurve")]
-            public FloatCurveParser axialTemperatureSunMultCurve
-            {
-                get { return Value.axialTemperatureSunMultCurve; }
-                set { Value.axialTemperatureSunMultCurve = value; }
-            }
-            
-            // eccentricityTemperatureBiasCurve
-            [ParserTarget("temperatureEccentricityBiasCurve")]
-            public FloatCurveParser eccentricityTemperatureBiasCurve
-            {
-                get { return Value.eccentricityTemperatureBiasCurve; }
-                set { Value.eccentricityTemperatureBiasCurve = value; }
-            }
-
-            // ambient atmosphere color
-            [ParserTarget("ambientColor")]
-            [KittopiaDescription("All objects inside of the atmosphere will slightly shine in this color.")]
-            public ColorParser ambientColor 
-            {
-                get { return Value.atmosphericAmbientColor; }
-                set { Value.atmosphericAmbientColor = value.Value; }
-            }
-
-            // AFG
-            [ParserTarget("AtmosphereFromGround", AllowMerge = true)]
-            [KittopiaDescription("The atmosphere effect that is seen on the horizon.")]
-            public AtmosphereFromGroundLoader atmosphereFromGround { get; set; }
-
-            // light color
-            [ParserTarget("lightColor")]
-            [KittopiaHideOption]
-            public ColorParser lightColor 
-            {
-                get { return atmosphereFromGround?.waveLength; }
-                set
-                {
-                    if (atmosphereFromGround == null)
-                        atmosphereFromGround = new AtmosphereFromGroundLoader();
-                    atmosphereFromGround.waveLength = value;
-                }
-            }
-
-            [KittopiaDestructor]
-            public void Destroy()
-            {
-                // No Atmosphere :(
-                Value.atmosphere = false;
-            }
-
-            // Parser apply event
-            void IParserEventSubscriber.Apply (ConfigNode node)
-            {
-                // If we don't want an atmosphere, ignore this step
-                if(!Value.atmosphere || !addAFG)
-                    return;
-
-                // If we don't already have an atmospheric shell generated
-                if (Value.scaledBody.GetComponentsInChildren<AtmosphereFromGround> (true).Length == 0) 
-                {
-                    // Setup known defaults
-                    Value.atmospherePressureSeaLevel = 1.0f;
-                }
-                
-                // Create the AFG Loader
-                atmosphereFromGround = new AtmosphereFromGroundLoader();
-
-                // Event
-                Events.OnAtmosphereLoaderApply.Fire(this, node);
-            }
-
-            // Parser post apply event
-            void IParserEventSubscriber.PostApply(ConfigNode node)
-            {
-                Events.OnAtmosphereLoaderPostApply.Fire(this, node);
-            }
-
-            /// <summary>
-            /// Creates a new Atmosphere Loader from the Injector context.
-            /// </summary>
-            public AtmosphereLoader()
-            {
-                // Is this the parser context?
-                if (!Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("Must be executed in Injector context.");
-                }
-                
-                // Store values
-                Value = generatedBody.celestialBody;
-                Value.scaledBody = generatedBody.scaledVersion;
-            }
-
-            /// <summary>
-            /// Creates a new Atmosphere Loader from a spawned CelestialBody.
-            /// </summary>
-            [KittopiaConstructor(KittopiaConstructor.Parameter.CelestialBody)]
-            public AtmosphereLoader(CelestialBody body)
-            {
-                // Is this a spawned body?
-                if (body?.scaledBody == null || Injector.IsInPrefab)
-                {
-                    throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                    AtmosphereFromGround = new AtmosphereFromGroundLoader();
                 }
 
-                // Store values
-                Value = body;
-                if (Value.afg)
-                {
-                    atmosphereFromGround = new AtmosphereFromGroundLoader(Value);
-                }
-                Value.atmosphere = true;
+                AtmosphereFromGround.WaveLength = value;
             }
+        }
+
+        [KittopiaDestructor]
+        public void Destroy()
+        {
+            // No Atmosphere :(
+            Value.atmosphere = false;
+        }
+
+        // Parser apply event
+        void IParserEventSubscriber.Apply(ConfigNode node)
+        {
+            // If we don't want an atmosphere, ignore this step
+            if (!Value.atmosphere || !AddAfg)
+            {
+                return;
+            }
+
+            // If we don't already have an atmospheric shell generated
+            if (Value.scaledBody.GetComponentsInChildren<AtmosphereFromGround>(true).Length == 0)
+            {
+                // Setup known defaults
+                Value.atmospherePressureSeaLevel = 1.0f;
+            }
+
+            // Create the AFG Loader
+            AtmosphereFromGround = new AtmosphereFromGroundLoader();
+
+            // Event
+            Events.OnAtmosphereLoaderApply.Fire(this, node);
+        }
+
+        // Parser post apply event
+        void IParserEventSubscriber.PostApply(ConfigNode node)
+        {
+            Events.OnAtmosphereLoaderPostApply.Fire(this, node);
+        }
+
+        /// <summary>
+        /// Creates a new Atmosphere Loader from the Injector context.
+        /// </summary>
+        public AtmosphereLoader()
+        {
+            // Is this the parser context?
+            if (!Injector.IsInPrefab)
+            {
+                throw new InvalidOperationException("Must be executed in Injector context.");
+            }
+
+            // Store values
+            Value = generatedBody.celestialBody;
+            Value.scaledBody = generatedBody.scaledVersion;
+        }
+
+        /// <summary>
+        /// Creates a new Atmosphere Loader from a spawned CelestialBody.
+        /// </summary>
+        [KittopiaConstructor(KittopiaConstructor.ParameterType.CelestialBody)]
+        public AtmosphereLoader(CelestialBody body)
+        {
+            // Is this a spawned body?
+            if (body.scaledBody == null || Injector.IsInPrefab)
+            {
+                throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+            }
+
+            // Store values
+            Value = body;
+            if (Value.afg)
+            {
+                AtmosphereFromGround = new AtmosphereFromGroundLoader(Value);
+            }
+
+            Value.atmosphere = true;
         }
     }
 }

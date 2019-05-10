@@ -17,55 +17,55 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class RemoveQuadMap : ModLoader<PQSMod_RemoveQuadMap>
     {
-        namespace ModLoader
+        // The map texture for the Quad Remover (?)
+        [ParserTarget("map")]
+        public MapSOParserGreyScale<MapSO> Map
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class RemoveQuadMap : ModLoader<PQSMod_RemoveQuadMap>
-            {
-                // The map texture for the Quad Remover (?)
-                [ParserTarget("map")]
-                public MapSOParser_GreyScale<MapSO> map
-                {
-                    get { return mod.map; }
-                    set { mod.map = value; }
-                }
+            get { return Mod.map; }
+            set { Mod.map = value; }
+        }
 
-                // The deformity of the map for the Quad Remover (?)
-                [ParserTarget("deformity")]
-                public NumericParser<Single> mapDeformity
-                {
-                    get { return mod.mapDeformity; }
-                    set { mod.mapDeformity = value; }
-                }
+        // The deformity of the map for the Quad Remover (?)
+        [ParserTarget("deformity")]
+        public NumericParser<Single> MapDeformity
+        {
+            get { return Mod.mapDeformity; }
+            set { Mod.mapDeformity = value; }
+        }
 
-                // The max. height for the Quad Remover (?)
-                [ParserTarget("maxHeight")]
-                public NumericParser<Single> maxHeight
-                {
-                    get { return mod.maxHeight; }
-                    set { mod.maxHeight = value; }
-                }
+        // The max. height for the Quad Remover (?)
+        [ParserTarget("maxHeight")]
+        public NumericParser<Single> MaxHeight
+        {
+            get { return Mod.maxHeight; }
+            set { Mod.maxHeight = value; }
+        }
 
-                // The min texture for the Quad Remover (?)
-                [ParserTarget("minHeight")]
-                public NumericParser<Single> minHeight 
-                {
-                    get { return mod.minHeight; }
-                    set { mod.minHeight = value; }
-                }
-            }
+        // The min texture for the Quad Remover (?)
+        [ParserTarget("minHeight")]
+        public NumericParser<Single> MinHeight
+        {
+            get { return Mod.minHeight; }
+            set { Mod.minHeight = value; }
         }
     }
 }

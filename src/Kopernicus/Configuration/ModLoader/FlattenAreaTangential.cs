@@ -17,86 +17,87 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    public class FlattenAreaTangential : ModLoader<PQSMod_FlattenAreaTangential>
     {
-        namespace ModLoader
+        // DEBUG_showColors
+        [ParserTarget("DEBUG_showColors")]
+        public NumericParser<Boolean> DebugShowColors
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class FlattenAreaTangential : ModLoader<PQSMod_FlattenAreaTangential>
-            {
-                // DEBUG_showColors
-                [ParserTarget("DEBUG_showColors")]
-                public NumericParser<Boolean> DEBUG_showColors
-                {
-                    get { return mod.DEBUG_showColors; }
-                    set { mod.DEBUG_showColors = value; }
-                }
+            get { return Mod.DEBUG_showColors; }
+            set { Mod.DEBUG_showColors = value; }
+        }
 
-                // flattenTo
-                [ParserTarget("flattenTo")]
-                public NumericParser<Double> flattenTo
-                {
-                    get { return mod.flattenTo; }
-                    set { mod.flattenTo = value; }
-                }
+        // flattenTo
+        [ParserTarget("flattenTo")]
+        public NumericParser<Double> FlattenTo
+        {
+            get { return Mod.flattenTo; }
+            set { Mod.flattenTo = value; }
+        }
 
-                // innerRadius
-                [ParserTarget("innerRadius")]
-                public NumericParser<Double> innerRadius
-                {
-                    get { return mod.innerRadius; }
-                    set { mod.innerRadius = value; }
-                }
+        // innerRadius
+        [ParserTarget("innerRadius")]
+        public NumericParser<Double> InnerRadius
+        {
+            get { return Mod.innerRadius; }
+            set { Mod.innerRadius = value; }
+        }
 
-                // outerRadius
-                [ParserTarget("outerRadius")]
-                public NumericParser<Double> outerRadius
-                {
-                    get { return mod.outerRadius; }
-                    set { mod.outerRadius = value; }
-                }
+        // outerRadius
+        [ParserTarget("outerRadius")]
+        public NumericParser<Double> OuterRadius
+        {
+            get { return Mod.outerRadius; }
+            set { Mod.outerRadius = value; }
+        }
 
-                // position
-                [ParserTarget("position")]
-                public Vector3Parser position
-                {
-                    get { return mod.position; }
-                    set { mod.position = value; }
-                }
+        // position
+        [ParserTarget("position")]
+        public Vector3Parser Position
+        {
+            get { return Mod.position; }
+            set { Mod.position = value; }
+        }
 
-                // position v2
-                [ParserTarget("Position")]
-                public PositionParser Position
-                {
-                    set { mod.position = value; }
-                }
+        // position v2
+        [ParserTarget("Position")]
+        private PositionParser Position2
+        {
+            set { Mod.position = value; }
+        }
 
-                // smoothEnd
-                [ParserTarget("smoothEnd")]
-                public NumericParser<Double> smoothEnd
-                {
-                    get { return mod.smoothEnd; }
-                    set { mod.smoothEnd = value; }
-                }
+        // smoothEnd
+        [ParserTarget("smoothEnd")]
+        public NumericParser<Double> SmoothEnd
+        {
+            get { return Mod.smoothEnd; }
+            set { Mod.smoothEnd = value; }
+        }
 
-                // smoothStart
-                [ParserTarget("smoothStart")]
-                public NumericParser<Double> smoothStart
-                {
-                    get { return mod.smoothStart; }
-                    set { mod.smoothStart = value; }
-                }
-            }
+        // smoothStart
+        [ParserTarget("smoothStart")]
+        public NumericParser<Double> SmoothStart
+        {
+            get { return Mod.smoothStart; }
+            set { Mod.smoothStart = value; }
         }
     }
 }

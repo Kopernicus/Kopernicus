@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,164 +25,169 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class OceanFx : ModLoader<PQSMod_OceanFX>
     {
-        namespace ModLoader
+        // angle
+        [ParserTarget("angle")]
+        public NumericParser<Single> Angle
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class OceanFX : ModLoader<PQSMod_OceanFX>
+            get { return Mod.angle; }
+            set { Mod.angle = value; }
+        }
+
+        // The deformity of the map for the Quad Remover (?)
+        [ParserTarget("blendA")]
+        public NumericParser<Single> BlendA
+        {
+            get { return Mod.blendA; }
+            set { Mod.blendA = value; }
+        }
+
+        // blendB
+        [ParserTarget("blendB")]
+        public NumericParser<Single> BlendB
+        {
+            get { return Mod.blendB; }
+            set { Mod.blendB = value; }
+        }
+
+        // bump
+        [ParserTarget("bump")]
+        public Texture2DParser Bump
+        {
+            get { return Mod.bump; }
+            set { Mod.bump = value; }
+        }
+
+        // framesPerSecond
+        [ParserTarget("framesPerSecond")]
+        public NumericParser<Single> FramesPerSecond
+        {
+            get { return Mod.framesPerSecond; }
+            set { Mod.framesPerSecond = value; }
+        }
+
+        // fresnel (???)
+        [ParserTarget("fresnel")]
+        public Texture2DParser Fresnel
+        {
+            get { return Mod.fresnel; }
+            set { Mod.fresnel = value; }
+        }
+
+        // oceanOpacity
+        [ParserTarget("oceanOpacity")]
+        public NumericParser<Single> OceanOpacity
+        {
+            get { return Mod.oceanOpacity; }
+            set { Mod.oceanOpacity = value; }
+        }
+
+        // refraction
+        [ParserTarget("refraction")]
+        public Texture2DParser Refraction
+        {
+            get { return Mod.refraction; }
+            set { Mod.refraction = value; }
+        }
+
+        // spaceAltitude
+        [ParserTarget("spaceAltitude")]
+        public NumericParser<Double> SpaceAltitude
+        {
+            get { return Mod.spaceAltitude; }
+            set { Mod.spaceAltitude = value; }
+        }
+
+        // spaceSurfaceBlend
+        [ParserTarget("spaceSurfaceBlend")]
+        public NumericParser<Single> SpaceSurfaceBlend
+        {
+            get { return Mod.spaceSurfaceBlend; }
+            set { Mod.spaceSurfaceBlend = value; }
+        }
+
+        // specColor
+        [ParserTarget("specColor")]
+        public ColorParser SpecColor
+        {
+            get { return Mod.specColor; }
+            set { Mod.specColor = value; }
+        }
+
+        // texBlend
+        [ParserTarget("texBlend")]
+        public NumericParser<Single> TexBlend
+        {
+            get { return Mod.texBlend; }
+            set { Mod.texBlend = value; }
+        }
+
+        // txIndex
+        [ParserTarget("txIndex")]
+        public NumericParser<Int32> TxIndex
+        {
+            get { return Mod.txIndex; }
+            set { Mod.txIndex = value; }
+        }
+
+        // Watermain
+        [ParserTargetCollection("Watermain")]
+        public List<Texture2DParser> Watermain
+        {
+            get { return Mod.watermain.Select(t => new Texture2DParser(t)).ToList(); }
+            set
             {
-                // angle
-                [ParserTarget("angle")]
-                public NumericParser<Single> angle
+                Mod.watermain = value.Select(t => t.Value).ToArray();
+                Mod.waterMainLength = value.Count;
+            }
+        }
+
+        // Create the mod
+        public override void Create(PQS pqsVersion)
+        {
+            // Call base
+            base.Create(pqsVersion);
+
+            // Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
+            PSystemBody body = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
+            foreach (PQS ocean in body.pqsVersion.GetComponentsInChildren<PQS>(true))
+            {
+                if (ocean.name == "LaytheOcean")
                 {
-                    get { return mod.angle; }
-                    set { mod.angle = value; }
+                    Utility.CopyObjectFields(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0], Mod);
                 }
+            }
+        }
 
-                // The deformity of the map for the Quad Remover (?)
-                [ParserTarget("blendA")]
-                public NumericParser<Single> blendA
+        // Create the mod
+        public override void Create(PQSMod_OceanFX mod, PQS pqsVersion)
+        {
+            // Call base
+            base.Create(mod, pqsVersion);
+
+            // Create the base mod if needed
+            if (Mod.reflection != null)
+            {
+                return;
+            }
+            PSystemBody body = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
+            foreach (PQS ocean in body.pqsVersion.GetComponentsInChildren<PQS>(true))
+            {
+                if (ocean.name == "LaytheOcean")
                 {
-                    get { return mod.blendA; }
-                    set { mod.blendA = value; }
-                }
-
-                // blendB
-                [ParserTarget("blendB")]
-                public NumericParser<Single> blendB
-                {
-                    get { return mod.blendB; }
-                    set { mod.blendB = value; }
-                }
-
-                // bump
-                [ParserTarget("bump")]
-                public Texture2DParser bump
-                {
-                    get { return mod.bump; }
-                    set { mod.bump = value; }
-                }
-
-                // framesPerSecond
-                [ParserTarget("framesPerSecond")]
-                public NumericParser<Single> framesPerSecond
-                {
-                    get { return mod.framesPerSecond; }
-                    set { mod.framesPerSecond = value; }
-                }
-
-                // fresnel (???)
-                [ParserTarget("fresnel")]
-                public Texture2DParser fresnel
-                {
-                    get { return mod.fresnel; }
-                    set { mod.fresnel = value; }
-                }
-
-                // oceanOpacity
-                [ParserTarget("oceanOpacity")]
-                public NumericParser<Single> oceanOpacity
-                {
-                    get { return mod.oceanOpacity; }
-                    set { mod.oceanOpacity = value; }
-                }
-
-                // refraction
-                [ParserTarget("refraction")]
-                public Texture2DParser refraction
-                {
-                    get { return mod.refraction; }
-                    set { mod.refraction = value; }
-                }
-
-                // spaceAltitude
-                [ParserTarget("spaceAltitude")]
-                public NumericParser<Double> spaceAltitude
-                {
-                    get { return mod.spaceAltitude; }
-                    set { mod.spaceAltitude = value; }
-                }
-
-                // spaceSurfaceBlend
-                [ParserTarget("spaceSurfaceBlend")]
-                public NumericParser<Single> spaceSurfaceBlend
-                {
-                    get { return mod.spaceSurfaceBlend; }
-                    set { mod.spaceSurfaceBlend = value; }
-                }
-
-                // specColor
-                [ParserTarget("specColor")]
-                public ColorParser specColor
-                {
-                    get { return mod.specColor; }
-                    set { mod.specColor = value; }
-                }
-
-                // texBlend
-                [ParserTarget("texBlend")]
-                public NumericParser<Single> texBlend
-                {
-                    get { return mod.texBlend; }
-                    set { mod.texBlend = value; }
-                }
-
-                // txIndex
-                [ParserTarget("txIndex")]
-                public NumericParser<Int32> txIndex
-                {
-                    get { return mod.txIndex; }
-                    set { mod.txIndex = value; }
-                }
-
-                // Watermain
-                [ParserTargetCollection("Watermain")]
-                public List<Texture2DParser> watermain
-                {
-                    get { return mod.watermain.Select(t => new Texture2DParser(t)).ToList(); }
-                    set
-                    {
-                        mod.watermain = value.Select(t => t.Value).ToArray();
-                        mod.waterMainLength = value.Count;
-                    }
-                }
-
-                // Create the mod
-                public override void Create(PQS pqsVersion)
-                {
-                    // Call base
-                    base.Create(pqsVersion);
-
-                    // Create the base mod (I need to instance this one, because some parameters aren't loadable. :( )
-                    PSystemBody Body = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
-                    foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
-                    {
-                        if (ocean.name == "LaytheOcean")
-                            Utility.CopyObjectFields(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0], mod);
-                    }
-                }
-
-                // Create the mod
-                public override void Create(PQSMod_OceanFX _mod, PQS pqsVersion)
-                {
-                    // Call base
-                    base.Create(_mod, pqsVersion);
-
-                    // Create the base mod if needed
-                    if (mod.reflection == null)
-                    {
-                        PSystemBody Body = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
-                        foreach (PQS ocean in Body.pqsVersion.GetComponentsInChildren<PQS>(true))
-                        {
-                            if (ocean.name == "LaytheOcean")
-                                Utility.CopyObjectFields(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0], mod);
-                        }
-                    }
+                    Utility.CopyObjectFields(ocean.GetComponentsInChildren<PQSMod_OceanFX>(true)[0], Mod);
                 }
             }
         }

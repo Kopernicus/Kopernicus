@@ -17,47 +17,47 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Modifiers
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class ScaleBiasOutput : NoiseLoader<LibNoise.Modifiers.ScaleBiasOutput>
     {
-        namespace NoiseLoader
+        [ParserTarget("bias")]
+        public NumericParser<Double> Bias
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class ScaleBiasOutput : NoiseLoader<LibNoise.Modifiers.ScaleBiasOutput>
-            {
-                [ParserTarget("bias")]
-                public NumericParser<Double> bias
-                {
-                    get { return noise.Bias; }
-                    set { noise.Bias = value; }
-                }
+            get { return Noise.Bias; }
+            set { Noise.Bias = value; }
+        }
 
-                [ParserTarget("scale")]
-                public NumericParser<Double> scale
-                {
-                    get { return noise.Scale; }
-                    set { noise.Scale = value; }
-                }
+        [ParserTarget("scale")]
+        public NumericParser<Double> Scale
+        {
+            get { return Noise.Scale; }
+            set { Noise.Scale = value; }
+        }
 
-                [PreApply]
-                [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModule;
+        [PreApply] 
+        [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        public INoiseLoader SourceModule { get; set; }
 
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Modifiers.ScaleBiasOutput(sourceModule.Noise);
-                }
-            }
+        public override void Apply(ConfigNode node)
+        {
+            Noise = new LibNoise.Modifiers.ScaleBiasOutput(SourceModule.Noise);
         }
     }
 }

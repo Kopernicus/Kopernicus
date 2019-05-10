@@ -17,36 +17,35 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Modifiers
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class Multiply : NoiseLoader<LibNoise.Modifiers.Multiply>
     {
-        namespace NoiseLoader
+        [PreApply] 
+        [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader SourceModuleA { get; set; }
+
+        [PreApply] 
+        [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader SourceModuleB { get; set; }
+
+        public override void Apply(ConfigNode node)
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class Multiply : NoiseLoader<LibNoise.Modifiers.Multiply>
-            {
-                [PreApply]
-                [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModuleA;
-
-                [PreApply]
-                [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModuleB;
-
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Modifiers.Multiply(sourceModuleA.Noise, sourceModuleB.Noise);
-                }
-            }
+            Noise = new LibNoise.Modifiers.Multiply(SourceModuleA.Noise, SourceModuleB.Noise);
         }
     }
 }

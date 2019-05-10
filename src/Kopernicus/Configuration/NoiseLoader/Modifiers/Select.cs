@@ -17,56 +17,56 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using Kopernicus;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.NoiseLoader.Modifiers
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class Select : NoiseLoader<LibNoise.Modifiers.Select>
     {
-        namespace NoiseLoader
+        [ParserTarget("lowerBound")] 
+        public NumericParser<Double> Lower { get; set; }
+
+        [ParserTarget("upperBound")] 
+        public NumericParser<Double> Upper { get; set; }
+
+        [ParserTarget("edgeFalloff")] 
+        public NumericParser<Double> EdgeFalloff { get; set; }
+
+        [PreApply] 
+        [ParserTarget("Control", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader ControlModule { get; set; }
+
+        [PreApply] 
+        [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader SourceModuleA { get; set; }
+
+        [PreApply] 
+        [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
+        public INoiseLoader SourceModuleB { get; set; }
+
+        public override void Apply(ConfigNode node)
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class Select : NoiseLoader<LibNoise.Modifiers.Select>
-            {
-                [ParserTarget("lowerBound")]
-                public NumericParser<Double> lower;
+            Noise = new LibNoise.Modifiers.Select(ControlModule.Noise, SourceModuleA.Noise, SourceModuleB.Noise);
+        }
 
-                [ParserTarget("upperBound")]
-                public NumericParser<Double> upper;
-
-                [ParserTarget("edgeFalloff")]
-                public NumericParser<Double> edgefalloff;
-
-                [PreApply]
-                [ParserTarget("Control", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader controlModule;
-
-                [PreApply]
-                [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModuleA;
-
-                [PreApply]
-                [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
-                public INoiseLoader sourceModuleB;
-
-                public override void Apply(ConfigNode node)
-                {
-                    noise = new LibNoise.Modifiers.Select(controlModule.Noise, sourceModuleA.Noise, sourceModuleB.Noise);
-                }
-
-                public override void PostApply(ConfigNode node)
-                {
-                    noise.SetBounds(lower, upper);
-                    noise.EdgeFalloff = edgefalloff;
-                }
-            }
+        public override void PostApply(ConfigNode node)
+        {
+            Noise.SetBounds(Lower, Upper);
+            Noise.EdgeFalloff = EdgeFalloff;
         }
     }
 }

@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,34 +25,31 @@
 
 using System;
 
-namespace Kopernicus
+namespace Kopernicus.UI
 {
-    namespace UI
+    /// <summary>
+    /// Defines the constructor that should be used when creating the object
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
+    public class KittopiaConstructor : Attribute
     {
         /// <summary>
-        /// Defines the constructor that should be used when creating the object
+        /// Describes the parameters that should be passed to the constructor
         /// </summary>
-        [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
-        public class KittopiaConstructor : Attribute
+        public enum ParameterType
         {
-            /// <summary>
-            /// Describes the parameters that should be passed to the constructor
-            /// </summary>
-            public enum Parameter
-            {
-                CelestialBody,
-                Empty
-            }
-            
-            /// <summary>
-            /// The parameter for the constructor
-            /// </summary>
-            public Parameter parameter;
+            CelestialBody,
+            Empty
+        }
 
-            public KittopiaConstructor(Parameter parameter)
-            {
-                this.parameter = parameter;
-            }
+        /// <summary>
+        /// The parameter for the constructor
+        /// </summary>
+        public readonly ParameterType Parameter;
+
+        public KittopiaConstructor(ParameterType parameterType)
+        {
+            Parameter = parameterType;
         }
     }
 }

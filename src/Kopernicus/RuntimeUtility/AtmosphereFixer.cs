@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,104 +25,93 @@
 
 using System;
 using System.Collections.Generic;
+using Kopernicus.Configuration;
+using Kopernicus.Constants;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.RuntimeUtility
 {
-    public class AFGInfo
+    public class AtmosphereInfo
     {
-        public static Dictionary<String, AFGInfo> atmospheres = new Dictionary<String, AFGInfo>();
-        
-        Boolean DEBUG_alwaysUpdateAll;
-        Boolean doScale;
-        Single outerRadius;
-        Single innerRadius;
-        Single ESun;
-        Single Kr;
-        Single Km;
-        Vector3 transformScale;
-        Single scaleDepth;
-        Single samples;
-        Single g;
-        Color waveLength;
-        Color invWaveLength;
+        public static readonly Dictionary<String, AtmosphereInfo> Atmospheres = new Dictionary<String, AtmosphereInfo>();
 
-        public static Boolean StoreAFG(AtmosphereFromGround afg)
+        private readonly Boolean _debugAlwaysUpdateAll;
+        private readonly Boolean _doScale;
+        private readonly Single _outerRadius;
+        private readonly Single _innerRadius;
+        private readonly Single _eSun;
+        private readonly Single _kr;
+        private readonly Single _km;
+        private readonly Vector3 _transformScale;
+        private readonly Single _scaleDepth;
+        private readonly Single _samples;
+        private readonly Single _g;
+        private readonly Color _waveLength;
+        private readonly Color _invWaveLength;
+
+        public static void StoreAfg(AtmosphereFromGround afg)
         {
             if (afg.planet == null)
             {
                 Debug.Log("[Kopernicus] Trying to store AFG, but planet null!");
+                return;
+            }
+            Atmospheres[afg.planet.transform.name] = new AtmosphereInfo(afg);
+        }
+
+        public static Boolean PatchAfg(AtmosphereFromGround afg)
+        {
+            if (!Atmospheres.TryGetValue(afg.planet.transform.name, out AtmosphereInfo info))
+            {
                 return false;
             }
-            atmospheres[afg.planet.transform.name] = new AFGInfo(afg);
+            try
+            {
+                info.Apply(afg);
+            }
+            catch
+            {
+                return false;
+            }
             return true;
         }
 
-        public static Boolean UpdateAFGName(String oName, String nName)
+        private AtmosphereInfo(AtmosphereFromGround afg)
         {
-            AFGInfo info = null;
-            if (atmospheres.TryGetValue(oName, out info))
-            {
-                atmospheres.Remove(oName);
-                atmospheres[nName] = info;
-                return true;
-            }
-            return false;
+            _debugAlwaysUpdateAll = afg.DEBUG_alwaysUpdateAll;
+            _doScale = afg.doScale;
+            _eSun = afg.ESun;
+            _kr = afg.Kr;
+            _km = afg.Km;
+            _transformScale = afg.transform.localScale;
+            _scaleDepth = afg.scaleDepth;
+            _samples = afg.samples;
+            _g = afg.g;
+            _waveLength = afg.waveLength;
+            _invWaveLength = afg.invWaveLength;
+            _outerRadius = afg.outerRadius;
+            _innerRadius = afg.innerRadius;
         }
 
-        public static Boolean PatchAFG(AtmosphereFromGround afg)
+        private void Apply(AtmosphereFromGround afg)
         {
-            AFGInfo info = null;
-            if (atmospheres.TryGetValue(afg.planet.transform.name, out info))
-            {
-                try
-                {
-                    info.Apply(afg);
-                }
-                catch
-                {
-                    return false;
-                }
-                return true;
-            }
-            return false;
-        }
+            Transform transform = afg.transform;
+            afg.DEBUG_alwaysUpdateAll = _debugAlwaysUpdateAll;
+            afg.doScale = _doScale;
+            afg.ESun = _eSun;
+            afg.Kr = _kr;
+            afg.Km = _km;
+            transform.localScale = _transformScale;
+            afg.scaleDepth = _scaleDepth;
+            afg.samples = _samples;
+            afg.g = _g;
+            afg.waveLength = _waveLength;
+            afg.invWaveLength = _invWaveLength;
+            afg.outerRadius = _outerRadius;
+            afg.innerRadius = _innerRadius;
+            transform.localPosition = Vector3.zero;
 
-        public AFGInfo(AtmosphereFromGround afg)
-        {
-            DEBUG_alwaysUpdateAll = afg.DEBUG_alwaysUpdateAll;
-            doScale = afg.doScale;
-            ESun = afg.ESun;
-            Kr = afg.Kr;
-            Km = afg.Km;
-            transformScale = afg.transform.localScale;
-            scaleDepth = afg.scaleDepth;
-            samples = afg.samples;
-            g = afg.g;
-            waveLength = afg.waveLength;
-            invWaveLength = afg.invWaveLength;
-            outerRadius = afg.outerRadius;
-            innerRadius = afg.innerRadius;
-        }
-
-        public void Apply(AtmosphereFromGround afg)
-        {
-            afg.DEBUG_alwaysUpdateAll = DEBUG_alwaysUpdateAll;
-            afg.doScale = doScale;
-            afg.ESun = ESun;
-            afg.Kr = Kr;
-            afg.Km = Km;
-            afg.transform.localScale = transformScale;
-            afg.scaleDepth = scaleDepth;
-            afg.samples = samples;
-            afg.g = g;
-            afg.waveLength = waveLength;
-            afg.invWaveLength = invWaveLength;
-            afg.outerRadius = outerRadius;
-            afg.innerRadius = innerRadius;
-            afg.transform.localPosition = Vector3.zero;
-
-            Configuration.AtmosphereFromGroundLoader.CalculatedMembers(afg);
+            AtmosphereFromGroundLoader.CalculatedMembers(afg);
             afg.SetMaterial(true);
 
             Events.OnRuntimeUtilityPatchAFG.Fire(afg);
@@ -132,8 +121,9 @@ namespace Kopernicus
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereFixer : MonoBehaviour
     {
-        Double timeCounter = 0d;
-        void Awake()
+        private Double _timeCounter;
+
+        private void Awake()
         {
             if (!CompatibilityChecker.IsCompatible())
             {
@@ -141,14 +131,18 @@ namespace Kopernicus
                 return;
             }
 
-            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
-                if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
-                    RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
+                return;
+            }
+            
+            if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
+            {
+                RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
             }
         }
 
-        void Start()
+        private void Start()
         {
             if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
@@ -157,25 +151,27 @@ namespace Kopernicus
             Destroy(this); // don't hang around.
         }
 
-        void Update()
+        private void Update()
         {
-            if (timeCounter < 0.5d)
+            if (_timeCounter < 0.5d)
             {
-                timeCounter += Time.deltaTime;
+                _timeCounter += Time.deltaTime;
                 return;
             }
             foreach (AtmosphereFromGround afg in Resources.FindObjectsOfTypeAll<AtmosphereFromGround>())
             {
-                if (afg.planet != null)
+                if (!afg.planet)
                 {
-                    //Debug.Log("[Kopernicus]: Patching AFG " + afg.planet.bodyName);
-                    //if (!AFGInfo.PatchAFG(afg))
-                    //    Debug.Log("[Kopernicus]: ERROR AtmosphereFixer => Couldn't patch AtmosphereFromGround for " + afg.planet.bodyName + "!");
-                    if (AFGInfo.PatchAFG(afg))
-                        Debug.Log("[Kopernicus] AtmosphereFixer => Patched AtmosphereFromGround for " + afg.planet.bodyName);
+                    continue;
+                }
+                
+                if (AtmosphereInfo.PatchAfg(afg))
+                {
+                    Debug.Log("[Kopernicus] AtmosphereFixer => Patched AtmosphereFromGround for " +
+                              afg.planet.bodyName);
                 }
             }
-            UnityEngine.Object.Destroy(this); // don't hang around.
+            Destroy(this); // don't hang around.
         }
     }
 }

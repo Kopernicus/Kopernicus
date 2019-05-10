@@ -17,39 +17,38 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexHeightOblate : ModLoader<PQSMod_VertexHeightOblate>
     {
-        namespace ModLoader
+        // The height where the terrain is oblated
+        [ParserTarget("height")]
+        public NumericParser<Double> Height
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightOblate : ModLoader<PQSMod_VertexHeightOblate>
-            {
-                // The height where the terrain is oblated
-                [ParserTarget("height")]
-                public NumericParser<Double> height
-                {
-                    get { return mod.height; }
-                    set { mod.height = value; }
-                }
+            get { return Mod.height; }
+            set { Mod.height = value; }
+        }
 
-                // The pow of the terrain
-                [ParserTarget("pow")]
-                public NumericParser<Double> pow
-                {
-                    get { return mod.pow; }
-                    set { mod.pow = value; }
-                }
-            }
+        // The pow of the terrain
+        [ParserTarget("pow")]
+        public NumericParser<Double> Pow
+        {
+            get { return Mod.pow; }
+            set { Mod.pow = value; }
         }
     }
 }

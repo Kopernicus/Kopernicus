@@ -17,13 +17,15 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -37,13 +39,19 @@ namespace Kopernicus
         /// </summary>
         public static T Get<T>(this CelestialBody body, String id)
         {
-            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
-            return c != null ? c.Get<T>(id) : default(T);
+            if (!body)
+            {
+                return default(T);
+            }
+            
+            StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
+            return !c ? default(T) : c.Get<T>(id);
         }
 
         /// <summary>
         /// Gets data from the internal storage of the body
         /// </summary>summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static T Get<T>(this PSystemBody body, String id)
         {
             return body.celestialBody.Get<T>(id);
@@ -54,13 +62,19 @@ namespace Kopernicus
         /// </summary>
         public static Boolean Has(this CelestialBody body, String id)
         {
-            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
-            return c?.Has(id) ?? false;
+            if (!body)
+            {
+                return false;
+            }
+            
+            StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
+            return c && c.Has(id);
         }
 
         /// <summary>
         /// Returns if the internal storage knows an id
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static Boolean Has(this PSystemBody body, String id)
         {
             return body.celestialBody.Has(id);
@@ -71,8 +85,17 @@ namespace Kopernicus
         /// </summary>
         public static void Set<T>(this CelestialBody body, String id, T value)
         {
-            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
-            c?.Set<T>(id, value);
+            if (!body)
+            {
+                return;
+            }
+            
+            StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
+            if (!c)
+            {
+                return;
+            }
+            c.Set(id, value);
         }
 
         /// <summary>
@@ -80,21 +103,32 @@ namespace Kopernicus
         /// </summary>
         public static void Set<T>(this PSystemBody body, String id, T value)
         {
-            body.celestialBody.Set<T>(id, value);
+            body.celestialBody.Set(id, value);
         }
 
         /// <summary>
         /// Removes an element from the internal storage
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static void Remove(this CelestialBody body, String id)
         {
-            StorageComponent c = body?.gameObject?.AddOrGetComponent<StorageComponent>();
-            c?.Remove(id);
+            if (!body)
+            {
+                return;
+            }
+            
+            StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
+            if (!c)
+            {
+                return;
+            }
+            c.Remove(id);
         }
 
         /// <summary>
         /// Removes an element from the internal storage
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static void Remove(this PSystemBody body, String id)
         {
             body.celestialBody.Remove(id);
@@ -105,11 +139,7 @@ namespace Kopernicus
         /// </summary>
         public static T Get<T>(this CelestialBody body, String id, T defaultValue)
         {
-            if (body.Has(id))
-            {
-                return body.Get<T>(id);
-            }
-            return defaultValue;
+            return body.Has(id) ? body.Get<T>(id) : defaultValue;
         }
 
         /// <summary>
@@ -117,7 +147,7 @@ namespace Kopernicus
         /// </summary>
         public static T Get<T>(this PSystemBody body, String id, T defaultValue)
         {
-            return body.celestialBody.Get<T>(id, defaultValue);
+            return body.celestialBody.Get(id, defaultValue);
         }
     }
 }

@@ -17,607 +17,572 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using LibNoise;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Kopernicus.Components;
-using Kopernicus.Configuration.NoiseLoader;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
-using RidgedMultifractal = LibNoise.RidgedMultifractal;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexPlanet : ModLoader<PQSMod_VertexPlanet>
     {
-        namespace ModLoader
+        // Loader for the SimplexWrapper
+        [RequireConfigType(ConfigType.Node)]
+        public class SimplexLoader : ITypeParser<KopernicusSimplexWrapper>
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexPlanet : ModLoader<PQSMod_VertexPlanet>
+            // Loaded wrapper
+            public KopernicusSimplexWrapper Value { get; set; }
+
+            // deformity
+            [ParserTarget("deformity")]
+            public NumericParser<Double> Deformity
             {
-                // Loader for the SimplexWrapper
-                [RequireConfigType(ConfigType.Node)]
-                public class SimplexLoader : ITypeParser<KopernicusSimplexWrapper>
+                get { return Value.deformity; }
+                set { Value.deformity = value; }
+            }
+
+            // frequency
+            [ParserTarget("frequency")]
+            public NumericParser<Double> Frequency
+            {
+                get { return Value.frequency; }
+                set { Value.frequency = value; }
+            }
+
+            // octaves
+            [ParserTarget("octaves")]
+            public NumericParser<Double> Octaves
+            {
+                get { return Value.octaves; }
+                set { Value.octaves = value; }
+            }
+
+            // persistance
+            [ParserTarget("persistance")]
+            public NumericParser<Double> Persistance
+            {
+                get { return Value.persistance; }
+                set { Value.persistance = value; }
+            }
+
+            // seed
+            [ParserTarget("seed")]
+            public NumericParser<Int32> Seed
+            {
+                get { return Value.Seed; }
+                set { Value.Seed = value; }
+            }
+
+            // Default constructor
+            [KittopiaConstructor(KittopiaConstructor.ParameterType.Empty)]
+            public SimplexLoader()
+            {
+                Value = new KopernicusSimplexWrapper(0, 0, 0, 0);
+            }
+
+            // Runtime constructor
+            public SimplexLoader(PQSMod_VertexPlanet.SimplexWrapper simplex)
+            {
+                Value = new KopernicusSimplexWrapper(simplex);
+            }
+
+            // Runtime constructor
+            public SimplexLoader(KopernicusSimplexWrapper simplex)
+            {
+                Value = simplex;
+            }
+
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
+            public static implicit operator KopernicusSimplexWrapper(SimplexLoader parser)
+            {
+                return parser.Value;
+            }
+
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator SimplexLoader(KopernicusSimplexWrapper value)
+            {
+                return value == null ? null : new SimplexLoader(value);
+            }
+
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator SimplexLoader(PQSMod_VertexPlanet.SimplexWrapper value)
+            {
+                return value == null ? null : new SimplexLoader(value);
+            }
+        }
+
+        // Loader for Noise
+        [RequireConfigType(ConfigType.Node)]
+        public class NoiseModLoader : ITypeParser<PQSMod_VertexPlanet.NoiseModWrapper>
+        {
+            // The loaded noise
+            public PQSMod_VertexPlanet.NoiseModWrapper Value { get; set; }
+
+            // deformity
+            [ParserTarget("deformity")]
+            public NumericParser<Double> Deformity
+            {
+                get { return Value.deformity; }
+                set { Value.deformity = value; }
+            }
+
+            // frequency
+            [ParserTarget("frequency")]
+            public NumericParser<Double> Frequency
+            {
+                get { return Value.frequency; }
+                set { Value.frequency = value; }
+            }
+
+            // octaves
+            [ParserTarget("octaves")]
+            public NumericParser<Int32> Octaves
+            {
+                get { return Value.octaves; }
+                set { Value.octaves = Mathf.Clamp(value, 1, 30); }
+            }
+
+            // persistance
+            [ParserTarget("persistance")]
+            public NumericParser<Double> Persistance
+            {
+                get { return Value.persistance; }
+                set { Value.persistance = value; }
+            }
+
+            // seed
+            [ParserTarget("seed")]
+            public NumericParser<Int32> SeedLoader
+            {
+                get { return Value.seed; }
+                set { Value.seed = value; }
+            }
+
+            // Default constructor
+            [KittopiaConstructor(KittopiaConstructor.ParameterType.Empty)]
+            public NoiseModLoader()
+            {
+                Value = new PQSMod_VertexPlanet.NoiseModWrapper(0, 0, 0, 0);
+            }
+
+            // Runtime Constructor
+            public NoiseModLoader(PQSMod_VertexPlanet.NoiseModWrapper noise)
+            {
+                Value = noise;
+            }
+
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
+            public static implicit operator PQSMod_VertexPlanet.NoiseModWrapper(NoiseModLoader parser)
+            {
+                return parser.Value;
+            }
+
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator NoiseModLoader(PQSMod_VertexPlanet.NoiseModWrapper value)
+            {
+                return new NoiseModLoader(value);
+            }
+        }
+
+        // Land class loader 
+        [RequireConfigType(ConfigType.Node)]
+        public class LandClassLoader : IPatchable, ITypeParser<PQSMod_VertexPlanet.LandClass>
+        {
+            // Land class object
+            public PQSMod_VertexPlanet.LandClass Value { get; set; }
+
+            // Name of the class
+            [ParserTarget("name")]
+            public String name
+            {
+                get { return Value.name; }
+                set { Value.name = value; }
+            }
+
+            // Should we delete this
+            [ParserTarget("delete")]
+            [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
+            public NumericParser<Boolean> Delete = false;
+
+            // baseColor
+            [ParserTarget("baseColor")]
+            public ColorParser BaseColor
+            {
+                get { return Value.baseColor; }
+                set { Value.baseColor = value; }
+            }
+
+            // colorNoise
+            [ParserTarget("colorNoise")]
+            public ColorParser ColorNoise
+            {
+                get { return Value.colorNoise; }
+                set { Value.colorNoise = value; }
+            }
+
+            // colorNoiseAmount
+            [ParserTarget("colorNoiseAmount")]
+            public NumericParser<Double> ColorNoiseAmount
+            {
+                get { return Value.colorNoiseAmount; }
+                set { Value.colorNoiseAmount = value; }
+            }
+
+            // colorNoiseMap
+            [ParserTarget("SimplexNoiseMap", AllowMerge = true)]
+            public SimplexLoader ColorNoiseMap
+            {
+                get { return Value.colorNoiseMap; }
+                set { Value.colorNoiseMap = value; }
+            }
+
+            // fractalEnd
+            [ParserTarget("fractalEnd")]
+            public NumericParser<Double> FractalEnd
+            {
+                get { return Value.fractalEnd; }
+                set { Value.fractalEnd = value; }
+            }
+
+            // fractalStart
+            [ParserTarget("fractalStart")]
+            public NumericParser<Double> FractalStart
+            {
+                get { return Value.fractalStart; }
+                set { Value.fractalStart = value; }
+            }
+
+            // lerpToNext
+            [ParserTarget("lerpToNext")]
+            public NumericParser<Boolean> LerpToNext
+            {
+                get { return Value.lerpToNext; }
+                set { Value.lerpToNext = value; }
+            }
+
+            // fractalDelta
+            [ParserTarget("fractalDelta")]
+            public NumericParser<Double> FractalDelta
+            {
+                get { return Value.fractalDelta; }
+                set { Value.fractalDelta = value; }
+            }
+
+            // endHeight
+            [ParserTarget("endHeight")]
+            public NumericParser<Double> EndHeight
+            {
+                get { return Value.endHeight; }
+                set { Value.endHeight = value; }
+            }
+
+            // startHeight
+            [ParserTarget("startHeight")]
+            public NumericParser<Double> StartHeight
+            {
+                get { return Value.startHeight; }
+                set { Value.startHeight = value; }
+            }
+
+            // Default constructor
+            [KittopiaConstructor(KittopiaConstructor.ParameterType.Empty)]
+            public LandClassLoader()
+            {
+                Value = new PQSMod_VertexPlanet.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
+            }
+
+            // Runtime constructor
+            public LandClassLoader(PQSMod_VertexPlanet.LandClass land)
+            {
+                Value = land;
+            }
+
+            /// <summary>
+            /// Convert Parser to Value
+            /// </summary>
+            public static implicit operator PQSMod_VertexPlanet.LandClass(LandClassLoader parser)
+            {
+                return parser?.Value;
+            }
+
+            /// <summary>
+            /// Convert Value to Parser
+            /// </summary>
+            public static implicit operator LandClassLoader(PQSMod_VertexPlanet.LandClass value)
+            {
+                return value != null ? new LandClassLoader(value) : null;
+            }
+        }
+
+        // buildHeightColors
+        [ParserTarget("buildHeightColors")]
+        public NumericParser<Boolean> BuildHeightColors
+        {
+            get { return Mod.buildHeightColors; }
+            set { Mod.buildHeightColors = value; }
+        }
+
+        // colorDeformity
+        [ParserTarget("colorDeformity")]
+        public NumericParser<Double> ColorDeformity
+        {
+            get { return Mod.colorDeformity; }
+            set { Mod.colorDeformity = value; }
+        }
+
+        // continental
+        [ParserTarget("ContinentalSimplex", AllowMerge = true)]
+        public SimplexLoader Continental
+        {
+            get { return Mod.continental; }
+            set { Mod.continental = value; }
+        }
+
+        // continentalRuggedness
+        [ParserTarget("RuggednessSimplex", AllowMerge = true)]
+        public SimplexLoader ContinentalRuggedness
+        {
+            get { return Mod.continentalRuggedness; }
+            set { Mod.continentalRuggedness = value; }
+        }
+
+        // continentalSharpness
+        [ParserTarget("SharpnessNoise", AllowMerge = true)]
+        public NoiseModLoader ContinentalSharpness
+        {
+            get { return Mod.continentalSharpness; }
+            set { Mod.continentalSharpness = value; }
+        }
+
+        // continentalSharpnessMap
+        [ParserTarget("SharpnessSimplexMap", AllowMerge = true)]
+        public SimplexLoader ContinentalSharpnessMap
+        {
+            get { return Mod.continentalSharpnessMap; }
+            set { Mod.continentalSharpnessMap = value; }
+        }
+
+        // deformity
+        [ParserTarget("deformity")]
+        public NumericParser<Double> Deformity
+        {
+            get { return Mod.deformity; }
+            set { Mod.deformity = value; }
+        }
+
+        // The land classes
+        [ParserTargetCollection("LandClasses", AllowMerge = true)]
+        public CallbackList<LandClassLoader> LandClasses { get; set; }
+
+        // oceanDepth
+        [ParserTarget("oceanDepth")]
+        public NumericParser<Double> OceanDepth
+        {
+            get { return Mod.oceanDepth; }
+            set { Mod.oceanDepth = value; }
+        }
+
+        // oceanLevel
+        [ParserTarget("oceanLevel")]
+        public NumericParser<Double> OceanLevel
+        {
+            get { return Mod.oceanLevel; }
+            set { Mod.oceanLevel = value; }
+        }
+
+        // oceanSnap
+        [ParserTarget("oceanSnap")]
+        public NumericParser<Boolean> OceanSnap
+        {
+            get { return Mod.oceanSnap; }
+            set { Mod.oceanSnap = value; }
+        }
+
+        // oceanStep
+        [ParserTarget("oceanStep")]
+        public NumericParser<Double> OceanStep
+        {
+            get { return Mod.oceanStep; }
+            set { Mod.oceanStep = value; }
+        }
+
+        // seed
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.seed; }
+            set { Mod.seed = value; }
+        }
+
+        // terrainRidgeBalance
+        [ParserTarget("terrainRidgeBalance")]
+        public NumericParser<Double> TerrainRidgeBalance
+        {
+            get { return Mod.terrainRidgeBalance; }
+            set { Mod.terrainRidgeBalance = value; }
+        }
+
+        // terrainRidgesMax
+        [ParserTarget("terrainRidgesMax")]
+        public NumericParser<Double> TerrainRidgesMax
+        {
+            get { return Mod.terrainRidgesMax; }
+            set { Mod.terrainRidgesMax = value; }
+        }
+
+        // terrainRidgesMin
+        [ParserTarget("terrainRidgesMin")]
+        public NumericParser<Double> TerrainRidgesMin
+        {
+            get { return Mod.terrainRidgesMin; }
+            set { Mod.terrainRidgesMin = value; }
+        }
+
+        // terrainShapeEnd
+        [ParserTarget("terrainShapeEnd")]
+        public NumericParser<Double> TerrainShapeEnd
+        {
+            get { return Mod.terrainShapeEnd; }
+            set { Mod.terrainShapeEnd = value; }
+        }
+
+        // terrainShapeStart
+        [ParserTarget("terrainShapeStart")]
+        public NumericParser<Double> TerrainShapeStart
+        {
+            get { return Mod.terrainShapeStart; }
+            set { Mod.terrainShapeStart = value; }
+        }
+
+        // terrainSmoothing
+        [ParserTarget("terrainSmoothing")]
+        public NumericParser<Double> TerrainSmoothing
+        {
+            get { return Mod.terrainSmoothing; }
+            set { Mod.terrainSmoothing = value; }
+        }
+
+        // terrainType
+        [ParserTarget("TerrainTypeSimplex", AllowMerge = true)]
+        public SimplexLoader TerrainType
+        {
+            get { return Mod.terrainType; }
+            set { Mod.terrainType = value; }
+        }
+
+        // Creates the a PQSMod of type T with given PQS
+        public override void Create(PQS pqsVersion)
+        {
+            base.Create(pqsVersion);
+
+            // Create mod components
+            Continental = new SimplexLoader();
+            ContinentalRuggedness = new SimplexLoader();
+            ContinentalSharpness = new NoiseModLoader();
+            ContinentalSharpnessMap = new SimplexLoader();
+            TerrainType = new SimplexLoader();
+
+            // Create the callback list
+            LandClasses = new CallbackList<LandClassLoader>(e =>
+            {
+                Mod.landClasses = LandClasses.Where(landClass => !landClass.Delete)
+                    .Select(landClass => landClass.Value).ToArray();
+            });
+            Mod.landClasses = new PQSMod_VertexPlanet.LandClass[0];
+        }
+
+        // Grabs a PQSMod of type T from a parameter with a given PQS
+        public override void Create(PQSMod_VertexPlanet mod, PQS pqsVersion)
+        {
+            base.Create(mod, pqsVersion);
+
+            // Create mod components
+            if (Continental == null)
+            {
+                Continental = new SimplexLoader();
+            }
+            else if (Mod.continental.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+            {
+                Continental = new SimplexLoader(Mod.continental);
+            }
+
+            if (ContinentalRuggedness == null)
+            {
+                ContinentalRuggedness = new SimplexLoader();
+            }
+            else if (Mod.continentalRuggedness.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+            {
+                ContinentalRuggedness = new SimplexLoader(Mod.continentalRuggedness);
+            }
+
+            if (ContinentalSharpness == null)
+            {
+                ContinentalSharpness = new NoiseModLoader();
+            }
+
+            if (ContinentalSharpnessMap == null)
+            {
+                ContinentalSharpnessMap = new SimplexLoader();
+            }
+            else if (Mod.continentalSharpnessMap.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+            {
+                ContinentalSharpnessMap = new SimplexLoader(Mod.continentalSharpnessMap);
+            }
+
+            if (TerrainType == null)
+            {
+                TerrainType = new SimplexLoader();
+            }
+            else if (Mod.terrainType.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+            {
+                TerrainType = new SimplexLoader(Mod.terrainType);
+            }
+
+            // Create the callback list
+            LandClasses = new CallbackList<LandClassLoader>(e =>
+            {
+                Mod.landClasses = LandClasses.Where(landClass => !landClass.Delete)
+                    .Select(landClass => landClass.Value).ToArray();
+            });
+
+            // Load LandClasses
+            if (Mod.landClasses != null)
+            {
+                for (Int32 i = 0; i < Mod.landClasses.Length; i++)
                 {
-                    // Loaded wrapper
-                    public KopernicusSimplexWrapper Value { get; set; }
-
-                    // deformity
-                    [ParserTarget("deformity")]
-                    public NumericParser<Double> deformity
-                    {
-                        get { return Value.deformity; }
-                        set { Value.deformity = value; }
-                    }
-
-                    // frequency
-                    [ParserTarget("frequency")]
-                    public NumericParser<Double> frequency
-                    {
-                        get { return Value.frequency; }
-                        set { Value.frequency = value; }
-                    }
-
-                    // octaves
-                    [ParserTarget("octaves")]
-                    public NumericParser<Double> octaves
-                    {
-                        get { return Value.octaves; }
-                        set { Value.octaves = value; }
-                    }
-
-                    // persistance
-                    [ParserTarget("persistance")]
-                    public NumericParser<Double> persistance
-                    {
-                        get { return Value.persistance; }
-                        set { Value.persistance = value; }
-                    }
-
-                    // seed
-                    [ParserTarget("seed")]
-                    public NumericParser<Int32> seed
-                    {
-                        get { return Value.seed; }
-                        set { Value.seed = value; }
-                    }
-
-                    // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
-                    public SimplexLoader()
-                    {
-                        Value = new KopernicusSimplexWrapper(0, 0, 0, 0);
-                    }
-
-                    // Runtime constructor
-                    public SimplexLoader(PQSMod_VertexPlanet.SimplexWrapper simplex)
-                    {
-                        Value = new KopernicusSimplexWrapper(simplex);
-                    }
-
-                    // Runtime constructor
-                    public SimplexLoader(KopernicusSimplexWrapper simplex)
-                    {
-                        Value = simplex;
-                    }
-
-                    /// <summary>
-                    /// Convert Parser to Value
-                    /// </summary>
-                    public static implicit operator KopernicusSimplexWrapper(SimplexLoader parser)
-                    {
-                        return parser.Value;
-                    }
-        
-                    /// <summary>
-                    /// Convert Value to Parser
-                    /// </summary>
-                    public static implicit operator SimplexLoader(KopernicusSimplexWrapper value)
-                    {
-                        if (value == null)
-                            return null;
-                        return new SimplexLoader(value);
-                    }
-        
-                    /// <summary>
-                    /// Convert Value to Parser
-                    /// </summary>
-                    public static implicit operator SimplexLoader(PQSMod_VertexPlanet.SimplexWrapper value)
-                    {
-                        if (value == null)
-                            return null;
-                        return new SimplexLoader(value);
-                    }
+                    // Only activate the callback if we are adding the last loader
+                    LandClasses.Add(new LandClassLoader(Mod.landClasses[i]), i == Mod.landClasses.Length - 1);
                 }
-
-                // Loader for Noise
-                [RequireConfigType(ConfigType.Node)]
-                public class NoiseModLoader : ITypeParser<PQSMod_VertexPlanet.NoiseModWrapper>
-                {
-                    // The loaded noise
-                    public PQSMod_VertexPlanet.NoiseModWrapper Value { get; set; }
-
-                    // deformity
-                    [ParserTarget("deformity")]
-                    public NumericParser<Double> deformity
-                    {
-                        get { return Value.deformity; }
-                        set { Value.deformity = value; }
-                    }
-
-                    // frequency
-                    [ParserTarget("frequency")]
-                    public NumericParser<Double> frequency
-                    {
-                        get { return Value.frequency; }
-                        set { Value.frequency = value; }
-                    }
-
-                    // octaves
-                    [ParserTarget("octaves")]
-                    public NumericParser<Int32> octaves
-                    {
-                        get { return Value.octaves; }
-                        set { Value.octaves = Mathf.Clamp(value, 1, 30); }
-                    }
-
-                    // persistance
-                    [ParserTarget("persistance")]
-                    public NumericParser<Double> persistance
-                    {
-                        get { return Value.persistance; }
-                        set { Value.persistance = value; }
-                    }
-
-                    // seed
-                    [ParserTarget("seed")]
-                    public NumericParser<Int32> seedLoader
-                    {
-                        get { return Value.seed; }
-                        set { Value.seed = value; }
-                    }
-
-                    // noise
-                    [ParserTarget("Noise", AllowMerge = true, NameSignificance = NameSignificance.Type)]
-                    [KittopiaHideOption]
-                    public INoiseLoader noise
-                    {
-                        get
-                        {
-                            if (Value.noise != null)
-                            {
-                                Type noiseType = Value.noise.GetType();
-                                foreach (Type loaderType in Parser.ModTypes)
-                                {
-                                    if (loaderType.BaseType == null)
-                                        continue;
-                                    if (loaderType.BaseType.Namespace != "Kopernicus.Configuration.NoiseLoader")
-                                        continue;
-                                    if (!loaderType.BaseType.Name.StartsWith("NoiseLoader"))
-                                        continue;
-                                    if (loaderType.BaseType.GetGenericArguments()[0] != noiseType)
-                                        continue;
-                        
-                                    // We found our loader type
-                                    INoiseLoader loader = (INoiseLoader) Activator.CreateInstance(loaderType);
-                                    loader.Create(Value.noise);
-                                    return loader;
-                                }
-                            }
-                            return null;
-                        }
-                        set
-                        {
-                            Value.Setup(value.Noise);
-                        }
-                    }
-
-                    // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
-                    public NoiseModLoader()
-                    {
-                        Value = new PQSMod_VertexPlanet.NoiseModWrapper(0, 0, 0, 0);
-                    }
-
-                    // Runtime Constructor
-                    public NoiseModLoader(PQSMod_VertexPlanet.NoiseModWrapper noise)
-                    {
-                        Value = noise;
-                    }
-
-                    /// <summary>
-                    /// Convert Parser to Value
-                    /// </summary>
-                    public static implicit operator PQSMod_VertexPlanet.NoiseModWrapper(NoiseModLoader parser)
-                    {
-                        return parser.Value;
-                    }
-        
-                    /// <summary>
-                    /// Convert Value to Parser
-                    /// </summary>
-                    public static implicit operator NoiseModLoader(PQSMod_VertexPlanet.NoiseModWrapper value)
-                    {
-                        return new NoiseModLoader(value);
-                    }
-                }
-
-                // Land class loader 
-                [RequireConfigType(ConfigType.Node)]
-                public class LandClassLoader : IPatchable, ITypeParser<PQSMod_VertexPlanet.LandClass>
-                {
-                    // Land class object
-                    public PQSMod_VertexPlanet.LandClass Value { get; set; }
-
-                    // Name of the class
-                    [ParserTarget("name")]
-                    public String name
-                    {
-                        get { return Value.name; }
-                        set { Value.name = value; }
-                    }
-
-                    // Should we delete this
-                    [ParserTarget("delete")]
-                    public NumericParser<Boolean> delete = false;
-
-                    // baseColor
-                    [ParserTarget("baseColor")]
-                    public ColorParser baseColor
-                    {
-                        get { return Value.baseColor; }
-                        set { Value.baseColor = value; }
-                    }
-
-                    // colorNoise
-                    [ParserTarget("colorNoise")]
-                    public ColorParser colorNoise
-                    {
-                        get { return Value.colorNoise; }
-                        set { Value.colorNoise = value; }
-                    }
-
-                    // colorNoiseAmount
-                    [ParserTarget("colorNoiseAmount")]
-                    public NumericParser<Double> colorNoiseAmount
-                    {
-                        get { return Value.colorNoiseAmount; }
-                        set { Value.colorNoiseAmount = value; }
-                    }
-
-                    // colorNoiseMap
-                    [ParserTarget("SimplexNoiseMap", AllowMerge = true)]
-                    public SimplexLoader colorNoiseMap
-                    {
-                        get { return Value.colorNoiseMap; }
-                        set { Value.colorNoiseMap = value; }
-                    }
-
-                    // fractalEnd
-                    [ParserTarget("fractalEnd")]
-                    public NumericParser<Double> fractalEnd
-                    {
-                        get { return Value.fractalEnd; }
-                        set { Value.fractalEnd = value; }
-                    }
-
-                    // fractalStart
-                    [ParserTarget("fractalStart")]
-                    public NumericParser<Double> fractalStart
-                    {
-                        get { return Value.fractalStart; }
-                        set { Value.fractalStart = value; }
-                    }
-
-                    // lerpToNext
-                    [ParserTarget("lerpToNext")]
-                    public NumericParser<Boolean> lerpToNext
-                    {
-                        get { return Value.lerpToNext; }
-                        set { Value.lerpToNext = value; }
-                    }
-
-                    // fractalDelta
-                    [ParserTarget("fractalDelta")]
-                    public NumericParser<Double> fractalDelta
-                    {
-                        get { return Value.fractalDelta; }
-                        set { Value.fractalDelta = value; }
-                    }
-
-                    // endHeight
-                    [ParserTarget("endHeight")]
-                    public NumericParser<Double> endHeight
-                    {
-                        get { return Value.endHeight; }
-                        set { Value.endHeight = value; }
-                    }
-
-                    // startHeight
-                    [ParserTarget("startHeight")]
-                    public NumericParser<Double> startHeight
-                    {
-                        get { return Value.startHeight; }
-                        set { Value.startHeight = value; }
-                    }
-                    
-                    // Default constructor
-                    [KittopiaConstructor(KittopiaConstructor.Parameter.Empty)]
-                    public LandClassLoader()
-                    {
-                        Value = new PQSMod_VertexPlanet.LandClass("class", 0.0, 0.0, Color.white, Color.white, 0.0);
-                    }
-
-                    // Runtime constructor
-                    public LandClassLoader(PQSMod_VertexPlanet.LandClass land)
-                    {
-                        Value = land;
-                    }
-
-                    /// <summary>
-                    /// Convert Parser to Value
-                    /// </summary>
-                    public static implicit operator PQSMod_VertexPlanet.LandClass(LandClassLoader parser)
-                    {
-                        return parser?.Value;
-                    }
-        
-                    /// <summary>
-                    /// Convert Value to Parser
-                    /// </summary>
-                    public static implicit operator LandClassLoader(PQSMod_VertexPlanet.LandClass value)
-                    {
-                        return value != null ? new LandClassLoader(value) : null;
-                    }
-                }
-
-                // buildHeightColors
-                [ParserTarget("buildHeightColors")]
-                public NumericParser<Boolean> buildHeightColors 
-                {
-                    get { return mod.buildHeightColors; }
-                    set { mod.buildHeightColors = value; }
-                }
-
-                // colorDeformity
-                [ParserTarget("colorDeformity")]
-                public NumericParser<Double> colorDeformity
-                {
-                    get { return mod.colorDeformity; }
-                    set { mod.colorDeformity = value; }
-                }
-
-                // continental
-                [ParserTarget("ContinentalSimplex", AllowMerge = true)]
-                public SimplexLoader continental
-                {
-                    get { return mod.continental; }
-                    set { mod.continental = value; }
-                }
-
-                // continentalRuggedness
-                [ParserTarget("RuggednessSimplex", AllowMerge = true)]
-                public SimplexLoader continentalRuggedness
-                {
-                    get { return mod.continentalRuggedness; }
-                    set { mod.continentalRuggedness = value; }
-                }
-
-                // continentalSharpness
-                [ParserTarget("SharpnessNoise", AllowMerge = true)]
-                public NoiseModLoader continentalSharpness
-                {
-                    get { return mod.continentalSharpness; }
-                    set { mod.continentalSharpness = value; }
-                }
-
-                // continentalSharpnessMap
-                [ParserTarget("SharpnessSimplexMap", AllowMerge = true)]
-                public SimplexLoader continentalSharpnessMap
-                {
-                    get { return mod.continentalSharpnessMap; }
-                    set { mod.continentalSharpnessMap = value; }
-                }
-
-                // deformity
-                [ParserTarget("deformity")]
-                public NumericParser<Double> deformity
-                {
-                    get { return mod.deformity; }
-                    set { mod.deformity = value; }
-                }
-
-                // The land classes
-                [ParserTargetCollection("LandClasses", AllowMerge = true)]
-                public CallbackList<LandClassLoader> landClasses { get; set; }
-
-                // oceanDepth
-                [ParserTarget("oceanDepth")]
-                public NumericParser<Double> oceanDepth
-                {
-                    get { return mod.oceanDepth; }
-                    set { mod.oceanDepth = value; }
-                }
-
-                // oceanLevel
-                [ParserTarget("oceanLevel")]
-                public NumericParser<Double> oceanLevel
-                {
-                    get { return mod.oceanLevel; }
-                    set { mod.oceanLevel = value; }
-                }
-
-                // oceanSnap
-                [ParserTarget("oceanSnap")]
-                public NumericParser<Boolean> oceanSnap
-                {
-                    get { return mod.oceanSnap; }
-                    set { mod.oceanSnap = value; }
-                }
-
-                // oceanStep
-                [ParserTarget("oceanStep")]
-                public NumericParser<Double> oceanStep
-                {
-                    get { return mod.oceanStep; }
-                    set { mod.oceanStep = value; }
-                }
-
-                // seed
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return mod.seed; }
-                    set { mod.seed = value; }
-                }
-
-                // terrainRidgeBalance
-                [ParserTarget("terrainRidgeBalance")]
-                public NumericParser<Double> terrainRidgeBalance
-                {
-                    get { return mod.terrainRidgeBalance; }
-                    set { mod.terrainRidgeBalance = value; }
-                }
-
-                // terrainRidgesMax
-                [ParserTarget("terrainRidgesMax")]
-                public NumericParser<Double> terrainRidgesMax
-                {
-                    get { return mod.terrainRidgesMax; }
-                    set { mod.terrainRidgesMax = value; }
-                }
-
-                // terrainRidgesMin
-                [ParserTarget("terrainRidgesMin")]
-                public NumericParser<Double> terrainRidgesMin
-                {
-                    get { return mod.terrainRidgesMin; }
-                    set { mod.terrainRidgesMin = value; }
-                }
-
-                // terrainShapeEnd
-                [ParserTarget("terrainShapeEnd")]
-                public NumericParser<Double> terrainShapeEnd
-                {
-                    get { return mod.terrainShapeEnd; }
-                    set { mod.terrainShapeEnd = value; }
-                }
-
-                // terrainShapeStart
-                [ParserTarget("terrainShapeStart")]
-                public NumericParser<Double> terrainShapeStart
-                {
-                    get { return mod.terrainShapeStart; }
-                    set { mod.terrainShapeStart = value; }
-                }
-
-                // terrainSmoothing
-                [ParserTarget("terrainSmoothing")]
-                public NumericParser<Double> terrainSmoothing
-                {
-                    get { return mod.terrainSmoothing; }
-                    set { mod.terrainSmoothing = value; }
-                }
-
-                // terrainType
-                [ParserTarget("TerrainTypeSimplex", AllowMerge = true)]
-                public SimplexLoader terrainType
-                {
-                    get { return mod.terrainType; }
-                    set { mod.terrainType = value; }
-                }
-
-                // Creates the a PQSMod of type T with given PQS
-                public override void Create(PQS pqsVersion)
-                {
-                    base.Create(pqsVersion);
-                    
-                    // Create mod components
-                    continental = new SimplexLoader();
-                    continentalRuggedness = new SimplexLoader();
-                    continentalSharpness = new NoiseModLoader();
-                    continentalSharpnessMap = new SimplexLoader();
-                    terrainType = new SimplexLoader();
-                        
-                    // Create the callback list
-                    landClasses = new CallbackList<LandClassLoader> ((e) =>
-                    {
-                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
-                            .Select(landClass => landClass.Value).ToArray();
-                    });
-                    mod.landClasses = new PQSMod_VertexPlanet.LandClass[0];
-                }
-
-                // Grabs a PQSMod of type T from a parameter with a given PQS
-                public override void Create(PQSMod_VertexPlanet _mod, PQS pqsVersion)
-                {
-                    base.Create(_mod, pqsVersion);
-                    
-                    // Create mod components
-                    if (continental == null)
-                    {
-                        continental = new SimplexLoader();
-                    }
-                    else if (mod.continental.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
-                    {
-                        continental = new SimplexLoader(mod.continental);
-                    }
-                    if (continentalRuggedness == null)
-                    {
-                        continentalRuggedness = new SimplexLoader();
-                    }
-                    else if (mod.continentalRuggedness.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
-                    {
-                        continentalRuggedness = new SimplexLoader(mod.continentalRuggedness);
-                    }
-                    if (continentalSharpness == null)
-                    {
-                        continentalSharpness = new NoiseModLoader();
-                    }
-                    if (continentalSharpnessMap == null)
-                    {
-                        continentalSharpnessMap = new SimplexLoader();
-                    }
-                    else if (mod.continentalSharpnessMap.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
-                    {
-                        continentalSharpnessMap = new SimplexLoader(mod.continentalSharpnessMap);
-                    }
-                    if (terrainType == null)
-                    {
-                        terrainType = new SimplexLoader();
-                    }
-                    else if (mod.terrainType.GetType() == typeof(PQSMod_VertexPlanet.SimplexWrapper))
-                    {
-                        terrainType = new SimplexLoader(mod.terrainType);
-                    }
-                    
-                    // Create the callback list
-                    landClasses = new CallbackList<LandClassLoader> ((e) =>
-                    {
-                        mod.landClasses = landClasses.Where(landClass => !landClass.delete)
-                            .Select(landClass => landClass.Value).ToArray();
-                    });
-                    
-                    // Load LandClasses
-                    if (mod.landClasses != null)
-                    {
-                        for (Int32 i = 0; i < mod.landClasses.Length; i++)
-                        {
-                            // Only activate the callback if we are adding the last loader
-                            landClasses.Add(new LandClassLoader(mod.landClasses[i]), i == mod.landClasses.Length - 1);
-                        }
-                    }
-                    else
-                    {
-                        mod.landClasses = new PQSMod_VertexPlanet.LandClass[0];
-                    }
-                }
+            }
+            else
+            {
+                Mod.landClasses = new PQSMod_VertexPlanet.LandClass[0];
             }
         }
     }

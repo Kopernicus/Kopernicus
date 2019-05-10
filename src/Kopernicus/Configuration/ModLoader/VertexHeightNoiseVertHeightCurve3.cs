@@ -17,244 +17,247 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using LibNoise;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Enumerations;
+using LibNoise;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexHeightNoiseVertHeightCurve3 : ModLoader<PQSMod_VertexHeightNoiseVertHeightCurve3>
     {
-        namespace ModLoader
+        // Maximum deformity
+        [ParserTarget("deformityMax")]
+        public NumericParser<Double> DeformityMax
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightNoiseVertHeightCurve3 : ModLoader<PQSMod_VertexHeightNoiseVertHeightCurve3>
+            get { return Mod.deformityMax; }
+            set { Mod.deformityMax = value; }
+        }
+
+        // Minimum deformity
+        [ParserTarget("deformityMin")]
+        public NumericParser<Double> DeformityMin
+        {
+            get { return Mod.deformityMin; }
+            set { Mod.deformityMin = value; }
+        }
+
+        // Deformity multiplier curve
+        [ParserTarget("inputHeightCurve")]
+        public FloatCurveParser InputHeightCurve
+        {
+            get { return Mod.inputHeightCurve; }
+            set { Mod.inputHeightCurve = value; }
+        }
+
+        // Ending height
+        [ParserTarget("inputHeightEnd")]
+        public NumericParser<Double> InputHeightEnd
+        {
+            get { return Mod.inputHeightEnd; }
+            set { Mod.inputHeightEnd = value; }
+        }
+
+        // Starting height
+        [ParserTarget("inputHeightStart")]
+        public NumericParser<Double> InputHeightStart
+        {
+            get { return Mod.inputHeightStart; }
+            set { Mod.inputHeightStart = value; }
+        }
+
+        // The frequency of the simplex multiplier
+        [ParserTarget("multiplierFrequency")]
+        public NumericParser<Double> MultiplierFrequency
+        {
+            get { return Mod.curveMultiplier.frequency; }
+            set { Mod.curveMultiplier.frequency = value; }
+        }
+
+        // Octaves of the simplex multiplier
+        [ParserTarget("multiplierOctaves")]
+        public NumericParser<Int32> MultiplierOctaves
+        {
+            get { return Mod.curveMultiplier.octaves; }
+            set { Mod.curveMultiplier.octaves = value; }
+        }
+
+        // Persistence of the simplex multiplier
+        [ParserTarget("multiplierPersistence")]
+        public NumericParser<Double> MultiplierPersistence
+        {
+            get { return Mod.curveMultiplier.persistence; }
+            set { Mod.curveMultiplier.persistence = value; }
+        }
+
+        // The seed of the simplex multiplier
+        [ParserTarget("multiplierSeed")]
+        public NumericParser<Int32> MultiplierSeed
+        {
+            get { return Mod.curveMultiplier.seed; }
+            set { Mod.curveMultiplier.seed = value; }
+        }
+
+        // The frequency of the simplex noise on deformity
+        [ParserTarget("deformityFrequency")]
+        public NumericParser<Double> DeformityFrequency
+        {
+            get { return Mod.deformity.frequency; }
+            set { Mod.deformity.frequency = value; }
+        }
+
+        // Octaves of the simplex noise on deformity
+        [ParserTarget("deformityOctaves")]
+        public NumericParser<Int32> DeformityOctaves
+        {
+            get { return Mod.deformity.octaves; }
+            set { Mod.deformity.octaves = value; }
+        }
+
+        // Persistence of the simplex noise on deformity
+        [ParserTarget("deformityPersistence")]
+        public NumericParser<Double> DeformityPersistence
+        {
+            get { return Mod.deformity.persistence; }
+            set { Mod.deformity.persistence = value; }
+        }
+
+        // The seed of the simplex noise on deformity
+        [ParserTarget("deformitySeed")]
+        public NumericParser<Int32> DeformitySeed
+        {
+            get { return Mod.deformity.seed; }
+            set { Mod.deformity.seed = value; }
+        }
+
+        // The frequency of the additive noise
+        [ParserTarget("ridgedAddFrequency")]
+        public NumericParser<Double> RidgedAddFrequency
+        {
+            get { return Mod.ridgedAdd.frequency; }
+            set { Mod.ridgedAdd.frequency = value; }
+        }
+
+        // Lacunarity of the additive noise
+        [ParserTarget("ridgedAddLacunarity")]
+        public NumericParser<Double> RidgedAddLacunarity
+        {
+            get { return Mod.ridgedAdd.lacunarity; }
+            set { Mod.ridgedAdd.lacunarity = value; }
+        }
+
+        // Octaves of the additive noise
+        [ParserTarget("ridgedAddOctaves")]
+        public NumericParser<Int32> RidgedAddOctaves
+        {
+            get { return Mod.ridgedAdd.octaves; }
+            set { Mod.ridgedAdd.octaves = Mathf.Clamp(value, 1, 30); }
+        }
+
+        // The quality of the additive noise
+        [ParserTarget("ridgedAddQuality")]
+        public EnumParser<KopernicusNoiseQuality> RidgedAddQuality
+        {
+            get { return (KopernicusNoiseQuality) (Int32) Mod.ridgedAdd.quality; }
+            set { Mod.ridgedAdd.quality = (NoiseQuality) (Int32) value.Value; }
+        }
+
+        // The seed of the additive noise
+        [ParserTarget("ridgedAddSeed")]
+        public NumericParser<Int32> RidgedAddSeed
+        {
+            get { return Mod.ridgedAdd.seed; }
+            set { Mod.ridgedAdd.seed = value; }
+        }
+
+        // The frequency of the subtractive noise
+        [ParserTarget("ridgedSubFrequency")]
+        public NumericParser<Double> RidgedSubFrequency
+        {
+            get { return Mod.ridgedSub.frequency; }
+            set { Mod.ridgedSub.frequency = value; }
+        }
+
+        // Lacunarity of the subtractive noise
+        [ParserTarget("ridgedSubLacunarity")]
+        public NumericParser<Double> RidgedSubLacunarity
+        {
+            get { return Mod.ridgedSub.lacunarity; }
+            set { Mod.ridgedSub.lacunarity = value; }
+        }
+
+        // Octaves of the subtractive noise
+        [ParserTarget("ridgedSubOctaves")]
+        public NumericParser<Int32> RidgedSubOctaves
+        {
+            get { return Mod.ridgedSub.octaves; }
+            set { Mod.ridgedSub.octaves = Mathf.Clamp(value, 1, 30); }
+        }
+
+        // The quality of the subtractive noise
+        [ParserTarget("ridgedSubQuality")]
+        public EnumParser<KopernicusNoiseQuality> RidgedSubQuality
+        {
+            get { return (KopernicusNoiseQuality) (Int32) Mod.ridgedSub.quality; }
+            set { Mod.ridgedSub.quality = (NoiseQuality) (Int32) value.Value; }
+        }
+
+        // The seed of the subtractive noise
+        [ParserTarget("ridgedSubSeed")]
+        public NumericParser<Int32> RidgedSubSeed
+        {
+            get { return Mod.ridgedSub.seed; }
+            set { Mod.ridgedSub.seed = value; }
+        }
+
+        // Create the mod
+        public override void Create(PQS pqsVersion)
+        {
+            base.Create(pqsVersion);
+
+            // Construct the internal objects.
+            Mod.curveMultiplier = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
+            Mod.deformity = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
+            Mod.ridgedAdd = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
+            Mod.ridgedSub = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
+        }
+
+        // Create the mod
+        public override void Create(PQSMod_VertexHeightNoiseVertHeightCurve3 mod, PQS pqsVersion)
+        {
+            base.Create(mod, pqsVersion);
+
+            // Construct the internal objects.
+            if (Mod.curveMultiplier == null)
             {
-                // Maximum deformity
-                [ParserTarget("deformityMax")]
-                public NumericParser<Double> deformityMax
-                {
-                    get { return mod.deformityMax; }
-                    set { mod.deformityMax = value; }
-                }
+                Mod.curveMultiplier = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
+            }
 
-                // Minimum deformity
-                [ParserTarget("deformityMin")]
-                public NumericParser<Double> deformityMin
-                {
-                    get { return mod.deformityMin; }
-                    set { mod.deformityMin = value; }
-                }
+            if (Mod.deformity == null)
+            {
+                Mod.deformity = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
+            }
 
-                // Deformity multiplier curve
-                [ParserTarget("inputHeightCurve")]
-                public FloatCurveParser inputHeightCurve
-                {
-                    get { return mod.inputHeightCurve; }
-                    set { mod.inputHeightCurve = value; }
-                }
+            if (Mod.ridgedAdd == null)
+            {
+                Mod.ridgedAdd = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
+            }
 
-                // Ending height
-                [ParserTarget("inputHeightEnd")]
-                public NumericParser<Double> inputHeightEnd
-                {
-                    get { return mod.inputHeightEnd; }
-                    set { mod.inputHeightEnd = value; }
-                }
-
-                // Starting height
-                [ParserTarget("inputHeightStart")]
-                public NumericParser<Double> inputHeightStart
-                {
-                    get { return mod.inputHeightStart; }
-                    set { mod.inputHeightStart = value; }
-                }
-
-                // The frequency of the simplex multiplier
-                [ParserTarget("multiplierFrequency")]
-                public NumericParser<Double> multiplierFrequency
-                {
-                    get { return mod.curveMultiplier.frequency; }
-                    set { mod.curveMultiplier.frequency = value; }
-                }
-
-                // Octaves of the simplex multiplier
-                [ParserTarget("multiplierOctaves")]
-                public NumericParser<Int32> multiplierOctaves
-                {
-                    get { return mod.curveMultiplier.octaves; }
-                    set { mod.curveMultiplier.octaves = value; }
-                }
-
-                // Persistence of the simplex multiplier
-                [ParserTarget("multiplierPersistence")]
-                public NumericParser<Double> multiplierPersistence
-                {
-                    get { return mod.curveMultiplier.persistence; }
-                    set { mod.curveMultiplier.persistence = value; }
-                }
-
-                // The seed of the simplex multiplier
-                [ParserTarget("multiplierSeed")]
-                public NumericParser<Int32> multiplierSeed
-                {
-                    get { return mod.curveMultiplier.seed; }
-                    set { mod.curveMultiplier.seed = value; }
-                }
-
-                // The frequency of the simplex noise on deformity
-                [ParserTarget("deformityFrequency")]
-                public NumericParser<Double> deformityFrequency
-                {
-                    get { return mod.deformity.frequency; }
-                    set { mod.deformity.frequency = value; }
-                }
-
-                // Octaves of the simplex noise on deformity
-                [ParserTarget("deformityOctaves")]
-                public NumericParser<Int32> deformityOctaves
-                {
-                    get { return mod.deformity.octaves; }
-                    set { mod.deformity.octaves = value; }
-                }
-
-                // Persistence of the simplex noise on deformity
-                [ParserTarget("deformityPersistence")]
-                public NumericParser<Double> deformityPersistence
-                {
-                    get { return mod.deformity.persistence; }
-                    set { mod.deformity.persistence = value; }
-                }
-
-                // The seed of the simplex noise on deformity
-                [ParserTarget("deformitySeed")]
-                public NumericParser<Int32> deformitySeed
-                {
-                    get { return mod.deformity.seed; }
-                    set { mod.deformity.seed = value; }
-                }
-
-                // The frequency of the additive noise
-                [ParserTarget("ridgedAddFrequency")]
-                public NumericParser<Double> ridgedAddFrequency
-                {
-                    get { return mod.ridgedAdd.frequency; }
-                    set { mod.ridgedAdd.frequency = value; }
-                }
-
-                // Lacunarity of the additive noise
-                [ParserTarget("ridgedAddLacunarity")]
-                public NumericParser<Double> ridgedAddLacunarity
-                {
-                    get { return mod.ridgedAdd.lacunarity; }
-                    set { mod.ridgedAdd.lacunarity = value; }
-                }
-
-                // Octaves of the additive noise
-                [ParserTarget("ridgedAddOctaves")]
-                public NumericParser<Int32> ridgedAddOctaves
-                {
-                    get { return mod.ridgedAdd.octaves; }
-                    set { mod.ridgedAdd.octaves = Mathf.Clamp(value, 1, 30); }
-                }
-
-                // The quality of the additive noise
-                [ParserTarget("ridgedAddQuality")]
-                public EnumParser<KopernicusNoiseQuality> ridgedAddQuality
-                {
-                    get { return (KopernicusNoiseQuality) (Int32) mod.ridgedAdd.quality; }
-                    set { mod.ridgedAdd.quality = (NoiseQuality) (Int32) value.Value; }
-                }
-
-                // The seed of the additive noise
-                [ParserTarget("ridgedAddSeed")]
-                public NumericParser<Int32> ridgedAddSeed
-                {
-                    get { return mod.ridgedAdd.seed; }
-                    set { mod.ridgedAdd.seed = value; }
-                }
-
-                // The frequency of the subtractive noise
-                [ParserTarget("ridgedSubFrequency")]
-                public NumericParser<Double> ridgedSubFrequency
-                {
-                    get { return mod.ridgedSub.frequency; }
-                    set { mod.ridgedSub.frequency = value; }
-                }
-
-                // Lacunarity of the subtractive noise
-                [ParserTarget("ridgedSubLacunarity")]
-                public NumericParser<Double> ridgedSubLacunarity
-                {
-                    get { return mod.ridgedSub.lacunarity; }
-                    set { mod.ridgedSub.lacunarity = value; }
-                }
-
-                // Octaves of the subtractive noise
-                [ParserTarget("ridgedSubOctaves")]
-                public NumericParser<Int32> ridgedSubOctaves
-                {
-                    get { return mod.ridgedSub.octaves; }
-                    set { mod.ridgedSub.octaves = Mathf.Clamp(value, 1, 30); }
-                }
-
-                // The quality of the subtractive noise
-                [ParserTarget("ridgedSubQuality")]
-                public EnumParser<KopernicusNoiseQuality> ridgedSubQuality
-                {
-                    get { return (KopernicusNoiseQuality) (Int32) mod.ridgedSub.quality; }
-                    set { mod.ridgedSub.quality = (NoiseQuality) (Int32) value.Value; }
-                }
-
-                // The seed of the subtractive noise
-                [ParserTarget("ridgedSubSeed")]
-                public NumericParser<Int32> ridgedSubSeed
-                {
-                    get { return mod.ridgedSub.seed; }
-                    set { mod.ridgedSub.seed = value; }
-                }
-
-                // Create the mod
-                public override void Create(PQS pqsVersion)
-                {
-                    base.Create(pqsVersion);
-
-                    // Construct the internal objects.
-                    mod.curveMultiplier = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
-                    mod.deformity = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
-                    mod.ridgedAdd = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
-                    mod.ridgedSub = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
-                }
-
-                // Create the mod
-                public override void Create(PQSMod_VertexHeightNoiseVertHeightCurve3 _mod, PQS pqsVersion)
-                {
-                    base.Create(_mod, pqsVersion);
-
-                    // Construct the internal objects.
-                    if (mod.curveMultiplier == null)
-                    {
-                        mod.curveMultiplier = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
-                    }
-                    if (mod.deformity == null)
-                    {
-                        mod.deformity = new PQSMod_VertexHeightNoiseVertHeightCurve3.SimplexNoise();
-                    }
-                    if (mod.ridgedAdd == null)
-                    {
-                        mod.ridgedAdd = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
-                    }
-                    if (mod.ridgedSub == null)
-                    {
-                        mod.ridgedSub = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
-                    }
-                }
+            if (Mod.ridgedSub == null)
+            {
+                Mod.ridgedSub = new PQSMod_VertexHeightNoiseVertHeightCurve3.RidgedNoise();
             }
         }
     }

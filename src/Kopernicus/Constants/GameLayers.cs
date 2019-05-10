@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,18 +25,16 @@
 
 using System;
 
-namespace Kopernicus
+namespace Kopernicus.Constants
 {
     // Constants found in planet creation (if things break in the future, check these first)
-    namespace Constants
+
+    public static class GameLayers
     {
-        public class GameLayers
-        {
-            // Layer for the scaled verion
-            public const Int32 ScaledSpaceAtmosphere = 9;
-            public const Int32 ScaledSpace = 10;
-            public const Int32 LocalSpace = 15;
-        }
+        // Layer for the scaled version
+        public const Int32 SCALED_SPACE_ATMOSPHERE = 9;
+        public const Int32 SCALED_SPACE = 10;
+        public const Int32 LOCAL_SPACE = 15;
     }
 }
 

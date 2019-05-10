@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,25 +25,22 @@
 
 using System;
 
-namespace Kopernicus
+namespace Kopernicus.UI
 {
-    namespace UI
+    /// <summary>
+    /// Describes a Kopernicus config option in the KittopiaTech UI
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
+    public class KittopiaDescription : Attribute
     {
         /// <summary>
-        /// Describes a Kopernicus config option in the KittopiaTech UI
+        /// The description of the config option
         /// </summary>
-        [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-        public class KittopiaDescription : Attribute
-        {
-            /// <summary>
-            /// The description of the config option
-            /// </summary>
-            public String description;
+        public readonly String Description;
 
-            public KittopiaDescription(String description)
-            {
-                this.description = description;
-            }
+        public KittopiaDescription(String description)
+        {
+            Description = description;
         }
     }
 }

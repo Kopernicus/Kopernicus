@@ -17,63 +17,62 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class TangentTextureRanges : ModLoader<PQSMod_TangentTextureRanges>
     {
-        namespace ModLoader
+        // highEnd
+        [ParserTarget("highEnd")]
+        public NumericParser<Double> HighEnd
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class TangentTextureRanges : ModLoader<PQSMod_TangentTextureRanges>
-            {
-                // highEnd
-                [ParserTarget("highEnd")]
-                public NumericParser<Double> highEnd
-                {
-                    get { return mod.highEnd; }
-                    set { mod.highEnd = value; }
-                }
+            get { return Mod.highEnd; }
+            set { Mod.highEnd = value; }
+        }
 
-                // highStart
-                [ParserTarget("highStart")]
-                public NumericParser<Double> highStart
-                {
-                    get { return mod.highStart; }
-                    set { mod.highStart = value; }
-                }
+        // highStart
+        [ParserTarget("highStart")]
+        public NumericParser<Double> HighStart
+        {
+            get { return Mod.highStart; }
+            set { Mod.highStart = value; }
+        }
 
-                // lowEnd
-                [ParserTarget("lowEnd")]
-                public NumericParser<Double> lowEnd
-                {
-                    get { return mod.lowEnd; }
-                    set { mod.lowEnd = value; }
-                }
+        // lowEnd
+        [ParserTarget("lowEnd")]
+        public NumericParser<Double> LowEnd
+        {
+            get { return Mod.lowEnd; }
+            set { Mod.lowEnd = value; }
+        }
 
-                // lowStart
-                [ParserTarget("lowStart")]
-                public NumericParser<Double> lowStart
-                {
-                    get { return mod.lowStart; }
-                    set { mod.lowStart = value; }
-                }
+        // lowStart
+        [ParserTarget("lowStart")]
+        public NumericParser<Double> LowStart
+        {
+            get { return Mod.lowStart; }
+            set { Mod.lowStart = value; }
+        }
 
-                // modulo
-                [ParserTarget("modulo")]
-                public NumericParser<Double> modulo
-                {
-                    get { return mod.modulo; }
-                    set { mod.modulo = value; }
-                }
-            }
+        // modulo
+        [ParserTarget("modulo")]
+        public NumericParser<Double> Modulo
+        {
+            get { return Mod.modulo; }
+            set { Mod.modulo = value; }
         }
     }
 }

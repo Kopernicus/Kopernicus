@@ -17,89 +17,89 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
  */
 
-using LibNoise;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Enumerations;
+using LibNoise;
 using UnityEngine;
 
-namespace Kopernicus
+namespace Kopernicus.Configuration.ModLoader
 {
-    namespace Configuration
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class VertexHeightNoise : ModLoader<PQSMod_VertexHeightNoise>
     {
-        namespace ModLoader
+        // The deformity of the simplex terrain noise
+        [ParserTarget("deformity")]
+        public NumericParser<Single> Deformity
         {
-            [RequireConfigType(ConfigType.Node)]
-            public class VertexHeightNoise : ModLoader<PQSMod_VertexHeightNoise>
-            {
-                // The deformity of the simplex terrain noise
-                [ParserTarget("deformity")]
-                public NumericParser<Single> deformity
-                {
-                    get { return mod.deformity; }
-                    set { mod.deformity = value; }
-                }
+            get { return Mod.deformity; }
+            set { Mod.deformity = value; }
+        }
 
-                // The frequency of the simplex terrain noise
-                [ParserTarget("frequency")]
-                public NumericParser<Single> frequency
-                {
-                    get { return mod.frequency; }
-                    set { mod.frequency = value; }
-                }
+        // The frequency of the simplex terrain noise
+        [ParserTarget("frequency")]
+        public NumericParser<Single> Frequency
+        {
+            get { return Mod.frequency; }
+            set { Mod.frequency = value; }
+        }
 
-                // Octaves of the simplex height noise
-                [ParserTarget("octaves")]
-                public NumericParser<Int32> octaves
-                {
-                    get { return mod.octaves; }
-                    set { mod.octaves = Mathf.Clamp(value, 1, 30); }
-                }
+        // Octaves of the simplex height noise
+        [ParserTarget("octaves")]
+        public NumericParser<Int32> Octaves
+        {
+            get { return Mod.octaves; }
+            set { Mod.octaves = Mathf.Clamp(value, 1, 30); }
+        }
 
-                // Persistence of the simplex height noise
-                [ParserTarget("persistence")]
-                public NumericParser<Single> persistence
-                {
-                    get { return mod.persistance; }
-                    set { mod.persistance = value; }
-                }
+        // Persistence of the simplex height noise
+        [ParserTarget("persistence")]
+        public NumericParser<Single> Persistence
+        {
+            get { return Mod.persistance; }
+            set { Mod.persistance = value; }
+        }
 
-                // The seed of the simplex height noise
-                [ParserTarget("seed")]
-                public NumericParser<Int32> seed
-                {
-                    get { return mod.seed; }
-                    set { mod.seed = value; }
-                }
+        // The seed of the simplex height noise
+        [ParserTarget("seed")]
+        public NumericParser<Int32> Seed
+        {
+            get { return Mod.seed; }
+            set { Mod.seed = value; }
+        }
 
-                // The type of the simplex height noise
-                [ParserTarget("noiseType")]
-                public EnumParser<KopernicusNoiseType> noiseType
-                {
-                    get { return (KopernicusNoiseType) (Int32) mod.noiseType; }
-                    set { mod.noiseType = (PQSMod_VertexHeightNoise.NoiseType) (Int32) value.Value; }
-                }
+        // The type of the simplex height noise
+        [ParserTarget("noiseType")]
+        public EnumParser<KopernicusNoiseType> NoiseType
+        {
+            get { return (KopernicusNoiseType) (Int32) Mod.noiseType; }
+            set { Mod.noiseType = (PQSMod_VertexHeightNoise.NoiseType) (Int32) value.Value; }
+        }
 
-                // The mode of the simplex height noise
-                [ParserTarget("mode")]
-                public EnumParser<KopernicusNoiseQuality> mode
-                {
-                    get { return (KopernicusNoiseQuality) (Int32) mod.mode; }
-                    set { mod.mode = (NoiseQuality) (Int32) value.Value; }
-                }
+        // The mode of the simplex height noise
+        [ParserTarget("mode")]
+        public EnumParser<KopernicusNoiseQuality> Mode
+        {
+            get { return (KopernicusNoiseQuality) (Int32) Mod.mode; }
+            set { Mod.mode = (NoiseQuality) (Int32) value.Value; }
+        }
 
-                // The lacunarity of the simplex height noise
-                [ParserTarget("lacunarity")]
-                public NumericParser<Single> lacunarity
-                {
-                    get { return mod.lacunarity; }
-                    set { mod.lacunarity = value; }
-                }
-            }
+        // The lacunarity of the simplex height noise
+        [ParserTarget("lacunarity")]
+        public NumericParser<Single> Lacunarity
+        {
+            get { return Mod.lacunarity; }
+            set { Mod.lacunarity = value; }
         }
     }
 }

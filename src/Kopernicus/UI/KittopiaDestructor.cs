@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  * 
  * This library is intended to be used as a plugin for Kerbal Space Program
- * which is copyright 2011-2017 Squad. Your usage of Kerbal Space Program
+ * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
  * 
  * https://kerbalspaceprogram.com
@@ -25,16 +25,13 @@
 
 using System;
 
-namespace Kopernicus
+namespace Kopernicus.UI
 {
-    namespace UI
+    /// <summary>
+    /// Defines a method that is responsible for cleaning up the object if it is removed
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
+    public class KittopiaDestructor : Attribute
     {
-        /// <summary>
-        /// Defines a method that is responsible for cleaning up the object if it is removed
-        /// </summary>
-        [AttributeUsage(AttributeTargets.Method)]
-        public class KittopiaDestructor : Attribute
-        {
-        }
     }
 }
