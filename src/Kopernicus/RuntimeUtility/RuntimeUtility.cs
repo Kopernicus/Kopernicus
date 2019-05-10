@@ -66,11 +66,11 @@ namespace Kopernicus.RuntimeUtility
             new Logger("Kopernicus.Runtime").SetAsActive();
 
             // Add handlers
-            GameEvents.onPartUnpack.Add(OnPartUnpack);
-            GameEvents.OnMapEntered.Add(OnMapEntered);
-            GameEvents.onLevelWasLoaded.Add(OnLevelWasLoaded);
-            GameEvents.onProtoVesselLoad.Add(TransformBodyReferencesOnLoad);
-            GameEvents.onProtoVesselSave.Add(TransformBodyReferencesOnSave);
+            GameEvents.onPartUnpack.Add(p => OnPartUnpack(p));
+            GameEvents.OnMapEntered.Add(() => OnMapEntered());
+            GameEvents.onLevelWasLoaded.Add(s => OnLevelWasLoaded(s));
+            GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
+            GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
             
             // Log
             Logger.Default.Log("[Kopernicus] RuntimeUtility Started");

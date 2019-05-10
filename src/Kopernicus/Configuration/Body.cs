@@ -268,7 +268,6 @@ namespace Kopernicus.Configuration
                 GeneratedBody.name = Name;
                 GeneratedBody.celestialBody.bodyName = Name;
                 GeneratedBody.celestialBody.transform.name = Name;
-                GeneratedBody.celestialBody.bodyTransform.name = Name;
                 GeneratedBody.scaledVersion.name = Name;
                 if (GeneratedBody.pqsVersion != null)
                 {

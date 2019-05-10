@@ -36,11 +36,11 @@ namespace Kopernicus.Components
     {
         protected override void Awake()
         {
-            Camera.onPreCull += OnPreCull;
+            Camera.onPreCull += PreCull;
         }
 
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
-        private void OnPreCull(Camera camera)
+        private void PreCull(Camera camera)
         {
             Vector3d scaledSpace = target.transform.position - ScaledSpace.LocalToScaledSpace(sun.position);
             sunDirection = scaledSpace.normalized;
@@ -53,7 +53,7 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "DelegateSubtraction")]
         protected override void OnDestroy()
         {
-            Camera.onPreCull -= OnPreCull;
+            Camera.onPreCull -= PreCull;
             base.OnDestroy();
         }
 
