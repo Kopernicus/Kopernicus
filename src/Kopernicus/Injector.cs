@@ -24,7 +24,9 @@
  */
 
 using System;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
@@ -38,6 +40,9 @@ namespace Kopernicus
     {
         // Name of the config node group which manages Kopernicus
         private const String ROOT_NODE_NAME = "Kopernicus";
+
+        // The checksum of the System.cfg file.
+        private const String CONFIG_CHECKSUM = "73eb1037678bc520a0fe2e89768e0549b36f17a9cac7136af6e3e6b7a0ccf9b9";
 
         // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
         public static PSystem StockSystemPrefab { get; private set; }
@@ -97,6 +102,24 @@ namespace Kopernicus
                     DisplayWarning();
                     return;
                 }
+
+                // Was the system template modified?
+                #if !DEBUG
+                String systemCfgPath = KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Config/System.cfg";
+                if (File.Exists(systemCfgPath))
+                {
+                    Byte[] data = File.ReadAllBytes(systemCfgPath);
+                    SHA256 sha256 = SHA256.Create();
+                    String checksum = BitConverter.ToString(sha256.ComputeHash(data));
+                    checksum = checksum.Replace("-", "");
+                    checksum = checksum.ToLower();
+                    if (checksum != CONFIG_CHECKSUM)
+                    {
+                        throw new Exception(
+                            "The file 'Kopernicus/Config/System.cfg' was modified directly without ModuleManager");
+                    }
+                }
+                #endif
 
                 // Backup the old prefab
                 StockSystemPrefab = PSystemManager.Instance.systemPrefab;
