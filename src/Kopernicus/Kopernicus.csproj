@@ -231,6 +231,7 @@
     <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />
     <Compile Include="OnDemand\ScaledSpaceOnDemand.cs" />
     <Compile Include="RuntimeUtility\LogAggregator.cs" />
+    <Compile Include="RuntimeUtility\MeshPreloader.cs" />
     <Compile Include="RuntimeUtility\RnDFixer.cs" />
     <Compile Include="RuntimeUtility\AtmosphereFixer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

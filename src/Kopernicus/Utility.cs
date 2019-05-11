@@ -31,6 +31,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Kopernicus.OnDemand;
+using Kopernicus.RuntimeUtility;
 using UnityEngine;
 using Object = System.Object;
 
@@ -210,9 +211,9 @@ namespace Kopernicus
             if (File.Exists(cacheFile) && exportMesh)
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Loading cached scaled space mesh: " + body.name);
-                Mesh scaledMesh = DeserializeMesh(cacheFile);
-                RecalculateTangents(scaledMesh);
-                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+                scaledVersion.GetComponent<MeshFilter>().sharedMesh = MeshPreloader.Meshes.ContainsKey(cacheFile)
+                    ? MeshPreloader.Meshes[cacheFile]
+                    : DeserializeMesh(cacheFile);
             }
 
             // Otherwise we have to generate the mesh
@@ -220,7 +221,6 @@ namespace Kopernicus
             {
                 Logger.Active.Log("Body.PostApply(ConfigNode): Generating scaled space mesh: " + body.name);
                 Mesh scaledMesh = ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
-                RecalculateTangents(scaledMesh);
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
                 if (exportMesh)
                 {
@@ -352,6 +352,7 @@ namespace Kopernicus
                 mesh.vertices = vertices;
                 mesh.RecalculateNormals();
                 mesh.RecalculateBounds();
+                RecalculateTangents(mesh);
             }
 
             // Cleanup
@@ -495,6 +496,9 @@ namespace Kopernicus
             FileStream outputStream = new FileStream(path, FileMode.Create, FileAccess.Write);
             BinaryWriter writer = new BinaryWriter(outputStream);
 
+            // Indicate that this is version two of the .bin format
+            writer.Write(-2);
+
             // Write the vertex count of the mesh
             writer.Write(mesh.vertices.Length);
             foreach (Vector3 vertex in mesh.vertices)
@@ -514,6 +518,27 @@ namespace Kopernicus
             {
                 writer.Write(triangle);
             }
+            writer.Write(mesh.uv2.Length);
+            foreach (Vector2 uv2 in mesh.uv2)
+            {
+                writer.Write(uv2.x);
+                writer.Write(uv2.y);
+            }
+            writer.Write(mesh.normals.Length);
+            foreach (Vector3 normal in mesh.normals)
+            {
+                writer.Write(normal.x);
+                writer.Write(normal.y);
+                writer.Write(normal.z);
+            }
+            writer.Write(mesh.tangents.Length);
+            foreach (Vector4 tangent in mesh.tangents)
+            {
+                writer.Write(tangent.x);
+                writer.Write(tangent.y);
+                writer.Write(tangent.z);
+                writer.Write(tangent.w);
+            }
 
             // Finish writing
             writer.Close();
@@ -526,51 +551,142 @@ namespace Kopernicus
         {
             FileStream inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             BinaryReader reader = new BinaryReader(inputStream);
+            Mesh m;
 
-            // Get the vertices
-            Int32 count = reader.ReadInt32();
-            Vector3[] vertices = new Vector3[count];
-            for (Int32 i = 0; i < count; i++)
+            // Check if the file is bin v1 or v2
+            Int32 first = reader.ReadInt32();
+            Boolean v2 = first == -2;
+
+            // Parse a v1 mesh
+            if (!v2)
             {
-                Vector3 vertex;
-                vertex.x = reader.ReadSingle();
-                vertex.y = reader.ReadSingle();
-                vertex.z = reader.ReadSingle();
-                vertices[i] = vertex;
+                // Get the vertices
+                Int32 count = first;
+                Vector3[] vertices = new Vector3[count];
+                for (Int32 i = 0; i < count; i++)
+                {
+                    Vector3 vertex;
+                    vertex.x = reader.ReadSingle();
+                    vertex.y = reader.ReadSingle();
+                    vertex.z = reader.ReadSingle();
+                    vertices[i] = vertex;
+                }
+
+                // Get the uvs
+                Int32 uvCount = reader.ReadInt32();
+                Vector2[] uvs = new Vector2[uvCount];
+                for (Int32 i = 0; i < uvCount; i++)
+                {
+                    Vector2 uv;
+                    uv.x = reader.ReadSingle();
+                    uv.y = reader.ReadSingle();
+                    uvs[i] = uv;
+                }
+
+                // Get the triangles
+                Int32 trisCount = reader.ReadInt32();
+                Int32[] triangles = new Int32[trisCount];
+                for (Int32 i = 0; i < trisCount; i++)
+                {
+                    triangles[i] = reader.ReadInt32();
+                }
+
+                // Create the mesh
+                m = new Mesh
+                {
+                    vertices = vertices,
+                    triangles = triangles,
+                    uv = uvs
+                };
+                m.RecalculateNormals();
+                RecalculateTangents(m);
             }
-
-            // Get the uvs
-            Int32 uvCount = reader.ReadInt32();
-            Vector2[] uvs = new Vector2[uvCount];
-            for (Int32 i = 0; i < uvCount; i++)
+            else
             {
-                Vector2 uv;
-                uv.x = reader.ReadSingle();
-                uv.y = reader.ReadSingle();
-                uvs[i] = uv;
-            }
+                // Get the vertices
+                Int32 count = reader.ReadInt32();
+                Vector3[] vertices = new Vector3[count];
+                for (Int32 i = 0; i < count; i++)
+                {
+                    Vector3 vertex;
+                    vertex.x = reader.ReadSingle();
+                    vertex.y = reader.ReadSingle();
+                    vertex.z = reader.ReadSingle();
+                    vertices[i] = vertex;
+                }
 
-            // Get the triangles
-            Int32 trisCount = reader.ReadInt32();
-            Int32[] triangles = new Int32[trisCount];
-            for (Int32 i = 0; i < trisCount; i++)
-            {
-                triangles[i] = reader.ReadInt32();
+                // Get the uvs
+                Int32 uvCount = reader.ReadInt32();
+                Vector2[] uvs = new Vector2[uvCount];
+                for (Int32 i = 0; i < uvCount; i++)
+                {
+                    Vector2 uv;
+                    uv.x = reader.ReadSingle();
+                    uv.y = reader.ReadSingle();
+                    uvs[i] = uv;
+                }
+
+                // Get the triangles
+                Int32 trisCount = reader.ReadInt32();
+                Int32[] triangles = new Int32[trisCount];
+                for (Int32 i = 0; i < trisCount; i++)
+                {
+                    triangles[i] = reader.ReadInt32();
+                }
+
+                // Get the uv2s
+                Int32 uv2Count = reader.ReadInt32();
+                // ReSharper disable once InconsistentNaming
+                Vector2[] uv2s = new Vector2[uv2Count];
+                for (Int32 i = 0; i < uv2Count; i++)
+                {
+                    Vector2 uv2;
+                    uv2.x = reader.ReadSingle();
+                    uv2.y = reader.ReadSingle();
+                    uv2s[i] = uv2;
+                }
+
+                // Get the normals
+                Int32 normalCount = reader.ReadInt32();
+                Vector3[] normals = new Vector3[normalCount];
+                for (Int32 i = 0; i < normalCount; i++)
+                {
+                    Vector3 normal;
+                    normal.x = reader.ReadSingle();
+                    normal.y = reader.ReadSingle();
+                    normal.z = reader.ReadSingle();
+                    normals[i] = normal;
+                }
+
+                // Get the tangents
+                Int32 tangentCount = reader.ReadInt32();
+                Vector4[] tangents = new Vector4[tangentCount];
+                for (Int32 i = 0; i < tangentCount; i++)
+                {
+                    Vector4 tangent;
+                    tangent.x = reader.ReadSingle();
+                    tangent.y = reader.ReadSingle();
+                    tangent.z = reader.ReadSingle();
+                    tangent.w = reader.ReadSingle();
+                    tangents[i] = tangent;
+                }
+
+                // Create the mesh
+                m = new Mesh
+                {
+                    vertices = vertices,
+                    triangles = triangles,
+                    uv = uvs,
+                    uv2 = uv2s,
+                    normals = normals,
+                    tangents = tangents
+                };
             }
 
             // Close
             reader.Close();
             inputStream.Close();
 
-            // Create the mesh
-            Mesh m = new Mesh
-            {
-                vertices = vertices, 
-                triangles = triangles, 
-                uv = uvs
-            };
-            m.RecalculateNormals();
-            m.RecalculateBounds();
             return m;
         }
 
