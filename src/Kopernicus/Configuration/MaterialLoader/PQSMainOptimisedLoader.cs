@@ -31,6 +31,7 @@ using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
+using Gradient = Kopernicus.Configuration.Parsing.Gradient;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
@@ -369,6 +370,30 @@ namespace Kopernicus.Configuration.MaterialLoader
         {
             get { return FogColorRamp; }
             set { FogColorRamp = value; }
+        }
+
+        // FogColorRamp, default = "white" { }
+        [ParserTarget("FogColorRamp")]
+        public Gradient FogColorRampGradientSetter
+        {
+            set
+            {
+                // Generate the ramp from a gradient
+                Texture2D ramp = new Texture2D(512, 1);
+                Color[] colors = ramp.GetPixels(0);
+                for (Int32 i = 0; i < colors.Length; i++)
+                {
+                    // Compute the position in the gradient
+                    Single k = (Single) i / colors.Length;
+                    colors[i] = value.ColorAt(k);
+                }
+
+                ramp.SetPixels(colors, 0);
+                ramp.Apply(true, false);
+
+                // Set the color ramp
+                FogColorRamp = ramp;
+            }
         }
 
         [ParserTarget("fogColorRampScale")]
