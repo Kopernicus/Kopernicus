@@ -36,7 +36,8 @@ namespace Kopernicus.Configuration.ModLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class OceanFx : ModLoader<PQSMod_OceanFX>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public class OceanFX : ModLoader<PQSMod_OceanFX>
     {
         // angle
         [ParserTarget("angle")]

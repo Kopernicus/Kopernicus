@@ -548,7 +548,7 @@ namespace Kopernicus.Components
             SetRotation();
 
             if (useNewShader && ringMr.sharedMaterial != null
-                             && KopernicusStar.Current.sun.transform != null)
+                             && KopernicusStar.Current != null && KopernicusStar.Current.sun.transform != null)
             {
                 ringMr.sharedMaterial.SetFloat(SunRadius,
                     (Single) KopernicusStar.Current.sun.Radius);
