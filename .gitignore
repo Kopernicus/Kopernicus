@@ -253,3 +253,6 @@ $RECYCLE.BIN/
 # Patching
 *.orig
 *.rej
+
+# Kopernicus
+build/GameData/Kopernicus/Cache/
