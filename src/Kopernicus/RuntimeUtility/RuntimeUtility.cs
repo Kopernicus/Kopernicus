@@ -50,6 +50,7 @@ namespace Kopernicus.RuntimeUtility
     public class RuntimeUtility : MonoBehaviour
     {
         // Awake() - flag this class as don't destroy on load and register delegates
+        [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
         private void Awake()
         {
             // Don't run if Kopernicus isn't compatible
@@ -63,7 +64,7 @@ namespace Kopernicus.RuntimeUtility
             DontDestroyOnLoad(this);
 
             // Init the runtime logging
-            new Logger("Kopernicus.Runtime").SetAsActive();
+            new Logger("Kopernicus.Runtime", true).SetAsActive();
 
             // Add handlers
             GameEvents.onPartUnpack.Add(p => OnPartUnpack(p));

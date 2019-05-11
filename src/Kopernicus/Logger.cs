@@ -78,6 +78,9 @@ namespace Kopernicus
         // The complete path of this log
         private TextWriter _loggerStream;
 
+        // Whether to flush the stream after every write
+        private readonly Boolean _autoFlush;
+
         // Write text to the log
         public void Log(Object o)
         {
@@ -87,7 +90,10 @@ namespace Kopernicus
             }
 
             _loggerStream.WriteLine("[LOG " + DateTime.Now.ToString("HH:mm:ss") + "]: " + o);
-            _loggerStream.Flush();
+            if (_autoFlush)
+            {
+                _loggerStream.Flush();
+            }
         }
 
         // Write text to the log
@@ -140,8 +146,9 @@ namespace Kopernicus
         }
 
         // Create a logger
-        public Logger(String logFileName = null)
+        public Logger(String logFileName = null, Boolean autoFlush = false)
         {
+            _autoFlush = autoFlush;
             SetFilename(logFileName);
         }
 
