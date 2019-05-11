@@ -58,6 +58,20 @@ namespace Kopernicus.Configuration
         // Scaled representation of a planet for map view to modify
         public CelestialBody Value { get; set; }
 
+        [RequireConfigType(ConfigType.Node)]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+        public class OnDemandConfig
+        {
+            [ParserTarget("texture")]
+            [ParserTarget("mainTex")]
+            public String Texture { get; set; }
+
+            [ParserTarget("normals")]
+            [ParserTarget("bumpMap")]
+            public String Normals { get; set; }
+        }
+
         // Type of object this body's scaled version is
         [PreApply]
         [ParserTarget("type")]
@@ -153,6 +167,10 @@ namespace Kopernicus.Configuration
             get { return Value.scaledBody.GetComponent<Renderer>().sharedMaterial; }
             set { Value.scaledBody.GetComponent<Renderer>().sharedMaterial = value; }
         }
+
+        [ParserTarget("OnDemand")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        public OnDemandConfig OnDemandTextures { get; set; }
 
         [ParserTarget("TextureOptions", AllowMerge = true)]
         [KittopiaHideOption(Export = false, Show = true)]
@@ -324,21 +342,15 @@ namespace Kopernicus.Configuration
             }
 
             // If we use OnDemand, we need to delete the original textures and reload them
-            if (OnDemandStorage.UseOnDemand && Type.Value != BodyType.Star)
+            if (OnDemandStorage.UseOnDemand && Type.Value != BodyType.Star && OnDemandTextures != null)
             {
-                Texture2D texture =
-                    Value.scaledBody.GetComponent<Renderer>().sharedMaterial.GetTexture(MainTex) as Texture2D;
-                Texture2D normals =
-                    Value.scaledBody.GetComponent<Renderer>().sharedMaterial.GetTexture(BumpMap) as Texture2D;
                 ScaledSpaceOnDemand onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
-                if (texture != null)
-                {
-                    onDemand.texture = texture.name;
-                }
-                if (normals != null)
-                {
-                    onDemand.normals = normals.name;
-                }
+                onDemand.texture = OnDemandTextures.Texture;
+                onDemand.normals = OnDemandTextures.Normals;
+
+                // Delete the original scaled space textures
+                Object.Destroy(Material.GetTexture(MainTex));
+                Object.Destroy(Material.GetTexture(BumpMap));
             }
 
             // Event
