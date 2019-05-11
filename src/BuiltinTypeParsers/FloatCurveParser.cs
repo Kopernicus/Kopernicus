@@ -69,7 +69,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
                     Value = null;
                     return;
                 }
-                Value.Curve.keys = new Keyframe[0];
+                Value = new FloatCurve();
                 foreach (NumericCollectionParser<Single> key in value)
                 {
                     if (key.Value.Count < 2)
