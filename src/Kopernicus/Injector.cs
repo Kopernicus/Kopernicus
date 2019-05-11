@@ -24,8 +24,11 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+// ReSharper disable once RedundantUsingDirective
 using System.IO;
 using System.Linq;
+// ReSharper disable once RedundantUsingDirective
 using System.Security.Cryptography;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
@@ -42,6 +45,7 @@ namespace Kopernicus
         private const String ROOT_NODE_NAME = "Kopernicus";
 
         // The checksum of the System.cfg file.
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private const String CONFIG_CHECKSUM = "73eb1037678bc520a0fe2e89768e0549b36f17a9cac7136af6e3e6b7a0ccf9b9";
 
         // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
