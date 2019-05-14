@@ -87,6 +87,7 @@
     <Compile Include="Components\MaterialWrapper\Standard.cs" />
     <Compile Include="Components\ModularComponentSystem\IComponent.cs" />
     <Compile Include="Components\ModularComponentSystem\IComponentSystem.cs" />
+    <Compile Include="Components\ModularScatter\HeatEmitter.cs" />
     <Compile Include="Components\ModularScatter\ModularScatter.cs" />
     <Compile Include="Components\ModularScatter\ScatterColliders.cs" />
     <Compile Include="Components\ModularScatter\ScatterExperiment.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Configuration\ModLoader\VertexSimplexNoiseColor.cs" />
     <Compile Include="Configuration\ModLoader\VertexVoronoi.cs" />
     <Compile Include="Configuration\ModLoader\VoronoiCraters.cs" />
+    <Compile Include="Configuration\ModularScatterLoader\HeatEmitter.cs" />
     <Compile Include="Configuration\ModularScatterLoader\ScatterColliders.cs" />
     <Compile Include="Configuration\ModularScatterLoader\ScatterExperiment.cs" />
     <Compile Include="Configuration\NoiseLoader\INoiseLoader.cs" />
