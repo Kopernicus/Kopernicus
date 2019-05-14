@@ -233,6 +233,12 @@ namespace Kopernicus
                         {
                             renderer.enabled = false;
                         }
+
+                        foreach (ScaledSpaceFader fader in body.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(
+                            true))
+                        {
+                            fader.enabled = false;
+                        }
                     }
 
                     // Event
