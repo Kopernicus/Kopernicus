@@ -38,6 +38,11 @@ namespace Kopernicus.Configuration.ModularScatterLoader
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ScatterColliders : ComponentLoader<ModularScatter, ScatterCollidersComponent>
     {
-
+        [ParserTarget("collider")]
+        public MeshParser Collider
+        {
+            get { return Value.CollisionMesh; }
+            set { Value.CollisionMesh = value; }
+        }
     }
 }

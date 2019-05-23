@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -32,68 +32,59 @@ using UnityEngine;
 
 namespace Kopernicus.Components.ModularScatter
 {
-    /// <summary>
-    /// A Scatter Component that can add colliders to a scatter object
-    /// </summary>
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-    public class ScatterCollidersComponent : IComponent<ModularScatter>
+    public class LightEmitterComponent : IComponent<ModularScatter>
     {
         /// <summary>
-        /// Contains a List of colliders for the scatter
+        /// Contains a List of lights for the scatter
         /// </summary>
-        private readonly List<MeshCollider> _meshColliders = new List<MeshCollider>();
+        private readonly List<Light> _lights = new List<Light>();
 
         /// <summary>
-        /// The mesh that is used for the collider
+        /// The prefab object that is instantiated to every scatter objects
         /// </summary>
-        public Mesh CollisionMesh;
+        public Light Prefab;
 
         /// <summary>
-        /// If no custom collision Mesh was set, use the base mesh from the scatter
+        /// The offset of the light, relative to the center of the scatter object
+        /// </summary>
+        public Vector3 Offset = Vector3.zero;
+
+        /// <summary>
+        /// Gets executed every frame and checks if some of the scatters don't have 
         /// </summary>
         /// <param name="system"></param>
-        void IComponent<ModularScatter>.PostApply(ModularScatter system)
-        {
-            if (CollisionMesh == null)
-            {
-                CollisionMesh = system.scatter.baseMesh;
-            }
-        }
-
-        /// <summary>
-        /// Gets executed every frame and checks if a Kerbal is within the range of the scatter object
-        /// </summary>
         void IComponent<ModularScatter>.Update(ModularScatter system)
         {
-            // If there's nothing to do, discard any old colliders and abort
+            // If there's nothing to do, discard any old lights and abort
             if (system.scatterObjects.Count == 0)
             {
-                if (!_meshColliders.Any())
+                if (!_lights.Any())
                 {
                     return;
                 }
 
-                Debug.LogWarning("[Kopernicus] Discard old colliders");
-                foreach (MeshCollider collider in _meshColliders.Where(collider => collider))
+                Debug.LogWarning("[Kopernicus] Discard old lights");
+                foreach (Light light in _lights.Where(l => l))
                 {
-                    UnityEngine.Object.Destroy(collider);
+                    UnityEngine.Object.Destroy(light.gameObject);
                 }
 
-                _meshColliders.Clear();
+                _lights.Clear();
                 return;
             }
 
             Boolean rebuild = false;
-            if (system.scatterObjects.Count > _meshColliders.Count)
+            if (system.scatterObjects.Count > _lights.Count)
             {
-                Debug.LogWarning("[Kopernicus] Add " + (system.scatterObjects.Count - _meshColliders.Count) +
-                                 " colliders");
+                Debug.LogWarning("[Kopernicus] Add " + (system.scatterObjects.Count - _lights.Count) +
+                                 " lights");
                 rebuild = true;
             }
-            else if (system.scatterObjects.Count < _meshColliders.Count)
+            else if (system.scatterObjects.Count < _lights.Count)
             {
-                Debug.LogWarning("[Kopernicus] Remove " + (_meshColliders.Count - system.scatterObjects.Count) +
-                                 " colliders");
+                Debug.LogWarning("[Kopernicus] Remove " + (_lights.Count - system.scatterObjects.Count) +
+                                 " lights");
                 rebuild = true;
             }
 
@@ -104,19 +95,26 @@ namespace Kopernicus.Components.ModularScatter
 
             foreach (GameObject scatter in system.scatterObjects)
             {
-                MeshCollider collider = scatter.GetComponent<MeshCollider>();
-                if (collider)
+                Light light = scatter.GetComponentInChildren<Light>();
+                if (light)
                 {
                     continue;
                 }
-                collider = scatter.AddComponent<MeshCollider>();
-                collider.sharedMesh = CollisionMesh;
-                collider.enabled = true;
-                _meshColliders.Add(collider);
+
+                GameObject lightObject = Utility.Instantiate(Prefab.gameObject, scatter.transform, true);
+                lightObject.transform.localPosition = Offset;
+                lightObject.transform.localScale = Vector3.one;
+                lightObject.transform.localRotation = Quaternion.identity;
+                _lights.Add(lightObject.GetComponent<Light>());
             }
         }
 
         void IComponent<ModularScatter>.Apply(ModularScatter system)
+        {
+            // We don't use this
+        }
+
+        void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             // We don't use this
         }

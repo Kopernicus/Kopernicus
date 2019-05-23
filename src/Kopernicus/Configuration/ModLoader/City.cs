@@ -27,6 +27,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CommNet;
+using Kopernicus.Components;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
@@ -322,6 +323,7 @@ namespace Kopernicus.Configuration.ModLoader
                     obj.transform.parent = Mod.transform;
                     obj.transform.localPosition = Vector3.zero;
                     obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
+                    obj.gameObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
                 }
             });
             Mod.lod = new PQSCity.LODRange[0];
@@ -342,6 +344,7 @@ namespace Kopernicus.Configuration.ModLoader
                     obj.transform.parent = Mod.transform;
                     obj.transform.localPosition = Vector3.zero;
                     obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
+                    obj.gameObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
                 }
             });
 

@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -192,6 +193,13 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Value.baseMesh = value; }
             }
 
+            [ParserTargetCollection("Meshes", AllowMerge = true)]
+            public List<MeshParser> Meshes
+            {
+                get { return Scatter.meshes.Select(m => (MeshParser) m).ToList(); }
+                set { Scatter.meshes = value.Select(m => m.Value).ToList(); }
+            }
+
             // castShadows
             [ParserTarget("castShadows")]
             public NumericParser<Boolean> CastShadows
@@ -315,6 +323,37 @@ namespace Kopernicus.Configuration.ModLoader
                     Value.material.enableInstancing = value;
                     #endif
                 }
+            }
+
+            [ParserTarget("rotation")]
+            public NumericCollectionParser<Single> Rotation
+            {
+                get { return Scatter.rotation; }
+                set { Scatter.rotation = value; }
+            }
+
+            [KittopiaHideOption]
+            [ParserTarget("useBetterDensity")]
+            public NumericParser<Boolean> UseBetterDensity
+            {
+                get { return Scatter.useBetterDensity; }
+                set { Scatter.useBetterDensity = value; }
+            }
+
+            [KittopiaHideOption]
+            [ParserTarget("ignoreDensityGameSetting")]
+            public NumericParser<Boolean> IgnoreDensityGameSetting
+            {
+                get { return Scatter.ignoreDensityGameSetting; }
+                set { Scatter.ignoreDensityGameSetting = value; }
+            }
+
+            [KittopiaHideOption]
+            [ParserTarget("densityVariance")]
+            public NumericCollectionParser<Single> DensityVariance
+            {
+                get { return Scatter.densityVariance; }
+                set { Scatter.densityVariance = value; }
             }
 
             // Default Constructor

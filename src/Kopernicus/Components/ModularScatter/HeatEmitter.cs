@@ -57,19 +57,27 @@ namespace Kopernicus.Components.ModularScatter
         void IComponent<ModularScatter>.Update(ModularScatter system)
         {
             // Check for an active vessel
-            if (!FlightGlobals.ActiveVessel || !FlightGlobals.ActiveVessel.packed)
+            if (!FlightGlobals.ActiveVessel || FlightGlobals.ActiveVessel.packed)
             {
                 return;
             }
-            
-            // Get the distance between the active vessel and ourselves
-            Single distance = Vector3.Distance(system.transform.position, FlightGlobals.ship_position);
-            Double heat = HeatRate / HeatInterval * HeatCurve.Evaluate(distance);
-            
-            // Apply the heat to all parts of the active vessel
-            for (Int32 i = 0; i < FlightGlobals.ActiveVessel.Parts.Count; i++) 
+
+            foreach (GameObject scatter in system.scatterObjects)
             {
-                FlightGlobals.ActiveVessel.Parts[i].temperature += heat;
+                if (!scatter.activeSelf)
+                {
+                    continue;
+                }
+            
+                // Get the distance between the active vessel and ourselves
+                Single distance = Vector3.Distance(scatter.transform.position, FlightGlobals.ship_position);
+                Double heat = HeatRate * HeatCurve.Evaluate(distance) / HeatInterval * Time.deltaTime;
+            
+                // Apply the heat to all parts of the active vessel
+                for (Int32 i = 0; i < FlightGlobals.ActiveVessel.Parts.Count; i++)
+                {
+                    FlightGlobals.ActiveVessel.Parts[i].temperature += heat;
+                }
             }
         }
 

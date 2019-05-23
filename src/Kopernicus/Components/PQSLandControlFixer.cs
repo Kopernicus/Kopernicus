@@ -23,15 +23,24 @@
 * https://kerbalspaceprogram.com
 */
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Kopernicus.Components
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class PQSLandControlFixer : PQSMod
     {
+        // Cache density values for scatters
+        private PQSLandControl[] _landControls;
+        private static FieldInfo lcScatterListField;
+        private PQ _quad;
+
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
         {
@@ -40,6 +49,58 @@ namespace Kopernicus.Components
                 .First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
             base.OnSetup();
             #endif
+
+            // Try to cache density values that are used to distribute scatters
+            _landControls = sphere.GetComponentsInChildren<PQSLandControl>(true);
+            if (lcScatterListField != null)
+            {
+                return;
+            }
+
+            lcScatterListField = typeof(PQSLandControl).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                .First(f => f.FieldType == typeof(Double[]));
+            Debug.Log(lcScatterListField.Name);
         }
+
+        public override void OnQuadPreBuild(PQ quad)
+        {
+            _quad = quad;
+        }
+
+        public override void OnMeshBuild()
+        {
+            Dictionary<String, Double> densities = new Dictionary<String, Double>();
+            for (Int32 i = 0; i < _landControls.Length; i++)
+            {
+                if (!(lcScatterListField.GetValue(_landControls[i]) is Double[] lcScatterList))
+                {
+                    continue;
+                }
+
+                for (Int32 j = 0; j < _landControls[i].scatters.Length; j++)
+                {
+                    if (lcScatterList[j] <= 0)
+                    {
+                        continue;
+                    }
+
+                    PQSLandControl.LandClassScatter scatter = _landControls[i].scatters[j];
+                    if (densities.ContainsKey(scatter.scatterName))
+                    {
+                        densities[scatter.scatterName] = lcScatterList[j];
+                    }
+                    else
+                    {
+                        densities.Add(scatter.scatterName, lcScatterList[j]);
+                    }
+                }
+            }
+            _quad.gameObject.AddOrGetComponent<DensityContainer>().densities = densities;
+        }
+    }
+
+    public class DensityContainer : MonoBehaviour
+    {
+        public Dictionary<String, Double> densities;
     }
 }

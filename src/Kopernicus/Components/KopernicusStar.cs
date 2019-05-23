@@ -332,7 +332,7 @@ namespace Kopernicus.Components
                     (Single) Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));
             }
 
-            if (HighLogic.LoadedSceneIsFlight && iva.GetComponent<Light>())
+            if (HighLogic.LoadedSceneIsFlight && iva && iva.GetComponent<Light>())
             {
                 iva.GetComponent<Light>().color = shifter.ivaSunColor;
                 iva.GetComponent<Light>().intensity =
