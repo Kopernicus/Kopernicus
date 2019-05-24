@@ -77,7 +77,7 @@ namespace Kopernicus.Components
                 Double heatingRate = heatCurve.Evaluate((Single) distanceToPlanet);
                 foreach (Part part in vessel.Parts)
                 {
-                    part.temperature += heatingRate;
+                    part.temperature += heatingRate * Time.deltaTime;
                 }
             }
         }
