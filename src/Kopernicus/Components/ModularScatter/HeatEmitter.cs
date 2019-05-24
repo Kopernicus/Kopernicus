@@ -49,7 +49,12 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// How many seconds should pass between applying the heat rate to the ship.
         /// </summary>
-        public Double HeatInterval = 0.05d;
+        public Double HeatInterval = 0.05;
+        
+        /// <summary>
+        /// The current position of the timer.
+        /// </summary>
+        private Double _heatPosition;
 
         /// <summary>
         /// Gets executed every frame and checks if a Kerbal is within the range of the scatter object
@@ -62,6 +67,21 @@ namespace Kopernicus.Components.ModularScatter
                 return;
             }
 
+            // Check if the vessel is near the body
+            if (FlightGlobals.currentMainBody != system.body)
+            {
+                return;
+            }
+            
+            // Simple counter
+            if (_heatPosition > 0f)
+            {
+                _heatPosition -= Time.deltaTime;
+                return;
+            }
+
+            // We got past the counter - update time
+
             foreach (GameObject scatter in system.scatterObjects)
             {
                 if (!scatter.activeSelf)
@@ -71,7 +91,7 @@ namespace Kopernicus.Components.ModularScatter
             
                 // Get the distance between the active vessel and ourselves
                 Single distance = Vector3.Distance(scatter.transform.position, FlightGlobals.ship_position);
-                Double heat = HeatRate * HeatCurve.Evaluate(distance) / HeatInterval * Time.deltaTime;
+                Double heat = HeatRate * HeatCurve.Evaluate(distance);
             
                 // Apply the heat to all parts of the active vessel
                 for (Int32 i = 0; i < FlightGlobals.ActiveVessel.Parts.Count; i++)
@@ -79,6 +99,9 @@ namespace Kopernicus.Components.ModularScatter
                     FlightGlobals.ActiveVessel.Parts[i].temperature += heat;
                 }
             }
+            
+            // Reset the timer
+            _heatPosition = HeatInterval;
         }
 
         void IComponent<ModularScatter>.Apply(ModularScatter system)

@@ -52,6 +52,11 @@ namespace Kopernicus.Components.ModularScatter
         }
 
         /// <summary>
+        /// The celestial body we are attached to
+        /// </summary>
+        public CelestialBody body;
+
+        /// <summary>
         /// The mod we are attached to
         /// </summary>
         public PQSLandControl landControl;
@@ -121,6 +126,7 @@ namespace Kopernicus.Components.ModularScatter
             typeof(PQSLandControl.LandClassScatter).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                 .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
             scatterObjects = new List<GameObject>();
+            body = Part.GetComponentUpwards<CelestialBody>(landControl.gameObject);
             if (scatter.baseMesh == null && meshes.Count > 0)
             {
                 scatter.baseMesh = meshes[0];

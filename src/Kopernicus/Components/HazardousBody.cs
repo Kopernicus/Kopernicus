@@ -65,10 +65,9 @@ namespace Kopernicus.Components
         public MapSO heatMap;
 
         private CelestialBody _body;
+        
         // The current position of the timer.
-        private Single heatPosition = 0f;
-        // So we can avoid division operators.
-        private Single invertedInterval;
+        private Single _heatPosition;
 
         /// <summary>
         /// Get the body
@@ -76,62 +75,56 @@ namespace Kopernicus.Components
         private void Start()
         {
             _body = GetComponent<CelestialBody>();
-            // Multiply operators are hundreds of times faster than division operators.
-            // So this way we allocate 32 bits of extra heap memory for the sake of avoiding a buildup of expensive computations.
-            invertedInterval = 1f / heatInterval;
         }
+
         /// <summary>
         /// Update the heat
         /// </summary>
         /// <returns></returns>
         private void Update()
         {
-            if (!FlightGlobals.ready)
+            // Check for an active vessel
+            if (!FlightGlobals.ActiveVessel || FlightGlobals.ActiveVessel.packed)
             {
                 return;
             }
-            
+
+            // Check if the vessel is near the body
+            if (FlightGlobals.currentMainBody != _body)
+            {
+                return;
+            }
+
             // Simple counter
-            if(heatPosition > 0f)
+            if (_heatPosition > 0f)
             {
-                heatPosition -= Time.deltaTime;
+                _heatPosition -= Time.deltaTime;
                 return;
             }
-            
+
             // We got past the counter - update time
+            Double altitude =
+                altitudeCurve.Evaluate((Single) Vector3d.Distance(FlightGlobals.ActiveVessel.transform.position,
+                    _body.transform.position));
+            Double latitude = latitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.latitude);
+            Double longitude = longitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.longitude);
 
-            // Get all vessels
-            List<Vessel> vessels = FlightGlobals.Vessels.FindAll(v => v.mainBody == _body);
-
-            // Loop through them
-            foreach (Vessel vessel in vessels)
+            Double heat = altitude * latitude * longitude * heatRate;
+            if (heatMap)
             {
-                Double altitude =
-                    altitudeCurve.Evaluate((Single) Vector3d.Distance(vessel.transform.position,
-                        _body.transform.position));
-                Double latitude = latitudeCurve.Evaluate((Single) vessel.latitude);
-                Double longitude = longitudeCurve.Evaluate((Single) vessel.longitude);
+                const Single FULL_CIRCLE = 1f / 360f;
+                const Single HALF_CIRCLE = 1f / 180f;
 
-                Double heat = altitude * latitude * longitude * heatRate;
-                if (heatMap)
-                {
-                    // Let's avoid divisions
-                    // 1f / 360f = 0.002777778f
-                    // 1f / 180f = 0.005555556f
-                    // The accuracy loss here is insignificant, but it makes this line hundreds of times faster.
-                    // heat *= heatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
-                    heat *= heatMap.GetPixelFloat((longitude + 180) * 0.002777778f, (latitude + 90) * 0.005555556f);
-                }
-
-                foreach (Part part in vessel.Parts)
-                {
-                    // Scale the heat by the time between updates
-                    part.temperature += heat * invertedInterval;
-                }
+                heat *= heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
             }
-            
+
+            foreach (Part part in FlightGlobals.ActiveVessel.Parts)
+            {
+                part.temperature += heat;
+            }
+
             // Reset the timer
-            heatPosition = heatInterval;
+            _heatPosition = heatInterval;
         }
     }
 }
