@@ -447,7 +447,7 @@ namespace Kopernicus.Configuration.ModLoader
                 foreach (IComponent<ModularScatter> component in Scatter.Components)
                 {
                     Type componentType = component.GetType();
-                    Type componentLoaderType = typeof(ComponentLoader<>).MakeGenericType(Value.GetType(), componentType);
+                    Type componentLoaderType = typeof(ComponentLoader<,>).MakeGenericType(typeof(ModularScatter), componentType);
                     foreach (Type loaderType in Parser.ModTypes)
                     {
                         if (!componentLoaderType.IsAssignableFrom(loaderType))

@@ -331,7 +331,7 @@ namespace Kopernicus.Configuration
             foreach (IComponent<Ring> component in Value.Components)
             {
                 Type componentType = component.GetType();
-                Type componentLoaderType = typeof(ComponentLoader<>).MakeGenericType(Value.GetType(), componentType);
+                Type componentLoaderType = typeof(ComponentLoader<,>).MakeGenericType(typeof(Ring), componentType);
                 foreach (Type loaderType in Parser.ModTypes)
                 {
                     if (!componentLoaderType.IsAssignableFrom(loaderType))
@@ -372,7 +372,7 @@ namespace Kopernicus.Configuration
             foreach (IComponent<Ring> component in Value.Components)
             {
                 Type componentType = component.GetType();
-                Type componentLoaderType = typeof(ComponentLoader<>).MakeGenericType(Value.GetType(), componentType);
+                Type componentLoaderType = typeof(ComponentLoader<,>).MakeGenericType(typeof(Ring), componentType);
                 foreach (Type loaderType in Parser.ModTypes)
                 {
                     if (!componentLoaderType.IsAssignableFrom(loaderType))
