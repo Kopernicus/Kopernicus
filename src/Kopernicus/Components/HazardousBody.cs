@@ -65,6 +65,10 @@ namespace Kopernicus.Components
         public MapSO heatMap;
 
         private CelestialBody _body;
+        // The current position of the timer.
+        private Single heatPosition = 0f;
+        // So we can avoid division operators.
+        private Single invertedInterval;
 
         /// <summary>
         /// Get the body
@@ -72,58 +76,62 @@ namespace Kopernicus.Components
         private void Start()
         {
             _body = GetComponent<CelestialBody>();
-
-            StartCoroutine(Worker());
+            // Multiply operators are hundreds of times faster than division operators.
+            // So this way we allocate 32 bits of extra heap memory for the sake of avoiding a buildup of expensive computations.
+            invertedInterval = 1f / heatInterval;
         }
-
-        private void OnLevelWasLoaded(Int32 level)
-        {
-            StartCoroutine(Worker());
-        }
-
         /// <summary>
         /// Update the heat
         /// </summary>
         /// <returns></returns>
-        private IEnumerator<WaitForSeconds> Worker()
+        private void Update()
         {
-            while (true)
+            if (!FlightGlobals.ready)
             {
-                if (!FlightGlobals.ready)
-                {
-                    yield return new WaitForSeconds(heatInterval);
-                    continue;
-                }
-
-                // Get all vessels
-                List<Vessel> vessels = FlightGlobals.Vessels.FindAll(v => v.mainBody == _body);
-
-                // Loop through them
-                foreach (Vessel vessel in vessels)
-                {
-                    Double altitude =
-                        altitudeCurve.Evaluate((Single) Vector3d.Distance(vessel.transform.position,
-                            _body.transform.position));
-                    Double latitude = latitudeCurve.Evaluate((Single) vessel.latitude);
-                    Double longitude = longitudeCurve.Evaluate((Single) vessel.longitude);
-
-                    Double heat = altitude * latitude * longitude * heatRate;
-                    if (heatMap)
-                    {
-                        heat *= heatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
-                    }
-
-                    foreach (Part part in vessel.Parts)
-                    {
-                        part.temperature += heat;
-                    }
-                }
-
-                // Wait
-                yield return new WaitForSeconds(heatInterval);
+                return;
             }
+            
+            // Simple counter
+            if(heatPosition > 0f)
+            {
+                heatPosition -= Time.deltaTime;
+                return;
+            }
+            
+            // We got past the counter - update time
 
-            // ReSharper disable once IteratorNeverReturns
+            // Get all vessels
+            List<Vessel> vessels = FlightGlobals.Vessels.FindAll(v => v.mainBody == _body);
+
+            // Loop through them
+            foreach (Vessel vessel in vessels)
+            {
+                Double altitude =
+                    altitudeCurve.Evaluate((Single) Vector3d.Distance(vessel.transform.position,
+                        _body.transform.position));
+                Double latitude = latitudeCurve.Evaluate((Single) vessel.latitude);
+                Double longitude = longitudeCurve.Evaluate((Single) vessel.longitude);
+
+                Double heat = altitude * latitude * longitude * heatRate;
+                if (heatMap)
+                {
+                    // Let's avoid divisions
+                    // 1f / 360f = 0.002777778f
+                    // 1f / 180f = 0.005555556f
+                    // The accuracy loss here is insignificant, but it makes this line hundreds of times faster.
+                    // heat *= heatMap.GetPixelFloat((longitude + 180) / 360f, (latitude + 90) / 180f);
+                    heat *= heatMap.GetPixelFloat((longitude + 180) * 0.002777778f, (latitude + 90) * 0.005555556f);
+                }
+
+                foreach (Part part in vessel.Parts)
+                {
+                    // Scale the heat by the time between updates
+                    part.temperature += heat * invertedInterval;
+                }
+            }
+            
+            // Reset the timer
+            heatPosition = heatInterval;
         }
     }
 }
