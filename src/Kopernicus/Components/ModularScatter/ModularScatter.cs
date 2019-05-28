@@ -127,7 +127,7 @@ namespace Kopernicus.Components.ModularScatter
                 .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
             scatterObjects = new List<GameObject>();
             body = Part.GetComponentUpwards<CelestialBody>(landControl.gameObject);
-            if (scatter.baseMesh == null && meshes.Count > 0)
+            if (!scatter.baseMesh && meshes.Count > 0)
             {
                 scatter.baseMesh = meshes[0];
             }
@@ -143,26 +143,12 @@ namespace Kopernicus.Components.ModularScatter
             PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
             for (Int32 i = 0; i < quads.Length; i++)
             {
-                Boolean needsRebuild = false;
-
                 if (!quads[i].isBuilt)
                 {
                     continue;
                 }
 
-                if (quads[i].mf)
-                {
-                    Destroy(quads[i].mf);
-                    needsRebuild = true;
-                }
-
-                if (quads[i].mr)
-                {
-                    Destroy(quads[i].mr);
-                    needsRebuild = true;
-                }
-
-                if (!needsRebuild)
+                if (quads[i].GetComponentInChildren<KopernicusSurfaceObject>())
                 {
                     continue;
                 }

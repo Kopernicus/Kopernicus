@@ -49,18 +49,6 @@ namespace Kopernicus.Components.ModularScatter
         public Mesh CollisionMesh;
 
         /// <summary>
-        /// If no custom collision Mesh was set, use the base mesh from the scatter
-        /// </summary>
-        /// <param name="system"></param>
-        void IComponent<ModularScatter>.PostApply(ModularScatter system)
-        {
-            if (CollisionMesh == null)
-            {
-                CollisionMesh = system.scatter.baseMesh;
-            }
-        }
-
-        /// <summary>
         /// Gets executed every frame and checks if a Kerbal is within the range of the scatter object
         /// </summary>
         void IComponent<ModularScatter>.Update(ModularScatter system)
@@ -109,14 +97,21 @@ namespace Kopernicus.Components.ModularScatter
                 {
                     continue;
                 }
+
+                MeshFilter filter = scatter.GetComponent<MeshFilter>();
                 collider = scatter.AddComponent<MeshCollider>();
-                collider.sharedMesh = CollisionMesh;
+                collider.sharedMesh = CollisionMesh ? CollisionMesh : filter.sharedMesh;
                 collider.enabled = true;
                 _meshColliders.Add(collider);
             }
         }
 
         void IComponent<ModularScatter>.Apply(ModularScatter system)
+        {
+            // We don't use this
+        }
+        
+        void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             // We don't use this
         }
