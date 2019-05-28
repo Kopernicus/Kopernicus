@@ -108,15 +108,28 @@ namespace Kopernicus.Components.ModularScatter
                 _lights.Add(lightObject.GetComponent<Light>());
             }
         }
+        
+        /// <summary>
+        /// Destroy the generated objects on a scene change so they don't appear in random positions
+        /// </summary>
+        private void OnGameSceneLoadRequested(GameScenes data)
+        {
+            foreach (Light light in _lights)
+            {
+                UnityEngine.Object.Destroy(light);
+            }
+
+            _lights.Clear();
+        }
 
         void IComponent<ModularScatter>.Apply(ModularScatter system)
         {
             // We don't use this
         }
-
+        
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
-            // We don't use this
+            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
         }
     }
 }

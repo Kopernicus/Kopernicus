@@ -74,7 +74,7 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// Whether to treat the density calculation as an actual floating point value
         /// </summary>
-        public Boolean useBetterDensity = true;
+        public Boolean useBetterDensity ;
 
         /// <summary>
         /// Makes the density calculation ignore the game setting for scatter density
@@ -127,6 +127,7 @@ namespace Kopernicus.Components.ModularScatter
                 .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
             scatterObjects = new List<GameObject>();
             body = Part.GetComponentUpwards<CelestialBody>(landControl.gameObject);
+            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
             if (!scatter.baseMesh && meshes.Count > 0)
             {
                 scatter.baseMesh = meshes[0];
@@ -136,31 +137,57 @@ namespace Kopernicus.Components.ModularScatter
             Components.ForEach(c => c.PostApply(this));
         }
 
+        /// <summary>
+        /// Destroy the generated objects on a scene change so they don't appear in random positions
+        /// </summary>
+        private void OnGameSceneLoadRequested(GameScenes data)
+        {
+            foreach (GameObject scatterObj in scatterObjects)
+            {
+                Destroy(scatterObj);
+            }
+
+            scatterObjects.Clear();
+        }
+
         private void Update()
         {
             // Reprocess the stock scatter models, since they are merged into
             // one gigantic mesh per quad, but we want unique objects
-            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
+            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(false);
             for (Int32 i = 0; i < quads.Length; i++)
             {
-                if (!quads[i].isBuilt)
+                if (quads[i].obj.name.StartsWith("Kopernicus"))
                 {
                     continue;
                 }
 
-                if (quads[i].GetComponentInChildren<KopernicusSurfaceObject>())
+                if (!quads[i].obj.activeSelf)
+                {
+                    continue;
+                }
+
+                if (quads[i].obj.name == "Unass")
                 {
                     continue;
                 }
 
                 CreateScatterMeshes(quads[i]);
+                quads[i].mesh.Clear();
             }
 
             for (Int32 i = 0; i < scatterObjects.Count; i++)
             {
-                if (scatterObjects[i] != null)
+                if (scatterObjects[i])
                 {
-                    continue;
+                    if (scatterObjects[i].transform.parent.name == "Unass")
+                    {
+                        Destroy(scatterObjects[i]);
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
                 scatterObjects.RemoveAt(i);
@@ -223,7 +250,7 @@ namespace Kopernicus.Components.ModularScatter
                 Single scatterScale = Random.Range(quad.scatter.minScale, quad.scatter.maxScale);
 
                 // Create a new object for the scatter
-                GameObject scatterObject = new GameObject(quad.scatter.scatterName);
+                GameObject scatterObject = new GameObject("Scatter");
                 scatterObject.transform.parent = quad.obj.transform;
                 scatterObject.transform.localPosition = scatterPos;
                 scatterObject.transform.localRotation = scatterRot;
@@ -238,6 +265,8 @@ namespace Kopernicus.Components.ModularScatter
                 scatterObject.layer = GameLayers.LOCAL_SPACE;
                 scatterObjects.Add(scatterObject);
             }
+
+            quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
         }
     }
 }

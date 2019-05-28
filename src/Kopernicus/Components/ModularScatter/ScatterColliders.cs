@@ -105,6 +105,19 @@ namespace Kopernicus.Components.ModularScatter
                 _meshColliders.Add(collider);
             }
         }
+        
+        /// <summary>
+        /// Destroy the generated objects on a scene change so they don't appear in random positions
+        /// </summary>
+        private void OnGameSceneLoadRequested(GameScenes data)
+        {
+            foreach (MeshCollider collider in _meshColliders)
+            {
+                UnityEngine.Object.Destroy(collider);
+            }
+
+            _meshColliders.Clear();
+        }
 
         void IComponent<ModularScatter>.Apply(ModularScatter system)
         {
@@ -113,7 +126,7 @@ namespace Kopernicus.Components.ModularScatter
         
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
-            // We don't use this
+            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
         }
     }
 }
