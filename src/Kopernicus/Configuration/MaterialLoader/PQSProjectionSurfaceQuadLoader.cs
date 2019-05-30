@@ -37,7 +37,7 @@ namespace Kopernicus.Configuration.MaterialLoader
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSProjectionSurfaceQuadLoader : PqsProjectionSurfaceQuad
+    public class PQSProjectionSurfaceQuadLoader : PQSProjectionSurfaceQuad
     {
         // Saturation, default = 1
         [ParserTarget("saturation")]

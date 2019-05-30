@@ -141,23 +141,23 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                if (PqsMainOptimised.UsesSameShader(SurfaceMaterial))
+                if (PQSMainOptimised.UsesSameShader(SurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericOptimized;
                 }
-                if (PqsMainShader.UsesSameShader(SurfaceMaterial))
+                if (PQSMainShader.UsesSameShader(SurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericMain;
                 }
-                if (PqsProjectionAerialQuadRelative.UsesSameShader(SurfaceMaterial))
+                if (PQSProjectionAerialQuadRelative.UsesSameShader(SurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericBasic;
                 }
-                if (PqsProjectionSurfaceQuad.UsesSameShader(SurfaceMaterial))
+                if (PQSProjectionSurfaceQuad.UsesSameShader(SurfaceMaterial))
                 {
                     return SurfaceMaterialType.Vacuum;
                 }
-                if (PqsMainExtras.UsesSameShader(SurfaceMaterial))
+                if (PQSMainExtras.UsesSameShader(SurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericExtra;
                 } 

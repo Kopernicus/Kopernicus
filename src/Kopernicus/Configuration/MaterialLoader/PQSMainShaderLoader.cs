@@ -38,7 +38,7 @@ namespace Kopernicus.Configuration.MaterialLoader
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSMainShaderLoader : PqsMainShader
+    public class PQSMainShaderLoader : PQSMainShader
     {
         // Saturation, default = 1
         [ParserTarget("saturation")]

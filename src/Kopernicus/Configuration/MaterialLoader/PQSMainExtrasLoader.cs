@@ -38,7 +38,7 @@ namespace Kopernicus.Configuration.MaterialLoader
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSMainExtrasLoader : PqsMainExtras
+    public class PQSMainExtrasLoader : PQSMainExtras
     {
         // Saturation, default = 1
         [ParserTarget("saturation")]

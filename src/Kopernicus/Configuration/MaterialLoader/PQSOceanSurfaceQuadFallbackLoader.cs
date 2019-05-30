@@ -37,7 +37,7 @@ namespace Kopernicus.Configuration.MaterialLoader
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSOceanSurfaceQuadFallbackLoader : PqsOceanSurfaceQuadFallback
+    public class PQSOceanSurfaceQuadFallbackLoader : PQSOceanSurfaceQuadFallback
     {
         // Main Color, default = (1,1,1,1)
         [ParserTarget("color")]

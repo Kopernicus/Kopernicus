@@ -9,7 +9,8 @@ namespace Kopernicus.Components.MaterialWrapper
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-    public class PqsMainOptimised : Material
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public class PQSMainOptimised : Material
     {
         // Internal property ID tracking object
         protected class Properties
@@ -539,17 +540,17 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetFloat(Properties.Instance.OceanFogDistanceId, value); }
         }
 
-        public PqsMainOptimised() : base(Properties.Shader)
+        public PQSMainOptimised() : base(Properties.Shader)
         {
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PqsMainOptimised(String contents) : base(contents)
+        public PQSMainOptimised(String contents) : base(contents)
         {
             shader = Properties.Shader;
         }
 
-        public PqsMainOptimised(Material material) : base(material)
+        public PQSMainOptimised(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)

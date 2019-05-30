@@ -37,7 +37,7 @@ namespace Kopernicus.Configuration.MaterialLoader
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSProjectionFallbackLoader : PqsProjectionFallback
+    public class PQSProjectionFallbackLoader : PQSProjectionFallback
     {
         // Saturation, default = 1
         [ParserTarget("saturation")]

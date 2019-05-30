@@ -10,7 +10,8 @@ namespace Kopernicus.Components.MaterialWrapper
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class PqsOceanSurfaceQuadFallback : Material
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public class PQSOceanSurfaceQuadFallback : Material
     {
         // Internal property ID tracking object
         protected class Properties
@@ -206,17 +207,17 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetFloat(Properties.Instance.PlanetOpacityId, value); }
         }
 
-        public PqsOceanSurfaceQuadFallback() : base(Properties.Shader)
+        public PQSOceanSurfaceQuadFallback() : base(Properties.Shader)
         {
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PqsOceanSurfaceQuadFallback(String contents) : base(contents)
+        public PQSOceanSurfaceQuadFallback(String contents) : base(contents)
         {
             shader = Properties.Shader;
         }
 
-        public PqsOceanSurfaceQuadFallback(Material material) : base(material)
+        public PQSOceanSurfaceQuadFallback(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)

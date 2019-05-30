@@ -9,7 +9,8 @@ namespace Kopernicus.Components.MaterialWrapper
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-    public class PqsMainShader : Material
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public class PQSMainShader : Material
     {
         // Internal property ID tracking object
         protected class Properties
@@ -639,17 +640,17 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetFloat(Properties.Instance.PlanetOpacityId, value); }
         }
 
-        public PqsMainShader() : base(Properties.Shader)
+        public PQSMainShader() : base(Properties.Shader)
         {
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PqsMainShader(String contents) : base(contents)
+        public PQSMainShader(String contents) : base(contents)
         {
             shader = Properties.Shader;
         }
 
-        public PqsMainShader(Material material) : base(material)
+        public PQSMainShader(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
