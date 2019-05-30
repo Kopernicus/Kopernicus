@@ -323,7 +323,7 @@ namespace Kopernicus
                     };
 
                     // Build from the PQS
-                    for (Int32 m = 0; i < mods.Length; i++)
+                    for (Int32 m = 0; m < mods.Length; m++)
                     {
                         // Don't build disabled mods
                         if (!mods[m].modEnabled)
