@@ -332,7 +332,6 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.rotation = value; }
             }
 
-            [KittopiaHideOption]
             [ParserTarget("useBetterDensity")]
             public NumericParser<Boolean> UseBetterDensity
             {
@@ -340,7 +339,13 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.useBetterDensity = value; }
             }
 
-            [KittopiaHideOption]
+            [ParserTarget("spawnChance")]
+            public NumericParser<Single> SpawnChance
+            {
+                get { return Scatter.spawnChance; }
+                set { Scatter.spawnChance = value; }
+            }
+
             [ParserTarget("ignoreDensityGameSetting")]
             public NumericParser<Boolean> IgnoreDensityGameSetting
             {
@@ -348,7 +353,6 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.ignoreDensityGameSetting = value; }
             }
 
-            [KittopiaHideOption]
             [ParserTarget("densityVariance")]
             public NumericCollectionParser<Single> DensityVariance
             {

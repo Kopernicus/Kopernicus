@@ -92,6 +92,11 @@ namespace Kopernicus.Components.ModularScatter
         public List<Single> rotation = new List<Single> {0, 360f};
 
         /// <summary>
+        /// How large is the chance that a scatter object spawns on a quad?
+        /// </summary>
+        public Single spawnChance = 1f;
+
+        /// <summary>
         /// A list of all meshes that can be used for the
         /// </summary>
         public List<Mesh> meshes = new List<Mesh>();
@@ -227,6 +232,15 @@ namespace Kopernicus.Components.ModularScatter
 
             for (Int32 i = 0; i < quad.count; i++)
             {
+                if (useBetterDensity)
+                {
+                    // Generate a random number between 0 and 1. If it is above the spawn chance, abort
+                    if (Random.value > spawnChance)
+                    {
+                        continue;
+                    }
+                }
+
                 Int32 num2 = -1;
                 Int32 num3 = -1;
                 while (num3 == num2)
