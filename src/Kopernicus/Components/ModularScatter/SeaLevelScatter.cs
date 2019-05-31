@@ -84,9 +84,10 @@ namespace Kopernicus.Components.ModularScatter
             {
                 Vector3 position = system.body.pqsController.transform.position;
                 Vector3 direction = (scatter.transform.position - position).normalized;
-                scatter.transform.position = position + 
-                    direction * (Single) (system.body.Radius + Random.Range(AltitudeVariance[0], AltitudeVariance[1]));
-                
+                scatter.transform.position = position +
+                                             direction * (Single) (system.body.Radius + system.scatter.verticalOffset +
+                                                                   Random.Range(AltitudeVariance[0],
+                                                                       AltitudeVariance[1]));
                 _moved.Add(scatter);
             }
         }
