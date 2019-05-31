@@ -1,6 +1,6 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
- * -------------------------------------------------------------a
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,21 +15,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- *
+ * 
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- *
+ * 
  * https://kerbalspaceprogram.com
  */
 
 using System;
-using UnityEngine;
+using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components.ModularScatter;
+using Kopernicus.ConfigParser.Attributes;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.Configuration.Parsing;
 
-namespace Kopernicus.Components
+namespace Kopernicus.Configuration.ModularScatterLoader
 {
-    public class KopernicusSurfaceObject : MonoBehaviour
+    /// <summary>
+    /// The loader for scatter objects that are shifted to the sea level
+    /// </summary>
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class SeaLevelScatter : ComponentLoader<ModularScatter, SeaLevelScatterComponent>
     {
-        public String objectName;
+        [ParserTarget("altitudeVariance")]
+        public NumericCollectionParser<Single> AltitudeVariance
+        {
+            get { return Value.AltitudeVariance; }
+            set { Value.AltitudeVariance = value; }
+        }
     }
 }
