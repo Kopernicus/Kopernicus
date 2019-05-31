@@ -159,9 +159,14 @@ namespace Kopernicus.Components.ModularScatter
         {
             // Reprocess the stock scatter models, since they are merged into
             // one gigantic mesh per quad, but we want unique objects
-            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(false);
+            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
             for (Int32 i = 0; i < quads.Length; i++)
             {
+                if (quads[i].mr && quads[i].mr.enabled)
+                {
+                    quads[i].mr.enabled = false;
+                }
+
                 if (quads[i].obj.name.StartsWith("Kopernicus"))
                 {
                     continue;
