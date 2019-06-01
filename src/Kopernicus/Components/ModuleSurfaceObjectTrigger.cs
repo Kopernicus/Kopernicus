@@ -100,11 +100,6 @@ namespace Kopernicus.Components
 
         public override void OnUpdate()
         {
-            // Find all active surface objects
-            KopernicusSurfaceObject surfaceObject =
-                FlightGlobals.currentMainBody.pqsController.GetComponentsInChildren<KopernicusSurfaceObject>(false)
-                    .First(m => m.objectName == objectName);
-
             // Check if we are near one
             Boolean isNearObject = false;
             Physics.OverlapSphereNonAlloc(FlightGlobals.ship_position, distance, _colliders);
@@ -120,7 +115,8 @@ namespace Kopernicus.Components
                     continue;
                 }
 
-                if (_colliders[i].transform.parent != surfaceObject.transform)
+                KopernicusSurfaceObject surfaceObject = _colliders[i].GetComponent<KopernicusSurfaceObject>();
+                if (!surfaceObject || surfaceObject.objectName != objectName)
                 {
                     continue;
                 }
@@ -134,7 +130,7 @@ namespace Kopernicus.Components
             {
                 if (isNearObject)
                 {
-                    _targetModule.SendMessage("OnObjectInRange", surfaceObject);
+                    _targetModule.SendMessage("OnObjectInRange", objectName);
                 }
                 else
                 {
