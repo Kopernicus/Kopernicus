@@ -101,6 +101,16 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         public List<Mesh> meshes = new List<Mesh>();
 
+        /// <summary>
+        /// The base mesh for the scatter.
+        /// </summary>
+        public Mesh baseMesh;
+
+        /// <summary>
+        /// A shared instance for a cube mesh, that is used to replace any mesh that KSP would want to spawn itself
+        /// </summary>
+        private static Mesh _cubeMesh;
+
         [SerializeField]
         private List<IComponent<ModularScatter>> components;
 
@@ -133,10 +143,46 @@ namespace Kopernicus.Components.ModularScatter
             scatterObjects = new List<GameObject>();
             body = Part.GetComponentUpwards<CelestialBody>(landControl.gameObject);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
-            if (!scatter.baseMesh && meshes.Count > 0)
+            if (!baseMesh && meshes.Count > 0)
             {
-                scatter.baseMesh = meshes[0];
+                baseMesh = meshes[0];
             }
+
+            // Generate a dummy mesh that is used to replace the mesh KSP want's to render itself.
+            if (!_cubeMesh)
+            {
+                Vector3[] vertices =
+                {
+                    new Vector3 (0, 0, 0),
+                    new Vector3 (1, 0, 0),
+                    new Vector3 (1, 1, 0),
+                    new Vector3 (0, 1, 0),
+                    new Vector3 (0, 1, 1),
+                    new Vector3 (1, 1, 1),
+                    new Vector3 (1, 0, 1),
+                    new Vector3 (0, 0, 1),
+                };
+
+                Int32[] triangles =
+                {
+                    0, 2, 1, //face front
+                    0, 3, 2,
+                    2, 3, 4, //face top
+                    2, 4, 5,
+                    1, 2, 5, //face right
+                    1, 5, 6,
+                    0, 7, 4, //face left
+                    0, 4, 3,
+                    5, 4, 7, //face back
+                    5, 7, 6,
+                    0, 6, 7, //face bottom
+                    0, 1, 6
+                };
+
+                _cubeMesh = new Mesh {vertices = vertices, triangles = triangles, name = "Kopernicus-CubeDummy"};
+            }
+
+            scatter.baseMesh = _cubeMesh;
 
             // PostApply for the Modules
             Components.ForEach(c => c.PostApply(this));
@@ -276,7 +322,7 @@ namespace Kopernicus.Components.ModularScatter
                 scatterObject.transform.localScale = Vector3.one * scatterScale;
                 scatterObject.AddComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
                 MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
-                filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : quad.scatter.baseMesh;
+                filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
                 MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
                 renderer.sharedMaterial = quad.scatter.material;
                 renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;

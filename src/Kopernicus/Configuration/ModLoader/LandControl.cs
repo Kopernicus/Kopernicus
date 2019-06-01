@@ -189,8 +189,8 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTarget("mesh")]
             public MeshParser BaseMesh
             {
-                get { return Value.baseMesh; }
-                set { Value.baseMesh = value; }
+                get { return Scatter.baseMesh; }
+                set { Scatter.baseMesh = value; }
             }
 
             [ParserTargetCollection("Meshes", AllowMerge = true)]
@@ -440,6 +440,10 @@ namespace Kopernicus.Configuration.ModLoader
                 // Add the scatter module
                 Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
                 Scatter.scatter = Value;
+                if (Value.baseMesh.name != "Kopernicus-CubeDummy")
+                {
+                    Scatter.baseMesh = Value.baseMesh;
+                }
 
                 // Create the Component callback
                 Components = new CallbackList<ComponentLoader<ModularScatter>>(e =>
