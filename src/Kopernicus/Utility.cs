@@ -206,7 +206,7 @@ namespace Kopernicus
                 cacheFile = cacheDirectory + "/" + body.name + ".bin";
             }
 
-            Directory.CreateDirectory(cacheDirectory);
+            Directory.CreateDirectory(cacheDirectory ?? throw new InvalidOperationException());
 
             if (File.Exists(cacheFile) && exportMesh)
             {

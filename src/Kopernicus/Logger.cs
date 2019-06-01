@@ -124,12 +124,7 @@ namespace Kopernicus
 
         public void Flush()
         {
-            if (_loggerStream == null)
-            {
-                return;
-            }
-
-            _loggerStream.Flush();
+            _loggerStream?.Flush();
         }
 
         // Close the logger

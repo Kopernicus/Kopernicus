@@ -89,12 +89,7 @@ namespace Kopernicus.RuntimeUtility
             }
 
             List<LoadingSystem> list = LoadingScreen.Instance.loaders;
-            if (list == null)
-            {
-                return;
-            }
-
-            list.Insert(list.FindIndex(m => m is GameDatabase) + 1, gameObject.AddComponent<MeshPreloader>());
+            list?.Insert(list.FindIndex(m => m is GameDatabase) + 1, gameObject.AddComponent<MeshPreloader>());
         }
     }
 }

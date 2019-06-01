@@ -82,10 +82,7 @@ namespace Kopernicus.Constants
             }
             finally
             {
-                if (s != null)
-                {
-                    s.Close();
-                }
+                s?.Close();
             }
 
             Int32 i = BitConverter.ToInt32(b, PE_HEADER_OFFSET);

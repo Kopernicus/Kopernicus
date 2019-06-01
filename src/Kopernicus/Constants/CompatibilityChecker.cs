@@ -94,15 +94,8 @@ namespace Kopernicus.Constants
             FieldInfo nyan = moduleManager.GetField("nyan", BindingFlags.Instance | BindingFlags.NonPublic);
             FieldInfo ncats = moduleManager.GetField("nCats", BindingFlags.Instance | BindingFlags.NonPublic);
             Object mm = FindObjectOfType(moduleManager);
-            if (nyan != null)
-            {
-                nyan.SetValue(mm, true);
-            }
-
-            if (ncats != null)
-            {
-                ncats.SetValue(mm, true);
-            }
+            nyan?.SetValue(mm, true);
+            ncats?.SetValue(mm, true);
 
             // Nobody can read that popup
             #if !KSP131

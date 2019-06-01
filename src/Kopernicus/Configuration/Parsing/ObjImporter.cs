@@ -88,10 +88,7 @@ namespace Kopernicus.Configuration.Parsing
                         && !currentText.StartsWith("vn "))
                     {
                         currentText = reader.ReadLine();
-                        if (currentText != null)
-                        {
-                            currentText = currentText.Replace("  ", " ");
-                        }
+                        currentText = currentText?.Replace("  ", " ");
                     }
                     else
                     {
@@ -117,10 +114,7 @@ namespace Kopernicus.Configuration.Parsing
                                 break;
                         }
                         currentText = reader.ReadLine();
-                        if (currentText != null)
-                        {
-                            currentText = currentText.Replace("  ", " ");
-                        }
+                        currentText = currentText?.Replace("  ", " ");
                     }
                 }
             }
@@ -158,10 +152,7 @@ namespace Kopernicus.Configuration.Parsing
                         !currentText.StartsWith("vc ") && !currentText.StartsWith("usemap "))
                     {
                         currentText = reader.ReadLine();
-                        if (currentText != null)
-                        {
-                            currentText = currentText.Replace("  ", " ");
-                        }
+                        currentText = currentText?.Replace("  ", " ");
                     }
                     else
                     {
@@ -240,10 +231,7 @@ namespace Kopernicus.Configuration.Parsing
                                 break;
                         }
                         currentText = reader.ReadLine();
-                        if (currentText != null)
-                        {
-                            currentText = currentText.Replace("  ", " ");       //Some .obj files insert Double spaces, this removes them.
-                        }
+                        currentText = currentText?.Replace("  ", " ");       //Some .obj files insert Double spaces, this removes them.
                     }
                 }
             }

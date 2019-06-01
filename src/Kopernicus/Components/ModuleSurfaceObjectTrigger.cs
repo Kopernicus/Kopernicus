@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using UnityEngine;
@@ -128,14 +127,7 @@ namespace Kopernicus.Components
             // Has the value changed?
             if (isNearObject != _isNearObject)
             {
-                if (isNearObject)
-                {
-                    _targetModule.SendMessage("OnObjectInRange", objectName);
-                }
-                else
-                {
-                    _targetModule.SendMessage("OnObjectOutOfRange", objectName);
-                }
+                _targetModule.SendMessage(isNearObject ? "OnObjectInRange" : "OnObjectOutOfRange", objectName);
             }
 
             _isNearObject = isNearObject;

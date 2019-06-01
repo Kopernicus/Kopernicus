@@ -84,6 +84,7 @@ namespace Kopernicus.Configuration.Parsing
 
     // Parser for Texture2D
     [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Texture2DParser : IParsable, ITypeParser<Texture2D>
     {
         /// <summary>
