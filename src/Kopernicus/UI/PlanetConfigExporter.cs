@@ -58,7 +58,7 @@ namespace Kopernicus.UI
             return bodyNode;
         }
 
-        private static void WriteToConfig(Object value, ref ConfigNode node)
+        public static void WriteToConfig(Object value, ref ConfigNode node)
         {
             // If the value can export to config node directly
             if (value is IConfigNodeWritable writable)

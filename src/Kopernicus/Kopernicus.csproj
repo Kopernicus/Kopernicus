@@ -102,6 +102,7 @@
     <Compile Include="Components\Ring.cs" />
     <Compile Include="Components\Serialization\SerializableMonoBehaviour.cs" />
     <Compile Include="Components\Serialization\SerializableObject.cs" />
+    <Compile Include="Components\Serialization\SerializablePartModule.cs" />
     <Compile Include="Components\Serialization\SerializablePQSMod.cs" />
     <Compile Include="Components\ShaderLoader.cs" />
     <Compile Include="Components\SharedScaledSpaceFader.cs" />

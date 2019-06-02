@@ -25,57 +25,75 @@
 
 using System;
 using System.Collections.Generic;
+using Kopernicus.Components.Serialization;
 using Kopernicus.ConfigParser;
+using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
+using Kopernicus.ConfigParser.Enumerations;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus.Components
 {
-    public class ModuleSurfaceObjectTrigger : PartModule
+    [Serializable]
+    public class ModuleSurfaceObjectTrigger : SerializablePartModule
     {
         /*
          * MODULE
          * {
-         *     name = ModuleScatterTrigger
+         *     name = ModuleSurfaceObjectTrigger
          *     module = ModuleScienceExperiment
-         * 
-         *     key = experimentID
-         *     value = temperatureScan
-         *
-         *
-         *     toggle = DeployExperiment
+         *     distance = 20
+         *     Properties
+         *     {
+         *         experimentID = scatterSample
+         *     }
+         *     Objects
+         *     {
+         *         name = Tree00
+         *         name = boulder
+         *     }
+         *     Toggles
+         *     {
+         *         name = DeployExperiment
+         *     }
          * }
          */
         
-        [KSPField(isPersistant =  false, guiActive = false)]
+        [ParserTarget("module")]
         public String module;
 
-        [KSPField(isPersistant =  false, guiActive = false)]
-        public String key;
+        [SerializeField]
+        [ParserTargetCollection("Properties", NameSignificance = NameSignificance.None)]
+        public Dictionary<String, String> properties;
 
-        [KSPField(isPersistant =  false, guiActive = false)]
-        public String value;
+        [ParserTargetCollection("Toggles", NameSignificance = NameSignificance.Key, Key = "name")]
+        public List<String> toggles;
 
-        [KSPField(isPersistant =  false, guiActive = false)]
-        public String toggle;
+        [ParserTargetCollection("Objects", NameSignificance = NameSignificance.Key, Key = "name")]
+        public List<String> objects;
 
-        [KSPField(isPersistant =  false, guiActive = false)]
-        public Single distance;
-
-        [KSPField(isPersistant =  false, guiActive = false)]
-        public String objectName;
+        [SerializeField]
+        [ParserTarget("distance")]
+        public NumericParser<Single> distance;
         
         private PartModule _targetModule;
         private Boolean _isNearObject = true;
-        private List<String> _toggle;
         private readonly Collider[] _colliders = new Collider[128];
+
+        public override void OnLoad(ConfigNode node)
+        {
+            Parser.LoadObjectFromConfigurationNode(this, node);
+            Debug.Log(properties["experimentID"]);
+        }
+
+        public override void OnSave(ConfigNode node)
+        {
+            PlanetConfigExporter.WriteToConfig(this, ref node);
+        }
 
         public override void OnStart(StartState state)
         {
-            StringCollectionParser parser = new StringCollectionParser();
-            parser.SetFromString(toggle);
-            _toggle = parser;
-            
             Type type = Parser.ModTypes.Find(t => t.Name == module && typeof(PartModule).IsAssignableFrom(t));
             for (Int32 i = 0; i < part.Modules.Count; i++)
             {
@@ -85,9 +103,18 @@ namespace Kopernicus.Components
                     continue;
                 }
 
-                BaseField field = partModule.Fields[key];
-                String fieldValue = field.GetValue(partModule).ToString();
-                if (fieldValue != value)
+                Boolean isModule = true;
+                foreach (KeyValuePair<String, String> keyValuePair in properties)
+                {
+                    BaseField field = partModule.Fields[keyValuePair.Key];
+                    String fieldValue = field.GetValue(partModule).ToString();
+                    if (fieldValue != keyValuePair.Value)
+                    {
+                        isModule = false;
+                    }
+                }
+
+                if (!isModule)
                 {
                     continue;
                 }
@@ -99,7 +126,7 @@ namespace Kopernicus.Components
 
         public override void OnUpdate()
         {
-            // Check if we are near one
+            // Check if we are near a surface feature
             Boolean isNearObject = false;
             Physics.OverlapSphereNonAlloc(FlightGlobals.ship_position, distance, _colliders);
             for (Int32 i = 0; i < _colliders.Length; i++)
@@ -115,7 +142,7 @@ namespace Kopernicus.Components
                 }
 
                 KopernicusSurfaceObject surfaceObject = _colliders[i].GetComponent<KopernicusSurfaceObject>();
-                if (!surfaceObject || surfaceObject.objectName != objectName)
+                if (!surfaceObject || !objects.Contains(surfaceObject.objectName))
                 {
                     continue;
                 }
@@ -127,29 +154,29 @@ namespace Kopernicus.Components
             // Has the value changed?
             if (isNearObject != _isNearObject)
             {
-                _targetModule.SendMessage(isNearObject ? "OnObjectInRange" : "OnObjectOutOfRange", objectName);
+                _targetModule.SendMessage(isNearObject ? "OnObjectInRange" : "OnObjectOutOfRange");
             }
 
             _isNearObject = isNearObject;
             
-            if (_toggle == null)
+            if (toggles == null)
             {
                 return;
             }
             
-            for (Int32 i = 0; i < _toggle.Count; i++)
+            for (Int32 i = 0; i < toggles.Count; i++)
             {
-                if (_targetModule.Events[_toggle[i]] != null)
+                if (_targetModule.Events[toggles[i]] != null)
                 {
-                    _targetModule.Events[_toggle[i]].guiActive = _isNearObject;
+                    _targetModule.Events[toggles[i]].guiActive = _isNearObject;
                 }
-                if (_targetModule.Actions[_toggle[i]] != null)
+                if (_targetModule.Actions[toggles[i]] != null)
                 {
-                    _targetModule.Actions[_toggle[i]].active = _isNearObject;
+                    _targetModule.Actions[toggles[i]].active = _isNearObject;
                 }
-                if (_targetModule.Fields[_toggle[i]] != null)
+                if (_targetModule.Fields[toggles[i]] != null)
                 {
-                    _targetModule.Fields[_toggle[i]].guiActive = _isNearObject;
+                    _targetModule.Fields[toggles[i]].guiActive = _isNearObject;
                 }
             }
         }
