@@ -60,7 +60,7 @@ namespace Kopernicus.OnDemand
             _unloadTime = 0;
 
             // Don't update, if the Injector is still running
-            if (_isLoaded || !Utility.LoadedToMainMenu)
+            if (_isLoaded)
             {
                 return;
             }

@@ -108,11 +108,6 @@ namespace Kopernicus.OnDemand
 
         public void LoadTextures()
         {
-            if (!Utility.LoadedToMainMenu)
-            {
-                return;
-            }
-            
             Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
 
             // Load Diffuse

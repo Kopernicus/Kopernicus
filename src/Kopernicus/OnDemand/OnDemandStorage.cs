@@ -56,7 +56,7 @@ namespace Kopernicus.OnDemand
         public static Boolean UseOnDemand = true;
         public static Boolean UseOnDemandBiomes = false;
         public static Boolean OnDemandLoadOnMissing = true;
-        public static Boolean OnDemandLogOnMissing = false;
+        public static Boolean OnDemandLogOnMissing = true;
         public static Int32 OnDemandUnloadDelay = 10;
 
         public static Boolean UseManualMemoryManagement = false;

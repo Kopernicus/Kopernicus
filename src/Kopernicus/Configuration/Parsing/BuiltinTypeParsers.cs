@@ -35,7 +35,6 @@ using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.OnDemand;
-using Kopernicus.RuntimeUtility;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -99,16 +98,17 @@ namespace Kopernicus.Configuration.Parsing
         public void SetFromString(String s)
         {
             // Check if we are attempting to load a builtin texture
-            if (TexturePreloader.Textures.ContainsKey(s))
+            if (s.StartsWith("BUILTIN/"))
             {
-                Value = TexturePreloader.Textures[s];
+                String textureName = Regex.Replace(s, "BUILTIN/", "");
+                Value = Resources.FindObjectsOfTypeAll<Texture>().FirstOrDefault(tex => tex.name == textureName) as Texture2D;
                 if (Value != null)
                 {
                     return;
                 }
                 
-                Debug.LogError("[Kopernicus] Could not find texture " + s);
-                Logger.Active.Log("Could not find texture " + s);
+                Debug.LogError("[Kopernicus] Could not find built-in texture " + textureName);
+                Logger.Active.Log("Could not find built-in texture " + textureName);
                 return;
             }
 
@@ -123,7 +123,23 @@ namespace Kopernicus.Configuration.Parsing
             // Or load the texture directly
             if (OnDemandStorage.TextureExists(s))
             {
-                Value = Utility.LoadTexture(s, false, true, false);
+                Value = OnDemandStorage.LoadTexture(s, false, true, false);
+
+                // Upload it to the GPU if the parser could load something
+                if (Value == null)
+                {
+                    return;
+                }
+                try
+                {
+                    Value.Apply(false, true);
+                }
+                catch
+                {
+                    Debug.LogError("[Kopernicus] Failed to upload texture " + Value.name + " to the GPU");
+                    Logger.Active.Log("Failed to upload texture " + Value.name + " to the GPU");
+                }
+
                 return;
             }
 

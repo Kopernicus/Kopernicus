@@ -247,7 +247,6 @@
     <Compile Include="RuntimeUtility\DiscoverableObjects.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
     <Compile Include="RuntimeUtility\MainMenuFixer.cs" />
-    <Compile Include="RuntimeUtility\TexturePreloader.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Templates.cs" />
     <Compile Include="Configuration\Loader.cs" />

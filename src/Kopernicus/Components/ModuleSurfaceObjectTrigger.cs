@@ -84,6 +84,7 @@ namespace Kopernicus.Components
         public override void OnLoad(ConfigNode node)
         {
             Parser.LoadObjectFromConfigurationNode(this, node);
+            Debug.Log(properties["experimentID"]);
         }
 
         public override void OnSave(ConfigNode node)
