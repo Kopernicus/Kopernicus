@@ -63,6 +63,18 @@ namespace Kopernicus
         }
 
         /// <summary>
+        /// Whether the game has successfully loaded the MainMenu
+        /// </summary>
+        public static Boolean LoadedToMainMenu
+        {
+            get
+            {
+                return HighLogic.LoadedScene != GameScenes.LOADING &&
+                       HighLogic.LoadedScene != GameScenes.LOADINGBUFFER && HighLogic.LoadedScene != GameScenes.PSYSTEM;
+            }
+        }
+
+        /// <summary>
         /// Copy one objects fields to another object via reflection
         /// </summary>
         /// <param name="source">Object to copy fields from</param>

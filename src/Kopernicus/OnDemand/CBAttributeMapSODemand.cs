@@ -261,10 +261,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting attribute with unloaded CBmap " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -285,10 +285,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting pixelbyte with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -336,10 +336,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelColD with unloaded CBmap " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -362,10 +362,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelColF with unloaded CBmap " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -385,10 +385,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting pixelColI with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -436,10 +436,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelCol32D with unloaded CBmap " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -462,10 +462,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelCol32F with unloaded CBmap " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -485,10 +485,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting pixelCol32I with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -534,10 +534,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelFloatD with unloaded CBmap " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -560,10 +560,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelFloatF with unloaded CBmap " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -583,10 +583,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting pixelFloatI with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -648,10 +648,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelHeightAlphaD with unloaded CBmap " + name + " of path " +
-                          Path + ", autoload = " + AutoLoad);
+                          Path + ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -674,10 +674,10 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.OnDemandLogOnMissing)
             {
                 Debug.Log("[OD] ERROR: getting pixelHeightAlphaF with unloaded CBmap " + name + " of path " +
-                          Path + ", autoload = " + AutoLoad);
+                          Path + ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -697,10 +697,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting pixelHeightAlphaI with unloaded CBmap " + name + " of path " +
-                              Path + ", autoload = " + AutoLoad);
+                              Path + ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -744,10 +744,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting GreyByteI with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -773,10 +773,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting GreyFloat with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -802,10 +802,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: getting pixelByte with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -849,10 +849,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -892,10 +892,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -935,10 +935,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -978,10 +978,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -1020,10 +1020,10 @@ namespace Kopernicus.OnDemand
                 if (OnDemandStorage.OnDemandLogOnMissing)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded CBmap " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }

@@ -42,7 +42,7 @@ namespace Kopernicus
     public class Injector : MonoBehaviour
     {
         // Name of the config node group which manages Kopernicus
-        private const String ROOT_NODE_NAME = "Kopernicus";
+        public const String ROOT_NODE_NAME = "Kopernicus";
 
         // The checksum of the System.cfg file.
         [SuppressMessage("ReSharper", "UnusedMember.Local")]

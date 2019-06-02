@@ -259,13 +259,13 @@ namespace Kopernicus.OnDemand
             // If we aren't loaded....
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting pixelbyte with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -309,13 +309,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelColor(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelColD with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -335,13 +335,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelColor(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelColF with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -358,13 +358,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting pixelColI with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -408,13 +408,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelColor32(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelCol32D with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -434,13 +434,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelColor32(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelCol32F with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -457,13 +457,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting pixelCol32I with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -505,13 +505,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelFloat(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelFloatD with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -531,13 +531,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelFloat(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelFloatF with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -554,13 +554,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting pixelFloatI with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -619,13 +619,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelHeightAlpha(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelHeightAlphaD with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -645,13 +645,13 @@ namespace Kopernicus.OnDemand
                 return base.GetPixelHeightAlpha(x, y);
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
             {
                 Debug.Log("[OD] ERROR: getting pixelHeightAlphaF with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                          ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
             }
 
-            if (AutoLoad)
+            if (AutoLoad && Utility.LoadedToMainMenu)
             {
                 Load();
             }
@@ -668,13 +668,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " +
-                              Path + ", autoload = " + AutoLoad);
+                              Path + ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -715,13 +715,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting GreyByteI with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -744,13 +744,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting GreyFloat with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -773,13 +773,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: getting pixelByte with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
+                              ", autoload = " + (AutoLoad && Utility.LoadedToMainMenu));
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -820,13 +820,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
                               AutoLoad);
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -863,13 +863,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
                               AutoLoad);
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -906,13 +906,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
                               AutoLoad);
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -949,13 +949,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
                               AutoLoad);
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
@@ -991,13 +991,13 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                if (OnDemandStorage.OnDemandLogOnMissing && Utility.LoadedToMainMenu)
                 {
                     Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
                               AutoLoad);
                 }
 
-                if (AutoLoad)
+                if (AutoLoad && Utility.LoadedToMainMenu)
                 {
                     Load();
                 }
