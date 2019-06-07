@@ -440,7 +440,7 @@ namespace Kopernicus.Configuration.ModLoader
                 // Add the scatter module
                 Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
                 Scatter.scatter = Value;
-                if (Value.baseMesh.name != "Kopernicus-CubeDummy")
+                if (Value.baseMesh && Value.baseMesh.name != "Kopernicus-CubeDummy")
                 {
                     Scatter.baseMesh = Value.baseMesh;
                 }
