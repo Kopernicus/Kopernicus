@@ -210,7 +210,7 @@ namespace Kopernicus.Components
             trackingBodyName = trackingBody.bodyDisplayName.Replace("^N", "");
 
             // Update the guiName for SwitchAOAMode
-            Events["SwitchAOAMode"].guiName = _relativeSunAoa ? "Use absolute exposure" : "Use relative exposure";
+            Events["SwitchAoaMode"].guiName = _relativeSunAoa ? "Use absolute exposure" : "Use relative exposure";
             base.LateUpdate();
         }
 
