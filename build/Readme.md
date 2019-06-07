@@ -6,9 +6,9 @@ June 07, 2019
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.7.1-2)
+New in this version (1.7.1-3)
 -------------------
-- Fixed the version checker not getting updated by my build server
+- Fix Kopernicus throwning an exception when trying to load Kerbins stock landcontrol
 --------
 _This is a hotfix release of [Kopernicus 1.7.1-1](https://github.com/Kopernicus/Kopernicus/releases/tag/release-1.7.1-1). Please also check out it's changelog!_
 
