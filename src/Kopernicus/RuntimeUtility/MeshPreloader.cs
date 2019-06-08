@@ -62,7 +62,17 @@ namespace Kopernicus.RuntimeUtility
             for (Int32 i = 0; i < binFiles.Length; i++)
             {
                 _progressTitle = "Kopernicus: Loading " + binFiles[i].Substring((KSPUtil.ApplicationRootPath + "GameData/").Length);
-                Meshes.Add(binFiles[i], Utility.DeserializeMesh(binFiles[i]));
+
+                try
+                {
+                    Meshes.Add(binFiles[i], Utility.DeserializeMesh(binFiles[i]));
+                    Debug.Log("[Kopernicus] Loaded '" + binFiles[i] + "'");
+                }
+                catch
+                {
+                    Debug.Log("[Kopernicus] Could not load '" + binFiles[i] + "'");
+                }
+
                 yield return null;
             }
 
