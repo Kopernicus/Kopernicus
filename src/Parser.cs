@@ -633,7 +633,8 @@ namespace Kopernicus.ConfigParser
             foreach (ParserTarget target in targets)
             {
                 // Figure out if this field exists and if we care
-                Boolean isNode = node.GetNodes().Any(n => n.name.StartsWith(target.FieldName));
+                Boolean isNode = node.GetNodes()
+                    .Any(n => n.name.StartsWith(target.FieldName + ":") || n.name == target.FieldName);
                 Boolean isValue = node.HasValue(target.FieldName);
 
                 // Obtain the type the member is (can only be field or property)
@@ -745,7 +746,7 @@ namespace Kopernicus.ConfigParser
                         case NameSignificance.Type:
 
                             // Generate the type from the name
-                            ConfigNode subnode = node.GetNodes().First(n => n.name.StartsWith(target.FieldName));
+                            ConfigNode subnode = node.GetNodes().First(n => n.name.StartsWith(target.FieldName + ":"));
                             String[] split = subnode.name.Split(':');
                             Type elementType = ModTypes.FirstOrDefault(t =>
                                 t.Name == split[1] && !Equals(t.Assembly, typeof(HighLogic).Assembly) &&
