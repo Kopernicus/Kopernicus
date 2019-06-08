@@ -1,14 +1,18 @@
 ﻿Kopernicus
 ==============================
-June 07, 2019
+June 08, 2019
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.7.1-4)
+New in this version (1.7.1-5)
 -------------------
-- Fix KopernicusSolarPanel not working and throwing NREs everywhere.
+- Fixed Kopernicus crashing when trying to load .bin files that are not 
+  scaled space caches.
+- Fixed Kopernicus destroying stock texture when trying to load them on demand
+- Fixed Kopernicus misinterpreting node names, that start with the correct
+  name but have additional characters after that
 --------
 _This is a hotfix release of [Kopernicus 1.7.1-1](https://github.com/Kopernicus/Kopernicus/releases/tag/release-1.7.1-1). Please also check out it's changelog!_
 
