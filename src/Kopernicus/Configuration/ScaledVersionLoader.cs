@@ -349,8 +349,15 @@ namespace Kopernicus.Configuration
                 onDemand.normals = OnDemandTextures.Normals;
 
                 // Delete the original scaled space textures
-                Object.Destroy(Material.GetTexture(MainTex));
-                Object.Destroy(Material.GetTexture(BumpMap));
+                if (OnDemandTextures.Texture != null)
+                {
+                    Material.SetTexture(MainTex, Texture2D.whiteTexture);
+                }
+
+                if (OnDemandTextures.Normals != null)
+                {
+                    Material.SetTexture(BumpMap, Texture2D.whiteTexture);
+                }
             }
 
             // Event
