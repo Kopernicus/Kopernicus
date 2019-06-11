@@ -47,6 +47,8 @@ namespace Kopernicus.Components
         [KSPField(isPersistant = true)]
         private Boolean _relativeSunAoa;
 
+        private ModuleDeployableSolarPanel SP;
+
         private static readonly Double StockLuminosity;
 
         static KopernicusSolarPanel()
@@ -63,22 +65,22 @@ namespace Kopernicus.Components
 
         public void LatePostCalculateTracking()
         {
-            ModuleDeployableSolarPanel SP = GetComponent<ModuleDeployableSolarPanel>();
-
-            Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
-            LatePostCalculateTracking((bool)SP.Fields["trackingLOS"].GetValue(SP), normalized);
+            if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
+            {
+                Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
+                FieldInfo trackingLOS = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "trackingLOS");
+                LatePostCalculateTracking((bool)trackingLOS.GetValue(SP), normalized);
+            }
         }
 
         public void LatePostCalculateTracking(Boolean trackingLos, Vector3 trackingDirection)
         {
-            ModuleDeployableSolarPanel SP = GetComponent<ModuleDeployableSolarPanel>();
-
             // Maximum values
             Double maxEnergy = 0;
             KopernicusStar maxStar = null;
 
             // Override layer mask
-            SP.Fields["planetLayerMask"].SetValue(ModularFlightIntegrator.SunLayerMask, SP);
+            typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "planetLayerMask").SetValue(SP, ModularFlightIntegrator.SunLayerMask);
 
             // Efficiency modifier
             SP._efficMult = SP.temperatureEfficCurve.Evaluate((Single)part.skinTemperature) *
@@ -98,9 +100,10 @@ namespace Kopernicus.Components
                 SP.trackingTransformLocal = sunTransform;
                 SP.trackingTransformScaled = star.sun.scaledBody.transform;
 
-                string blockingObject = (string)SP.Fields["blockingObject"].GetValue(SP);
-                trackingLos = SP.CalculateTrackingLOS(trackDir, ref blockingObject);
-                SP.Fields["blockingObject"].SetValue(blockingObject, SP);
+                FieldInfo blockingObject = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "blockingObject");
+                string blockingObjectName = (string)blockingObject.GetValue(SP);
+                trackingLos = SP.CalculateTrackingLOS(trackDir, ref blockingObjectName);
+                blockingObject.SetValue(SP, blockingObjectName);
 
                 SP.trackingTransformLocal = old.transform;
                 SP.trackingTransformScaled = old.scaledBody.transform;
@@ -169,7 +172,7 @@ namespace Kopernicus.Components
                     Double altitudeAtPos =
                         -FlightGlobals.getAltitudeAtPos
                         (
-                            (Vector3d)(((Transform)SP.Fields["secondaryTransform"].GetValue(SP)).position),
+                            (Vector3d)(((Transform)typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "secondaryTransform").GetValue(SP)).position),
                             vessel.mainBody
                         );
                     altitudeAtPos = (altitudeAtPos * 3 + part.maxDepth) * 0.25;
@@ -223,19 +226,19 @@ namespace Kopernicus.Components
 
         public void EarlyLateUpdate()
         {
-            ModuleDeployableSolarPanel SP = GetComponent<ModuleDeployableSolarPanel>();
+            if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
+            {
+                // Update the name
+                trackingBodyName = SP.trackingBody.bodyDisplayName.Replace("^N", "");
 
-            // Update the name
-            trackingBodyName = SP.trackingBody.bodyDisplayName.Replace("^N", "");
-
-            // Update the guiName for SwitchAOAMode
-            Events["SwitchAoaMode"].guiName = _relativeSunAoa ? "Use absolute exposure" : "Use relative exposure";
+                // Update the guiName for SwitchAOAMode
+                Events["SwitchAoaMode"].guiName = _relativeSunAoa ? "Use absolute exposure" : "Use relative exposure";
+            }
         }
 
         [KSPEvent(active = true, guiActive = true, guiName = "Select Tracking Body")]
         public void ManualTracking()
         {
-            ModuleDeployableSolarPanel SP = GetComponent<ModuleDeployableSolarPanel>();
 
             // Assemble the buttons
             DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
@@ -275,8 +278,6 @@ namespace Kopernicus.Components
 
         public void OnDestroy()
         {
-            TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
-            TimingManager.FixedUpdateAdd(TimingManager.TimingStage.Late, LatePostCalculateTracking);
         }
     }
 }
