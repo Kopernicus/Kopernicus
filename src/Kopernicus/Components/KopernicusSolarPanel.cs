@@ -239,7 +239,6 @@ namespace Kopernicus.Components
         [KSPEvent(active = true, guiActive = true, guiName = "Select Tracking Body")]
         public void ManualTracking()
         {
-
             // Assemble the buttons
             DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
             options[0] = new DialogGUIButton("Auto", () => { _manualTracking = false; }, true);
@@ -273,11 +272,15 @@ namespace Kopernicus.Components
             TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
             TimingManager.FixedUpdateAdd(TimingManager.TimingStage.Late, LatePostCalculateTracking);
 
+            SP = GetComponent<ModuleDeployableSolarPanel>();
+
             base.OnStart(state);
         }
 
         public void OnDestroy()
         {
+            TimingManager.LateUpdateRemove(TimingManager.TimingStage.Early, EarlyLateUpdate);
+            TimingManager.FixedUpdateRemove(TimingManager.TimingStage.Late, LatePostCalculateTracking);
         }
     }
 }
