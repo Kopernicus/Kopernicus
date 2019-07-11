@@ -94,7 +94,7 @@ namespace Kopernicus.Configuration
                 CelestialBody.Set("barycenter", value.Value);
 
                 // Reuse the selectable option, to reduce the amount of boilerplate code we need.
-                CelestialBody.Set("selectable", value.Value);
+                CelestialBody.Set("selectable", !value.Value);
             }
         }
 
