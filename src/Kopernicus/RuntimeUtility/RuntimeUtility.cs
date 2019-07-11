@@ -399,8 +399,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 trackingstation.Add(PlanetariumCamera.fetch.targets.Find(t => t.celestialBody == cb));
             });
-            PlanetariumCamera.fetch.targets = trackingstation.Where(m =>
-                m?.celestialBody != null && m.celestialBody.Get("selectable", true)).ToList();
+            PlanetariumCamera.fetch.targets = trackingstation.Where(m => m != null).ToList();
 
             // Undo stuff
             foreach (CelestialBody b in PSystemManager.Instance.localBodies.Where(b => b.Has("orbitPatches")))
