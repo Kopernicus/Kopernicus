@@ -50,8 +50,8 @@ namespace Kopernicus.Constants
         // Compatible version
         internal const Int32 VERSION_MAJOR = 1;
         internal const Int32 VERSION_MINOR = 7;
-        internal const Int32 REVISION = 1;
-        internal const Int32 KOPERNICUS = 5;
+        internal const Int32 REVISION = 3;
+        internal const Int32 KOPERNICUS = 1;
 
         public static Boolean IsCompatible()
         {
