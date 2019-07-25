@@ -51,7 +51,7 @@ namespace Kopernicus.Components
                 _ocean = null;
             }
 
-            if (_ocean != null)
+            if (_ocean == null)
             {
                 _ocean = _mainBody.pqsController.GetComponentInChildren<PQS>();
             }
