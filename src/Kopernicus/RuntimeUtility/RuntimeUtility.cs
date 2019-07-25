@@ -137,11 +137,8 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            // Replace PartBuoyancy with KopernicusBuoyancy
-            KopernicusBuoyancy buoyancy = part.gameObject.AddComponent<KopernicusBuoyancy>();
-            Utility.CopyObjectFields(part.partBuoyancy, buoyancy, false);
-            part.partBuoyancy = buoyancy;
-            Destroy(part.GetComponent<PartBuoyancy>());
+            // Attach KopernicusBuoyancy
+            KopernicusBuoyancy buoyancy = part.gameObject.AddOrGetComponent<KopernicusBuoyancy>();
         }
 
         // Transforms body references in the save games

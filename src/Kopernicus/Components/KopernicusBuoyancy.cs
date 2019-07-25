@@ -23,74 +23,45 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus.Components
 {
-    // Our own implementation of PartBuoyancy
-    public class KopernicusBuoyancy : PartBuoyancy
+    // Our own modifications to PartBuoyancy
+    public class KopernicusBuoyancy : MonoBehaviour
     {
-        // The Part we are attached to
-        private Part Part
-        {
-            get { return GetComponent<Part>(); }
-        }
+        private Part _part;
+        private PartBuoyancy _buoyancy;
 
         // The current ocean
         private PQS _ocean;
         private CelestialBody _mainBody;
-        private Action _baseFixedUpdate;
 
-        // Update the status of the water
-        private void FixedUpdate()
+        private void Start()
         {
-            if (GetOcean() != null)
-            {
-                // Change water level
-                waterLevel = GetAltitudeFromOcean(centerOfDisplacement);
-            }
-
-            // Call base
-            GetBaseFixedUpdate()();
+            _part = GetComponent<Part>();
+            _buoyancy = GetComponent<PartBuoyancy>();
         }
 
-        private Single GetAltitudeFromOcean(Vector3 position)
+        private void Update()
         {
-            PQS ocean = GetOcean();
-            return (Single) ocean.GetSurfaceHeight(ocean.GetRelativePosition(position)) -
-                   (Single) Part.vessel.mainBody.Radius;
-        }
-
-        private PQS GetOcean()
-        {
-            if (_ocean != null && _mainBody == Part.vessel.mainBody)
+            if (_mainBody != _part.vessel.mainBody)
             {
-                return _ocean;
+                _mainBody = _part.vessel.mainBody;
+                _ocean = null;
             }
 
-            _mainBody = Part.vessel.mainBody;
-            _ocean = _mainBody.GetComponentsInChildren<PQS>(true)
-                .FirstOrDefault(p => p.name == _mainBody.transform.name + "Ocean");
-
-            return _ocean;
-        }
-
-        private Action GetBaseFixedUpdate()
-        {
-            if (_baseFixedUpdate != null)
+            if (_ocean != null)
             {
-                return _baseFixedUpdate;
+                _ocean = _mainBody.pqsController.GetComponentInChildren<PQS>();
             }
 
-            PartBuoyancy b = this;
-            MethodInfo info =
-                typeof(PartBuoyancy).GetMethod("FixedUpdate", BindingFlags.NonPublic | BindingFlags.Instance);
-            _baseFixedUpdate = (Action) Delegate.CreateDelegate(typeof(Action), b, info);
-
-            return _baseFixedUpdate;
+            if (_ocean != null)
+            {
+                _buoyancy.waterLevel =
+                    _ocean.GetSurfaceHeight(_ocean.GetRelativePosition(_buoyancy.centerOfDisplacement)) -
+                    _part.vessel.mainBody.Radius;
+            }
         }
     }
 }
