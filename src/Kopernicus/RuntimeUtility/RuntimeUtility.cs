@@ -67,7 +67,6 @@ namespace Kopernicus.RuntimeUtility
             new Logger("Kopernicus.Runtime", true).SetAsActive();
 
             // Add handlers
-            GameEvents.onPartUnpack.Add(p => OnPartUnpack(p));
             GameEvents.OnMapEntered.Add(() => OnMapEntered());
             GameEvents.onLevelWasLoaded.Add(s => OnLevelWasLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
@@ -126,19 +125,6 @@ namespace Kopernicus.RuntimeUtility
                 PatchStarReferences(PSystemManager.Instance.localBodies[i]);
                 PatchContractWeight(PSystemManager.Instance.localBodies[i]);
             }
-        }
-
-        // Fix the buoyancy
-        private static void OnPartUnpack(Part part)
-        {
-            // If there's nothing to do, abort
-            if (part.partBuoyancy == null)
-            {
-                return;
-            }
-
-            // Attach KopernicusBuoyancy
-            KopernicusBuoyancy buoyancy = part.gameObject.AddOrGetComponent<KopernicusBuoyancy>();
         }
 
         // Transforms body references in the save games
@@ -898,7 +884,6 @@ namespace Kopernicus.RuntimeUtility
         // Remove the Handlers
         private void OnDestroy()
         {
-            GameEvents.onPartUnpack.Remove(OnPartUnpack);
             GameEvents.OnMapEntered.Remove(OnMapEntered);
             GameEvents.onLevelWasLoaded.Remove(OnLevelWasLoaded);
             GameEvents.onProtoVesselLoad.Remove(TransformBodyReferencesOnLoad);
