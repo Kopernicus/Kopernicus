@@ -121,7 +121,7 @@ namespace Kopernicus.OnDemand
             if (OnDemandStorage.TextureExists(normals))
             {
                 scaledRenderer.sharedMaterial.SetTexture(BumpMap,
-                    OnDemandStorage.LoadTexture(normals, false, true, false));
+                    OnDemandStorage.LoadTexture(normals, false, true, true));
             }
 
             // Events
