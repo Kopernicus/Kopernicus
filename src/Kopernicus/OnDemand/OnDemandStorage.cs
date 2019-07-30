@@ -54,12 +54,12 @@ namespace Kopernicus.OnDemand
 
         // OnDemand flags
         public static Boolean UseOnDemand = true;
-        public static Boolean UseOnDemandBiomes = false;
+        public static Boolean UseOnDemandBiomes = true;
         public static Boolean OnDemandLoadOnMissing = true;
         public static Boolean OnDemandLogOnMissing = true;
         public static Int32 OnDemandUnloadDelay = 10;
 
-        public static Boolean UseManualMemoryManagement = false;
+        public static Boolean UseManualMemoryManagement = true;
 
         // Add the management handler to the PQS
         public static void AddHandler(PQS pqsVersion)
