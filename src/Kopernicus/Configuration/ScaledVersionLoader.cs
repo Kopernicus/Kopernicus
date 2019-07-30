@@ -342,21 +342,45 @@ namespace Kopernicus.Configuration
             }
 
             // If we use OnDemand, we need to delete the original textures and reload them
-            if (OnDemandStorage.UseOnDemand && Type.Value != BodyType.Star && OnDemandTextures != null)
+            if (Type.Value != BodyType.Star && OnDemandTextures != null)
             {
-                ScaledSpaceOnDemand onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
-                onDemand.texture = OnDemandTextures.Texture;
-                onDemand.normals = OnDemandTextures.Normals;
-
-                // Delete the original scaled space textures
-                if (OnDemandTextures.Texture != null)
+                if (OnDemandStorage.UseOnDemand)
                 {
-                    Material.SetTexture(MainTex, Texture2D.whiteTexture);
+                    ScaledSpaceOnDemand onDemand = Value.scaledBody.AddComponent<ScaledSpaceOnDemand>();
+                    onDemand.texture = OnDemandTextures.Texture;
+                    onDemand.normals = OnDemandTextures.Normals;
+
+                    // Delete the original scaled space textures
+                    if (OnDemandTextures.Texture != null)
+                    {
+                        Texture2D texture = new Texture2D(1, 1);
+                        texture.Apply();
+                        Material.SetTexture(MainTex, texture);
+                    }
+
+                    if (OnDemandTextures.Normals != null)
+                    {
+                        Texture2D texture = new Texture2D(1, 1);
+                        texture.Apply();
+                        Material.SetTexture(BumpMap, texture);
+                    }
                 }
-
-                if (OnDemandTextures.Normals != null)
+                else
                 {
-                    Material.SetTexture(BumpMap, Texture2D.whiteTexture);
+                    // If OD isn't enabled, load the textures, assign them and don't care anymore
+                    Texture2DParser parser = new Texture2DParser();
+
+                    if (OnDemandTextures.Texture != null)
+                    {
+                        parser.SetFromString(OnDemandTextures.Texture);
+                        Material.SetTexture(MainTex, parser);
+                    }
+
+                    if (OnDemandTextures.Normals != null)
+                    {
+                        parser.SetFromString(OnDemandTextures.Normals);
+                        Material.SetTexture(BumpMap, parser);
+                    }
                 }
             }
 
