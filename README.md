@@ -1,15 +1,16 @@
 ﻿Kopernicus
 ==============================
-July 12, 2019
+September 12, 2019
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.7.3-1)
+New in this version (1.7.3-2)
 -------------------
-- Updated to KSP 1.7.3
-- Fixed the selectable and barycenter options, thanks to Sigma
+- Removed Kopernicus Buoyancy modifications to fix ocean lag, they never worked anyways
+- Fixed texture loading with on-demand loading disabled
+- Unload normal maps from RAM and only keep them in VRAM when loaded on demand
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
