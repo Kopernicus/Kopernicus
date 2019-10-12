@@ -67,10 +67,10 @@ namespace Kopernicus.Configuration.ModLoader
 
             // octaves
             [ParserTarget("octaves")]
-            public NumericParser<Int32> Octaves
+            public NumericParser<Double> Octaves
             {
                 get { return Value.octaves; }
-                set { Value.octaves = Mathf.Clamp(value, 1, 30); }
+                set { Value.octaves = value > 30 ? 30 : value > 1 ? value : 1; }
             }
 
             // persistance
