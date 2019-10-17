@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -48,15 +48,15 @@ namespace Kopernicus.Configuration.Parsing
     public class PositionParser : BaseLoader
     {
         // Latitude
-        [ParserTarget("latitude")] 
+        [ParserTarget("latitude")]
         public NumericParser<Double> Latitude { get; set; }
 
         // Longitude
-        [ParserTarget("longitude")] 
+        [ParserTarget("longitude")]
         public NumericParser<Double> Longitude { get; set; }
 
         // Altitude
-        [ParserTarget("altitude")] 
+        [ParserTarget("altitude")]
         public NumericParser<Double> Altitude { get; set; }
 
         // Default Constructor
@@ -75,7 +75,7 @@ namespace Kopernicus.Configuration.Parsing
             {
                 return Vector3.zero;
             }
-            
+
             Double radius = generatedBody.celestialBody.Radius;
             return Utility.LLAtoECEF(parser.Latitude, parser.Longitude, parser.Altitude,
                 Math.Max(radius, 0));
@@ -106,7 +106,7 @@ namespace Kopernicus.Configuration.Parsing
                 {
                     return;
                 }
-                
+
                 Debug.LogError("[Kopernicus] Could not find built-in texture " + textureName);
                 Logger.Active.Log("Could not find built-in texture " + textureName);
                 return;
@@ -232,7 +232,7 @@ namespace Kopernicus.Configuration.Parsing
                     {
                         return;
                     }
-                    
+
                     String mapName = s;
                     mapName = mapName.Substring(s.LastIndexOf('/') + 1);
                     Int32 lastDot = mapName.LastIndexOf('.');
@@ -268,7 +268,7 @@ namespace Kopernicus.Configuration.Parsing
                     {
                         return;
                     }
-                    
+
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
                     Value.CreateMap(MapSO.MapDepth.Greyscale, map);
@@ -364,7 +364,7 @@ namespace Kopernicus.Configuration.Parsing
                     {
                         return;
                     }
-                    
+
                     String mapName = s;
                     mapName = mapName.Substring(s.LastIndexOf('/') + 1);
                     Int32 lastDot = mapName.LastIndexOf('.');
@@ -401,7 +401,7 @@ namespace Kopernicus.Configuration.Parsing
                     {
                         return;
                     }
-                    
+
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
                     Value.CreateMap(MapSO.MapDepth.RGB, map);
@@ -647,7 +647,7 @@ namespace Kopernicus.Configuration.Parsing
         /// </summary>
         public T Value { get; set; }
 
-        [SuppressMessage("ReSharper", "StaticMemberInGenericType")] 
+        [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
         private static readonly Dictionary<String, AssetBundle> Bundles = new Dictionary<String, AssetBundle>();
 
         /// <summary>
@@ -675,7 +675,7 @@ namespace Kopernicus.Configuration.Parsing
                 bundle = Bundles[split[0]];
             }
 
-            Value = Utility.Instantiate(bundle.LoadAsset<T>(split[1]));
+            Value = UnityEngine.Object.Instantiate(bundle.LoadAsset<T>(split[1]));
             Object.DontDestroyOnLoad(Value);
             Value.name = s;
         }
@@ -741,7 +741,7 @@ namespace Kopernicus.Configuration.Parsing
             if (s.StartsWith("BUILTIN/"))
             {
                 String objName = Regex.Replace(s, "BUILTIN/", "");
-                Value = Utility.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>()
+                Value = UnityEngine.Object.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>()
                     .First(obj => obj.name == objName));
                 Value.name = objName;
                 return;

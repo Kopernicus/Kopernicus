@@ -1,6 +1,6 @@
 ﻿/**
 * Kopernicus Planetary System Modifier
-* ------------------------------------------------------------- 
+* -------------------------------------------------------------
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
 * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 * MA 02110-1301  USA
-* 
+*
 * This library is intended to be used as a plugin for Kerbal Space Program
 * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
 * itself is governed by the terms of its EULA, not the license above.
-* 
+*
 * https://kerbalspaceprogram.com
 */
 
@@ -43,11 +43,9 @@ namespace Kopernicus.Components
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
         {
-            #if !KSP131
             typeof(PQS).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                 .First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
             base.OnSetup();
-            #endif
 
             // Try to cache density values that are used to distribute scatters
             _landControls = sphere.GetComponentsInChildren<PQSLandControl>(true);

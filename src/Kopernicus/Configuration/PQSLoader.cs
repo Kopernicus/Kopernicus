@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -160,7 +160,7 @@ namespace Kopernicus.Configuration
                 if (PQSMainExtras.UsesSameShader(SurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericExtra;
-                } 
+                }
                 return SurfaceMaterialType.Vacuum;
             }
             set
@@ -359,7 +359,7 @@ namespace Kopernicus.Configuration
             {
                 PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
                 GameObject scTree = kerbinTemplate.pqsVersion.gameObject.GetChild("KSC");
-                GameObject newScTree = Utility.Instantiate(scTree, Value.transform, true);
+                GameObject newScTree = UnityEngine.Object.Instantiate(scTree, Value.transform, true);
                 newScTree.transform.localPosition = scTree.transform.localPosition;
                 newScTree.transform.localScale = scTree.transform.localScale;
                 newScTree.transform.localRotation = scTree.transform.localRotation;
@@ -521,7 +521,7 @@ namespace Kopernicus.Configuration
             {
                 OnDemandStorage.AddHandler(Value);
             }
-            
+
             // Load existing mods
             foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == Value))
             {

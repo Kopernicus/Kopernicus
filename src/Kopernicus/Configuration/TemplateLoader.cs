@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -119,19 +119,19 @@ namespace Kopernicus.Configuration
             SpaceCenter.Instance = null;
 
             // Instantiate (clone) the template body
-            GameObject bodyGameObject = Utility.Instantiate(OriginalBody.gameObject, Utility.Deactivator, true);
+            GameObject bodyGameObject = UnityEngine.Object.Instantiate(OriginalBody.gameObject, Utility.Deactivator, true);
             bodyGameObject.name = OriginalBody.name;
             Body = bodyGameObject.GetComponent<PSystemBody>();
             Body.children = new List<PSystemBody>();
 
             // Clone the scaled version
-            Body.scaledVersion = Utility.Instantiate(OriginalBody.scaledVersion, Utility.Deactivator, true);
+            Body.scaledVersion = UnityEngine.Object.Instantiate(OriginalBody.scaledVersion, Utility.Deactivator, true);
             Body.scaledVersion.name = OriginalBody.scaledVersion.name;
 
             // Clone the PQS version (if it has one) and we want the PQS
             if (Body.pqsVersion != null && RemovePqs.Value != true)
             {
-                Body.pqsVersion = Utility.Instantiate(OriginalBody.pqsVersion, Utility.Deactivator, true);
+                Body.pqsVersion = UnityEngine.Object.Instantiate(OriginalBody.pqsVersion, Utility.Deactivator, true);
                 Body.pqsVersion.name = OriginalBody.pqsVersion.name;
             }
             else

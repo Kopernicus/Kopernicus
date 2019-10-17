@@ -61,20 +61,8 @@ namespace Kopernicus.Configuration.ModularScatterLoader
         [ParserTarget("colorTemperature")]
         public NumericParser<Single> ColorTemperature
         {
-            get
-            {
-                #if !KSP131
-                return Value.Prefab.colorTemperature;
-                #else
-                return 1;
-                #endif
-            }
-            set
-            {
-                #if !KSP131
-                Value.Prefab.colorTemperature = value;
-                #endif
-            }
+            get { return Value.Prefab.colorTemperature; }
+            set { Value.Prefab.colorTemperature = value; }
         }
 
         [ParserTarget("intensity")]

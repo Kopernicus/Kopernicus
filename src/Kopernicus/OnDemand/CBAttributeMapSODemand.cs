@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -878,7 +878,7 @@ namespace Kopernicus.OnDemand
             }
             else
             {
-                Texture2D compiled = Utility.Instantiate(Data);
+                Texture2D compiled = UnityEngine.Object.Instantiate(Data);
                 compiled.Apply(false, true);
                 return compiled;
             }
@@ -921,7 +921,7 @@ namespace Kopernicus.OnDemand
             }
             else
             {
-                Texture2D compiled = Utility.Instantiate(Data);
+                Texture2D compiled = UnityEngine.Object.Instantiate(Data);
                 compiled.Apply(false, true);
                 return compiled;
             }
@@ -964,7 +964,7 @@ namespace Kopernicus.OnDemand
             }
             else
             {
-                Texture2D compiled = Utility.Instantiate(Data);
+                Texture2D compiled = UnityEngine.Object.Instantiate(Data);
                 compiled.Apply(false, true);
                 return compiled;
             }
@@ -1006,7 +1006,7 @@ namespace Kopernicus.OnDemand
             }
             else
             {
-                Texture2D compiled = Utility.Instantiate(Data);
+                Texture2D compiled = UnityEngine.Object.Instantiate(Data);
                 compiled.Apply(false, true);
                 return compiled;
             }
@@ -1049,7 +1049,7 @@ namespace Kopernicus.OnDemand
             }
             else
             {
-                Texture2D compiled = Utility.Instantiate(Data);
+                Texture2D compiled = UnityEngine.Object.Instantiate(Data);
                 compiled.Apply(false, true);
                 return compiled;
             }
