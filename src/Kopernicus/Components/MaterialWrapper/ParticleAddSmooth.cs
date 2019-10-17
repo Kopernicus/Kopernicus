@@ -15,7 +15,7 @@ namespace Kopernicus.Components.MaterialWrapper
         protected class Properties
         {
             // Return the shader for this wrapper
-            private const String SHADER_NAME = "Particles/Additive (Soft)";
+            private const String SHADER_NAME = "Legacy Shaders/Particles/Additive (Soft)";
 
             public static Shader Shader
             {
@@ -99,7 +99,7 @@ namespace Kopernicus.Components.MaterialWrapper
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
             {
-                throw new InvalidOperationException("Type Mismatch: Particles/Additive (Soft) shader required");
+                throw new InvalidOperationException("Type Mismatch: Legacy Shaders/Particles/Additive (Soft) shader required");
             }
         }
 

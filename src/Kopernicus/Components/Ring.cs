@@ -258,7 +258,7 @@ namespace Kopernicus.Components
         /// </summary>
         private const String NEW_SHADER = "Kopernicus/Rings";
         private const String UNLIT_SHADER = "Unlit/Transparent";
-        private const String DIFFUSE_SHADER = "Transparent/Diffuse";
+        private const String DIFFUSE_SHADER = "Legacy Shaders/Transparent/Diffuse";
 
         /// <summary>
         /// Queries the shader the material should use
