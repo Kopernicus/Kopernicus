@@ -56,7 +56,9 @@ namespace Kopernicus.Configuration
             AtmosphericBasic,
             AtmosphericMain,
             AtmosphericOptimized,
-            AtmosphericExtra
+            AtmosphericExtra,
+            AtmosphericOptimizedFastBlend,
+            AtmosphericTriplanarZoomRotation
         }
 
         // PQS we are creating
@@ -161,6 +163,14 @@ namespace Kopernicus.Configuration
                 {
                     return SurfaceMaterialType.AtmosphericExtra;
                 }
+                if (PQSMainOptimisedFastBlend.UsesSameShader(SurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericOptimizedFastBlend;
+                }
+                if (PQSTriplanarZoomRotation.UsesSameShader(SurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericTriplanarZoomRotation;
+                }
                 return SurfaceMaterialType.Vacuum;
             }
             set
@@ -185,6 +195,14 @@ namespace Kopernicus.Configuration
                 {
                     SurfaceMaterial = new PQSMainExtrasLoader();
                 }
+                else if (value.Value == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
+                {
+                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
+                }
+                else if (value.Value == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader();
+                }
                 else
                 {
                     throw new ArgumentOutOfRangeException();
@@ -198,7 +216,13 @@ namespace Kopernicus.Configuration
         public Material SurfaceMaterial
         {
             get { return Value.surfaceMaterial; }
-            set { Value.surfaceMaterial = value; }
+            set
+            {
+                Value.surfaceMaterial = value;
+                Value.lowQualitySurfaceMaterial = value;
+                Value.mediumQualitySurfaceMaterial = value;
+                Value.highQualitySurfaceMaterial = value;
+            }
         }
 
         // Fallback Material of the PQS (its always the same material)
@@ -265,6 +289,14 @@ namespace Kopernicus.Configuration
                 else if (MaterialType == SurfaceMaterialType.AtmosphericExtra)
                 {
                     SurfaceMaterial = new PQSMainExtrasLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
+                {
+                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader(SurfaceMaterial);
                 }
 
                 SurfaceMaterial.name = Guid.NewGuid().ToString();
@@ -429,6 +461,14 @@ namespace Kopernicus.Configuration
                 else if (MaterialType == SurfaceMaterialType.AtmosphericExtra)
                 {
                     SurfaceMaterial = new PQSMainExtrasLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
+                {
+                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader(SurfaceMaterial);
                 }
 
                 SurfaceMaterial.name = Guid.NewGuid().ToString();

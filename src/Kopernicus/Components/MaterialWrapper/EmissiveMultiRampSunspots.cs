@@ -102,18 +102,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.RampMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 RampMapScale
         {
-            get { return GetTextureScale(Properties.RAMP_MAP_KEY); }
-            set { SetTextureScale(Properties.RAMP_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.RampMapId); }
+            set { SetTextureScale(Properties.Instance.RampMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 RampMapOffset
         {
-            get { return GetTextureOffset(Properties.RAMP_MAP_KEY); }
-            set { SetTextureOffset(Properties.RAMP_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.RampMapId); }
+            set { SetTextureOffset(Properties.Instance.RampMapId, value); }
         }
 
         // Noise Map (RGBA), default = "white" { }
@@ -123,18 +121,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.NoiseMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 NoiseMapScale
         {
-            get { return GetTextureScale(Properties.NOISE_MAP_KEY); }
-            set { SetTextureScale(Properties.NOISE_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.NoiseMapId); }
+            set { SetTextureScale(Properties.Instance.NoiseMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 NoiseMapOffset
         {
-            get { return GetTextureOffset(Properties.NOISE_MAP_KEY); }
-            set { SetTextureOffset(Properties.NOISE_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.NoiseMapId); }
+            set { SetTextureOffset(Properties.Instance.NoiseMapId, value); }
         }
 
         // Emission Color 0, default = (1,1,1,1)
@@ -158,18 +154,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.SunspotTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SunspotTexScale
         {
-            get { return GetTextureScale(Properties.SUNSPOT_TEX_KEY); }
-            set { SetTextureScale(Properties.SUNSPOT_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.SunspotTexId); }
+            set { SetTextureScale(Properties.Instance.SunspotTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SunspotTexOffset
         {
-            get { return GetTextureOffset(Properties.SUNSPOT_TEX_KEY); }
-            set { SetTextureOffset(Properties.SUNSPOT_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.SunspotTexId); }
+            set { SetTextureOffset(Properties.Instance.SunspotTexId, value); }
         }
 
         // Sunspot Power, default = 1

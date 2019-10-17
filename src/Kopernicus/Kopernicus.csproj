@@ -88,13 +88,16 @@
     <Compile Include="Components\MaterialWrapper\ParticleAddSmooth.cs" />
     <Compile Include="Components\MaterialWrapper\PQSMainExtras.cs" />
     <Compile Include="Components\MaterialWrapper\PQSMainOptimised.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSMainOptimisedFastBlend.cs" />
     <Compile Include="Components\MaterialWrapper\PQSMainShader.cs" />
     <Compile Include="Components\MaterialWrapper\PQSOceanSurfaceQuad.cs" />
     <Compile Include="Components\MaterialWrapper\PQSOceanSurfaceQuadFallback.cs" />
     <Compile Include="Components\MaterialWrapper\PQSProjectionAerialQuadRelative.cs" />
     <Compile Include="Components\MaterialWrapper\PQSProjectionFallback.cs" />
     <Compile Include="Components\MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSTriplanarZoomRotation.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimAerial.cs" />
+    <Compile Include="Components\MaterialWrapper\ScaledPlanetRimLight.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="Components\MaterialWrapper\Standard.cs" />
     <Compile Include="Components\ModularComponentSystem\IComponent.cs" />
@@ -134,6 +137,9 @@
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseDetailLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainExtrasLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedFastBlendLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSTriplanarZoomRotationLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimLightLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\StandardLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
     <Compile Include="Configuration\ModLoader\City.cs" />

@@ -126,7 +126,13 @@ namespace Kopernicus.Configuration
         public Material SurfaceMaterial
         {
             get { return Value.surfaceMaterial; }
-            set { Value.surfaceMaterial = value; }
+            set
+            {
+                Value.surfaceMaterial = value;
+                Value.lowQualitySurfaceMaterial = value;
+                Value.mediumQualitySurfaceMaterial = value;
+                Value.highQualitySurfaceMaterial = value;
+            }
         }
 
         // Fallback Material of the PQS (its always the same material)

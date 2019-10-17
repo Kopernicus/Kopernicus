@@ -9,18 +9,30 @@ namespace Kopernicus.Components.MaterialWrapper
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSMainShader : Material
+    public class PQSTriplanarZoomRotation : Material
     {
         // Internal property ID tracking object
         protected class Properties
         {
             // Return the shader for this wrapper
-            private const String SHADER_NAME = "Terrain/PQS/PQS Main Shader";
+            private const String SHADER_NAME = "Terrain/PQS/PQS Triplanar Zoom Rotation";
 
             public static Shader Shader
             {
                 get { return Shader.Find(SHADER_NAME); }
             }
+
+            // Factor, default = 10
+            public const String FACTOR_KEY = "_factor";
+            public Int32 FactorId { get; private set; }
+
+            // Factor Blend Width, default = 0.1
+            public const String FACTOR_BLEND_WIDTH_KEY = "_factorBlendWidth";
+            public Int32 FactorBlendWidthId { get; private set; }
+
+            // Factor Rotation, default = 30
+            public const String FACTOR_ROTATION_KEY = "_factorRotation";
+            public Int32 FactorRotationId { get; private set; }
 
             // Saturation, default = 1
             public const String SATURATION_KEY = "_saturation";
@@ -34,21 +46,13 @@ namespace Kopernicus.Components.MaterialWrapper
             public const String TINT_COLOR_KEY = "_tintColor";
             public Int32 TintColorId { get; private set; }
 
-            // Near Blend, default = 0.5
-            public const String POWER_NEAR_KEY = "_powerNear";
-            public Int32 PowerNearId { get; private set; }
+            // Specular Color, default = (0.2,0.2,0.2,0.2)
+            public const String SPECULAR_COLOR_KEY = "_specularColor";
+            public Int32 SpecularColorId { get; private set; }
 
-            // Far Blend, default = 0.5
-            public const String POWER_FAR_KEY = "_powerFar";
-            public Int32 PowerFarId { get; private set; }
-
-            // NearFar Start, default = 2000
-            public const String GROUND_TEX_START_KEY = "_groundTexStart";
-            public Int32 GroundTexStartId { get; private set; }
-
-            // NearFar End, default = 10000
-            public const String GROUND_TEX_END_KEY = "_groundTexEnd";
-            public Int32 GroundTexEndId { get; private set; }
+            // Brightness, default = 2
+            public const String ALBEDO_BRIGHTNESS_KEY = "_albedoBrightness";
+            public Int32 AlbedoBrightnessId { get; private set; }
 
             // Steep Blend, default = 1
             public const String STEEP_POWER_KEY = "_steepPower";
@@ -82,73 +86,33 @@ namespace Kopernicus.Components.MaterialWrapper
             public const String LOW_TEX_KEY = "_lowTex";
             public Int32 LowTexId { get; private set; }
 
-            // Low Bump Map, default = "bump" { }
-            public const String LOW_BUMP_MAP_KEY = "_lowBumpMap";
-            public Int32 LowBumpMapId { get; private set; }
-
-            // Low Near Tiling, default = 1000
-            public const String LOW_NEAR_TILING_KEY = "_lowNearTiling";
-            public Int32 LowNearTilingId { get; private set; }
-
-            // Low Far Tiling, default = 10
-            public const String LOW_MULTI_FACTOR_KEY = "_lowMultiFactor";
-            public Int32 LowMultiFactorId { get; private set; }
-
-            // Low Bump Near Tiling, default = 1
-            public const String LOW_BUMP_NEAR_TILING_KEY = "_lowBumpNearTiling";
-            public Int32 LowBumpNearTilingId { get; private set; }
-
-            // Low Bump Far Tiling, default = 1
-            public const String LOW_BUMP_FAR_TILING_KEY = "_lowBumpFarTiling";
-            public Int32 LowBumpFarTilingId { get; private set; }
+            // Low Tiling, default = 100000
+            public const String LOW_TILING_KEY = "_lowTiling";
+            public Int32 LowTilingId { get; private set; }
 
             // Mid Texture, default = "white" { }
             public const String MID_TEX_KEY = "_midTex";
             public Int32 MidTexId { get; private set; }
 
+            // Mid Tiling, default = 100000
+            public const String MID_TILING_KEY = "_midTiling";
+            public Int32 MidTilingId { get; private set; }
+
             // Mid Bump Map, default = "bump" { }
             public const String MID_BUMP_MAP_KEY = "_midBumpMap";
             public Int32 MidBumpMapId { get; private set; }
 
-            // Mid Near Tiling, default = 1000
-            public const String MID_NEAR_TILING_KEY = "_midNearTiling";
-            public Int32 MidNearTilingId { get; private set; }
-
-            // Mid Far Tiling, default = 10
-            public const String MID_MULTI_FACTOR_KEY = "_midMultiFactor";
-            public Int32 MidMultiFactorId { get; private set; }
-
-            // Mid Bump Near Tiling, default = 1
-            public const String MID_BUMP_NEAR_TILING_KEY = "_midBumpNearTiling";
-            public Int32 MidBumpNearTilingId { get; private set; }
-
-            // Mid Bump Far Tiling, default = 1
-            public const String MID_BUMP_FAR_TILING_KEY = "_midBumpFarTiling";
-            public Int32 MidBumpFarTilingId { get; private set; }
+            // Mid Bump Tiling, default = 100000
+            public const String MID_BUMP_TILING_KEY = "_midBumpTiling";
+            public Int32 MidBumpTilingId { get; private set; }
 
             // High Texture, default = "white" { }
             public const String HIGH_TEX_KEY = "_highTex";
             public Int32 HighTexId { get; private set; }
 
-            // High Bump Map, default = "bump" { }
-            public const String HIGH_BUMP_MAP_KEY = "_highBumpMap";
-            public Int32 HighBumpMapId { get; private set; }
-
-            // High Near Tiling, default = 1000
-            public const String HIGH_NEAR_TILING_KEY = "_highNearTiling";
-            public Int32 HighNearTilingId { get; private set; }
-
-            // High Far Tiling, default = 10
-            public const String HIGH_MULTI_FACTOR_KEY = "_highMultiFactor";
-            public Int32 HighMultiFactorId { get; private set; }
-
-            // High Bump Near Tiling, default = 1
-            public const String HIGH_BUMP_NEAR_TILING_KEY = "_highBumpNearTiling";
-            public Int32 HighBumpNearTilingId { get; private set; }
-
-            // High Bump Far Tiling, default = 1
-            public const String HIGH_BUMP_FAR_TILING_KEY = "_highBumpFarTiling";
-            public Int32 HighBumpFarTilingId { get; private set; }
+            // High Tiling, default = 100000
+            public const String HIGH_TILING_KEY = "_highTiling";
+            public Int32 HighTilingId { get; private set; }
 
             // Low Transition Start, default = 0
             public const String LOW_START_KEY = "_lowStart";
@@ -178,6 +142,10 @@ namespace Kopernicus.Components.MaterialWrapper
             public const String PLANET_OPACITY_KEY = "_PlanetOpacity";
             public Int32 PlanetOpacityId { get; private set; }
 
+            // Ocean Fog Dist, default = 1000
+            public const String OCEAN_FOG_DISTANCE_KEY = "_oceanFogDistance";
+            public Int32 OceanFogDistanceId { get; private set; }
+
             // Singleton instance
             private static Properties _singleton;
 
@@ -192,13 +160,14 @@ namespace Kopernicus.Components.MaterialWrapper
 
             private Properties()
             {
+                FactorId = Shader.PropertyToID(FACTOR_KEY);
+                FactorBlendWidthId = Shader.PropertyToID(FACTOR_BLEND_WIDTH_KEY);
+                FactorRotationId = Shader.PropertyToID(FACTOR_ROTATION_KEY);
                 SaturationId = Shader.PropertyToID(SATURATION_KEY);
                 ContrastId = Shader.PropertyToID(CONTRAST_KEY);
                 TintColorId = Shader.PropertyToID(TINT_COLOR_KEY);
-                PowerNearId = Shader.PropertyToID(POWER_NEAR_KEY);
-                PowerFarId = Shader.PropertyToID(POWER_FAR_KEY);
-                GroundTexStartId = Shader.PropertyToID(GROUND_TEX_START_KEY);
-                GroundTexEndId = Shader.PropertyToID(GROUND_TEX_END_KEY);
+                SpecularColorId = Shader.PropertyToID(SPECULAR_COLOR_KEY);
+                AlbedoBrightnessId = Shader.PropertyToID(ALBEDO_BRIGHTNESS_KEY);
                 SteepPowerId = Shader.PropertyToID(STEEP_POWER_KEY);
                 SteepTexStartId = Shader.PropertyToID(STEEP_TEX_START_KEY);
                 SteepTexEndId = Shader.PropertyToID(STEEP_TEX_END_KEY);
@@ -207,23 +176,13 @@ namespace Kopernicus.Components.MaterialWrapper
                 SteepNearTilingId = Shader.PropertyToID(STEEP_NEAR_TILING_KEY);
                 SteepTilingId = Shader.PropertyToID(STEEP_TILING_KEY);
                 LowTexId = Shader.PropertyToID(LOW_TEX_KEY);
-                LowBumpMapId = Shader.PropertyToID(LOW_BUMP_MAP_KEY);
-                LowNearTilingId = Shader.PropertyToID(LOW_NEAR_TILING_KEY);
-                LowMultiFactorId = Shader.PropertyToID(LOW_MULTI_FACTOR_KEY);
-                LowBumpNearTilingId = Shader.PropertyToID(LOW_BUMP_NEAR_TILING_KEY);
-                LowBumpFarTilingId = Shader.PropertyToID(LOW_BUMP_FAR_TILING_KEY);
+                LowTilingId = Shader.PropertyToID(LOW_TILING_KEY);
                 MidTexId = Shader.PropertyToID(MID_TEX_KEY);
+                MidTilingId = Shader.PropertyToID(MID_TILING_KEY);
                 MidBumpMapId = Shader.PropertyToID(MID_BUMP_MAP_KEY);
-                MidNearTilingId = Shader.PropertyToID(MID_NEAR_TILING_KEY);
-                MidMultiFactorId = Shader.PropertyToID(MID_MULTI_FACTOR_KEY);
-                MidBumpNearTilingId = Shader.PropertyToID(MID_BUMP_NEAR_TILING_KEY);
-                MidBumpFarTilingId = Shader.PropertyToID(MID_BUMP_FAR_TILING_KEY);
+                MidBumpTilingId = Shader.PropertyToID(MID_BUMP_TILING_KEY);
                 HighTexId = Shader.PropertyToID(HIGH_TEX_KEY);
-                HighBumpMapId = Shader.PropertyToID(HIGH_BUMP_MAP_KEY);
-                HighNearTilingId = Shader.PropertyToID(HIGH_NEAR_TILING_KEY);
-                HighMultiFactorId = Shader.PropertyToID(HIGH_MULTI_FACTOR_KEY);
-                HighBumpNearTilingId = Shader.PropertyToID(HIGH_BUMP_NEAR_TILING_KEY);
-                HighBumpFarTilingId = Shader.PropertyToID(HIGH_BUMP_FAR_TILING_KEY);
+                HighTilingId = Shader.PropertyToID(HIGH_TILING_KEY);
                 LowStartId = Shader.PropertyToID(LOW_START_KEY);
                 LowEndId = Shader.PropertyToID(LOW_END_KEY);
                 HighStartId = Shader.PropertyToID(HIGH_START_KEY);
@@ -231,6 +190,7 @@ namespace Kopernicus.Components.MaterialWrapper
                 GlobalDensityId = Shader.PropertyToID(GLOBAL_DENSITY_KEY);
                 FogColorRampId = Shader.PropertyToID(FOG_COLOR_RAMP_KEY);
                 PlanetOpacityId = Shader.PropertyToID(PLANET_OPACITY_KEY);
+                OceanFogDistanceId = Shader.PropertyToID(OCEAN_FOG_DISTANCE_KEY);
             }
         }
 
@@ -238,6 +198,27 @@ namespace Kopernicus.Components.MaterialWrapper
         public static Boolean UsesSameShader(Material m)
         {
             return m.shader.name == Properties.Shader.name;
+        }
+
+        // Factor, default = 10
+        public Single Factor
+        {
+            get { return GetFloat(Properties.Instance.FactorId); }
+            set { SetFloat(Properties.Instance.FactorId, value); }
+        }
+
+        // Factor Blend Width, default = 0.1
+        public Single FactorBlendWidth
+        {
+            get { return GetFloat(Properties.Instance.FactorBlendWidthId); }
+            set { SetFloat(Properties.Instance.FactorBlendWidthId, Mathf.Clamp(value, 0f, 0.5f)); }
+        }
+
+        // Factor Rotation, default = 30
+        public Single FactorRotation
+        {
+            get { return GetFloat(Properties.Instance.FactorRotationId); }
+            set { SetFloat(Properties.Instance.FactorRotationId, value); }
         }
 
         // Saturation, default = 1
@@ -261,32 +242,18 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetColor(Properties.Instance.TintColorId, value); }
         }
 
-        // Near Blend, default = 0.5
-        public Single PowerNear
+        // Specular Color, default = (0.2,0.2,0.2,0.2)
+        public Color SpecularColor
         {
-            get { return GetFloat(Properties.Instance.PowerNearId); }
-            set { SetFloat(Properties.Instance.PowerNearId, value); }
+            get { return GetColor(Properties.Instance.SpecularColorId); }
+            set { SetColor(Properties.Instance.SpecularColorId, value); }
         }
 
-        // Far Blend, default = 0.5
-        public Single PowerFar
+        // Brightness, default = 2
+        public Single AlbedoBrightness
         {
-            get { return GetFloat(Properties.Instance.PowerFarId); }
-            set { SetFloat(Properties.Instance.PowerFarId, value); }
-        }
-
-        // NearFar Start, default = 2000
-        public Single GroundTexStart
-        {
-            get { return GetFloat(Properties.Instance.GroundTexStartId); }
-            set { SetFloat(Properties.Instance.GroundTexStartId, value); }
-        }
-
-        // NearFar End, default = 10000
-        public Single GroundTexEnd
-        {
-            get { return GetFloat(Properties.Instance.GroundTexEndId); }
-            set { SetFloat(Properties.Instance.GroundTexEndId, value); }
+            get { return GetFloat(Properties.Instance.AlbedoBrightnessId); }
+            set { SetFloat(Properties.Instance.AlbedoBrightnessId, value); }
         }
 
         // Steep Blend, default = 1
@@ -381,51 +348,11 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTextureOffset(Properties.Instance.LowTexId, value); }
         }
 
-        // Low Bump Map, default = "bump" { }
-        public Texture2D LowBumpMap
+        // Low Tiling, default = 100000
+        public Single LowTiling
         {
-            get { return GetTexture(Properties.Instance.LowBumpMapId) as Texture2D; }
-            set { SetTexture(Properties.Instance.LowBumpMapId, value); }
-        }
-
-        public Vector2 LowBumpMapScale
-        {
-            get { return GetTextureScale(Properties.Instance.LowBumpMapId); }
-            set { SetTextureScale(Properties.Instance.LowBumpMapId, value); }
-        }
-
-        public Vector2 LowBumpMapOffset
-        {
-            get { return GetTextureOffset(Properties.Instance.LowBumpMapId); }
-            set { SetTextureOffset(Properties.Instance.LowBumpMapId, value); }
-        }
-
-        // Low Near Tiling, default = 1000
-        public Single LowNearTiling
-        {
-            get { return GetFloat(Properties.Instance.LowNearTilingId); }
-            set { SetFloat(Properties.Instance.LowNearTilingId, value); }
-        }
-
-        // Low Far Tiling, default = 10
-        public Single LowMultiFactor
-        {
-            get { return GetFloat(Properties.Instance.LowMultiFactorId); }
-            set { SetFloat(Properties.Instance.LowMultiFactorId, value); }
-        }
-
-        // Low Bump Near Tiling, default = 1
-        public Single LowBumpNearTiling
-        {
-            get { return GetFloat(Properties.Instance.LowBumpNearTilingId); }
-            set { SetFloat(Properties.Instance.LowBumpNearTilingId, value); }
-        }
-
-        // Low Bump Far Tiling, default = 1
-        public Single LowBumpFarTiling
-        {
-            get { return GetFloat(Properties.Instance.LowBumpFarTilingId); }
-            set { SetFloat(Properties.Instance.LowBumpFarTilingId, value); }
+            get { return GetFloat(Properties.Instance.LowTilingId); }
+            set { SetFloat(Properties.Instance.LowTilingId, value); }
         }
 
         // Mid Texture, default = "white" { }
@@ -447,6 +374,13 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTextureOffset(Properties.Instance.MidTexId, value); }
         }
 
+        // Mid Tiling, default = 100000
+        public Single MidTiling
+        {
+            get { return GetFloat(Properties.Instance.MidTilingId); }
+            set { SetFloat(Properties.Instance.MidTilingId, value); }
+        }
+
         // Mid Bump Map, default = "bump" { }
         public Texture2D MidBumpMap
         {
@@ -466,32 +400,11 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTextureOffset(Properties.Instance.MidBumpMapId, value); }
         }
 
-        // Mid Near Tiling, default = 1000
-        public Single MidNearTiling
+        // Mid Bump Tiling, default = 100000
+        public Single MidBumpTiling
         {
-            get { return GetFloat(Properties.Instance.MidNearTilingId); }
-            set { SetFloat(Properties.Instance.MidNearTilingId, value); }
-        }
-
-        // Mid Far Tiling, default = 10
-        public Single MidMultiFactor
-        {
-            get { return GetFloat(Properties.Instance.MidMultiFactorId); }
-            set { SetFloat(Properties.Instance.MidMultiFactorId, value); }
-        }
-
-        // Mid Bump Near Tiling, default = 1
-        public Single MidBumpNearTiling
-        {
-            get { return GetFloat(Properties.Instance.MidBumpNearTilingId); }
-            set { SetFloat(Properties.Instance.MidBumpNearTilingId, value); }
-        }
-
-        // Mid Bump Far Tiling, default = 1
-        public Single MidBumpFarTiling
-        {
-            get { return GetFloat(Properties.Instance.MidBumpFarTilingId); }
-            set { SetFloat(Properties.Instance.MidBumpFarTilingId, value); }
+            get { return GetFloat(Properties.Instance.MidBumpTilingId); }
+            set { SetFloat(Properties.Instance.MidBumpTilingId, value); }
         }
 
         // High Texture, default = "white" { }
@@ -513,51 +426,11 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTextureOffset(Properties.Instance.HighTexId, value); }
         }
 
-        // High Bump Map, default = "bump" { }
-        public Texture2D HighBumpMap
+        // High Tiling, default = 100000
+        public Single HighTiling
         {
-            get { return GetTexture(Properties.Instance.HighBumpMapId) as Texture2D; }
-            set { SetTexture(Properties.Instance.HighBumpMapId, value); }
-        }
-
-        public Vector2 HighBumpMapScale
-        {
-            get { return GetTextureScale(Properties.Instance.HighBumpMapId); }
-            set { SetTextureScale(Properties.Instance.HighBumpMapId, value); }
-        }
-
-        public Vector2 HighBumpMapOffset
-        {
-            get { return GetTextureOffset(Properties.Instance.HighBumpMapId); }
-            set { SetTextureOffset(Properties.Instance.HighBumpMapId, value); }
-        }
-
-        // High Near Tiling, default = 1000
-        public Single HighNearTiling
-        {
-            get { return GetFloat(Properties.Instance.HighNearTilingId); }
-            set { SetFloat(Properties.Instance.HighNearTilingId, value); }
-        }
-
-        // High Far Tiling, default = 10
-        public Single HighMultiFactor
-        {
-            get { return GetFloat(Properties.Instance.HighMultiFactorId); }
-            set { SetFloat(Properties.Instance.HighMultiFactorId, value); }
-        }
-
-        // High Bump Near Tiling, default = 1
-        public Single HighBumpNearTiling
-        {
-            get { return GetFloat(Properties.Instance.HighBumpNearTilingId); }
-            set { SetFloat(Properties.Instance.HighBumpNearTilingId, value); }
-        }
-
-        // High Bump Far Tiling, default = 1
-        public Single HighBumpFarTiling
-        {
-            get { return GetFloat(Properties.Instance.HighBumpFarTilingId); }
-            set { SetFloat(Properties.Instance.HighBumpFarTilingId, value); }
+            get { return GetFloat(Properties.Instance.HighTilingId); }
+            set { SetFloat(Properties.Instance.HighTilingId, value); }
         }
 
         // Low Transition Start, default = 0
@@ -621,21 +494,29 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetFloat(Properties.Instance.PlanetOpacityId, value); }
         }
 
-        public PQSMainShader() : base(Properties.Shader)
+        // Ocean Fog Dist, default = 1000
+        public Single OceanFogDistance
+        {
+            get { return GetFloat(Properties.Instance.OceanFogDistanceId); }
+            set { SetFloat(Properties.Instance.OceanFogDistanceId, value); }
+        }
+
+        public PQSTriplanarZoomRotation() : base(Properties.Shader)
         {
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PQSMainShader(String contents) : base(contents)
+        public PQSTriplanarZoomRotation(String contents) : base(contents)
         {
             shader = Properties.Shader;
         }
 
-        public PQSMainShader(Material material) : base(material)
+        public PQSTriplanarZoomRotation(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
-                throw new InvalidOperationException("Type Mismatch: Terrain/PQS/PQS Main Shader shader required");
+                throw new InvalidOperationException(
+                    "Type Mismatch: Terrain/PQS/PQS Triplanar Zoom Rotation shader required");
         }
 
     }

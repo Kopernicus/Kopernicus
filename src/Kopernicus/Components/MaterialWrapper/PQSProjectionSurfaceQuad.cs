@@ -327,18 +327,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.DeepTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DeepTexScale
         {
-            get { return GetTextureScale(Properties.DEEP_TEX_KEY); }
-            set { SetTextureScale(Properties.DEEP_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.DeepTexId); }
+            set { SetTextureScale(Properties.Instance.DeepTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DeepTexOffset
         {
-            get { return GetTextureOffset(Properties.DEEP_TEX_KEY); }
-            set { SetTextureOffset(Properties.DEEP_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.DeepTexId); }
+            set { SetTextureOffset(Properties.Instance.DeepTexId, value); }
         }
 
         // Deep MT, default = "white" { }
@@ -348,18 +346,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.DeepMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DeepMultiTexScale
         {
-            get { return GetTextureScale(Properties.DEEP_MULTI_TEX_KEY); }
-            set { SetTextureScale(Properties.DEEP_MULTI_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.DeepMultiTexId); }
+            set { SetTextureScale(Properties.Instance.DeepMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DeepMultiTexOffset
         {
-            get { return GetTextureOffset(Properties.DEEP_MULTI_TEX_KEY); }
-            set { SetTextureOffset(Properties.DEEP_MULTI_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.DeepMultiTexId); }
+            set { SetTextureOffset(Properties.Instance.DeepMultiTexId, value); }
         }
 
         // Deep MT Tiling, default = 1
@@ -376,18 +372,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexScale
         {
-            get { return GetTextureScale(Properties.MAIN_TEX_KEY); }
-            set { SetTextureScale(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MainTexId); }
+            set { SetTextureScale(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexOffset
         {
-            get { return GetTextureOffset(Properties.MAIN_TEX_KEY); }
-            set { SetTextureOffset(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MainTexId); }
+            set { SetTextureOffset(Properties.Instance.MainTexId, value); }
         }
 
         // Main MT, default = "white" { }
@@ -397,18 +391,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.MainMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainMultiTexScale
         {
-            get { return GetTextureScale(Properties.MAIN_MULTI_TEX_KEY); }
-            set { SetTextureScale(Properties.MAIN_MULTI_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MainMultiTexId); }
+            set { SetTextureScale(Properties.Instance.MainMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainMultiTexOffset
         {
-            get { return GetTextureOffset(Properties.MAIN_MULTI_TEX_KEY); }
-            set { SetTextureOffset(Properties.MAIN_MULTI_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MainMultiTexId); }
+            set { SetTextureOffset(Properties.Instance.MainMultiTexId, value); }
         }
 
         // Main MT Tiling, default = 1
@@ -425,18 +417,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.HighTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 HighTexScale
         {
-            get { return GetTextureScale(Properties.HIGH_TEX_KEY); }
-            set { SetTextureScale(Properties.HIGH_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.HighTexId); }
+            set { SetTextureScale(Properties.Instance.HighTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 HighTexOffset
         {
-            get { return GetTextureOffset(Properties.HIGH_TEX_KEY); }
-            set { SetTextureOffset(Properties.HIGH_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.HighTexId); }
+            set { SetTextureOffset(Properties.Instance.HighTexId, value); }
         }
 
         // High MT, default = "white" { }
@@ -446,18 +436,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.HighMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 HighMultiTexScale
         {
-            get { return GetTextureScale(Properties.HIGH_MULTI_TEX_KEY); }
-            set { SetTextureScale(Properties.HIGH_MULTI_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.HighMultiTexId); }
+            set { SetTextureScale(Properties.Instance.HighMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 HighMultiTexOffset
         {
-            get { return GetTextureOffset(Properties.HIGH_MULTI_TEX_KEY); }
-            set { SetTextureOffset(Properties.HIGH_MULTI_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.HighMultiTexId); }
+            set { SetTextureOffset(Properties.Instance.HighMultiTexId, value); }
         }
 
         // High MT Tiling, default = 1
@@ -474,18 +462,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.SnowTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SnowTexScale
         {
-            get { return GetTextureScale(Properties.SNOW_TEX_KEY); }
-            set { SetTextureScale(Properties.SNOW_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.SnowTexId); }
+            set { SetTextureScale(Properties.Instance.SnowTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SnowTexOffset
         {
-            get { return GetTextureOffset(Properties.SNOW_TEX_KEY); }
-            set { SetTextureOffset(Properties.SNOW_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.SnowTexId); }
+            set { SetTextureOffset(Properties.Instance.SnowTexId, value); }
         }
 
         // Snow MT, default = "white" { }
@@ -495,18 +481,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.SnowMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SnowMultiTexScale
         {
-            get { return GetTextureScale(Properties.SNOW_MULTI_TEX_KEY); }
-            set { SetTextureScale(Properties.SNOW_MULTI_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.SnowMultiTexId); }
+            set { SetTextureScale(Properties.Instance.SnowMultiTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SnowMultiTexOffset
         {
-            get { return GetTextureOffset(Properties.SNOW_MULTI_TEX_KEY); }
-            set { SetTextureOffset(Properties.SNOW_MULTI_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.SnowMultiTexId); }
+            set { SetTextureOffset(Properties.Instance.SnowMultiTexId, value); }
         }
 
         // Snow MT Tiling, default = 1
@@ -523,18 +507,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.SteepTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SteepTexScale
         {
-            get { return GetTextureScale(Properties.STEEP_TEX_KEY); }
-            set { SetTextureScale(Properties.STEEP_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.SteepTexId); }
+            set { SetTextureScale(Properties.Instance.SteepTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 SteepTexOffset
         {
-            get { return GetTextureOffset(Properties.STEEP_TEX_KEY); }
-            set { SetTextureOffset(Properties.STEEP_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.SteepTexId); }
+            set { SetTextureOffset(Properties.Instance.SteepTexId, value); }
         }
 
         // Deep Start, default = 0

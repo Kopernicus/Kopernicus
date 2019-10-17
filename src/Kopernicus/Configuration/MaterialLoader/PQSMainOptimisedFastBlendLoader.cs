@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -31,14 +31,13 @@ using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
 using UnityEngine;
-using Gradient = Kopernicus.Configuration.Parsing.Gradient;
 
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSMainExtrasLoader : PQSMainExtras
+    public class PQSMainOptimisedFastBlendLoader : PQSMainOptimisedFastBlend
     {
         // Saturation, default = 1
         [ParserTarget("saturation")]
@@ -120,7 +119,7 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { SteepTexEnd = value; }
         }
 
-        // Steep Texture, default = "white" {}
+        // Steep Texture, default = "white" { }
         [ParserTarget("steepTex")]
         public Texture2DParser SteepTexSetter
         {
@@ -142,7 +141,7 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { SteepTexOffset = value; }
         }
 
-        // Steep Bump Map, default = "bump" {}
+        // Steep Bump Map, default = "bump" { }
         [ParserTarget("steepBumpMap")]
         public Texture2DParser SteepBumpMapSetter
         {
@@ -180,7 +179,7 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { SteepTiling = value; }
         }
 
-        // Low Texture, default = "white" {}
+        // Low Texture, default = "white" { }
         [ParserTarget("lowTex")]
         public Texture2DParser LowTexSetter
         {
@@ -202,28 +201,6 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { LowTexOffset = value; }
         }
 
-        // Low Bump Map, default = "bump" {}
-        [ParserTarget("lowBumpMap")]
-        public Texture2DParser LowBumpMapSetter
-        {
-            get { return LowBumpMap; }
-            set { LowBumpMap = value; }
-        }
-
-        [ParserTarget("lowBumpMapScale")]
-        public Vector2Parser LowBumpMapScaleSetter
-        {
-            get { return LowBumpMapScale; }
-            set { LowBumpMapScale = value; }
-        }
-
-        [ParserTarget("lowBumpMapOffset")]
-        public Vector2Parser LowBumpMapOffsetSetter
-        {
-            get { return LowBumpMapOffset; }
-            set { LowBumpMapOffset = value; }
-        }
-
         // Low Near Tiling, default = 1000
         [ParserTarget("lowNearTiling")]
         public NumericParser<Single> LowNearTilingSetter
@@ -240,23 +217,7 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { LowMultiFactor = value; }
         }
 
-        // Low Bump Near Tiling, default = 1
-        [ParserTarget("lowBumpNearTiling")]
-        public NumericParser<Single> LowBumpNearTilingSetter
-        {
-            get { return LowBumpNearTiling; }
-            set { LowBumpNearTiling = value; }
-        }
-
-        // Low Bump Far Tiling, default = 1
-        [ParserTarget("lowBumpFarTiling")]
-        public NumericParser<Single> LowBumpFarTilingSetter
-        {
-            get { return LowBumpFarTiling; }
-            set { LowBumpFarTiling = value; }
-        }
-
-        // Mid Texture, default = "white" {}
+        // Mid Texture, default = "white" { }
         [ParserTarget("midTex")]
         public Texture2DParser MidTexSetter
         {
@@ -278,7 +239,7 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { MidTexOffset = value; }
         }
 
-        // Mid Bump Map, default = "bump" {}
+        // Mid Bump Map, default = "bump" { }
         [ParserTarget("midBumpMap")]
         public Texture2DParser MidBumpMapSetter
         {
@@ -324,15 +285,7 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { MidBumpNearTiling = value; }
         }
 
-        // Mid Bump Far Tiling, default = 1
-        [ParserTarget("midBumpFarTiling")]
-        public NumericParser<Single> MidBumpFarTilingSetter
-        {
-            get { return MidBumpFarTiling; }
-            set { MidBumpFarTiling = value; }
-        }
-
-        // High Texture, default = "white" {}
+        // High Texture, default = "white" { }
         [ParserTarget("highTex")]
         public Texture2DParser HighTexSetter
         {
@@ -354,28 +307,6 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { HighTexOffset = value; }
         }
 
-        // High Bump Map, default = "bump" {}
-        [ParserTarget("highBumpMap")]
-        public Texture2DParser HighBumpMapSetter
-        {
-            get { return HighBumpMap; }
-            set { HighBumpMap = value; }
-        }
-
-        [ParserTarget("highBumpMapScale")]
-        public Vector2Parser HighBumpMapScaleSetter
-        {
-            get { return HighBumpMapScale; }
-            set { HighBumpMapScale = value; }
-        }
-
-        [ParserTarget("highBumpMapOffset")]
-        public Vector2Parser HighBumpMapOffsetSetter
-        {
-            get { return HighBumpMapOffset; }
-            set { HighBumpMapOffset = value; }
-        }
-
         // High Near Tiling, default = 1000
         [ParserTarget("highNearTiling")]
         public NumericParser<Single> HighNearTilingSetter
@@ -390,22 +321,6 @@ namespace Kopernicus.Configuration.MaterialLoader
         {
             get { return HighMultiFactor; }
             set { HighMultiFactor = value; }
-        }
-
-        // High Bump Near Tiling, default = 1
-        [ParserTarget("highBumpNearTiling")]
-        public NumericParser<Single> HighBumpNearTilingSetter
-        {
-            get { return HighBumpNearTiling; }
-            set { HighBumpNearTiling = value; }
-        }
-
-        // High Bump Far Tiling, default = 1
-        [ParserTarget("highBumpFarTiling")]
-        public NumericParser<Single> HighBumpFarTilingSetter
-        {
-            get { return HighBumpFarTiling; }
-            set { HighBumpFarTiling = value; }
         }
 
         // Low Transition Start, default = 0
@@ -448,36 +363,12 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { GlobalDensity = value; }
         }
 
-        // FogColorRamp, default = "white" {}
+        // FogColorRamp, default = "white" { }
         [ParserTarget("fogColorRamp")]
         public Texture2DParser FogColorRampSetter
         {
             get { return FogColorRamp; }
             set { FogColorRamp = value; }
-        }
-
-        // FogColorRamp, default = "white" { }
-        [ParserTarget("FogColorRamp")]
-        public Gradient FogColorRampGradientSetter
-        {
-            set
-            {
-                // Generate the ramp from a gradient
-                Texture2D ramp = new Texture2D(512, 1);
-                Color[] colors = ramp.GetPixels(0);
-                for (Int32 i = 0; i < colors.Length; i++)
-                {
-                    // Compute the position in the gradient
-                    Single k = (Single) i / colors.Length;
-                    colors[i] = value.ColorAt(k);
-                }
-
-                ramp.SetPixels(colors, 0);
-                ramp.Apply(true, false);
-
-                // Set the color ramp
-                FogColorRamp = ramp;
-            }
         }
 
         [ParserTarget("fogColorRampScale")]
@@ -511,16 +402,16 @@ namespace Kopernicus.Configuration.MaterialLoader
         }
 
         // Constructors
-        public PQSMainExtrasLoader()
+        public PQSMainOptimisedFastBlendLoader()
         {
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public PQSMainExtrasLoader(String contents) : base(contents)
+        public PQSMainOptimisedFastBlendLoader(String contents) : base(contents)
         {
         }
 
-        public PQSMainExtrasLoader(Material material) : base(material)
+        public PQSMainOptimisedFastBlendLoader(Material material) : base(material)
         {
         }
     }
