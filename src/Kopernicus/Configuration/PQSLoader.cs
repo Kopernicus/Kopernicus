@@ -215,7 +215,20 @@ namespace Kopernicus.Configuration
         [KittopiaUntouchable]
         public Material SurfaceMaterial
         {
-            get { return Value.surfaceMaterial; }
+            get
+            {
+                switch (GameSettings.TERRAIN_SHADER_QUALITY)
+                {
+                    case 2 when Value.highQualitySurfaceMaterial != null:
+                        return Value.highQualitySurfaceMaterial;
+                    case 1 when Value.mediumQualitySurfaceMaterial != null:
+                        return Value.mediumQualitySurfaceMaterial;
+                    case 0 when Value.lowQualitySurfaceMaterial != null:
+                        return Value.lowQualitySurfaceMaterial;
+                    default:
+                        return Value.surfaceMaterial;
+                }
+            }
             set
             {
                 Value.surfaceMaterial = value;
