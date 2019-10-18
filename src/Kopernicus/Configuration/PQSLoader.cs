@@ -412,7 +412,7 @@ namespace Kopernicus.Configuration
             }
 
             // Load existing mods
-            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == Value))
+            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
             {
                 Type modType = mod.GetType();
                 Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
@@ -576,6 +576,8 @@ namespace Kopernicus.Configuration
             }
 
             // Load existing mods
+            // Unlike the above, this checks for the sphere reference because at runtime the ocean is a child of the
+            // normal PQS, and we would be getting references to ocean mods without it.
             foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == Value))
             {
                 Type modType = mod.GetType();
