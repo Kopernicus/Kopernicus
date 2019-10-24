@@ -35,7 +35,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="ModularFlightIntegrator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\ModularFlightIntegrator.1.2.6.6\lib\net40\ModularFlightIntegrator.dll</HintPath>
+      <HintPath>..\..\packages\ModularFlightIntegrator.1.2.7\lib\net40\ModularFlightIntegrator.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
