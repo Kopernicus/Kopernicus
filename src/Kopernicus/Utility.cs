@@ -1065,5 +1065,10 @@ namespace Kopernicus
             return UnityEngine.Object.Instantiate(original, parent, worldPositionStays) as T;
             #endif
         }
+
+        public static Double Clamp(Double value, Double min, Double max)
+        {
+            return Math.Min(Math.Max(value, min), max);
+        }
     }
 }

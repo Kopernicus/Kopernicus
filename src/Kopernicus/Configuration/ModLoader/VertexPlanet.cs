@@ -70,7 +70,7 @@ namespace Kopernicus.Configuration.ModLoader
             public NumericParser<Double> Octaves
             {
                 get { return Value.octaves; }
-                set { Value.octaves = value > 30 ? 30 : value > 1 ? value : 1; }
+                set { Value.octaves = Utility.Clamp(value, 1, 30); }
             }
 
             // persistance
