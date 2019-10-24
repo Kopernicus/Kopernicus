@@ -64,7 +64,7 @@ namespace Kopernicus.Configuration.ModLoader
         public NumericParser<Double> Octaves
         {
             get { return Mod.octaves; }
-            set { Mod.octaves = value; }
+            set { Mod.octaves = value > 30 ? 30 : value > 1 ? value : 1; }
         }
 
         // Persistence of the simplex height
