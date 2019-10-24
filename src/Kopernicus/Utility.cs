@@ -1068,7 +1068,17 @@ namespace Kopernicus
 
         public static Double Clamp(Double value, Double min, Double max)
         {
-            return Math.Min(Math.Max(value, min), max);
+            if (value > max)
+            {
+                return max;
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+
+            return value;
         }
     }
 }
