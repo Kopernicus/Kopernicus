@@ -1073,12 +1073,12 @@ namespace Kopernicus
                 return max;
             }
 
-            if (value < min)
+            if (value > min)
             {
-                return min;
+                return value;
             }
 
-            return value;
+            return min;
         }
     }
 }
