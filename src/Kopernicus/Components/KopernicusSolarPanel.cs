@@ -221,7 +221,7 @@ namespace Kopernicus.Components
             }
 
             // Use the flow rate
-            SP.flowRate = (Single)(resHandler.UpdateModuleResourceOutputs(SP._flowRate) * SP.flowMult);
+            SP.flowRate = (Single)(SP.resHandler.UpdateModuleResourceOutputs(SP._flowRate) * SP.flowMult);
         }
 
         public void EarlyLateUpdate()
