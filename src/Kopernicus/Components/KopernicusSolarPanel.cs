@@ -47,7 +47,7 @@ namespace Kopernicus.Components
         [KSPField(isPersistant = true)]
         private Boolean _relativeSunAoa;
 
-        private ModuleDeployableSolarPanel SP;
+        private ModuleDeployableSolarPanel[] SPs;
 
         private static readonly Double StockLuminosity;
 
@@ -65,16 +65,21 @@ namespace Kopernicus.Components
 
         public void LatePostCalculateTracking()
         {
+            foreach (var SP in SPs)
+            {
             if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
             {
                 Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
                 FieldInfo trackingLOS = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "trackingLOS");
                 LatePostCalculateTracking((bool)trackingLOS.GetValue(SP), normalized);
             }
+            }
         }
 
         public void LatePostCalculateTracking(Boolean trackingLos, Vector3 trackingDirection)
         {
+            foreach (var SP in SPs)
+            {
             // Maximum values
             Double maxEnergy = 0;
             KopernicusStar maxStar = null;
@@ -222,10 +227,13 @@ namespace Kopernicus.Components
 
             // Use the flow rate
             SP.flowRate = (Single)(SP.resHandler.UpdateModuleResourceOutputs(SP._flowRate) * SP.flowMult);
+            }
         }
 
         public void EarlyLateUpdate()
         {
+            foreach (var SP in SPs)
+            {
             if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
             {
                 // Update the name
@@ -234,11 +242,14 @@ namespace Kopernicus.Components
                 // Update the guiName for SwitchAOAMode
                 Events["SwitchAoaMode"].guiName = _relativeSunAoa ? "Use absolute exposure" : "Use relative exposure";
             }
+            }
         }
 
         [KSPEvent(active = true, guiActive = true, guiName = "Select Tracking Body")]
         public void ManualTracking()
         {
+            foreach (var SP in SPs)
+            {
             // Assemble the buttons
             DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
             options[0] = new DialogGUIButton("Auto", () => { _manualTracking = false; }, true);
@@ -259,6 +270,7 @@ namespace Kopernicus.Components
                 "Select Tracking Body",
                 UISkinManager.GetSkin("MainMenuSkin"),
                 options), false, UISkinManager.GetSkin("MainMenuSkin"));
+            }
         }
 
         [KSPEvent(active = true, guiActive = true, guiName = "Use relative exposure")]
@@ -272,7 +284,7 @@ namespace Kopernicus.Components
             TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
             TimingManager.FixedUpdateAdd(TimingManager.TimingStage.Late, LatePostCalculateTracking);
 
-            SP = GetComponent<ModuleDeployableSolarPanel>();
+            SPs = GetComponents<ModuleDeployableSolarPanel>();
 
             base.OnStart(state);
         }
