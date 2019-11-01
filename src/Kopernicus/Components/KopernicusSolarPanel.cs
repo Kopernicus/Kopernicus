@@ -35,7 +35,7 @@ namespace Kopernicus.Components
     /// <summary>
     /// An extension for the Solar Panel to calculate the flux properly
     /// </summary>
-    public class KopernicusSolarPanel : PartModule
+    public class KopernicusSolarPanels : PartModule
     {
         [KSPField(guiActive = true, guiActiveEditor = false, guiName = "Tracking Body", isPersistant = true)]
         [SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -51,7 +51,7 @@ namespace Kopernicus.Components
 
         private static readonly Double StockLuminosity;
 
-        static KopernicusSolarPanel()
+        static KopernicusSolarPanels()
         {
             String filename = (String) typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                 .First(f => f.FieldType == typeof(String)).GetValue(PhysicsGlobals.Instance);
@@ -65,8 +65,10 @@ namespace Kopernicus.Components
 
         public void LatePostCalculateTracking()
         {
-            foreach (var SP in SPs)
+            for (Int32 n = SPs.Length; n > 0; n--)
             {
+                ModuleDeployableSolarPanel SP = SPs[n - 1];
+
             if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
             {
                 Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
@@ -78,8 +80,10 @@ namespace Kopernicus.Components
 
         public void LatePostCalculateTracking(Boolean trackingLos, Vector3 trackingDirection)
         {
-            foreach (var SP in SPs)
+            for (Int32 n = SPs.Length; n > 0; n--)
             {
+                ModuleDeployableSolarPanel SP = SPs[n - 1];
+
             // Maximum values
             Double maxEnergy = 0;
             KopernicusStar maxStar = null;
@@ -96,8 +100,10 @@ namespace Kopernicus.Components
             SP.sunAOA = 0;
 
             // Go through all stars
-            foreach (KopernicusStar star in KopernicusStar.Stars)
+            for (Int32 i = KopernicusStar.Stars?.Count ?? 0; i > 0; i--)
             {
+                KopernicusStar star = KopernicusStar.Stars[i - 1];
+
                 // Calculate stuff
                 Transform sunTransform = star.sun.transform;
                 Vector3 trackDir = (sunTransform.position - SP.panelRotationTransform.position).normalized;
@@ -118,7 +124,7 @@ namespace Kopernicus.Components
                 if (!trackingLos)
                 {
                     sunAoa = 0f;
-                    SP.status = "Blocked by " + blockingObject;
+                    SP.status = "Blocked by " + blockingObjectName;
                 }
                 else
                 {
@@ -232,8 +238,10 @@ namespace Kopernicus.Components
 
         public void EarlyLateUpdate()
         {
-            foreach (var SP in SPs)
+            for (Int32 n = SPs.Length; n > 0; n--)
             {
+                ModuleDeployableSolarPanel SP = SPs[n - 1];
+
             if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
             {
                 // Update the name
@@ -245,23 +253,30 @@ namespace Kopernicus.Components
             }
         }
 
-        [KSPEvent(active = true, guiActive = true, guiName = "Select Tracking Body")]
+        [KSPEvent(active = true, guiActive = false, guiName = "Select Tracking Body")]
         public void ManualTracking()
         {
-            foreach (var SP in SPs)
-            {
             // Assemble the buttons
             DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
             options[0] = new DialogGUIButton("Auto", () => { _manualTracking = false; }, true);
             for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
             {
                 CelestialBody body = KopernicusStar.Stars[i].sun;
-                options[i + 1] = new DialogGUIButton(body.bodyDisplayName.Replace("^N", ""), () =>
-                {
-                    _manualTracking = true;
-                    SP.trackingBody = body;
-                    SP.GetTrackingBodyTransforms();
-                }, true);
+                options[i + 1] = new DialogGUIButton
+                (
+                    body.bodyDisplayName.Replace("^N", ""),
+                    () =>
+                    {
+                        for (int n = SPs?.Length ?? 0; n > 0; n--)
+                        {
+                            ModuleDeployableSolarPanel SP = SPs[n - 1];
+                            _manualTracking = true;
+                            SP.trackingBody = body;
+                            SP.GetTrackingBodyTransforms();
+                        }
+                    },
+                    true
+                );
             }
 
             PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new MultiOptionDialog(
@@ -270,7 +285,6 @@ namespace Kopernicus.Components
                 "Select Tracking Body",
                 UISkinManager.GetSkin("MainMenuSkin"),
                 options), false, UISkinManager.GetSkin("MainMenuSkin"));
-            }
         }
 
         [KSPEvent(active = true, guiActive = true, guiName = "Use relative exposure")]
@@ -281,10 +295,19 @@ namespace Kopernicus.Components
 
         public override void OnStart(StartState state)
         {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
             TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
             TimingManager.FixedUpdateAdd(TimingManager.TimingStage.Late, LatePostCalculateTracking);
 
             SPs = GetComponents<ModuleDeployableSolarPanel>();
+
+            if (SPs.Any(p => p.isTracking))
+            {
+                Fields["trackingBodyName"].guiActive = true;
+                Events["ManualTracking"].guiActive = true;
+            }
+            }
 
             base.OnStart(state);
         }
