@@ -119,14 +119,17 @@ namespace Kopernicus.RuntimeUtility
             {
                 String modName = kvP.Key;
                 String[] filePaths = kvP.Value;
-                
-                // Does the file already exist?
+
+                // Does the folder already exist?
+                String folder = KSPUtil.ApplicationRootPath + "Logs/";
                 String path = KSPUtil.ApplicationRootPath + "Logs/" + "Logs-" + modName + ".zip";
-                Directory.CreateDirectory(Path.GetDirectoryName(path));
-                if (File.Exists(path))
+
+                if (Directory.Exists(folder))
                 {
-                    File.Delete(path);
+                    Directory.Delete(folder, true);
                 }
+
+                Directory.CreateDirectory(folder);
 
                 using (ZipStorer zip = ZipStorer.Create(path, ""))
                 {
