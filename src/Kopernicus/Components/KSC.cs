@@ -149,8 +149,6 @@ namespace Kopernicus.Components
         [SerializeField]
         public Vector2? editorGroundTexOffset;
 
-        public Material groundMaterial;
-
         // Current Instance
         public static KSC Instance;
 
@@ -367,6 +365,7 @@ namespace Kopernicus.Components
                 for (int i = materials.Length; i > 0; i--)
                 {
                     var material = materials[i - 1];
+
                     // Grass
                     if (Instance.nearGrassTexture) material.SetTexture("_NearGrassTexture", Instance.nearGrassTexture);
                     if (Instance.nearGrassTextureOffset.HasValue) material.SetTextureOffset("_NearGrassTexture", Instance.nearGrassTextureOffset.Value);
@@ -391,6 +390,46 @@ namespace Kopernicus.Components
                 }
 
                 Destroy(this);
+            }
+        }
+    }
+
+    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
+    public class EditorMaterialFixer : MonoBehaviour
+    {
+        private void Start()
+        {
+            KSC ksc = KSC.Instance;
+            if (!ksc)
+            {
+                return;
+            }
+
+            Material material = Resources.FindObjectsOfTypeAll<Material>()?.FirstOrDefault(m => m?.name == "ksc_terrain_TX");
+
+            if (material == null)
+            {
+                return;
+            }
+
+            if (ksc.editorGroundColor.HasValue)
+            {
+                material.color = ksc.editorGroundColor.Value;
+            }
+
+            if (ksc.editorGroundTex)
+            {
+                material.mainTexture = ksc.editorGroundTex;
+            }
+
+            if (ksc.editorGroundTexScale.HasValue)
+            {
+                material.mainTextureScale = ksc.editorGroundTexScale.Value;
+            }
+
+            if (ksc.editorGroundTexOffset.HasValue)
+            {
+                material.mainTextureOffset = ksc.editorGroundTexOffset.Value;
             }
         }
     }
