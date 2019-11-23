@@ -320,13 +320,13 @@ namespace Kopernicus.Configuration
 
         // groundColor
         [ParserTarget("groundColor")]
-        [KittopiaDescription("The color of the grass at the KSC.")]
-        public ColorParser GroundColorParser
+        [KittopiaDescription("The color of the KSC grass.")]
+        public ColorParser GrassColor
         {
-            get { return Value.color; }
+            get { return Value.grassColor; }
             set
             {
-                Value.color = value;
+                Value.grassColor = value;
                 if (!Injector.IsInPrefab)
                 {
                     Value.Start();
@@ -336,13 +336,13 @@ namespace Kopernicus.Configuration
 
         // Texture
         [ParserTarget("groundTexture")]
-        [KittopiaDescription("The surface texture of the grass spots at the KSC.")]
-        public Texture2DParser GroundTextureParser
+        [KittopiaDescription("The texture of the KSC grass from up close.")]
+        public Texture2DParser NearGrassTexture
         {
-            get { return Value.mainTexture; }
+            get { return Value.nearGrassTexture; }
             set
             {
-                Value.mainTexture = value;
+                Value.nearGrassTexture = value;
                 if (!Injector.IsInPrefab)
                 {
                     Value.Start();
@@ -365,6 +365,10 @@ namespace Kopernicus.Configuration
                 }
             }
         }
+
+        [ParserTarget("GrassMaterial", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public GrassMaterialLoader GrassMaterialLoader { get; set; }
 
         // Editor Ground Texture
         [ParserTarget("editorGroundTex")]
@@ -415,6 +419,7 @@ namespace Kopernicus.Configuration
         // Apply event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
+            KSC.Instance = Value;
             Events.OnSpaceCenterLoaderApply.Fire(this, node);
         }
 
@@ -461,6 +466,285 @@ namespace Kopernicus.Configuration
             Value = body.gameObject.AddComponent<KSC>();
             Value.Start();
             Object.DontDestroyOnLoad(Value);
+        }
+    }
+
+    [RequireConfigType(ConfigType.Node)]
+    public class GrassMaterialLoader : BaseLoader
+    {
+        // NearGrass
+        [ParserTarget("nearGrassTexture")]
+        [KittopiaDescription("The texture of the KSC grass from up close.")]
+        public Texture2DParser NearGrassTexture
+        {
+            get { return KSC.Instance.nearGrassTexture; }
+            set
+            {
+                KSC.Instance.nearGrassTexture = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("nearGrassTextureOffset")]
+        [KittopiaDescription("The texture offset of the KSC grass from up close.")]
+        public Vector2Parser NearGrassTextureOffset
+        {
+            get { return KSC.Instance.nearGrassTextureOffset; }
+            set
+            {
+                KSC.Instance.nearGrassTextureOffset = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("nearGrassTextureScale")]
+        [KittopiaDescription("The texture scale of the KSC grass from up close.")]
+        public Vector2Parser NearGrassTextureScale
+        {
+            get { return KSC.Instance.nearGrassTextureScale; }
+            set
+            {
+                KSC.Instance.nearGrassTextureScale = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("nearGrassTiling")]
+        [KittopiaDescription("The tiling of the KSC grass from up close.")]
+        public NumericParser<Single> NearGrassTiling
+        {
+            get { return KSC.Instance.nearGrassTiling; }
+            set
+            {
+                KSC.Instance.nearGrassTiling = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        // FarGrass
+        [ParserTarget("farGrassTexture")]
+        [KittopiaDescription("The texture of the KSC grass from a distance.")]
+        public Texture2DParser FarGrassTexture
+        {
+            get { return KSC.Instance.farGrassTexture; }
+            set
+            {
+                KSC.Instance.farGrassTexture = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("farGrassTextureOffset")]
+        [KittopiaDescription("The texture offset of the KSC grass from a distance.")]
+        public Vector2Parser FarGrassTextureOffset
+        {
+            get { return KSC.Instance.farGrassTextureOffset; }
+            set
+            {
+                KSC.Instance.farGrassTextureOffset = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("farGrassTextureScale")]
+        [KittopiaDescription("The texture scale of the KSC grass from a distance.")]
+        public Vector2Parser FarGrassTextureScale
+        {
+            get { return KSC.Instance.farGrassTextureScale; }
+            set
+            {
+                KSC.Instance.farGrassTextureScale = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("farGrassTiling")]
+        [KittopiaDescription("The tiling of the KSC grass from a distance.")]
+        public NumericParser<Single> FarGrassTiling
+        {
+            get { return KSC.Instance.farGrassTiling; }
+            set
+            {
+                KSC.Instance.farGrassTiling = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("farGrassBlendDistance")]
+        [KittopiaDescription("The blend distance to the far KSC grass.")]
+        public NumericParser<Single> FarGrassBlendDistance
+        {
+            get { return KSC.Instance.farGrassBlendDistance; }
+            set
+            {
+                KSC.Instance.farGrassBlendDistance = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        // GrassColor
+        [ParserTarget("grassColor")]
+        [KittopiaDescription("The color of the KSC grass.")]
+        public ColorParser GrassColor
+        {
+            get { return KSC.Instance.grassColor; }
+            set
+            {
+                KSC.Instance.grassColor = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        // Tarmac
+        [ParserTarget("tarmacTexture")]
+        [KittopiaDescription("The texture of the KSC tarmac.")]
+        public Texture2DParser TarmacTexture
+        {
+            get { return KSC.Instance.tarmacTexture; }
+            set
+            {
+                KSC.Instance.tarmacTexture = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("tarmacTextureOffset")]
+        [KittopiaDescription("The texture offset of the KSC tarmac.")]
+        public Vector2Parser TarmacTextureOffset
+        {
+            get { return KSC.Instance.tarmacTextureOffset; }
+            set
+            {
+                KSC.Instance.tarmacTextureOffset = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("tarmacTextureScale")]
+        [KittopiaDescription("The texture Scale of the KSC tarmac.")]
+        public Vector2Parser TarmacTextureScale
+        {
+            get { return KSC.Instance.tarmacTextureScale; }
+            set
+            {
+                KSC.Instance.tarmacTextureScale = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("tarmacColor")]
+        [KittopiaDescription("The color of the KSC tarmac.")]
+        public ColorParser TarmacColor
+        {
+            get { return KSC.Instance.tarmacColor; }
+            set
+            {
+                KSC.Instance.tarmacColor = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        // Other
+        [ParserTarget("opacity")]
+        [KittopiaDescription("The opacity of the KSC grass material.")]
+        public NumericParser<Single> Opacity
+        {
+            get { return KSC.Instance.opacity; }
+            set
+            {
+                KSC.Instance.opacity = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("rimColor")]
+        [KittopiaDescription("The rimColor of the KSC grass material.")]
+        public ColorParser RimColor
+        {
+            get { return KSC.Instance.rimColor; }
+            set
+            {
+                KSC.Instance.rimColor = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("rimFalloff")]
+        [KittopiaDescription("The opacity of the KSC grass material.")]
+        public NumericParser<Single> RimFalloff
+        {
+            get { return KSC.Instance.rimFalloff; }
+            set
+            {
+                KSC.Instance.rimFalloff = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
+        }
+
+        [ParserTarget("underwaterFogFactor")]
+        [KittopiaDescription("The underwaterFogFactor of the KSC grass material.")]
+        public NumericParser<Single> UnderwaterFogFactor
+        {
+            get { return KSC.Instance.underwaterFogFactor; }
+            set
+            {
+                KSC.Instance.underwaterFogFactor = value;
+                if (!Injector.IsInPrefab)
+                {
+                    KSC.Instance.Start();
+                }
+            }
         }
     }
 }

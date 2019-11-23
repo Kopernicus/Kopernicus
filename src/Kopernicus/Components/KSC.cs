@@ -93,12 +93,48 @@ namespace Kopernicus.Components
         [SerializeField]
         public Double? decalLongitude;
 
-        // PQSCity Ground Material
+        // Grass
         [SerializeField]
-        public Texture2D mainTexture;
+        public Texture2D nearGrassTexture;
+        [SerializeField]
+        public Vector2? nearGrassTextureOffset;
+        [SerializeField]
+        public Vector2? nearGrassTextureScale;
+        [SerializeField]
+        public Single? nearGrassTiling;
+        [SerializeField]
+        public Texture2D farGrassTexture;
+        [SerializeField]
+        public Vector2? farGrassTextureOffset;
+        [SerializeField]
+        public Vector2? farGrassTextureScale;
+        [SerializeField]
+        public Single? farGrassTiling;
+        [SerializeField]
+        public Single? farGrassBlendDistance;
+        [SerializeField]
+        public Color? grassColor;
 
+        // Tarmac
         [SerializeField]
-        public Color? color;
+        public Texture2D tarmacTexture;
+        [SerializeField]
+        public Vector2? tarmacTextureOffset;
+        [SerializeField]
+        public Vector2? tarmacTextureScale;
+        [SerializeField]
+        public Color? tarmacColor;
+
+        // Other	
+        [SerializeField]
+        public Single? opacity;
+        [SerializeField]
+        public Color? rimColor;
+        [SerializeField]
+        public Single? rimFalloff;
+        [SerializeField]
+        public Single? underwaterFogFactor;
+
 
         // Editor Ground Material
         [SerializeField]
@@ -227,7 +263,7 @@ namespace Kopernicus.Components
             {
                 foreach (PQSCity.LODRange lodRange in _ksc.lod)
                 {
-                    lodRange.visibleRange *= (Single) lodvisibleRangeMult.Value;
+                    lodRange.visibleRange *= (Single)lodvisibleRangeMult.Value;
                 }
             }
             else
@@ -320,8 +356,6 @@ namespace Kopernicus.Components
         // MaterialFixer
         private class MaterialFixer : MonoBehaviour
         {
-            private static readonly String StockColor = new Color(0.640f, 0.728f, 0.171f, 0.729f).ToString();
-            
             private void Update()
             {
                 if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
@@ -329,146 +363,34 @@ namespace Kopernicus.Components
                     return;
                 }
 
-                KSC ksc = GetComponent<KSC>();
-
-                // Loop through all Materials and change their settings
-                try
+                Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(m => m?.shader?.name == "KSP/Scenery/Diffuse Ground KSC").ToArray();
+                for (int i = materials.Length; i > 0; i--)
                 {
-                    Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
-                    Int32? n = materials?.Length;
-
-                    for (Int32 i = 0; i < n; i++)
-                    {
-                        Material material = materials[i];
-
-                        if (material.HasProperty("_Color") != true || material.color.ToString() != StockColor)
-                        {
-                            continue;
-                        }
-
-                        if (ksc.groundMaterial)
-                        {
-                            material.shader = ksc.groundMaterial.shader;
-                            material.CopyPropertiesFromMaterial(ksc.groundMaterial);
-                        }
-                        else
-                        {
-                            // Remember this material
-                            ksc.groundMaterial = material;
-
-                            // Patch the texture
-                            if (ksc.mainTexture)
-                            {
-                                material.mainTexture = ksc.mainTexture;
-                            }
-                            else
-                            {
-                                ksc.mainTexture = material.mainTexture as Texture2D;
-                            }
-
-                            // Patch the color
-                            if (ksc.color.HasValue)
-                            {
-                                material.color = ksc.color.Value;
-                            }
-                            else
-                            {
-                                ksc.color = material.color;
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.Log("[Kopernicus]: MaterialFixer: Exception " + e);
+                    var material = materials[i - 1];
+                    // Grass
+                    if (Instance.nearGrassTexture) material.SetTexture("_NearGrassTexture", Instance.nearGrassTexture);
+                    if (Instance.nearGrassTextureOffset.HasValue) material.SetTextureOffset("_NearGrassTexture", Instance.nearGrassTextureOffset.Value);
+                    if (Instance.nearGrassTextureScale.HasValue) material.SetTextureScale("_NearGrassTexture", Instance.nearGrassTextureScale.Value);
+                    if (Instance.nearGrassTiling.HasValue) material.SetFloat("_NearGrassTiling", Instance.nearGrassTiling.Value);
+                    if (Instance.farGrassTexture) material.SetTexture("_FarGrassTexture", Instance.farGrassTexture);
+                    if (Instance.farGrassTextureOffset.HasValue) material.SetTextureOffset("_FarGrassTexture", Instance.farGrassTextureOffset.Value);
+                    if (Instance.farGrassTextureScale.HasValue) material.SetTextureScale("_FarGrassTexture", Instance.farGrassTextureScale.Value);
+                    if (Instance.farGrassTiling.HasValue) material.SetFloat("_FarGrassTiling", Instance.farGrassTiling.Value);
+                    if (Instance.farGrassBlendDistance.HasValue) material.SetFloat("_FarGrassBlendDistance", Instance.farGrassBlendDistance.Value);
+                    if (Instance.grassColor.HasValue) material.SetColor("_GrassColor", Instance.grassColor.Value);
+                    // Tarmac                    
+                    if (Instance.tarmacTexture) material.SetTexture("_TarmacTexture", Instance.tarmacTexture);
+                    if (Instance.tarmacTextureOffset.HasValue) material.SetTextureOffset("_TarmacTexture", Instance.tarmacTextureOffset.Value);
+                    if (Instance.tarmacTextureScale.HasValue) material.SetTextureScale("_TarmacTexture", Instance.tarmacTextureScale.Value);
+                    if (Instance.tarmacColor.HasValue) material.SetColor("_TarmacColor", Instance.tarmacColor.Value);
+                    // Other                    
+                    if (Instance.opacity.HasValue) material.SetFloat("_Opacity", Instance.opacity.Value);
+                    if (Instance.rimColor.HasValue) material.SetColor("_RimColor", Instance.rimColor.Value);
+                    if (Instance.rimFalloff.HasValue) material.SetFloat("_RimFalloff", Instance.rimFalloff.Value);
+                    if (Instance.underwaterFogFactor.HasValue) material.SetFloat("_UnderwaterFogFactor", Instance.underwaterFogFactor.Value);
                 }
 
                 Destroy(this);
-            }
-        }
-    }
-
-    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-    public class EditorMaterialFixer : MonoBehaviour
-    {
-        private EditorFacility _editor;
-
-        private void Update()
-        {
-            if (_editor == EditorDriver.editorFacility)
-            {
-                return;
-            }
-
-            _editor = EditorDriver.editorFacility;
-            FixMaterials();
-        }
-
-        [SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
-        private static void FixMaterials()
-        {
-            KSC ksc = KSC.Instance;
-
-            if (!ksc)
-            {
-                return;
-            }
-
-            Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
-            if (materials == null)
-            {
-                return;
-            }
-
-            Int32? n = materials.Length;
-            for (Int32 i = 0; i < n; i++)
-            {
-                Material material = materials[i];
-
-                if (material == null)
-                {
-                    continue;
-                }
-
-                if (material.name == "ksc_exterior_terrain_grass_02")
-                {
-                    if (!ksc.groundMaterial)
-                    {
-                        continue;
-                    }
-
-                    material.shader = ksc.groundMaterial.shader;
-                    material.CopyPropertiesFromMaterial(ksc.groundMaterial);
-                }
-
-                else if (material.name == "ksc_terrain_TX")
-                {
-                    if (ksc.groundMaterial)
-                    {
-                        material.shader = ksc.groundMaterial.shader;
-                        material.CopyPropertiesFromMaterial(ksc.groundMaterial);
-                    }
-
-                    if (ksc.editorGroundColor.HasValue)
-                    {
-                        material.color = ksc.editorGroundColor.Value;
-                    }
-
-                    if (ksc.editorGroundTex)
-                    {
-                        material.mainTexture = ksc.editorGroundTex;
-                    }
-
-                    if (ksc.editorGroundTexScale.HasValue)
-                    {
-                        material.mainTextureScale = ksc.editorGroundTexScale.Value;
-                    }
-
-                    if (ksc.editorGroundTexOffset.HasValue)
-                    {
-                        material.mainTextureOffset = ksc.editorGroundTexOffset.Value;
-                    }
-                }
             }
         }
     }
