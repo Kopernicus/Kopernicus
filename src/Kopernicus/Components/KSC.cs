@@ -93,48 +93,16 @@ namespace Kopernicus.Components
         [SerializeField]
         public Double? decalLongitude;
 
-        // Grass
+        // PQSCity Ground Material
         [SerializeField]
-        public Texture2D nearGrassTexture;
-        [SerializeField]
-        public Vector2? nearGrassTextureOffset;
-        [SerializeField]
-        public Vector2? nearGrassTextureScale;
-        [SerializeField]
-        public Single? nearGrassTiling;
-        [SerializeField]
-        public Texture2D farGrassTexture;
-        [SerializeField]
-        public Vector2? farGrassTextureOffset;
-        [SerializeField]
-        public Vector2? farGrassTextureScale;
-        [SerializeField]
-        public Single? farGrassTiling;
-        [SerializeField]
-        public Single? farGrassBlendDistance;
-        [SerializeField]
-        public Color? grassColor;
+        public Texture2D mainTexture;
 
-        // Tarmac
         [SerializeField]
-        public Texture2D tarmacTexture;
-        [SerializeField]
-        public Vector2? tarmacTextureOffset;
-        [SerializeField]
-        public Vector2? tarmacTextureScale;
-        [SerializeField]
-        public Color? tarmacColor;
+        public Color? color;
 
-        // Other	
+        // Grass Material
         [SerializeField]
-        public Single? opacity;
-        [SerializeField]
-        public Color? rimColor;
-        [SerializeField]
-        public Single? rimFalloff;
-        [SerializeField]
-        public Single? underwaterFogFactor;
-
+        public GrassMaterial Material;
 
         // Editor Ground Material
         [SerializeField]
@@ -351,6 +319,52 @@ namespace Kopernicus.Components
             Events.OnSwitchKSC.Fire(this);
         }
 
+        // Material
+        public class GrassMaterial
+        {
+            // Grass
+            [SerializeField]
+            public Texture2D nearGrassTexture;
+            [SerializeField]
+            public Vector2? nearGrassTextureOffset;
+            [SerializeField]
+            public Vector2? nearGrassTextureScale;
+            [SerializeField]
+            public Single? nearGrassTiling;
+            [SerializeField]
+            public Texture2D farGrassTexture;
+            [SerializeField]
+            public Vector2? farGrassTextureOffset;
+            [SerializeField]
+            public Vector2? farGrassTextureScale;
+            [SerializeField]
+            public Single? farGrassTiling;
+            [SerializeField]
+            public Single? farGrassBlendDistance;
+            [SerializeField]
+            public Color? grassColor;
+
+            // Tarmac
+            [SerializeField]
+            public Texture2D tarmacTexture;
+            [SerializeField]
+            public Vector2? tarmacTextureOffset;
+            [SerializeField]
+            public Vector2? tarmacTextureScale;
+            [SerializeField]
+            public Color? tarmacColor;
+
+            // Other	
+            [SerializeField]
+            public Single? opacity;
+            [SerializeField]
+            public Color? rimColor;
+            [SerializeField]
+            public Single? rimFalloff;
+            [SerializeField]
+            public Single? underwaterFogFactor;
+        }
+
         // MaterialFixer
         private class MaterialFixer : MonoBehaviour
         {
@@ -367,26 +381,28 @@ namespace Kopernicus.Components
                     var material = materials[i - 1];
 
                     // Grass
-                    if (Instance.nearGrassTexture) material.SetTexture("_NearGrassTexture", Instance.nearGrassTexture);
-                    if (Instance.nearGrassTextureOffset.HasValue) material.SetTextureOffset("_NearGrassTexture", Instance.nearGrassTextureOffset.Value);
-                    if (Instance.nearGrassTextureScale.HasValue) material.SetTextureScale("_NearGrassTexture", Instance.nearGrassTextureScale.Value);
-                    if (Instance.nearGrassTiling.HasValue) material.SetFloat("_NearGrassTiling", Instance.nearGrassTiling.Value);
-                    if (Instance.farGrassTexture) material.SetTexture("_FarGrassTexture", Instance.farGrassTexture);
-                    if (Instance.farGrassTextureOffset.HasValue) material.SetTextureOffset("_FarGrassTexture", Instance.farGrassTextureOffset.Value);
-                    if (Instance.farGrassTextureScale.HasValue) material.SetTextureScale("_FarGrassTexture", Instance.farGrassTextureScale.Value);
-                    if (Instance.farGrassTiling.HasValue) material.SetFloat("_FarGrassTiling", Instance.farGrassTiling.Value);
-                    if (Instance.farGrassBlendDistance.HasValue) material.SetFloat("_FarGrassBlendDistance", Instance.farGrassBlendDistance.Value);
-                    if (Instance.grassColor.HasValue) material.SetColor("_GrassColor", Instance.grassColor.Value);
-                    // Tarmac                    
-                    if (Instance.tarmacTexture) material.SetTexture("_TarmacTexture", Instance.tarmacTexture);
-                    if (Instance.tarmacTextureOffset.HasValue) material.SetTextureOffset("_TarmacTexture", Instance.tarmacTextureOffset.Value);
-                    if (Instance.tarmacTextureScale.HasValue) material.SetTextureScale("_TarmacTexture", Instance.tarmacTextureScale.Value);
-                    if (Instance.tarmacColor.HasValue) material.SetColor("_TarmacColor", Instance.tarmacColor.Value);
-                    // Other                    
-                    if (Instance.opacity.HasValue) material.SetFloat("_Opacity", Instance.opacity.Value);
-                    if (Instance.rimColor.HasValue) material.SetColor("_RimColor", Instance.rimColor.Value);
-                    if (Instance.rimFalloff.HasValue) material.SetFloat("_RimFalloff", Instance.rimFalloff.Value);
-                    if (Instance.underwaterFogFactor.HasValue) material.SetFloat("_UnderwaterFogFactor", Instance.underwaterFogFactor.Value);
+                    if (Instance.mainTexture) material.SetTexture("_NearGrassTexture", Instance.mainTexture);
+                    if (Instance.Material.nearGrassTexture) material.SetTexture("_NearGrassTexture", Instance.Material.nearGrassTexture);
+                    if (Instance.Material.nearGrassTextureOffset.HasValue) material.SetTextureOffset("_NearGrassTexture", Instance.Material.nearGrassTextureOffset.Value);
+                    if (Instance.Material.nearGrassTextureScale.HasValue) material.SetTextureScale("_NearGrassTexture", Instance.Material.nearGrassTextureScale.Value);
+                    if (Instance.Material.nearGrassTiling.HasValue) material.SetFloat("_NearGrassTiling", Instance.Material.nearGrassTiling.Value);
+                    if (Instance.Material.farGrassTexture) material.SetTexture("_FarGrassTexture", Instance.Material.farGrassTexture);
+                    if (Instance.Material.farGrassTextureOffset.HasValue) material.SetTextureOffset("_FarGrassTexture", Instance.Material.farGrassTextureOffset.Value);
+                    if (Instance.Material.farGrassTextureScale.HasValue) material.SetTextureScale("_FarGrassTexture", Instance.Material.farGrassTextureScale.Value);
+                    if (Instance.Material.farGrassTiling.HasValue) material.SetFloat("_FarGrassTiling", Instance.Material.farGrassTiling.Value);
+                    if (Instance.Material.farGrassBlendDistance.HasValue) material.SetFloat("_FarGrassBlendDistance", Instance.Material.farGrassBlendDistance.Value);
+                    if (Instance.color.HasValue) material.SetColor("_GrassColor", Instance.color.Value);
+                    if (Instance.Material.grassColor.HasValue) material.SetColor("_GrassColor", Instance.Material.grassColor.Value);
+                    // Tarmac
+                    if (Instance.Material.tarmacTexture) material.SetTexture("_TarmacTexture", Instance.Material.tarmacTexture);
+                    if (Instance.Material.tarmacTextureOffset.HasValue) material.SetTextureOffset("_TarmacTexture", Instance.Material.tarmacTextureOffset.Value);
+                    if (Instance.Material.tarmacTextureScale.HasValue) material.SetTextureScale("_TarmacTexture", Instance.Material.tarmacTextureScale.Value);
+                    if (Instance.Material.tarmacColor.HasValue) material.SetColor("_TarmacColor", Instance.Material.tarmacColor.Value);
+                    // Other
+                    if (Instance.Material.opacity.HasValue) material.SetFloat("_Opacity", Instance.Material.opacity.Value);
+                    if (Instance.Material.rimColor.HasValue) material.SetColor("_RimColor", Instance.Material.rimColor.Value);
+                    if (Instance.Material.rimFalloff.HasValue) material.SetFloat("_RimFalloff", Instance.Material.rimFalloff.Value);
+                    if (Instance.Material.underwaterFogFactor.HasValue) material.SetFloat("_UnderwaterFogFactor", Instance.Material.underwaterFogFactor.Value);
                 }
 
                 Destroy(this);
