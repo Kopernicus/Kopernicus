@@ -259,7 +259,8 @@ namespace Kopernicus.Components
             // Assemble the buttons
             DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
             options[0] = new DialogGUIButton("Auto", () => { _manualTracking = false; }, true);
-            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+            Int32? s = KopernicusStar.Stars.Count;
+            for (Int32 i = 0; i < s; i++)
             {
                 CelestialBody body = KopernicusStar.Stars[i].sun;
                 options[i + 1] = new DialogGUIButton
