@@ -100,9 +100,10 @@ namespace Kopernicus.Components
                 SP.sunAOA = 0;
 
                 // Go through all stars
-                for (Int32 i = KopernicusStar.Stars?.Count ?? 0; i > 0; i--)
+                Int32 stars = KopernicusStar.Stars.Count;
+                for (Int32 i = 0; i < stars; i++)
                 {
-                    KopernicusStar star = KopernicusStar.Stars[i - 1];
+                    KopernicusStar star = KopernicusStar.Stars[i];
 
                     // Calculate stuff
                     Transform sunTransform = star.sun.transform;
@@ -218,7 +219,7 @@ namespace Kopernicus.Components
                 }
 
                 // Sun AOA
-                SP.sunAOA /= _relativeSunAoa ? KopernicusStar.Stars.Count : 1;
+                SP.sunAOA /= _relativeSunAoa ? stars : 1;
                 SP._distMult = Math.Abs(SP._flowRate) > 0.01 ? SP._flowRate / SP._efficMult / SP.sunAOA : 0;
 
                 // We got the best star to use
@@ -257,10 +258,10 @@ namespace Kopernicus.Components
         public void ManualTracking()
         {
             // Assemble the buttons
-            DialogGUIBase[] options = new DialogGUIBase[KopernicusStar.Stars.Count + 1];
+            Int32 stars = KopernicusStar.Stars.Count;
+            DialogGUIBase[] options = new DialogGUIBase[stars + 1];
             options[0] = new DialogGUIButton("Auto", () => { _manualTracking = false; }, true);
-            Int32? s = KopernicusStar.Stars.Count;
-            for (Int32 i = 0; i < s; i++)
+            for (Int32 i = 0; i < stars; i++)
             {
                 CelestialBody body = KopernicusStar.Stars[i].sun;
                 options[i + 1] = new DialogGUIButton
