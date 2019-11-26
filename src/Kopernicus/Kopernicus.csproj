@@ -71,7 +71,7 @@
     <Compile Include="Components\HazardousOcean.cs" />
     <Compile Include="Components\KopernicusOrbitRendererData.cs" />
     <Compile Include="Components\KopernicusSimplexWrapper.cs" />
-    <Compile Include="Components\KopernicusSolarPanel.cs" />
+    <Compile Include="Components\KopernicusSolarPanels.cs" />
     <Compile Include="Components\KopernicusStar.cs" />
     <Compile Include="Components\KopernicusSunFlare.cs" />
     <Compile Include="Components\KopernicusSurfaceObject.cs" />
