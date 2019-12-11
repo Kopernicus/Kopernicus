@@ -102,7 +102,7 @@ namespace Kopernicus.Components
 
         // Grass Material
         [SerializeField]
-        public GrassMaterial Material;
+        public GrassMaterial Material = new GrassMaterial();
 
         // Editor Ground Material
         [SerializeField]
