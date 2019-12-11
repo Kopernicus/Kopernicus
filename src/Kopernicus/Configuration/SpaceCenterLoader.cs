@@ -618,7 +618,7 @@ namespace Kopernicus.Configuration
             get { return Value.tarmacTextureScale; }
             set
             {
-                Value.tarmacTextureScale = value;
+                Value.tarmacTextureScale *= value;
             }
         }
 
