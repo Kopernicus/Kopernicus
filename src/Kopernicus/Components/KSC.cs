@@ -102,7 +102,7 @@ namespace Kopernicus.Components
 
         // Grass Material
         [SerializeField]
-        public GrassMaterial Material = new GrassMaterial();
+        public GrassMaterial Material;
 
         // Editor Ground Material
         [SerializeField]
@@ -122,6 +122,11 @@ namespace Kopernicus.Components
 
         private void Awake()
         {
+            if (Material == null)
+            {
+                Material = new GrassMaterial();
+            }
+
             Instance = this;
         }
 
