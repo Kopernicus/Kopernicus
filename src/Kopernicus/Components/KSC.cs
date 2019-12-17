@@ -386,9 +386,9 @@ namespace Kopernicus.Components
                     // Grass
                     if (Instance.mainTexture) material.SetTexture("_NearGrassTexture", Instance.mainTexture);
                     if (Instance.Material.nearGrassTexture) material.SetTexture("_NearGrassTexture", Instance.Material.nearGrassTexture);
-                    if (Instance.Material.nearGrassTiling.HasValue) material.SetFloat("_NearGrassTiling", Instance.Material.nearGrassTiling.Value);
+                    if (Instance.Material.nearGrassTiling.HasValue) material.SetFloat("_NearGrassTiling", material.GetFloat("_NearGrassTiling") * Instance.Material.nearGrassTiling.Value);
                     if (Instance.Material.farGrassTexture) material.SetTexture("_FarGrassTexture", Instance.Material.farGrassTexture);
-                    if (Instance.Material.farGrassTiling.HasValue) material.SetFloat("_FarGrassTiling", Instance.Material.farGrassTiling.Value);
+                    if (Instance.Material.farGrassTiling.HasValue) material.SetFloat("_FarGrassTiling", material.GetFloat("_FarGrassTiling") * Instance.Material.farGrassTiling.Value);
                     if (Instance.Material.farGrassBlendDistance.HasValue) material.SetFloat("_FarGrassBlendDistance", Instance.Material.farGrassBlendDistance.Value);
                     if (Instance.color.HasValue) material.SetColor("_GrassColor", Instance.color.Value);
                     if (Instance.Material.grassColor.HasValue) material.SetColor("_GrassColor", Instance.Material.grassColor.Value);
