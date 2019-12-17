@@ -487,28 +487,6 @@ namespace Kopernicus.Configuration
             }
         }
 
-        [ParserTarget("nearGrassTextureOffset")]
-        [KittopiaDescription("The texture offset of the KSC grass from up close.")]
-        public Vector2Parser NearGrassTextureOffset
-        {
-            get { return Value.nearGrassTextureOffset; }
-            set
-            {
-                Value.nearGrassTextureOffset = value;
-            }
-        }
-
-        [ParserTarget("nearGrassTextureScale")]
-        [KittopiaDescription("The texture scale of the KSC grass from up close.")]
-        public Vector2Parser NearGrassTextureScale
-        {
-            get { return Value.nearGrassTextureScale; }
-            set
-            {
-                Value.nearGrassTextureScale = value;
-            }
-        }
-
         [ParserTarget("nearGrassTiling")]
         [KittopiaDescription("The tiling of the KSC grass from up close.")]
         public NumericParser<Single> NearGrassTiling
@@ -529,28 +507,6 @@ namespace Kopernicus.Configuration
             set
             {
                 Value.farGrassTexture = value;
-            }
-        }
-
-        [ParserTarget("farGrassTextureOffset")]
-        [KittopiaDescription("The texture offset of the KSC grass from a distance.")]
-        public Vector2Parser FarGrassTextureOffset
-        {
-            get { return Value.farGrassTextureOffset; }
-            set
-            {
-                Value.farGrassTextureOffset = value;
-            }
-        }
-
-        [ParserTarget("farGrassTextureScale")]
-        [KittopiaDescription("The texture scale of the KSC grass from a distance.")]
-        public Vector2Parser FarGrassTextureScale
-        {
-            get { return Value.farGrassTextureScale; }
-            set
-            {
-                Value.farGrassTextureScale = value;
             }
         }
 

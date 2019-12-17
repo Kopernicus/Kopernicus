@@ -331,17 +331,9 @@ namespace Kopernicus.Components
             [SerializeField]
             public Texture2D nearGrassTexture;
             [SerializeField]
-            public Vector2? nearGrassTextureOffset;
-            [SerializeField]
-            public Vector2? nearGrassTextureScale;
-            [SerializeField]
             public Single? nearGrassTiling;
             [SerializeField]
             public Texture2D farGrassTexture;
-            [SerializeField]
-            public Vector2? farGrassTextureOffset;
-            [SerializeField]
-            public Vector2? farGrassTextureScale;
             [SerializeField]
             public Single? farGrassTiling;
             [SerializeField]
