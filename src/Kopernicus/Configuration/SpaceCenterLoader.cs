@@ -622,17 +622,6 @@ namespace Kopernicus.Configuration
             }
         }
 
-        [ParserTarget("tarmacColor")]
-        [KittopiaDescription("The color of the KSC tarmac.")]
-        public ColorParser TarmacColor
-        {
-            get { return Value.tarmacColor; }
-            set
-            {
-                Value.tarmacColor = value;
-            }
-        }
-
         // Other
         [ParserTarget("opacity")]
         [KittopiaDescription("The opacity of the KSC grass material.")]

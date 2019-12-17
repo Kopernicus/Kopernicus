@@ -356,8 +356,6 @@ namespace Kopernicus.Components
             public Vector2? tarmacTextureOffset;
             [SerializeField]
             public Vector2? tarmacTextureScale;
-            [SerializeField]
-            public Color? tarmacColor;
 
             // Other	
             [SerializeField]
