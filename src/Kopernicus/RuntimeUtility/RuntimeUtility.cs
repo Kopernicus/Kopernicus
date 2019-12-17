@@ -113,12 +113,12 @@ namespace Kopernicus.RuntimeUtility
 
         // Run patches every time a new scene was loaded
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
-        private static void OnLevelWasLoaded(GameScenes scene)
+        private void OnLevelWasLoaded(GameScenes scene)
         {
             PatchFlightIntegrator();
             FixCameras();
             PatchTimeOfDayAnimation();
-            FixFlags(3);
+            StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -894,11 +894,6 @@ namespace Kopernicus.RuntimeUtility
         private static void FixFlags(Upgradeables.UpgradeableFacility data0, int data1)
         {
             FixFlags();
-        }
-
-        private void FixFlags(int delay)
-        {
-            StartCoroutine(CallbackUtil.DelayedCallback(delay, FixFlags));
         }
 
         private static void FixFlags()
