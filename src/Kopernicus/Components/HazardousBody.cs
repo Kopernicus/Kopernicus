@@ -65,7 +65,8 @@ namespace Kopernicus.Components
 
         private CelestialBody _body;
         
-        // The current position of the timer.
+        // A timer that counts how much time is left until the next heating time. Negative value means the heating is
+        // late and there is heating "debt" that needs to be paid off.
         private Single _heatPosition;
 
         /// <summary>
@@ -77,10 +78,10 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
-        /// Update the heat
+        /// Update the heat. Heating is physics phenomenon so do it in the physics loop.
         /// </summary>
         /// <returns></returns>
-        private void Update()
+        private void FixedUpdate()
         {
             // Check for an active vessel
             if (!FlightGlobals.ActiveVessel || FlightGlobals.ActiveVessel.packed)
@@ -94,10 +95,10 @@ namespace Kopernicus.Components
                 return;
             }
 
-            // Simple counter
+            // Decrement timer. If it becomes zero or less, it's time to apply heating.
+            _heatPosition -= TimeWarp.fixedDeltaTime;
             if (_heatPosition > 0f)
             {
-                _heatPosition -= Time.deltaTime;
                 return;
             }
 
@@ -117,13 +118,17 @@ namespace Kopernicus.Components
                 heat *= heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
             }
 
+            // How many rounds of heating need to be applied before the timer is positive again (heating "debt" is paid
+            // off).
+            UInt32 heatingRounds = (UInt32) Math.Floor(-_heatPosition / heatInterval + 1);
+
             foreach (Part part in FlightGlobals.ActiveVessel.Parts)
             {
-                part.temperature += heat;
+                part.temperature += heat * heatingRounds;
             }
 
-            // Reset the timer
-            _heatPosition = heatInterval;
+            // Increment timer so that it becomes positive.
+            _heatPosition += heatInterval * heatingRounds;
         }
     }
 }
