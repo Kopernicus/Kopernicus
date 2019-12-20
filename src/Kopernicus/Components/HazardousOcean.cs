@@ -77,7 +77,9 @@ namespace Kopernicus.Components
                 Double heatingRate = heatCurve.Evaluate((Single) distanceToPlanet);
                 foreach (Part part in vessel.Parts)
                 {
-                    part.temperature += heatingRate * TimeWarp.fixedDeltaTime;
+                    // Multiplying by 50 to counteract the effect of multiplying by physics delta-time (1/50 by
+                    // default). The heating rate is per frame, not per second, for legacy compatibility.
+                    part.temperature += heatingRate * TimeWarp.fixedDeltaTime * 50;
                 }
             }
         }
