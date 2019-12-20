@@ -62,19 +62,33 @@ namespace Kopernicus.Components
         /// Controls the amount of heat that is applied on each spot of the planet
         /// </summary>
         public MapSO heatMap;
+    }
 
-        private CelestialBody _body;
-        
-        // A timer that counts how much time is left until the next heating time. Negative value means the heating is
-        // late and there is heating "debt" that needs to be paid off.
-        private Single _heatPosition;
-
-        /// <summary>
-        /// Get the body
-        /// </summary>
-        private void Start()
+    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
+    public class HazardousTracker : MonoBehaviour
+    {
+        void Start()
         {
-            _body = GetComponent<CelestialBody>();
+            GameEvents.onVesselLoaded.Add(OnVesselLoaded);
+            DontDestroyOnLoad(this);
+        }
+
+        void OnVesselLoaded(Vessel vessel)
+        {
+            vessel.gameObject.AddOrGetComponent<HazardousVessel>();
+        }
+    }
+
+    public class HazardousVessel : MonoBehaviour
+    {
+        Vessel vessel;
+        CelestialBody _body;
+        HazardousBody hazardousBody;
+        Single _heatPosition;
+
+        void Start()
+        {
+            vessel = GetComponent<Vessel>();
         }
 
         /// <summary>
@@ -83,14 +97,19 @@ namespace Kopernicus.Components
         /// <returns></returns>
         private void FixedUpdate()
         {
-            // Check for an active vessel
-            if (!FlightGlobals.ActiveVessel || FlightGlobals.ActiveVessel.packed)
+            // Check if the vessel is near the body
+            if (FlightGlobals.currentMainBody != vessel.mainBody)
             {
                 return;
             }
 
-            // Check if the vessel is near the body
-            if (FlightGlobals.currentMainBody != _body)
+            if (_body != FlightGlobals.currentMainBody)
+            {
+                _body = FlightGlobals.currentMainBody;
+                hazardousBody = _body.GetComponent<HazardousBody>();
+            }
+
+            if (!hazardousBody)
             {
                 return;
             }
@@ -104,31 +123,31 @@ namespace Kopernicus.Components
 
             // We got past the counter - update time
             Double altitude =
-                altitudeCurve.Evaluate((Single) Vector3d.Distance(FlightGlobals.ActiveVessel.transform.position,
+                hazardousBody.altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position,
                     _body.transform.position));
-            Double latitude = latitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.latitude);
-            Double longitude = longitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.longitude);
+            Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
+            Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
 
-            Double heat = altitude * latitude * longitude * heatRate;
-            if (heatMap)
+            Double heat = altitude * latitude * longitude * hazardousBody.heatRate;
+            if (hazardousBody.heatMap)
             {
                 const Single FULL_CIRCLE = 1f / 360f;
                 const Single HALF_CIRCLE = 1f / 180f;
 
-                heat *= heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
+                heat *= hazardousBody.heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
             }
 
             // How many rounds of heating need to be applied before the timer is positive again (heating "debt" is paid
             // off).
-            UInt32 heatingRounds = (UInt32) Math.Floor(-_heatPosition / heatInterval + 1);
+            UInt32 heatingRounds = (UInt32)Math.Floor(-_heatPosition / hazardousBody.heatInterval + 1);
 
-            foreach (Part part in FlightGlobals.ActiveVessel.Parts)
+            foreach (Part part in vessel.Parts)
             {
                 part.temperature += heat * heatingRounds;
             }
 
             // Increment timer so that it becomes positive.
-            _heatPosition += heatInterval * heatingRounds;
+            _heatPosition += hazardousBody.heatInterval * heatingRounds;
         }
     }
 }
