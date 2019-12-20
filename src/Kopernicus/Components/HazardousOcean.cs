@@ -55,9 +55,9 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
-        /// Update the heat
+        /// Update the heat. Heating is physics phenomenon so do it in the physics loop.
         /// </summary>
-        public void Update()
+        public void FixedUpdate()
         {
             if (!FlightGlobals.ready)
             {
@@ -77,7 +77,7 @@ namespace Kopernicus.Components
                 Double heatingRate = heatCurve.Evaluate((Single) distanceToPlanet);
                 foreach (Part part in vessel.Parts)
                 {
-                    part.temperature += heatingRate * Time.deltaTime;
+                    part.temperature += heatingRate * TimeWarp.fixedDeltaTime;
                 }
             }
         }
