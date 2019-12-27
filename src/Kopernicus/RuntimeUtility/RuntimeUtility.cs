@@ -84,6 +84,7 @@ namespace Kopernicus.RuntimeUtility
             ApplyInitialTarget();
             ApplyOrbitPatches();
             ApplyStarPatchSun();
+            ApplyFlagFixes();
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -112,11 +113,12 @@ namespace Kopernicus.RuntimeUtility
 
         // Run patches every time a new scene was loaded
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
-        private static void OnLevelWasLoaded(GameScenes scene)
+        private void OnLevelWasLoaded(GameScenes scene)
         {
             PatchFlightIntegrator();
             FixCameras();
             PatchTimeOfDayAnimation();
+            StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -874,6 +876,33 @@ namespace Kopernicus.RuntimeUtility
             else
             {
                 ContractSystem.ContractWeights.Add(body.name, body.Get<Int32>("contractWeight"));
+            }
+        }
+
+        // Flag Fixer
+        private static void ApplyFlagFixes()
+        {
+            GameEvents.OnKSCFacilityUpgraded.Add(FixFlags);
+            GameEvents.OnKSCStructureRepaired.Add(FixFlags);
+        }
+
+        private static void FixFlags(DestructibleBuilding data)
+        {
+            FixFlags();
+        }
+
+        private static void FixFlags(Upgradeables.UpgradeableFacility data0, int data1)
+        {
+            FixFlags();
+        }
+
+        private static void FixFlags()
+        {
+            PQSCity KSC = FlightGlobals.GetHomeBody()?.pqsController?.GetComponentsInChildren<PQSCity>(true)?.FirstOrDefault(p => p?.name == "KSC");
+            SkinnedMeshRenderer[] flags = KSC?.GetComponentsInChildren<SkinnedMeshRenderer>(true)?.Where(smr => smr?.name == "Flag")?.ToArray();
+            for (int i = 0; i < flags?.Length; i++)
+            {
+                flags[i].rootBone = flags[i]?.rootBone?.parent?.gameObject?.GetChild("bn_upper_flag_a01")?.transform;
             }
         }
 
