@@ -45,21 +45,21 @@ namespace Kopernicus.Configuration
         public HazardousBody Value { get; set; }
 
         // The average heat on the body
-        [ParserTarget("heat")]
+        [ParserTarget("maxTemp")]
         [KittopiaDescription("The average heat on the body.")]
-        public NumericParser<Double> Heat
+        public NumericParser<Double> MaxTemp
         {
-            get { return Value.heatRate; }
-            set { Value.heatRate = value; }
+            get { return Value.maxTemp + 273.15; }
+            set { Value.maxTemp = value - 273.15; }
         }
 
         // How much time passes between applying the heat to a vessel
-        [ParserTarget("interval")]
+        [ParserTarget("lambda")]
         [KittopiaDescription("How much time passes between applying the heat to a vessel.")]
-        public NumericParser<Single> Interval
+        public NumericParser<Single> Lambda
         {
-            get { return Value.heatInterval; }
-            set { Value.heatInterval = value; }
+            get { return Value.lambda; }
+            set { Value.lambda = value; }
         }
 
         // Controls the how much of the average heat gets applied at a certain altitude

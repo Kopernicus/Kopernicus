@@ -34,14 +34,14 @@ namespace Kopernicus.Components
     public class HazardousBody : MonoBehaviour
     {
         /// <summary>
-        /// The average heat rate on the surface of the body. Gets multiplied by latitude, longitude and altitude curves
+        /// The maximum temperature that will eventually be reached.
         /// </summary>
-        public Double heatRate;
+        public Double maxTemp = 0;
 
         /// <summary>
-        /// How many seconds should pass between applying the heat rate to the ship.
+        /// How many seconds it'll take to get halfway to maxTemp.
         /// </summary>
-        public Single heatInterval = 0.05f;
+        public Single lambda = 0;
 
         /// <summary>
         /// Controls the heat rate at a certain latitude
@@ -70,7 +70,13 @@ namespace Kopernicus.Components
         void Start()
         {
             GameEvents.onVesselLoaded.Add(OnVesselLoaded);
+            GameEvents.onVesselCreate.Add(OnVesselCreate);
             DontDestroyOnLoad(this);
+        }
+
+        private void OnVesselCreate(Vessel data)
+        {
+            data.gameObject.AddOrGetComponent<HazardousVessel>();
         }
 
         void OnVesselLoaded(Vessel vessel)
@@ -84,7 +90,6 @@ namespace Kopernicus.Components
         Vessel vessel;
         CelestialBody _body;
         HazardousBody hazardousBody;
-        Single _heatPosition;
 
         void Start()
         {
@@ -103,20 +108,15 @@ namespace Kopernicus.Components
                 return;
             }
 
+            // Check if the body has changed
             if (_body != FlightGlobals.currentMainBody)
             {
                 _body = FlightGlobals.currentMainBody;
                 hazardousBody = _body.GetComponent<HazardousBody>();
             }
 
+            // Check if the body is hazardous
             if (!hazardousBody)
-            {
-                return;
-            }
-
-            // Decrement timer. If it becomes zero or less, it's time to apply heating.
-            _heatPosition -= TimeWarp.fixedDeltaTime;
-            if (_heatPosition > 0f)
             {
                 return;
             }
@@ -128,26 +128,26 @@ namespace Kopernicus.Components
             Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
             Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
 
-            Double heat = altitude * latitude * longitude * hazardousBody.heatRate;
+            //Double heat = altitude * latitude * longitude * hazardousBody.heatRate;
+            Double maxTemp = altitude * latitude * longitude * hazardousBody.maxTemp;
             if (hazardousBody.heatMap)
             {
                 const Single FULL_CIRCLE = 1f / 360f;
                 const Single HALF_CIRCLE = 1f / 180f;
 
-                heat *= hazardousBody.heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
+                maxTemp *= hazardousBody.heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
             }
-
-            // How many rounds of heating need to be applied before the timer is positive again (heating "debt" is paid
-            // off).
-            UInt32 heatingRounds = (UInt32)Math.Floor(-_heatPosition / hazardousBody.heatInterval + 1);
 
             foreach (Part part in vessel.Parts)
             {
-                part.temperature += heat * heatingRounds;
-            }
+                if (part.temperature < maxTemp)
+                {
+                    part.temperature += ((maxTemp - part.temperature) * 0.69420 / hazardousBody.lambda) * TimeWarp.fixedDeltaTime;
 
-            // Increment timer so that it becomes positive.
-            _heatPosition += hazardousBody.heatInterval * heatingRounds;
+                    if (part.temperature > maxTemp)
+                        part.temperature = maxTemp;
+                }
+            }
         }
     }
 }

@@ -68,7 +68,6 @@
   <ItemGroup>
     <Compile Include="Components\DrawTools.cs" />
     <Compile Include="Components\HazardousBody.cs" />
-    <Compile Include="Components\HazardousOcean.cs" />
     <Compile Include="Components\KopernicusOrbitRendererData.cs" />
     <Compile Include="Components\KopernicusSimplexWrapper.cs" />
     <Compile Include="Components\KopernicusSolarPanels.cs" />
