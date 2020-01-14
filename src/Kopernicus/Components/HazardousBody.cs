@@ -44,22 +44,22 @@ namespace Kopernicus.Components
         public Single lambda = 0;
 
         /// <summary>
-        /// Controls the heat rate at a certain latitude
+        /// Multiplier curve to change maxTemp with latitude
         /// </summary>
         public FloatCurve latitudeCurve;
 
         /// <summary>
-        /// Controls the heat rate at a certain longitude
+        /// Multiplier curve to change maxTemp with longitude
         /// </summary>
         public FloatCurve longitudeCurve;
 
         /// <summary>
-        /// Controls the heat rate at a certain altitude
+        /// Multiplier curve to change maxTemp with altitude
         /// </summary>
         public FloatCurve altitudeCurve;
 
         /// <summary>
-        /// Controls the amount of heat that is applied on each spot of the planet
+        /// Multiplier map for maxTemperature
         /// </summary>
         public MapSO heatMap;
     }
@@ -97,7 +97,7 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
-        /// Update the heat. Heating is physics phenomenon so do it in the physics loop.
+        /// Update the temperature. This is physics phenomenon so do it in the physics loop.
         /// </summary>
         /// <returns></returns>
         private void FixedUpdate()
@@ -128,7 +128,6 @@ namespace Kopernicus.Components
             Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
             Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
 
-            //Double heat = altitude * latitude * longitude * hazardousBody.heatRate;
             Double maxTemp = altitude * latitude * longitude * hazardousBody.maxTemp;
             if (hazardousBody.heatMap)
             {
@@ -138,8 +137,10 @@ namespace Kopernicus.Components
                 maxTemp *= hazardousBody.heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
             }
 
-            foreach (Part part in vessel.Parts)
+            for (int i = vessel.Parts.Count; i > 0; i--)
             {
+                Part part = vessel.Parts[i - 1];
+
                 if (part.temperature < maxTemp)
                 {
                     part.temperature += ((maxTemp - part.temperature) * 0.69420 / hazardousBody.lambda) * TimeWarp.fixedDeltaTime;
