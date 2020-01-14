@@ -44,54 +44,54 @@ namespace Kopernicus.Configuration
         // Set-up our parental objects
         public HazardousBody Value { get; set; }
 
-        // The average heat on the body
+        // The maximum temperature that will eventually be reached.
         [ParserTarget("maxTemp")]
-        [KittopiaDescription("The average heat on the body.")]
+        [KittopiaDescription("The maximum temperature that will eventually be reached.")]
         public NumericParser<Double> MaxTemp
         {
-            get { return Value.maxTemp + 273.15; }
-            set { Value.maxTemp = value - 273.15; }
+            get { return Value.maxTemp; }
+            set { Value.maxTemp = value; }
         }
 
-        // How much time passes between applying the heat to a vessel
+        // How many seconds it'll take to get halfway to maxTemp.
         [ParserTarget("lambda")]
-        [KittopiaDescription("How much time passes between applying the heat to a vessel.")]
+        [KittopiaDescription("How many seconds it'll take to get halfway to maxTemp.")]
         public NumericParser<Single> Lambda
         {
             get { return Value.lambda; }
             set { Value.lambda = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain altitude
+        // Multiplier curve to change maxTemp with altitude
         [ParserTarget("AltitudeCurve")]
-        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain altitude.")]
+        [KittopiaDescription("Multiplier curve to change maxTemp with altitude.")]
         public FloatCurveParser AltitudeCurve
         {
             get { return Value.altitudeCurve; }
             set { Value.altitudeCurve = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain latitude
+        // Multiplier curve to change maxTemp with latitude
         [ParserTarget("LatitudeCurve")]
-        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain latitude.")]
+        [KittopiaDescription("Multiplier curve to change maxTemp with latitude.")]
         public FloatCurveParser LatitudeCurve
         {
             get { return Value.latitudeCurve; }
             set { Value.latitudeCurve = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain longitude
+        // Multiplier curve to change maxTemp with longitude
         [ParserTarget("LongitudeCurve")]
-        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain longitude.")]
+        [KittopiaDescription("Multiplier curve to change maxTemp with longitude.")]
         public FloatCurveParser LongitudeCurve
         {
             get { return Value.longitudeCurve; }
             set { Value.longitudeCurve = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain longitude
+        // Multiplier map for maxTemp
         [ParserTarget("HeatMap")]
-        [KittopiaDescription("Greyscale map for fine control of the heat on a planet. black = 0, white = 1")]
+        [KittopiaDescription("Greyscale map for fine control of the maxTemp on a planet. black = 0, white = 1")]
         public MapSOParserGreyScale<MapSO> HeatMap
         {
             get { return Value.heatMap; }

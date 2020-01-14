@@ -59,7 +59,7 @@ namespace Kopernicus.Components
         public FloatCurve altitudeCurve;
 
         /// <summary>
-        /// Multiplier map for maxTemperature
+        /// Multiplier map for maxTemp
         /// </summary>
         public MapSO heatMap;
     }
