@@ -163,36 +163,6 @@ namespace Kopernicus.Configuration
         [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
         public readonly List<IModLoader> Mods = new List<IModLoader>();
 
-        // Killer-Ocean
-        [ParserTarget("HazardousOcean", AllowMerge = true)]
-        public FloatCurveParser HazardousOcean
-        {
-            get
-            {
-                HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
-                return ocean == null ? null : ocean.heatCurve;
-            }
-            set
-            {
-                HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
-                if (value == null && ocean != null)
-                {
-                    Object.Destroy(ocean);
-                    return;
-                }
-
-                if (value != null && ocean == null)
-                {
-                    ocean = Value.gameObject.AddComponent<HazardousOcean>();
-                }
-
-                if (value != null)
-                {
-                    ocean.heatCurve = value;
-                }
-            }
-        }
-
         // Ocean-Fog
         [ParserTarget("Fog", AllowMerge = true)]
         [KittopiaUntouchable]

@@ -34,101 +34,121 @@ namespace Kopernicus.Components
     public class HazardousBody : MonoBehaviour
     {
         /// <summary>
-        /// The average heat rate on the surface of the body. Gets multiplied by latitude, longitude and altitude curves
+        /// The maximum temperature that will eventually be reached.
         /// </summary>
-        public Double heatRate;
+        public Double maxTemp = 0;
 
         /// <summary>
-        /// How many seconds should pass between applying the heat rate to the ship.
+        /// How many seconds it'll take to get halfway to maxTemp.
         /// </summary>
-        public Single heatInterval = 0.05f;
+        public Single lambda = 0;
 
         /// <summary>
-        /// Controls the heat rate at a certain latitude
+        /// Multiplier curve to change maxTemp with latitude
         /// </summary>
         public FloatCurve latitudeCurve;
 
         /// <summary>
-        /// Controls the heat rate at a certain longitude
+        /// Multiplier curve to change maxTemp with longitude
         /// </summary>
         public FloatCurve longitudeCurve;
 
         /// <summary>
-        /// Controls the heat rate at a certain altitude
+        /// Multiplier curve to change maxTemp with altitude
         /// </summary>
         public FloatCurve altitudeCurve;
 
         /// <summary>
-        /// Controls the amount of heat that is applied on each spot of the planet
+        /// Multiplier map for maxTemp
         /// </summary>
         public MapSO heatMap;
+    }
 
-        private CelestialBody _body;
-        
-        // A timer that counts how much time is left until the next heating time. Negative value means the heating is
-        // late and there is heating "debt" that needs to be paid off.
-        private Single _heatPosition;
-
-        /// <summary>
-        /// Get the body
-        /// </summary>
-        private void Start()
+    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
+    public class HazardousTracker : MonoBehaviour
+    {
+        void Start()
         {
-            _body = GetComponent<CelestialBody>();
+            GameEvents.onVesselLoaded.Add(OnVesselLoaded);
+            GameEvents.onVesselCreate.Add(OnVesselCreate);
+            DontDestroyOnLoad(this);
+        }
+
+        private void OnVesselCreate(Vessel data)
+        {
+            data.gameObject.AddOrGetComponent<HazardousVessel>();
+        }
+
+        void OnVesselLoaded(Vessel vessel)
+        {
+            vessel.gameObject.AddOrGetComponent<HazardousVessel>();
+        }
+    }
+
+    public class HazardousVessel : MonoBehaviour
+    {
+        Vessel vessel;
+        CelestialBody _body;
+        HazardousBody hazardousBody;
+
+        void Start()
+        {
+            vessel = GetComponent<Vessel>();
         }
 
         /// <summary>
-        /// Update the heat. Heating is physics phenomenon so do it in the physics loop.
+        /// Update the temperature. This is physics phenomenon so do it in the physics loop.
         /// </summary>
         /// <returns></returns>
         private void FixedUpdate()
         {
-            // Check for an active vessel
-            if (!FlightGlobals.ActiveVessel || FlightGlobals.ActiveVessel.packed)
-            {
-                return;
-            }
-
             // Check if the vessel is near the body
-            if (FlightGlobals.currentMainBody != _body)
+            if (FlightGlobals.currentMainBody != vessel.mainBody)
             {
                 return;
             }
 
-            // Decrement timer. If it becomes zero or less, it's time to apply heating.
-            _heatPosition -= TimeWarp.fixedDeltaTime;
-            if (_heatPosition > 0f)
+            // Check if the body has changed
+            if (_body != FlightGlobals.currentMainBody)
+            {
+                _body = FlightGlobals.currentMainBody;
+                hazardousBody = _body.GetComponent<HazardousBody>();
+            }
+
+            // Check if the body is hazardous
+            if (!hazardousBody)
             {
                 return;
             }
 
             // We got past the counter - update time
             Double altitude =
-                altitudeCurve.Evaluate((Single) Vector3d.Distance(FlightGlobals.ActiveVessel.transform.position,
+                hazardousBody.altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position,
                     _body.transform.position));
-            Double latitude = latitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.latitude);
-            Double longitude = longitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.longitude);
+            Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
+            Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
 
-            Double heat = altitude * latitude * longitude * heatRate;
-            if (heatMap)
+            Double maxTemp = altitude * latitude * longitude * hazardousBody.maxTemp;
+            if (hazardousBody.heatMap)
             {
                 const Single FULL_CIRCLE = 1f / 360f;
                 const Single HALF_CIRCLE = 1f / 180f;
 
-                heat *= heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
+                maxTemp *= hazardousBody.heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
             }
 
-            // How many rounds of heating need to be applied before the timer is positive again (heating "debt" is paid
-            // off).
-            UInt32 heatingRounds = (UInt32) Math.Floor(-_heatPosition / heatInterval + 1);
-
-            foreach (Part part in FlightGlobals.ActiveVessel.Parts)
+            for (int i = vessel.Parts.Count; i > 0; i--)
             {
-                part.temperature += heat * heatingRounds;
-            }
+                Part part = vessel.Parts[i - 1];
 
-            // Increment timer so that it becomes positive.
-            _heatPosition += heatInterval * heatingRounds;
+                if (part.temperature < maxTemp)
+                {
+                    part.temperature += ((maxTemp - part.temperature) * 0.69420 / hazardousBody.lambda) * TimeWarp.fixedDeltaTime;
+
+                    if (part.temperature > maxTemp)
+                        part.temperature = maxTemp;
+                }
+            }
         }
     }
 }
