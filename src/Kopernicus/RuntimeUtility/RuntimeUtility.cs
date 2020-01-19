@@ -339,14 +339,15 @@ namespace Kopernicus.RuntimeUtility
                     Destroy(this);
                     return;
                 }
-
+         
                 fixes.Add(body.transform.name,
                     new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
                 body.referenceBody.orbitingBodies.Add(body);
                 body.referenceBody.orbitingBodies =
                     body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
                 body.orbit.Init();
-                body.orbitDriver.UpdateOrbit();
+    
+                //body.orbitDriver.UpdateOrbit();
 
                 // Calculations
                 if (!body.Has("sphereOfInfluence"))
@@ -354,18 +355,18 @@ namespace Kopernicus.RuntimeUtility
                     body.sphereOfInfluence = body.orbit.semiMajorAxis *
                                              Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
                 }
-
+              
                 if (!body.Has("hillSphere"))
                 {
                     body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) *
                                       Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
                 }
-
+              
                 if (!body.solarRotationPeriod)
                 {
-                    continue;
+                   continue;
                 }
-
+       
                 Double rotPeriod = Utility
                     .FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody
                     .rotationPeriod;
@@ -880,23 +881,23 @@ namespace Kopernicus.RuntimeUtility
         }
 
         // Flag Fixer
-        private static void ApplyFlagFixes()
+        private  void ApplyFlagFixes()
         {
             GameEvents.OnKSCFacilityUpgraded.Add(FixFlags);
             GameEvents.OnKSCStructureRepaired.Add(FixFlags);
         }
 
-        private static void FixFlags(DestructibleBuilding data)
+        private  void FixFlags(DestructibleBuilding data)
         {
             FixFlags();
         }
 
-        private static void FixFlags(Upgradeables.UpgradeableFacility data0, int data1)
+        private  void FixFlags(Upgradeables.UpgradeableFacility data0, int data1)
         {
             FixFlags();
         }
 
-        private static void FixFlags()
+        private  void FixFlags()
         {
             PQSCity KSC = FlightGlobals.GetHomeBody()?.pqsController?.GetComponentsInChildren<PQSCity>(true)?.FirstOrDefault(p => p?.name == "KSC");
             SkinnedMeshRenderer[] flags = KSC?.GetComponentsInChildren<SkinnedMeshRenderer>(true)?.Where(smr => smr?.name == "Flag")?.ToArray();
