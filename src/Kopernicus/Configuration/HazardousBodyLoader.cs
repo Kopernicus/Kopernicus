@@ -44,54 +44,45 @@ namespace Kopernicus.Configuration
         // Set-up our parental objects
         public HazardousBody Value { get; set; }
 
-        // The maximum temperature that will eventually be reached.
-        [ParserTarget("maxTemp")]
-        [KittopiaDescription("The maximum temperature that will eventually be reached.")]
-        public NumericParser<Double> MaxTemp
+        // The ambient temperature.
+        [ParserTarget("ambientTemp")]
+        [KittopiaDescription("The ambient temperature.")]
+        public NumericParser<Double> AmbientTemp
         {
-            get { return Value.maxTemp; }
-            set { Value.maxTemp = value; }
+            get { return Value.ambientTemp; }
+            set { Value.ambientTemp = value; }
         }
 
-        // How many seconds it'll take to get halfway to maxTemp.
-        [ParserTarget("lambda")]
-        [KittopiaDescription("How many seconds it'll take to get halfway to maxTemp.")]
-        public NumericParser<Single> Lambda
-        {
-            get { return Value.lambda; }
-            set { Value.lambda = value; }
-        }
-
-        // Multiplier curve to change maxTemp with altitude
+        // Multiplier curve to change ambientTemp with altitude
         [ParserTarget("AltitudeCurve")]
-        [KittopiaDescription("Multiplier curve to change maxTemp with altitude.")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with altitude.")]
         public FloatCurveParser AltitudeCurve
         {
             get { return Value.altitudeCurve; }
             set { Value.altitudeCurve = value; }
         }
 
-        // Multiplier curve to change maxTemp with latitude
+        // Multiplier curve to change ambientTemp with latitude
         [ParserTarget("LatitudeCurve")]
-        [KittopiaDescription("Multiplier curve to change maxTemp with latitude.")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with latitude.")]
         public FloatCurveParser LatitudeCurve
         {
             get { return Value.latitudeCurve; }
             set { Value.latitudeCurve = value; }
         }
 
-        // Multiplier curve to change maxTemp with longitude
+        // Multiplier curve to change ambientTemp with longitude
         [ParserTarget("LongitudeCurve")]
-        [KittopiaDescription("Multiplier curve to change maxTemp with longitude.")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with longitude.")]
         public FloatCurveParser LongitudeCurve
         {
             get { return Value.longitudeCurve; }
             set { Value.longitudeCurve = value; }
         }
 
-        // Multiplier map for maxTemp
+        // Multiplier map for ambientTemp
         [ParserTarget("HeatMap")]
-        [KittopiaDescription("Greyscale map for fine control of the maxTemp on a planet. black = 0, white = 1")]
+        [KittopiaDescription("Greyscale map for fine control of the ambientTemp on a planet. black = 0, white = 1")]
         public MapSOParserGreyScale<MapSO> HeatMap
         {
             get { return Value.heatMap; }
@@ -118,9 +109,9 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = generatedBody.celestialBody.gameObject.AddComponent<HazardousBody>();
-            Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
         }
 
         /// <summary>
@@ -137,9 +128,9 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = body.gameObject.AddComponent<HazardousBody>();
-            Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
         }
 
         /// <summary>
@@ -153,17 +144,17 @@ namespace Kopernicus.Configuration
             // Null safe
             if (Value.altitudeCurve == null)
             {
-                Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
             }
 
             if (Value.latitudeCurve == null)
             {
-                Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
             }
 
             if (Value.longitudeCurve == null)
             {
-                Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
             }
         }
     }

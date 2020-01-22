@@ -686,6 +686,7 @@ namespace Kopernicus.RuntimeUtility
             }
             Events.OnRuntimeUtilityPatchFI.Fire();
             ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+            ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(HazardousBody.RadiationTemperature);
         }
 
         // Fix the Space Center Cameras
