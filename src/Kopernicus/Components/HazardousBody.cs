@@ -84,7 +84,7 @@ namespace Kopernicus.Components
                         const Single FULL_CIRCLE = 1f / 360f;
                         const Single HALF_CIRCLE = 1f / 180f;
 
-                        newTemp *= hazardousBody.heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
+                        newTemp *= hazardousBody.heatMap.GetPixelFloat(((465 - longitude) % 360) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
                     }
 
                     if (newTemp > baseTemp)
