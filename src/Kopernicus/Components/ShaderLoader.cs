@@ -77,19 +77,16 @@ namespace Kopernicus.Components
 
             Debug.Log("[Kopernicus] ShaderLoader: Loading asset bundle at path " + path);
 
-            using (WWW www = new WWW("file://" + path))
+            AssetBundle bundle = AssetBundle.LoadFromFile(path);
+            Shader[] shaders = bundle.LoadAllAssets<Shader>();
+
+            foreach (Shader shader in shaders)
             {
-                AssetBundle bundle = www.assetBundle;
-                Shader[] shaders = bundle.LoadAllAssets<Shader>();
-
-                foreach (Shader shader in shaders)
-                {
-                    Debug.Log("[Kopernicus] ShaderLoader: adding " + shader.name);
-                    ShaderDictionary.Add(shader.name, shader);
-                }
-
-                bundle.Unload(false); // unload the raw asset bundle
+                Debug.Log("[Kopernicus] ShaderLoader: adding " + shader.name);
+                ShaderDictionary.Add(shader.name, shader);
             }
+
+            bundle.Unload(false); // unload the raw asset bundle
         }
     }
 }
