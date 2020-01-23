@@ -53,6 +53,15 @@ namespace Kopernicus.Configuration
             set { Value.ambientTemp = value; }
         }
 
+        // If the ambientTemp should be added.
+        [ParserTarget("sumTemp")]
+        [KittopiaDescription("If the ambientTemp should be added.")]
+        public NumericParser<Boolean> SumTemp
+        {
+            get { return Value.sumTemp; }
+            set { Value.sumTemp = value; }
+        }
+
         // Multiplier curve to change ambientTemp with altitude
         [ParserTarget("AltitudeCurve")]
         [KittopiaDescription("Multiplier curve to change ambientTemp with altitude.")]

@@ -40,6 +40,11 @@ namespace Kopernicus.Components
         public Double ambientTemp = 0;
 
         /// <summary>
+        /// If the ambientTemp should be added.
+        /// </summary>
+        public Boolean sumTemp = false;
+
+        /// <summary>
         /// Multiplier curve to change ambientTemp with latitude
         /// </summary>
         public FloatCurve latitudeCurve;
@@ -73,6 +78,8 @@ namespace Kopernicus.Components
 
                 if (hazardousBodies?.Length > 0)
                 {
+                    Double addTemp = 0;
+
                     for (Int32 i = hazardousBodies.Length; i > 0; i--)
                     {
                         HazardousBody hazardousBody = hazardousBodies[i - 1];
@@ -91,11 +98,17 @@ namespace Kopernicus.Components
                             newTemp *= m;
                         }
 
-                        if (newTemp > baseTemp)
+                        if (hazardousBody.sumTemp && newTemp > 0)
+                        {
+                            addTemp += newTemp;
+                        }
+                        else if (newTemp > baseTemp)
                         {
                             baseTemp = newTemp;
                         }
                     }
+
+                    baseTemp += addTemp;
                 }
             }
 
