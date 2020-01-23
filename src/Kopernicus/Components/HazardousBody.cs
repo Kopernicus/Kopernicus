@@ -62,34 +62,39 @@ namespace Kopernicus.Components
         /// <summary>
         /// Override for <see cref="FlightIntegrator.CalculateBackgroundRadiationTemperature"/>
         /// </summary>
-        internal static double RadiationTemperature(ModularFlightIntegrator flightIntegrator, double baseTemp)
+        internal static double RadiationTemperature(ModularFlightIntegrator flightIntegrator, Double baseTemp)
         {
             Vessel vessel = flightIntegrator?.Vessel;
 
             if (vessel != null)
             {
                 CelestialBody _body = vessel?.mainBody;
-                HazardousBody hazardousBody = _body?.GetComponent<HazardousBody>();
+                HazardousBody[] hazardousBodies = _body?.GetComponents<HazardousBody>();
 
-                if (hazardousBody != null)
+                if (hazardousBodies?.Length > 0)
                 {
-                    Double altitude = hazardousBody.altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
-                    Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
-                    Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
-
-                    Double newTemp = altitude * latitude * longitude * hazardousBody.ambientTemp;
-
-                    if (hazardousBody.heatMap)
+                    for (Int32 i = hazardousBodies.Length; i > 0; i--)
                     {
-                        double x = ((450 - vessel.longitude) % 360) / 360.0;
-                        double y = (vessel.latitude + 90) / 180.0;
-                        double m = hazardousBody.heatMap.GetPixelFloat(x, y);
-                        newTemp *= m;
-                    }
+                        HazardousBody hazardousBody = hazardousBodies[i - 1];
 
-                    if (newTemp > baseTemp)
-                    {
-                        baseTemp = newTemp;
+                        Double altitude = hazardousBody.altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
+                        Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
+                        Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
+
+                        Double newTemp = altitude * latitude * longitude * hazardousBody.ambientTemp;
+
+                        if (hazardousBody.heatMap)
+                        {
+                            Double x = ((450 - vessel.longitude) % 360) / 360.0;
+                            Double y = (vessel.latitude + 90) / 180.0;
+                            Double m = hazardousBody.heatMap.GetPixelFloat(x, y);
+                            newTemp *= m;
+                        }
+
+                        if (newTemp > baseTemp)
+                        {
+                            baseTemp = newTemp;
+                        }
                     }
                 }
             }
