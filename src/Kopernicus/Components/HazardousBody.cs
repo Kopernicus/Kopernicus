@@ -91,7 +91,7 @@ namespace Kopernicus.Components
 
                         if (!string.IsNullOrEmpty(hazardousBody.biomeName))
                         {
-                            String biomeName = _body?.BiomeMap?.GetAtt(vessel.latitude, vessel.longitude)?.name;
+                            String biomeName = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
 
                             if (hazardousBody.biomeName != biomeName)
                                 continue;
