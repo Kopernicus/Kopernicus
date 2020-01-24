@@ -45,6 +45,11 @@ namespace Kopernicus.Components
         public Boolean sumTemp = false;
 
         /// <summary>
+        /// The name of the biome.
+        /// </summary>
+        public String biomeName;
+
+        /// <summary>
         /// Multiplier curve to change ambientTemp with latitude
         /// </summary>
         public FloatCurve latitudeCurve;
@@ -83,6 +88,14 @@ namespace Kopernicus.Components
                     for (Int32 i = hazardousBodies.Length; i > 0; i--)
                     {
                         HazardousBody hazardousBody = hazardousBodies[i - 1];
+
+                        if (!string.IsNullOrEmpty(hazardousBody.biomeName))
+                        {
+                            String biomeName = _body?.BiomeMap?.GetAtt(vessel.latitude, vessel.longitude)?.name;
+
+                            if (hazardousBody.biomeName != biomeName)
+                                continue;
+                        }
 
                         Double altitude = hazardousBody.altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
                         Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);

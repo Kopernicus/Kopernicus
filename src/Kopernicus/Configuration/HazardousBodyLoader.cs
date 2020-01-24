@@ -62,6 +62,15 @@ namespace Kopernicus.Configuration
             set { Value.sumTemp = value; }
         }
 
+        // The name of the biome.
+        [ParserTarget("biomeName")]
+        [KittopiaDescription("The name of the biome.")]
+        public String BiomeName
+        {
+            get { return Value.biomeName; }
+            set { Value.biomeName = value; }
+        }
+
         // Multiplier curve to change ambientTemp with altitude
         [ParserTarget("AltitudeCurve")]
         [KittopiaDescription("Multiplier curve to change ambientTemp with altitude.")]
