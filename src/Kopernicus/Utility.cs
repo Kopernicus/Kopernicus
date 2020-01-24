@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -54,7 +54,7 @@ namespace Kopernicus
                 {
                     return _deactivator;
                 }
-                
+
                 GameObject deactivatorObject = new GameObject("__deactivator");
                 deactivatorObject.SetActive(false);
                 UnityEngine.Object.DontDestroyOnLoad(deactivatorObject);
@@ -78,7 +78,7 @@ namespace Kopernicus
                 {
                     continue;
                 }
-                
+
                 if (log)
                 {
                     Logger.Active.Log("Copying \"" + field.Name + "\": " + (field.GetValue(destination) ?? "<NULL>") + " => " + (field.GetValue(source) ?? "<NULL>"));
@@ -154,7 +154,7 @@ namespace Kopernicus
             Logger.Active.Log("------------------");
         }
 
-        // Print out the tree of components 
+        // Print out the tree of components
         public static void GameObjectWalk(GameObject o, String prefix = "")
         {
             // If null, don't do anything
@@ -260,12 +260,12 @@ namespace Kopernicus
             {
                 return mesh;
             }
-            
+
             // first we enable all maps
             OnDemandStorage.EnableBody(body.bodyName);
-                
+
             // In order to generate the scaled space we have to enable the mods.  Since this is
-            // a prefab they don't get disabled as kill game performance.  To resolve this we 
+            // a prefab they don't get disabled as kill game performance.  To resolve this we
             // clone the PQS, use it, and then delete it when done. At runtime we can simply use
             // the PQS that is active
             GameObject pqsVersionGameObject =
@@ -316,9 +316,9 @@ namespace Kopernicus
                     // Build the vertex data object for the PQS mods
                     PQS.VertexBuildData vertex = new PQS.VertexBuildData
                     {
-                        directionFromCenter = direction, 
-                        vertHeight = body.Radius, 
-                        u = uv.x, 
+                        directionFromCenter = direction,
+                        vertHeight = body.Radius,
+                        u = uv.x,
                         v = uv.y
                     };
 
@@ -336,7 +336,7 @@ namespace Kopernicus
                         {
                             continue;
                         }
-                        
+
                         mods[m].OnVertexBuildHeight(vertex);
                     }
 
@@ -475,7 +475,7 @@ namespace Kopernicus
             {
                 Vector3 n = normals[i];
                 Vector3 t = tan1[i];
-                
+
                 Vector3.OrthoNormalize(ref n, ref t);
 
                 tangents[i].x = t.x;
@@ -869,7 +869,7 @@ namespace Kopernicus
                     {
                         continue;
                     }
-                    
+
                     Logger.Active.Log("Adding to remove list: " + mType);
                     types.Add(mType);
                 }
@@ -884,13 +884,13 @@ namespace Kopernicus
                     {
                         continue;
                     }
-                    
+
                     Logger.Active.Log("Removed mod " + mType);
                     if (!toCheck.Contains(delMod.gameObject))
                     {
                         toCheck.Add(delMod.gameObject);
                     }
-                    
+
                     delMod.sphere = null;
                     switch (delMod)
                     {
@@ -1021,49 +1021,29 @@ namespace Kopernicus
 
         public static T Instantiate<T>(T original) where T : UnityEngine.Object
         {
-            #if !KSP131
             return UnityEngine.Object.Instantiate(original);
-            #else
-            return UnityEngine.Object.Instantiate(original);
-            #endif
         }
 
         public static T Instantiate<T>(T original, Vector3 position, Quaternion rotation) where T : UnityEngine.Object
         {
-            #if !KSP131
             return UnityEngine.Object.Instantiate(original, position, rotation);
-            #else
-            return UnityEngine.Object.Instantiate(original, position, rotation) as T;
-            #endif
         }
 
         public static T Instantiate<T>(T original, Vector3 position, Quaternion rotation, Transform parent)
             where T : UnityEngine.Object
         {
-            #if !KSP131
             return UnityEngine.Object.Instantiate(original, position, rotation, parent);
-            #else
-            return UnityEngine.Object.Instantiate(original, position, rotation, parent) as T;
-            #endif
         }
 
         public static T Instantiate<T>(T original, Transform parent) where T : UnityEngine.Object
         {
-            #if !KSP131
             return UnityEngine.Object.Instantiate(original, parent);
-            #else
-            return UnityEngine.Object.Instantiate(original, parent) as T;
-            #endif
         }
 
         public static T Instantiate<T>(T original, Transform parent, Boolean worldPositionStays)
             where T : UnityEngine.Object
         {
-            #if !KSP131
             return UnityEngine.Object.Instantiate(original, parent, worldPositionStays);
-            #else
-            return UnityEngine.Object.Instantiate(original, parent, worldPositionStays) as T;
-            #endif
         }
 
         public static Double Clamp(Double value, Double min, Double max)

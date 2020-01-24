@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -84,7 +84,7 @@ namespace Kopernicus.Configuration.ModLoader
                         obj.transform.parent = Utility.Deactivator;
                         foreach (GameObject subobj in Value.objects)
                         {
-                            Utility.Instantiate(subobj).transform.parent = obj.transform;
+                            UnityEngine.Object.Instantiate(subobj).transform.parent = obj.transform;
                         }
                     }
                     else if (Value.objects.Length == 1)
@@ -361,7 +361,7 @@ namespace Kopernicus.Configuration.ModLoader
             {
                 Mod.lod = new PQSCity.LODRange[0];
             }
-            
+
         }
     }
 }

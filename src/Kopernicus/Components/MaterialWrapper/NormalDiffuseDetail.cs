@@ -74,18 +74,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexScale
         {
-            get { return GetTextureScale(Properties.MAIN_TEX_KEY); }
-            set { SetTextureScale(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MainTexId); }
+            set { SetTextureScale(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexOffset
         {
-            get { return GetTextureOffset(Properties.MAIN_TEX_KEY); }
-            set { SetTextureOffset(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MainTexId); }
+            set { SetTextureOffset(Properties.Instance.MainTexId, value); }
         }
 
         // Detail (RGB), default = "gray" { }
@@ -95,18 +93,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.DetailId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailScale
         {
-            get { return GetTextureScale(Properties.DETAIL_KEY); }
-            set { SetTextureScale(Properties.DETAIL_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.DetailId); }
+            set { SetTextureScale(Properties.Instance.DetailId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailOffset
         {
-            get { return GetTextureOffset(Properties.DETAIL_KEY); }
-            set { SetTextureOffset(Properties.DETAIL_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.DetailId); }
+            set { SetTextureOffset(Properties.Instance.DetailId, value); }
         }
 
         public NormalDiffuseDetail() : base(Properties.Shader)

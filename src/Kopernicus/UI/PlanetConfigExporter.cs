@@ -33,6 +33,8 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration;
 using KSP.Localization;
+using UnityEngine;
+using Object = System.Object;
 
 namespace Kopernicus.UI
 {
@@ -113,30 +115,37 @@ namespace Kopernicus.UI
                 return;
             }
 
-            // Is this a value or a node?
-            ConfigType configType = Tools.GetConfigType(value.GetType());
-            if (configType == ConfigType.Value)
+            try
             {
-                SetValue(parserTarget, memberInfo, reference, ref node);
-            }
-            else
-            {
-                // Create the new node
-                String name = parserTarget.FieldName;
-                if (parserTarget.NameSignificance == NameSignificance.Type)
+                // Is this a value or a node?
+                ConfigType configType = Tools.GetConfigType(value.GetType());
+                if (configType == ConfigType.Value)
                 {
-                    name += ":" + value.GetType().Name;
+                    SetValue(parserTarget, memberInfo, reference, ref node);
                 }
+                else
+                {
+                    // Create the new node
+                    String name = parserTarget.FieldName;
+                    if (parserTarget.NameSignificance == NameSignificance.Type)
+                    {
+                        name += ":" + value.GetType().Name;
+                    }
 
-                // Get a description
-                String description = Tools.GetDescription(memberInfo);
+                    // Get a description
+                    String description = Tools.GetDescription(memberInfo);
 
-                // Add it to the config
-                ConfigNode valueNode = String.IsNullOrEmpty(description)
-                    ? node.AddNode(name)
-                    : node.AddNode(name, description);
+                    // Add it to the config
+                    ConfigNode valueNode = String.IsNullOrEmpty(description)
+                        ? node.AddNode(name)
+                        : node.AddNode(name, description);
 
-                WriteToConfig(value, ref valueNode);
+                    WriteToConfig(value, ref valueNode);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
             }
         }
 

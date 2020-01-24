@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -40,7 +40,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             // Get the MainMenu-Logic
             MainMenu main = FindObjectOfType<MainMenu>();
             if (main == null)
@@ -70,7 +70,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             // Select a random body?
             if (Templates.RandomMainMenuBodies.Any())
             {
@@ -139,10 +139,10 @@ namespace Kopernicus.RuntimeUtility
             }
 
             // Clone the scaledVersion and attach it to the Scene
-            GameObject menuPlanet = Utility.Instantiate(Utility
+            GameObject menuPlanet = UnityEngine.Object.Instantiate(Utility
                 .FindBody(PSystemManager.Instance.systemPrefab.rootBody, planetCb.transform.name).scaledVersion, space.transform, true);
             menuPlanet.name = planetCb.transform.name;
-                    
+
             // Destroy stuff
             DestroyImmediate(menuPlanet.GetComponent<ScaledSpaceFader>());
             DestroyImmediate(menuPlanet.GetComponent<SphereCollider>());
@@ -162,7 +162,7 @@ namespace Kopernicus.RuntimeUtility
 
             // And set it to layer 0
             menuPlanet.layer = 0;
-                
+
             Events.OnRuntimeUtilityUpdateMenu.Fire();
         }
     }

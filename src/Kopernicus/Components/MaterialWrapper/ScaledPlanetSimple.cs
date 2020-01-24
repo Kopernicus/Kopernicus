@@ -108,18 +108,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexScale
         {
-            get { return GetTextureScale(Properties.MAIN_TEX_KEY); }
-            set { SetTextureScale(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MainTexId); }
+            set { SetTextureScale(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexOffset
         {
-            get { return GetTextureOffset(Properties.MAIN_TEX_KEY); }
-            set { SetTextureOffset(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MainTexId); }
+            set { SetTextureOffset(Properties.Instance.MainTexId, value); }
         }
 
         // Normal map, default = "bump" { }
@@ -129,18 +127,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.BumpMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapScale
         {
-            get { return GetTextureScale(Properties.BUMP_MAP_KEY); }
-            set { SetTextureScale(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.BumpMapId); }
+            set { SetTextureScale(Properties.Instance.BumpMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapOffset
         {
-            get { return GetTextureOffset(Properties.BUMP_MAP_KEY); }
-            set { SetTextureOffset(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.BumpMapId); }
+            set { SetTextureOffset(Properties.Instance.BumpMapId, value); }
         }
 
         // Opacity, default = 1
@@ -157,18 +153,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.ResourceMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 ResourceMapScale
         {
-            get { return GetTextureScale(Properties.RESOURCE_MAP_KEY); }
-            set { SetTextureScale(Properties.RESOURCE_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.ResourceMapId); }
+            set { SetTextureScale(Properties.Instance.ResourceMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 ResourceMapOffset
         {
-            get { return GetTextureOffset(Properties.RESOURCE_MAP_KEY); }
-            set { SetTextureOffset(Properties.RESOURCE_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.ResourceMapId); }
+            set { SetTextureOffset(Properties.Instance.ResourceMapId, value); }
         }
 
         public ScaledPlanetSimple() : base(Properties.Shader)

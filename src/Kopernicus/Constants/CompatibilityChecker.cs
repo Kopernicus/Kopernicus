@@ -49,9 +49,9 @@ namespace Kopernicus.Constants
     {
         // Compatible version
         internal const Int32 VERSION_MAJOR = 1;
-        internal const Int32 VERSION_MINOR = 7;
-        internal const Int32 REVISION = 3;
-        internal const Int32 KOPERNICUS = 2;
+        internal const Int32 VERSION_MINOR = 8;
+        internal const Int32 REVISION = 0;
+        internal const Int32 KOPERNICUS = 903;
 
         public static Boolean IsCompatible()
         {
@@ -98,17 +98,10 @@ namespace Kopernicus.Constants
             ncats?.SetValue(mm, true);
 
             // Nobody can read that popup
-            #if !KSP131
             ScreenMessages.PostScreenMessage(
                 "Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!",
                 Single.MaxValue,
                 ScreenMessageStyle.UPPER_LEFT, true);
-            #else
-            DontDestroyOnLoad(ScreenMessages.PostScreenMessage(
-                "Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!",
-                Single.MaxValue,
-                ScreenMessageStyle.UPPER_LEFT).textInstance);
-            #endif
         }
 
         public void Start()

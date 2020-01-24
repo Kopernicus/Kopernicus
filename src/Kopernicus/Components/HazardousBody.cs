@@ -23,6 +23,7 @@
  * https://kerbalspaceprogram.com
  */
 
+using ModularFI;
 using System;
 using UnityEngine;
 
@@ -34,96 +35,101 @@ namespace Kopernicus.Components
     public class HazardousBody : MonoBehaviour
     {
         /// <summary>
-        /// The average heat rate on the surface of the body. Gets multiplied by latitude, longitude and altitude curves
+        /// The maximum temperature that will eventually be reached.
         /// </summary>
-        public Double heatRate;
+        public Double ambientTemp = 0;
 
         /// <summary>
-        /// How many seconds should pass between applying the heat rate to the ship.
+        /// If the ambientTemp should be added.
         /// </summary>
-        public Single heatInterval = 0.05f;
+        public Boolean sumTemp = false;
 
         /// <summary>
-        /// Controls the heat rate at a certain latitude
+        /// The name of the biome.
+        /// </summary>
+        public String biomeName;
+
+        /// <summary>
+        /// Multiplier curve to change ambientTemp with latitude
         /// </summary>
         public FloatCurve latitudeCurve;
 
         /// <summary>
-        /// Controls the heat rate at a certain longitude
+        /// Multiplier curve to change ambientTemp with longitude
         /// </summary>
         public FloatCurve longitudeCurve;
 
         /// <summary>
-        /// Controls the heat rate at a certain altitude
+        /// Multiplier curve to change ambientTemp with altitude
         /// </summary>
         public FloatCurve altitudeCurve;
 
         /// <summary>
-        /// Controls the amount of heat that is applied on each spot of the planet
+        /// Multiplier map for ambientTemp
         /// </summary>
         public MapSO heatMap;
 
-        private CelestialBody _body;
-        
-        // The current position of the timer.
-        private Single _heatPosition;
-
         /// <summary>
-        /// Get the body
+        /// Override for <see cref="FlightIntegrator.CalculateBackgroundRadiationTemperature"/>
         /// </summary>
-        private void Start()
+        internal static double RadiationTemperature(ModularFlightIntegrator flightIntegrator, Double baseTemp)
         {
-            _body = GetComponent<CelestialBody>();
-        }
+            // Stock Behaviour
+            baseTemp = UtilMath.Lerp(baseTemp, PhysicsGlobals.SpaceTemperature, flightIntegrator.DensityThermalLerp);
 
-        /// <summary>
-        /// Update the heat
-        /// </summary>
-        /// <returns></returns>
-        private void Update()
-        {
-            // Check for an active vessel
-            if (!FlightGlobals.ActiveVessel || FlightGlobals.ActiveVessel.packed)
+            // Hazardous Body
+            Vessel vessel = flightIntegrator?.Vessel;
+
+            if (vessel != null)
             {
-                return;
+                CelestialBody _body = vessel?.mainBody;
+                HazardousBody[] hazardousBodies = _body?.GetComponents<HazardousBody>();
+
+                if (hazardousBodies?.Length > 0)
+                {
+                    Double addTemp = 0;
+
+                    for (Int32 i = hazardousBodies.Length; i > 0; i--)
+                    {
+                        HazardousBody hazardousBody = hazardousBodies[i - 1];
+
+                        if (!string.IsNullOrEmpty(hazardousBody.biomeName))
+                        {
+                            String biomeName = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
+
+                            if (hazardousBody.biomeName != biomeName)
+                                continue;
+                        }
+
+                        Double altitude = hazardousBody.altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
+                        Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
+                        Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
+
+                        Double newTemp = altitude * latitude * longitude * hazardousBody.ambientTemp;
+
+                        if (hazardousBody.heatMap)
+                        {
+                            Double x = ((450 - vessel.longitude) % 360) / 360.0;
+                            Double y = (vessel.latitude + 90) / 180.0;
+                            Double m = hazardousBody.heatMap.GetPixelFloat(x, y);
+                            newTemp *= m;
+                        }
+
+                        if (hazardousBody.sumTemp && newTemp > 0)
+                        {
+                            addTemp += newTemp;
+                        }
+                        else if (newTemp > baseTemp)
+                        {
+                            baseTemp = newTemp;
+                        }
+                    }
+
+                    baseTemp += addTemp;
+                }
             }
 
-            // Check if the vessel is near the body
-            if (FlightGlobals.currentMainBody != _body)
-            {
-                return;
-            }
-
-            // Simple counter
-            if (_heatPosition > 0f)
-            {
-                _heatPosition -= Time.deltaTime;
-                return;
-            }
-
-            // We got past the counter - update time
-            Double altitude =
-                altitudeCurve.Evaluate((Single) Vector3d.Distance(FlightGlobals.ActiveVessel.transform.position,
-                    _body.transform.position));
-            Double latitude = latitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.latitude);
-            Double longitude = longitudeCurve.Evaluate((Single) FlightGlobals.ActiveVessel.longitude);
-
-            Double heat = altitude * latitude * longitude * heatRate;
-            if (heatMap)
-            {
-                const Single FULL_CIRCLE = 1f / 360f;
-                const Single HALF_CIRCLE = 1f / 180f;
-
-                heat *= heatMap.GetPixelFloat((longitude + 180) * FULL_CIRCLE, (latitude + 90) * HALF_CIRCLE);
-            }
-
-            foreach (Part part in FlightGlobals.ActiveVessel.Parts)
-            {
-                part.temperature += heat;
-            }
-
-            // Reset the timer
-            _heatPosition = heatInterval;
+            return baseTemp;
         }
     }
 }

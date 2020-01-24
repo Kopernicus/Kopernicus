@@ -74,18 +74,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexScale
         {
-            get { return GetTextureScale(Properties.MAIN_TEX_KEY); }
-            set { SetTextureScale(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MainTexId); }
+            set { SetTextureScale(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexOffset
         {
-            get { return GetTextureOffset(Properties.MAIN_TEX_KEY); }
-            set { SetTextureOffset(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MainTexId); }
+            set { SetTextureOffset(Properties.Instance.MainTexId, value); }
         }
 
         // Normal map, default = "bump" { }
@@ -95,18 +93,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.BumpMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapScale
         {
-            get { return GetTextureScale(Properties.BUMP_MAP_KEY); }
-            set { SetTextureScale(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.BumpMapId); }
+            set { SetTextureScale(Properties.Instance.BumpMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapOffset
         {
-            get { return GetTextureOffset(Properties.BUMP_MAP_KEY); }
-            set { SetTextureOffset(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.BumpMapId); }
+            set { SetTextureOffset(Properties.Instance.BumpMapId, value); }
         }
 
         public NormalBumped() : base(Properties.Shader)

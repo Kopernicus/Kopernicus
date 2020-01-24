@@ -125,8 +125,27 @@ namespace Kopernicus.Configuration
         [KittopiaUntouchable]
         public Material SurfaceMaterial
         {
-            get { return Value.surfaceMaterial; }
-            set { Value.surfaceMaterial = value; }
+            get
+            {
+                switch (GameSettings.TERRAIN_SHADER_QUALITY)
+                {
+                    case 2 when Value.highQualitySurfaceMaterial != null:
+                        return Value.highQualitySurfaceMaterial;
+                    case 1 when Value.mediumQualitySurfaceMaterial != null:
+                        return Value.mediumQualitySurfaceMaterial;
+                    case 0 when Value.lowQualitySurfaceMaterial != null:
+                        return Value.lowQualitySurfaceMaterial;
+                    default:
+                        return Value.surfaceMaterial;
+                }
+            }
+            set
+            {
+                Value.surfaceMaterial = value;
+                Value.lowQualitySurfaceMaterial = value;
+                Value.mediumQualitySurfaceMaterial = value;
+                Value.highQualitySurfaceMaterial = value;
+            }
         }
 
         // Fallback Material of the PQS (its always the same material)
@@ -143,36 +162,6 @@ namespace Kopernicus.Configuration
         [KittopiaUntouchable]
         [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
         public readonly List<IModLoader> Mods = new List<IModLoader>();
-
-        // Killer-Ocean
-        [ParserTarget("HazardousOcean", AllowMerge = true)]
-        public FloatCurveParser HazardousOcean
-        {
-            get
-            {
-                HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
-                return ocean == null ? null : ocean.heatCurve;
-            }
-            set
-            {
-                HazardousOcean ocean = Value.gameObject.GetComponent<HazardousOcean>();
-                if (value == null && ocean != null)
-                {
-                    Object.Destroy(ocean);
-                    return;
-                }
-
-                if (value != null && ocean == null)
-                {
-                    ocean = Value.gameObject.AddComponent<HazardousOcean>();
-                }
-
-                if (value != null)
-                {
-                    ocean.heatCurve = value;
-                }
-            }
-        }
 
         // Ocean-Fog
         [ParserTarget("Fog", AllowMerge = true)]

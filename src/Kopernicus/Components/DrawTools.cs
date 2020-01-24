@@ -78,7 +78,7 @@ namespace Kopernicus.Components
             {
                 if (_material == null)
                 {
-                    _material = new Material(Shader.Find("Particles/Additive"));
+                    _material = new Material(Shader.Find("Legacy Shaders/Particles/Additive"));
                 }
 
                 return _material;
