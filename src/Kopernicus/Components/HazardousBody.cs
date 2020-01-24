@@ -74,6 +74,10 @@ namespace Kopernicus.Components
         /// </summary>
         internal static double RadiationTemperature(ModularFlightIntegrator flightIntegrator, Double baseTemp)
         {
+            // Stock Behaviour
+            baseTemp = UtilMath.Lerp(baseTemp, PhysicsGlobals.SpaceTemperature, flightIntegrator.DensityThermalLerp);
+
+            // Hazardous Body
             Vessel vessel = flightIntegrator?.Vessel;
 
             if (vessel != null)
