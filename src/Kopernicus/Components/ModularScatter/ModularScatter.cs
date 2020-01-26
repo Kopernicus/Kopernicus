@@ -251,7 +251,10 @@ namespace Kopernicus.Components.ModularScatter
             }
 
             // Update components
-            Components.ForEach(c => c.Update(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Update(this);
+            }
         }
 
         /// <summary>
