@@ -69,67 +69,47 @@ namespace Kopernicus.Components
         /// </summary>
         public MapSO heatMap;
 
-        /// <summary>
-        /// Override for <see cref="FlightIntegrator.CalculateBackgroundRadiationTemperature"/>
-        /// </summary>
-        internal static double RadiationTemperature(ModularFlightIntegrator flightIntegrator, Double baseTemp)
+        void Start()
         {
-            // Stock Behaviour
-            baseTemp = UtilMath.Lerp(baseTemp, PhysicsGlobals.SpaceTemperature, flightIntegrator.DensityThermalLerp);
+            Events.OnCalculateBackgroundRadiationTemperature.Add(OnCalculateBackgroundRadiationTemperature);
+        }
 
-            // Hazardous Body
+        void OnDestroy()
+        {
+            Events.OnCalculateBackgroundRadiationTemperature.Remove(OnCalculateBackgroundRadiationTemperature);
+        }
+
+        void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator)
+        {
             Vessel vessel = flightIntegrator?.Vessel;
+            CelestialBody _body = GetComponent<CelestialBody>();
 
-            if (vessel != null)
+            if (_body != null && _body == vessel?.mainBody)
             {
-                CelestialBody _body = vessel?.mainBody;
-                HazardousBody[] hazardousBodies = _body?.GetComponents<HazardousBody>();
-
-                if (hazardousBodies?.Length > 0)
+                if (!string.IsNullOrEmpty(biomeName))
                 {
-                    Double addTemp = 0;
+                    String biome = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
 
-                    for (Int32 i = hazardousBodies.Length; i > 0; i--)
-                    {
-                        HazardousBody hazardousBody = hazardousBodies[i - 1];
-
-                        if (!string.IsNullOrEmpty(hazardousBody.biomeName))
-                        {
-                            String biomeName = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
-
-                            if (hazardousBody.biomeName != biomeName)
-                                continue;
-                        }
-
-                        Double altitude = hazardousBody.altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
-                        Double latitude = hazardousBody.latitudeCurve.Evaluate((Single)vessel.latitude);
-                        Double longitude = hazardousBody.longitudeCurve.Evaluate((Single)vessel.longitude);
-
-                        Double newTemp = altitude * latitude * longitude * hazardousBody.ambientTemp;
-
-                        if (hazardousBody.heatMap)
-                        {
-                            Double x = ((450 - vessel.longitude) % 360) / 360.0;
-                            Double y = (vessel.latitude + 90) / 180.0;
-                            Double m = hazardousBody.heatMap.GetPixelFloat(x, y);
-                            newTemp *= m;
-                        }
-
-                        if (hazardousBody.sumTemp && newTemp > 0)
-                        {
-                            addTemp += newTemp;
-                        }
-                        else if (newTemp > baseTemp)
-                        {
-                            baseTemp = newTemp;
-                        }
-                    }
-
-                    baseTemp += addTemp;
+                    if (biomeName != biome)
+                        return;
                 }
-            }
 
-            return baseTemp;
+                Double altitude = altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
+                Double latitude = latitudeCurve.Evaluate((Single)vessel.latitude);
+                Double longitude = longitudeCurve.Evaluate((Single)vessel.longitude);
+
+                Double newTemp = altitude * latitude * longitude * ambientTemp;
+
+                if (heatMap)
+                {
+                    Double x = ((450 - vessel.longitude) % 360) / 360.0;
+                    Double y = (vessel.latitude + 90) / 180.0;
+                    Double m = heatMap.GetPixelFloat(x, y);
+                    newTemp *= m;
+                }
+
+                KopernicusHeatManager.NewTemp(newTemp, sumTemp);
+            }
         }
     }
 }

@@ -41,31 +41,76 @@ namespace Kopernicus.Configuration.ModularScatterLoader
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class HeatEmitter : ComponentLoader<ModularScatter, HeatEmitterComponent>
     {
-        // The average heat emitted by the scatter
-        [ParserTarget("heat")]
-        [KittopiaDescription("The average heat emitted by the scatter.")]
-        public NumericParser<Double> Heat
+        // The ambient temperature.
+        [ParserTarget("temperature")]
+        [KittopiaDescription("The ambient temperature.")]
+        public NumericParser<Double> AmbientTemp
         {
-            get { return Value.HeatRate; }
-            set { Value.HeatRate = value; }
+            get { return Value.ambientTemp; }
+            set { Value.ambientTemp = value; }
         }
 
-        // How many seconds pass between applying the heat to a vessel
-        [ParserTarget("interval")]
-        [KittopiaDescription("How many seconds pass between applying the heat to a vessel.")]
-        public NumericParser<Double> Interval
+        // If the ambientTemp should be added.
+        [ParserTarget("sumTemp")]
+        [KittopiaDescription("If the ambientTemp should be added.")]
+        public NumericParser<Boolean> SumTemp
         {
-            get { return Value.HeatInterval; }
-            set { Value.HeatInterval = value; }
+            get { return Value.sumTemp; }
+            set { Value.sumTemp = value; }
         }
-        
-        // Controls the how much of the average heat gets applied at a certain distance
+
+        // The name of the biome.
+        [ParserTarget("biomeName")]
+        [KittopiaDescription("The name of the biome.")]
+        public String BiomeName
+        {
+            get { return Value.biomeName; }
+            set { Value.biomeName = value; }
+        }
+
+        // Multiplier curve to change ambientTemp with altitude
+        [ParserTarget("AltitudeCurve")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with altitude.")]
+        public FloatCurveParser AltitudeCurve
+        {
+            get { return Value.altitudeCurve; }
+            set { Value.altitudeCurve = value; }
+        }
+
+        // Multiplier curve to change ambientTemp with latitude
+        [ParserTarget("LatitudeCurve")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with latitude.")]
+        public FloatCurveParser LatitudeCurve
+        {
+            get { return Value.latitudeCurve; }
+            set { Value.latitudeCurve = value; }
+        }
+
+        // Multiplier curve to change ambientTemp with longitude
+        [ParserTarget("LongitudeCurve")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with longitude.")]
+        public FloatCurveParser LongitudeCurve
+        {
+            get { return Value.longitudeCurve; }
+            set { Value.longitudeCurve = value; }
+        }
+
+        // Multiplier curve to change ambientTemp with distance
         [ParserTarget("DistanceCurve")]
-        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain distance.")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with distance.")]
         public FloatCurveParser DistanceCurve
         {
-            get { return Value.HeatCurve; }
-            set { Value.HeatCurve = value; }
+            get { return Value.distanceCurve; }
+            set { Value.distanceCurve = value; }
+        }
+
+        // Multiplier map for ambientTemp
+        [ParserTarget("HeatMap")]
+        [KittopiaDescription("Greyscale map for fine control of the ambientTemp on a planet. black = 0, white = 1")]
+        public MapSOParserGreyScale<MapSO> HeatMap
+        {
+            get { return Value.heatMap; }
+            set { Value.heatMap = value; }
         }
     }
 }

@@ -107,7 +107,6 @@ namespace Kopernicus.Configuration
             set { Value.heatMap = value; }
         }
 
-
         [KittopiaDestructor]
         public void Destroy()
         {
