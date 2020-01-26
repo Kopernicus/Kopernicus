@@ -161,7 +161,10 @@ namespace Kopernicus.Components
         public void BuildRing()
         {
             // Call the modules
-            Components.ForEach(m => m.Apply(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Apply(this);
+            }
 
             // Create the ring mesh
             GameObject parent = transform.parent.gameObject;
@@ -250,7 +253,10 @@ namespace Kopernicus.Components
             }
 
             // Call the modules
-            Components.ForEach(m => m.PostApply(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].PostApply(this);
+            }
         }
 
         /// <summary>
@@ -560,7 +566,10 @@ namespace Kopernicus.Components
             }
 
             // Call Modules
-            Components.ForEach(m => m.Update(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Update(this);
+            }
         }
 
         /// <summary>
@@ -573,7 +582,10 @@ namespace Kopernicus.Components
             SetRotation();
 
             // Call Modules
-            Components.ForEach(m => m.Update(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Update(this);
+            }
         }
 
         /// <summary>
@@ -586,7 +598,10 @@ namespace Kopernicus.Components
             SetRotation();
 
             // Call Modules
-            Components.ForEach(m => m.Update(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Update(this);
+            }
         }
 
         /// <summary>
