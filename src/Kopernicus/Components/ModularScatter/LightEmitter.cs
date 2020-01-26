@@ -93,8 +93,10 @@ namespace Kopernicus.Components.ModularScatter
                 return;
             }
 
-            foreach (GameObject scatter in system.scatterObjects)
+            for (Int32 i = system.scatterObjects.Count; i > 0; i--)
             {
+                GameObject scatter = system.scatterObjects[i - 1];
+
                 Light light = scatter.GetComponentInChildren<Light>();
                 if (light)
                 {
