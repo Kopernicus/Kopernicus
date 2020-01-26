@@ -78,9 +78,14 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         public MapSO heatMap;
 
-        /// <summary>
-        /// Gets executed every frame and checks if a Kerbal is within the range of the scatter object
-        /// </summary>
+        public HeatEmitterComponent()
+        {
+            distanceCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+        }
+
         void IComponent<ModularScatter>.Update(ModularScatter system)
         {
             // We don't use this
@@ -94,15 +99,6 @@ namespace Kopernicus.Components.ModularScatter
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             Events.OnCalculateBackgroundRadiationTemperature.Add((mfi) => OnCalculateBackgroundRadiationTemperature(mfi, system));
-
-            if (distanceCurve == null)
-                distanceCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            if (latitudeCurve == null)
-                latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            if (longitudeCurve == null)
-                longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            if (altitudeCurve == null)
-                altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
         }
 
         void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator, ModularScatter system)
