@@ -94,52 +94,58 @@ namespace Kopernicus.Components.ModularScatter
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             Events.OnCalculateBackgroundRadiationTemperature.Add((mfi) => OnCalculateBackgroundRadiationTemperature(mfi, system));
+
+            if (distanceCurve == null)
+                distanceCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            if (latitudeCurve == null)
+                latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            if (longitudeCurve == null)
+                longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            if (altitudeCurve == null)
+                altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
         }
 
         void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator, ModularScatter system)
         {
-            List<GameObject> scatters = system?.scatterObjects;
+            List<GameObject> scatters = system.scatterObjects;
+            Vessel vessel = flightIntegrator.Vessel;
+            CelestialBody _body = system.body;
 
-            if (system?.scatterObjects != null)
+            if (_body != vessel.mainBody)
+                return;
+
+            for (Int32 i = 0; i < scatters.Count; i++)
             {
-                Vessel vessel = flightIntegrator?.Vessel;
-                CelestialBody _body = system.body;
+                GameObject scatter = scatters[i];
 
-                if (_body != null && _body == vessel?.mainBody)
+                if (scatter?.activeSelf != true)
+                    continue;
+
+                if (!string.IsNullOrEmpty(biomeName))
                 {
-                    for (Int32 i = scatters.Count; i > 0; i--)
-                    {
-                        GameObject scatter = scatters[i - 1];
+                    String biome = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
 
-                        if (scatter?.activeSelf != true)
-                            continue;
-
-                        if (!string.IsNullOrEmpty(biomeName))
-                        {
-                            String biome = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
-
-                            if (biomeName != biome)
-                                continue;
-                        }
-
-                        Double altitude = altitudeCurve?.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position)) ?? 1;
-                        Double latitude = latitudeCurve?.Evaluate((Single)vessel.latitude) ?? 1;
-                        Double longitude = longitudeCurve?.Evaluate((Single)vessel.longitude) ?? 1;
-                        Double distance = distanceCurve?.Evaluate((Single)Vector3d.Distance(vessel.transform.position, scatter.transform.position)) ?? 1;
-
-                        Double newTemp = altitude * latitude * longitude * ambientTemp;
-
-                        if (heatMap)
-                        {
-                            Double x = ((450 - vessel.longitude) % 360) / 360.0;
-                            Double y = (vessel.latitude + 90) / 180.0;
-                            Double m = heatMap.GetPixelFloat(x, y);
-                            newTemp *= m;
-                        }
-
-                        KopernicusHeatManager.NewTemp(newTemp, sumTemp);
-                    }
+                    if (biomeName != biome)
+                        continue;
                 }
+
+                Single distance = distanceCurve.Evaluate(Vector3.Distance(vessel.transform.position, scatter.transform.position));
+
+                Double altitude = altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
+                Double latitude = latitudeCurve.Evaluate((Single)vessel.latitude);
+                Double longitude = longitudeCurve.Evaluate((Single)vessel.longitude);
+
+                Double newTemp = altitude * latitude * longitude * ambientTemp;
+
+                if (heatMap)
+                {
+                    Double x = ((450 - vessel.longitude) % 360) / 360.0;
+                    Double y = (vessel.latitude + 90) / 180.0;
+                    Double m = heatMap.GetPixelFloat(x, y);
+                    newTemp *= m;
+                }
+
+                KopernicusHeatManager.NewTemp(newTemp, sumTemp);
             }
         }
     }
