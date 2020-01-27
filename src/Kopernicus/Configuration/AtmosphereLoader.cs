@@ -31,6 +31,7 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
+using UnityEngine;
 
 namespace Kopernicus.Configuration
 {
@@ -318,6 +319,30 @@ namespace Kopernicus.Configuration
         // Parser post apply event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            if (Value.isHomeWorld && Value.atmospherePressureCurveIsNormalized)
+            {
+                double pressureASL = Value.atmospherePressureSeaLevel;
+
+                if (Value.Has("staticPressureASL"))
+                    pressureASL = Value.Get<Double>("staticPressureASL");
+
+                Keyframe[] keys = Value.atmospherePressureCurve.Curve.keys;
+                FloatCurve newAtmo = new FloatCurve();
+
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    Keyframe key = keys[i];
+
+                    key.time *= (Single)pressureASL;
+                    key.inTangent /= (Single)pressureASL;
+                    key.outTangent /= (Single)pressureASL;
+
+                    newAtmo.Add(key.time * (Single)pressureASL, key.value, key.inTangent / (Single)pressureASL, key.outTangent / (Single)pressureASL);
+                }
+
+                Value.atmospherePressureCurve = newAtmo;
+                Value.atmospherePressureCurveIsNormalized = false;
+            }
             Events.OnAtmosphereLoaderPostApply.Fire(this, node);
         }
 
