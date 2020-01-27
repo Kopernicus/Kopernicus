@@ -34,12 +34,16 @@ using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
+using KSP.UI;
 using KSP.UI.Screens;
 using KSP.UI.Screens.Mapview;
 using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using KSP.UI.Screens.Settings.Controls;
 using ModularFI;
 using UnityEngine;
+using UnityEngine.UI;
+using KSP.Localization;
+using Object = UnityEngine.Object;
 
 namespace Kopernicus.RuntimeUtility
 {
@@ -69,10 +73,67 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelWasLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
+            
+            // Add Callback
+            KbApp_PlanetParameters.CallbackAfterActivate += CallbackAfterActivate;
 
             // Log
             Logger.Default.Log("[Kopernicus] RuntimeUtility Started");
             Logger.Default.Flush();
+        }
+
+        private bool CallbackAfterActivate(KbApp_PlanetParameters kbapp, MapObject target)
+        {
+            CelestialBody currentBody = target.celestialBody;
+
+            if (currentBody.isHomeWorld && currentBody.Has("staticPressureASL"))
+            {
+                kbapp.appFrame.scrollList.Clear(true);
+                kbapp.cascadingList = Object.Instantiate(kbapp.cascadingListPrefab);
+                kbapp.cascadingList.Setup(kbapp.appFrame.scrollList);
+                kbapp.cascadingList.transform.SetParent(base.transform, false);
+                UIListItem header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462403"), out Button button, true);
+                kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), kbapp.CreatePhysicalCharacteristics(), button, -1);
+                header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462406"), out button, true);
+                kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), CreateAtmosphericCharacteristics(kbapp.cascadingList), button, -1);
+            }
+
+            return true;
+        }
+
+        private List<UIListItem> CreateAtmosphericCharacteristics(GenericCascadingList cascadingList)
+        {
+            CelestialBody currentBody = FlightGlobals.GetHomeBody();
+            double staticPressureASL = currentBody.Get<double>("staticPressureASL");
+
+            List<UIListItem> list = new List<UIListItem>();
+            GenericCascadingList genericCascadingList = cascadingList;
+            string key = Localizer.Format("#autoLOC_462448");
+            object template;
+            
+            if (staticPressureASL > 0)
+            {
+                template = "#autoLOC_439855";
+            }
+            else
+            {
+                template = "#autoLOC_439856";
+            }
+
+            UIListItem item = genericCascadingList.CreateBody(key, "<color=#b8f4d1>" + Localizer.Format((string)template) + "</color>");
+            list.Add(item);
+
+            if (staticPressureASL > 0)
+            {
+                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462453"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmosphereDepth, "N0") + " " + Localizer.Format("#autoLOC_7001411") + "</color>");
+                list.Add(item);
+                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462456"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(staticPressureASL / 101.324996948242, "0.#####") + " " + Localizer.Format("#autoLOC_7001419") + "</color>");
+                list.Add(item);
+                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462459"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmosphereTemperatureSeaLevel, "0.##") + " " + Localizer.Format("#autoLOC_7001406") + "</color>");
+                list.Add(item);
+            }
+
+            return list;
         }
 
         // Execute MainMenu functions

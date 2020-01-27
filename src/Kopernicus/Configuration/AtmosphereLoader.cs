@@ -145,8 +145,24 @@ namespace Kopernicus.Configuration
             "The static pressure at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
         public NumericParser<Double> StaticPressureAsl
         {
-            get { return Value.atmospherePressureSeaLevel; }
-            set { Value.atmospherePressureSeaLevel = value; }
+            get
+            {
+                if (Value.Has("staticPressureASL"))
+                    return Value.Get<double>("staticPressureASL");
+
+                return Value.atmospherePressureSeaLevel;
+            }
+            set
+            {
+                if (Value.isHomeWorld)
+                {
+                    Value.Set<double>("staticPressureASL", value);
+                }
+                else
+                {
+                    Value.atmospherePressureSeaLevel = value;
+                }
+            }
         }
 
         // Temperature curve (see below)
