@@ -73,9 +73,10 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelWasLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
-            
-            // Add Callback
-            KbApp_PlanetParameters.CallbackAfterActivate += CallbackAfterActivate;
+
+            // Add Callback only if necessary
+            if (FlightGlobals.GetHomeBody().atmospherePressureSeaLevel != 101.324996948242)
+                KbApp_PlanetParameters.CallbackAfterActivate += CallbackAfterActivate;
 
             // Log
             Logger.Default.Log("[Kopernicus] RuntimeUtility Started");
@@ -84,50 +85,35 @@ namespace Kopernicus.RuntimeUtility
 
         private bool CallbackAfterActivate(KbApp_PlanetParameters kbapp, MapObject target)
         {
-            CelestialBody currentBody = target.celestialBody;
-
-            if (currentBody.isHomeWorld && currentBody.Has("staticPressureASL"))
-            {
-                kbapp.appFrame.scrollList.Clear(true);
-                kbapp.cascadingList = Object.Instantiate(kbapp.cascadingListPrefab);
-                kbapp.cascadingList.Setup(kbapp.appFrame.scrollList);
-                kbapp.cascadingList.transform.SetParent(base.transform, false);
-                UIListItem header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462403"), out Button button, true);
-                kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), kbapp.CreatePhysicalCharacteristics(), button, -1);
-                header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462406"), out button, true);
-                kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), CreateAtmosphericCharacteristics(kbapp.cascadingList), button, -1);
-            }
+            kbapp.appFrame.scrollList.Clear(true);
+            kbapp.cascadingList = Object.Instantiate(kbapp.cascadingListPrefab);
+            kbapp.cascadingList.Setup(kbapp.appFrame.scrollList);
+            kbapp.cascadingList.transform.SetParent(base.transform, false);
+            UIListItem header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462403"), out Button button, true);
+            kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), kbapp.CreatePhysicalCharacteristics(), button, -1);
+            header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462406"), out button, true);
+            kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), CreateAtmosphericCharacteristics(target.celestialBody, kbapp.cascadingList), button, -1);
 
             return true;
         }
 
-        private List<UIListItem> CreateAtmosphericCharacteristics(GenericCascadingList cascadingList)
+        private List<UIListItem> CreateAtmosphericCharacteristics(CelestialBody currentBody, GenericCascadingList cascadingList)
         {
-            CelestialBody currentBody = FlightGlobals.GetHomeBody();
-            double staticPressureASL = currentBody.Get<double>("staticPressureASL");
+            GenericCascadingList genericCascadingList = cascadingList;
+            Boolean atmosphere = currentBody.atmosphere && currentBody.atmospherePressureSeaLevel > 0;
+
+            String key = Localizer.Format("#autoLOC_462448");
+            String template = atmosphere ? "#autoLOC_439856" : "#autoLOC_439855";
+            UIListItem item = genericCascadingList.CreateBody(key, "<color=#b8f4d1>" + Localizer.Format((string)template) + "</color>");
 
             List<UIListItem> list = new List<UIListItem>();
-            GenericCascadingList genericCascadingList = cascadingList;
-            string key = Localizer.Format("#autoLOC_462448");
-            object template;
-            
-            if (staticPressureASL > 0)
-            {
-                template = "#autoLOC_439855";
-            }
-            else
-            {
-                template = "#autoLOC_439856";
-            }
-
-            UIListItem item = genericCascadingList.CreateBody(key, "<color=#b8f4d1>" + Localizer.Format((string)template) + "</color>");
             list.Add(item);
 
-            if (staticPressureASL > 0)
+            if (atmosphere)
             {
                 item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462453"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmosphereDepth, "N0") + " " + Localizer.Format("#autoLOC_7001411") + "</color>");
                 list.Add(item);
-                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462456"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(staticPressureASL / 101.324996948242, "0.#####") + " " + Localizer.Format("#autoLOC_7001419") + "</color>");
+                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462456"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmospherePressureSeaLevel / 101.324996948242, "0.#####") + " " + Localizer.Format("#autoLOC_7001419") + "</color>");
                 list.Add(item);
                 item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462459"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmosphereTemperatureSeaLevel, "0.##") + " " + Localizer.Format("#autoLOC_7001406") + "</color>");
                 list.Add(item);
