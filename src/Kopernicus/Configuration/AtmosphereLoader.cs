@@ -338,8 +338,8 @@ namespace Kopernicus.Configuration
                     (
                         key.time *= atmoDepth,
                         key.value *= pressureASL,
-                        key.inTangent *= atmoDepth / pressureASL,
-                        key.outTangent *= atmoDepth / pressureASL
+                        key.inTangent *= pressureASL / atmoDepth,
+                        key.outTangent *= pressureASL / atmoDepth
                     );
                 }
 
