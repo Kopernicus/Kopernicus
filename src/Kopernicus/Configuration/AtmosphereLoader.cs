@@ -149,7 +149,7 @@ namespace Kopernicus.Configuration
             get
             {
                 if (Value.Has("staticPressureASL"))
-                    return Value.Get<double>("staticPressureASL");
+                    return Value.Get<Double>("staticPressureASL");
 
                 return Value.atmospherePressureSeaLevel;
             }
@@ -157,7 +157,7 @@ namespace Kopernicus.Configuration
             {
                 if (Value.isHomeWorld)
                 {
-                    Value.Set<double>("staticPressureASL", value);
+                    Value.Set<Double>("staticPressureASL", value);
                 }
                 else
                 {
@@ -321,28 +321,32 @@ namespace Kopernicus.Configuration
         {
             if (Value.isHomeWorld && Value.atmospherePressureCurveIsNormalized)
             {
-                double pressureASL = Value.atmospherePressureSeaLevel;
+                Single atmoDepth = (Single)Value.atmosphereDepth;
+                Single pressureASL = (Single)Value.atmospherePressureSeaLevel;
 
                 if (Value.Has("staticPressureASL"))
-                    pressureASL = Value.Get<Double>("staticPressureASL");
+                    pressureASL = (Single)Value.Get<Double>("staticPressureASL");
 
                 Keyframe[] keys = Value.atmospherePressureCurve.Curve.keys;
                 FloatCurve newAtmo = new FloatCurve();
 
-                for (int i = 0; i < keys.Length; i++)
+                for (Int32 i = 0; i < keys.Length; i++)
                 {
                     Keyframe key = keys[i];
 
-                    key.time *= (Single)pressureASL;
-                    key.inTangent /= (Single)pressureASL;
-                    key.outTangent /= (Single)pressureASL;
-
-                    newAtmo.Add(key.time * (Single)pressureASL, key.value, key.inTangent / (Single)pressureASL, key.outTangent / (Single)pressureASL);
+                    newAtmo.Add
+                    (
+                        key.time *= atmoDepth,
+                        key.value *= pressureASL,
+                        key.inTangent *= atmoDepth / pressureASL,
+                        key.outTangent *= atmoDepth / pressureASL
+                    );
                 }
 
                 Value.atmospherePressureCurve = newAtmo;
                 Value.atmospherePressureCurveIsNormalized = false;
             }
+
             Events.OnAtmosphereLoaderPostApply.Fire(this, node);
         }
 
