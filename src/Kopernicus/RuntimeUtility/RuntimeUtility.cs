@@ -103,7 +103,7 @@ namespace Kopernicus.RuntimeUtility
             Boolean atmosphere = currentBody.atmosphere && currentBody.atmospherePressureSeaLevel > 0;
 
             String key = Localizer.Format("#autoLOC_462448");
-            String template = atmosphere ? "#autoLOC_439856" : "#autoLOC_439855";
+            String template = atmosphere ? "#autoLOC_439855" : "#autoLOC_439856";
             UIListItem item = genericCascadingList.CreateBody(key, "<color=#b8f4d1>" + Localizer.Format((string)template) + "</color>");
 
             List<UIListItem> list = new List<UIListItem>();
