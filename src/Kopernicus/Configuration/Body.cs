@@ -112,7 +112,7 @@ namespace Kopernicus.Configuration
             set
             {
                 // Change the displayName
-                CelestialBody.bodyDisplayName = value;
+                CelestialBody.bodyDisplayName = CelestialBody.bodyAdjectiveDisplayName = value;
 
                 // Set the NameChanger component
                 NameChanger changer = CelestialBody.gameObject.AddOrGetComponent<NameChanger>();
@@ -283,7 +283,7 @@ namespace Kopernicus.Configuration
                 // If we've changed the name, reset use_The_InName
                 if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
                 {
-                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyName;
+                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                 }
             }
 
@@ -304,7 +304,7 @@ namespace Kopernicus.Configuration
 
                 // Sensible defaults 
                 GeneratedBody.celestialBody.bodyName = Name;
-                GeneratedBody.celestialBody.bodyDisplayName = Name;
+                GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = Name;
                 GeneratedBody.celestialBody.atmosphere = false;
                 GeneratedBody.celestialBody.ocean = false;
 

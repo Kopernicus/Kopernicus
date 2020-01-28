@@ -309,7 +309,7 @@ namespace Kopernicus.Configuration
         public String DisplayName
         {
             get { return Value.bodyDisplayName; }
-            set { Value.bodyDisplayName = value; }
+            set { Value.bodyDisplayName = Value.bodyAdjectiveDisplayName = value; }
         }
 
         // If the body should be unselectable
