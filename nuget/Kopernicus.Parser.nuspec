@@ -14,11 +14,11 @@
     <tags>Kopernicus, Planetary, System, Modifier, Parser, config-parser</tags>
     <dependencies>
       <dependency id="Assembly-CSharp" version="[{KSP-VERSION}]" />
-      <dependency id="UnityEngine" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine.CoreModule" version="[{KSP-VERSION}]" />
       <dependency id="UnityEngine.UI" version="[{KSP-VERSION}]" />
     </dependencies>
   </metadata>
   <files>
-    <file src="Kopernicus.Parser.dll" target="lib/net35" />
+    <file src="Kopernicus.Parser.dll" target="lib/net40" />
   </files>
 </package>
