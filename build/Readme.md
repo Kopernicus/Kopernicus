@@ -1,16 +1,25 @@
 ﻿Kopernicus
 ==============================
-September 12, 2019
+February 04, 2020
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.7.3-2)
+New in this version (1.8.1-1)
 -------------------
-- Removed Kopernicus Buoyancy modifications to fix ocean lag, they never worked anyways
-- Fixed texture loading with on-demand loading disabled
-- Unload normal maps from RAM and only keep them in VRAM when loaded on demand
+- Updated to KSP 1.8.1
+- Removed HazardousOcean
+- Removed particles support
+- Added Support for new terrain shaders
+- Added a fix for the flags going crazy
+- Improved Kopernicus Solar Panels
+- Improved Space Center Loader
+- Improved HazardousBody
+- Improved ModularScatter HeatEmitter
+- Improved ModularScatter LightEmitter
+- Fixed Tracking Station Atmospheric Info
+- 'displayName' now also changes 'bodyAdjectiveDisplayName'
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
