@@ -56,7 +56,7 @@ namespace Kopernicus.Configuration
 
         // minEmission of particles
         [ParserTarget("minEmission")]
-        public NumericParser<Single> MinEmission
+        public NumericParser<Int32> MinEmission
         {
             get { return Value.minEmission; }
             set { Value.minEmission = value; }
@@ -64,7 +64,7 @@ namespace Kopernicus.Configuration
 
         // maxEmission of particles
         [ParserTarget("maxEmission")]
-        public NumericParser<Single> MaxEmission
+        public NumericParser<Int32> MaxEmission
         {
             get { return Value.maxEmission; }
             set { Value.maxEmission = value; }

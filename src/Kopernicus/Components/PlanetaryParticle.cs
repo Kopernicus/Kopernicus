@@ -37,15 +37,13 @@ namespace Kopernicus.Components
     public class PlanetParticleEmitter : MonoBehaviour
     {
         // Components
-        public ParticleEmitter emitter;
-        public ParticleAnimator animator;
-        public ParticleRenderer renderer;
+        public KSPParticleEmitter emitter;
         public MeshFilter filter;
 
         // Variables
         public String target = "None";
         public Single speedScale;
-        public Single minEmission, maxEmission;
+        public Int32 minEmission, maxEmission;
         public Single minEnergy, maxEnergy;
         public Single minSize, maxSize;
         public Single sizeGrow;
@@ -78,35 +76,17 @@ namespace Kopernicus.Components
         /// </summary>
         private void Awake()
         {
-            if (!GetComponent<ParticleEmitter>())
+            if (!GetComponent<KSPParticleEmitter>())
             {
-                emitter = gameObject.AddComponent<MeshParticleEmitter>();
+                emitter = gameObject.AddComponent<KSPParticleEmitter>();
                 emitter.useWorldSpace = false;
                 emitter.emit = true;
+                emitter.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended"));
+                emitter.doesAnimateColor = true;
             }
             else
             {
-                emitter = GetComponent<ParticleEmitter>();
-            }
-
-            if (!GetComponent<ParticleAnimator>())
-            {
-                animator = gameObject.AddComponent<ParticleAnimator>();
-                animator.doesAnimateColor = true;
-            }
-            else
-            {
-                animator = GetComponent<ParticleAnimator>();
-            }
-
-            if (!GetComponent<ParticleRenderer>())
-            {
-                renderer = gameObject.AddComponent<ParticleRenderer>();
-                renderer.sharedMaterial = new Material(Shader.Find("Particles/Alpha Blended"));
-            }
-            else
-            {
-                renderer = GetComponent<ParticleRenderer>();
+                emitter = GetComponent<KSPParticleEmitter>();
             }
 
             filter = !GetComponent<MeshFilter>() ? gameObject.AddComponent<MeshFilter>() : GetComponent<MeshFilter>();
@@ -126,11 +106,11 @@ namespace Kopernicus.Components
             // Update the values
             emitter.minSize = minSize;
             emitter.maxSize = maxSize;
-            animator.sizeGrow = sizeGrow;
-            animator.colorAnimation = colorAnimation;
-            renderer.sharedMaterial.mainTexture = mainTexture;
+            emitter.sizeGrow = sizeGrow;
+            emitter.colorAnimation = colorAnimation;
+            emitter.material.mainTexture = mainTexture;
             filter.mesh = filter.sharedMesh = mesh ? mesh : transform.parent.GetComponent<MeshFilter>().sharedMesh;
-            animator.force = force;
+            emitter.force = force;
 
             // We have a target
             if (target != "None")
@@ -145,8 +125,8 @@ namespace Kopernicus.Components
                 speed *= speedScale;
                 emitter.minEnergy = minEnergy / TimeWarp.CurrentRate;
                 emitter.maxEnergy = maxEnergy / TimeWarp.CurrentRate;
-                emitter.maxEmission = maxEmission * TimeWarp.CurrentRate;
-                emitter.minEmission = minEmission * TimeWarp.CurrentRate;
+                emitter.maxEmission = Convert.ToInt32(maxEmission * TimeWarp.CurrentRate);
+                emitter.minEmission = Convert.ToInt32(minEmission * TimeWarp.CurrentRate);
                 emitter.rndVelocity = randomVelocity * TimeWarp.CurrentRate;
                 speed *= TimeWarp.CurrentRate;
                 emitter.worldVelocity = speed;
