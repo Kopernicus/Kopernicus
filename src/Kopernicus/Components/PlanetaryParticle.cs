@@ -42,6 +42,7 @@ namespace Kopernicus.Components
 
         // Variables
         public String target = "None";
+        public KSPParticleEmitter.EmissionShape emissionShape = KSPParticleEmitter.EmissionShape.Sphere;
         public Single speedScale;
         public Int32 minEmission, maxEmission;
         public Single minEnergy, maxEnergy;
@@ -83,6 +84,7 @@ namespace Kopernicus.Components
                 emitter.emit = true;
                 emitter.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended"));
                 emitter.doesAnimateColor = true;
+                emitter.SetDirty();
             }
             else
             {
@@ -104,6 +106,7 @@ namespace Kopernicus.Components
         private void Update()
         {
             // Update the values
+            emitter.shape = emissionShape;
             emitter.minSize = minSize;
             emitter.maxSize = maxSize;
             emitter.sizeGrow = sizeGrow;

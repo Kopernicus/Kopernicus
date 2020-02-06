@@ -54,6 +54,14 @@ namespace Kopernicus.Configuration
             set { Value.target = value; }
         }
 
+        // Shape of the particles
+        [ParserTarget("shape", Optional = true)]
+        public EnumParser<KSPParticleEmitter.EmissionShape> EmissionShape
+        {
+            get { return Value.emissionShape; }
+            set { Value.emissionShape = value; }
+        }
+
         // minEmission of particles
         [ParserTarget("minEmission")]
         public NumericParser<Int32> MinEmission
