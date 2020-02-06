@@ -111,6 +111,7 @@
     <Compile Include="Components\NameChanger.cs" />
     <Compile Include="Components\NativeByteArray.cs" />
     <Compile Include="Components\OrbitRendererUpdater.cs" />
+    <Compile Include="Components\PlanetaryParticle.cs" />
     <Compile Include="Components\PQSLandControlFixer.cs" />
     <Compile Include="Components\Ring.cs" />
     <Compile Include="Components\Serialization\SerializableMonoBehaviour.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Configuration\ModLoader\HeightColorMap2.cs" />
     <Compile Include="Configuration\ModLoader\BillboardObject.cs" />
     <Compile Include="Configuration\ModLoader\AerialPerspectiveMaterial.cs" />
+    <Compile Include="Configuration\ParticleLoader.cs" />
     <Compile Include="Configuration\OceanLoader.cs" />
     <Compile Include="Constants\CompatibilityChecker.cs" />
     <Compile Include="Constants\Version.cs" />
