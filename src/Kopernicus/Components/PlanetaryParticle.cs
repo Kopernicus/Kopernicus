@@ -38,23 +38,20 @@ namespace Kopernicus.Components
     {
         // Components
         public KSPParticleEmitter emitter;
-        public MeshFilter filter;
 
         // Variables
         public String target = "None";
-        public KSPParticleEmitter.EmissionShape emissionShape = KSPParticleEmitter.EmissionShape.Sphere;
+        public String shaderName = "Legacy Shaders/Particles/Alpha Blended";
         public Single speedScale;
         public Int32 minEmission, maxEmission;
         public Single minEnergy, maxEnergy;
-        public Single minSize, maxSize;
-        public Single sizeGrow;
-        public Color[] colorAnimation;
         public Texture2D mainTexture;
         public Vector3 randomVelocity;
         public Vector3 scale = Vector3.one;
         public Mesh mesh;
-        public Boolean collideable;
-        public Vector3 force = Vector3.zero;
+        public Boolean collideable = false;
+        public Single bounce = 0.5f;
+        public Color[] lifetimeColors;
 
         /// <summary>
         /// Attaches a Planet Particle Emitter to a host, that has a meshfilter attached
@@ -82,16 +79,28 @@ namespace Kopernicus.Components
                 emitter = gameObject.AddComponent<KSPParticleEmitter>();
                 emitter.useWorldSpace = false;
                 emitter.emit = true;
-                emitter.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended"));
+                emitter.material = new Material(Shader.Find(shaderName));
                 emitter.doesAnimateColor = true;
                 emitter.SetDirty();
+                emitter.particleRenderMode = ParticleSystemRenderMode.Mesh;
+
+                var sh = emitter.ps.shape;
+                sh.enabled = true;
+                sh.shapeType = ParticleSystemShapeType.Mesh;
+
+                var collision = emitter.ps.collision;
+                collision.enabled = collideable;
+                collision.type = ParticleSystemCollisionType.World;
+                collision.bounce = bounce;
+
+                var lifeColor = emitter.ps.colorOverLifetime;
+                lifeColor.enabled = lifetimeColors == null ? false : true;
+                lifeColor.color = new ParticleSystem.MinMaxGradient(lifetimeColors[0], lifetimeColors[1]);
             }
             else
             {
                 emitter = GetComponent<KSPParticleEmitter>();
             }
-
-            filter = !GetComponent<MeshFilter>() ? gameObject.AddComponent<MeshFilter>() : GetComponent<MeshFilter>();
         }
 
         /// <summary>
@@ -106,14 +115,9 @@ namespace Kopernicus.Components
         private void Update()
         {
             // Update the values
-            emitter.shape = emissionShape;
-            emitter.minSize = minSize;
-            emitter.maxSize = maxSize;
-            emitter.sizeGrow = sizeGrow;
-            emitter.colorAnimation = colorAnimation;
             emitter.material.mainTexture = mainTexture;
-            filter.mesh = filter.sharedMesh = mesh ? mesh : transform.parent.GetComponent<MeshFilter>().sharedMesh;
-            emitter.force = force;
+            var sh = emitter.ps.shape;
+            sh.mesh = mesh;
 
             // We have a target
             if (target != "None")

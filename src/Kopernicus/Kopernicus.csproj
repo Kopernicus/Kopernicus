@@ -44,10 +44,6 @@
       <HintPath>..\..\packages\UnityEngine.AssetBundleModule.1.8.1\lib\net40\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.CoreModule.1.8.1\lib\net40\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\packages\UnityEngine.ImageConversionModule.1.8.1\lib\net40\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
@@ -63,6 +59,12 @@
     <Reference Include="UnityEngine.UnityWebRequestWWWModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\packages\UnityEngine.UnityWebRequestWWWModule.1.8.1\lib\net40\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\packages\Defiant_Zombie.KSP.Skeleton.UnityEngine.CoreModule.1.8.1\lib\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>..\..\packages\Defiant_Zombie.KSP.Skeleton.UnityEngine.ParticleSystemModule.1.8.1\lib\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

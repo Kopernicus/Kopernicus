@@ -35,6 +35,7 @@ using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
+using Gradient = Kopernicus.Configuration.Parsing.Gradient;
 using Object = UnityEngine.Object;
 
 namespace Kopernicus.Configuration
@@ -54,12 +55,44 @@ namespace Kopernicus.Configuration
             set { Value.target = value; }
         }
 
+        // Shader of the particles
+        [ParserTarget("shader", Optional = true)]
+        public String ShaderName
+        {
+            get { return Value.shaderName; }
+            set { Value.shaderName = value; }
+        }
+
         // Shape of the particles
         [ParserTarget("shape", Optional = true)]
         public EnumParser<KSPParticleEmitter.EmissionShape> EmissionShape
         {
-            get { return Value.emissionShape; }
-            set { Value.emissionShape = value; }
+            get { return Value.emitter.shape; }
+            set { Value.emitter.shape = value; }
+        }
+
+        // 1-dimensional shape of the particles
+        [ParserTarget("shape1D", Optional = true)]
+        public NumericParser<Single> Shape1D
+        {
+            get { return Value.emitter.shape1D; }
+            set { Value.emitter.shape1D = value; }
+        }
+
+        // 2-dimensional shape of the particles
+        [ParserTarget("shape2D", Optional = true)]
+        public Vector2Parser Shape2D
+        {
+            get { return Value.emitter.shape2D; }
+            set { Value.emitter.shape2D = value; }
+        }
+
+        // 3-dimensional shape of the particles
+        [ParserTarget("shape3D", Optional = true)]
+        public Vector3Parser Shape3D
+        {
+            get { return Value.emitter.shape3D; }
+            set { Value.emitter.shape3D = value; }
         }
 
         // minEmission of particles
@@ -98,16 +131,16 @@ namespace Kopernicus.Configuration
         [ParserTarget("sizeMin")]
         public NumericParser<Single> SizeMin
         {
-            get { return Value.minSize; }
-            set { Value.minSize = value; }
+            get { return Value.emitter.minSize; }
+            set { Value.emitter.minSize = value; }
         }
 
         // maximum size of particles
         [ParserTarget("sizeMax")]
         public NumericParser<Single> SizeMax
         {
-            get { return Value.maxSize; }
-            set { Value.maxSize = value; }
+            get { return Value.emitter.maxSize; }
+            set { Value.emitter.maxSize = value; }
         }
 
         // speedScale of particles
@@ -122,8 +155,8 @@ namespace Kopernicus.Configuration
         [ParserTarget("rate")]
         public NumericParser<Single> Rate
         {
-            get { return Value.sizeGrow; }
-            set { Value.sizeGrow = value; }
+            get { return Value.emitter.sizeGrow; }
+            set { Value.emitter.sizeGrow = value; }
         }
 
         // rand Velocity of particles
@@ -150,9 +183,9 @@ namespace Kopernicus.Configuration
             set { Value.scale = value; }
         }
 
-        // mesh
-        [ParserTarget("mesh")]
-        public MeshParser Mesh
+        // Mesh to emit particles from
+        [ParserTarget("emitMesh")]
+        public MeshParser EmitMesh
         {
             get { return Value.mesh; }
             set { Value.mesh = value; }
@@ -166,20 +199,83 @@ namespace Kopernicus.Configuration
             set { Value.collideable = value; }
         }
 
+        // Collision mesh
+        [ParserTarget("bounce", Optional = true)]
+        public NumericParser<Single> CollisionMesh
+        {
+            get { return Value.bounce; }
+            set { Value.bounce = value; }
+        }
+
+        // Damping of the particles after they collide
+        [ParserTarget("damping", Optional = true)]
+        public NumericParser<Single> Damping
+        {
+            get { return Value.emitter.damping; }
+            set { Value.emitter.damping = value; }
+        }
+
+        // Whether the particles should cast shadows
+        [ParserTarget("shadowCast")]
+        public NumericParser<Boolean> CastShadows
+        {
+            get { return Value.emitter.castShadows; }
+            set { Value.emitter.castShadows = value; }
+        }
+
+        // Whether the particles should be affected by shadows
+        [ParserTarget("shadowEffect")]
+        public NumericParser<Boolean> ReceiveShadows
+        {
+            get { return Value.emitter.recieveShadows; }
+            set { Value.emitter.recieveShadows = value; }
+        }
+
+        // Whether to use an auto random seed
+        [ParserTarget("autoSeed", Optional = true)]
+        public NumericParser<Boolean> AutoRandomSeed
+        {
+            get { return Value.emitter.ps.useAutoRandomSeed; }
+            set { Value.emitter.ps.useAutoRandomSeed = value; }
+        }
+
+        // Seed for the particle generation (cannot be negative)
+        [ParserTarget("seed", Optional = true)]
+        public NumericParser<UInt32> Seed
+        {
+            get { return Value.emitter.ps.randomSeed; }
+            set { Value.emitter.ps.randomSeed = value; }
+        }
+
         // force
         [ParserTarget("force")]
         public Vector3Parser Force
         {
-            get { return Value.force; }
-            set { Value.force = value; }
+            get
+            {
+                if (Value.emitter.force == null)
+                {
+                    Value.emitter.force = Vector3.zero;
+                }
+                return Value.emitter.force;
+            }
+            set { Value.emitter.force = value; }
         }
 
         // Colors
         [ParserTargetCollection("Colors")]
         public List<ColorParser> Colors
         {
-            get { return Value.colorAnimation.Select(c => new ColorParser(c)).ToList(); }
-            set { Value.colorAnimation = value.Select(c => c.Value).ToArray(); }
+            get { return Value.emitter.colorAnimation.Select(c => new ColorParser(c)).ToList(); }
+            set { Value.emitter.colorAnimation = value.Select(c => c.Value).ToArray(); }
+        }
+
+        // Lifetime colors (length two)
+        [ParserTarget("lifetimeColors", Optional = true)]
+        public List<ColorParser> LifetimeColors
+        {
+            get { return Value.lifetimeColors.Select(c => new ColorParser(c)).ToList(); }
+            set { Value.lifetimeColors = value.Select(c => c.Value).ToArray(); }
         }
 
         [KittopiaDestructor]
@@ -201,7 +297,7 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = PlanetParticleEmitter.Create(generatedBody.scaledVersion);
-            Value.colorAnimation = new Color[0];
+            Value.emitter.colorAnimation = new Color[0];
         }
 
         /// <summary>
@@ -218,7 +314,7 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = PlanetParticleEmitter.Create(body.scaledBody);
-            Value.colorAnimation = new Color[0];
+            Value.emitter.colorAnimation = new Color[0];
         }
 
         /// <summary>
@@ -230,9 +326,9 @@ namespace Kopernicus.Configuration
             Value = particle;
 
             // Null safe
-            if (Value.colorAnimation == null)
+            if (Value.emitter.colorAnimation == null)
             {
-                Value.colorAnimation = new Color[0];
+                Value.emitter.colorAnimation = new Color[0];
             }
         }
 
