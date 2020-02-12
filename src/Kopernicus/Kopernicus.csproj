@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\Assembly-CSharp.1.8.1\lib\net40\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\packages\Assembly-CSharp.1.9.0\lib\net40\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ModularFlightIntegrator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -41,27 +41,27 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.AssetBundleModule.1.8.1\lib\net40\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.AssetBundleModule.1.9.0\lib\net40\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.CoreModule.1.8.1\lib\net40\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.CoreModule.1.9.0\lib\net40\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.ImageConversionModule.1.8.1\lib\net40\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.ImageConversionModule.1.9.0\lib\net40\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.PhysicsModule.1.8.1\lib\net40\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.PhysicsModule.1.9.0\lib\net40\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.UI.1.8.1\lib\net40\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.UI.1.9.0\lib\net40\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.UnityWebRequestWWWModule.1.8.1\lib\net40\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.UnityWebRequestWWWModule.1.9.0\lib\net40\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
