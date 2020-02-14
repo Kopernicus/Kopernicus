@@ -320,14 +320,6 @@ namespace Kopernicus.Configuration
                     // Remove all mods
                     Utility.RemoveModsOfType(null, Body.pqsVersion);
                 }
-
-                Logger.Active.Log("Patching PQSLandControl");
-
-                GameObject modObj = new GameObject("LandControlFixer");
-                PQSLandControlFixer fixer = modObj.AddComponent<PQSLandControlFixer>();
-                fixer.modEnabled = true;
-                fixer.order = 0;
-                modObj.transform.parent = Body.pqsVersion.transform;
             }
 
             // Should we remove the progress tree

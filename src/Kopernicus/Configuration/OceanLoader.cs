@@ -129,6 +129,8 @@ namespace Kopernicus.Configuration
             {
                 switch (GameSettings.TERRAIN_SHADER_QUALITY)
                 {
+                    case 3 when Value.ultraQualitySurfaceMaterial != null:
+                        return Value.ultraQualitySurfaceMaterial;
                     case 2 when Value.highQualitySurfaceMaterial != null:
                         return Value.highQualitySurfaceMaterial;
                     case 1 when Value.mediumQualitySurfaceMaterial != null:
@@ -145,6 +147,7 @@ namespace Kopernicus.Configuration
                 Value.lowQualitySurfaceMaterial = value;
                 Value.mediumQualitySurfaceMaterial = value;
                 Value.highQualitySurfaceMaterial = value;
+                Value.ultraQualitySurfaceMaterial = value;
             }
         }
 

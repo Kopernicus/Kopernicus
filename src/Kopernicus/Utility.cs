@@ -182,6 +182,22 @@ namespace Kopernicus
             }
         }
 
+        public static Boolean HasMod<T>(PQS sphere) where T : PQSMod
+        {
+            return sphere.GetComponentsInChildren<T>(true).Length != 0;
+        }
+
+        public static T AddMod<T>(PQS sphere, Int32 order) where T : PQSMod
+        {
+            GameObject modObject = new GameObject(typeof(T).Name);
+            modObject.transform.parent = sphere.transform;
+            T mod = modObject.AddComponent<T>();
+            mod.modEnabled = true;
+            mod.order = order;
+            mod.sphere = sphere;
+            return mod;
+        }
+
         public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, String path,
             String cacheFile, Boolean exportMesh, Boolean useSpherical)
         {

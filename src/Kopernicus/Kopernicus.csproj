@@ -96,6 +96,7 @@
     <Compile Include="Components\MaterialWrapper\PQSProjectionFallback.cs" />
     <Compile Include="Components\MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
     <Compile Include="Components\MaterialWrapper\PQSTriplanarZoomRotation.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSTriplanarZoomRotationTextureArray.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimAerial.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimLight.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetSimple.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Components\NativeByteArray.cs" />
     <Compile Include="Components\OrbitRendererUpdater.cs" />
     <Compile Include="Components\PQSLandControlFixer.cs" />
+    <Compile Include="Components\PQSMod_TextureAtlasFixer.cs" />
     <Compile Include="Components\Ring.cs" />
     <Compile Include="Components\Serialization\SerializableMonoBehaviour.cs" />
     <Compile Include="Components\Serialization\SerializableObject.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="Configuration\MaterialLoader\PQSMainExtrasLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedFastBlendLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSTriplanarZoomRotationLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSTriplanarZoomRotationTextureArrayLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimLightLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\StandardLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
@@ -151,6 +154,7 @@
     <Compile Include="Configuration\ModLoader\MaterialQuadRelative.cs" />
     <Compile Include="Configuration\ModLoader\SmoothLatitudeRange.cs" />
     <Compile Include="Configuration\ModLoader\TangentTextureRanges.cs" />
+    <Compile Include="Configuration\ModLoader\TextureAtlas.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorNoise.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorNoiseRGB.cs" />
