@@ -245,7 +245,7 @@ namespace Kopernicus.Components.MaterialWrapper
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
             {
-                throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (RimAerial) shader required");
+                throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (RimAerial) Standard shader required");
             }
         }
 
