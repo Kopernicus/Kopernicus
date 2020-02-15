@@ -90,6 +90,10 @@ namespace Kopernicus.Configuration
                 {
                     return ScaledMaterialType.Atmospheric;
                 }
+                if (ScaledPlanetRimAerialStandard.UsesSameShader(material))
+                {
+                    return ScaledMaterialType.AtmosphericStandard;
+                }
                 if (EmissiveMultiRampSunspots.UsesSameShader(material))
                 {
                     return ScaledMaterialType.Star;
@@ -108,6 +112,9 @@ namespace Kopernicus.Configuration
                         break;
                     case ScaledMaterialType.Atmospheric:
                         renderer.sharedMaterial = new ScaledPlanetRimAerialLoader();
+                        break;
+                    case ScaledMaterialType.AtmosphericStandard:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialStandardLoader();
                         break;
                     case ScaledMaterialType.Star:
                         renderer.sharedMaterial = new EmissiveMultiRampSunspotsLoader();
@@ -236,6 +243,7 @@ namespace Kopernicus.Configuration
 
                 Boolean isVaccum = material is ScaledPlanetSimpleLoader;
                 Boolean isAtmospheric = material is ScaledPlanetRimAerialLoader;
+                Boolean isAtmosphericStandard = material is ScaledPlanetRimAerialStandardLoader;
                 Boolean isStar = material is EmissiveMultiRampSunspotsLoader;
 
                 switch (Type.Value)
@@ -244,6 +252,8 @@ namespace Kopernicus.Configuration
                         return new ScaledPlanetSimpleLoader(material);
                     case ScaledMaterialType.Atmospheric when !isAtmospheric:
                         return new ScaledPlanetRimAerialLoader(material);
+                    case ScaledMaterialType.AtmosphericStandard when !isAtmosphericStandard:
+                        return new ScaledPlanetRimAerialStandardLoader(material);
                     case ScaledMaterialType.Star when !isStar:
                         return new EmissiveMultiRampSunspotsLoader(material);
                     default:
@@ -256,6 +266,7 @@ namespace Kopernicus.Configuration
 
                 Boolean isVaccum = value is ScaledPlanetSimpleLoader;
                 Boolean isAtmospheric = value is ScaledPlanetRimAerialLoader;
+                Boolean isAtmosphericStandard = value is ScaledPlanetRimAerialStandardLoader;
                 Boolean isStar = value is EmissiveMultiRampSunspotsLoader;
 
                 switch (Type.Value)
@@ -265,6 +276,9 @@ namespace Kopernicus.Configuration
                         break;
                     case ScaledMaterialType.Atmospheric when !isAtmospheric:
                         renderer.sharedMaterial = new ScaledPlanetRimAerialLoader(value);
+                        break;
+                    case ScaledMaterialType.AtmosphericStandard when !isAtmosphericStandard:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialStandardLoader(value);
                         break;
                     case ScaledMaterialType.Star when !isStar:
                         renderer.sharedMaterial = new EmissiveMultiRampSunspotsLoader(value);

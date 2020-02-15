@@ -98,6 +98,7 @@
     <Compile Include="Components\MaterialWrapper\PQSTriplanarZoomRotation.cs" />
     <Compile Include="Components\MaterialWrapper\PQSTriplanarZoomRotationTextureArray.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimAerial.cs" />
+    <Compile Include="Components\MaterialWrapper\ScaledPlanetRimAerialStandard.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimLight.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="Components\MaterialWrapper\Standard.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedFastBlendLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSTriplanarZoomRotationLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSTriplanarZoomRotationTextureArrayLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialStandardLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimLightLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\StandardLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
