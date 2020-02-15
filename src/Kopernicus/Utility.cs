@@ -182,9 +182,19 @@ namespace Kopernicus
             }
         }
 
+        public static T[] GetMods<T>(PQS sphere) where T : PQSMod
+        {
+            return sphere.GetComponentsInChildren<T>(true).Where(m => m.transform.parent == sphere.transform).ToArray();
+        }
+
+        public static T GetMod<T>(PQS sphere) where T : PQSMod
+        {
+            return GetMods<T>(sphere).FirstOrDefault();
+        }
+
         public static Boolean HasMod<T>(PQS sphere) where T : PQSMod
         {
-            return sphere.GetComponentsInChildren<T>(true).Length != 0;
+            return GetMod<T>(sphere) != null;
         }
 
         public static T AddMod<T>(PQS sphere, Int32 order) where T : PQSMod

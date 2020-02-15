@@ -131,6 +131,8 @@
     <Compile Include="Configuration\DebugLoader.cs" />
     <Compile Include="Configuration\Enumerations\KopernicusNoiseQuality.cs" />
     <Compile Include="Configuration\Enumerations\KopernicusNoiseType.cs" />
+    <Compile Include="Configuration\Enumerations\ScaledMaterialType.cs" />
+    <Compile Include="Configuration\Enumerations\SurfaceMaterialType.cs" />
     <Compile Include="Configuration\HazardousBodyLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
@@ -282,7 +284,6 @@
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetSimpleLoader.cs" />
     <Compile Include="Configuration\AtmosphereLoader.cs" />
     <Compile Include="Configuration\PQSLoader.cs" />
-    <Compile Include="Configuration\Enumerations\BodyType.cs" />
     <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
     <Compile Include="Configuration\CoronaLoader.cs" />
     <Compile Include="Configuration\Parsing\Gradient.cs" />

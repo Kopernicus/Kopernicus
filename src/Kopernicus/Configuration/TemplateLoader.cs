@@ -53,9 +53,6 @@ namespace Kopernicus.Configuration
         // Initial radius of the body
         public Double Radius { get; set; }
 
-        // Initial type of the body
-        public BodyType Type { get; set; }
-
         // PSystemBody to use as a template in lookup & clone
         public PSystemBody OriginalBody;
 
@@ -329,26 +326,15 @@ namespace Kopernicus.Configuration
             }
 
             // Figure out what kind of body we are
-            if (Body.scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0)
-            {
-                Type = BodyType.Star;
-            }
-            else if (Body.celestialBody.atmosphere)
-            {
-                Type = BodyType.Atmospheric;
-            }
-            else
-            {
-                Type = BodyType.Vacuum;
-            }
+            Boolean isStar = Body.scaledVersion.GetComponentsInChildren<SunShaderController>(true).Length > 0;
 
             // remove coronas
-            if (Type == BodyType.Star && RemoveCoronas)
+            if (isStar && RemoveCoronas)
             {
                 foreach (SunCoronas corona in Body.scaledVersion.GetComponentsInChildren<SunCoronas>(true))
                 {
-                    corona.GetComponent<Renderer>().enabled =
-                        false; // RnD hard refs Coronas, so we need to disable them
+                    // RnD hard refs Coronas, so we need to disable them
+                    corona.GetComponent<Renderer>().enabled = false;
                 }
             }
 
