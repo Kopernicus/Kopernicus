@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -51,7 +51,7 @@ namespace Kopernicus.Components.ModularScatter
         public Vector3 Offset = Vector3.zero;
 
         /// <summary>
-        /// Gets executed every frame and checks if some of the scatters don't have 
+        /// Gets executed every frame and checks if some of the scatters don't have
         /// </summary>
         /// <param name="system"></param>
         void IComponent<ModularScatter>.Update(ModularScatter system)
@@ -93,22 +93,24 @@ namespace Kopernicus.Components.ModularScatter
                 return;
             }
 
-            foreach (GameObject scatter in system.scatterObjects)
+            for (Int32 i = system.scatterObjects.Count; i > 0; i--)
             {
+                GameObject scatter = system.scatterObjects[i - 1];
+
                 Light light = scatter.GetComponentInChildren<Light>();
                 if (light)
                 {
                     continue;
                 }
 
-                GameObject lightObject = Utility.Instantiate(Prefab.gameObject, scatter.transform, true);
+                GameObject lightObject = UnityEngine.Object.Instantiate(Prefab.gameObject, scatter.transform, true);
                 lightObject.transform.localPosition = Offset;
                 lightObject.transform.localScale = Vector3.one;
                 lightObject.transform.localRotation = Quaternion.identity;
                 _lights.Add(lightObject.GetComponent<Light>());
             }
         }
-        
+
         /// <summary>
         /// Destroy the generated objects on a scene change so they don't appear in random positions
         /// </summary>
@@ -126,7 +128,7 @@ namespace Kopernicus.Components.ModularScatter
         {
             // We don't use this
         }
-        
+
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);

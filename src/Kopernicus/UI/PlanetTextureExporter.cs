@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -124,21 +124,12 @@ namespace Kopernicus.UI
             pqsVersion.SetupExternalRender();
 
             // Get the mod building methods from the PQS
-            #if !KSP131
             Action<PQS.VertexBuildData, Boolean> modOnVertexBuildHeight =
                 (Action<PQS.VertexBuildData, Boolean>) Delegate.CreateDelegate(
                     typeof(Action<PQS.VertexBuildData, Boolean>),
                     pqsVersion,
                     typeof(PQS).GetMethod("Mod_OnVertexBuildHeight",
                         BindingFlags.Instance | BindingFlags.NonPublic));
-            #else
-            Action<PQS.VertexBuildData> modOnVertexBuildHeight =
-                (Action<PQS.VertexBuildData>) Delegate.CreateDelegate(
-                    typeof(Action<PQS.VertexBuildData>),
-                    pqsVersion,
-                    typeof(PQS).GetMethod("Mod_OnVertexBuildHeight",
-                        BindingFlags.Instance | BindingFlags.NonPublic));
-            #endif
             Action<PQS.VertexBuildData> modOnVertexBuild = (Action<PQS.VertexBuildData>) Delegate.CreateDelegate(
                 typeof(Action<PQS.VertexBuildData>),
                 pqsVersion,
@@ -190,11 +181,7 @@ namespace Kopernicus.UI
                         * Vector3d.forward;
                     data.vertHeight = pqsVersion.radius;
 
-                    #if !KSP131
                     modOnVertexBuildHeight(data, true);
-                    #else
-                    modOnVertexBuildHeight(data);
-                    #endif
                     modOnVertexBuild(data);
 
                     // Cache the results
@@ -258,7 +245,7 @@ namespace Kopernicus.UI
 
                 for (Int32 x = 0; x < options.Resolution; x++)
                 {
-                    // Build from the Mods 
+                    // Build from the Mods
                     Double height = heightValues[y * options.Resolution + x] - pqsVersion.radius;
                     if (options.ExportColor)
                     {

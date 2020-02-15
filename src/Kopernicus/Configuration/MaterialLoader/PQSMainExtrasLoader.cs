@@ -502,6 +502,14 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { PlanetOpacity = value; }
         }
 
+        // Ocean Fog Dist, default = 1000
+        [ParserTarget("oceanFogDistance")]
+        public NumericParser<Single> OceanFogDistanceSetter
+        {
+            get { return OceanFogDistance; }
+            set { OceanFogDistance = value; }
+        }
+
         // Constructors
         public PQSMainExtrasLoader()
         {

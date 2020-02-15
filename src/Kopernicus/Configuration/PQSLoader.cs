@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Kopernicus.Components;
 using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
@@ -56,7 +57,10 @@ namespace Kopernicus.Configuration
             AtmosphericBasic,
             AtmosphericMain,
             AtmosphericOptimized,
-            AtmosphericExtra
+            AtmosphericExtra,
+            AtmosphericOptimizedFastBlend,
+            AtmosphericTriplanarZoomRotation,
+            AtmosphericTriplanarZoomRotationTextureArray,
         }
 
         // PQS we are creating
@@ -160,7 +164,19 @@ namespace Kopernicus.Configuration
                 if (PQSMainExtras.UsesSameShader(SurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericExtra;
-                } 
+                }
+                if (PQSMainOptimisedFastBlend.UsesSameShader(SurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericOptimizedFastBlend;
+                }
+                if (PQSTriplanarZoomRotation.UsesSameShader(SurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericTriplanarZoomRotation;
+                }
+                if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(SurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray;
+                }
                 return SurfaceMaterialType.Vacuum;
             }
             set
@@ -185,6 +201,18 @@ namespace Kopernicus.Configuration
                 {
                     SurfaceMaterial = new PQSMainExtrasLoader();
                 }
+                else if (value.Value == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
+                {
+                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
+                }
+                else if (value.Value == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader();
+                }
+                else if (value.Value == SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader();
+                }
                 else
                 {
                     throw new ArgumentOutOfRangeException();
@@ -197,8 +225,30 @@ namespace Kopernicus.Configuration
         [KittopiaUntouchable]
         public Material SurfaceMaterial
         {
-            get { return Value.surfaceMaterial; }
-            set { Value.surfaceMaterial = value; }
+            get
+            {
+                switch (GameSettings.TERRAIN_SHADER_QUALITY)
+                {
+                    case 3 when Value.ultraQualitySurfaceMaterial != null:
+                        return Value.ultraQualitySurfaceMaterial;
+                    case 2 when Value.highQualitySurfaceMaterial != null:
+                        return Value.highQualitySurfaceMaterial;
+                    case 1 when Value.mediumQualitySurfaceMaterial != null:
+                        return Value.mediumQualitySurfaceMaterial;
+                    case 0 when Value.lowQualitySurfaceMaterial != null:
+                        return Value.lowQualitySurfaceMaterial;
+                    default:
+                        return Value.surfaceMaterial;
+                }
+            }
+            set
+            {
+                Value.surfaceMaterial = value;
+                Value.lowQualitySurfaceMaterial = value;
+                Value.mediumQualitySurfaceMaterial = value;
+                Value.highQualitySurfaceMaterial = value;
+                Value.ultraQualitySurfaceMaterial = value;
+            }
         }
 
         // Fallback Material of the PQS (its always the same material)
@@ -266,6 +316,19 @@ namespace Kopernicus.Configuration
                 {
                     SurfaceMaterial = new PQSMainExtrasLoader(SurfaceMaterial);
                 }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
+                {
+                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(SurfaceMaterial);
+                }
+
 
                 SurfaceMaterial.name = Guid.NewGuid().ToString();
 
@@ -349,9 +412,19 @@ namespace Kopernicus.Configuration
             generatedBody.celestialBody.pqsController = generatedBody.pqsVersion;
 
             // Add an OnDemand Handler
-            if (Value.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
+            if (!Utility.HasMod<PQSMod_OnDemandHandler>(Value))
             {
-                OnDemandStorage.AddHandler(Value);
+                Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
+            }
+
+            // Add fixes for LandControl and TextureAtlas
+            if (!Utility.HasMod<PQSLandControlFixer>(Value))
+            {
+                Utility.AddMod<PQSLandControlFixer>(Value, 0);
+            }
+            if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
+            {
+                Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
             }
 
             // hacky hack
@@ -359,7 +432,7 @@ namespace Kopernicus.Configuration
             {
                 PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
                 GameObject scTree = kerbinTemplate.pqsVersion.gameObject.GetChild("KSC");
-                GameObject newScTree = Utility.Instantiate(scTree, Value.transform, true);
+                GameObject newScTree = Object.Instantiate(scTree, Value.transform, true);
                 newScTree.transform.localPosition = scTree.transform.localPosition;
                 newScTree.transform.localScale = scTree.transform.localScale;
                 newScTree.transform.localRotation = scTree.transform.localRotation;
@@ -429,6 +502,18 @@ namespace Kopernicus.Configuration
                 else if (MaterialType == SurfaceMaterialType.AtmosphericExtra)
                 {
                     SurfaceMaterial = new PQSMainExtrasLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
+                {
+                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader(SurfaceMaterial);
+                }
+                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray)
+                {
+                    SurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(SurfaceMaterial);
                 }
 
                 SurfaceMaterial.name = Guid.NewGuid().ToString();
@@ -517,11 +602,21 @@ namespace Kopernicus.Configuration
             body.pqsController.radius = body.Radius;
 
             // Add an OnDemand Handler
-            if (Value.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
+            if (!Utility.HasMod<PQSMod_OnDemandHandler>(Value))
             {
-                OnDemandStorage.AddHandler(Value);
+                Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
             }
-            
+
+            // Add fixes for LandControl and TextureAtlas
+            if (!Utility.HasMod<PQSLandControlFixer>(Value))
+            {
+                Utility.AddMod<PQSLandControlFixer>(Value, 0);
+            }
+            if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
+            {
+                Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
+            }
+
             // Load existing mods
             // Unlike the above, this checks for the sphere reference because at runtime the ocean is a child of the
             // normal PQS, and we would be getting references to ocean mods without it.

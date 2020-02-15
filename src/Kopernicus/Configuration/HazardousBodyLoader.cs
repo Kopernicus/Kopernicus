@@ -44,60 +44,68 @@ namespace Kopernicus.Configuration
         // Set-up our parental objects
         public HazardousBody Value { get; set; }
 
-        // The average heat on the body
-        [ParserTarget("heat")]
-        [KittopiaDescription("The average heat on the body.")]
-        public NumericParser<Double> Heat
+        // The ambient temperature.
+        [ParserTarget("ambientTemp")]
+        [KittopiaDescription("The ambient temperature.")]
+        public NumericParser<Double> AmbientTemp
         {
-            get { return Value.heatRate; }
-            set { Value.heatRate = value; }
+            get { return Value.ambientTemp; }
+            set { Value.ambientTemp = value; }
         }
 
-        // How much time passes between applying the heat to a vessel
-        [ParserTarget("interval")]
-        [KittopiaDescription("How much time passes between applying the heat to a vessel.")]
-        public NumericParser<Single> Interval
+        // If the ambientTemp should be added.
+        [ParserTarget("sumTemp")]
+        [KittopiaDescription("If the ambientTemp should be added.")]
+        public NumericParser<Boolean> SumTemp
         {
-            get { return Value.heatInterval; }
-            set { Value.heatInterval = value; }
+            get { return Value.sumTemp; }
+            set { Value.sumTemp = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain altitude
+        // The name of the biome.
+        [ParserTarget("biomeName")]
+        [KittopiaDescription("The name of the biome.")]
+        public String BiomeName
+        {
+            get { return Value.biomeName; }
+            set { Value.biomeName = value; }
+        }
+
+        // Multiplier curve to change ambientTemp with altitude
         [ParserTarget("AltitudeCurve")]
-        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain altitude.")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with altitude.")]
         public FloatCurveParser AltitudeCurve
         {
             get { return Value.altitudeCurve; }
             set { Value.altitudeCurve = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain latitude
+        // Multiplier curve to change ambientTemp with latitude
         [ParserTarget("LatitudeCurve")]
-        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain latitude.")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with latitude.")]
         public FloatCurveParser LatitudeCurve
         {
             get { return Value.latitudeCurve; }
             set { Value.latitudeCurve = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain longitude
+        // Multiplier curve to change ambientTemp with longitude
         [ParserTarget("LongitudeCurve")]
-        [KittopiaDescription("Controls the how much of the average heat gets applied at a certain longitude.")]
+        [KittopiaDescription("Multiplier curve to change ambientTemp with longitude.")]
         public FloatCurveParser LongitudeCurve
         {
             get { return Value.longitudeCurve; }
             set { Value.longitudeCurve = value; }
         }
 
-        // Controls the how much of the average heat gets applied at a certain longitude
+        // Multiplier map for ambientTemp
         [ParserTarget("HeatMap")]
-        [KittopiaDescription("Greyscale map for fine control of the heat on a planet. black = 0, white = 1")]
+        [KittopiaDescription("Greyscale map for fine control of the ambientTemp on a planet. black = 0, white = 1")]
         public MapSOParserGreyScale<MapSO> HeatMap
         {
             get { return Value.heatMap; }
             set { Value.heatMap = value; }
         }
-
 
         [KittopiaDestructor]
         public void Destroy()
@@ -118,9 +126,9 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = generatedBody.celestialBody.gameObject.AddComponent<HazardousBody>();
-            Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
         }
 
         /// <summary>
@@ -137,9 +145,9 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = body.gameObject.AddComponent<HazardousBody>();
-            Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
-            Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+            Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
         }
 
         /// <summary>
@@ -153,17 +161,17 @@ namespace Kopernicus.Configuration
             // Null safe
             if (Value.altitudeCurve == null)
             {
-                Value.altitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
             }
 
             if (Value.latitudeCurve == null)
             {
-                Value.latitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
             }
 
             if (Value.longitudeCurve == null)
             {
-                Value.longitudeCurve = new FloatCurve(new[] {new Keyframe(0, 1)});
+                Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
             }
         }
     }

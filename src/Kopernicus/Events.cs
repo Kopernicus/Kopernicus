@@ -31,6 +31,7 @@ using Kopernicus.Components;
 using Kopernicus.Configuration;
 using Kopernicus.Configuration.Asteroids;
 using Kopernicus.OnDemand;
+using ModularFI;
 using UnityEngine;
 
 namespace Kopernicus
@@ -145,11 +146,6 @@ namespace Kopernicus
         private static EventData<ConfigNode> OnOrbitLoaderApplyNR { get; set; }
         [Description("OrbitLoader.PostApply.NR")]
         private static EventData<ConfigNode> OnOrbitLoaderPostApplyNR { get; set; }
-
-        [Description("ParticleLoader.Apply")]
-        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderApply { get; private set; }
-        [Description("ParticleLoader.PostApply")]
-        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderPostApply { get; private set; }
 
         [Description("ParticleLoader.Apply.NR")]
         private static EventData<ConfigNode> OnParticleLoaderApplyNR { get; set; }
@@ -286,6 +282,8 @@ namespace Kopernicus
         public static EventData<KSC> OnSwitchKSC { get; private set; }
         [Description("Components.ApplyNameChange")]
         public static EventData<NameChanger, CelestialBody> OnApplyNameChange { get; private set; }
+        [Description("Components.KopernicusHeatManager")]
+        public static EventData<ModularFlightIntegrator> OnCalculateBackgroundRadiationTemperature { get; set; }
 
         [Description("Components.SwitchKSC.NR")]
         private static EventVoid OnSwitchKSCNR { get; set; }
@@ -355,8 +353,6 @@ namespace Kopernicus
             OnOceanLoaderPostApply.Add((a, c) => OnOceanLoaderPostApplyNR.Fire(c));
             OnOrbitLoaderApply.Add((a, c) => OnOrbitLoaderApplyNR.Fire(c));
             OnOrbitLoaderPostApply.Add((a, c) => OnOrbitLoaderPostApplyNR.Fire(c));
-            OnParticleLoaderApply.Add((a, c) => OnParticleLoaderApplyNR.Fire(c));
-            OnParticleLoaderPostApply.Add((a, c) => OnParticleLoaderPostApplyNR.Fire(c));
             OnPQSLoaderApply.Add((a, c) => OnPQSLoaderApplyNR.Fire(c));
             OnPQSLoaderPostApply.Add((a, c) => OnPQSLoaderPostApplyNR.Fire(c));
             OnPropertiesLoaderApply.Add((a, c) => OnPropertiesLoaderApplyNR.Fire(c));

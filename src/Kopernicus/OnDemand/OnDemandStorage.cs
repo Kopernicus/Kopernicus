@@ -43,10 +43,6 @@ namespace Kopernicus.OnDemand
         private static readonly Dictionary<String, List<ILoadOnDemand>> Maps =
             new Dictionary<String, List<ILoadOnDemand>>();
 
-        [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-        private static readonly Dictionary<PQS, PQSMod_OnDemandHandler> Handlers =
-            new Dictionary<PQS, PQSMod_OnDemandHandler>();
-
         // Whole file buffer management
         private static Byte[] _wholeFileBuffer;
         private static Int32 _sizeWholeFile;
@@ -60,17 +56,6 @@ namespace Kopernicus.OnDemand
         public static Int32 OnDemandUnloadDelay = 10;
 
         public static Boolean UseManualMemoryManagement = true;
-
-        // Add the management handler to the PQS
-        public static void AddHandler(PQS pqsVersion)
-        {
-            PQSMod_OnDemandHandler handler = new GameObject("OnDemandHandler").AddComponent<PQSMod_OnDemandHandler>();
-            handler.transform.parent = pqsVersion.transform;
-            Object.DontDestroyOnLoad(handler);
-            handler.sphere = pqsVersion;
-            handler.order = 1;
-            Handlers[pqsVersion] = handler;
-        }
 
         // Add a map to the map-list
         public static void AddMap(String body, ILoadOnDemand map)

@@ -231,18 +231,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.WaterTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTexScale
         {
-            get { return GetTextureScale(Properties.WATER_TEX_KEY); }
-            set { SetTextureScale(Properties.WATER_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.WaterTexId); }
+            set { SetTextureScale(Properties.Instance.WaterTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTexOffset
         {
-            get { return GetTextureOffset(Properties.WATER_TEX_KEY); }
-            set { SetTextureOffset(Properties.WATER_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.WaterTexId); }
+            set { SetTextureOffset(Properties.Instance.WaterTexId, value); }
         }
 
         // Tex1, default = "white" { }
@@ -252,18 +250,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.WaterTex1Id, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTex1Scale
         {
-            get { return GetTextureScale(Properties.WATER_TEX1_KEY); }
-            set { SetTextureScale(Properties.WATER_TEX1_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.WaterTex1Id); }
+            set { SetTextureScale(Properties.Instance.WaterTex1Id, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTex1Offset
         {
-            get { return GetTextureOffset(Properties.WATER_TEX1_KEY); }
-            set { SetTextureOffset(Properties.WATER_TEX1_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.WaterTex1Id); }
+            set { SetTextureOffset(Properties.Instance.WaterTex1Id, value); }
         }
 
         // Normal Tiling, default = 1
@@ -280,18 +276,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.BumpMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapScale
         {
-            get { return GetTextureScale(Properties.BUMP_MAP_KEY); }
-            set { SetTextureScale(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.BumpMapId); }
+            set { SetTextureScale(Properties.Instance.BumpMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapOffset
         {
-            get { return GetTextureOffset(Properties.BUMP_MAP_KEY); }
-            set { SetTextureOffset(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.BumpMapId); }
+            set { SetTextureOffset(Properties.Instance.BumpMapId, value); }
         }
 
         // Water Movement, default = 1
@@ -378,18 +372,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.FogColorRampId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 FogColorRampScale
         {
-            get { return GetTextureScale(Properties.FOG_COLOR_RAMP_KEY); }
-            set { SetTextureScale(Properties.FOG_COLOR_RAMP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.FogColorRampId); }
+            set { SetTextureScale(Properties.Instance.FogColorRampId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 FogColorRampOffset
         {
-            get { return GetTextureOffset(Properties.FOG_COLOR_RAMP_KEY); }
-            set { SetTextureOffset(Properties.FOG_COLOR_RAMP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.FogColorRampId); }
+            set { SetTextureOffset(Properties.Instance.FogColorRampId, value); }
         }
 
         // FadeStart, default = 1

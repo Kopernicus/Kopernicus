@@ -112,7 +112,7 @@ namespace Kopernicus.Configuration
             set
             {
                 // Change the displayName
-                CelestialBody.bodyDisplayName = value;
+                CelestialBody.bodyDisplayName = CelestialBody.bodyAdjectiveDisplayName = value;
 
                 // Set the NameChanger component
                 NameChanger changer = CelestialBody.gameObject.AddOrGetComponent<NameChanger>();
@@ -215,10 +215,6 @@ namespace Kopernicus.Configuration
         [ParserTargetCollection("Rings", AllowMerge = true)]
         public List<RingLoader> Rings { get; set; }
 
-        // Wrapper around Particle class for editing/loading
-        [ParserTargetCollection("Particles", AllowMerge = true)]
-        public List<ParticleLoader> Particles { get; set; }
-
         [ParserTargetCollection("HazardousBody", AllowMerge = true)]
         public List<HazardousBodyLoader> HazardousBody { get; set; }
 
@@ -287,7 +283,7 @@ namespace Kopernicus.Configuration
                 // If we've changed the name, reset use_The_InName
                 if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
                 {
-                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyName;
+                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                 }
             }
 
@@ -308,7 +304,7 @@ namespace Kopernicus.Configuration
 
                 // Sensible defaults 
                 GeneratedBody.celestialBody.bodyName = Name;
-                GeneratedBody.celestialBody.bodyDisplayName = Name;
+                GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = Name;
                 GeneratedBody.celestialBody.atmosphere = false;
                 GeneratedBody.celestialBody.ocean = false;
 
@@ -386,7 +382,6 @@ namespace Kopernicus.Configuration
         public Body()
         {
             Rings = new List<RingLoader>();
-            Particles = new List<ParticleLoader>();
         }
 
         /// <summary>
@@ -424,13 +419,6 @@ namespace Kopernicus.Configuration
             foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
             {
                 Rings.Add(new RingLoader(ring));
-            }
-
-            Particles = new List<ParticleLoader>();
-            foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
-                .GetComponentsInChildren<PlanetParticleEmitter>(true))
-            {
-                Particles.Add(new ParticleLoader(particle));
             }
 
             HazardousBody = new List<HazardousBodyLoader>();

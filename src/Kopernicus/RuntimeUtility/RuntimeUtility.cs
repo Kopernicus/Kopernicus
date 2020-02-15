@@ -1,6 +1,6 @@
 /**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -29,19 +29,21 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Contracts;
-#if !KSP131
 using Expansions;
-#endif
 using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
+using KSP.UI;
 using KSP.UI.Screens;
 using KSP.UI.Screens.Mapview;
 using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using KSP.UI.Screens.Settings.Controls;
 using ModularFI;
 using UnityEngine;
+using UnityEngine.UI;
+using KSP.Localization;
+using Object = UnityEngine.Object;
 
 namespace Kopernicus.RuntimeUtility
 {
@@ -71,10 +73,53 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelWasLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
-            
+
+            // Add Callback only if necessary
+            if (FlightGlobals.GetHomeBody().atmospherePressureSeaLevel != 101.324996948242)
+                KbApp_PlanetParameters.CallbackAfterActivate += CallbackAfterActivate;
+
             // Log
             Logger.Default.Log("[Kopernicus] RuntimeUtility Started");
             Logger.Default.Flush();
+        }
+
+        private bool CallbackAfterActivate(KbApp_PlanetParameters kbapp, MapObject target)
+        {
+            kbapp.appFrame.scrollList.Clear(true);
+            kbapp.cascadingList = Object.Instantiate(kbapp.cascadingListPrefab);
+            kbapp.cascadingList.Setup(kbapp.appFrame.scrollList);
+            kbapp.cascadingList.transform.SetParent(base.transform, false);
+            UIListItem header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462403"), out Button button, true);
+            kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), kbapp.CreatePhysicalCharacteristics(), button, -1);
+            header = kbapp.cascadingList.CreateHeader(Localizer.Format("#autoLOC_462406"), out button, true);
+            kbapp.cascadingList.ruiList.AddCascadingItem(header, kbapp.cascadingList.CreateFooter(), CreateAtmosphericCharacteristics(target.celestialBody, kbapp.cascadingList), button, -1);
+
+            return true;
+        }
+
+        private List<UIListItem> CreateAtmosphericCharacteristics(CelestialBody currentBody, GenericCascadingList cascadingList)
+        {
+            GenericCascadingList genericCascadingList = cascadingList;
+            Boolean atmosphere = currentBody.atmosphere && currentBody.atmospherePressureSeaLevel > 0;
+
+            String key = Localizer.Format("#autoLOC_462448");
+            String template = atmosphere ? "#autoLOC_439855" : "#autoLOC_439856";
+            UIListItem item = genericCascadingList.CreateBody(key, "<color=#b8f4d1>" + Localizer.Format((string)template) + "</color>");
+
+            List<UIListItem> list = new List<UIListItem>();
+            list.Add(item);
+
+            if (atmosphere)
+            {
+                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462453"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmosphereDepth, "N0") + " " + Localizer.Format("#autoLOC_7001411") + "</color>");
+                list.Add(item);
+                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462456"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmospherePressureSeaLevel / 101.324996948242, "0.#####") + " " + Localizer.Format("#autoLOC_7001419") + "</color>");
+                list.Add(item);
+                item = cascadingList.CreateBody(Localizer.Format("#autoLOC_462459"), "<color=#b8f4d1>" + KSPUtil.LocalizeNumber(currentBody.atmosphereTemperatureSeaLevel, "0.##") + " " + Localizer.Format("#autoLOC_7001406") + "</color>");
+                list.Add(item);
+            }
+
+            return list;
         }
 
         // Execute MainMenu functions
@@ -86,6 +131,7 @@ namespace Kopernicus.RuntimeUtility
             ApplyInitialTarget();
             ApplyOrbitPatches();
             ApplyStarPatchSun();
+            ApplyFlagFixes();
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -103,7 +149,7 @@ namespace Kopernicus.RuntimeUtility
             ApplyMapTargetPatches();
             FixFlickeringOrbitLines();
             ApplyOrbitIconCustomization();
-            
+
             // Apply changes for all bodies
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -114,11 +160,12 @@ namespace Kopernicus.RuntimeUtility
 
         // Run patches every time a new scene was loaded
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
-        private static void OnLevelWasLoaded(GameScenes scene)
+        private void OnLevelWasLoaded(GameScenes scene)
         {
             PatchFlightIntegrator();
             FixCameras();
             PatchTimeOfDayAnimation();
+            StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -173,7 +220,7 @@ namespace Kopernicus.RuntimeUtility
             PlanetariumCamera.fetch.targets = Templates.MapTargets.Where(m =>
                 m.celestialBody != null && m.celestialBody.Get("selectable", true)).ToList();
         }
-        
+
         // Apply the star patch to the center body
         private static void ApplyStarPatchSun()
         {
@@ -192,7 +239,7 @@ namespace Kopernicus.RuntimeUtility
             DestroyImmediate(SunFlare.Instance);
             SunFlare.Instance = star.lensFlare = flare;
         }
-        
+
         [SuppressMessage("ReSharper", "RedundantCast")]
         private static void ApplyStarPatches(CelestialBody body)
         {
@@ -200,8 +247,8 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
-            GameObject starObj = Utility.Instantiate(Sun.Instance.gameObject, Sun.Instance.transform.parent, true);
+
+            GameObject starObj = UnityEngine.Object.Instantiate(Sun.Instance.gameObject, Sun.Instance.transform.parent, true);
             KopernicusStar star = starObj.GetComponent<KopernicusStar>();
             star.sun = body;
             starObj.name = body.name;
@@ -211,7 +258,7 @@ namespace Kopernicus.RuntimeUtility
             starObj.transform.position = body.position;
             starObj.transform.rotation = body.rotation;
 
-            GameObject flareObj = Utility.Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
+            GameObject flareObj = UnityEngine.Object.Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
             KopernicusSunFlare flare = flareObj.GetComponent<KopernicusSunFlare>();
             star.lensFlare = flare;
             flareObj.name = body.name;
@@ -224,17 +271,16 @@ namespace Kopernicus.RuntimeUtility
 
         private static void ApplyLaunchSitePatches()
         {
-            #if !KSP131
             if (!ExpansionsLoader.IsExpansionInstalled("MakingHistory"))
             {
                 return;
             }
-            
+
             PQSCity2[] cities = FindObjectsOfType<PQSCity2>();
             for (Int32 i = 0; i < Templates.RemoveLaunchSites.Count; i++)
             {
                 String site = Templates.RemoveLaunchSites[i];
-                
+
                 // Remove the launch site from the list if it exists
                 if (PSystemSetup.Instance.LaunchSites.Any(s => s.name == site))
                 {
@@ -275,7 +321,6 @@ namespace Kopernicus.RuntimeUtility
                 Logger.Default.Log("Failed to remove launch sites from 'stockLaunchSites' field. Exception information follows.");
                 Logger.Default.LogException(ex);
             }
-            #endif
         }
 
         // Apply the home atmosphere height as the altitude where space music starts
@@ -296,7 +341,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
         }
 
@@ -307,7 +352,7 @@ namespace Kopernicus.RuntimeUtility
             ScaledMovement movement = home.scaledBody.GetComponentInChildren<ScaledMovement>();
             PlanetariumCamera.fetch.initialTarget = movement;
         }
-        
+
         // Apply PostSpawnOrbit patches
         private void ApplyOrbitPatches()
         {
@@ -317,7 +362,7 @@ namespace Kopernicus.RuntimeUtility
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 CelestialBody body = PSystemManager.Instance.localBodies[i];
-                
+
                 // Post spawn patcher
                 if (!body.Has("orbitPatches"))
                 {
@@ -329,7 +374,7 @@ namespace Kopernicus.RuntimeUtility
                 CelestialBody oldRef = body.referenceBody;
                 Parser.LoadObjectFromConfigurationNode(loader, orbitNode, "Kopernicus");
                 oldRef.orbitingBodies.Remove(body);
-                
+
                 if (body.referenceBody == null)
                 {
                     // Log the exception
@@ -341,14 +386,15 @@ namespace Kopernicus.RuntimeUtility
                     Destroy(this);
                     return;
                 }
-
+         
                 fixes.Add(body.transform.name,
                     new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
                 body.referenceBody.orbitingBodies.Add(body);
                 body.referenceBody.orbitingBodies =
                     body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
                 body.orbit.Init();
-                body.orbitDriver.UpdateOrbit();
+    
+                //body.orbitDriver.UpdateOrbit();
 
                 // Calculations
                 if (!body.Has("sphereOfInfluence"))
@@ -356,18 +402,18 @@ namespace Kopernicus.RuntimeUtility
                     body.sphereOfInfluence = body.orbit.semiMajorAxis *
                                              Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
                 }
-
+              
                 if (!body.Has("hillSphere"))
                 {
                     body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) *
                                       Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
                 }
-
+              
                 if (!body.solarRotationPeriod)
                 {
-                    continue;
+                   continue;
                 }
-                
+       
                 Double rotPeriod = Utility
                     .FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody
                     .rotationPeriod;
@@ -403,7 +449,7 @@ namespace Kopernicus.RuntimeUtility
         {
             if (HighLogic.LoadedSceneHasPlanetarium && MapView.fetch && !_fixZoomingIsDone)
             {
-                // Fix the bug via switching away from Home and back immediately. 
+                // Fix the bug via switching away from Home and back immediately.
                 // TODO: Check if this still happens
                 PlanetariumCamera.fetch.SetTarget(PlanetariumCamera.fetch.targets[
                     (PlanetariumCamera.fetch.targets.IndexOf(PlanetariumCamera.fetch.target) + 1) %
@@ -423,13 +469,13 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             MapObject target = PlanetariumCamera.fetch.target;
             if (!target || !target.celestialBody)
             {
                 return;
             }
-            
+
             CelestialBody body = target.celestialBody;
             if (body.Has("maxZoom"))
             {
@@ -443,7 +489,7 @@ namespace Kopernicus.RuntimeUtility
 
         // Whether to apply RD changes next frame
         private Boolean _rdIsDone;
-        
+
         // Remove the thumbnail for barycenters in the RD and patch name changes
         private void ApplyRnDPatches()
         {
@@ -477,14 +523,14 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             MapView.fetch.max3DlineDrawDist = Single.MaxValue;
             GameSettings.MAP_MAX_ORBIT_BEFORE_FORCE2D = Int32.MaxValue;
         }
 
         // The preset names
         private String[] _details;
-        
+
         // Update the names of the presets in the settings dialog
         private void UpdatePresetNames()
         {
@@ -492,14 +538,14 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             foreach (SettingsTerrainDetail detail in Resources.FindObjectsOfTypeAll<SettingsTerrainDetail>())
             {
                 detail.displayStringValue = true;
                 detail.stringValues = _details ?? (_details = Templates.PresetDisplayNames.ToArray());
             }
         }
-        
+
         // Reflection fields for orbit targeting
         private FieldInfo[] _fields;
 
@@ -543,7 +589,7 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
             OrbitRenderer.OrbitCastHit cast = (OrbitRenderer.OrbitCastHit)_fields[2].GetValue(targeter);
-            
+
             CelestialBody body = PSystemManager.Instance.localBodies.Find(b =>
                 cast.or != null && cast.or.discoveryInfo?.name != null && b.name == cast.or.discoveryInfo.name.Value);
             if (!body)
@@ -582,7 +628,7 @@ namespace Kopernicus.RuntimeUtility
         {
             _orbitIconsReady = true;
         }
-        
+
         // The cache for the orbit icon objects
         private readonly Dictionary<CelestialBody, Sprite> _spriteCache = new Dictionary<CelestialBody, Sprite>();
 
@@ -659,7 +705,7 @@ namespace Kopernicus.RuntimeUtility
                 body.orbitDriver.Renderer.drawIcons = body.Get<OrbitRenderer.DrawIcons>("drawIcons");
             }
         }
-        
+
         // Shader accessor for AtmosphereFromGround
         private readonly Int32 _lightDot = Shader.PropertyToID("_lightDot");
 
@@ -670,7 +716,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             GameObject star = KopernicusStar.GetNearest(body).gameObject;
             Vector3 afgCamPosition = body.afg.mainCamera.transform.position;
             Vector3 distance = body.scaledBody.transform.position - afgCamPosition;
@@ -687,6 +733,7 @@ namespace Kopernicus.RuntimeUtility
             }
             Events.OnRuntimeUtilityPatchFI.Fire();
             ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+            ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
         }
 
         // Fix the Space Center Cameras
@@ -697,7 +744,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             // Get the parental body
             CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
 
@@ -870,7 +917,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             if (ContractSystem.ContractWeights.ContainsKey(body.name))
             {
                 ContractSystem.ContractWeights[body.name] = body.Get<Int32>("contractWeight");
@@ -878,6 +925,33 @@ namespace Kopernicus.RuntimeUtility
             else
             {
                 ContractSystem.ContractWeights.Add(body.name, body.Get<Int32>("contractWeight"));
+            }
+        }
+
+        // Flag Fixer
+        private  void ApplyFlagFixes()
+        {
+            GameEvents.OnKSCFacilityUpgraded.Add(FixFlags);
+            GameEvents.OnKSCStructureRepaired.Add(FixFlags);
+        }
+
+        private  void FixFlags(DestructibleBuilding data)
+        {
+            FixFlags();
+        }
+
+        private  void FixFlags(Upgradeables.UpgradeableFacility data0, int data1)
+        {
+            FixFlags();
+        }
+
+        private  void FixFlags()
+        {
+            PQSCity KSC = FlightGlobals.GetHomeBody()?.pqsController?.GetComponentsInChildren<PQSCity>(true)?.FirstOrDefault(p => p?.name == "KSC");
+            SkinnedMeshRenderer[] flags = KSC?.GetComponentsInChildren<SkinnedMeshRenderer>(true)?.Where(smr => smr?.name == "Flag")?.ToArray();
+            for (int i = 0; i < flags?.Length; i++)
+            {
+                flags[i].rootBone = flags[i]?.rootBone?.parent?.gameObject?.GetChild("bn_upper_flag_a01")?.transform;
             }
         }
 

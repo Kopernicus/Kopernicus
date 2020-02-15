@@ -151,18 +151,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.WaterTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTexScale
         {
-            get { return GetTextureScale(Properties.WATER_TEX_KEY); }
-            set { SetTextureScale(Properties.WATER_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.WaterTexId); }
+            set { SetTextureScale(Properties.Instance.WaterTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTexOffset
         {
-            get { return GetTextureOffset(Properties.WATER_TEX_KEY); }
-            set { SetTextureOffset(Properties.WATER_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.WaterTexId); }
+            set { SetTextureOffset(Properties.Instance.WaterTexId, value); }
         }
 
         // Tex1, default = "white" { }
@@ -172,18 +170,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.WaterTex1Id, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTex1Scale
         {
-            get { return GetTextureScale(Properties.WATER_TEX1_KEY); }
-            set { SetTextureScale(Properties.WATER_TEX1_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.WaterTex1Id); }
+            set { SetTextureScale(Properties.Instance.WaterTex1Id, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 WaterTex1Offset
         {
-            get { return GetTextureOffset(Properties.WATER_TEX1_KEY); }
-            set { SetTextureOffset(Properties.WATER_TEX1_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.WaterTex1Id); }
+            set { SetTextureOffset(Properties.Instance.WaterTex1Id, value); }
         }
 
         // FadeStart, default = 1

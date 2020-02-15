@@ -24,8 +24,10 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.Components.ModularComponentSystem;
+using ModularFI;
 using UnityEngine;
 
 namespace Kopernicus.Components.ModularScatter
@@ -37,71 +39,56 @@ namespace Kopernicus.Components.ModularScatter
     public class HeatEmitterComponent : IComponent<ModularScatter>
     {
         /// <summary>
-        /// How much heat should be applied at a certain distance
+        /// The maximum temperature that will eventually be reached.
         /// </summary>
-        public FloatCurve HeatCurve;
-        
-        /// <summary>
-        /// The amount of heat that gets added to the active vessel every n seconds
-        /// </summary>
-        public Double HeatRate;
+        public Double ambientTemp = 0;
 
         /// <summary>
-        /// How many seconds should pass between applying the heat rate to the ship.
+        /// If the ambientTemp should be added.
         /// </summary>
-        public Double HeatInterval = 0.05;
-        
-        /// <summary>
-        /// The current position of the timer.
-        /// </summary>
-        private Double _heatPosition;
+        public Boolean sumTemp = false;
 
         /// <summary>
-        /// Gets executed every frame and checks if a Kerbal is within the range of the scatter object
+        /// The name of the biome.
         /// </summary>
+        public String biomeName;
+
+        /// <summary>
+        /// Multiplier curve to change ambientTemp with latitude
+        /// </summary>
+        public FloatCurve latitudeCurve;
+
+        /// <summary>
+        /// Multiplier curve to change ambientTemp with longitude
+        /// </summary>
+        public FloatCurve longitudeCurve;
+
+        /// <summary>
+        /// Multiplier curve to change ambientTemp with altitude
+        /// </summary>
+        public FloatCurve altitudeCurve;
+
+        /// <summary>
+        /// Multiplier curve to change ambientTemp with distance
+        /// </summary>
+        public FloatCurve distanceCurve;
+
+        /// <summary>
+        /// Multiplier map for ambientTemp
+        /// </summary>
+        public MapSO heatMap;
+
+        public HeatEmitterComponent()
+        {
+            distanceCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+        }
+
         void IComponent<ModularScatter>.Update(ModularScatter system)
         {
-            // Check for an active vessel
-            if (!FlightGlobals.ActiveVessel || FlightGlobals.ActiveVessel.packed)
-            {
-                return;
-            }
-
-            // Check if the vessel is near the body
-            if (FlightGlobals.currentMainBody != system.body)
-            {
-                return;
-            }
-            
-            // Simple counter
-            if (_heatPosition > 0f)
-            {
-                _heatPosition -= Time.deltaTime;
-                return;
-            }
-
-            // We got past the counter - update time
-
-            foreach (GameObject scatter in system.scatterObjects)
-            {
-                if (!scatter.activeSelf)
-                {
-                    continue;
-                }
-            
-                // Get the distance between the active vessel and ourselves
-                Single distance = Vector3.Distance(scatter.transform.position, FlightGlobals.ship_position);
-                Double heat = HeatRate * HeatCurve.Evaluate(distance);
-            
-                // Apply the heat to all parts of the active vessel
-                for (Int32 i = 0; i < FlightGlobals.ActiveVessel.Parts.Count; i++)
-                {
-                    FlightGlobals.ActiveVessel.Parts[i].temperature += heat;
-                }
-            }
-            
-            // Reset the timer
-            _heatPosition = HeatInterval;
+            // We don't use this
         }
 
         void IComponent<ModularScatter>.Apply(ModularScatter system)
@@ -111,7 +98,51 @@ namespace Kopernicus.Components.ModularScatter
 
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
-            // We don't use this
+            Events.OnCalculateBackgroundRadiationTemperature.Add((mfi) => OnCalculateBackgroundRadiationTemperature(mfi, system));
+        }
+
+        void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator, ModularScatter system)
+        {
+            List<GameObject> scatters = system.scatterObjects;
+            Vessel vessel = flightIntegrator.Vessel;
+            CelestialBody _body = system.body;
+
+            if (_body != vessel.mainBody)
+                return;
+
+            for (Int32 i = 0; i < scatters.Count; i++)
+            {
+                GameObject scatter = scatters[i];
+
+                if (scatter?.activeSelf != true)
+                    continue;
+
+                if (!string.IsNullOrEmpty(biomeName))
+                {
+                    String biome = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
+
+                    if (biomeName != biome)
+                        continue;
+                }
+
+                Single distance = distanceCurve.Evaluate(Vector3.Distance(vessel.transform.position, scatter.transform.position));
+
+                Double altitude = altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
+                Double latitude = latitudeCurve.Evaluate((Single)vessel.latitude);
+                Double longitude = longitudeCurve.Evaluate((Single)vessel.longitude);
+
+                Double newTemp = altitude * latitude * longitude * ambientTemp;
+
+                if (heatMap)
+                {
+                    Double x = ((450 - vessel.longitude) % 360) / 360.0;
+                    Double y = (vessel.latitude + 90) / 180.0;
+                    Double m = heatMap.GetPixelFloat(x, y);
+                    newTemp *= m;
+                }
+
+                KopernicusHeatManager.NewTemp(newTemp, sumTemp);
+            }
         }
     }
 }

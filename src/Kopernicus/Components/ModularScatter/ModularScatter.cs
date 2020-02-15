@@ -129,7 +129,10 @@ namespace Kopernicus.Components.ModularScatter
         private void Start()
         {
             // Apply the modules
-            Components.ForEach(c => c.Apply(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Apply(this);
+            }
 
             // Register us as the parental object for the scatter
             landControl = transform.parent.GetComponent<PQSLandControl>();
@@ -185,7 +188,10 @@ namespace Kopernicus.Components.ModularScatter
             scatter.baseMesh = _cubeMesh;
 
             // PostApply for the Modules
-            Components.ForEach(c => c.PostApply(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].PostApply(this);
+            }
         }
 
         /// <summary>
@@ -251,7 +257,10 @@ namespace Kopernicus.Components.ModularScatter
             }
 
             // Update components
-            Components.ForEach(c => c.Update(this));
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Update(this);
+            }
         }
 
         /// <summary>

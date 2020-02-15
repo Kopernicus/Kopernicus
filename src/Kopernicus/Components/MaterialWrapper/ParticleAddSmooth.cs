@@ -15,7 +15,7 @@ namespace Kopernicus.Components.MaterialWrapper
         protected class Properties
         {
             // Return the shader for this wrapper
-            private const String SHADER_NAME = "Particles/Additive (Soft)";
+            private const String SHADER_NAME = "Legacy Shaders/Particles/Additive (Soft)";
 
             public static Shader Shader
             {
@@ -63,18 +63,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexScale
         {
-            get { return GetTextureScale(Properties.MAIN_TEX_KEY); }
-            set { SetTextureScale(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MainTexId); }
+            set { SetTextureScale(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexOffset
         {
-            get { return GetTextureOffset(Properties.MAIN_TEX_KEY); }
-            set { SetTextureOffset(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MainTexId); }
+            set { SetTextureOffset(Properties.Instance.MainTexId, value); }
         }
 
         // Soft Particles Factor, default = 1
@@ -99,7 +97,7 @@ namespace Kopernicus.Components.MaterialWrapper
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
             {
-                throw new InvalidOperationException("Type Mismatch: Particles/Additive (Soft) shader required");
+                throw new InvalidOperationException("Type Mismatch: Legacy Shaders/Particles/Additive (Soft) shader required");
             }
         }
 

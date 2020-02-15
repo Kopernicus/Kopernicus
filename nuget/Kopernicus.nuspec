@@ -14,13 +14,17 @@
     <tags>Kopernicus, Planetary, System, Modifier</tags>
     <dependencies>
       <dependency id="Assembly-CSharp" version="[{KSP-VERSION}]" />
-      <dependency id="UnityEngine" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine.AssetBundleModule" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine.CoreModule" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine.ImageConversionModule" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine.PhysicsModule" version="[{KSP-VERSION}]" />
       <dependency id="UnityEngine.UI" version="[{KSP-VERSION}]" />
+      <dependency id="UnityEngine.UnityWebRequestWWWModule" version="[{KSP-VERSION}]" />
       <dependency id="Kopernicus.Parser" version="[{KSP-VERSION}.{KOPERNICUS-VERSION}]" />
       <dependency id="ModularFlightIntegrator" version="[{MFI-VERSION}]" />
     </dependencies>
   </metadata>
   <files>
-    <file src="Kopernicus.dll" target="lib/net35/" />
+    <file src="Kopernicus.dll" target="lib/net40/" />
   </files>
 </package>

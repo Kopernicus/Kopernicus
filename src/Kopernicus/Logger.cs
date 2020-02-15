@@ -201,10 +201,7 @@ namespace Kopernicus
                 }
 
                 // Clear out the old log files
-                foreach(String file in Directory.GetFiles(LogDirectory))
-                {
-                    File.Delete(file);
-                }
+                Directory.Delete(LogDirectory, true);
             }
             catch (Exception e) 
             {

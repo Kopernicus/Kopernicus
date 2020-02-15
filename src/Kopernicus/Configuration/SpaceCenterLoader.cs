@@ -320,7 +320,7 @@ namespace Kopernicus.Configuration
 
         // groundColor
         [ParserTarget("groundColor")]
-        [KittopiaDescription("The color of the grass at the KSC.")]
+        [KittopiaDescription("The color of the KSC grass.")]
         public ColorParser GroundColorParser
         {
             get { return Value.color; }
@@ -336,7 +336,7 @@ namespace Kopernicus.Configuration
 
         // Texture
         [ParserTarget("groundTexture")]
-        [KittopiaDescription("The surface texture of the grass spots at the KSC.")]
+        [KittopiaDescription("The texture of the KSC grass from up close.")]
         public Texture2DParser GroundTextureParser
         {
             get { return Value.mainTexture; }
@@ -365,6 +365,10 @@ namespace Kopernicus.Configuration
                 }
             }
         }
+
+        [ParserTarget("Material", AllowMerge = true)]
+        [KittopiaUntouchable]
+        public GrassMaterialLoader GrassMaterialLoader { get; set; }
 
         // Editor Ground Texture
         [ParserTarget("editorGroundTex")]
@@ -461,6 +465,202 @@ namespace Kopernicus.Configuration
             Value = body.gameObject.AddComponent<KSC>();
             Value.Start();
             Object.DontDestroyOnLoad(Value);
+        }
+    }
+
+    [RequireConfigType(ConfigType.Node)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class GrassMaterialLoader : BaseLoader, ITypeParser<KSC.GrassMaterial>
+    {
+        // The KSC.GrassMaterial Object we're editing
+        public KSC.GrassMaterial Value { get; set; }
+
+        // NearGrass
+        [ParserTarget("nearGrassTexture")]
+        [KittopiaDescription("The texture of the KSC grass from up close.")]
+        public Texture2DParser NearGrassTexture
+        {
+            get { return Value.nearGrassTexture; }
+            set
+            {
+                Value.nearGrassTexture = value;
+            }
+        }
+
+        [ParserTarget("nearGrassTiling")]
+        [KittopiaDescription("The tiling of the KSC grass from up close.")]
+        public NumericParser<Single> NearGrassTiling
+        {
+            get { return Value.nearGrassTiling; }
+            set
+            {
+                Value.nearGrassTiling = value;
+            }
+        }
+
+        // FarGrass
+        [ParserTarget("farGrassTexture")]
+        [KittopiaDescription("The texture of the KSC grass from a distance.")]
+        public Texture2DParser FarGrassTexture
+        {
+            get { return Value.farGrassTexture; }
+            set
+            {
+                Value.farGrassTexture = value;
+            }
+        }
+
+        [ParserTarget("farGrassTiling")]
+        [KittopiaDescription("The tiling of the KSC grass from a distance.")]
+        public NumericParser<Single> FarGrassTiling
+        {
+            get { return Value.farGrassTiling; }
+            set
+            {
+                Value.farGrassTiling = value;
+            }
+        }
+
+        [ParserTarget("farGrassBlendDistance")]
+        [KittopiaDescription("The blend distance to the far KSC grass.")]
+        public NumericParser<Single> FarGrassBlendDistance
+        {
+            get { return Value.farGrassBlendDistance; }
+            set
+            {
+                Value.farGrassBlendDistance = value;
+            }
+        }
+
+        // GrassColor
+        [ParserTarget("grassColor")]
+        [KittopiaDescription("The color of the KSC grass.")]
+        public ColorParser GrassColor
+        {
+            get { return Value.grassColor; }
+            set
+            {
+                Value.grassColor = value;
+            }
+        }
+
+        // Tarmac
+        [ParserTarget("tarmacTexture")]
+        [KittopiaDescription("The texture of the KSC tarmac.")]
+        public Texture2DParser TarmacTexture
+        {
+            get { return Value.tarmacTexture; }
+            set
+            {
+                Value.tarmacTexture = value;
+            }
+        }
+
+        [ParserTarget("tarmacTextureOffset")]
+        [KittopiaDescription("The texture offset of the KSC tarmac.")]
+        public Vector2Parser TarmacTextureOffset
+        {
+            get { return Value.tarmacTextureOffset; }
+            set
+            {
+                Value.tarmacTextureOffset = value;
+            }
+        }
+
+        [ParserTarget("tarmacTextureScale")]
+        [KittopiaDescription("The texture Scale of the KSC tarmac.")]
+        public Vector2Parser TarmacTextureScale
+        {
+            get { return Value.tarmacTextureScale; }
+            set
+            {
+                Value.tarmacTextureScale = value;
+            }
+        }
+
+        // Other
+        [ParserTarget("opacity")]
+        [KittopiaDescription("The opacity of the KSC grass material.")]
+        public NumericParser<Single> Opacity
+        {
+            get { return Value.opacity; }
+            set
+            {
+                Value.opacity = value;
+            }
+        }
+
+        [ParserTarget("rimColor")]
+        [KittopiaDescription("The rimColor of the KSC grass material.")]
+        public ColorParser RimColor
+        {
+            get { return Value.rimColor; }
+            set
+            {
+                Value.rimColor = value;
+            }
+        }
+
+        [ParserTarget("rimFalloff")]
+        [KittopiaDescription("The opacity of the KSC grass material.")]
+        public NumericParser<Single> RimFalloff
+        {
+            get { return Value.rimFalloff; }
+            set
+            {
+                Value.rimFalloff = value;
+            }
+        }
+
+        [ParserTarget("underwaterFogFactor")]
+        [KittopiaDescription("The underwaterFogFactor of the KSC grass material.")]
+        public NumericParser<Single> UnderwaterFogFactor
+        {
+            get { return Value.underwaterFogFactor; }
+            set
+            {
+                Value.underwaterFogFactor = value;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new GrassMaterial Loader from the Injector context.
+        /// </summary>
+        public GrassMaterialLoader()
+        {
+            // Is this the parser context?
+            if (!Injector.IsInPrefab)
+            {
+                throw new InvalidOperationException("Must be executed in Injector context.");
+            }
+
+            // Store values
+            Value = generatedBody.celestialBody.gameObject.GetComponent<KSC>().Material = new KSC.GrassMaterial();
+        }
+
+        /// <summary>
+        /// Creates a new GrassMaterial Loader from a spawned CelestialBody.
+        /// </summary>
+        [KittopiaConstructor(KittopiaConstructor.ParameterType.CelestialBody)]
+        public GrassMaterialLoader(CelestialBody body)
+        {
+            // Is this a spawned body?
+            if (body.scaledBody == null || Injector.IsInPrefab)
+            {
+                throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+            }
+
+            // Store values
+            KSC ksc = body.GetComponent<KSC>();
+            if (ksc != null)
+            {
+                Value = ksc.Material;
+                if (Value != null)
+                {
+                    return;
+                }
+                Value = ksc.Material = new KSC.GrassMaterial();
+            }
         }
     }
 }

@@ -212,18 +212,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexScale
         {
-            get { return GetTextureScale(Properties.MAIN_TEX_KEY); }
-            set { SetTextureScale(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MainTexId); }
+            set { SetTextureScale(Properties.Instance.MainTexId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MainTexOffset
         {
-            get { return GetTextureOffset(Properties.MAIN_TEX_KEY); }
-            set { SetTextureOffset(Properties.MAIN_TEX_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MainTexId); }
+            set { SetTextureOffset(Properties.Instance.MainTexId, value); }
         }
 
         // Alpha Cutoff, default = 0.500000
@@ -272,18 +270,16 @@ namespace Kopernicus.Components.MaterialWrapper
             }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MetallicGlossMapScale
         {
-            get { return GetTextureScale(Properties.METALLIC_GLOSS_MAP_KEY); }
-            set { SetTextureScale(Properties.METALLIC_GLOSS_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.MetallicGlossMapId); }
+            set { SetTextureScale(Properties.Instance.MetallicGlossMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 MetallicGlossMapOffset
         {
-            get { return GetTextureOffset(Properties.METALLIC_GLOSS_MAP_KEY); }
-            set { SetTextureOffset(Properties.METALLIC_GLOSS_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.MetallicGlossMapId); }
+            set { SetTextureOffset(Properties.Instance.MetallicGlossMapId, value); }
         }
 
         // Specular Highlights, default = 1.000000
@@ -308,29 +304,26 @@ namespace Kopernicus.Components.MaterialWrapper
         }
 
         // Normal Map, default = "bump" { }
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Texture2D BumpMap
         {
-            get { return GetTexture(Properties.BUMP_MAP_KEY) as Texture2D; }
+            get { return GetTexture(Properties.Instance.BumpMapId) as Texture2D; }
             set
             {
-                SetTexture(Properties.BUMP_MAP_KEY, value);
+                SetTexture(Properties.Instance.BumpMapId, value);
                 SetupMaterial();
             }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapScale
         {
-            get { return GetTextureScale(Properties.BUMP_MAP_KEY); }
-            set { SetTextureScale(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.BumpMapId); }
+            set { SetTextureScale(Properties.Instance.BumpMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 BumpMapOffset
         {
-            get { return GetTextureOffset(Properties.BUMP_MAP_KEY); }
-            set { SetTextureOffset(Properties.BUMP_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.BumpMapId); }
+            set { SetTextureOffset(Properties.Instance.BumpMapId, value); }
         }
 
         // Height Scale, default = 0.020000
@@ -351,18 +344,16 @@ namespace Kopernicus.Components.MaterialWrapper
             }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 ParallaxMapScale
         {
-            get { return GetTextureScale(Properties.PARALLAX_MAP_KEY); }
-            set { SetTextureScale(Properties.PARALLAX_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.ParallaxMapId); }
+            set { SetTextureScale(Properties.Instance.ParallaxMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 ParallaxMapOffset
         {
-            get { return GetTextureOffset(Properties.PARALLAX_MAP_KEY); }
-            set { SetTextureOffset(Properties.PARALLAX_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.ParallaxMapId); }
+            set { SetTextureOffset(Properties.Instance.ParallaxMapId, value); }
         }
 
         // Strength, default = 1.000000
@@ -379,18 +370,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.OcclusionMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 OcclusionMapScale
         {
-            get { return GetTextureScale(Properties.OCCLUSION_MAP_KEY); }
-            set { SetTextureScale(Properties.OCCLUSION_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.OcclusionMapId); }
+            set { SetTextureScale(Properties.Instance.OcclusionMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 OcclusionMapOffset
         {
-            get { return GetTextureOffset(Properties.OCCLUSION_MAP_KEY); }
-            set { SetTextureOffset(Properties.OCCLUSION_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.OcclusionMapId); }
+            set { SetTextureOffset(Properties.Instance.OcclusionMapId, value); }
         }
 
         // Color, default = (0.000000,0.000000,0.000000,1.000000)
@@ -411,18 +400,16 @@ namespace Kopernicus.Components.MaterialWrapper
             }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 EmissionMapScale
         {
-            get { return GetTextureScale(Properties.EMISSION_MAP_KEY); }
-            set { SetTextureScale(Properties.EMISSION_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.EmissionMapId); }
+            set { SetTextureScale(Properties.Instance.EmissionMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 EmissionMapOffset
         {
-            get { return GetTextureOffset(Properties.EMISSION_MAP_KEY); }
-            set { SetTextureOffset(Properties.EMISSION_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.EmissionMapId); }
+            set { SetTextureOffset(Properties.Instance.EmissionMapId, value); }
         }
 
         // Detail Mask, default = "white" { }
@@ -432,18 +419,16 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTexture(Properties.Instance.DetailMaskId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailMaskScale
         {
-            get { return GetTextureScale(Properties.DETAIL_MASK_KEY); }
-            set { SetTextureScale(Properties.DETAIL_MASK_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.DetailMaskId); }
+            set { SetTextureScale(Properties.Instance.DetailMaskId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailMaskOffset
         {
-            get { return GetTextureOffset(Properties.DETAIL_MASK_KEY); }
-            set { SetTextureOffset(Properties.DETAIL_MASK_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.DetailMaskId); }
+            set { SetTextureOffset(Properties.Instance.DetailMaskId, value); }
         }
 
         // Detail Albedo x2, default = "grey" { }
@@ -457,18 +442,16 @@ namespace Kopernicus.Components.MaterialWrapper
             }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailAlbedoMapScale
         {
-            get { return GetTextureScale(Properties.DETAIL_ALBEDO_MAP_KEY); }
-            set { SetTextureScale(Properties.DETAIL_ALBEDO_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.DetailAlbedoMapId); }
+            set { SetTextureScale(Properties.Instance.DetailAlbedoMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailAlbedoMapOffset
         {
-            get { return GetTextureOffset(Properties.DETAIL_ALBEDO_MAP_KEY); }
-            set { SetTextureOffset(Properties.DETAIL_ALBEDO_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.DetailAlbedoMapId); }
+            set { SetTextureOffset(Properties.Instance.DetailAlbedoMapId, value); }
         }
 
         // Normal Map, default = "bump" { }
@@ -483,18 +466,16 @@ namespace Kopernicus.Components.MaterialWrapper
         }
 
         // Scale, default = 1.000000
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailNormalMapScale
         {
-            get { return GetTextureScale(Properties.DETAIL_NORMAL_MAP_KEY); }
-            set { SetTextureScale(Properties.DETAIL_NORMAL_MAP_KEY, value); }
+            get { return GetTextureScale(Properties.Instance.DetailNormalMapId); }
+            set { SetTextureScale(Properties.Instance.DetailNormalMapId, value); }
         }
 
-        [SuppressMessage("ReSharper", "Unity.PreferAddressByIdToGraphicsParams")]
         public Vector2 DetailNormalMapOffset
         {
-            get { return GetTextureOffset(Properties.DETAIL_NORMAL_MAP_KEY); }
-            set { SetTextureOffset(Properties.DETAIL_NORMAL_MAP_KEY, value); }
+            get { return GetTextureOffset(Properties.Instance.DetailNormalMapId); }
+            set { SetTextureOffset(Properties.Instance.DetailNormalMapId, value); }
         }
 
         // UV Set for secondary textures, default = 0.000000
