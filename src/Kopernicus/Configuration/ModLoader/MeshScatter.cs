@@ -168,7 +168,7 @@ namespace Kopernicus.Configuration.ModLoader
         public Texture2DParser ScatterMap
         {
             get { return Mod.scatterMap; }
-            set { Mod.scatterMap = value; }
+            set { Mod.scatterMap = Utility.CreateReadable(value); }
         }
 
         // The mesh

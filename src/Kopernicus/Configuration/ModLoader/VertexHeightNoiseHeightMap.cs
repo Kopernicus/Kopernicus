@@ -42,7 +42,7 @@ namespace Kopernicus.Configuration.ModLoader
         public Texture2DParser Map
         {
             get { return Mod.heightMap; }
-            set { Mod.heightMap = value; }
+            set { Mod.heightMap = Utility.CreateReadable(value); }
         }
 
         // Where the heightMap starts
