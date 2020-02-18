@@ -23,9 +23,7 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
@@ -49,14 +47,6 @@ namespace Kopernicus.Configuration.ModLoader
         {
             base.Create(pqsVersion);
 
-            if (!PQSTriplanarZoomRotationTextureArray.UsesSameShader(pqsVersion.surfaceMaterial))
-            {
-                throw new Exception("TextureAtlas is only supported for AtmosphericTriplanarZoomRotationTextureArray");
-            }
-
-            // We need to force this to prevent the PQS mod from disabling itself
-            GameSettings.TERRAIN_SHADER_QUALITY = 3;
-
             Shader blend1 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 1 Blend");
             Shader blend2 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 2 Blend");
             Shader blend3 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 3 Blend");
@@ -76,14 +66,6 @@ namespace Kopernicus.Configuration.ModLoader
             Shader blend2 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 2 Blend");
             Shader blend3 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 3 Blend");
             Shader blend4 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 4 Blend");
-
-            if (!PQSTriplanarZoomRotationTextureArray.UsesSameShader(pqsVersion.surfaceMaterial))
-            {
-                throw new Exception("TextureAtlas is only supported for AtmosphericTriplanarZoomRotationTextureArray");
-            }
-
-            // We need to force this to prevent the PQS mod from disabling itself
-            GameSettings.TERRAIN_SHADER_QUALITY = 3;
 
             if (Mod.material1Blend == null)
             {
