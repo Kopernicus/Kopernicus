@@ -36,6 +36,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Enumerations;
 using Kopernicus.Configuration.MaterialLoader;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
@@ -54,17 +55,6 @@ namespace Kopernicus.Configuration.ModLoader
         [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
         public class LandClassScatterLoader : IPatchable, ITypeParser<PQSLandControl.LandClassScatter>
         {
-            public enum ScatterMaterialType
-            {
-                Diffuse,
-                BumpedDiffuse,
-                DiffuseDetail,
-                DiffuseWrapped,
-                CutoutDiffuse,
-                AerialCutout,
-                Standard
-            }
-
             // The value we are editing
             public PQSLandControl.LandClassScatter Value { get; set; }
             public ModularScatter Scatter { get; set; }
@@ -87,77 +77,13 @@ namespace Kopernicus.Configuration.ModLoader
                 }
             }
 
+            // Scatter name
             [PreApply]
-            [ParserTarget("materialType")]
-            public EnumParser<ScatterMaterialType> MaterialType
+            [ParserTarget("name")]
+            public String name
             {
-                get
-                {
-                    if (CustomMaterial == null)
-                    {
-                        return null;
-                    }
-                    if (NormalDiffuse.UsesSameShader(CustomMaterial))
-                    {
-                        return ScatterMaterialType.Diffuse;
-                    }
-                    if (NormalBumped.UsesSameShader(CustomMaterial))
-                    {
-                        return ScatterMaterialType.BumpedDiffuse;
-                    }
-                    if (NormalDiffuseDetail.UsesSameShader(CustomMaterial))
-                    {
-                        return ScatterMaterialType.DiffuseDetail;
-                    }
-                    if (DiffuseWrap.UsesSameShader(CustomMaterial))
-                    {
-                        return ScatterMaterialType.DiffuseWrapped;
-                    }
-                    if (AlphaTestDiffuse.UsesSameShader(CustomMaterial))
-                    {
-                        return ScatterMaterialType.CutoutDiffuse;
-                    }
-                    if (AerialTransCutout.UsesSameShader(CustomMaterial))
-                    {
-                        return ScatterMaterialType.AerialCutout;
-                    }
-                    if (Standard.UsesSameShader(CustomMaterial))
-                    {
-                        return ScatterMaterialType.Standard;
-                    }
-                    return null;
-                }
-                set
-                {
-                    if (value == ScatterMaterialType.Diffuse)
-                    {
-                        CustomMaterial = new NormalDiffuseLoader();
-                    }
-                    else if (value == ScatterMaterialType.BumpedDiffuse)
-                    {
-                        CustomMaterial = new NormalBumpedLoader();
-                    }
-                    else if (value == ScatterMaterialType.DiffuseDetail)
-                    {
-                        CustomMaterial = new NormalDiffuseDetailLoader();
-                    }
-                    else if (value == ScatterMaterialType.DiffuseWrapped)
-                    {
-                        CustomMaterial = new DiffuseWrapLoader();
-                    }
-                    else if (value == ScatterMaterialType.CutoutDiffuse)
-                    {
-                        CustomMaterial = new AlphaTestDiffuseLoader();
-                    }
-                    else if (value == ScatterMaterialType.AerialCutout)
-                    {
-                        CustomMaterial = new AerialTransCutoutLoader();
-                    }
-                    else if (value == ScatterMaterialType.Standard)
-                    {
-                        CustomMaterial = new StandardLoader();
-                    }
-                }
+                get { return Value.scatterName; }
+                set { Value.scatterName = value; }
             }
 
             // Should we delete the Scatter?
@@ -166,23 +92,154 @@ namespace Kopernicus.Configuration.ModLoader
             [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
             public NumericParser<Boolean> Delete = false;
 
-            [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
-            public CallbackList<ComponentLoader<ModularScatter>> Components { get; set; }
-
-            // Stock material
-            [ParserTarget("material")]
-            public StockMaterialParser Material
+            [PreApply]
+            [ParserTarget("materialType")]
+            public EnumParser<ScatterMaterialType> Type
             {
-                get { return Value.material; }
-                set { Value.material = value; }
+                get
+                {
+                    if (NormalDiffuse.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.Diffuse;
+                    }
+                    if (NormalBumped.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.BumpedDiffuse;
+                    }
+                    if (NormalDiffuseDetail.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.DiffuseDetail;
+                    }
+                    if (DiffuseWrap.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.DiffuseWrapped;
+                    }
+                    if (AlphaTestDiffuse.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.CutoutDiffuse;
+                    }
+                    if (AerialTransCutout.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.AerialCutout;
+                    }
+                    if (Standard.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.Standard;
+                    }
+
+                    throw new Exception("The material doesn't have a supported shader.");
+                }
+                set
+                {
+                    switch (value.Value)
+                    {
+                        case ScatterMaterialType.Diffuse:
+                            Value.material = new NormalDiffuseLoader();
+                            break;
+                        case ScatterMaterialType.BumpedDiffuse:
+                            Value.material = new NormalBumpedLoader();
+                            break;
+                        case ScatterMaterialType.DiffuseDetail:
+                            Value.material = new NormalDiffuseDetailLoader();
+                            break;
+                        case ScatterMaterialType.DiffuseWrapped:
+                            Value.material = new DiffuseWrapLoader();
+                            break;
+                        case ScatterMaterialType.CutoutDiffuse:
+                            Value.material = new AlphaTestDiffuseLoader();
+                            break;
+                        case ScatterMaterialType.AerialCutout:
+                            Value.material = new AerialTransCutoutLoader();
+                            break;
+                        case ScatterMaterialType.Standard:
+                            Value.material = new StandardLoader();
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
             }
 
             // Custom scatter material
-            [ParserTarget("Material", AllowMerge = true, GetChild = false)]
-            public Material CustomMaterial
+            [ParserTarget("Material", AllowMerge = true)]
+            public Material Material
             {
-                get { return Value.material; }
-                set { Value.material = value; }
+                get
+                {
+                    Boolean isDiffuse = Value.material is NormalDiffuseLoader;
+                    Boolean isBumped = Value.material is NormalBumpedLoader;
+                    Boolean isDetail = Value.material is NormalDiffuseDetailLoader;
+                    Boolean isWrapped = Value.material is DiffuseWrapLoader;
+                    Boolean isCutout = Value.material is AlphaTestDiffuseLoader;
+                    Boolean isAerial = Value.material is AerialTransCutoutLoader;
+                    Boolean isStandard = Value.material is StandardLoader;
+
+                    switch (Type.Value)
+                    {
+                        case ScatterMaterialType.Diffuse when !isDiffuse:
+                            return new NormalDiffuseLoader(Value.material);
+                        case ScatterMaterialType.BumpedDiffuse when !isBumped:
+                            return new NormalBumpedLoader(Value.material);
+                        case ScatterMaterialType.DiffuseDetail when !isDetail:
+                            return new NormalDiffuseDetailLoader(Value.material);
+                        case ScatterMaterialType.DiffuseWrapped when !isWrapped:
+                            return new DiffuseWrapLoader(Value.material);
+                        case ScatterMaterialType.CutoutDiffuse when !isCutout:
+                            return new AlphaTestDiffuseLoader(Value.material);
+                        case ScatterMaterialType.AerialCutout when !isAerial:
+                            return new AerialTransCutoutLoader(Value.material);
+                        case ScatterMaterialType.Standard when !isStandard:
+                            return new StandardLoader(Value.material);
+                        default:
+                            return Value.material;
+                    }
+                }
+                set
+                {
+                    Boolean isDiffuse = value is NormalDiffuseLoader;
+                    Boolean isBumped = value is NormalBumpedLoader;
+                    Boolean isDetail = value is NormalDiffuseDetailLoader;
+                    Boolean isWrapped = value is DiffuseWrapLoader;
+                    Boolean isCutout = value is AlphaTestDiffuseLoader;
+                    Boolean isAerial = value is AerialTransCutoutLoader;
+                    Boolean isStandard = value is StandardLoader;
+
+                    switch (Type.Value)
+                    {
+                        case ScatterMaterialType.Diffuse when !isDiffuse:
+                            Value.material = new NormalDiffuseLoader(value);
+                            break;
+                        case ScatterMaterialType.BumpedDiffuse when !isBumped:
+                            Value.material = new NormalBumpedLoader(value);
+                            break;
+                        case ScatterMaterialType.DiffuseDetail when !isDetail:
+                            Value.material = new NormalDiffuseDetailLoader(value);
+                            break;
+                        case ScatterMaterialType.DiffuseWrapped when !isWrapped:
+                            Value.material = new DiffuseWrapLoader(value);
+                            break;
+                        case ScatterMaterialType.CutoutDiffuse when !isCutout:
+                            Value.material = new AlphaTestDiffuseLoader(value);
+                            break;
+                        case ScatterMaterialType.AerialCutout when !isAerial:
+                            Value.material = new AerialTransCutoutLoader(value);
+                            break;
+                        case ScatterMaterialType.Standard when !isStandard:
+                            Value.material = new StandardLoader(value);
+                            break;
+                        default:
+                            Value.material = value;
+                            break;
+                    }
+                }
+            }
+
+            // Stock material
+            [ParserTarget("material", AllowMerge = true)]
+            public StockMaterialParser StockMaterial
+            {
+                get { return Material; }
+                set { Material = value; }
             }
 
             // The mesh
@@ -280,15 +337,6 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Value.recieveShadows = value; }
             }
 
-            // Scatter name
-            [PreApply]
-            [ParserTarget("name")]
-            public String name
-            {
-                get { return Value.scatterName; }
-                set { Value.scatterName = value; }
-            }
-
             // The value we are editing
             // Scatter seed
             [ParserTarget("seed")]
@@ -348,17 +396,17 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.densityVariance = value; }
             }
 
+            [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
+            public CallbackList<ComponentLoader<ModularScatter>> Components { get; set; }
+
             // Default Constructor
             [KittopiaConstructor(KittopiaConstructor.ParameterType.Empty)]
             public LandClassScatterLoader()
             {
-
                 // Initialize default parameters
                 Value = new PQSLandControl.LandClassScatter
                 {
-                    maxCache = 512,
-                    maxCacheDelta = 32,
-                    maxSpeed = 1000
+                    maxCache = 512, maxCacheDelta = 32, maxSpeed = 1000
                 };
 
                 // Get the Scatter-Parent
@@ -380,38 +428,6 @@ namespace Kopernicus.Configuration.ModLoader
             public LandClassScatterLoader(PQSLandControl.LandClassScatter value)
             {
                 Value = value;
-
-                if (CustomMaterial)
-                {
-                    if (NormalDiffuse.UsesSameShader(CustomMaterial))
-                    {
-                        CustomMaterial = new NormalDiffuseLoader(CustomMaterial);
-                    }
-                    else if (NormalBumped.UsesSameShader(CustomMaterial))
-                    {
-                        CustomMaterial = new NormalBumpedLoader(CustomMaterial);
-                    }
-                    else if (NormalDiffuseDetail.UsesSameShader(CustomMaterial))
-                    {
-                        CustomMaterial = new NormalDiffuseDetailLoader(CustomMaterial);
-                    }
-                    else if (DiffuseWrap.UsesSameShader(CustomMaterial))
-                    {
-                        CustomMaterial = new DiffuseWrapLoader(CustomMaterial);
-                    }
-                    else if (AlphaTestDiffuse.UsesSameShader(CustomMaterial))
-                    {
-                        CustomMaterial = new AlphaTestDiffuseLoader(CustomMaterial);
-                    }
-                    else if (AerialTransCutout.UsesSameShader(CustomMaterial))
-                    {
-                        CustomMaterial = new AerialTransCutoutLoader(CustomMaterial);
-                    }
-                    else if (Standard.UsesSameShader(CustomMaterial))
-                    {
-                        CustomMaterial = new StandardLoader(CustomMaterial);
-                    }
-                }
 
                 // Get the Scatter-Parent
                 GameObject scatterParent = typeof(PQSLandControl.LandClassScatter)
@@ -440,20 +456,23 @@ namespace Kopernicus.Configuration.ModLoader
                 });
 
                 // Load existing Modules
-                foreach (IComponent<ModularScatter> component in Scatter.Components)
+                for (Int32 i = 0; i < Scatter.Components.Count; i++)
                 {
-                    Type componentType = component.GetType();
-                    Type componentLoaderType = typeof(ComponentLoader<,>).MakeGenericType(typeof(ModularScatter), componentType);
-                    foreach (Type loaderType in Parser.ModTypes)
+                    Type componentType = Scatter.Components[i].GetType();
+                    Type componentLoaderType =
+                        typeof(ComponentLoader<,>).MakeGenericType(typeof(ModularScatter), componentType);
+
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                     {
-                        if (!componentLoaderType.IsAssignableFrom(loaderType))
+                        if (!componentLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
                         {
                             continue;
                         }
 
                         // We found our loader type
-                        ComponentLoader<ModularScatter> loader = (ComponentLoader<ModularScatter>) Activator.CreateInstance(loaderType);
-                        loader.Create(component);
+                        ComponentLoader<ModularScatter> loader =
+                            (ComponentLoader<ModularScatter>) Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(Scatter.Components[i]);
                         Components.Add(loader);
                     }
                 }

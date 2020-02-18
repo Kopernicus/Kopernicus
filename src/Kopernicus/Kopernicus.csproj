@@ -133,6 +133,7 @@
     <Compile Include="Configuration\Enumerations\KopernicusNoiseQuality.cs" />
     <Compile Include="Configuration\Enumerations\KopernicusNoiseType.cs" />
     <Compile Include="Configuration\Enumerations\ScaledMaterialType.cs" />
+    <Compile Include="Configuration\Enumerations\ScatterMaterialType.cs" />
     <Compile Include="Configuration\Enumerations\SurfaceMaterialType.cs" />
     <Compile Include="Configuration\HazardousBodyLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
