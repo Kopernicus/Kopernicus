@@ -25,6 +25,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components.MaterialWrapper;
+using UnityEngine;
 
 namespace Kopernicus.Components
 {
@@ -36,6 +38,16 @@ namespace Kopernicus.Components
         public override void OnSetup()
         {
             _mods = sphere.GetComponentsInChildren<PQSMod_TextureAtlas>(true);
+
+            if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(sphere.surfaceMaterial))
+            {
+                return;
+            }
+
+            for (Int32 i = 0; i < _mods.Length; i++)
+            {
+                _mods[i].modEnabled = false;
+            }
         }
 
         public override void OnQuadPreBuild(PQ quad)
