@@ -215,7 +215,7 @@ namespace Kopernicus.Configuration
                     return SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray;
                 }
 
-                throw new Exception("The material doesn't have a supported shader.");
+                throw new Exception("The shader '" + material.shader.name + "' is not supported.");
             }
             set
             {

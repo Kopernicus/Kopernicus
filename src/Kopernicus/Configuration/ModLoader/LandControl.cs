@@ -127,7 +127,7 @@ namespace Kopernicus.Configuration.ModLoader
                         return ScatterMaterialType.Standard;
                     }
 
-                    throw new Exception("The material doesn't have a supported shader.");
+                    throw new Exception("The shader '" + Value.material.shader.name + "' is not supported.");
                 }
                 set
                 {
