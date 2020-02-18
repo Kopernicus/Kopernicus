@@ -27,6 +27,7 @@ using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
+using UnityEngine;
 
 namespace Kopernicus.Configuration.ModLoader
 {
@@ -40,6 +41,51 @@ namespace Kopernicus.Configuration.ModLoader
         {
             get { return Mod.textureAtlasMap; }
             set { Mod.textureAtlasMap = value; }
+        }
+
+        public override void Create(PQS pqsVersion)
+        {
+            base.Create(pqsVersion);
+
+            Shader blend1 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 1 Blend");
+            Shader blend2 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 2 Blend");
+            Shader blend3 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 3 Blend");
+            Shader blend4 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 4 Blend");
+
+            Mod.material1Blend = new Material(blend1);
+            Mod.material2Blend = new Material(blend2);
+            Mod.material3Blend = new Material(blend3);
+            Mod.material4Blend = new Material(blend4);
+        }
+
+        public override void Create(PQSMod_TextureAtlas mod, PQS pqsVersion)
+        {
+            base.Create(mod, pqsVersion);
+
+            Shader blend1 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 1 Blend");
+            Shader blend2 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 2 Blend");
+            Shader blend3 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 3 Blend");
+            Shader blend4 = Shader.Find("Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array - 4 Blend");
+
+            if (Mod.material1Blend == null)
+            {
+                Mod.material1Blend = new Material(blend1);
+            }
+
+            if (Mod.material2Blend == null)
+            {
+                Mod.material2Blend = new Material(blend2);
+            }
+
+            if (Mod.material3Blend == null)
+            {
+                Mod.material3Blend = new Material(blend3);
+            }
+
+            if (Mod.material4Blend == null)
+            {
+                Mod.material4Blend = new Material(blend4);
+            }
         }
     }
 }
