@@ -126,6 +126,18 @@ namespace Kopernicus.Configuration.ModLoader
                     {
                         return ScatterMaterialType.Standard;
                     }
+                    if (StandardSpecular.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.StandardSpecular;
+                    }
+                    if (KSPBumped.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.KSPBumped;
+                    }
+                    if (KSPBumpedSpecular.UsesSameShader(Value.material))
+                    {
+                        return ScatterMaterialType.KSPBumpedSpecular;
+                    }
 
                     throw new Exception("The shader '" + Value.material.shader.name + "' is not supported.");
                 }
@@ -154,6 +166,15 @@ namespace Kopernicus.Configuration.ModLoader
                         case ScatterMaterialType.Standard:
                             Value.material = new StandardLoader();
                             break;
+                        case ScatterMaterialType.StandardSpecular:
+                            Value.material = new StandardSpecularLoader();
+                            break;
+                        case ScatterMaterialType.KSPBumped:
+                            Value.material = new KSPBumpedLoader();
+                            break;
+                        case ScatterMaterialType.KSPBumpedSpecular:
+                            Value.material = new KSPBumpedSpecularLoader();
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -173,6 +194,9 @@ namespace Kopernicus.Configuration.ModLoader
                     Boolean isCutout = Value.material is AlphaTestDiffuseLoader;
                     Boolean isAerial = Value.material is AerialTransCutoutLoader;
                     Boolean isStandard = Value.material is StandardLoader;
+                    Boolean isStandardSpecular = Value.material is StandardSpecularLoader;
+                    Boolean isKspBumped = Value.material is KSPBumpedLoader;
+                    Boolean isKspBumpedSpecular = Value.material is KSPBumpedSpecularLoader;
 
                     switch (Type.Value)
                     {
@@ -190,6 +214,12 @@ namespace Kopernicus.Configuration.ModLoader
                             return new AerialTransCutoutLoader(Value.material);
                         case ScatterMaterialType.Standard when !isStandard:
                             return new StandardLoader(Value.material);
+                        case ScatterMaterialType.StandardSpecular when !isStandardSpecular:
+                            return new StandardSpecularLoader(Value.material);
+                        case ScatterMaterialType.KSPBumped when !isKspBumped:
+                            return new KSPBumpedLoader(Value.material);
+                        case ScatterMaterialType.KSPBumpedSpecular when !isKspBumpedSpecular:
+                            return new KSPBumpedSpecularLoader(Value.material);
                         default:
                             return Value.material;
                     }
@@ -203,6 +233,9 @@ namespace Kopernicus.Configuration.ModLoader
                     Boolean isCutout = value is AlphaTestDiffuseLoader;
                     Boolean isAerial = value is AerialTransCutoutLoader;
                     Boolean isStandard = value is StandardLoader;
+                    Boolean isStandardSpecular = value is StandardSpecularLoader;
+                    Boolean isKspBumped = Value.material is KSPBumpedLoader;
+                    Boolean isKspBumpedSpecular = Value.material is KSPBumpedSpecularLoader;
 
                     switch (Type.Value)
                     {
@@ -226,6 +259,15 @@ namespace Kopernicus.Configuration.ModLoader
                             break;
                         case ScatterMaterialType.Standard when !isStandard:
                             Value.material = new StandardLoader(value);
+                            break;
+                        case ScatterMaterialType.StandardSpecular when !isStandardSpecular:
+                            Value.material = new StandardSpecularLoader(value);
+                            break;
+                        case ScatterMaterialType.KSPBumped when !isKspBumped:
+                            Value.material = new KSPBumpedLoader(value);
+                            break;
+                        case ScatterMaterialType.KSPBumpedSpecular when !isKspBumpedSpecular:
+                            Value.material = new KSPBumpedSpecularLoader(value);
                             break;
                         default:
                             Value.material = value;

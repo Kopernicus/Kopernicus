@@ -34,6 +34,9 @@ namespace Kopernicus.Configuration.Enumerations
 		DiffuseWrapped,
 		CutoutDiffuse,
 		AerialCutout,
-		Standard
+		Standard,
+		StandardSpecular,
+		KSPBumped,
+		KSPBumpedSpecular
 	}
 }

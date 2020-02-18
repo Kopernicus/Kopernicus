@@ -82,6 +82,8 @@
     <Compile Include="Components\MaterialWrapper\AtmosphereFromGround.cs" />
     <Compile Include="Components\MaterialWrapper\DiffuseWrap.cs" />
     <Compile Include="Components\MaterialWrapper\EmissiveMultiRampSunspots.cs" />
+    <Compile Include="Components\MaterialWrapper\KSPBumpedSpecular.cs" />
+    <Compile Include="Components\MaterialWrapper\KSPBumped.cs" />
     <Compile Include="Components\MaterialWrapper\NormalBumped.cs" />
     <Compile Include="Components\MaterialWrapper\NormalDiffuse.cs" />
     <Compile Include="Components\MaterialWrapper\NormalDiffuseDetail.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimLight.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="Components\MaterialWrapper\Standard.cs" />
+    <Compile Include="Components\MaterialWrapper\StandardSpecular.cs" />
     <Compile Include="Components\ModularComponentSystem\IComponent.cs" />
     <Compile Include="Components\ModularComponentSystem\IComponentSystem.cs" />
     <Compile Include="Components\ModularScatter\HeatEmitter.cs" />
@@ -139,6 +142,8 @@
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\DiffuseWrapLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\KSPBumpedLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\KSPBumpedSpecularLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalBumpedLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseDetailLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseLoader.cs" />
@@ -149,6 +154,7 @@
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialStandardLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimLightLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\StandardLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\StandardSpecularLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
     <Compile Include="Configuration\ModLoader\City.cs" />
     <Compile Include="Configuration\ModLoader\IModLoader.cs" />
