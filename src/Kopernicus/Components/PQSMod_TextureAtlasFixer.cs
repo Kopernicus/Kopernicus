@@ -73,7 +73,6 @@ namespace Kopernicus.Components
                     normal = (Texture2DArray) mod.material1Blend.GetTexture(NormalTex);
                 }
 
-                sphere.surfaceMaterial.SetTexture(AtlasTex, atlas);
                 mod.material1Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
                 mod.material2Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
                 mod.material3Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
@@ -81,7 +80,7 @@ namespace Kopernicus.Components
 
                 Debug.Log(atlas);
 
-                sphere.surfaceMaterial.SetTexture(AtlasTex, normal);
+                sphere.surfaceMaterial.SetTexture(AtlasTex, atlas);
                 mod.material1Blend.SetTexture(AtlasTex, atlas);
                 mod.material2Blend.SetTexture(AtlasTex, atlas);
                 mod.material3Blend.SetTexture(AtlasTex, atlas);
@@ -89,6 +88,7 @@ namespace Kopernicus.Components
 
                 Debug.Log(normal);
 
+                sphere.surfaceMaterial.SetTexture(NormalTex, normal);
                 mod.material1Blend.SetTexture(NormalTex, normal);
                 mod.material2Blend.SetTexture(NormalTex, normal);
                 mod.material3Blend.SetTexture(NormalTex, normal);
