@@ -78,15 +78,11 @@ namespace Kopernicus.Components
                 mod.material3Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
                 mod.material4Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
 
-                Debug.Log(atlas);
-
                 sphere.surfaceMaterial.SetTexture(AtlasTex, atlas);
                 mod.material1Blend.SetTexture(AtlasTex, atlas);
                 mod.material2Blend.SetTexture(AtlasTex, atlas);
                 mod.material3Blend.SetTexture(AtlasTex, atlas);
                 mod.material4Blend.SetTexture(AtlasTex, atlas);
-
-                Debug.Log(normal);
 
                 sphere.surfaceMaterial.SetTexture(NormalTex, normal);
                 mod.material1Blend.SetTexture(NormalTex, normal);
