@@ -170,6 +170,32 @@ namespace Kopernicus.Configuration
             // If we have a PQS
             if (Body.pqsVersion != null)
             {
+                // We only support one surface material per body, so use the one with the highest quality available
+                Material surfaceMaterial = Body.pqsVersion.ultraQualitySurfaceMaterial;
+
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.highQualitySurfaceMaterial;
+                }
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.mediumQualitySurfaceMaterial;
+                }
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.lowQualitySurfaceMaterial;
+                }
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.surfaceMaterial;
+                }
+
+                Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.surfaceMaterial = surfaceMaterial;
+
                 // Should we remove the ocean?
                 if (Body.celestialBody.ocean && RemoveOcean.Value)
                 {

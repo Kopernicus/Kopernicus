@@ -131,38 +131,7 @@ namespace Kopernicus.Configuration
         /// </summary>
         private Material BasicSurfaceMaterial
         {
-            get
-            {
-                switch (GameSettings.TERRAIN_SHADER_QUALITY)
-                {
-                    case 3:
-                        if (Value.ultraQualitySurfaceMaterial != null)
-                        {
-                            return Value.ultraQualitySurfaceMaterial;
-                        }
-                        goto case 2;
-                    case 2:
-                        if (Value.highQualitySurfaceMaterial != null)
-                        {
-                            return Value.highQualitySurfaceMaterial;
-                        }
-                        goto case 1;
-                    case 1:
-                        if (Value.mediumQualitySurfaceMaterial != null)
-                        {
-                            return Value.mediumQualitySurfaceMaterial;
-                        }
-                        goto case 0;
-                    case 0:
-                        if (Value.lowQualitySurfaceMaterial != null)
-                        {
-                            return Value.lowQualitySurfaceMaterial;
-                        }
-                        goto default;
-                    default:
-                        return Value.surfaceMaterial;
-                }
-            }
+            get { return Value.ultraQualitySurfaceMaterial; }
             set
             {
                 Value.ultraQualitySurfaceMaterial = value;
