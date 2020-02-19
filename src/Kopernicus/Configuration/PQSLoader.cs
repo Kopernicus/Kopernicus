@@ -171,6 +171,10 @@ namespace Kopernicus.Configuration
                 {
                     return SurfaceMaterialType.AtmosphericExtra;
                 }
+                if (PQSMainFastBlend.UsesSameShader(material))
+                {
+                    return SurfaceMaterialType.AtmosphericMainFastBlend;
+                }
                 if (PQSMainOptimisedFastBlend.UsesSameShader(material))
                 {
                     return SurfaceMaterialType.AtmosphericOptimizedFastBlend;
@@ -193,7 +197,8 @@ namespace Kopernicus.Configuration
                 Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isRotation = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isRotationArray = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
 
@@ -214,7 +219,10 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.AtmosphericExtra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isFastBlend:
+                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                        BasicSurfaceMaterial = new PQSMainFastBlendLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
                         break;
                     case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
@@ -243,7 +251,8 @@ namespace Kopernicus.Configuration
                 Boolean isMain = material is PQSMainShaderLoader;
                 Boolean isOptimised = material is PQSMainOptimisedLoader;
                 Boolean isExtra = material is PQSMainExtrasLoader;
-                Boolean isFastBlend = material is PQSMainOptimisedFastBlendLoader;
+                Boolean isFastBlend = material is PQSMainFastBlendLoader;
+                Boolean isOptimisedFastBlend = material is PQSMainOptimisedFastBlendLoader;
                 Boolean isRotation = material is PQSTriplanarZoomRotationLoader;
                 Boolean isRotationArray = material is PQSTriplanarZoomRotationTextureArrayLoader;
 
@@ -259,7 +268,9 @@ namespace Kopernicus.Configuration
                         return new PQSMainOptimisedLoader(material);
                     case SurfaceMaterialType.AtmosphericExtra when !isExtra:
                         return new PQSMainExtrasLoader(material);
-                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isFastBlend:
+                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                        return new PQSMainFastBlendLoader(material);
+                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
                         return new PQSMainOptimisedFastBlendLoader(material);
                     case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
                         return new PQSTriplanarZoomRotationLoader(material);
@@ -276,7 +287,8 @@ namespace Kopernicus.Configuration
                 Boolean isMain = value is PQSMainShaderLoader;
                 Boolean isOptimised = value is PQSMainOptimisedLoader;
                 Boolean isExtra = value is PQSMainExtrasLoader;
-                Boolean isFastBlend = value is PQSMainOptimisedFastBlendLoader;
+                Boolean isFastBlend = value is PQSMainFastBlendLoader;
+                Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
                 Boolean isRotation = value is PQSTriplanarZoomRotationLoader;
                 Boolean isRotationArray = value is PQSTriplanarZoomRotationTextureArrayLoader;
 
@@ -300,7 +312,10 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.AtmosphericExtra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isFastBlend:
+                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                        BasicSurfaceMaterial = new PQSMainFastBlendLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(value);
                         break;
                     case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:

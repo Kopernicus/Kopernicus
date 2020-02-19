@@ -33,6 +33,7 @@ namespace Kopernicus.Configuration.Enumerations
 		AtmosphericMain,
 		AtmosphericOptimized,
 		AtmosphericExtra,
+		AtmosphericMainFastBlend,
 		AtmosphericOptimizedFastBlend,
 		AtmosphericTriplanarZoomRotation,
 		AtmosphericTriplanarZoomRotationTextureArray,
