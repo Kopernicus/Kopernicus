@@ -81,7 +81,7 @@ namespace Kopernicus.Components
 
                 Debug.Log(atlas);
 
-                sphere.surfaceMaterial.SetTexture(NormalTex, normal);
+                sphere.surfaceMaterial.SetTexture(AtlasTex, normal);
                 mod.material1Blend.SetTexture(AtlasTex, atlas);
                 mod.material2Blend.SetTexture(AtlasTex, atlas);
                 mod.material3Blend.SetTexture(AtlasTex, atlas);
