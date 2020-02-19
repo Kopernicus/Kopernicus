@@ -39,16 +39,22 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void Update()
+        {
             if (GameSettings.TERRAIN_SHADER_QUALITY == 3)
             {
                 return;
             }
 
             ScreenMessages.PostScreenMessage(
-                "Kopernicus only supports terrain quality 3 (ultra)!\nThe settings will be updated automatically.",
+                "Kopernicus only supports terrain quality ultra!\nThe settings will be updated automatically.",
                 5f, ScreenMessageStyle.UPPER_LEFT);
 
             GameSettings.TERRAIN_SHADER_QUALITY = 3;
+            GameSettings.SaveSettings();
         }
     }
 }
