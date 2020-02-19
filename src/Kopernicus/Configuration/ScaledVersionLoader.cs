@@ -105,22 +105,27 @@ namespace Kopernicus.Configuration
             {
                 Renderer renderer = Value.scaledBody.GetComponent<Renderer>();
 
+                Boolean isVaccum = ScaledPlanetSimple.UsesSameShader(renderer.sharedMaterial);
+                Boolean isAtmospheric = ScaledPlanetRimAerial.UsesSameShader(renderer.sharedMaterial);
+                Boolean isAtmosphericStandard = ScaledPlanetRimAerialStandard.UsesSameShader(renderer.sharedMaterial);
+                Boolean isStar = EmissiveMultiRampSunspots.UsesSameShader(renderer.sharedMaterial);
+
                 switch (value.Value)
                 {
-                    case ScaledMaterialType.Vacuum:
+                    case ScaledMaterialType.Vacuum when !isVaccum:
                         renderer.sharedMaterial = new ScaledPlanetSimpleLoader();
                         break;
-                    case ScaledMaterialType.Atmospheric:
+                    case ScaledMaterialType.Atmospheric when !isAtmospheric:
                         renderer.sharedMaterial = new ScaledPlanetRimAerialLoader();
                         break;
-                    case ScaledMaterialType.AtmosphericStandard:
+                    case ScaledMaterialType.AtmosphericStandard when !isAtmosphericStandard:
                         renderer.sharedMaterial = new ScaledPlanetRimAerialStandardLoader();
                         break;
-                    case ScaledMaterialType.Star:
+                    case ScaledMaterialType.Star when !isStar:
                         renderer.sharedMaterial = new EmissiveMultiRampSunspotsLoader();
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        return;
                 }
             }
         }

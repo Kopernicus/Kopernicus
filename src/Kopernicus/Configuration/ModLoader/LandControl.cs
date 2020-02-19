@@ -143,40 +143,51 @@ namespace Kopernicus.Configuration.ModLoader
                 }
                 set
                 {
+                    Boolean isDiffuse = NormalDiffuse.UsesSameShader(Value.material);
+                    Boolean isBumped = NormalBumped.UsesSameShader(Value.material);
+                    Boolean isDetail = NormalDiffuseDetail.UsesSameShader(Value.material);
+                    Boolean isWrapped = DiffuseWrap.UsesSameShader(Value.material);
+                    Boolean isCutout = AlphaTestDiffuse.UsesSameShader(Value.material);
+                    Boolean isAerial = AerialTransCutout.UsesSameShader(Value.material);
+                    Boolean isStandard = Standard.UsesSameShader(Value.material);
+                    Boolean isStandardSpecular = StandardSpecular.UsesSameShader(Value.material);
+                    Boolean isKspBumped = KSPBumped.UsesSameShader(Value.material);
+                    Boolean isKspBumpedSpecular = KSPBumpedSpecular.UsesSameShader(Value.material);
+
                     switch (value.Value)
                     {
-                        case ScatterMaterialType.Diffuse:
+                        case ScatterMaterialType.Diffuse when !isDiffuse:
                             Value.material = new NormalDiffuseLoader();
                             break;
-                        case ScatterMaterialType.BumpedDiffuse:
+                        case ScatterMaterialType.BumpedDiffuse when !isBumped:
                             Value.material = new NormalBumpedLoader();
                             break;
-                        case ScatterMaterialType.DiffuseDetail:
+                        case ScatterMaterialType.DiffuseDetail when !isDetail:
                             Value.material = new NormalDiffuseDetailLoader();
                             break;
-                        case ScatterMaterialType.DiffuseWrapped:
+                        case ScatterMaterialType.DiffuseWrapped when !isWrapped:
                             Value.material = new DiffuseWrapLoader();
                             break;
-                        case ScatterMaterialType.CutoutDiffuse:
+                        case ScatterMaterialType.CutoutDiffuse when !isCutout:
                             Value.material = new AlphaTestDiffuseLoader();
                             break;
-                        case ScatterMaterialType.AerialCutout:
+                        case ScatterMaterialType.AerialCutout when !isAerial:
                             Value.material = new AerialTransCutoutLoader();
                             break;
-                        case ScatterMaterialType.Standard:
+                        case ScatterMaterialType.Standard when !isStandard:
                             Value.material = new StandardLoader();
                             break;
-                        case ScatterMaterialType.StandardSpecular:
+                        case ScatterMaterialType.StandardSpecular when !isStandardSpecular:
                             Value.material = new StandardSpecularLoader();
                             break;
-                        case ScatterMaterialType.KSPBumped:
+                        case ScatterMaterialType.KSPBumped when !isKspBumped:
                             Value.material = new KSPBumpedLoader();
                             break;
-                        case ScatterMaterialType.KSPBumpedSpecular:
+                        case ScatterMaterialType.KSPBumpedSpecular when !isKspBumpedSpecular:
                             Value.material = new KSPBumpedSpecularLoader();
                             break;
                         default:
-                            throw new ArgumentOutOfRangeException();
+                            return;
                     }
                 }
             }

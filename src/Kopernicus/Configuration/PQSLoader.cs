@@ -219,34 +219,43 @@ namespace Kopernicus.Configuration
             }
             set
             {
+                Boolean isVaccum = PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isBasic = PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isRotation = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isRotationArray = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
+
                 switch (value.Value)
                 {
-                    case SurfaceMaterialType.Vacuum:
+                    case SurfaceMaterialType.Vacuum when !isVaccum:
                         BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericBasic:
+                    case SurfaceMaterialType.AtmosphericBasic when !isBasic:
                         BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericMain:
+                    case SurfaceMaterialType.AtmosphericMain when !isMain:
                         BasicSurfaceMaterial = new PQSMainShaderLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimized:
+                    case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
                         BasicSurfaceMaterial = new PQSMainOptimisedLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericExtra:
+                    case SurfaceMaterialType.AtmosphericExtra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend:
+                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation:
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray:
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader();
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        return;
                 }
             }
         }
