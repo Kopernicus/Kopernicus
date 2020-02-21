@@ -212,25 +212,35 @@ namespace Kopernicus.Configuration.ModLoader
                     switch (Type.Value)
                     {
                         case ScatterMaterialType.Diffuse when !isDiffuse:
-                            return new NormalDiffuseLoader(Value.material);
+                            Value.material = new NormalDiffuseLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.BumpedDiffuse when !isBumped:
-                            return new NormalBumpedLoader(Value.material);
+                            Value.material = new NormalBumpedLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.DiffuseDetail when !isDetail:
-                            return new NormalDiffuseDetailLoader(Value.material);
+                            Value.material = new NormalDiffuseDetailLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.DiffuseWrapped when !isWrapped:
-                            return new DiffuseWrapLoader(Value.material);
+                            Value.material = new DiffuseWrapLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.CutoutDiffuse when !isCutout:
-                            return new AlphaTestDiffuseLoader(Value.material);
+                            Value.material = new AlphaTestDiffuseLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.AerialCutout when !isAerial:
-                            return new AerialTransCutoutLoader(Value.material);
+                            Value.material = new AerialTransCutoutLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.Standard when !isStandard:
-                            return new StandardLoader(Value.material);
+                            Value.material = new StandardLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.StandardSpecular when !isStandardSpecular:
-                            return new StandardSpecularLoader(Value.material);
+                            Value.material = new StandardSpecularLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.KSPBumped when !isKspBumped:
-                            return new KSPBumpedLoader(Value.material);
+                            Value.material = new KSPBumpedLoader(Value.material);
+                            goto default;
                         case ScatterMaterialType.KSPBumpedSpecular when !isKspBumpedSpecular:
-                            return new KSPBumpedSpecularLoader(Value.material);
+                            Value.material = new KSPBumpedSpecularLoader(Value.material);
+                            goto default;
                         default:
                             return Value.material;
                     }

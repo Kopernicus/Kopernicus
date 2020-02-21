@@ -244,25 +244,29 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                Material material = Value.scaledBody.GetComponent<Renderer>().sharedMaterial;
+                Renderer renderer = Value.scaledBody.GetComponent<Renderer>();
 
-                Boolean isVaccum = material is ScaledPlanetSimpleLoader;
-                Boolean isAtmospheric = material is ScaledPlanetRimAerialLoader;
-                Boolean isAtmosphericStandard = material is ScaledPlanetRimAerialStandardLoader;
-                Boolean isStar = material is EmissiveMultiRampSunspotsLoader;
+                Boolean isVaccum = renderer.sharedMaterial is ScaledPlanetSimpleLoader;
+                Boolean isAtmospheric = renderer.sharedMaterial is ScaledPlanetRimAerialLoader;
+                Boolean isAtmosphericStandard = renderer.sharedMaterial is ScaledPlanetRimAerialStandardLoader;
+                Boolean isStar = renderer.sharedMaterial is EmissiveMultiRampSunspotsLoader;
 
                 switch (Type.Value)
                 {
                     case ScaledMaterialType.Vacuum when !isVaccum:
-                        return new ScaledPlanetSimpleLoader(material);
+                        renderer.sharedMaterial = new ScaledPlanetSimpleLoader(renderer.sharedMaterial);
+                        goto default;
                     case ScaledMaterialType.Atmospheric when !isAtmospheric:
-                        return new ScaledPlanetRimAerialLoader(material);
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialLoader(renderer.sharedMaterial);
+                        goto default;
                     case ScaledMaterialType.AtmosphericStandard when !isAtmosphericStandard:
-                        return new ScaledPlanetRimAerialStandardLoader(material);
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialStandardLoader(renderer.sharedMaterial);
+                        goto default;
                     case ScaledMaterialType.Star when !isStar:
-                        return new EmissiveMultiRampSunspotsLoader(material);
+                        renderer.sharedMaterial = new EmissiveMultiRampSunspotsLoader(renderer.sharedMaterial);
+                        goto default;
                     default:
-                        return material;
+                        return renderer.sharedMaterial;
                 }
             }
             set

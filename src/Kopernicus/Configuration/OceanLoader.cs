@@ -176,14 +176,12 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                Material material = BasicSurfaceMaterial;
-
-                if (material is PQSOceanSurfaceQuadLoader)
+                if (!(BasicSurfaceMaterial is PQSProjectionFallbackLoader))
                 {
-                    return material;
+                    BasicSurfaceMaterial = new PQSOceanSurfaceQuadLoader(BasicSurfaceMaterial);
                 }
 
-                return new PQSOceanSurfaceQuadLoader(material);
+                return BasicSurfaceMaterial;
             }
             set
             {
@@ -191,8 +189,10 @@ namespace Kopernicus.Configuration
                 {
                     BasicSurfaceMaterial = value;
                 }
-
-                BasicSurfaceMaterial = new PQSOceanSurfaceQuadLoader(value);
+                else
+                {
+                    BasicSurfaceMaterial = new PQSOceanSurfaceQuadLoader(value);
+                }
             }
         }
 
@@ -204,12 +204,12 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                if (Value.fallbackMaterial is PQSOceanSurfaceQuadFallbackLoader)
+                if (!(Value.fallbackMaterial is PQSOceanSurfaceQuadFallbackLoader))
                 {
-                    return Value.fallbackMaterial;
+                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial);
                 }
 
-                return new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial);
+                return Value.fallbackMaterial;
             }
             set
             {
@@ -217,8 +217,10 @@ namespace Kopernicus.Configuration
                 {
                     Value.fallbackMaterial = value;
                 }
-
-                Value.fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(value);
+                else
+                {
+                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(value);
+                }
             }
         }
 

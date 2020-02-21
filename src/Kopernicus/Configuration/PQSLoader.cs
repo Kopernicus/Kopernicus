@@ -149,46 +149,44 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                Material material = BasicSurfaceMaterial;
-
-                if (PQSProjectionSurfaceQuad.UsesSameShader(material))
+                if (PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.Vacuum;
                 }
-                if (PQSProjectionAerialQuadRelative.UsesSameShader(material))
+                if (PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericBasic;
                 }
-                if (PQSMainShader.UsesSameShader(material))
+                if (PQSMainShader.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericMain;
                 }
-                if (PQSMainOptimised.UsesSameShader(material))
+                if (PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericOptimized;
                 }
-                if (PQSMainExtras.UsesSameShader(material))
+                if (PQSMainExtras.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericExtra;
                 }
-                if (PQSMainFastBlend.UsesSameShader(material))
+                if (PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericMainFastBlend;
                 }
-                if (PQSMainOptimisedFastBlend.UsesSameShader(material))
+                if (PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericOptimizedFastBlend;
                 }
-                if (PQSTriplanarZoomRotation.UsesSameShader(material))
+                if (PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericTriplanarZoomRotation;
                 }
-                if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(material))
+                if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray;
                 }
 
-                throw new Exception("The shader '" + material.shader.name + "' is not supported.");
+                throw new Exception("The shader '" + BasicSurfaceMaterial.shader.name + "' is not supported.");
             }
             set
             {
@@ -244,40 +242,47 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                Material material = BasicSurfaceMaterial;
-
-                Boolean isVaccum = material is PQSProjectionSurfaceQuadLoader;
-                Boolean isBasic = material is PQSProjectionAerialQuadRelativeLoader;
-                Boolean isMain = material is PQSMainShaderLoader;
-                Boolean isOptimised = material is PQSMainOptimisedLoader;
-                Boolean isExtra = material is PQSMainExtrasLoader;
-                Boolean isFastBlend = material is PQSMainFastBlendLoader;
-                Boolean isOptimisedFastBlend = material is PQSMainOptimisedFastBlendLoader;
-                Boolean isRotation = material is PQSTriplanarZoomRotationLoader;
-                Boolean isRotationArray = material is PQSTriplanarZoomRotationTextureArrayLoader;
+                Boolean isVaccum = BasicSurfaceMaterial is PQSProjectionSurfaceQuadLoader;
+                Boolean isBasic = BasicSurfaceMaterial is PQSProjectionAerialQuadRelativeLoader;
+                Boolean isMain = BasicSurfaceMaterial is PQSMainShaderLoader;
+                Boolean isOptimised = BasicSurfaceMaterial is PQSMainOptimisedLoader;
+                Boolean isExtra = BasicSurfaceMaterial is PQSMainExtrasLoader;
+                Boolean isFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
+                Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
+                Boolean isRotation = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
+                Boolean isRotationArray = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
 
                 switch (MaterialType.Value)
                 {
                     case SurfaceMaterialType.Vacuum when !isVaccum:
-                        return new PQSProjectionSurfaceQuadLoader(material);
+                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericBasic when !isBasic:
-                        return new PQSProjectionAerialQuadRelativeLoader(material);
+                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericMain when !isMain:
-                        return new PQSMainShaderLoader(material);
+                        BasicSurfaceMaterial = new PQSMainShaderLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
-                        return new PQSMainOptimisedLoader(material);
+                        BasicSurfaceMaterial = new PQSMainOptimisedLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericExtra when !isExtra:
-                        return new PQSMainExtrasLoader(material);
+                        BasicSurfaceMaterial = new PQSMainExtrasLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
-                        return new PQSMainFastBlendLoader(material);
+                        BasicSurfaceMaterial = new PQSMainFastBlendLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
-                        return new PQSMainOptimisedFastBlendLoader(material);
+                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
-                        return new PQSTriplanarZoomRotationLoader(material);
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial);
+                        goto default;
                     case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
-                        return new PQSTriplanarZoomRotationTextureArrayLoader(material);
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(BasicSurfaceMaterial);
+                        goto default;
                     default:
-                        return material;
+                        return BasicSurfaceMaterial;
                 }
             }
             set
@@ -339,12 +344,12 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                if (Value.fallbackMaterial is PQSProjectionFallbackLoader)
+                if (!(Value.fallbackMaterial is PQSProjectionFallbackLoader))
                 {
-                    return Value.fallbackMaterial;
+                    Value.fallbackMaterial = new PQSProjectionFallbackLoader(Value.fallbackMaterial);
                 }
 
-                return new PQSProjectionFallbackLoader(Value.fallbackMaterial);
+                return Value.fallbackMaterial;
             }
             set
             {
@@ -352,8 +357,10 @@ namespace Kopernicus.Configuration
                 {
                     Value.fallbackMaterial = value;
                 }
-
-                Value.fallbackMaterial = new PQSProjectionFallbackLoader(value);
+                else
+                {
+                    Value.fallbackMaterial = new PQSProjectionFallbackLoader(value);
+                }
             }
         }
 
