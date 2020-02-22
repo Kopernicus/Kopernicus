@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -117,14 +118,14 @@ namespace Kopernicus.Configuration
         }
 
         // Pressure curve
-        [ParserTarget("pressureCurve")]
+        [ParserTargetCollection("pressureCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("Assigns a pressure value to a height value inside of the atmosphere.")]
-        public FloatCurveParser PressureCurve
+        public List<NumericCollectionParser<Single>> PressureCurve
         {
-            get { return Value.atmosphereUsePressureCurve ? Value.atmospherePressureCurve : null; }
+            get { return Utility.FloatCurveToList(Value.atmosphereUsePressureCurve ? Value.atmospherePressureCurve : null); }
             set
             {
-                Value.atmospherePressureCurve = value;
+                Value.atmospherePressureCurve = Utility.ListToFloatCurve(value);
                 Value.atmosphereUsePressureCurve = true;
             }
         }
@@ -150,14 +151,14 @@ namespace Kopernicus.Configuration
         }
 
         // Temperature curve (see below)
-        [ParserTarget("temperatureCurve")]
+        [ParserTargetCollection("temperatureCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("Assigns a temperature value to a height value inside of the atmosphere.")]
-        public FloatCurveParser TemperatureCurve
+        public List<NumericCollectionParser<Single>> TemperatureCurve
         {
-            get { return Value.atmosphereUseTemperatureCurve ? Value.atmosphereTemperatureCurve : null; }
+            get { return Utility.FloatCurveToList(Value.atmosphereUseTemperatureCurve ? Value.atmosphereTemperatureCurve : null); }
             set
             {
-                Value.atmosphereTemperatureCurve = value;
+                Value.atmosphereTemperatureCurve = Utility.ListToFloatCurve(value);
                 Value.atmosphereUseTemperatureCurve = true;
             }
         }
@@ -191,51 +192,51 @@ namespace Kopernicus.Configuration
         }
 
         // atmosphereTemperatureSunMultCurve
-        [ParserTarget("temperatureSunMultCurve")]
-        public FloatCurveParser AtmosphereTemperatureSunMultCurve
+        [ParserTargetCollection("temperatureSunMultCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> AtmosphereTemperatureSunMultCurve
         {
-            get { return Value.atmosphereTemperatureSunMultCurve; }
-            set { Value.atmosphereTemperatureSunMultCurve = value; }
+            get { return Utility.FloatCurveToList(Value.atmosphereTemperatureSunMultCurve); }
+            set { Value.atmosphereTemperatureSunMultCurve = Utility.ListToFloatCurve(value); }
         }
 
         // Temperature latitude bias
-        [ParserTarget("temperatureLatitudeBiasCurve")]
-        public FloatCurveParser LatitudeTemperatureBiasCurve
+        [ParserTargetCollection("temperatureLatitudeBiasCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> LatitudeTemperatureBiasCurve
         {
-            get { return Value.latitudeTemperatureBiasCurve; }
-            set { Value.latitudeTemperatureBiasCurve = value; }
+            get { return Utility.FloatCurveToList(Value.latitudeTemperatureBiasCurve); }
+            set { Value.latitudeTemperatureBiasCurve = Utility.ListToFloatCurve(value); }
         }
 
         // latitudeTemperatureSunMultCurve
-        [ParserTarget("temperatureLatitudeSunMultCurve")]
-        public FloatCurveParser LatitudeTemperatureSunMultCurve
+        [ParserTargetCollection("temperatureLatitudeSunMultCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> LatitudeTemperatureSunMultCurve
         {
-            get { return Value.latitudeTemperatureSunMultCurve; }
-            set { Value.latitudeTemperatureSunMultCurve = value; }
+            get { return Utility.FloatCurveToList(Value.latitudeTemperatureSunMultCurve); }
+            set { Value.latitudeTemperatureSunMultCurve = Utility.ListToFloatCurve(value); }
         }
 
         // axialTemperatureSunMultCurve
-        [ParserTarget("temperatureAxialSunBiasCurve")]
-        public FloatCurveParser AxialTemperatureSunBiasCurve
+        [ParserTargetCollection("temperatureAxialSunBiasCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> AxialTemperatureSunBiasCurve
         {
-            get { return Value.axialTemperatureSunBiasCurve; }
-            set { Value.axialTemperatureSunBiasCurve = value; }
+            get { return Utility.FloatCurveToList(Value.axialTemperatureSunBiasCurve); }
+            set { Value.axialTemperatureSunBiasCurve = Utility.ListToFloatCurve(value); }
         }
 
         // axialTemperatureSunMultCurve
-        [ParserTarget("temperatureAxialSunMultCurve")]
-        public FloatCurveParser AxialTemperatureSunMultCurve
+        [ParserTargetCollection("temperatureAxialSunMultCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> AxialTemperatureSunMultCurve
         {
-            get { return Value.axialTemperatureSunMultCurve; }
-            set { Value.axialTemperatureSunMultCurve = value; }
+            get { return Utility.FloatCurveToList(Value.axialTemperatureSunMultCurve); }
+            set { Value.axialTemperatureSunMultCurve = Utility.ListToFloatCurve(value); }
         }
 
         // eccentricityTemperatureBiasCurve
-        [ParserTarget("temperatureEccentricityBiasCurve")]
-        public FloatCurveParser EccentricityTemperatureBiasCurve
+        [ParserTargetCollection("temperatureEccentricityBiasCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> EccentricityTemperatureBiasCurve
         {
-            get { return Value.eccentricityTemperatureBiasCurve; }
-            set { Value.eccentricityTemperatureBiasCurve = value; }
+            get { return Utility.FloatCurveToList(Value.eccentricityTemperatureBiasCurve); }
+            set { Value.eccentricityTemperatureBiasCurve = Utility.ListToFloatCurve(value); }
         }
 
         // ambient atmosphere color

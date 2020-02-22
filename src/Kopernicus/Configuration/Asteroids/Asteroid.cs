@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -79,7 +80,14 @@ namespace Kopernicus.Configuration.Asteroids
         public ConfigNode Vessel { get; set; }
 
         // Classes of the asteroid
-        [ParserTarget("Size")]
-        public FloatCurveParser Size { get; set; }
+        [ParserTargetCollection("Size", Key = "key", NameSignificance = NameSignificance.Key)]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private List<NumericCollectionParser<Single>> SizeSetter
+        {
+            get { return Utility.FloatCurveToList(Size); }
+            set { Size = Utility.ListToFloatCurve(value); }
+        }
+
+        public FloatCurve Size { get; set; }
     }
 }

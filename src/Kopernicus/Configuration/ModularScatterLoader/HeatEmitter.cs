@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.Components.ModularScatter;
 using Kopernicus.ConfigParser.Attributes;
@@ -69,39 +70,39 @@ namespace Kopernicus.Configuration.ModularScatterLoader
         }
 
         // Multiplier curve to change ambientTemp with altitude
-        [ParserTarget("AltitudeCurve")]
+        [ParserTargetCollection("AltitudeCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("Multiplier curve to change ambientTemp with altitude.")]
-        public FloatCurveParser AltitudeCurve
+        public List<NumericCollectionParser<Single>> AltitudeCurve
         {
-            get { return Value.altitudeCurve; }
-            set { Value.altitudeCurve = value; }
+            get { return Utility.FloatCurveToList(Value.altitudeCurve); }
+            set { Value.altitudeCurve = Utility.ListToFloatCurve(value); }
         }
 
         // Multiplier curve to change ambientTemp with latitude
-        [ParserTarget("LatitudeCurve")]
+        [ParserTargetCollection("LatitudeCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("Multiplier curve to change ambientTemp with latitude.")]
-        public FloatCurveParser LatitudeCurve
+        public List<NumericCollectionParser<Single>> LatitudeCurve
         {
-            get { return Value.latitudeCurve; }
-            set { Value.latitudeCurve = value; }
+            get { return Utility.FloatCurveToList(Value.latitudeCurve); }
+            set { Value.latitudeCurve = Utility.ListToFloatCurve(value); }
         }
 
         // Multiplier curve to change ambientTemp with longitude
-        [ParserTarget("LongitudeCurve")]
+        [ParserTargetCollection("LongitudeCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("Multiplier curve to change ambientTemp with longitude.")]
-        public FloatCurveParser LongitudeCurve
+        public List<NumericCollectionParser<Single>> LongitudeCurve
         {
-            get { return Value.longitudeCurve; }
-            set { Value.longitudeCurve = value; }
+            get { return Utility.FloatCurveToList(Value.longitudeCurve); }
+            set { Value.longitudeCurve = Utility.ListToFloatCurve(value); }
         }
 
         // Multiplier curve to change ambientTemp with distance
-        [ParserTarget("DistanceCurve")]
+        [ParserTargetCollection("DistanceCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("Multiplier curve to change ambientTemp with distance.")]
-        public FloatCurveParser DistanceCurve
+        public List<NumericCollectionParser<Single>> DistanceCurve
         {
-            get { return Value.distanceCurve; }
-            set { Value.distanceCurve = value; }
+            get { return Utility.FloatCurveToList(Value.distanceCurve); }
+            set { Value.distanceCurve = Utility.ListToFloatCurve(value); }
         }
 
         // Multiplier map for ambientTemp

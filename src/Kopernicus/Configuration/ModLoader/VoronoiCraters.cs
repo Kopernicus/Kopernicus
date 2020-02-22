@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -60,11 +61,11 @@ namespace Kopernicus.Configuration.ModLoader
         }
 
         // CraterCurve
-        [ParserTarget("CraterCurve")]
-        public FloatCurveParser CraterCurve
+        [ParserTargetCollection("CraterCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> CraterCurve
         {
-            get { return Mod.craterCurve; }
-            set { Mod.craterCurve = value; }
+            get { return Utility.AnimCurveToList(Mod.craterCurve); }
+            set { Mod.craterCurve = Utility.ListToAnimCurve(value); }
         }
 
         // jitter
@@ -76,11 +77,11 @@ namespace Kopernicus.Configuration.ModLoader
         }
 
         // JitterCurve
-        [ParserTarget("JitterCurve")]
-        public FloatCurveParser JitterCurve
+        [ParserTargetCollection("JitterCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> JitterCurve
         {
-            get { return Mod.jitterCurve; }
-            set { Mod.jitterCurve = value; }
+            get { return Utility.AnimCurveToList(Mod.jitterCurve); }
+            set { Mod.jitterCurve = Utility.ListToAnimCurve(value); }
         }
 
         // jitterHeight

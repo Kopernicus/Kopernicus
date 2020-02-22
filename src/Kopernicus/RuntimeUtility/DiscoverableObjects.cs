@@ -224,7 +224,7 @@ namespace Kopernicus.RuntimeUtility
             Double maxLifetime = asteroid.MaxUntrackedLifetime * 24d * 60d * 60d;
 
             // Size
-            UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Value.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
+            UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
 
             // Spawn
             ConfigNode vessel = ProtoVessel.CreateVesselNode(

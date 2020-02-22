@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -119,11 +120,11 @@ namespace Kopernicus.Configuration.ModLoader
         }
 
         // simplexCurve
-        [ParserTarget("simplexCurve")]
-        public FloatCurveParser SimplexCurve
+        [ParserTargetCollection("simplexCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> SimplexCurve
         {
-            get { return Mod.simplexCurve; }
-            set { Mod.simplexCurve = value; }
+            get { return Utility.AnimCurveToList(Mod.simplexCurve); }
+            set { Mod.simplexCurve = Utility.ListToAnimCurve(value); }
         }
 
         // simplexFrequency
