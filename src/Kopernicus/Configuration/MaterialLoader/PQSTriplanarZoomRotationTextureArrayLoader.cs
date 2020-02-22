@@ -32,6 +32,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.UI;
 using UnityEngine;
 
 namespace Kopernicus.Configuration.MaterialLoader
@@ -59,6 +60,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Atlas Texture, default = "white" { }
         [ParserTargetCollection("AtlasTex")]
+        [KittopiaHideOption]
         public List<Texture2DParser> AtlasTexSetter
         {
             // TODO: Figure out if it is even possible to get the names out of a Texture2DArray
@@ -79,6 +81,7 @@ namespace Kopernicus.Configuration.MaterialLoader
 
         // Normal Atlas Texture, default = "white" { }
         [ParserTargetCollection("NormalTex")]
+        [KittopiaHideOption]
         public List<Texture2DParser> NormalTexSetter
         {
             // TODO: Figure out if it is even possible to get the names out of a Texture2DArray
