@@ -81,6 +81,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             // Get the parse method for this object
             _parserMethod = typeof(T).GetMethod("Parse", new [] { typeof(String) });
+            Value = new List<T>();
         }
         
         /// <summary>
