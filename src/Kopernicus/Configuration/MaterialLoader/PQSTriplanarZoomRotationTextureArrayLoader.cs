@@ -49,6 +49,14 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { ColorLerpModifier = value; }
         }
 
+        // Atlas Texture, default = 100000
+        [ParserTarget("atlasTiling")]
+        public NumericParser<Single> AtlasTilingSetter
+        {
+            get { return AtlasTiling; }
+            set { AtlasTiling = value; }
+        }
+
         // Atlas Texture, default = "white" { }
         [ParserTargetCollection("AtlasTex")]
         public List<Texture2DParser> AtlasTexSetter

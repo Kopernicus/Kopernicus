@@ -26,6 +26,10 @@ namespace Kopernicus.Components.MaterialWrapper
             public const String COLOR_LERP_MODIFIER_KEY = "_ColorLerpModifier";
             public Int32 ColorLerpModifierId { get; private set; }
 
+            // Atlas Tiling, default = 100000
+            public const String ATLAS_TILING_KEY = "_AtlasTiling";
+            public Int32 AtlasTilingId { get; private set; }
+
             // Atlas Texture, default = "white" { }
             public const String ATLAS_TEX_KEY = "_AtlasTex";
             public Int32 AtlasTexId { get; private set; }
@@ -125,6 +129,7 @@ namespace Kopernicus.Components.MaterialWrapper
             private Properties()
             {
                 ColorLerpModifierId = Shader.PropertyToID(COLOR_LERP_MODIFIER_KEY);
+                AtlasTilingId = Shader.PropertyToID(ATLAS_TILING_KEY);
                 AtlasTexId = Shader.PropertyToID(ATLAS_TEX_KEY);
                 NormalTexId = Shader.PropertyToID(NORMAL_TEX_KEY);
                 FactorId = Shader.PropertyToID(FACTOR_KEY);
@@ -165,6 +170,13 @@ namespace Kopernicus.Components.MaterialWrapper
         {
             get { return GetFloat(Properties.Instance.ColorLerpModifierId); }
             set { SetFloat(Properties.Instance.ColorLerpModifierId, value); }
+        }
+
+        // Atlas Texture, default = 100000
+        public Single AtlasTiling
+        {
+            get { return GetFloat(Properties.Instance.AtlasTilingId); }
+            set { SetFloat(Properties.Instance.AtlasTilingId, value); }
         }
 
         // Atlas Texture, default = "white" { }
