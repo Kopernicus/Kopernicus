@@ -52,7 +52,6 @@
     <Compile Include="Attributes\RequireConfigType.cs" />
     <Compile Include="BuiltinTypeParsers\ColorParser.cs" />
     <Compile Include="BuiltinTypeParsers\EnumParser.cs" />
-    <Compile Include="BuiltinTypeParsers\FloatCurveParser.cs" />
     <Compile Include="BuiltinTypeParsers\NumericCollectionParser.cs" />
     <Compile Include="BuiltinTypeParsers\NumericParser.cs" />
     <Compile Include="BuiltinTypeParsers\QuaternionParser.cs" />
