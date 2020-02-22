@@ -12,13 +12,13 @@ namespace Kopernicus.Components.MaterialWrapper
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class Standard : Material
+    public class StandardSpecular : Material
     {
         // Internal property ID tracking object
         protected class Properties
         {
             // Return the shader for this wrapper
-            private const String SHADER_NAME = "Standard";
+            private const String SHADER_NAME = "Standard (Specular setup)";
 
             public static Shader Shader
             {
@@ -49,13 +49,13 @@ namespace Kopernicus.Components.MaterialWrapper
             public const String SMOOTHNESS_TEXTURE_CHANNEL_KEY = "_SmoothnessTextureChannel";
             public Int32 SmoothnessTextureChannelId { get; private set; }
 
-            // Metallic, default = 0.000000
-            public const String METALLIC_KEY = "_Metallic";
-            public Int32 MetallicId { get; private set; }
+            // Specular, default = (0.2,0.2,0.2,1)
+            public const String SPEC_COLOR_KEY = "_SpecColor";
+            public Int32 SpecColorId { get; private set; }
 
-            // Metallic, default = "white" { }
-            public const String METALLIC_GLOSS_MAP_KEY = "_MetallicGlossMap";
-            public Int32 MetallicGlossMapId { get; private set; }
+            // Specular, default = "white" { }
+            public const String SPEC_GLOSS_MAP_KEY = "_SpecGlossMap";
+            public Int32 SpecGlossMapId { get; private set; }
 
             // Specular Highlights, default = 1.000000
             public const String SPECULAR_HIGHLIGHTS_KEY = "_SpecularHighlights";
@@ -149,8 +149,8 @@ namespace Kopernicus.Components.MaterialWrapper
                 GlossinessId = Shader.PropertyToID(GLOSSINESS_KEY);
                 GlossMapScaleId = Shader.PropertyToID(GLOSS_MAP_SCALE_KEY);
                 SmoothnessTextureChannelId = Shader.PropertyToID(SMOOTHNESS_TEXTURE_CHANNEL_KEY);
-                MetallicId = Shader.PropertyToID(METALLIC_KEY);
-                MetallicGlossMapId = Shader.PropertyToID(METALLIC_GLOSS_MAP_KEY);
+                SpecColorId = Shader.PropertyToID(SPEC_COLOR_KEY);
+                SpecGlossMapId = Shader.PropertyToID(SPEC_GLOSS_MAP_KEY);
                 SpecularHighlightsId = Shader.PropertyToID(SPECULAR_HIGHLIGHTS_KEY);
                 GlossyReflectionsId = Shader.PropertyToID(GLOSSY_REFLECTIONS_KEY);
                 BumpScaleId = Shader.PropertyToID(BUMP_SCALE_KEY);
@@ -257,34 +257,34 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetFloat(Properties.Instance.SmoothnessTextureChannelId, (Int32) value); }
         }
 
-        // Metallic, default = 0.000000
-        public Single Metallic
+        // Specular, default = (0.2,0.2,0.2,1)
+        public Color SpecColor
         {
-            get { return GetFloat(Properties.Instance.MetallicId); }
-            set { SetFloat(Properties.Instance.MetallicId, Mathf.Clamp(value, 0.000000f, 1.000000f)); }
+            get { return GetColor(Properties.Instance.SpecColorId); }
+            set { SetColor(Properties.Instance.SpecColorId, value); }
         }
 
-        // Metallic, default = "white" { }
-        public Texture2D MetallicGlossMap
+        // Specular, default = "white" { }
+        public Texture2D SpecGlossMap
         {
-            get { return GetTexture(Properties.Instance.MetallicGlossMapId) as Texture2D; }
+            get { return GetTexture(Properties.Instance.SpecGlossMapId) as Texture2D; }
             set
             {
-                SetTexture(Properties.Instance.MetallicGlossMapId, value);
+                SetTexture(Properties.Instance.SpecGlossMapId, value);
                 SetupMaterial();
             }
         }
 
         public Vector2 MetallicGlossMapScale
         {
-            get { return GetTextureScale(Properties.Instance.MetallicGlossMapId); }
-            set { SetTextureScale(Properties.Instance.MetallicGlossMapId, value); }
+            get { return GetTextureScale(Properties.Instance.SpecGlossMapId); }
+            set { SetTextureScale(Properties.Instance.SpecGlossMapId, value); }
         }
 
         public Vector2 MetallicGlossMapOffset
         {
-            get { return GetTextureOffset(Properties.Instance.MetallicGlossMapId); }
-            set { SetTextureOffset(Properties.Instance.MetallicGlossMapId, value); }
+            get { return GetTextureOffset(Properties.Instance.SpecGlossMapId); }
+            set { SetTextureOffset(Properties.Instance.SpecGlossMapId, value); }
         }
 
         // Specular Highlights, default = 1.000000
@@ -573,10 +573,6 @@ namespace Kopernicus.Components.MaterialWrapper
             }
 
             SetKeyword("_NORMALMAP", BumpMap || DetailNormalMap);
-            if (MetallicGlossMap != null)
-            {
-                SetKeyword("_METALLICGLOSSMAP", MetallicGlossMap);
-            }
 
             SetKeyword("_PARALLAXMAP", ParallaxMap);
             SetKeyword("_DETAIL_MULX2", DetailAlbedoMap || DetailNormalMap);
@@ -601,24 +597,24 @@ namespace Kopernicus.Components.MaterialWrapper
             }
         }
 
-        public Standard() : base(Properties.Shader)
+        public StandardSpecular() : base(Properties.Shader)
         {
             SetupMaterial();
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public Standard(String contents) : base(contents)
+        public StandardSpecular(String contents) : base(contents)
         {
             shader = Properties.Shader;
             SetupMaterial();
         }
 
-        public Standard(Material material) : base(material)
+        public StandardSpecular(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
             {
-                throw new InvalidOperationException("Type Mismatch: Standard shader required");
+                throw new InvalidOperationException("Type Mismatch: Standard (Specular setup) shader required");
             }
 
             SetupMaterial();

@@ -9,46 +9,54 @@ namespace Kopernicus.Components.MaterialWrapper
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-    public class ScaledPlanetSimple : Material
+    public class KSPBumped : Material
     {
         // Internal property ID tracking object
         protected class Properties
         {
             // Return the shader for this wrapper
-            private const String SHADER_NAME = "Terrain/Scaled Planet (Simple)";
+            private const String SHADER_NAME = "KSP/Bumped";
 
             public static Shader Shader
             {
                 get { return Shader.Find(SHADER_NAME); }
             }
 
+            // _MainTex (RGB spec(A)), default = "gray" { }
+            public const String MAIN_TEX_KEY = "_MainTex";
+            public Int32 MainTexId { get; private set; }
+
+            // _BumpMap, default = "bump" { }
+            public const String BUMP_MAP_KEY = "_BumpMap";
+            public Int32 BumpMapId { get; private set; }
+
             // Main Color, default = (1,1,1,1)
             public const String COLOR_KEY = "_Color";
             public Int32 ColorId { get; private set; }
 
-            // Specular Color, default = (0.5,0.5,0.5,1)
-            public const String SPEC_COLOR_KEY = "_SpecColor";
-            public Int32 SpecColorId { get; private set; }
-
-            // Shininess, default = 0.078125
-            public const String SHININESS_KEY = "_Shininess";
-            public Int32 ShininessId { get; private set; }
-
-            // Base (RGB) Gloss (A), default = "white" { }
-            public const String MAIN_TEX_KEY = "_MainTex";
-            public Int32 MainTexId { get; private set; }
-
-            // Normal map, default = "bump" { }
-            public const String BUMP_MAP_KEY = "_BumpMap";
-            public Int32 BumpMapId { get; private set; }
-
-            // Opacity, default = 1
+            // _Opacity, default = 1
             public const String OPACITY_KEY = "_Opacity";
             public Int32 OpacityId { get; private set; }
 
-            // Resource Map (RGB), default = "black" { }
-            public const String RESOURCE_MAP_KEY = "_ResourceMap";
-            public Int32 ResourceMapId { get; private set; }
+            // _RimFalloff, default = 0.1
+            public const String RIM_FALLOFF_KEY = "_RimFalloff";
+            public Int32 RimFalloffId { get; private set; }
+
+            // _RimColor, default = (0,0,0,0)
+            public const String RIM_COLOR_KEY = "_RimColor";
+            public Int32 RimColorId { get; private set; }
+
+            // _TemperatureColor, default = (0,0,0,0)
+            public const String TEMPERATURE_COLOR_KEY = "_TemperatureColor";
+            public Int32 TemperatureColorId { get; private set; }
+
+            // Burn Color, default = (1,1,1,1)
+            public const String BURN_COLOR_KEY = "_BurnColor";
+            public Int32 BurnColorId { get; private set; }
+
+            // Underwater Fog Factor default = 0
+            public const String UNDERWATER_FOG_FACTOR_KEY = "_UnderwaterFogFactor";
+            public Int32 UnderwaterFogFactorId { get; private set; }
 
             // Singleton instance
             private static Properties _singleton;
@@ -64,13 +72,15 @@ namespace Kopernicus.Components.MaterialWrapper
 
             private Properties()
             {
-                ColorId = Shader.PropertyToID(COLOR_KEY);
-                SpecColorId = Shader.PropertyToID(SPEC_COLOR_KEY);
-                ShininessId = Shader.PropertyToID(SHININESS_KEY);
                 MainTexId = Shader.PropertyToID(MAIN_TEX_KEY);
                 BumpMapId = Shader.PropertyToID(BUMP_MAP_KEY);
+                ColorId = Shader.PropertyToID(COLOR_KEY);
                 OpacityId = Shader.PropertyToID(OPACITY_KEY);
-                ResourceMapId = Shader.PropertyToID(RESOURCE_MAP_KEY);
+                RimFalloffId = Shader.PropertyToID(RIM_FALLOFF_KEY);
+                RimColorId = Shader.PropertyToID(RIM_COLOR_KEY);
+                TemperatureColorId = Shader.PropertyToID(TEMPERATURE_COLOR_KEY);
+                BurnColorId = Shader.PropertyToID(BURN_COLOR_KEY);
+                UnderwaterFogFactorId = Shader.PropertyToID(UNDERWATER_FOG_FACTOR_KEY);
             }
         }
 
@@ -85,28 +95,7 @@ namespace Kopernicus.Components.MaterialWrapper
             return m.shader.name == Properties.Shader.name;
         }
 
-        // Main Color, default = (1,1,1,1)
-        public Color Color
-        {
-            get { return GetColor(Properties.Instance.ColorId); }
-            set { SetColor(Properties.Instance.ColorId, value); }
-        }
-
-        // Specular Color, default = (0.5,0.5,0.5,1)
-        public Color SpecColor
-        {
-            get { return GetColor(Properties.Instance.SpecColorId); }
-            set { SetColor(Properties.Instance.SpecColorId, value); }
-        }
-
-        // Shininess, default = 0.078125
-        public Single Shininess
-        {
-            get { return GetFloat(Properties.Instance.ShininessId); }
-            set { SetFloat(Properties.Instance.ShininessId, Mathf.Clamp(value, 0.03f, 1f)); }
-        }
-
-        // Base (RGB) Gloss (A), default = "white" { }
+        // Base (RGB), default = "white" { }
         public Texture2D MainTex
         {
             get { return GetTexture(Properties.Instance.MainTexId) as Texture2D; }
@@ -144,48 +133,71 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTextureOffset(Properties.Instance.BumpMapId, value); }
         }
 
-        // Opacity, default = 1
+        // Main Color, default = (1,1,1,1)
+        public Color Color
+        {
+            get { return GetColor(Properties.Instance.ColorId); }
+            set { SetColor(Properties.Instance.ColorId, value); }
+        }
+
+        // _Opacity, default = 1
         public Single Opacity
         {
             get { return GetFloat(Properties.Instance.OpacityId); }
-            set { SetFloat(Properties.Instance.OpacityId, Mathf.Clamp(value, 0f, 1f)); }
+            set { SetFloat(Properties.Instance.OpacityId, Mathf.Clamp(value, 0.000000f, 1.000000f)); }
         }
 
-        // Resource Map (RGB), default = "black" { }
-        public Texture2D ResourceMap
+        // _RimFalloff, default = 0.1
+        public Single RimFalloff
         {
-            get { return GetTexture(Properties.Instance.ResourceMapId) as Texture2D; }
-            set { SetTexture(Properties.Instance.ResourceMapId, value); }
+            get { return GetFloat(Properties.Instance.RimFalloffId); }
+            set { SetFloat(Properties.Instance.RimFalloffId, Mathf.Clamp(value, 0.010000f, 5.000000f)); }
         }
 
-        public Vector2 ResourceMapScale
+        // _RimColor, default = (0,0,0,0)
+        public Color RimColor
         {
-            get { return GetTextureScale(Properties.Instance.ResourceMapId); }
-            set { SetTextureScale(Properties.Instance.ResourceMapId, value); }
+            get { return GetColor(Properties.Instance.RimColorId); }
+            set { SetColor(Properties.Instance.RimColorId, value); }
         }
 
-        public Vector2 ResourceMapOffset
+        // _TemperatureColor, default = (0,0,0,0)
+        public Color TemperatureColor
         {
-            get { return GetTextureOffset(Properties.Instance.ResourceMapId); }
-            set { SetTextureOffset(Properties.Instance.ResourceMapId, value); }
+            get { return GetColor(Properties.Instance.TemperatureColorId); }
+            set { SetColor(Properties.Instance.TemperatureColorId, value); }
         }
 
-        public ScaledPlanetSimple() : base(Properties.Shader)
+        // Burn Color, default = (1,1,1,1)
+        public Color BurnColor
+        {
+            get { return GetColor(Properties.Instance.BurnColorId); }
+            set { SetColor(Properties.Instance.BurnColorId, value); }
+        }
+
+        // Underwater Fog Factor, default = 0
+        public Single UnderwaterFogFactor
+        {
+            get { return GetFloat(Properties.Instance.UnderwaterFogFactorId); }
+            set { SetFloat(Properties.Instance.UnderwaterFogFactorId, Mathf.Clamp(value, 0.000000f, 1.000000f)); }
+        }
+
+        public KSPBumped() : base(Properties.Shader)
         {
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public ScaledPlanetSimple(String contents) : base(contents)
+        public KSPBumped(String contents) : base(contents)
         {
             shader = Properties.Shader;
         }
 
-        public ScaledPlanetSimple(Material material) : base(material)
+        public KSPBumped(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
             {
-                throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (Simple) shader required");
+                throw new InvalidOperationException("Type Mismatch: KSP/Bumped shader required");
             }
         }
 

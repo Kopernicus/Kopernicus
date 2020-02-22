@@ -25,6 +25,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Kopernicus.Components.MaterialWrapper;
+using UnityEngine;
 
 namespace Kopernicus.Components
 {
@@ -33,9 +35,22 @@ namespace Kopernicus.Components
     {
         private PQSMod_TextureAtlas[] _mods;
 
+        private static readonly Int32 NormalTex = Shader.PropertyToID("_NormalTex");
+        private static readonly Int32 AtlasTex = Shader.PropertyToID("_AtlasTex");
+
         public override void OnSetup()
         {
             _mods = sphere.GetComponentsInChildren<PQSMod_TextureAtlas>(true);
+
+            if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(sphere.surfaceMaterial))
+            {
+                return;
+            }
+
+            for (Int32 i = 0; i < _mods.Length; i++)
+            {
+                _mods[i].modEnabled = false;
+            }
         }
 
         public override void OnQuadPreBuild(PQ quad)
@@ -44,10 +59,36 @@ namespace Kopernicus.Components
             {
                 PQSMod_TextureAtlas mod = _mods[i];
 
+                Texture2DArray atlas = (Texture2DArray) sphere.surfaceMaterial.GetTexture(AtlasTex);
+
+                if (atlas == null)
+                {
+                    atlas = (Texture2DArray) mod.material1Blend.GetTexture(AtlasTex);
+                }
+
+                Texture2DArray normal = (Texture2DArray) sphere.surfaceMaterial.GetTexture(NormalTex);
+
+                if (normal == null)
+                {
+                    normal = (Texture2DArray) mod.material1Blend.GetTexture(NormalTex);
+                }
+
                 mod.material1Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
                 mod.material2Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
                 mod.material3Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
                 mod.material4Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);
+
+                sphere.surfaceMaterial.SetTexture(AtlasTex, atlas);
+                mod.material1Blend.SetTexture(AtlasTex, atlas);
+                mod.material2Blend.SetTexture(AtlasTex, atlas);
+                mod.material3Blend.SetTexture(AtlasTex, atlas);
+                mod.material4Blend.SetTexture(AtlasTex, atlas);
+
+                sphere.surfaceMaterial.SetTexture(NormalTex, normal);
+                mod.material1Blend.SetTexture(NormalTex, normal);
+                mod.material2Blend.SetTexture(NormalTex, normal);
+                mod.material3Blend.SetTexture(NormalTex, normal);
+                mod.material4Blend.SetTexture(NormalTex, normal);
             }
         }
     }

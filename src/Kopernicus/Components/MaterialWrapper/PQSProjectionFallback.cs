@@ -99,6 +99,11 @@ namespace Kopernicus.Components.MaterialWrapper
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static Boolean UsesSameShader(Material m)
         {
+            if (m == null)
+            {
+                return false;
+            }
+
             return m.shader.name == Properties.Shader.name;
         }
 

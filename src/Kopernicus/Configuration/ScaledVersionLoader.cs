@@ -76,7 +76,59 @@ namespace Kopernicus.Configuration
         [PreApply]
         [ParserTarget("type")]
         [KittopiaHideOption]
-        public EnumParser<BodyType> Type { get; set; }
+        public EnumParser<ScaledMaterialType> Type
+        {
+            get
+            {
+                Material material = Value.scaledBody.GetComponent<Renderer>().sharedMaterial;
+
+                if (ScaledPlanetSimple.UsesSameShader(material))
+                {
+                    return ScaledMaterialType.Vacuum;
+                }
+                if (ScaledPlanetRimAerial.UsesSameShader(material))
+                {
+                    return ScaledMaterialType.Atmospheric;
+                }
+                if (ScaledPlanetRimAerialStandard.UsesSameShader(material))
+                {
+                    return ScaledMaterialType.AtmosphericStandard;
+                }
+                if (EmissiveMultiRampSunspots.UsesSameShader(material))
+                {
+                    return ScaledMaterialType.Star;
+                }
+
+                throw new Exception("The shader '" + material.shader.name + "' is not supported.");
+            }
+            set
+            {
+                Renderer renderer = Value.scaledBody.GetComponent<Renderer>();
+
+                Boolean isVaccum = ScaledPlanetSimple.UsesSameShader(renderer.sharedMaterial);
+                Boolean isAtmospheric = ScaledPlanetRimAerial.UsesSameShader(renderer.sharedMaterial);
+                Boolean isAtmosphericStandard = ScaledPlanetRimAerialStandard.UsesSameShader(renderer.sharedMaterial);
+                Boolean isStar = EmissiveMultiRampSunspots.UsesSameShader(renderer.sharedMaterial);
+
+                switch (value.Value)
+                {
+                    case ScaledMaterialType.Vacuum when !isVaccum:
+                        renderer.sharedMaterial = new ScaledPlanetSimpleLoader();
+                        break;
+                    case ScaledMaterialType.Atmospheric when !isAtmospheric:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialLoader();
+                        break;
+                    case ScaledMaterialType.AtmosphericStandard when !isAtmosphericStandard:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialStandardLoader();
+                        break;
+                    case ScaledMaterialType.Star when !isStar:
+                        renderer.sharedMaterial = new EmissiveMultiRampSunspotsLoader();
+                        break;
+                    default:
+                        return;
+                }
+            }
+        }
 
         // Set the altitude where the fade to scaled space starts
         [ParserTarget("fadeStart")]
@@ -84,11 +136,24 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                return Value.scaledBody.GetComponentInChildren<ScaledSpaceFader>()
-                    ? Value.scaledBody.GetComponentInChildren<ScaledSpaceFader>().fadeStart
-                    : 0;
+                ScaledSpaceFader fader = Value.scaledBody.GetComponentInChildren<ScaledSpaceFader>();
+
+                if (fader)
+                {
+                    return fader.fadeStart;
+                }
+
+                return 0;
             }
-            set { Value.scaledBody.GetComponent<ScaledSpaceFader>().fadeStart = value; }
+            set
+            {
+                ScaledSpaceFader fader = Value.scaledBody.GetComponentInChildren<ScaledSpaceFader>();
+
+                if (fader)
+                {
+                    fader.fadeStart = value;
+                }
+            }
         }
 
         // Set the altitude where the fade to scaled space starts
@@ -97,11 +162,24 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                return Value.scaledBody.GetComponent<ScaledSpaceFader>()
-                    ? Value.scaledBody.GetComponent<ScaledSpaceFader>().fadeEnd
-                    : 0;
+                ScaledSpaceFader fader = Value.scaledBody.GetComponentInChildren<ScaledSpaceFader>();
+
+                if (fader)
+                {
+                    return fader.fadeEnd;
+                }
+
+                return 0;
             }
-            set { Value.scaledBody.GetComponent<ScaledSpaceFader>().fadeEnd = value; }
+            set
+            {
+                ScaledSpaceFader fader = Value.scaledBody.GetComponentInChildren<ScaledSpaceFader>();
+
+                if (fader)
+                {
+                    fader.fadeEnd = value;
+                }
+            }
         }
 
         // Create the Kopernicus LightShifter
@@ -111,7 +189,7 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                if (Type != BodyType.Star)
+                if (Type != ScaledMaterialType.Star)
                 {
                     return null;
                 }
@@ -164,8 +242,61 @@ namespace Kopernicus.Configuration
         [KittopiaUntouchable]
         public Material Material
         {
-            get { return Value.scaledBody.GetComponent<Renderer>().sharedMaterial; }
-            set { Value.scaledBody.GetComponent<Renderer>().sharedMaterial = value; }
+            get
+            {
+                Renderer renderer = Value.scaledBody.GetComponent<Renderer>();
+
+                Boolean isVaccum = renderer.sharedMaterial is ScaledPlanetSimpleLoader;
+                Boolean isAtmospheric = renderer.sharedMaterial is ScaledPlanetRimAerialLoader;
+                Boolean isAtmosphericStandard = renderer.sharedMaterial is ScaledPlanetRimAerialStandardLoader;
+                Boolean isStar = renderer.sharedMaterial is EmissiveMultiRampSunspotsLoader;
+
+                switch (Type.Value)
+                {
+                    case ScaledMaterialType.Vacuum when !isVaccum:
+                        renderer.sharedMaterial = new ScaledPlanetSimpleLoader(renderer.sharedMaterial);
+                        goto default;
+                    case ScaledMaterialType.Atmospheric when !isAtmospheric:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialLoader(renderer.sharedMaterial);
+                        goto default;
+                    case ScaledMaterialType.AtmosphericStandard when !isAtmosphericStandard:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialStandardLoader(renderer.sharedMaterial);
+                        goto default;
+                    case ScaledMaterialType.Star when !isStar:
+                        renderer.sharedMaterial = new EmissiveMultiRampSunspotsLoader(renderer.sharedMaterial);
+                        goto default;
+                    default:
+                        return renderer.sharedMaterial;
+                }
+            }
+            set
+            {
+                Renderer renderer = Value.scaledBody.GetComponent<Renderer>();
+
+                Boolean isVaccum = value is ScaledPlanetSimpleLoader;
+                Boolean isAtmospheric = value is ScaledPlanetRimAerialLoader;
+                Boolean isAtmosphericStandard = value is ScaledPlanetRimAerialStandardLoader;
+                Boolean isStar = value is EmissiveMultiRampSunspotsLoader;
+
+                switch (Type.Value)
+                {
+                    case ScaledMaterialType.Vacuum when !isVaccum:
+                        renderer.sharedMaterial = new ScaledPlanetSimpleLoader(value);
+                        break;
+                    case ScaledMaterialType.Atmospheric when !isAtmospheric:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialLoader(value);
+                        break;
+                    case ScaledMaterialType.AtmosphericStandard when !isAtmosphericStandard:
+                        renderer.sharedMaterial = new ScaledPlanetRimAerialStandardLoader(value);
+                        break;
+                    case ScaledMaterialType.Star when !isStar:
+                        renderer.sharedMaterial = new EmissiveMultiRampSunspotsLoader(value);
+                        break;
+                    default:
+                        renderer.sharedMaterial = value;
+                        break;
+                }
+            }
         }
 
         [ParserTarget("OnDemand")]
@@ -197,17 +328,8 @@ namespace Kopernicus.Configuration
         // Parser apply event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            // Get any existing material we might have on this scaled version
-            ConfigNode data = node.GetNode(MATERIAL_NODE_NAME);
-
-            // Check for bad condition (no material, no new material)
-            if (Material == null && data == null)
-            {
-                throw new Exception("Scaled version has no material information");
-            }
-
             // Are we a planet or moon?
-            if (Type.Value != BodyType.Star)
+            if (Type != ScaledMaterialType.Star)
             {
                 // If we are not a star, we need a scaled space fader and a sphere collider
                 ScaledSpaceFader fader = Value.scaledBody.GetComponent<ScaledSpaceFader>();
@@ -229,36 +351,6 @@ namespace Kopernicus.Configuration
                     SphereCollider collider = Value.scaledBody.AddComponent<SphereCollider>();
                     collider.center = Vector3.zero;
                     collider.radius = 1000.0f;
-                }
-
-                // Generate new atmospheric body material
-                if (Type.Value == BodyType.Atmospheric)
-                {
-                    if (Material != null && ScaledPlanetRimAerial.UsesSameShader(Material))
-                    {
-                        Material = new ScaledPlanetRimAerialLoader(Material);
-                    }
-                    else
-                    {
-                        Material = new ScaledPlanetRimAerialLoader();
-                    }
-
-                    Material.name = Guid.NewGuid().ToString();
-                }
-
-                // Generate new vacuum body material
-                else
-                {
-                    if (Material != null && ScaledPlanetSimple.UsesSameShader(Material))
-                    {
-                        Material = new ScaledPlanetSimpleLoader(Material);
-                    }
-                    else
-                    {
-                        Material = new ScaledPlanetSimpleLoader();
-                    }
-
-                    Material.name = Guid.NewGuid().ToString();
                 }
             }
 
@@ -287,19 +379,6 @@ namespace Kopernicus.Configuration
                 // Add the Kopernicus star component
                 Value.scaledBody.AddComponent<StarComponent>();
 
-                // Generate a new material for the star
-                if (Material != null && EmissiveMultiRampSunspots.UsesSameShader(Material))
-                {
-                    Material = new EmissiveMultiRampSunspotsLoader(Material);
-                }
-                else
-                {
-                    Material = new EmissiveMultiRampSunspotsLoader();
-                }
-
-                Material.name = Guid.NewGuid().ToString();
-
-
                 // Backup existing coronas
                 foreach (SunCoronas corona in Value.scaledBody.GetComponentsInChildren<SunCoronas>(true))
                 {
@@ -319,7 +398,7 @@ namespace Kopernicus.Configuration
             Logger.Active.Log("===========================================");
 
             // If we are a star, we need to generate the coronas 
-            if (Type.Value == BodyType.Star)
+            if (Type == ScaledMaterialType.Star)
             {
                 // Restore backed up coronas if no custom ones were specified
                 if (!Coronas.Any())
@@ -342,7 +421,7 @@ namespace Kopernicus.Configuration
             }
 
             // If we use OnDemand, we need to delete the original textures and reload them
-            if (Type.Value != BodyType.Star && OnDemandTextures != null)
+            if (Type != ScaledMaterialType.Star && OnDemandTextures != null)
             {
                 if (OnDemandStorage.UseOnDemand)
                 {
@@ -402,8 +481,6 @@ namespace Kopernicus.Configuration
             // Get the scaled version object
             Value = generatedBody.celestialBody;
             Value.scaledBody = generatedBody.scaledVersion;
-            Body currentBody = Parser.GetState<Body>("Kopernicus:currentBody");
-            Type = new EnumParser<BodyType>(currentBody.Template?.Type ?? BodyType.Atmospheric);
 
             // Ensure scaled version at least has a mesh filter and mesh renderer
             if (Value.scaledBody.GetComponent<MeshFilter>() == null)
@@ -452,21 +529,7 @@ namespace Kopernicus.Configuration
                 Coronas = null;
             }
 
-            // Figure out what kind of body we are
-            if (Value.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length > 0)
-            {
-                Type = BodyType.Star;
-            }
-            else if (Value.atmosphere)
-            {
-                Type = BodyType.Atmospheric;
-            }
-            else
-            {
-                Type = BodyType.Vacuum;
-            }
-
-            if (Type != BodyType.Star)
+            if (Type != ScaledMaterialType.Star)
             {
                 ScaledSpaceFader fader = Value.scaledBody.GetComponent<ScaledSpaceFader>();
                 if (!(fader is SharedScaledSpaceFader))
@@ -483,27 +546,6 @@ namespace Kopernicus.Configuration
                     Utility.CopyObjectFields(controller, Value.scaledBody.AddComponent<SharedSunShaderController>());
                     Object.Destroy(controller);
                 }
-            }
-
-            // Assign the proper scaled space loaders
-            if (Material == null)
-            {
-                return;
-            }
-
-            if (ScaledPlanetSimple.UsesSameShader(Material))
-            {
-                Material = new ScaledPlanetSimpleLoader(Material);
-            }
-
-            if (ScaledPlanetRimAerial.UsesSameShader(Material))
-            {
-                Material = new ScaledPlanetRimAerialLoader(Material);
-            }
-
-            if (EmissiveMultiRampSunspots.UsesSameShader(Material))
-            {
-                Material = new EmissiveMultiRampSunspotsLoader(Material);
             }
 
             if (Options != null)

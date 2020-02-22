@@ -9,13 +9,13 @@ namespace Kopernicus.Components.MaterialWrapper
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-    public class ScaledPlanetSimple : Material
+    public class ScaledPlanetRimAerialStandard : Material
     {
         // Internal property ID tracking object
         protected class Properties
         {
             // Return the shader for this wrapper
-            private const String SHADER_NAME = "Terrain/Scaled Planet (Simple)";
+            private const String SHADER_NAME = "Terrain/Scaled Planet (RimAerial) Standard";
 
             public static Shader Shader
             {
@@ -46,6 +46,22 @@ namespace Kopernicus.Components.MaterialWrapper
             public const String OPACITY_KEY = "_Opacity";
             public Int32 OpacityId { get; private set; }
 
+            // Rim Power, default = 3
+            public const String RIM_POWER_KEY = "_rimPower";
+            public Int32 RimPowerId { get; private set; }
+
+            // Rim Blend, default = 1
+            public const String RIM_BLEND_KEY = "_rimBlend";
+            public Int32 RimBlendId { get; private set; }
+
+            // RimColorRamp, default = "white" { }
+            public const String RIM_COLOR_RAMP_KEY = "_rimColorRamp";
+            public Int32 RimColorRampId { get; private set; }
+
+            // LightDirection, default = (1,0,0,0)
+            public const String LOCAL_LIGHT_DIRECTION_KEY = "_localLightDirection";
+            public Int32 LocalLightDirectionId { get; private set; }
+
             // Resource Map (RGB), default = "black" { }
             public const String RESOURCE_MAP_KEY = "_ResourceMap";
             public Int32 ResourceMapId { get; private set; }
@@ -70,6 +86,10 @@ namespace Kopernicus.Components.MaterialWrapper
                 MainTexId = Shader.PropertyToID(MAIN_TEX_KEY);
                 BumpMapId = Shader.PropertyToID(BUMP_MAP_KEY);
                 OpacityId = Shader.PropertyToID(OPACITY_KEY);
+                RimPowerId = Shader.PropertyToID(RIM_POWER_KEY);
+                RimBlendId = Shader.PropertyToID(RIM_BLEND_KEY);
+                RimColorRampId = Shader.PropertyToID(RIM_COLOR_RAMP_KEY);
+                LocalLightDirectionId = Shader.PropertyToID(LOCAL_LIGHT_DIRECTION_KEY);
                 ResourceMapId = Shader.PropertyToID(RESOURCE_MAP_KEY);
             }
         }
@@ -151,6 +171,51 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetFloat(Properties.Instance.OpacityId, Mathf.Clamp(value, 0f, 1f)); }
         }
 
+        // Rim Power, default = 3
+        public Single RimPower
+        {
+            get { return GetFloat(Properties.Instance.RimPowerId); }
+            set { SetFloat(Properties.Instance.RimPowerId, value); }
+        }
+
+        // Rim Blend, default = 1
+        public Single RimBlend
+        {
+            get { return GetFloat(Properties.Instance.RimBlendId); }
+            set { SetFloat(Properties.Instance.RimBlendId, value); }
+        }
+
+        // RimColorRamp, default = "white" { }
+        public Texture2D RimColorRamp
+        {
+            get { return GetTexture(Properties.Instance.RimColorRampId) as Texture2D; }
+            set
+            {
+                value.wrapMode = TextureWrapMode.Clamp;
+                value.mipMapBias = 0.0f;
+                SetTexture(Properties.Instance.RimColorRampId, value);
+            }
+        }
+
+        public Vector2 RimColorRampScale
+        {
+            get { return GetTextureScale(Properties.Instance.RimColorRampId); }
+            set { SetTextureScale(Properties.Instance.RimColorRampId, value); }
+        }
+
+        public Vector2 RimColorRampOffset
+        {
+            get { return GetTextureOffset(Properties.Instance.RimColorRampId); }
+            set { SetTextureOffset(Properties.Instance.RimColorRampId, value); }
+        }
+
+        // LightDirection, default = (1,0,0,0)
+        public Vector4 LocalLightDirection
+        {
+            get { return GetVector(Properties.Instance.LocalLightDirectionId); }
+            set { SetVector(Properties.Instance.LocalLightDirectionId, value); }
+        }
+
         // Resource Map (RGB), default = "black" { }
         public Texture2D ResourceMap
         {
@@ -170,22 +235,22 @@ namespace Kopernicus.Components.MaterialWrapper
             set { SetTextureOffset(Properties.Instance.ResourceMapId, value); }
         }
 
-        public ScaledPlanetSimple() : base(Properties.Shader)
+        public ScaledPlanetRimAerialStandard() : base(Properties.Shader)
         {
         }
 
         [Obsolete("Creating materials from shader source String is no longer supported. Use Shader assets instead.")]
-        public ScaledPlanetSimple(String contents) : base(contents)
+        public ScaledPlanetRimAerialStandard(String contents) : base(contents)
         {
             shader = Properties.Shader;
         }
 
-        public ScaledPlanetSimple(Material material) : base(material)
+        public ScaledPlanetRimAerialStandard(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
             if (material.shader.name != Properties.Shader.name)
             {
-                throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (Simple) shader required");
+                throw new InvalidOperationException("Type Mismatch: Terrain/Scaled Planet (RimAerial) Standard shader required");
             }
         }
 

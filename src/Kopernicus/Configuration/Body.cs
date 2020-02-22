@@ -343,13 +343,12 @@ namespace Kopernicus.Configuration
             Events.OnBodyPostApply.Fire(this, node);
 
             // We need to generate new scaled space meshes if 
-            //   a) we are using a template and we've change either the radius or type of body
+            //   a) we are using a template and we've change the radius of body
             //   b) we aren't using a template
             //   c) debug mode is active
             if (ScaledVersion.DeferMesh ||
-                (Template == null || !(Math.Abs(Template.Radius - GeneratedBody.celestialBody.Radius) > 1.0) &&
-                 Template.Type == ScaledVersion.Type.Value) && Template != null &&
-                !Debug.Update)
+                (Template == null || !(Math.Abs(Template.Radius - GeneratedBody.celestialBody.Radius) > 1.0)) &&
+                Template != null && !Debug.Update)
             {
                 return;
             }

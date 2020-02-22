@@ -49,6 +49,14 @@ namespace Kopernicus.Configuration.MaterialLoader
             set { ColorLerpModifier = value; }
         }
 
+        // Atlas Texture, default = 100000
+        [ParserTarget("atlasTiling")]
+        public NumericParser<Single> AtlasTilingSetter
+        {
+            get { return AtlasTiling; }
+            set { AtlasTiling = value; }
+        }
+
         // Atlas Texture, default = "white" { }
         [ParserTargetCollection("AtlasTex")]
         public List<Texture2DParser> AtlasTexSetter
@@ -63,7 +71,7 @@ namespace Kopernicus.Configuration.MaterialLoader
                 }
 
                 Texture2D sample = value[0];
-                List<Texture2D> textures = value.Select(t => t.Value).ToList();
+                List<Texture2D> textures = value.Select(t => Utility.CreateReadable(t.Value)).ToList();
 
                 AtlasTex = KSPUtil.GenerateTexture2DArray(textures, sample.format, sample.mipmapCount > 0);
             }
@@ -83,7 +91,7 @@ namespace Kopernicus.Configuration.MaterialLoader
                 }
 
                 Texture2D sample = value[0];
-                List<Texture2D> textures = value.Select(t => t.Value).ToList();
+                List<Texture2D> textures = value.Select(t => Utility.CreateReadable(t.Value)).ToList();
 
                 NormalTex = KSPUtil.GenerateTexture2DArray(textures, sample.format, sample.mipmapCount > 0);
             }
