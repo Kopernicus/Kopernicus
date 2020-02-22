@@ -73,7 +73,7 @@ namespace Kopernicus.Configuration.MaterialLoader
                 }
 
                 List<Texture2D> textures = value.Select(t => Utility.CreateReadable(t.Value)).ToList();
-                AtlasTex = KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, false);
+                AtlasTex = KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, true);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Kopernicus.Configuration.MaterialLoader
                 }
 
                 List<Texture2D> textures = value.Select(t => Utility.CreateReadable(t.Value)).ToList();
-                NormalTex = KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, false);
+                NormalTex = KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, true);
             }
         }
 
