@@ -29,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using ModularFI;
 using UnityEngine;
+using KSP.Localization;
 
 namespace Kopernicus.Components
 {
@@ -37,7 +38,16 @@ namespace Kopernicus.Components
     /// </summary>
     public class KopernicusSolarPanels : PartModule
     {
-        [KSPField(guiActive = true, guiActiveEditor = false, guiName = "Tracking Body", isPersistant = true)]
+        //Strings for Localization
+        private static string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");//"Direct Sunlight"
+        private static string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");//"Underwater"
+        private static string button_AbsoluteExposure = Localizer.Format("#Kopernicus_UI_AbsoluteExposure");//"Use absolute exposure"
+        private static string button_RelativeExposure = Localizer.Format("#Kopernicus_UI_RelativeExposure");//"Use relative exposure"
+        private static string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");//"Auto"
+        private static string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");//"Select Tracking Body"
+        private static string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");// "Please select the Body you want to track with this Solar Panel."
+
+        [KSPField(guiActive = true, guiActiveEditor = false, guiName = "#Kopernicus_UI_TrackingBody", isPersistant = true)]//Tracking Body
         [SuppressMessage("ReSharper", "NotAccessedField.Global")]
         public String trackingBodyName;
 
@@ -125,11 +135,11 @@ namespace Kopernicus.Components
                     if (!trackingLos)
                     {
                         sunAoa = 0f;
-                        SP.status = "Blocked by " + blockingObjectName;
+                        SP.status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObjectName);//"Blocked by " + blockingObjectName
                     }
                     else
                     {
-                        SP.status = "Direct Sunlight";
+                        SP.status = SP_status_DirectSunlight;//"Direct Sunlight"
                         if (SP.panelType == ModuleDeployableSolarPanel.PanelType.FLAT)
                         {
                             sunAoa = Mathf.Clamp(Vector3.Dot(SP.trackingDotTransform.forward, trackDir), 0f, 1f);
@@ -203,7 +213,7 @@ namespace Kopernicus.Components
                             panelFlowRate *= UtilMath.LerpUnclamped(1, num, part.submergedPortion);
                         }
 
-                        SP.status += ", Underwater";
+                        SP.status += ", " + SP_status_Underwater;//Underwater
                     }
 
                     SP.sunAOA += sunAoa;
@@ -249,18 +259,18 @@ namespace Kopernicus.Components
                     trackingBodyName = SP.trackingBody.bodyDisplayName.Replace("^N", "");
 
                     // Update the guiName for SwitchAOAMode
-                    Events["SwitchAoaMode"].guiName = _relativeSunAoa ? "Use absolute exposure" : "Use relative exposure";
+                    Events["SwitchAoaMode"].guiName = _relativeSunAoa ? button_AbsoluteExposure : button_RelativeExposure;//Use absolute exposure//Use relative exposure
                 }
             }
         }
 
-        [KSPEvent(active = true, guiActive = false, guiName = "Select Tracking Body")]
+        [KSPEvent(active = true, guiActive = false, guiName = "#Kopernicus_UI_SelectBody")]//Select Tracking Body
         public void ManualTracking()
         {
             // Assemble the buttons
             Int32 stars = KopernicusStar.Stars.Count;
             DialogGUIBase[] options = new DialogGUIBase[stars + 1];
-            options[0] = new DialogGUIButton("Auto", () => { _manualTracking = false; }, true);
+            options[0] = new DialogGUIButton(button_Auto, () => { _manualTracking = false; }, true);//Auto
             for (Int32 i = 0; i < stars; i++)
             {
                 CelestialBody body = KopernicusStar.Stars[i].sun;
@@ -283,13 +293,13 @@ namespace Kopernicus.Components
 
             PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new MultiOptionDialog(
                 "SelectTrackingBody",
-                "Please select the Body you want to track with this Solar Panel.",
-                "Select Tracking Body",
+                SelectBody_Msg,//Please select the Body you want to track with this Solar Panel.
+                SelectBody,//Select Tracking Body
                 UISkinManager.GetSkin("MainMenuSkin"),
                 options), false, UISkinManager.GetSkin("MainMenuSkin"));
         }
 
-        [KSPEvent(active = true, guiActive = true, guiName = "Use relative exposure")]
+        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_UI_RelativeExposure")]//Use relative exposure
         public void SwitchAoaMode()
         {
             _relativeSunAoa = !_relativeSunAoa;
