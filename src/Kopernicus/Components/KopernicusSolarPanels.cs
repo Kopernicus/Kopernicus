@@ -39,13 +39,13 @@ namespace Kopernicus.Components
     public class KopernicusSolarPanels : PartModule
     {
         //Strings for Localization
-        string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");//"Direct Sunlight"
-        string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");//"Underwater"
-        string button_AbsoluteExposure = Localizer.Format("#Kopernicus_UI_AbsoluteExposure");//"Use absolute exposure"
-        string button_RelativeExposure = Localizer.Format("#Kopernicus_UI_RelativeExposure");//"Use relative exposure"
-        string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");//"Auto"
-        string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");//"Select Tracking Body"
-        string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");// "Please select the Body you want to track with this Solar Panel."
+        private static string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");//"Direct Sunlight"
+        private static string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");//"Underwater"
+        private static string button_AbsoluteExposure = Localizer.Format("#Kopernicus_UI_AbsoluteExposure");//"Use absolute exposure"
+        private static string button_RelativeExposure = Localizer.Format("#Kopernicus_UI_RelativeExposure");//"Use relative exposure"
+        private static string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");//"Auto"
+        private static string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");//"Select Tracking Body"
+        private static string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");// "Please select the Body you want to track with this Solar Panel."
 
         [KSPField(guiActive = true, guiActiveEditor = false, guiName = "#Kopernicus_UI_TrackingBody", isPersistant = true)]//Tracking Body
         [SuppressMessage("ReSharper", "NotAccessedField.Global")]
