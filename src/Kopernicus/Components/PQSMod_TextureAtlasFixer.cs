@@ -25,6 +25,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Kopernicus.Components.MaterialWrapper;
 using UnityEngine;
 
@@ -47,9 +48,30 @@ namespace Kopernicus.Components
                 return;
             }
 
+            Boolean rescan = false;
+
             for (Int32 i = 0; i < _mods.Length; i++)
             {
+                if (_mods[i].modEnabled)
+                {
+                    rescan = true;
+                }
+
                 _mods[i].modEnabled = false;
+            }
+
+            if (modEnabled)
+            {
+                rescan = true;
+            }
+
+            modEnabled = false;
+
+            // Tell the PQS to rescan the PQSMods.
+            if (rescan)
+            {
+                MethodInfo setupMods = typeof(PQS).GetMethod("SetupMods");
+                setupMods?.Invoke(sphere, null);
             }
         }
 
