@@ -411,8 +411,9 @@ namespace Kopernicus.Components
                 return;
             }
 
-            Material material = Resources.FindObjectsOfTypeAll<Material>()?.FirstOrDefault(m => m?.name == "ksc_terrain_TX");
-
+            GameObject scenery = GameObject.Find("VABscenery") ?? GameObject.Find("SPHscenery");
+            Material material = scenery?.GetChild("ksc_terrain")?.GetComponent<Renderer>()?.sharedMaterial;
+            
             if (material == null)
             {
                 return;
