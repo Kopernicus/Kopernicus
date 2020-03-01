@@ -403,11 +403,11 @@ namespace Kopernicus.OnDemand
                                 new DDSHeaderDX10(binaryReader);
                             }
 
-                            Boolean alpha = (ddsHeader.dwFlags & 0x00000002) != 0;
-                            Boolean fourcc = (ddsHeader.dwFlags & 0x00000004) != 0;
-                            Boolean rgb = (ddsHeader.dwFlags & 0x00000040) != 0;
-                            Boolean alphapixel = (ddsHeader.dwFlags & 0x00000001) != 0;
-                            Boolean luminance = (ddsHeader.dwFlags & 0x00020000) != 0;
+                            Boolean alpha = (ddsHeader.ddspf.dwFlags & 0x00000002) != 0;
+                            Boolean fourcc = (ddsHeader.ddspf.dwFlags & 0x00000004) != 0;
+                            Boolean rgb = (ddsHeader.ddspf.dwFlags & 0x00000040) != 0;
+                            Boolean alphapixel = (ddsHeader.ddspf.dwFlags & 0x00000001) != 0;
+                            Boolean luminance = (ddsHeader.ddspf.dwFlags & 0x00020000) != 0;
                             Boolean rgb888 = ddsHeader.ddspf.dwRBitMask == 0x000000ff &&
                                              ddsHeader.ddspf.dwGBitMask == 0x0000ff00 &&
                                              ddsHeader.ddspf.dwBBitMask == 0x00ff0000;
@@ -538,16 +538,27 @@ namespace Kopernicus.OnDemand
                                 {
                                     textureFormat = TextureFormat.RGBA4444;
                                 }
-                                else if (!rgb && alpha != luminance)
+                                else if (!rgb && alpha != luminance && (ddsHeader.ddspf.dwRGBBitCount == 8 || ddsHeader.ddspf.dwRGBBitCount == 16))
                                 {
-                                    // A8 format or Luminance 8
-                                    textureFormat = TextureFormat.Alpha8;
+                                    if (ddsHeader.ddspf.dwRGBBitCount == 8)
+                                    {
+                                        // A8 format or Luminance 8
+                                        if (alpha)
+                                            textureFormat = TextureFormat.Alpha8;
+                                        else
+                                            textureFormat = TextureFormat.R8;
+                                    }
+                                    else if (ddsHeader.ddspf.dwRGBBitCount == 16)
+                                    {
+                                        // R16 format
+                                        textureFormat = TextureFormat.R16;
+                                    }
                                 }
                                 else
                                 {
                                     ok = false;
                                     Debug.Log(
-                                        "[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
+                                        "[Kopernicus]: Only DXT1, DXT5, A8, R8, R16, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
                                 }
 
                                 if (ok)
