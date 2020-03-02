@@ -384,6 +384,7 @@ namespace Kopernicus.OnDemand
             if (File.Exists(path))
             {
                 Boolean uncaught = true;
+                Boolean error = false;
                 try
                 {
                     if (path.ToLower().EndsWith(".dds"))
@@ -461,52 +462,6 @@ namespace Kopernicus.OnDemand
                                 {
                                     Debug.Log("[Kopernicus]: Magic dds not supported: " + path);
                                 }
-                                else if (ddsHeader.ddspf.dwRGBBitCount == 4 || ddsHeader.ddspf.dwRGBBitCount == 8)
-                                {
-                                    try
-                                    {
-                                        Int32 bpp = (Int32) ddsHeader.ddspf.dwRGBBitCount;
-                                        Int32 colors = (Int32) Math.Pow(2, bpp);
-                                        Int32 width = (Int32) ddsHeader.dwWidth;
-                                        Int32 height = (Int32) ddsHeader.dwHeight;
-                                        Int64 length = new FileInfo(path).Length;
-                                        Int32 pixels = width * height * bpp / 8 + 4 * colors;
-
-                                        if (length - 128 >= pixels)
-                                        {
-                                            Byte[] data = binaryReader.ReadBytes(pixels);
-
-                                            Color[] palette = new Color[colors];
-                                            Color[] image = new Color[width * height];
-
-                                            for (Int32 i = 0; i < 4 * colors; i += 4)
-                                            {
-                                                palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2],
-                                                    data[i + 3]);
-                                            }
-
-                                            for (Int32 i = 4 * colors; i < data.Length; i++)
-                                            {
-                                                image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
-                                                if (bpp == 4)
-                                                {
-                                                    image[(i - 64) * 2 + 1] = palette[data[i] % 16];
-                                                }
-                                            }
-
-                                            map = new Texture2D(width, height, TextureFormat.ARGB32, false);
-                                            map.SetPixels(image);
-                                        }
-                                        else
-                                        {
-                                            fourcc = false;
-                                        }
-                                    }
-                                    catch
-                                    {
-                                        fourcc = false;
-                                    }
-                                }
                                 else
                                 {
                                     fourcc = false;
@@ -554,9 +509,63 @@ namespace Kopernicus.OnDemand
                                         textureFormat = TextureFormat.R16;
                                     }
                                 }
+                                else if (ddsHeader.ddspf.dwRGBBitCount == 4 || ddsHeader.ddspf.dwRGBBitCount == 8)
+                                {
+                                    try
+                                    {
+                                        Int32 bpp = (Int32) ddsHeader.ddspf.dwRGBBitCount;
+                                        Int32 colors = (Int32) Math.Pow(2, bpp);
+                                        Int32 width = (Int32) ddsHeader.dwWidth;
+                                        Int32 height = (Int32) ddsHeader.dwHeight;
+                                        Int64 length = new FileInfo(path).Length;
+                                        Int32 pixels = width * height * bpp / 8 + 4 * colors;
+
+                                        if (length - 128 >= pixels)
+                                        {
+                                            Byte[] data = binaryReader.ReadBytes(pixels);
+
+                                            Color[] palette = new Color[colors];
+                                            Color[] image = new Color[width * height];
+
+                                            for (Int32 i = 0; i < 4 * colors; i += 4)
+                                            {
+                                                palette[i / 4] = new Color32(data[i + 0], data[i + 1], data[i + 2],
+                                                    data[i + 3]);
+                                            }
+
+                                            for (Int32 i = 4 * colors; i < data.Length; i++)
+                                            {
+                                                image[(i - 4 * colors) * 8 / bpp] = palette[data[i] * colors / 256];
+                                                if (bpp == 4)
+                                                {
+                                                    image[(i - 64) * 2 + 1] = palette[data[i] % 16];
+                                                }
+                                            }
+
+                                            map = new Texture2D(width, height, TextureFormat.ARGB32, false);
+                                            map.SetPixels(image);
+
+                                            // We loaded the texture manually
+                                            ok = false;
+                                        }
+                                        else
+                                        {
+                                            error = true;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        error = true;
+                                    }
+                                }
                                 else
                                 {
                                     ok = false;
+                                    error = true;
+                                }
+
+                                if (error)
+                                {
                                     Debug.Log(
                                         "[Kopernicus]: Only DXT1, DXT5, A8, R8, R16, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
                                 }
