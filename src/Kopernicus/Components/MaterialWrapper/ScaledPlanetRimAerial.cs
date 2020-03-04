@@ -191,8 +191,12 @@ namespace Kopernicus.Components.MaterialWrapper
             get { return GetTexture(Properties.Instance.RimColorRampId) as Texture2D; }
             set
             {
-                value.wrapMode = TextureWrapMode.Clamp;
-                value.mipMapBias = 0.0f;
+                if (value)
+                {
+                    value.wrapMode = TextureWrapMode.Clamp;
+                    value.mipMapBias = 0.0f;
+                }
+
                 SetTexture(Properties.Instance.RimColorRampId, value);
             }
         }
