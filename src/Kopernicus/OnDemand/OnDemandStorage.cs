@@ -609,6 +609,7 @@ namespace Kopernicus.OnDemand
                 else
                 {
                     map.name = path.Remove(0, (KSPUtil.ApplicationRootPath + "GameData/").Length);
+                    map.wrapMode = TextureWrapMode.Clamp;
 
                     if (compress)
                     {
