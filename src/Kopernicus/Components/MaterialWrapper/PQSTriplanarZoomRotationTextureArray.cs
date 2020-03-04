@@ -333,7 +333,11 @@ namespace Kopernicus.Components.MaterialWrapper
         public Texture2D FogColorRamp
         {
             get { return GetTexture(Properties.Instance.FogColorRampId) as Texture2D; }
-            set { SetTexture(Properties.Instance.FogColorRampId, value); }
+            set
+            {
+                if (value) value.wrapMode = TextureWrapMode.Clamp;
+                SetTexture(Properties.Instance.FogColorRampId, value);
+            }
         }
 
         public Vector2 FogColorRampScale
