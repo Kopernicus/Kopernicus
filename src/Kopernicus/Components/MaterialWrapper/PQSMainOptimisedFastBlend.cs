@@ -503,7 +503,12 @@ namespace Kopernicus.Components.MaterialWrapper
             get { return GetTexture(Properties.Instance.FogColorRampId) as Texture2D; }
             set
             {
-                if (value) value.wrapMode = TextureWrapMode.Clamp;
+                if (value)
+                {
+                    value.wrapMode = TextureWrapMode.Clamp;
+                    value.mipMapBias = 0.0f;
+                }
+
                 SetTexture(Properties.Instance.FogColorRampId, value);
             }
         }
