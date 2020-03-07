@@ -247,17 +247,7 @@ namespace Kopernicus.Components.ModularScatter
 
             for (Int32 i = 0; i < scatterObjects.Count; i++)
             {
-                if (scatterObjects[i])
-                {
-                    //if (scatterObjects[i].transform.parent.name == "Unass")
-                    //{
-                    //    Destroy(scatterObjects[i]);
-                    //}
-                    //else
-                    {
-                        continue;
-                    }
-                }
+                if (scatterObjects[i]) continue;
 
                 scatterObjects.RemoveAt(i);
                 i--;
