@@ -93,9 +93,9 @@ namespace Kopernicus.Components.ModularScatter
                 return;
             }
 
-            for (Int32 i = system.scatterObjects.Count; i > 0; i--)
+            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
             {
-                GameObject scatter = system.scatterObjects[i - 1];
+                GameObject scatter = system.scatterObjects[i];
 
                 Light light = scatter.GetComponentInChildren<Light>();
                 if (light)

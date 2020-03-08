@@ -80,7 +80,7 @@ namespace Kopernicus.Components.ModularScatter
             Random.InitState(system.scatter.seed);
             
             // Shift every object to sea level
-            for (int i = 0; i < system.scatterObjects.Count; i++)
+            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
             {
                 GameObject scatter = system.scatterObjects[i];
 
