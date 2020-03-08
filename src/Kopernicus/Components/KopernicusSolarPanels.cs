@@ -106,6 +106,7 @@ namespace Kopernicus.Components
                              SP.timeEfficCurve.Evaluate(
                                  (Single)((Planetarium.GetUniversalTime() - SP.launchUT) * 1.15740740740741E-05)) *
                             SP.efficiencyMult;
+                Double sunFlowRate = 0;
                 SP._flowRate = 0;
                 SP.sunAOA = 0;
 
@@ -224,6 +225,14 @@ namespace Kopernicus.Components
                         maxStar = star;
                     }
 
+                    // Skip the stock Sun since its flow has 
+                    // already been calculated by stock KSP
+                    if (star.sun.transform.name == "Sun")
+                    {
+                        sunFlowRate = panelFlowRate;
+                        continue;
+                    }
+
                     // Apply the flow rate
                     SP._flowRate += panelFlowRate;
                 }
@@ -243,8 +252,28 @@ namespace Kopernicus.Components
                 }
 
                 // Use the flow rate
-                SP.flowRate = (Single)(SP.resHandler.UpdateModuleResourceOutputs(SP._flowRate) * SP.flowMult);
+                SP.resHandler.UpdateModuleResourceOutputs(SP._flowRate);
+                SP.flowRate = (Single)(UpdateFlowOnly(SP.resHandler, SP._flowRate + sunFlowRate) * SP.flowMult);
             }
+        }
+
+        internal static Double UpdateFlowOnly(ModuleResourceHandler resHandler, double rateMultiplier = 1.0, double minAbsValue = 0.0)
+        {
+            double maxRate = 0.0;
+            for (int i = 0; i < resHandler.outputResources.Count; i++)
+            {
+                ModuleResource moduleResource = resHandler.outputResources[i];
+                double rate = moduleResource.rate * rateMultiplier;
+                moduleResource.currentRequest = rate * TimeWarp.fixedDeltaTime;
+                if (moduleResource.currentRequest > minAbsValue)
+                {
+                    if (rate > maxRate)
+                    {
+                        maxRate = rate;
+                    }
+                }
+            }
+            return maxRate;
         }
 
         public void EarlyLateUpdate()
