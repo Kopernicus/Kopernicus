@@ -80,8 +80,10 @@ namespace Kopernicus.Components.ModularScatter
             Random.InitState(system.scatter.seed);
             
             // Shift every object to sea level
-            foreach (GameObject scatter in system.scatterObjects)
+            for (int i = 0; i < system.scatterObjects.Count; i++)
             {
+                GameObject scatter = system.scatterObjects[i];
+
                 Vector3 position = system.body.pqsController.transform.position;
                 Vector3 direction = (scatter.transform.position - position).normalized;
                 scatter.transform.position = position +
