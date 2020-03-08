@@ -257,7 +257,7 @@ namespace Kopernicus.Components
             }
         }
 
-        internal static Double UpdateFlowOnly(ModuleResourceHandler resHandler, double rateMultiplier = 1.0, double minAbsValue = 0.0)
+        internal Double UpdateFlowOnly(ModuleResourceHandler resHandler, double rateMultiplier = 1.0, double minAbsValue = 0.0)
         {
             double maxRate = 0.0;
             for (int i = 0; i < resHandler.outputResources.Count; i++)
