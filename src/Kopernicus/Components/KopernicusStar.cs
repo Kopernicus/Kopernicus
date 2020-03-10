@@ -78,62 +78,62 @@ namespace Kopernicus.Components
         /// </summary>
         public static void SunBodyFlux(ModularFlightIntegrator flightIntegrator)
         {
-            // Set Physics
-            PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
-            PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
-            CalculatePhysics();
+            KopernicusStar sun = Instance as KopernicusStar;
 
-            // Get "Correct" values
-            flightIntegrator.BaseFICalculateSunBodyFlux();
+            Boolean directSunlight = false;
+            Double solarFlux = 0;
 
-            // FI Values
-            Boolean directSunlight = flightIntegrator.Vessel.directSunlight;
-            Double solarFlux = flightIntegrator.solarFlux;
-            if (!SolarFlux.ContainsKey(Current.name))
+            // Calculate the values for all bodies except the sun
+            for (Int32 i = 0; i < Stars.Count; i++)
             {
-                SolarFlux.Add(Current.name, solarFlux);
-            }
-            else
-            {
-                SolarFlux[Current.name] = solarFlux;
-            }
+                KopernicusStar star = Stars[i];
+                if (star == sun)
+                {
+                    return;
+                }
 
-            // Calculate the values for all bodies
-            foreach (KopernicusStar star in Stars.Where(s => s.sun != FlightIntegrator.sunBody))
-            {
-                // Set Physics
+                // Apply physics variables
                 PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
                 PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
                 CalculatePhysics();
 
-                // Calculate Flux
-                Double flux = Flux(flightIntegrator, star);
+                // Calculate flux
+                flightIntegrator.BaseFICalculateSunBodyFlux();
+                solarFlux += flightIntegrator.solarFlux;
 
-                // And save them
-                if (flux > 0)
-                {
-                    directSunlight = true;
-                }
-
-                solarFlux += flux;
                 if (!SolarFlux.ContainsKey(star.name))
                 {
-                    SolarFlux.Add(star.name, flux);
+                    SolarFlux.Add(star.name, flightIntegrator.solarFlux);
                 }
                 else
                 {
-                    SolarFlux[star.name] = flux;
+                    SolarFlux[star.name] = flightIntegrator.solarFlux;
+                }
+                if (flightIntegrator.Vessel.directSunlight)
+                {
+                    directSunlight = true;
                 }
             }
 
-            // Reapply
-            flightIntegrator.Vessel.directSunlight = directSunlight;
-            flightIntegrator.solarFlux = solarFlux;
-
-            // Set Physics
-            PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
-            PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
+            // Set back to the values for sun
+            PhysicsGlobals.SolarLuminosityAtHome = sun.shifter.solarLuminosity;
+            PhysicsGlobals.SolarInsolationAtHome = sun.shifter.solarInsolation;
             CalculatePhysics();
+
+            // Get the values for sun
+            flightIntegrator.BaseFICalculateSunBodyFlux();
+            if (!SolarFlux.ContainsKey(sun.name))
+            {
+                SolarFlux.Add(sun.name, flightIntegrator.solarFlux);
+            }
+            else
+            {
+                SolarFlux[sun.name] = flightIntegrator.solarFlux;
+            }
+
+            // Apply the stored values for the other bodies
+            flightIntegrator.solarFlux += solarFlux;
+            flightIntegrator.Vessel.directSunlight |= directSunlight;
         }
 
         /// <summary>
@@ -163,48 +163,6 @@ namespace Kopernicus.Components
                 .Where(f => f.FieldType == typeof(Double)).Skip(2).First().SetValue(PhysicsGlobals.Instance,
                     Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 *
                     PhysicsGlobals.SolarLuminosityAtHome);
-        }
-
-        /// <summary>
-        /// Small method to handle flux
-        /// </summary>
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        private static Double Flux(ModularFlightIntegrator fi, KopernicusStar star)
-        {
-            // Nullchecks
-            if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
-            {
-                return 0;
-            }
-
-            // Get sunVector
-            Boolean directSunlight = false;
-            Vector3 integratorPosition = fi.transform.position;
-            Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-            Vector3 position = star.sun.scaledBody.transform.position;
-            Double scale = Math.Max((position - scaledSpace).magnitude, 1);
-            Vector3 sunVector = (position - scaledSpace) / scale;
-            Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
-
-            // Get Solar Flux
-            Double realDistanceToSun = 0;
-            if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
-            {
-                directSunlight = true;
-                realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
-            }
-            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
-            {
-                realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
-                directSunlight = true;
-            }
-
-            if (directSunlight)
-            {
-                return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
-            }
-
-            return 0;
         }
 
         /// <summary>
