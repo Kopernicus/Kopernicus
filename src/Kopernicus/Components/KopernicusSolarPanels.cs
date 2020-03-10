@@ -264,7 +264,7 @@ namespace Kopernicus.Components
             {
                 ModuleResource moduleResource = resHandler.outputResources[i];
                 double rate = moduleResource.rate * rateMultiplier;
-                if (moduleResource.currentRequest > minAbsValue)
+                if (rate * TimeWarp.fixedDeltaTime > minAbsValue)
                 {
                     if (rate > maxRate)
                     {
