@@ -75,17 +75,15 @@ namespace Kopernicus.Components
                 if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
                 {
                     Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
-                    FieldInfo trackingLOS = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "trackingLOS");
-                    LatePostCalculateTracking((bool)trackingLOS.GetValue(SP), normalized);
+                    LatePostCalculateTracking(SP, normalized);
                 }
             }
         }
 
-        public void LatePostCalculateTracking(Boolean trackingLos, Vector3 trackingDirection)
+        public void LatePostCalculateTracking(ModuleDeployableSolarPanel SP, Vector3 trackingDirection)
         {
-            for (Int32 n = SPs.Length; n > 0; n--)
-            {
-                ModuleDeployableSolarPanel SP = SPs[n - 1];
+            FieldInfo trackingLOS = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "trackingLOS");
+            Boolean trackingLos = (bool)trackingLOS.GetValue(SP);
 
                 // Maximum values
                 Double maxEnergy = 0;
@@ -237,7 +235,6 @@ namespace Kopernicus.Components
 
                 // Use the flow rate
                 SP.flowRate = (Single)(SP.resHandler.UpdateModuleResourceOutputs(SP._flowRate) * SP.flowMult);
-            }
         }
 
         public void EarlyLateUpdate()
