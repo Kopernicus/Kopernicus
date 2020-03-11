@@ -24,6 +24,8 @@
  */
 
 using System;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus.Components
@@ -115,5 +117,33 @@ namespace Kopernicus.Components
                 ambientLight.vacuumAmbientColor = ambientLightColor;
             }
         }
+
+        public void ApplyPhysics()
+        {
+            if (!FlightGlobals.ready)
+            {
+                return;
+            }
+
+            CelestialBody homeBody = FlightGlobals.GetHomeBody();
+            if (homeBody == null)
+            {
+                return;
+            }
+
+            while (KopernicusStar.Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+            {
+                homeBody = homeBody.referenceBody;
+            }
+
+            Double solarLuminosityTotal = homeBody.orbit.semiMajorAxis *
+                homeBody.orbit.semiMajorAxis * 4 + Math.PI * solarLuminosity;
+
+            PhysicsGlobals.SolarInsolationAtHome = solarInsolation;
+            PhysicsGlobals.SolarLuminosityAtHome = solarLuminosity;
+            typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(PhysicsGlobals.Instance, solarLuminosityTotal);
+        }
+
     }
 }

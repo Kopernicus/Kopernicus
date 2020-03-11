@@ -93,9 +93,7 @@ namespace Kopernicus.Components
                 }
 
                 // Apply physics variables
-                PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
-                PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
-                CalculatePhysics();
+                sun.shifter.ApplyPhysics();
 
                 // Calculate flux
                 flightIntegrator.BaseFICalculateSunBodyFlux();
@@ -116,9 +114,7 @@ namespace Kopernicus.Components
             }
 
             // Set back to the values for sun
-            PhysicsGlobals.SolarLuminosityAtHome = sun.shifter.solarLuminosity;
-            PhysicsGlobals.SolarInsolationAtHome = sun.shifter.solarInsolation;
-            CalculatePhysics();
+            sun.shifter.ApplyPhysics();
 
             // Get the values for sun
             flightIntegrator.BaseFICalculateSunBodyFlux();
@@ -134,35 +130,6 @@ namespace Kopernicus.Components
             // Apply the stored values for the other bodies
             flightIntegrator.solarFlux += solarFlux;
             flightIntegrator.Vessel.directSunlight |= directSunlight;
-        }
-
-        /// <summary>
-        /// Fixes the Calculation for Luminosity
-        /// NEVER REMOVE THIS AGAIN!
-        /// EVEN IF SQUAD MAKES EVERY FIELD PUBLIC AND OPENSOURCE AND WHATNOT
-        /// </summary>
-        private static void CalculatePhysics()
-        {
-            if (!FlightGlobals.ready)
-            {
-                return;
-            }
-
-            CelestialBody homeBody = FlightGlobals.GetHomeBody();
-            if (homeBody == null)
-            {
-                return;
-            }
-
-            while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
-            {
-                homeBody = homeBody.referenceBody;
-            }
-
-            typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-                .Where(f => f.FieldType == typeof(Double)).Skip(2).First().SetValue(PhysicsGlobals.Instance,
-                    Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 *
-                    PhysicsGlobals.SolarLuminosityAtHome);
         }
 
         /// <summary>
