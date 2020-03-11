@@ -93,7 +93,7 @@ namespace Kopernicus.Components
                 }
 
                 // Apply physics variables
-                sun.shifter.ApplyPhysics();
+                star.shifter.ApplyPhysics();
 
                 // Calculate flux
                 flightIntegrator.BaseFICalculateSunBodyFlux();
