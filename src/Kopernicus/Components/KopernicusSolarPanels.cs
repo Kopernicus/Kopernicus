@@ -63,14 +63,7 @@ namespace Kopernicus.Components
 
         static KopernicusSolarPanels()
         {
-            String filename = (String)typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-                .First(f => f.FieldType == typeof(String)).GetValue(PhysicsGlobals.Instance);
-            ConfigNode node = ConfigNode.Load(filename);
-            String value = node.GetValue("solarLuminosityAtHome");
-            if (value != null)
-            {
-                StockLuminosity = Double.Parse(value);
-            }
+            StockLuminosity = LightShifter.Prefab.solarLuminosity;
         }
 
         public void LatePostCalculateTracking()
