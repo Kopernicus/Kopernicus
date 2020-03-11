@@ -78,28 +78,12 @@ namespace Kopernicus.Components
         /// </summary>
         public static void SunBodyFlux(ModularFlightIntegrator flightIntegrator)
         {
-            // Set Physics
-            PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
-            PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
-            CalculatePhysics();
+            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: START");
 
-            // Get "Correct" values
-            flightIntegrator.BaseFICalculateSunBodyFlux();
-
-            // FI Values
-            Boolean directSunlight = flightIntegrator.Vessel.directSunlight;
-            Double solarFlux = flightIntegrator.solarFlux;
-            if (!SolarFlux.ContainsKey(Current.name))
-            {
-                SolarFlux.Add(Current.name, solarFlux);
-            }
-            else
-            {
-                SolarFlux[Current.name] = solarFlux;
-            }
+            Double solarFlux = 0;
 
             // Calculate the values for all bodies
-            foreach (KopernicusStar star in Stars.Where(s => s.sun != FlightIntegrator.sunBody))
+            foreach (KopernicusStar star in Stars)
             {
                 // Set Physics
                 PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
@@ -109,13 +93,8 @@ namespace Kopernicus.Components
                 // Calculate Flux
                 Double flux = Flux(flightIntegrator, star);
 
-                // And save them
-                if (flux > 0)
-                {
-                    directSunlight = true;
-                }
-
                 solarFlux += flux;
+
                 if (!SolarFlux.ContainsKey(star.name))
                 {
                     SolarFlux.Add(star.name, flux);
@@ -124,16 +103,21 @@ namespace Kopernicus.Components
                 {
                     SolarFlux[star.name] = flux;
                 }
+                Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: star = " + star + ", flux = " + flux + ", solarFlux = " + solarFlux);
             }
 
             // Reapply
-            flightIntegrator.Vessel.directSunlight = directSunlight;
+            flightIntegrator.Vessel.directSunlight = solarFlux > 0;
             flightIntegrator.solarFlux = solarFlux;
+            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: flightIntegrator.solarFlux = " + flightIntegrator.solarFlux + ", Vessel.directSunlight = " + flightIntegrator.Vessel.directSunlight);
 
             // Set Physics
             PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
             PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
             CalculatePhysics();
+
+            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: PhysicsGlobals.SolarLuminosityAtHome = " + PhysicsGlobals.SolarLuminosityAtHome + ", PhysicsGlobals.SolarInsolationAtHome = " + PhysicsGlobals.SolarInsolationAtHome);
+            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: END");
         }
 
         /// <summary>
@@ -171,21 +155,23 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         private static Double Flux(ModularFlightIntegrator fi, KopernicusStar star)
         {
+            Debug.Log("SigmaLog: KopernicusStar.Flux: START: star = " + star.sun);
             // Nullchecks
             if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
             {
+                Debug.Log("SigmaLog: KopernicusStar.Flux: return ==> " + 0);
                 return 0;
             }
 
             // Get sunVector
             Boolean directSunlight = false;
             Vector3 integratorPosition = fi.transform.position;
+            Debug.Log("SigmaLog: integratorPosition = " + ((Vector3d)fi.transform.position) + ", vesselPosition = " + ((Vector3d)fi.Vessel.transform.position) + ", distance = " + (double)((fi.transform.position - fi.Vessel.transform.position).magnitude));
             Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-            Vector3 position = star.sun.scaledBody.transform.position;
+            Vector3d position = star.sun.scaledBody.transform.position;
             Double scale = Math.Max((position - scaledSpace).magnitude, 1);
             Vector3 sunVector = (position - scaledSpace) / scale;
             Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
-
             // Get Solar Flux
             Double realDistanceToSun = 0;
             if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
@@ -201,9 +187,11 @@ namespace Kopernicus.Components
 
             if (directSunlight)
             {
+                Debug.Log("SigmaLog: KopernicusStar.Flux: return ==> " + (PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun)));
                 return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
             }
 
+            Debug.Log("SigmaLog: KopernicusStar.Flux: return ==> " + 0);
             return 0;
         }
 
@@ -320,7 +308,7 @@ namespace Kopernicus.Components
             {
                 light.color = shifter.sunlightColor;
                 light.intensity =
-                    shifter.intensityCurve.Evaluate((Single) Vector3d.Distance(sun.position, localSpace));
+                    shifter.intensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, localSpace));
                 light.shadowStrength = shifter.sunlightShadowStrength;
             }
 
@@ -329,14 +317,14 @@ namespace Kopernicus.Components
             {
                 scaledSunLight.color = shifter.scaledSunlightColor;
                 scaledSunLight.intensity = shifter.scaledIntensityCurve.Evaluate(
-                    (Single) Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));
+                    (Single)Vector3d.Distance(ScaledSpace.LocalToScaledSpace(sun.position), target.position));
             }
 
             if (HighLogic.LoadedSceneIsFlight && iva && iva.GetComponent<Light>())
             {
                 iva.GetComponent<Light>().color = shifter.ivaSunColor;
                 iva.GetComponent<Light>().intensity =
-                    shifter.ivaIntensityCurve.Evaluate((Single) Vector3d.Distance(sun.position, localSpace));
+                    shifter.ivaIntensityCurve.Evaluate((Single)Vector3d.Distance(sun.position, localSpace));
             }
 
             // Set SunFlare color
@@ -384,7 +372,7 @@ namespace Kopernicus.Components
 
                 Double horizonAngle = Math.Acos(FlightGlobals.currentMainBody.Radius /
                                                 (FlightGlobals.currentMainBody.Radius + targetAltitude));
-                Single horizonScalar = -Mathf.Sin((Single) horizonAngle);
+                Single horizonScalar = -Mathf.Sin((Single)horizonAngle);
                 Single dayNightRatio = 1f - Mathf.Abs(horizonScalar);
                 Single fadeStartAtAlt = horizonScalar + fadeStart * dayNightRatio;
                 Single fadeEndAtAlt = horizonScalar - fadeEnd * dayNightRatio;
@@ -401,10 +389,10 @@ namespace Kopernicus.Components
         {
             Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
             Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
-            #pragma warning disable 618
+#pragma warning disable 618
             Double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) *
                            Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
-            #pragma warning restore 618
+#pragma warning restore 618
             if (angle > Math.PI * 2)
             {
                 angle -= Math.PI * 2;
