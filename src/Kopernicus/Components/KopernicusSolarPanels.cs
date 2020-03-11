@@ -68,9 +68,9 @@ namespace Kopernicus.Components
 
         public void LatePostCalculateTracking()
         {
-            for (Int32 n = SPs.Length; n > 0; n--)
+            for (Int32 n = 0; n < SPs.Length; n++)
             {
-                ModuleDeployableSolarPanel SP = SPs[n - 1];
+                ModuleDeployableSolarPanel SP = SPs[n];
 
                 if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
                 {
