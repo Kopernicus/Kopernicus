@@ -92,11 +92,7 @@ namespace Kopernicus.Components
                 // Override layer mask
                 typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "planetLayerMask").SetValue(SP, ModularFlightIntegrator.SunLayerMask);
 
-                // Efficiency modifier
-                SP._efficMult = SP.temperatureEfficCurve.Evaluate((Single)part.skinTemperature) *
-                             SP.timeEfficCurve.Evaluate(
-                                 (Single)((Planetarium.GetUniversalTime() - SP.launchUT) * 1.15740740740741E-05)) *
-                            SP.efficiencyMult;
+                // Reset values
                 SP._flowRate = 0;
                 SP.sunAOA = 0;
 
