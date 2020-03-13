@@ -226,7 +226,7 @@ namespace Kopernicus.RuntimeUtility
         {
             // Sun
             GameObject gob = Sun.Instance.gameObject;
-            KopernicusStar star = gob.AddComponent<KopernicusStar>();
+            KopernicusStar star = KopernicusStar.StockSun = gob.AddComponent<KopernicusStar>();
             Utility.CopyObjectFields(Sun.Instance, star, false);
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;

@@ -59,18 +59,16 @@ namespace Kopernicus.Components
 
         private ModuleDeployableSolarPanel[] SPs;
 
-        private static readonly Double StockLuminosity;
-
-        static KopernicusSolarPanels()
-        {
-            StockLuminosity = LightShifter.Prefab.solarLuminosity;
-        }
-
         public void EarlyPostCalculateTracking()
         {
-            Debug.Log("SigmaLog: EarlyPostCalculateTracking: OLD PhysicsGlobals.SolarLuminosityAtHome = " + PhysicsGlobals.SolarLuminosityAtHome);
-            PhysicsGlobals.SolarLuminosityAtHome = Double.PositiveInfinity;
-            Debug.Log("SigmaLog: EarlyPostCalculateTracking: TEMP1 PhysicsGlobals.SolarLuminosityAtHome = " + PhysicsGlobals.SolarLuminosityAtHome);
+            PhysicsGlobals.SolarLuminosityAtHome = KopernicusStar.StockSun.shifter.solarLuminosity;
+
+            for (Int32 n = 0; n < SPs.Length; n++)
+            {
+                ModuleDeployableSolarPanel SP = SPs[n];
+                SP.trackingTransformLocal = KopernicusStar.StockSun.sun.transform;
+                SP.trackingTransformScaled = KopernicusStar.StockSun.sun.scaledBody.transform;
+            }
         }
 
         public void LatePostCalculateTracking()
@@ -78,64 +76,55 @@ namespace Kopernicus.Components
             for (Int32 n = 0; n < SPs.Length; n++)
             {
                 ModuleDeployableSolarPanel SP = SPs[n];
-                CelestialBody oldBody = SP.trackingBody;
-                KopernicusStar oldStar = null;
 
-                for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
+                if (SP.deployState == ModuleDeployablePart.DeployState.EXTENDED)
                 {
-                    KopernicusStar star = KopernicusStar.Stars[s];
+                    CelestialBody trackingBody = SP.trackingBody;
+                    KopernicusStar trackingStar = null;
 
-                    if (star.sun == oldBody)
+                    for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
                     {
-                        oldStar = star;
+                        KopernicusStar star = KopernicusStar.Stars[s];
+
+                        if (star.sun == trackingBody)
+                        {
+                            trackingStar = star;
+                        }
+                        else if (star != KopernicusStar.StockSun)
+                        {
+                            LatePostCalculateTracking(SP, star);
+                        }
                     }
-                    else
-                    {
-                        Test(SP, star);
-                    }
+
+                    LatePostCalculateTracking(SP, trackingStar);
                 }
-
-                Test(SP, oldStar);
             }
-
-            Debug.Log("SigmaLog: LatePostCalculateTracking: TEMP2 PhysicsGlobals.SolarLuminosityAtHome = " + PhysicsGlobals.SolarLuminosityAtHome);
-            PhysicsGlobals.SolarLuminosityAtHome = KopernicusStar.Current.shifter.solarLuminosity;
-            Debug.Log("SigmaLog: LatePostCalculateTracking: NEW PhysicsGlobals.SolarLuminosityAtHome = " + PhysicsGlobals.SolarLuminosityAtHome);
-            return;
-            //for (Int32 n = 0; n < SPs.Length; n++)
-            //{
-            //    ModuleDeployableSolarPanel SP = SPs[n];
-            //    Debug.Log("SigmaLog: LatePostCalculateTracking: SPs[" + n + "] = " + SP + ", DeployState = " + SP?.deployState);
-
-            //    if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
-            //    {
-            //        Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
-            //        LatePostCalculateTracking(SP, normalized);
-            //    }
-            //}
         }
 
-        void Test(ModuleDeployableSolarPanel SP, KopernicusStar star)
+        void LatePostCalculateTracking(ModuleDeployableSolarPanel SP, KopernicusStar star)
         {
             SP.trackingTransformLocal = star.sun.transform;
             SP.trackingTransformScaled = star.sun.scaledBody.transform;
 
-            PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
+            KopernicusStar.CalculatePhysics(star.shifter.solarLuminosity * KopernicusStar.SolarIntensityAtHomeMultiplier);
             vessel.solarFlux = Flux(star);
-
             Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
 
             FieldInfo Blocker = typeof(ModuleDeployableSolarPanel).GetField("blockingObject", BindingFlags.Instance | BindingFlags.NonPublic);
             String blocker = Blocker.GetValue(SP) as String;
             Boolean trackingLos = SP.CalculateTrackingLOS(normalized, ref blocker);
             Blocker.SetValue(SP, blocker);
-
             SP.PostCalculateTracking(trackingLos, normalized);
+        }
+
+        void LastPostCalculateTracking()
+        {
+            PhysicsGlobals.SolarLuminosityAtHome = KopernicusStar.Current.shifter.solarLuminosity;
+            KopernicusStar.CalculatePhysics();
         }
 
         Double Flux(KopernicusStar star)
         {
-            Debug.Log("SigmaLog: KopernicusSolarPanel.Flux: star = " + star?.sun);
             // Get sunVector
             Boolean directSunlight = false;
             Vector3 integratorPosition = vessel.transform.position;
@@ -160,12 +149,9 @@ namespace Kopernicus.Components
 
             if (directSunlight)
             {
-                Debug.Log("SigmaLog: KopernicusSolarPanel.Flux:     PhysicsGlobals.SolarLuminosity = " + PhysicsGlobals.SolarLuminosity + ", PhysicsGlobals.SolarLuminosityAtHome = " + PhysicsGlobals.SolarLuminosityAtHome);
-                Debug.Log("SigmaLog: KopernicusSolarPanel.Flux:     return ==> " + (PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun)));
                 return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
             }
 
-            Debug.Log("SigmaLog: KopernicusSolarPanel.Flux:     return ==> " + 0);
             return 0;
         }
 
@@ -234,6 +220,7 @@ namespace Kopernicus.Components
                 TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
                 TimingManager.FixedUpdateAdd(TimingManager.TimingStage.FlightIntegrator, EarlyPostCalculateTracking);
                 TimingManager.FixedUpdateAdd(TimingManager.TimingStage.Late, LatePostCalculateTracking);
+                TimingManager.FixedUpdateAdd(TimingManager.TimingStage.BetterLateThanNever, LastPostCalculateTracking);
 
                 SPs = GetComponents<ModuleDeployableSolarPanel>();
 
@@ -252,6 +239,7 @@ namespace Kopernicus.Components
             TimingManager.LateUpdateRemove(TimingManager.TimingStage.Early, EarlyLateUpdate);
             TimingManager.FixedUpdateRemove(TimingManager.TimingStage.FlightIntegrator, EarlyPostCalculateTracking);
             TimingManager.FixedUpdateRemove(TimingManager.TimingStage.Late, LatePostCalculateTracking);
+            TimingManager.FixedUpdateRemove(TimingManager.TimingStage.BetterLateThanNever, LastPostCalculateTracking);
         }
     }
 }

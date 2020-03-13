@@ -54,6 +54,16 @@ namespace Kopernicus.Components
         public static KopernicusStar Current;
 
         /// <summary>
+        /// The stock Sun
+        /// </summary>
+        public static KopernicusStar StockSun;
+
+        /// <summary>
+        /// The SolarIntensityAtHomeMultiplier
+        /// </summary>
+        public static double SolarIntensityAtHomeMultiplier = 0;
+
+        /// <summary>
         /// The sunlight
         /// </summary>
         public Light light;
@@ -78,9 +88,10 @@ namespace Kopernicus.Components
         /// </summary>
         public static void SunBodyFlux(ModularFlightIntegrator flightIntegrator)
         {
-            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: START");
-
             Double solarFlux = 0;
+            Double SolarLuminosity = PhysicsGlobals.SolarLuminosity;
+            Double SolarLuminosityAtHome = PhysicsGlobals.SolarLuminosityAtHome;
+            Double SolarInsolationAtHome = PhysicsGlobals.SolarInsolationAtHome;
 
             // Calculate the values for all bodies
             foreach (KopernicusStar star in Stars)
@@ -95,29 +106,24 @@ namespace Kopernicus.Components
 
                 solarFlux += flux;
 
-                if (!SolarFlux.ContainsKey(star.name))
-                {
-                    SolarFlux.Add(star.name, flux);
-                }
-                else
+                //if (!SolarFlux.ContainsKey(star.name))
+                //{
+                //    SolarFlux.Add(star.name, flux);
+                //}
+                //else
                 {
                     SolarFlux[star.name] = flux;
                 }
-                Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: star = " + star + ", flux = " + flux + ", solarFlux = " + solarFlux);
             }
 
             // Reapply
             flightIntegrator.Vessel.directSunlight = solarFlux > 0;
             flightIntegrator.solarFlux = solarFlux;
-            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: flightIntegrator.solarFlux = " + flightIntegrator.solarFlux + ", Vessel.directSunlight = " + flightIntegrator.Vessel.directSunlight);
 
             // Set Physics
-            PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
-            PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
-            CalculatePhysics();
-
-            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: PhysicsGlobals.SolarLuminosityAtHome = " + PhysicsGlobals.SolarLuminosityAtHome + ", PhysicsGlobals.SolarInsolationAtHome = " + PhysicsGlobals.SolarInsolationAtHome);
-            Debug.Log("SigmaLog: KopernicusStar.SunBodyFlux: END");
+            PhysicsGlobals.SolarLuminosityAtHome = SolarLuminosityAtHome;
+            PhysicsGlobals.SolarInsolationAtHome = SolarInsolationAtHome;
+            CalculatePhysics(SolarLuminosity);
         }
 
         /// <summary>
@@ -125,28 +131,44 @@ namespace Kopernicus.Components
         /// NEVER REMOVE THIS AGAIN!
         /// EVEN IF SQUAD MAKES EVERY FIELD PUBLIC AND OPENSOURCE AND WHATNOT
         /// </summary>
-        private static void CalculatePhysics()
+        internal static void CalculatePhysics()
         {
             if (!FlightGlobals.ready)
             {
                 return;
             }
 
-            CelestialBody homeBody = FlightGlobals.GetHomeBody();
-            if (homeBody == null)
+            if (SolarIntensityAtHomeMultiplier == 0)
+            {
+                CelestialBody homeBody = FlightGlobals.GetHomeBody();
+                if (homeBody == null)
+                {
+                    return;
+                }
+
+                while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+                {
+                    homeBody = homeBody.referenceBody;
+                }
+
+                SolarIntensityAtHomeMultiplier = Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979;
+            }
+
+            CalculatePhysics(SolarIntensityAtHomeMultiplier * PhysicsGlobals.SolarLuminosityAtHome);
+        }
+
+        /// <summary>
+        /// Applies The Calculation for Luminosity
+        /// </summary>
+        internal static void CalculatePhysics(Double solarLuminosity)
+        {
+            if (!FlightGlobals.ready)
             {
                 return;
             }
 
-            while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
-            {
-                homeBody = homeBody.referenceBody;
-            }
-
-            typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-                .Where(f => f.FieldType == typeof(Double)).Skip(2).First().SetValue(PhysicsGlobals.Instance,
-                    Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 *
-                    PhysicsGlobals.SolarLuminosityAtHome);
+            FieldInfo SolarLuminosity = typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic);
+            SolarLuminosity.SetValue(PhysicsGlobals.Instance, solarLuminosity);
         }
 
         /// <summary>
@@ -155,18 +177,15 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         private static Double Flux(ModularFlightIntegrator fi, KopernicusStar star)
         {
-            Debug.Log("SigmaLog: KopernicusStar.Flux: START: star = " + star.sun);
             // Nullchecks
             if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
             {
-                Debug.Log("SigmaLog: KopernicusStar.Flux: return ==> " + 0);
                 return 0;
             }
 
             // Get sunVector
             Boolean directSunlight = false;
             Vector3 integratorPosition = fi.transform.position;
-            Debug.Log("SigmaLog: integratorPosition = " + ((Vector3d)fi.transform.position) + ", vesselPosition = " + ((Vector3d)fi.Vessel.transform.position) + ", distance = " + (double)((fi.transform.position - fi.Vessel.transform.position).magnitude));
             Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
             Vector3d position = star.sun.scaledBody.transform.position;
             Double scale = Math.Max((position - scaledSpace).magnitude, 1);
@@ -187,11 +206,9 @@ namespace Kopernicus.Components
 
             if (directSunlight)
             {
-                Debug.Log("SigmaLog: KopernicusStar.Flux: return ==> " + (PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun)));
                 return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
             }
 
-            Debug.Log("SigmaLog: KopernicusStar.Flux: return ==> " + 0);
             return 0;
         }
 
@@ -389,10 +406,10 @@ namespace Kopernicus.Components
         {
             Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
             Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
-#pragma warning disable 618
+            #pragma warning disable 618
             Double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) *
                            Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
-#pragma warning restore 618
+            #pragma warning restore 618
             if (angle > Math.PI * 2)
             {
                 angle -= Math.PI * 2;
