@@ -44,6 +44,22 @@ namespace Kopernicus.Components
         public static List<KopernicusStar> Stars;
 
         /// <summary>
+        /// A list of all stars
+        /// </summary>
+        public static Dictionary<CelestialBody, KopernicusStar> CelestialBodies;
+
+        /// <summary>
+        /// A list of all stars and their luminosity
+        /// </summary>
+        public static Dictionary<KopernicusStar, Double> StarsLuminosity
+        {
+            get
+            {
+                return Stars.ToDictionary(star => star, star => star.shifter.solarLuminosity);
+            }
+        }
+
+        /// <summary>
         /// The results of the latest flux calculation for each star
         /// </summary>
         public static Dictionary<String, Double> SolarFlux;
@@ -82,49 +98,6 @@ namespace Kopernicus.Components
         /// The SunFlare component that controls the lensflare assigned to this star
         /// </summary>
         public KopernicusSunFlare lensFlare;
-
-        /// <summary>
-        /// Override for <see cref="FlightIntegrator.CalculateSunBodyFlux"/>
-        /// </summary>
-        public static void SunBodyFlux(ModularFlightIntegrator flightIntegrator)
-        {
-            Double solarFlux = 0;
-            Double SolarLuminosity = PhysicsGlobals.SolarLuminosity;
-            Double SolarLuminosityAtHome = PhysicsGlobals.SolarLuminosityAtHome;
-            Double SolarInsolationAtHome = PhysicsGlobals.SolarInsolationAtHome;
-
-            // Calculate the values for all bodies
-            foreach (KopernicusStar star in Stars)
-            {
-                // Set Physics
-                PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
-                PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
-                CalculatePhysics();
-
-                // Calculate Flux
-                Double flux = Flux(flightIntegrator, star);
-
-                solarFlux += flux;
-
-                //if (!SolarFlux.ContainsKey(star.name))
-                //{
-                //    SolarFlux.Add(star.name, flux);
-                //}
-                //else
-                {
-                    SolarFlux[star.name] = flux;
-                }
-            }
-
-            // Reapply
-            flightIntegrator.Vessel.directSunlight = solarFlux > 0;
-            flightIntegrator.solarFlux = solarFlux;
-
-            // Set Physics
-            PhysicsGlobals.SolarLuminosityAtHome = SolarLuminosityAtHome;
-            PhysicsGlobals.SolarInsolationAtHome = SolarInsolationAtHome;
-            CalculatePhysics(SolarLuminosity);
-        }
 
         /// <summary>
         /// Fixes the Calculation for Luminosity
