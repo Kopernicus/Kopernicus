@@ -44,26 +44,26 @@ namespace Kopernicus.Components
         public static List<KopernicusStar> Stars;
 
         /// <summary>
-        /// A list of all stars
+        /// A dictionary to get the <see cref="KopernicusStar"/> component using the <see cref="CelestialBody"/>.
         /// </summary>
         public static Dictionary<CelestialBody, KopernicusStar> CelestialBodies;
 
         /// <summary>
-        /// A list of all stars and their luminosity
+        /// A list of all <see cref="Sun"/><i>s</i> and their luminosity
         /// </summary>
-        public static Dictionary<KopernicusStar, Double> StarsLuminosity
+        public static Dictionary<Sun, Double> StarsLuminosity
         {
             get
             {
-                return Stars.ToDictionary(star => star, star => star.shifter.solarLuminosity);
+                return Stars.ToDictionary(star => star as Sun, star => star.shifter.solarLuminosity);
             }
         }
 
         /// <summary>
-        /// The currently active star, for stuff we cant patch
+        /// The currently active <see cref="KopernicusStar"/>, for stuff we can't patch
         /// </summary>
         public static KopernicusStar Current;
-        
+
         /// <summary>
         /// The SolarIntensityAtHomeMultiplier
         /// </summary>
@@ -85,14 +85,12 @@ namespace Kopernicus.Components
         public LightShifter shifter;
 
         /// <summary>
-        /// The SunFlare component that controls the lensflare assigned to this star
+        /// The <see cref="SunFlare"/> component that controls the lensflare assigned to this star
         /// </summary>
         public KopernicusSunFlare lensFlare;
 
         /// <summary>
         /// Fixes the Calculation for Luminosity
-        /// NEVER REMOVE THIS AGAIN!
-        /// EVEN IF SQUAD MAKES EVERY FIELD PUBLIC AND OPENSOURCE AND WHATNOT
         /// </summary>
         internal static void CalculatePhysics()
         {
@@ -133,7 +131,7 @@ namespace Kopernicus.Components
             FieldInfo SolarLuminosity = typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic);
             SolarLuminosity.SetValue(PhysicsGlobals.Instance, solarLuminosity);
         }
-        
+
         /// <summary>
         /// Returns the star the given body orbits
         /// </summary>
@@ -317,24 +315,8 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
-        /// Override this function and use <see cref="Current"/> instead of Planetarium sun
+        /// Returns the <see cref="Vessel.solarFlux"/> at the given location.
         /// </summary>
-        public override Double GetLocalTimeAtPosition(Vector3d wPos, CelestialBody cb)
-        {
-            Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
-            Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
-            #pragma warning disable 618
-            Double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) *
-                           Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
-            #pragma warning restore 618
-            if (angle > Math.PI * 2)
-            {
-                angle -= Math.PI * 2;
-            }
-
-            return angle;
-        }
-
         public Double CalculateFluxAt(Vessel vessel)
         {
             // Get sunVector
@@ -410,6 +392,25 @@ namespace Kopernicus.Components
             // Reapply
             MFI.Vessel.directSunlight = solarFlux > 0;
             MFI.solarFlux = solarFlux;
+        }
+
+        /// <summary>
+        /// Override this function and use <see cref="Current"/> instead of Planetarium sun
+        /// </summary>
+        public override Double GetLocalTimeAtPosition(Vector3d wPos, CelestialBody cb)
+        {
+            Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
+            Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
+            #pragma warning disable 618
+            Double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) *
+                           Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
+            #pragma warning restore 618
+            if (angle > Math.PI * 2)
+            {
+                angle -= Math.PI * 2;
+            }
+
+            return angle;
         }
     }
 }
