@@ -231,16 +231,7 @@ namespace Kopernicus.Components
                 options[i + 1] = new DialogGUIButton
                 (
                     body.bodyDisplayName.Replace("^N", ""),
-                    () =>
-                    {
-                        for (int n = 0; n < SPs.Length; n++)
-                        {
-                            ModuleDeployableSolarPanel SP = SPs[n];
-                            _manualTracking = true;
-                            SP.trackingBody = body;
-                            SP.GetTrackingBodyTransforms();
-                        }
-                    },
+                    () => SetTrackingBody(body),
                     true
                 );
             }
@@ -253,7 +244,18 @@ namespace Kopernicus.Components
                 options), false, UISkinManager.GetSkin("MainMenuSkin"));
         }
 
-        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_UI_RelativeExposure")]//Use relative exposure
+        public void SetTrackingBody(CelestialBody sun)
+        {
+            for (int n = 0; n < SPs.Length; n++)
+            {
+                ModuleDeployableSolarPanel SP = SPs[n];
+                _manualTracking = true;
+                SP.trackingBody = sun;
+                SP.GetTrackingBodyTransforms();
+            }
+        }
+
+        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_UI_RelativeExposure")]
         public void SwitchAoaMode()
         {
             _relativeSunAoa = !_relativeSunAoa;
