@@ -274,6 +274,20 @@ namespace Kopernicus.Components
                     Fields["trackingBodyName"].guiActive = true;
                     Events["ManualTracking"].guiActive = true;
                 }
+
+                if (_manualTracking)
+                {
+                    CelestialBody trackingBody = FlightGlobals.Bodies.FirstOrDefault(b => b.bodyDisplayName.Replace("^N", "") == trackingBodyName);
+
+                    if (trackingBody != null)
+                    {
+                        SetTrackingBody(trackingBody);
+                    }
+                    else
+                    {
+                        _manualTracking = false;
+                    }
+                }
             }
         }
 
