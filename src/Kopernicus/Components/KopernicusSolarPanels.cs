@@ -26,15 +26,13 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
-using ModularFI;
 using UnityEngine;
 using KSP.Localization;
 
 namespace Kopernicus.Components
 {
     /// <summary>
-    /// An extension for the Solar Panel to calculate the flux properly
+    /// This <see cref="PartModule"/> should be added before any <see cref="ModuleDeployableSolarPanel"/>.
     /// </summary>
     public class KopernicusSolarPanelsFixer : PartModule
     {
@@ -48,7 +46,9 @@ namespace Kopernicus.Components
             }
         }
 
-        // Runs before the MDSP FixedUpdate
+        /// <summary>
+        /// Runs before <see cref="ModuleDeployableSolarPanel.FixedUpdate"/>.
+        /// </summary>
         public virtual void FixedUpdate()
         {
             if (HighLogic.LoadedSceneIsFlight)
@@ -68,20 +68,20 @@ namespace Kopernicus.Components
     }
 
     /// <summary>
-    /// An extension for the Solar Panel to calculate the flux properly
+    /// This <see cref="PartModule"/> should be added after all <see cref="ModuleDeployableSolarPanel"/>.
     /// </summary>
     public class KopernicusSolarPanels : KopernicusSolarPanelsFixer
     {
         //Strings for Localization
-        private static string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");//"Direct Sunlight"
-        private static string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");//"Underwater"
-        private static string button_AbsoluteExposure = Localizer.Format("#Kopernicus_UI_AbsoluteExposure");//"Use absolute exposure"
-        private static string button_RelativeExposure = Localizer.Format("#Kopernicus_UI_RelativeExposure");//"Use relative exposure"
-        private static string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");//"Auto"
-        private static string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");//"Select Tracking Body"
-        private static string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");// "Please select the Body you want to track with this Solar Panel."
+        private static string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");  // "Direct Sunlight"
+        private static string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");          // "Underwater"
+        private static string button_AbsoluteExposure = Localizer.Format("#Kopernicus_UI_AbsoluteExposure"); // "Use absolute exposure"
+        private static string button_RelativeExposure = Localizer.Format("#Kopernicus_UI_RelativeExposure"); // "Use relative exposure"
+        private static string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");                 // "Auto"
+        private static string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");                    // "Select Tracking Body"
+        private static string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");            // "Please select the Body you want to track with this Solar Panel."
 
-        [KSPField(guiActive = true, guiActiveEditor = false, guiName = "#Kopernicus_UI_TrackingBody", isPersistant = true)]//Tracking Body
+        [KSPField(guiActive = true, guiActiveEditor = false, guiName = "#Kopernicus_UI_TrackingBody", isPersistant = true)]
         [SuppressMessage("ReSharper", "NotAccessedField.Global")]
         public String trackingBodyName;
 
@@ -91,8 +91,14 @@ namespace Kopernicus.Components
         [KSPField(isPersistant = true)]
         private Boolean _relativeSunAoa;
 
+        /// <summary>
+        /// The list of all <see cref="ModuleDeployableSolarPanel"/><i>s</i> on this <see cref="Part"/>.
+        /// </summary>
         private ModuleDeployableSolarPanel[] SPs;
 
+        /// <summary>
+        /// Runs before <see cref="ModuleDeployableSolarPanel.FixedUpdate"/>.
+        /// </summary>
         public override void FixedUpdate()
         {
             if (HighLogic.LoadedSceneIsFlight)
@@ -207,12 +213,12 @@ namespace Kopernicus.Components
                     trackingBodyName = SP.trackingBody.bodyDisplayName.Replace("^N", "");
 
                     // Update the guiName for SwitchAOAMode
-                    Events["SwitchAoaMode"].guiName = _relativeSunAoa ? button_AbsoluteExposure : button_RelativeExposure;//Use absolute exposure//Use relative exposure
+                    Events["SwitchAoaMode"].guiName = _relativeSunAoa ? button_AbsoluteExposure : button_RelativeExposure;
                 }
             }
         }
 
-        [KSPEvent(active = true, guiActive = false, guiName = "#Kopernicus_UI_SelectBody")]//Select Tracking Body
+        [KSPEvent(active = true, guiActive = false, guiName = "#Kopernicus_UI_SelectBody")]
         public void ManualTracking()
         {
             // Assemble the buttons
