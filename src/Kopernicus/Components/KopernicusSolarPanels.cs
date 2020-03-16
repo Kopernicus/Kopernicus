@@ -107,12 +107,10 @@ namespace Kopernicus.Components
 
                     if (SP.deployState == ModuleDeployablePart.DeployState.EXTENDED)
                     {
-                        CelestialBody trackingBody = SP.trackingBody;
-                        KopernicusStar trackingStar = null;
+                        KopernicusStar trackingStar = KopernicusStar.CelestialBodies[SP.trackingBody];
 
                         Double bestFlux = vessel.solarFlux;
-                        KopernicusStar bestStar = null;
-
+                        KopernicusStar bestStar = trackingStar;
                         Double totalFlux = 0;
                         Single totalAoA = SP.sunAOA;
                         Double _totalFlow = SP._flowRate;
@@ -122,11 +120,7 @@ namespace Kopernicus.Components
                         {
                             KopernicusStar star = KopernicusStar.Stars[s];
 
-                            if (star.sun == trackingBody)
-                            {
-                                trackingStar = star;
-                            }
-                            else
+                            if (star != trackingStar)
                             {
                                 // Use this star
                                 star.shifter.ApplyPhysics();
