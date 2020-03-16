@@ -374,5 +374,42 @@ namespace Kopernicus.Components
 
             return 0;
         }
+
+        /// <summary>
+        /// Override for <see cref="FlightIntegrator.CalculateSunBodyFlux"/>
+        /// </summary>
+        public static void SunBodyFlux(ModularFlightIntegrator MFI)
+        {
+            Double solarFlux = 0;
+
+            // Calculate the values for all bodies
+            foreach (KopernicusStar star in Stars)
+            {
+                if (star == KopernicusStar.Current)
+                {
+                    continue;
+                }
+
+                // Set Physics
+                PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
+                PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
+                CalculatePhysics();
+
+                // Calculate Flux
+                solarFlux += star.CalculateFluxAt(MFI.Vessel);
+            }
+
+            // Set Physics to the Current Star
+            PhysicsGlobals.SolarLuminosityAtHome = KopernicusStar.Current.shifter.solarLuminosity;
+            PhysicsGlobals.SolarInsolationAtHome = KopernicusStar.Current.shifter.solarInsolation;
+            CalculatePhysics();
+
+            // Calculate Flux
+            solarFlux += Current.CalculateFluxAt(MFI.Vessel);
+
+            // Reapply
+            MFI.Vessel.directSunlight = solarFlux > 0;
+            MFI.solarFlux = solarFlux;
+        }
     }
 }

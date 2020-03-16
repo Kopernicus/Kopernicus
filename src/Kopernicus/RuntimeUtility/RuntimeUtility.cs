@@ -740,6 +740,7 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
             Events.OnRuntimeUtilityPatchFI.Fire();
+            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
             ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
         }
 
