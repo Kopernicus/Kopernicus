@@ -212,6 +212,9 @@ namespace Kopernicus.Components
                     // Update the name
                     trackingBodyName = SP.trackingBody.bodyDisplayName.Replace("^N", "");
 
+                    if (!_manualTracking)
+                        trackingBodyName = Localizer.Format("#Kopernicus_UI_AutoTrackingBodyName", trackingBodyName);
+
                     // Update the guiName for SwitchAOAMode
                     Events["SwitchAoaMode"].guiName = _relativeSunAoa ? button_AbsoluteExposure : button_RelativeExposure;
                 }
