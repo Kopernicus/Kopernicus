@@ -59,7 +59,7 @@ namespace Kopernicus.RuntimeUtility
             if (FlightGlobals.ActiveVessel)
             {
                 // Radiators
-                foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
+                foreach (ModuleDeployableRadiator rad in FlightGlobals.VesselsLoaded.SelectMany(v => v.FindPartModulesImplementing<ModuleDeployableRadiator>()))
                 {
                     rad.trackingBody = CelestialBody;
                     rad.trackingTransformLocal = CelestialBody.transform;
