@@ -73,7 +73,7 @@ namespace Kopernicus.RuntimeUtility
 
             // Apply Ambient Light
             KopernicusStar.Current.shifter.ApplyAmbient();
-            PhysicsGlobals.RadiationFactor = KopernicusStar.Current.shifter.radiationFactor;
+            KopernicusStar.Current.shifter.ApplyPhysics();
 
             // Apply Sky
             GalaxyCubeControl.Instance.sunRef = KopernicusStar.Current;

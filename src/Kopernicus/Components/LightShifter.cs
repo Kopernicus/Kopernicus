@@ -146,6 +146,7 @@ namespace Kopernicus.Components
 
             PhysicsGlobals.SolarLuminosityAtHome = solarLuminosity;
             PhysicsGlobals.SolarInsolationAtHome = solarInsolation;
+            PhysicsGlobals.RadiationFactor = radiationFactor;
 
             FieldInfo SolarLuminosity = typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic);
             SolarLuminosity.SetValue(PhysicsGlobals.Instance, SolarIntensityAtHomeMultiplier * PhysicsGlobals.SolarLuminosityAtHome);
