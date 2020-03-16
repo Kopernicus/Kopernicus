@@ -390,5 +390,45 @@ namespace Kopernicus.Components
 
             return angle;
         }
+
+        public Double CalculateFluxAt(Vessel vessel)
+        {
+            // Get sunVector
+            Boolean directSunlight = false;
+            Vector3 integratorPosition = vessel.transform.position;
+            Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
+            Vector3 position = sun.scaledBody.transform.position;
+            Double scale = Math.Max((position - scaledSpace).magnitude, 1);
+            Vector3 sunVector = (position - scaledSpace) / scale;
+            Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
+
+            // Get Thermal Stats
+            if (vessel.mainBody.atmosphere && !vessel.mainBody.isStar)
+            {
+                FlightIntegrator FI = vessel.GetComponent<FlightIntegrator>();
+                vessel.mainBody.GetAtmoThermalStats(true, sun, sunVector, Vector3d.Dot(sunVector, vessel.upAxis), vessel.upAxis, vessel.altitude, out FI.atmosphereTemperatureOffset, out FI.bodyEmissiveFlux, out FI.bodyAlbedoFlux);
+            }
+
+            // Get Solar Flux
+            Double realDistanceToSun = 0;
+            if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
+            {
+                directSunlight = true;
+                realDistanceToSun = scale * ScaledSpace.ScaleFactor - sun.Radius;
+            }
+            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == sun)
+            {
+                realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
+                directSunlight = true;
+            }
+
+            if (directSunlight)
+            {
+                Double output = PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun) * PhysicsGlobals.SolarLuminosityAtHome / 1360;
+                return output;
+            }
+
+            return 0;
+        }
     }
 }

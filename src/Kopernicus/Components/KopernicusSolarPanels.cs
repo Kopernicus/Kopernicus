@@ -61,42 +61,9 @@ namespace Kopernicus.Components
                     PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
                     KopernicusStar.CalculatePhysics();
 
-                    vessel.solarFlux = CalculateFlux(star);
+                    vessel.solarFlux = star.CalculateFluxAt(vessel);
                 }
             }
-        }
-
-        public Double CalculateFlux(Sun star)
-        {
-            // Get sunVector
-            Boolean directSunlight = false;
-            Vector3 integratorPosition = vessel.transform.position;
-            Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-            Vector3 position = star.sun.scaledBody.transform.position;
-            Double scale = Math.Max((position - scaledSpace).magnitude, 1);
-            Vector3 sunVector = (position - scaledSpace) / scale;
-            Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
-
-            // Get Solar Flux
-            Double realDistanceToSun = 0;
-            if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
-            {
-                directSunlight = true;
-                realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
-            }
-            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
-            {
-                realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
-                directSunlight = true;
-            }
-
-            if (directSunlight)
-            {
-                Double output = PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun) * PhysicsGlobals.SolarLuminosityAtHome / 1360;
-                return output;
-            }
-
-            return 0;
         }
     }
 
@@ -161,7 +128,7 @@ namespace Kopernicus.Components
                                 PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
                                 PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
                                 KopernicusStar.CalculatePhysics();
-                                vessel.solarFlux = CalculateFlux(star);
+                                vessel.solarFlux = star.CalculateFluxAt(vessel);
 
                                 // Change the tracking body
                                 SP.trackingBody = star.sun;
@@ -200,7 +167,7 @@ namespace Kopernicus.Components
                         PhysicsGlobals.SolarInsolationAtHome = trackingStar.shifter.solarInsolation;
                         KopernicusStar.CalculatePhysics();
 
-                        totalFlux += CalculateFlux(trackingStar);
+                        totalFlux += trackingStar.CalculateFluxAt(vessel);
 
                         vessel.solarFlux = totalFlux;
                         SP.sunAOA = totalAoA;
