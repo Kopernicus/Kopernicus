@@ -54,12 +54,15 @@ namespace Kopernicus.Components
             if (HighLogic.LoadedSceneIsFlight)
             {
                 // Start from the target body
-                KopernicusStar star = KopernicusStar.CelestialBodies[SP.trackingBody];
-                PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
-                PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
-                KopernicusStar.CalculatePhysics();
+                if (SP != null)
+                {
+                    KopernicusStar star = KopernicusStar.CelestialBodies[SP.trackingBody];
+                    PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
+                    PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
+                    KopernicusStar.CalculatePhysics();
 
-                vessel.solarFlux = CalculateFlux(star);
+                    vessel.solarFlux = CalculateFlux(star);
+                }
             }
         }
 
