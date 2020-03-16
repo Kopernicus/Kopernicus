@@ -60,20 +60,10 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
-        /// The results of the latest flux calculation for each star
-        /// </summary>
-        public static Dictionary<String, Double> SolarFlux;
-
-        /// <summary>
         /// The currently active star, for stuff we cant patch
         /// </summary>
         public static KopernicusStar Current;
-
-        /// <summary>
-        /// The stock Sun
-        /// </summary>
-        public static KopernicusStar StockSun;
-
+        
         /// <summary>
         /// The SolarIntensityAtHomeMultiplier
         /// </summary>
@@ -143,48 +133,7 @@ namespace Kopernicus.Components
             FieldInfo SolarLuminosity = typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic);
             SolarLuminosity.SetValue(PhysicsGlobals.Instance, solarLuminosity);
         }
-
-        /// <summary>
-        /// Small method to handle flux
-        /// </summary>
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        private static Double Flux(ModularFlightIntegrator fi, KopernicusStar star)
-        {
-            // Nullchecks
-            if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
-            {
-                return 0;
-            }
-
-            // Get sunVector
-            Boolean directSunlight = false;
-            Vector3 integratorPosition = fi.transform.position;
-            Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-            Vector3d position = star.sun.scaledBody.transform.position;
-            Double scale = Math.Max((position - scaledSpace).magnitude, 1);
-            Vector3 sunVector = (position - scaledSpace) / scale;
-            Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
-            // Get Solar Flux
-            Double realDistanceToSun = 0;
-            if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
-            {
-                directSunlight = true;
-                realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
-            }
-            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
-            {
-                realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
-                directSunlight = true;
-            }
-
-            if (directSunlight)
-            {
-                return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
-            }
-
-            return 0;
-        }
-
+        
         /// <summary>
         /// Returns the star the given body orbits
         /// </summary>
@@ -201,11 +150,6 @@ namespace Kopernicus.Components
             if (Stars == null)
             {
                 Stars = new List<KopernicusStar>();
-            }
-
-            if (SolarFlux == null)
-            {
-                SolarFlux = new Dictionary<String, Double>();
             }
 
             Stars.Add(this);
