@@ -65,11 +65,6 @@ namespace Kopernicus.Components
         public static KopernicusStar Current;
 
         /// <summary>
-        /// The SolarIntensityAtHomeMultiplier
-        /// </summary>
-        public static double SolarIntensityAtHomeMultiplier = 0;
-
-        /// <summary>
         /// The sunlight
         /// </summary>
         public Light light;
