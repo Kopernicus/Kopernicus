@@ -49,7 +49,7 @@ namespace Kopernicus.Components
         /// <summary>
         /// Runs before <see cref="ModuleDeployableSolarPanel.FixedUpdate"/>.
         /// </summary>
-        public virtual void FixedUpdate()
+        void FixedUpdate()
         {
             if (HighLogic.LoadedSceneIsFlight)
             {
@@ -68,7 +68,7 @@ namespace Kopernicus.Components
     /// <summary>
     /// This <see cref="PartModule"/> should be added after all <see cref="ModuleDeployableSolarPanel"/>.
     /// </summary>
-    public class KopernicusSolarPanels : KopernicusSolarPanelsFixer
+    public class KopernicusSolarPanels : PartModule
     {
         //Strings for Localization
         private static string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");  // "Direct Sunlight"
@@ -97,7 +97,7 @@ namespace Kopernicus.Components
         /// <summary>
         /// Runs before <see cref="ModuleDeployableSolarPanel.FixedUpdate"/>.
         /// </summary>
-        public override void FixedUpdate()
+        void FixedUpdate()
         {
             if (HighLogic.LoadedSceneIsFlight)
             {
