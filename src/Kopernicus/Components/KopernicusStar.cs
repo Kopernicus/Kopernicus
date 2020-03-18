@@ -314,6 +314,12 @@ namespace Kopernicus.Components
         /// </summary>
         public static void SunBodyFlux(ModularFlightIntegrator MFI)
         {
+            // Nullchecks
+            if (MFI.Vessel == null || MFI.Vessel.state == Vessel.State.DEAD || MFI.CurrentMainBody == null)
+            {
+                return;
+            }
+
             Double solarFlux = 0;
 
             // Calculate the values for all bodies
