@@ -326,8 +326,10 @@ namespace Kopernicus.Components
             Double solarFlux = 0;
 
             // Calculate the values for all bodies
-            foreach (KopernicusStar star in Stars)
+            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
             {
+                KopernicusStar star = KopernicusStar.Stars[i];
+
                 if (star == KopernicusStar.Current)
                 {
                     continue;
