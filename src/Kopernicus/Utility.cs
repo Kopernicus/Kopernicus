@@ -30,6 +30,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.OnDemand;
 using Kopernicus.RuntimeUtility;
 using UnityEngine;
@@ -180,6 +181,32 @@ namespace Kopernicus
                     GameObjectWalk(b.gameObject, "    " + prefix);
                 }
             }
+        }
+
+        public static T[] GetMods<T>(PQS sphere) where T : PQSMod
+        {
+            return sphere.GetComponentsInChildren<T>(true).Where(m => m.transform.parent == sphere.transform).ToArray();
+        }
+
+        public static T GetMod<T>(PQS sphere) where T : PQSMod
+        {
+            return GetMods<T>(sphere).FirstOrDefault();
+        }
+
+        public static Boolean HasMod<T>(PQS sphere) where T : PQSMod
+        {
+            return GetMod<T>(sphere) != null;
+        }
+
+        public static T AddMod<T>(PQS sphere, Int32 order) where T : PQSMod
+        {
+            GameObject modObject = new GameObject(typeof(T).Name);
+            modObject.transform.parent = sphere.transform;
+            T mod = modObject.AddComponent<T>();
+            mod.modEnabled = true;
+            mod.order = order;
+            mod.sphere = sphere;
+            return mod;
         }
 
         public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, String path,
@@ -1059,6 +1086,91 @@ namespace Kopernicus
             }
 
             return min;
+        }
+
+        public static FloatCurve ListToFloatCurve(List<NumericCollectionParser<Single>> parser)
+        {
+            if (parser == null)
+            {
+                return null;
+            }
+
+            // Additional error correction will only happen at runtime to keep the configs
+            // compatible with the stock KSP behaviour
+            if (!Injector.IsInPrefab)
+            {
+                // First make sure that all elements contain at least 2 values
+                for (Int32 i = 0; i < parser.Count; i++)
+                {
+                    if (parser[i].Value.Count < 2)
+                    {
+                        while (parser[i].Value.Count < 2)
+                        {
+                            parser[i].Value.Add(0);
+                        }
+                    }
+                }
+
+                // Then make sure that no index is used twice
+                for (Int32 i = 0; i < parser.Count; i++)
+                {
+                    while (parser.Count(p => Math.Abs(p.Value[0] - parser[i].Value[0]) < 0.001) > 1)
+                    {
+                        parser[i].Value[0] += 0.1f;
+                    }
+                }
+            }
+
+            FloatCurve curve = new FloatCurve();
+
+            for (Int32 i = 0; i < parser.Count; i++)
+            {
+                NumericCollectionParser<Single> key = parser[i];
+
+                if (key.Value.Count < 2)
+                {
+                    Debug.LogError("FloatCurve: Invalid line. Requires two values, 'time' and 'value'");
+                }
+
+                if (key.Value.Count == 4)
+                {
+                    curve.Add(key.Value[0], key.Value[1], key.Value[2], key.Value[3]);
+                }
+                else
+                {
+                    curve.Add(key.Value[0], key.Value[1]);
+                }
+            }
+
+            return curve;
+        }
+
+        public static AnimationCurve ListToAnimCurve(List<NumericCollectionParser<Single>> parser)
+        {
+            return ListToFloatCurve(parser).Curve;
+        }
+
+        public static List<NumericCollectionParser<Single>> FloatCurveToList(FloatCurve curve)
+        {
+            if (curve == null)
+            {
+                return null;
+            }
+
+            List<NumericCollectionParser<Single>> list = new List<NumericCollectionParser<Single>>();
+
+            for (Int32 i = 0; i < curve.Curve.length; i++)
+            {
+                Keyframe key = curve.Curve.keys[i];
+                list.Add(new List<Single> {key.time, key.value, key.inTangent, key.outTangent});
+            }
+
+            return list;
+        }
+
+        public static List<NumericCollectionParser<Single>> AnimCurveToList(AnimationCurve curve)
+        {
+            return FloatCurveToList(new FloatCurve(curve?.keys ?? new Keyframe[0]));
         }
     }
 }

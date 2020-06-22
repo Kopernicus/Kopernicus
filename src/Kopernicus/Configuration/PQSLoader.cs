@@ -26,13 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using Kopernicus.Components;
 using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
+using Kopernicus.Configuration.Enumerations;
 using Kopernicus.Configuration.MaterialLoader;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.Configuration.Parsing;
@@ -47,19 +48,9 @@ namespace Kopernicus.Configuration
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "ForCanBeConvertedToForeach")]
     public class PQSLoader : BaseLoader, IParserEventSubscriber, ITypeParser<PQS>
     {
-        // PQS Material Type Enum
-        public enum SurfaceMaterialType
-        {
-            Vacuum,
-            AtmosphericBasic,
-            AtmosphericMain,
-            AtmosphericOptimized,
-            AtmosphericExtra,
-            AtmosphericOptimizedFastBlend,
-            AtmosphericTriplanarZoomRotation
-        }
 
         // PQS we are creating
         public PQS Value { get; set; }
@@ -135,77 +126,111 @@ namespace Kopernicus.Configuration
             set { Value.mapMaxHeight = value; }
         }
 
+        /// <summary>
+        /// A helper property that returns the surface material that Kopernicus will support and use.
+        /// </summary>
+        private Material BasicSurfaceMaterial
+        {
+            get { return Value.ultraQualitySurfaceMaterial; }
+            set
+            {
+                Value.ultraQualitySurfaceMaterial = value;
+                Value.highQualitySurfaceMaterial = value;
+                Value.mediumQualitySurfaceMaterial = value;
+                Value.lowQualitySurfaceMaterial = value;
+                Value.surfaceMaterial = value;
+            }
+        }
+
         [PreApply]
         [ParserTarget("materialType")]
         [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
-        [SuppressMessage("ReSharper", "ConvertIfStatementToSwitchStatement")]
         public EnumParser<SurfaceMaterialType> MaterialType
         {
             get
             {
-                if (PQSMainOptimised.UsesSameShader(SurfaceMaterial))
-                {
-                    return SurfaceMaterialType.AtmosphericOptimized;
-                }
-                if (PQSMainShader.UsesSameShader(SurfaceMaterial))
-                {
-                    return SurfaceMaterialType.AtmosphericMain;
-                }
-                if (PQSProjectionAerialQuadRelative.UsesSameShader(SurfaceMaterial))
-                {
-                    return SurfaceMaterialType.AtmosphericBasic;
-                }
-                if (PQSProjectionSurfaceQuad.UsesSameShader(SurfaceMaterial))
+                if (PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.Vacuum;
                 }
-                if (PQSMainExtras.UsesSameShader(SurfaceMaterial))
+                if (PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericBasic;
+                }
+                if (PQSMainShader.UsesSameShader(BasicSurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericMain;
+                }
+                if (PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericOptimized;
+                }
+                if (PQSMainExtras.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericExtra;
                 }
-                if (PQSMainOptimisedFastBlend.UsesSameShader(SurfaceMaterial))
+                if (PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericMainFastBlend;
+                }
+                if (PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericOptimizedFastBlend;
                 }
-                if (PQSTriplanarZoomRotation.UsesSameShader(SurfaceMaterial))
+                if (PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.AtmosphericTriplanarZoomRotation;
                 }
-                return SurfaceMaterialType.Vacuum;
+                if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial))
+                {
+                    return SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray;
+                }
+
+                throw new Exception("The shader '" + BasicSurfaceMaterial.shader.name + "' is not supported.");
             }
             set
             {
-                if (value.Value == SurfaceMaterialType.AtmosphericOptimized)
+                Boolean isVaccum = PQSProjectionSurfaceQuad.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isBasic = PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isRotation = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isRotationArray = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
+
+                switch (value.Value)
                 {
-                    SurfaceMaterial = new PQSMainOptimisedLoader();
-                }
-                else if (value.Value == SurfaceMaterialType.AtmosphericMain)
-                {
-                    SurfaceMaterial = new PQSMainShaderLoader();
-                }
-                else if (value.Value == SurfaceMaterialType.AtmosphericBasic)
-                {
-                    SurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
-                }
-                else if (value.Value == SurfaceMaterialType.Vacuum)
-                {
-                    SurfaceMaterial = new PQSProjectionSurfaceQuadLoader();
-                }
-                else if (value.Value == SurfaceMaterialType.AtmosphericExtra)
-                {
-                    SurfaceMaterial = new PQSMainExtrasLoader();
-                }
-                else if (value.Value == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
-                {
-                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
-                }
-                else if (value.Value == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
-                {
-                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader();
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException();
+                    case SurfaceMaterialType.Vacuum when !isVaccum:
+                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericBasic when !isBasic:
+                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericMain when !isMain:
+                        BasicSurfaceMaterial = new PQSMainShaderLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
+                        BasicSurfaceMaterial = new PQSMainOptimisedLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericExtra when !isExtra:
+                        BasicSurfaceMaterial = new PQSMainExtrasLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                        BasicSurfaceMaterial = new PQSMainFastBlendLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
+                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader();
+                        break;
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader();
+                        break;
+                    default:
+                        return;
                 }
             }
         }
@@ -217,34 +242,126 @@ namespace Kopernicus.Configuration
         {
             get
             {
-                switch (GameSettings.TERRAIN_SHADER_QUALITY)
+                Boolean isVaccum = BasicSurfaceMaterial is PQSProjectionSurfaceQuadLoader;
+                Boolean isBasic = BasicSurfaceMaterial is PQSProjectionAerialQuadRelativeLoader;
+                Boolean isMain = BasicSurfaceMaterial is PQSMainShaderLoader;
+                Boolean isOptimised = BasicSurfaceMaterial is PQSMainOptimisedLoader;
+                Boolean isExtra = BasicSurfaceMaterial is PQSMainExtrasLoader;
+                Boolean isFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
+                Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
+                Boolean isRotation = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
+                Boolean isRotationArray = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
+
+                switch (MaterialType.Value)
                 {
-                    case 2 when Value.highQualitySurfaceMaterial != null:
-                        return Value.highQualitySurfaceMaterial;
-                    case 1 when Value.mediumQualitySurfaceMaterial != null:
-                        return Value.mediumQualitySurfaceMaterial;
-                    case 0 when Value.lowQualitySurfaceMaterial != null:
-                        return Value.lowQualitySurfaceMaterial;
+                    case SurfaceMaterialType.Vacuum when !isVaccum:
+                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericBasic when !isBasic:
+                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericMain when !isMain:
+                        BasicSurfaceMaterial = new PQSMainShaderLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
+                        BasicSurfaceMaterial = new PQSMainOptimisedLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericExtra when !isExtra:
+                        BasicSurfaceMaterial = new PQSMainExtrasLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                        BasicSurfaceMaterial = new PQSMainFastBlendLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
+                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial);
+                        goto default;
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(BasicSurfaceMaterial);
+                        goto default;
                     default:
-                        return Value.surfaceMaterial;
+                        return BasicSurfaceMaterial;
                 }
             }
             set
             {
-                Value.surfaceMaterial = value;
-                Value.lowQualitySurfaceMaterial = value;
-                Value.mediumQualitySurfaceMaterial = value;
-                Value.highQualitySurfaceMaterial = value;
+                Boolean isVaccum = value is PQSProjectionSurfaceQuadLoader;
+                Boolean isBasic = value is PQSProjectionAerialQuadRelativeLoader;
+                Boolean isMain = value is PQSMainShaderLoader;
+                Boolean isOptimised = value is PQSMainOptimisedLoader;
+                Boolean isExtra = value is PQSMainExtrasLoader;
+                Boolean isFastBlend = value is PQSMainFastBlendLoader;
+                Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
+                Boolean isRotation = value is PQSTriplanarZoomRotationLoader;
+                Boolean isRotationArray = value is PQSTriplanarZoomRotationTextureArrayLoader;
+
+                // We need to set the material before we check it, so we can reuse the code in MaterialType
+                BasicSurfaceMaterial = value;
+
+                switch (MaterialType.Value)
+                {
+                    case SurfaceMaterialType.Vacuum when !isVaccum:
+                        BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericBasic when !isBasic:
+                        BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericMain when !isMain:
+                        BasicSurfaceMaterial = new PQSMainShaderLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
+                        BasicSurfaceMaterial = new PQSMainOptimisedLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericExtra when !isExtra:
+                        BasicSurfaceMaterial = new PQSMainExtrasLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                        BasicSurfaceMaterial = new PQSMainFastBlendLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
+                        BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(value);
+                        break;
+                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
+                        BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(value);
+                        break;
+                    default:
+                        BasicSurfaceMaterial = value;
+                        break;
+                }
             }
         }
 
         // Fallback Material of the PQS (its always the same material)
         [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
+        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
         [KittopiaUntouchable]
         public Material FallbackMaterial
         {
-            get { return Value.fallbackMaterial; }
-            set { Value.fallbackMaterial = value; }
+            get
+            {
+                if (!(Value.fallbackMaterial is PQSProjectionFallbackLoader))
+                {
+                    Value.fallbackMaterial = new PQSProjectionFallbackLoader(Value.fallbackMaterial);
+                }
+
+                return Value.fallbackMaterial;
+            }
+            set
+            {
+                if (value is PQSProjectionFallbackLoader)
+                {
+                    Value.fallbackMaterial = value;
+                }
+                else
+                {
+                    Value.fallbackMaterial = new PQSProjectionFallbackLoader(value);
+                }
+            }
         }
 
         // PQSMod loader
@@ -277,45 +394,8 @@ namespace Kopernicus.Configuration
                 Value = generatedBody.pqsVersion;
 
                 // Get the required PQS information
-                _transform = Value.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
-                    .FirstOrDefault(mod => mod.transform.parent == Value.transform);
-                _collider = Value.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true)
-                    .FirstOrDefault(mod => mod.transform.parent == Value.transform);
-
-                // Clone the surface material of the PQS
-                if (MaterialType == SurfaceMaterialType.AtmosphericOptimized)
-                {
-                    SurfaceMaterial = new PQSMainOptimisedLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericMain)
-                {
-                    SurfaceMaterial = new PQSMainShaderLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericBasic)
-                {
-                    SurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.Vacuum)
-                {
-                    SurfaceMaterial = new PQSProjectionSurfaceQuadLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericExtra)
-                {
-                    SurfaceMaterial = new PQSMainExtrasLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
-                {
-                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
-                {
-                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader(SurfaceMaterial);
-                }
-
-                SurfaceMaterial.name = Guid.NewGuid().ToString();
-
-                // Clone the fallback material of the PQS
-                FallbackMaterial = new PQSProjectionFallbackLoader(FallbackMaterial) {name = Guid.NewGuid().ToString()};
+                _transform = Utility.GetMod<PQSMod_CelestialBodyTransform>(Value);
+                _collider = Utility.GetMod<PQSMod_QuadMeshColliders>(Value);
             }
             else
             {
@@ -328,14 +408,12 @@ namespace Kopernicus.Configuration
                 // And I (Thomas) am at this time just too lazy to do it differently...
                 PSystemBody laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
                 Utility.CopyObjectFields(laythe.pqsVersion, Value);
-                Value.surfaceMaterial = laythe.pqsVersion.surfaceMaterial;
-                Value.fallbackMaterial = laythe.pqsVersion.fallbackMaterial;
+
+                // Create the fallback material (always the same shader)
+                FallbackMaterial = new PQSProjectionFallbackLoader();
 
                 // Create the celestial body transform
-                GameObject mod = new GameObject("_CelestialBody");
-                mod.transform.parent = controllerRoot.transform;
-                _transform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
-                _transform.sphere = Value;
+                _transform = Utility.AddMod<PQSMod_CelestialBodyTransform>(Value, 10);
                 _transform.forceActivate = false;
                 _transform.deactivateAltitude = 115000;
                 _transform.forceRebuildOnTargetChange = false;
@@ -349,40 +427,16 @@ namespace Kopernicus.Configuration
                     secondaryRenderers = new List<GameObject>()
                 };
                 _transform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
-                _transform.requirements = PQS.ModiferRequirements.Default;
-                _transform.modEnabled = true;
-                _transform.order = 10;
-
-                // Create the material direction
-                // ReSharper disable Unity.InefficientPropertyAccess
-                mod = new GameObject("_Material_SunLight");
-                mod.transform.parent = controllerRoot.gameObject.transform;
-                PQSMod_MaterialSetDirection lightDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
-                lightDirection.sphere = Value;
-                lightDirection.valueName = "_sunLightDirection";
-                lightDirection.requirements = PQS.ModiferRequirements.Default;
-                lightDirection.modEnabled = true;
-                lightDirection.order = 100;
-
-                // Create the UV planet relative position
-                mod = new GameObject("_Material_SurfaceQuads");
-                mod.transform.parent = controllerRoot.transform;
-                PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                uvs.sphere = Value;
-                uvs.requirements = PQS.ModiferRequirements.Default;
-                uvs.modEnabled = true;
-                uvs.order = 999999;
 
                 // Crete the quad mesh colliders
-                mod = new GameObject("QuadMeshColliders");
-                mod.transform.parent = controllerRoot.gameObject.transform;
-                _collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
-                _collider.sphere = Value;
+                _collider = Utility.AddMod<PQSMod_QuadMeshColliders>(Value, 100);
                 _collider.maxLevelOffset = 0;
-                _collider.requirements = PQS.ModiferRequirements.Default;
-                _collider.modEnabled = true;
-                _collider.order = 100;
-                // ReSharper restore Unity.InefficientPropertyAccess
+
+                // Create the material direction
+                Utility.AddMod<PQSMod_MaterialSetDirection>(Value, 100).valueName = "_sunLightDirection";
+
+                // Create the UV planet relative position
+                Utility.AddMod<PQSMod_UVPlanetRelativePosition>(Value, 999999);
             }
 
             // Assigning the new PQS
@@ -394,9 +448,19 @@ namespace Kopernicus.Configuration
             generatedBody.celestialBody.pqsController = generatedBody.pqsVersion;
 
             // Add an OnDemand Handler
-            if (Value.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
+            if (!Utility.HasMod<PQSMod_OnDemandHandler>(Value))
             {
-                OnDemandStorage.AddHandler(Value);
+                Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
+            }
+
+            // Add fixes for LandControl and TextureAtlas
+            if (!Utility.HasMod<PQSLandControlFixer>(Value))
+            {
+                Utility.AddMod<PQSLandControlFixer>(Value, 0);
+            }
+            if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
+            {
+                Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
             }
 
             // hacky hack
@@ -404,7 +468,7 @@ namespace Kopernicus.Configuration
             {
                 PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
                 GameObject scTree = kerbinTemplate.pqsVersion.gameObject.GetChild("KSC");
-                GameObject newScTree = UnityEngine.Object.Instantiate(scTree, Value.transform, true);
+                GameObject newScTree = Object.Instantiate(scTree, Value.transform, true);
                 newScTree.transform.localPosition = scTree.transform.localPosition;
                 newScTree.transform.localScale = scTree.transform.localScale;
                 newScTree.transform.localRotation = scTree.transform.localRotation;
@@ -412,20 +476,21 @@ namespace Kopernicus.Configuration
             }
 
             // Load existing mods
-            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
+            PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            for (Int32 i = 0; i < mods.Length; i++)
             {
-                Type modType = mod.GetType();
+                Type modType = mods[i].GetType();
                 Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-                foreach (Type loaderType in Parser.ModTypes)
+
+                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                 {
-                    if (!modLoaderType.IsAssignableFrom(loaderType))
+                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
                     {
                         continue;
                     }
 
-                    // We found our loader type
-                    IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                    loader.Create(mod, Value);
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                    loader.Create(mods[i], Value);
                     Mods.Add(loader);
                 }
             }
@@ -449,45 +514,8 @@ namespace Kopernicus.Configuration
                 Value = body.pqsController;
 
                 // Get the required PQS information
-                _transform = Value.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
-                    .FirstOrDefault(mod => mod.transform.parent == Value.transform);
-                _collider = Value.GetComponentsInChildren<PQSMod_QuadMeshColliders>(true)
-                    .FirstOrDefault(mod => mod.transform.parent == Value.transform);
-
-                // Clone the surface material of the PQS
-                if (MaterialType == SurfaceMaterialType.AtmosphericOptimized)
-                {
-                    SurfaceMaterial = new PQSMainOptimisedLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericMain)
-                {
-                    SurfaceMaterial = new PQSMainShaderLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericBasic)
-                {
-                    SurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.Vacuum)
-                {
-                    SurfaceMaterial = new PQSProjectionSurfaceQuadLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericExtra)
-                {
-                    SurfaceMaterial = new PQSMainExtrasLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericOptimizedFastBlend)
-                {
-                    SurfaceMaterial = new PQSMainOptimisedFastBlendLoader(SurfaceMaterial);
-                }
-                else if (MaterialType == SurfaceMaterialType.AtmosphericTriplanarZoomRotation)
-                {
-                    SurfaceMaterial = new PQSTriplanarZoomRotationLoader(SurfaceMaterial);
-                }
-
-                SurfaceMaterial.name = Guid.NewGuid().ToString();
-
-                // Clone the fallback material of the PQS
-                FallbackMaterial = new PQSProjectionFallbackLoader(FallbackMaterial) {name = Guid.NewGuid().ToString()};
+                _transform = Utility.GetMod<PQSMod_CelestialBodyTransform>(Value);
+                _collider = Utility.GetMod<PQSMod_QuadMeshColliders>(Value);
             }
             else
             {
@@ -496,22 +524,14 @@ namespace Kopernicus.Configuration
                 controllerRoot.transform.parent = body.transform;
                 Value = controllerRoot.AddComponent<PQS>();
 
-                // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
-                // And I (Thomas) am at this time just too lazy to do it differently...
                 PSystemBody laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
                 Utility.CopyObjectFields(laythe.pqsVersion, Value);
-                Value.surfaceMaterial = laythe.pqsVersion.surfaceMaterial;
 
                 // Create the fallback material (always the same shader)
                 FallbackMaterial = new PQSProjectionFallbackLoader();
-                Value.fallbackMaterial = FallbackMaterial;
-                FallbackMaterial.name = Guid.NewGuid().ToString();
 
                 // Create the celestial body transform
-                GameObject mod = new GameObject("_CelestialBody");
-                mod.transform.parent = controllerRoot.transform;
-                _transform = mod.AddComponent<PQSMod_CelestialBodyTransform>();
-                _transform.sphere = Value;
+                _transform = Utility.AddMod<PQSMod_CelestialBodyTransform>(Value, 10);
                 _transform.forceActivate = false;
                 _transform.deactivateAltitude = 115000;
                 _transform.forceRebuildOnTargetChange = false;
@@ -525,40 +545,16 @@ namespace Kopernicus.Configuration
                     secondaryRenderers = new List<GameObject>()
                 };
                 _transform.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[0];
-                _transform.requirements = PQS.ModiferRequirements.Default;
-                _transform.modEnabled = true;
-                _transform.order = 10;
-
-                // Create the material direction
-                // ReSharper disable Unity.InefficientPropertyAccess
-                mod = new GameObject("_Material_SunLight");
-                mod.transform.parent = controllerRoot.gameObject.transform;
-                PQSMod_MaterialSetDirection lightDirection = mod.AddComponent<PQSMod_MaterialSetDirection>();
-                lightDirection.sphere = Value;
-                lightDirection.valueName = "_sunLightDirection";
-                lightDirection.requirements = PQS.ModiferRequirements.Default;
-                lightDirection.modEnabled = true;
-                lightDirection.order = 100;
-
-                // Create the UV planet relative position
-                mod = new GameObject("_Material_SurfaceQuads");
-                mod.transform.parent = controllerRoot.transform;
-                PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                uvs.sphere = Value;
-                uvs.requirements = PQS.ModiferRequirements.Default;
-                uvs.modEnabled = true;
-                uvs.order = 999999;
 
                 // Crete the quad mesh colliders
-                mod = new GameObject("QuadMeshColliders");
-                mod.transform.parent = controllerRoot.gameObject.transform;
-                _collider = mod.AddComponent<PQSMod_QuadMeshColliders>();
-                _collider.sphere = Value;
+                _collider = Utility.AddMod<PQSMod_QuadMeshColliders>(Value, 100);
                 _collider.maxLevelOffset = 0;
-                _collider.requirements = PQS.ModiferRequirements.Default;
-                _collider.modEnabled = true;
-                _collider.order = 100;
-                // ReSharper restore Unity.InefficientPropertyAccess
+
+                // Create the material direction
+                Utility.AddMod<PQSMod_MaterialSetDirection>(Value, 100).valueName = "_sunLightDirection";
+
+                // Create the UV planet relative position
+                Utility.AddMod<PQSMod_UVPlanetRelativePosition>(Value, 999999);
             }
 
             // Assigning the new PQS
@@ -570,28 +566,38 @@ namespace Kopernicus.Configuration
             body.pqsController.radius = body.Radius;
 
             // Add an OnDemand Handler
-            if (Value.GetComponentsInChildren<PQSMod_OnDemandHandler>(true).Length == 0)
+            if (!Utility.HasMod<PQSMod_OnDemandHandler>(Value))
             {
-                OnDemandStorage.AddHandler(Value);
+                Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
+            }
+
+            // Add fixes for LandControl and TextureAtlas
+            if (!Utility.HasMod<PQSLandControlFixer>(Value))
+            {
+                Utility.AddMod<PQSLandControlFixer>(Value, 0);
+            }
+
+            if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
+            {
+                Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
             }
 
             // Load existing mods
-            // Unlike the above, this checks for the sphere reference because at runtime the ocean is a child of the
-            // normal PQS, and we would be getting references to ocean mods without it.
-            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == Value))
+            PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            for (Int32 i = 0; i < mods.Length; i++)
             {
-                Type modType = mod.GetType();
+                Type modType = mods[i].GetType();
                 Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-                foreach (Type loaderType in Parser.ModTypes)
+
+                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                 {
-                    if (!modLoaderType.IsAssignableFrom(loaderType))
+                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
                     {
                         continue;
                     }
 
-                    // We found our loader type
-                    IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                    loader.Create(mod, Value);
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                    loader.Create(mods[i], Value);
                     Mods.Add(loader);
                 }
             }

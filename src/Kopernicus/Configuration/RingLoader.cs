@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Kopernicus.Components;
@@ -67,21 +68,21 @@ namespace Kopernicus.Configuration
         }
 
         // Inner Radius multiplier of the ring
-        [ParserTarget("InnerRadiusMultiplier")]
+        [ParserTargetCollection("InnerRadiusMultiplier", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("A curve that defines a multiplier for the inner radius, using an angle (degree).")]
-        public FloatCurveParser InnerRadiusMultiplier
+        public List<NumericCollectionParser<Single>> InnerRadiusMultiplier
         {
-            get { return Value.innerMultCurve; }
-            set { Value.innerMultCurve = value; }
+            get { return Utility.FloatCurveToList(Value.innerMultCurve); }
+            set { Value.innerMultCurve = Utility.ListToFloatCurve(value); }
         }
 
         // Outer Radius multiplier of the ring
-        [ParserTarget("OuterRadiusMultiplier")]
+        [ParserTargetCollection("OuterRadiusMultiplier", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription("A curve that defines a multiplier for the outer radius, using an angle (degree).")]
-        public FloatCurveParser OuterRadiusMultiplier
+        public List<NumericCollectionParser<Single>> OuterRadiusMultiplier
         {
-            get { return Value.outerMultCurve; }
-            set { Value.outerMultCurve = value; }
+            get { return Utility.FloatCurveToList(Value.outerMultCurve); }
+            set { Value.outerMultCurve = Utility.ListToFloatCurve(value); }
         }
 
         /// <summary>

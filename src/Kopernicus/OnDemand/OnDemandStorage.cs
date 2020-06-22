@@ -43,10 +43,6 @@ namespace Kopernicus.OnDemand
         private static readonly Dictionary<String, List<ILoadOnDemand>> Maps =
             new Dictionary<String, List<ILoadOnDemand>>();
 
-        [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-        private static readonly Dictionary<PQS, PQSMod_OnDemandHandler> Handlers =
-            new Dictionary<PQS, PQSMod_OnDemandHandler>();
-
         // Whole file buffer management
         private static Byte[] _wholeFileBuffer;
         private static Int32 _sizeWholeFile;
@@ -60,17 +56,6 @@ namespace Kopernicus.OnDemand
         public static Int32 OnDemandUnloadDelay = 10;
 
         public static Boolean UseManualMemoryManagement = true;
-
-        // Add the management handler to the PQS
-        public static void AddHandler(PQS pqsVersion)
-        {
-            PQSMod_OnDemandHandler handler = new GameObject("OnDemandHandler").AddComponent<PQSMod_OnDemandHandler>();
-            handler.transform.parent = pqsVersion.transform;
-            Object.DontDestroyOnLoad(handler);
-            handler.sphere = pqsVersion;
-            handler.order = 1;
-            Handlers[pqsVersion] = handler;
-        }
 
         // Add a map to the map-list
         public static void AddMap(String body, ILoadOnDemand map)
@@ -399,6 +384,7 @@ namespace Kopernicus.OnDemand
             if (File.Exists(path))
             {
                 Boolean uncaught = true;
+                Boolean error = false;
                 try
                 {
                     if (path.ToLower().EndsWith(".dds"))
@@ -418,11 +404,11 @@ namespace Kopernicus.OnDemand
                                 new DDSHeaderDX10(binaryReader);
                             }
 
-                            Boolean alpha = (ddsHeader.dwFlags & 0x00000002) != 0;
-                            Boolean fourcc = (ddsHeader.dwFlags & 0x00000004) != 0;
-                            Boolean rgb = (ddsHeader.dwFlags & 0x00000040) != 0;
-                            Boolean alphapixel = (ddsHeader.dwFlags & 0x00000001) != 0;
-                            Boolean luminance = (ddsHeader.dwFlags & 0x00020000) != 0;
+                            Boolean alpha = (ddsHeader.ddspf.dwFlags & 0x00000002) != 0;
+                            Boolean fourcc = (ddsHeader.ddspf.dwFlags & 0x00000004) != 0;
+                            Boolean rgb = (ddsHeader.ddspf.dwFlags & 0x00000040) != 0;
+                            Boolean alphapixel = (ddsHeader.ddspf.dwFlags & 0x00000001) != 0;
+                            Boolean luminance = (ddsHeader.ddspf.dwFlags & 0x00020000) != 0;
                             Boolean rgb888 = ddsHeader.ddspf.dwRBitMask == 0x000000ff &&
                                              ddsHeader.ddspf.dwGBitMask == 0x0000ff00 &&
                                              ddsHeader.ddspf.dwBBitMask == 0x00ff0000;
@@ -476,6 +462,53 @@ namespace Kopernicus.OnDemand
                                 {
                                     Debug.Log("[Kopernicus]: Magic dds not supported: " + path);
                                 }
+                                else
+                                {
+                                    fourcc = false;
+                                }
+                            }
+
+                            if (!fourcc)
+                            {
+                                TextureFormat textureFormat = TextureFormat.ARGB32;
+                                Boolean ok = true;
+                                if (rgb && rgb888)
+                                {
+                                    // RGB or RGBA format
+                                    textureFormat = alphapixel
+                                        ? TextureFormat.RGBA32
+                                        : TextureFormat.RGB24;
+                                }
+                                else if (rgb && rgb565)
+                                {
+                                    // Nvidia texconv B5G6R5_UNORM
+                                    textureFormat = TextureFormat.RGB565;
+                                }
+                                else if (rgb && alphapixel && argb4444)
+                                {
+                                    // Nvidia texconv B4G4R4A4_UNORM
+                                    textureFormat = TextureFormat.ARGB4444;
+                                }
+                                else if (rgb && alphapixel && rbga4444)
+                                {
+                                    textureFormat = TextureFormat.RGBA4444;
+                                }
+                                else if (!rgb && alpha != luminance && (ddsHeader.ddspf.dwRGBBitCount == 8 || ddsHeader.ddspf.dwRGBBitCount == 16))
+                                {
+                                    if (ddsHeader.ddspf.dwRGBBitCount == 8)
+                                    {
+                                        // A8 format or Luminance 8
+                                        if (alpha)
+                                            textureFormat = TextureFormat.Alpha8;
+                                        else
+                                            textureFormat = TextureFormat.R8;
+                                    }
+                                    else if (ddsHeader.ddspf.dwRGBBitCount == 16)
+                                    {
+                                        // R16 format
+                                        textureFormat = TextureFormat.R16;
+                                    }
+                                }
                                 else if (ddsHeader.ddspf.dwRGBBitCount == 4 || ddsHeader.ddspf.dwRGBBitCount == 8)
                                 {
                                     try
@@ -511,58 +544,30 @@ namespace Kopernicus.OnDemand
 
                                             map = new Texture2D(width, height, TextureFormat.ARGB32, false);
                                             map.SetPixels(image);
+
+                                            // We loaded the texture manually
+                                            ok = false;
                                         }
                                         else
                                         {
-                                            fourcc = false;
+                                            error = true;
                                         }
                                     }
                                     catch
                                     {
-                                        fourcc = false;
+                                        error = true;
                                     }
                                 }
                                 else
                                 {
-                                    fourcc = false;
-                                }
-                            }
-
-                            if (!fourcc)
-                            {
-                                TextureFormat textureFormat = TextureFormat.ARGB32;
-                                Boolean ok = true;
-                                if (rgb && rgb888)
-                                {
-                                    // RGB or RGBA format
-                                    textureFormat = alphapixel
-                                        ? TextureFormat.RGBA32
-                                        : TextureFormat.RGB24;
-                                }
-                                else if (rgb && rgb565)
-                                {
-                                    // Nvidia texconv B5G6R5_UNORM
-                                    textureFormat = TextureFormat.RGB565;
-                                }
-                                else if (rgb && alphapixel && argb4444)
-                                {
-                                    // Nvidia texconv B4G4R4A4_UNORM
-                                    textureFormat = TextureFormat.ARGB4444;
-                                }
-                                else if (rgb && alphapixel && rbga4444)
-                                {
-                                    textureFormat = TextureFormat.RGBA4444;
-                                }
-                                else if (!rgb && alpha != luminance)
-                                {
-                                    // A8 format or Luminance 8
-                                    textureFormat = TextureFormat.Alpha8;
-                                }
-                                else
-                                {
                                     ok = false;
+                                    error = true;
+                                }
+
+                                if (error)
+                                {
                                     Debug.Log(
-                                        "[Kopernicus]: Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
+                                        "[Kopernicus]: Only DXT1, DXT5, A8, R8, R16, RGB24, RGBA32, RGB565, ARGB4444, RGBA4444, 4bpp palette and 8bpp palette are supported");
                                 }
 
                                 if (ok)

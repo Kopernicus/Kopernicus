@@ -233,19 +233,11 @@ namespace Kopernicus.Configuration.Parsing
                         return;
                     }
 
-                    String mapName = s;
-                    mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                    Int32 lastDot = mapName.LastIndexOf('.');
-                    if (lastDot > 0)
-                    {
-                        mapName = mapName.Substring(0, lastDot);
-                    }
                     if (typeof(T) == typeof(CBAttributeMapSO))
                     {
                         CBAttributeMapSODemand cbMap = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
                         cbMap.Path = s;
                         cbMap.Depth = MapSO.MapDepth.Greyscale;
-                        cbMap.name = mapName + " (CBG) for " + generatedBody.name;
                         cbMap.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
                         OnDemandStorage.AddMap(generatedBody.name, cbMap);
                         Value = cbMap as T;
@@ -255,7 +247,6 @@ namespace Kopernicus.Configuration.Parsing
                         MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                         map.Path = s;
                         map.Depth = MapSO.MapDepth.Greyscale;
-                        map.name = mapName + " (G) for " + generatedBody.name;
                         map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
                         OnDemandStorage.AddMap(generatedBody.name, map);
                         Value = map as T;
@@ -274,6 +265,11 @@ namespace Kopernicus.Configuration.Parsing
                     Value.CreateMap(MapSO.MapDepth.Greyscale, map);
                     Object.DestroyImmediate(map);
                 }
+            }
+
+            if (Value != null)
+            {
+                Value.name = s;
             }
         }
 
@@ -364,20 +360,11 @@ namespace Kopernicus.Configuration.Parsing
                     {
                         return;
                     }
-
-                    String mapName = s;
-                    mapName = mapName.Substring(s.LastIndexOf('/') + 1);
-                    Int32 lastDot = mapName.LastIndexOf('.');
-                    if (lastDot > 0)
-                    {
-                        mapName = mapName.Substring(0, lastDot);
-                    }
                     if (typeof(T) == typeof(CBAttributeMapSO))
                     {
                         CBAttributeMapSODemand cbMap = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
                         cbMap.Path = s;
                         cbMap.Depth = MapSO.MapDepth.RGB;
-                        cbMap.name = mapName + " (CBG) for " + generatedBody.name;
                         cbMap.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
                         OnDemandStorage.AddMap(generatedBody.name, cbMap);
                         Value = cbMap as T;
@@ -387,7 +374,6 @@ namespace Kopernicus.Configuration.Parsing
                         MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                         map.Path = s;
                         map.Depth = MapSO.MapDepth.RGB;
-                        map.name = mapName + " (G) for " + generatedBody.name;
                         map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
                         OnDemandStorage.AddMap(generatedBody.name, map);
                         Value = map as T;
@@ -407,6 +393,11 @@ namespace Kopernicus.Configuration.Parsing
                     Value.CreateMap(MapSO.MapDepth.RGB, map);
                     Object.DestroyImmediate(map);
                 }
+            }
+
+            if (Value != null)
+            {
+                Value.name = s;
             }
         }
 

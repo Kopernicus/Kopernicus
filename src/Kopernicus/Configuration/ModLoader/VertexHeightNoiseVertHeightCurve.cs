@@ -25,6 +25,7 @@
 
 using LibNoise;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -39,11 +40,11 @@ namespace Kopernicus.Configuration.ModLoader
     public class VertexHeightNoiseVertHeightCurve : ModLoader<PQSMod_VertexHeightNoiseVertHeightCurve>
     {
         // curve
-        [ParserTarget("curve")]
-        public FloatCurveParser Curve
+        [ParserTargetCollection("curve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> Curve
         {
-            get { return Mod.curve; }
-            set { Mod.curve = value; }
+            get { return Utility.AnimCurveToList(Mod.curve); }
+            set { Mod.curve = Utility.ListToAnimCurve(value); }
         }
 
         // Where the height starts
