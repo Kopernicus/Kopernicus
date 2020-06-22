@@ -30,6 +30,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.UI;
 using UnityEngine;
 using Gradient = Kopernicus.Configuration.Parsing.Gradient;
 
@@ -157,6 +158,7 @@ namespace Kopernicus.Configuration.MaterialLoader
         }
 
         [ParserTarget("Gradient")]
+        [KittopiaHideOption]
         public Gradient RimColorRampGradientSetter
         {
             set

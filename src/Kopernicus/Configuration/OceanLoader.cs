@@ -47,6 +47,7 @@ namespace Kopernicus.Configuration
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+    [SuppressMessage("ReSharper", "ForCanBeConvertedToForeach")]
     public class OceanLoader : BaseLoader, IParserEventSubscriber, ITypeParser<PQS>
     {
         /// <summary>
@@ -120,41 +121,76 @@ namespace Kopernicus.Configuration
             set { Value.maxQuadLenghtsPerFrame = value; }
         }
 
+        /// <summary>
+        /// A helper property that returns the surface material that Kopernicus will support and use.
+        /// </summary>
+        private Material BasicSurfaceMaterial
+        {
+            get { return Value.ultraQualitySurfaceMaterial; }
+            set
+            {
+                Value.ultraQualitySurfaceMaterial = value;
+                Value.highQualitySurfaceMaterial = value;
+                Value.mediumQualitySurfaceMaterial = value;
+                Value.lowQualitySurfaceMaterial = value;
+                Value.surfaceMaterial = value;
+            }
+        }
+
         // Surface Material of the PQS
         [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
         [KittopiaUntouchable]
         public Material SurfaceMaterial
         {
             get
             {
-                switch (GameSettings.TERRAIN_SHADER_QUALITY)
+                if (!(BasicSurfaceMaterial is PQSProjectionFallbackLoader))
                 {
-                    case 2 when Value.highQualitySurfaceMaterial != null:
-                        return Value.highQualitySurfaceMaterial;
-                    case 1 when Value.mediumQualitySurfaceMaterial != null:
-                        return Value.mediumQualitySurfaceMaterial;
-                    case 0 when Value.lowQualitySurfaceMaterial != null:
-                        return Value.lowQualitySurfaceMaterial;
-                    default:
-                        return Value.surfaceMaterial;
+                    BasicSurfaceMaterial = new PQSOceanSurfaceQuadLoader(BasicSurfaceMaterial);
                 }
+
+                return BasicSurfaceMaterial;
             }
             set
             {
-                Value.surfaceMaterial = value;
-                Value.lowQualitySurfaceMaterial = value;
-                Value.mediumQualitySurfaceMaterial = value;
-                Value.highQualitySurfaceMaterial = value;
+                if (value is PQSOceanSurfaceQuadLoader)
+                {
+                    BasicSurfaceMaterial = value;
+                }
+                else
+                {
+                    BasicSurfaceMaterial = new PQSOceanSurfaceQuadLoader(value);
+                }
             }
         }
 
         // Fallback Material of the PQS (its always the same material)
-        [ParserTarget("FallbackMaterial", AllowMerge = true)]
+        [ParserTarget("FallbackMaterial", AllowMerge = true, GetChild = false)]
+        [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
         [KittopiaUntouchable]
         public Material FallbackMaterial
         {
-            get { return Value.fallbackMaterial; }
-            set { Value.fallbackMaterial = value; }
+            get
+            {
+                if (!(Value.fallbackMaterial is PQSOceanSurfaceQuadFallbackLoader))
+                {
+                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(Value.fallbackMaterial);
+                }
+
+                return Value.fallbackMaterial;
+            }
+            set
+            {
+                if (value is PQSOceanSurfaceQuadFallbackLoader)
+                {
+                    Value.fallbackMaterial = value;
+                }
+                else
+                {
+                    Value.fallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(value);
+                }
+            }
         }
 
         // PQSMod loader
@@ -179,22 +215,10 @@ namespace Kopernicus.Configuration
                 throw new InvalidOperationException("Must be executed in Injector context.");
             }
 
-            if (generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
-            {
-                // Save the PQSVersion
-                Value = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true)
-                    .First(p => p.name.EndsWith("Ocean"));
+            Value = generatedBody.pqsVersion.GetComponentsInChildren<PQS>(true)
+                .FirstOrDefault(p => p.name.EndsWith("Ocean"));
 
-                // Get the required PQS information
-                SurfaceMaterial = new PQSOceanSurfaceQuadLoader(SurfaceMaterial) {name = Guid.NewGuid().ToString()};
-
-                // Clone the fallback material of the PQS
-                FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(FallbackMaterial)
-                {
-                    name = Guid.NewGuid().ToString()
-                };
-            }
-            else
+            if (!Value)
             {
                 // Create a new PQS
                 GameObject controllerRoot = new GameObject();
@@ -204,38 +228,25 @@ namespace Kopernicus.Configuration
                 // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
                 // And I (Thomas) am at this time just too lazy to do it differently...
                 PSystemBody laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
-                foreach (PQS oc in laythe.pqsVersion.GetComponentsInChildren<PQS>(true))
+                PQS[] oceans = laythe.pqsVersion.GetComponentsInChildren<PQS>(true);
+                for (Int32 i = 0; i < oceans.Length; i++)
                 {
-                    if (oc.name != "LaytheOcean")
+                    if (oceans[i].name != "LaytheOcean")
                     {
                         continue;
                     }
-                    
-                    // Copying Laythes Ocean-properties
-                    Utility.CopyObjectFields(oc, Value);
 
-                    // Load Surface material
-                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
+                    Utility.CopyObjectFields(oceans[i], Value);
 
-                    // Load Fallback-Material
-                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oc.fallbackMaterial);
+                    // Create the material (always the same shader)
+                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader();
+                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader();
+
                     break;
                 }
 
-                // Load our new Material into the PQS
-                SurfaceMaterial.name = Guid.NewGuid().ToString();
-
-                // Load fallback material into the PQS            
-                FallbackMaterial.name = Guid.NewGuid().ToString();
-
                 // Create the UV planet relative position
-                GameObject mod = new GameObject("_Material_SurfaceQuads");
-                mod.transform.parent = controllerRoot.transform;
-                PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                uvs.sphere = Value;
-                uvs.requirements = PQS.ModiferRequirements.Default;
-                uvs.modEnabled = true;
-                uvs.order = 999999;
+                Utility.AddMod<PQSMod_UVPlanetRelativePosition>(Value, 9999999);
             }
 
             // Assigning the new PQS
@@ -245,31 +256,32 @@ namespace Kopernicus.Configuration
             Value.gameObject.name = generatedBody.name + "Ocean";
             Value.radius = generatedBody.celestialBody.Radius;
             Value.parentSphere = generatedBody.pqsVersion;
+            MapOcean = true;
 
             // Add the ocean PQS to the secondary renders of the CelestialBody Transform
-            PQSMod_CelestialBodyTransform transform = generatedBody.pqsVersion
-                .GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
-                .FirstOrDefault(m => m.transform.parent == generatedBody.pqsVersion.transform);
+            PQSMod_CelestialBodyTransform transform =
+                Utility.GetMod<PQSMod_CelestialBodyTransform>(generatedBody.pqsVersion);
             if (transform != null)
             {
                 transform.planetFade.secondaryRenderers.Add(Value.gameObject);
             }
 
             // Load existing mods
-            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
+            PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            for (Int32 i = 0; i < mods.Length; i++)
             {
-                Type modType = mod.GetType();
+                Type modType = mods[i].GetType();
                 Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-                foreach (Type loaderType in Parser.ModTypes)
+
+                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                 {
-                    if (!modLoaderType.IsAssignableFrom(loaderType))
+                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
                     {
                         continue;
                     }
 
-                    // We found our loader type
-                    IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                    loader.Create(mod, Value);
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                    loader.Create(mods[i], Value);
                     Mods.Add(loader);
                 }
             }
@@ -287,21 +299,11 @@ namespace Kopernicus.Configuration
                 throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
             }
 
-            if (body.pqsController.GetComponentsInChildren<PQS>(true).Any(p => p.name.EndsWith("Ocean")))
-            {
-                // Save the PQSVersion
-                Value = body.pqsController.GetComponentsInChildren<PQS>(true).First(p => p.name.EndsWith("Ocean"));
 
-                // Get the required PQS information
-                SurfaceMaterial = new PQSOceanSurfaceQuadLoader(SurfaceMaterial) {name = Guid.NewGuid().ToString()};
+            Value = body.pqsController.GetComponentsInChildren<PQS>(true)
+                .FirstOrDefault(p => p.name.EndsWith("Ocean"));
 
-                // Clone the fallback material of the PQS
-                FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(FallbackMaterial)
-                {
-                    name = Guid.NewGuid().ToString()
-                };
-            }
-            else
+            if (!Value)
             {
                 // Create a new PQS
                 GameObject controllerRoot = new GameObject();
@@ -311,38 +313,25 @@ namespace Kopernicus.Configuration
                 // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
                 // And I (Thomas) am at this time just too lazy to do it differently...
                 PSystemBody laythe = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Laythe");
-                foreach (PQS oc in laythe.pqsVersion.GetComponentsInChildren<PQS>(true))
+                PQS[] oceans = laythe.pqsVersion.GetComponentsInChildren<PQS>(true);
+                for (Int32 i = 0; i < oceans.Length; i++)
                 {
-                    if (oc.name != "LaytheOcean")
+                    if (oceans[i].name != "LaytheOcean")
                     {
                         continue;
                     }
-                    
-                    // Copying Laythes Ocean-properties
-                    Utility.CopyObjectFields(oc, Value);
 
-                    // Load Surface material
-                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader(oc.surfaceMaterial);
+                    Utility.CopyObjectFields(oceans[i], Value);
 
-                    // Load Fallback-Material
-                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader(oc.fallbackMaterial);
+                    // Create the material (always the same shader)
+                    SurfaceMaterial = new PQSOceanSurfaceQuadLoader();
+                    FallbackMaterial = new PQSOceanSurfaceQuadFallbackLoader();
+
                     break;
                 }
 
-                // Load our new Material into the PQS
-                SurfaceMaterial.name = Guid.NewGuid().ToString();
-
-                // Load fallback material into the PQS            
-                FallbackMaterial.name = Guid.NewGuid().ToString();
-
                 // Create the UV planet relative position
-                GameObject mod = new GameObject("_Material_SurfaceQuads");
-                mod.transform.parent = controllerRoot.transform;
-                PQSMod_UVPlanetRelativePosition uvs = mod.AddComponent<PQSMod_UVPlanetRelativePosition>();
-                uvs.sphere = Value;
-                uvs.requirements = PQS.ModiferRequirements.Default;
-                uvs.modEnabled = true;
-                uvs.order = 999999;
+                Utility.AddMod<PQSMod_UVPlanetRelativePosition>(Value, 9999999);
             }
 
             // Assigning the new PQS
@@ -353,31 +342,32 @@ namespace Kopernicus.Configuration
             Value.gameObject.name = bodyTransform.name + "Ocean";
             Value.radius = body.Radius;
             Value.parentSphere = body.pqsController;
+            MapOcean = true;
 
             // Add the ocean PQS to the secondary renders of the CelestialBody Transform
-            PQSMod_CelestialBodyTransform transform = body.pqsController
-                .GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)
-                .FirstOrDefault(m => m.transform.parent == body.pqsController.transform);
+            PQSMod_CelestialBodyTransform transform =
+                Utility.GetMod<PQSMod_CelestialBodyTransform>(body.pqsController);
             if (transform != null)
             {
                 transform.planetFade.secondaryRenderers.Add(Value.gameObject);
             }
 
             // Load existing mods
-            foreach (PQSMod mod in Value.GetComponentsInChildren<PQSMod>(true))
+            PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            for (Int32 i = 0; i < mods.Length; i++)
             {
-                Type modType = mod.GetType();
+                Type modType = mods[i].GetType();
                 Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-                foreach (Type loaderType in Parser.ModTypes)
+
+                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                 {
-                    if (!modLoaderType.IsAssignableFrom(loaderType))
+                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
                     {
                         continue;
                     }
 
-                    // We found our loader type
-                    IModLoader loader = (IModLoader) Activator.CreateInstance(loaderType);
-                    loader.Create(mod, Value);
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                    loader.Create(mods[i], Value);
                     Mods.Add(loader);
                 }
             }
@@ -385,12 +375,16 @@ namespace Kopernicus.Configuration
             Fog = new FogLoader(body);
         }
 
+        [KittopiaDestructor]
+        public void Destroy()
+        {
+            MapOcean = false;
+            Object.Destroy(Value.gameObject);
+        }
+
         // Apply Event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            // Make assumptions
-            MapOcean = true;
-
             // Share the current PQS
             Parser.SetState("Kopernicus:pqsVersion", () => Value);
 

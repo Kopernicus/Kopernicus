@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.Components;
 using Kopernicus.ConfigParser.Attributes;
@@ -178,13 +179,13 @@ namespace Kopernicus.Configuration
         }
 
         // brightnessCurve
-        [ParserTarget("brightnessCurve")]
+        [ParserTargetCollection("brightnessCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription(
             "Associates a distance value with a multiplier for the brightness of the LensFlare effect.")]
-        public FloatCurveParser BrightnessCurve
+        public List<NumericCollectionParser<Single>> BrightnessCurve
         {
-            get { return Value.brightnessCurve; }
-            set { Value.brightnessCurve = value; }
+            get { return Utility.FloatCurveToList(Value.brightnessCurve); }
+            set { Value.brightnessCurve = Utility.ListToFloatCurve(value); }
         }
 
         // sunAU
@@ -215,33 +216,33 @@ namespace Kopernicus.Configuration
         }
 
         // intensityCurve
-        [ParserTarget("IntensityCurve")]
+        [ParserTargetCollection("IntensityCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription(
             "Associates a distance value (in meters) with a value that describes the intensity of the LocalSpace starlight at that point.")]
-        public FloatCurveParser IntensityCurve
+        public List<NumericCollectionParser<Single>> IntensityCurve
         {
-            get { return Value.intensityCurve; }
-            set { Value.intensityCurve = value; }
+            get { return Utility.FloatCurveToList(Value.intensityCurve); }
+            set { Value.intensityCurve = Utility.ListToFloatCurve(value); }
         }
 
         // scaledIntensityCurve
-        [ParserTarget("ScaledIntensityCurve")]
+        [ParserTargetCollection("ScaledIntensityCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription(
             "Associates a distance value (in meters / 6000) with a value that describes the intensity of the ScaledSpace starlight at that point.")]
-        public FloatCurveParser ScaledIntensityCurve
+        public List<NumericCollectionParser<Single>> ScaledIntensityCurve
         {
-            get { return Value.scaledIntensityCurve; }
-            set { Value.scaledIntensityCurve = value; }
+            get { return Utility.FloatCurveToList(Value.scaledIntensityCurve); }
+            set { Value.scaledIntensityCurve = Utility.ListToFloatCurve(value); }
         }
 
         // intensityCurve
-        [ParserTarget("IVAIntensityCurve")]
+        [ParserTargetCollection("IVAIntensityCurve", Key = "key", NameSignificance = NameSignificance.Key)]
         [KittopiaDescription(
             "Associates a distance value (in meters) with a value that describes the intensity of the IVA starlight at that point.")]
-        public FloatCurveParser IvaIntensityCurve
+        public List<NumericCollectionParser<Single>> IvaIntensityCurve
         {
-            get { return Value.ivaIntensityCurve; }
-            set { Value.ivaIntensityCurve = value; }
+            get { return Utility.FloatCurveToList(Value.ivaIntensityCurve); }
+            set { Value.ivaIntensityCurve = Utility.ListToFloatCurve(value); }
         }
 
         // Parser apply event

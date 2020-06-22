@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\Assembly-CSharp.1.8.1\lib\net40\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\packages\Assembly-CSharp.1.9.1\lib\net40\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ModularFlightIntegrator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -41,27 +41,27 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.AssetBundleModule.1.8.1\lib\net40\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.AssetBundleModule.1.9.1\lib\net40\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">	
-      <HintPath>..\..\packages\UnityEngine.CoreModule.1.8.1\lib\net40\UnityEngine.CoreModule.dll</HintPath>	
-      <Private>False</Private>	
+      <HintPath>..\..\packages\UnityEngine.CoreModule.1.9.1\lib\net40\UnityEngine.CoreModule.dll</HintPath>	
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.ImageConversionModule.1.8.1\lib\net40\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.ImageConversionModule.1.9.1\lib\net40\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.PhysicsModule.1.8.1\lib\net40\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.PhysicsModule.1.9.1\lib\net40\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.UI.1.8.1\lib\net40\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.UI.1.9.1\lib\net40\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\packages\UnityEngine.UnityWebRequestWWWModule.1.8.1\lib\net40\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>..\..\packages\UnityEngine.UnityWebRequestWWWModule.1.9.1\lib\net40\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -82,11 +82,14 @@
     <Compile Include="Components\MaterialWrapper\AtmosphereFromGround.cs" />
     <Compile Include="Components\MaterialWrapper\DiffuseWrap.cs" />
     <Compile Include="Components\MaterialWrapper\EmissiveMultiRampSunspots.cs" />
+    <Compile Include="Components\MaterialWrapper\KSPBumpedSpecular.cs" />
+    <Compile Include="Components\MaterialWrapper\KSPBumped.cs" />
     <Compile Include="Components\MaterialWrapper\NormalBumped.cs" />
     <Compile Include="Components\MaterialWrapper\NormalDiffuse.cs" />
     <Compile Include="Components\MaterialWrapper\NormalDiffuseDetail.cs" />
     <Compile Include="Components\MaterialWrapper\ParticleAddSmooth.cs" />
     <Compile Include="Components\MaterialWrapper\PQSMainExtras.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSMainFastBlend.cs" />
     <Compile Include="Components\MaterialWrapper\PQSMainOptimised.cs" />
     <Compile Include="Components\MaterialWrapper\PQSMainOptimisedFastBlend.cs" />
     <Compile Include="Components\MaterialWrapper\PQSMainShader.cs" />
@@ -96,10 +99,13 @@
     <Compile Include="Components\MaterialWrapper\PQSProjectionFallback.cs" />
     <Compile Include="Components\MaterialWrapper\PQSProjectionSurfaceQuad.cs" />
     <Compile Include="Components\MaterialWrapper\PQSTriplanarZoomRotation.cs" />
+    <Compile Include="Components\MaterialWrapper\PQSTriplanarZoomRotationTextureArray.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimAerial.cs" />
+    <Compile Include="Components\MaterialWrapper\ScaledPlanetRimAerialStandard.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetRimLight.cs" />
     <Compile Include="Components\MaterialWrapper\ScaledPlanetSimple.cs" />
     <Compile Include="Components\MaterialWrapper\Standard.cs" />
+    <Compile Include="Components\MaterialWrapper\StandardSpecular.cs" />
     <Compile Include="Components\ModularComponentSystem\IComponent.cs" />
     <Compile Include="Components\ModularComponentSystem\IComponentSystem.cs" />
     <Compile Include="Components\ModularScatter\HeatEmitter.cs" />
@@ -113,6 +119,7 @@
     <Compile Include="Components\OrbitRendererUpdater.cs" />
     <Compile Include="Components\PlanetaryParticle.cs" />
     <Compile Include="Components\PQSLandControlFixer.cs" />
+    <Compile Include="Components\PQSMod_TextureAtlasFixer.cs" />
     <Compile Include="Components\Ring.cs" />
     <Compile Include="Components\Serialization\SerializableMonoBehaviour.cs" />
     <Compile Include="Components\Serialization\SerializableObject.cs" />
@@ -130,28 +137,37 @@
     <Compile Include="Configuration\DebugLoader.cs" />
     <Compile Include="Configuration\Enumerations\KopernicusNoiseQuality.cs" />
     <Compile Include="Configuration\Enumerations\KopernicusNoiseType.cs" />
+    <Compile Include="Configuration\Enumerations\ScaledMaterialType.cs" />
+    <Compile Include="Configuration\Enumerations\ScatterMaterialType.cs" />
+    <Compile Include="Configuration\Enumerations\SurfaceMaterialType.cs" />
     <Compile Include="Configuration\HazardousBodyLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AerialTransCutoutLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\AlphaTestDiffuseLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\DiffuseWrapLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\KSPBumpedLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\KSPBumpedSpecularLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalBumpedLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseDetailLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\NormalDiffuseLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainExtrasLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSMainFastBlendLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainOptimisedFastBlendLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSTriplanarZoomRotationLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\PQSTriplanarZoomRotationTextureArrayLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimAerialStandardLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetRimLightLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\StandardLoader.cs" />
+    <Compile Include="Configuration\MaterialLoader\StandardSpecularLoader.cs" />
     <Compile Include="Configuration\ModLoader\City2.cs" />
     <Compile Include="Configuration\ModLoader\City.cs" />
     <Compile Include="Configuration\ModLoader\IModLoader.cs" />
-    <Compile Include="Configuration\ModLoader\MeshScatter.cs" />
     <Compile Include="Configuration\ModLoader\LandControl.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitudeDouble.cs" />
     <Compile Include="Configuration\ModLoader\MaterialFadeAltitude.cs" />
     <Compile Include="Configuration\ModLoader\MaterialQuadRelative.cs" />
     <Compile Include="Configuration\ModLoader\SmoothLatitudeRange.cs" />
     <Compile Include="Configuration\ModLoader\TangentTextureRanges.cs" />
+    <Compile Include="Configuration\ModLoader\TextureAtlas.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMapBlend.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorNoise.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorNoiseRGB.cs" />
@@ -264,6 +280,7 @@
     <Compile Include="RuntimeUtility\DiscoverableObjects.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
     <Compile Include="RuntimeUtility\MainMenuFixer.cs" />
+    <Compile Include="RuntimeUtility\TerrainQualitySetter.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Templates.cs" />
     <Compile Include="Configuration\Loader.cs" />
@@ -280,7 +297,6 @@
     <Compile Include="Configuration\MaterialLoader\ScaledPlanetSimpleLoader.cs" />
     <Compile Include="Configuration\AtmosphereLoader.cs" />
     <Compile Include="Configuration\PQSLoader.cs" />
-    <Compile Include="Configuration\Enumerations\BodyType.cs" />
     <Compile Include="Configuration\MaterialLoader\EmissiveMultiRampSunspotsLoader.cs" />
     <Compile Include="Configuration\CoronaLoader.cs" />
     <Compile Include="Configuration\Parsing\Gradient.cs" />

@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
@@ -55,11 +56,11 @@ namespace Kopernicus.Configuration.ModLoader
         }
 
         // Deformity multiplier curve
-        [ParserTarget("inputHeightCurve")]
-        public FloatCurveParser InputHeightCurve
+        [ParserTargetCollection("inputHeightCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        public List<NumericCollectionParser<Single>> InputHeightCurve
         {
-            get { return Mod.inputHeightCurve; }
-            set { Mod.inputHeightCurve = value; }
+            get { return Utility.AnimCurveToList(Mod.inputHeightCurve); }
+            set { Mod.inputHeightCurve = Utility.ListToAnimCurve(value); }
         }
 
         // Ending height

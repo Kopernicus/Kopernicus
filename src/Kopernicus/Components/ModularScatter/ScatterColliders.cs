@@ -90,8 +90,9 @@ namespace Kopernicus.Components.ModularScatter
                 return;
             }
 
-            foreach (GameObject scatter in system.scatterObjects)
+            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
             {
+                GameObject scatter = system.scatterObjects[i];
                 MeshCollider collider = scatter.GetComponent<MeshCollider>();
                 if (collider)
                 {

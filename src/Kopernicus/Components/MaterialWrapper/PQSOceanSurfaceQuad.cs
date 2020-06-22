@@ -179,6 +179,11 @@ namespace Kopernicus.Components.MaterialWrapper
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static Boolean UsesSameShader(Material m)
         {
+            if (m == null)
+            {
+                return false;
+            }
+
             return m.shader.name == Properties.Shader.name;
         }
 
@@ -369,7 +374,16 @@ namespace Kopernicus.Components.MaterialWrapper
         public Texture2D FogColorRamp
         {
             get { return GetTexture(Properties.Instance.FogColorRampId) as Texture2D; }
-            set { SetTexture(Properties.Instance.FogColorRampId, value); }
+            set
+            {
+                if (value)
+                {
+                    value.wrapMode = TextureWrapMode.Clamp;
+                    value.mipMapBias = 0.0f;
+                }
+
+                SetTexture(Properties.Instance.FogColorRampId, value);
+            }
         }
 
         public Vector2 FogColorRampScale

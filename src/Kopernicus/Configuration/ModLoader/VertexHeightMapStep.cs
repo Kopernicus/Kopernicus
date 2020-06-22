@@ -41,7 +41,7 @@ namespace Kopernicus.Configuration.ModLoader
         public Texture2DParser HeightMap
         {
             get { return Mod.heightMap; }
-            set { Mod.heightMap = value; }
+            set { Mod.heightMap = Utility.CreateReadable(value); }
         }
 
         // Height map offset
