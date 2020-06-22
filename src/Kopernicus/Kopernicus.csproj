@@ -45,7 +45,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">	
-      <HintPath>..\..\packages\UnityEngine.CoreModule.1.8.1\lib\net40\UnityEngine.CoreModule.dll</HintPath>	
+      <HintPath>..\..\packages\UnityEngine.CoreModule.1.9.1\lib\net40\UnityEngine.CoreModule.dll</HintPath>	
       <Private>False</Private>	
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
