@@ -59,7 +59,7 @@ namespace Kopernicus.RuntimeUtility
             if (FlightGlobals.ActiveVessel)
             {
                 // Radiators
-                foreach (ModuleDeployableRadiator rad in FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleDeployableRadiator>())
+                foreach (ModuleDeployableRadiator rad in FlightGlobals.VesselsLoaded.SelectMany(v => v.FindPartModulesImplementing<ModuleDeployableRadiator>()))
                 {
                     rad.trackingBody = CelestialBody;
                     rad.trackingTransformLocal = CelestialBody.transform;
@@ -73,7 +73,7 @@ namespace Kopernicus.RuntimeUtility
 
             // Apply Ambient Light
             KopernicusStar.Current.shifter.ApplyAmbient();
-            PhysicsGlobals.RadiationFactor = KopernicusStar.Current.shifter.radiationFactor;
+            KopernicusStar.Current.shifter.ApplyPhysics();
 
             // Apply Sky
             GalaxyCubeControl.Instance.sunRef = KopernicusStar.Current;
