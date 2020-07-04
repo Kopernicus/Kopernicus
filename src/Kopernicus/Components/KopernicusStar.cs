@@ -281,7 +281,7 @@ namespace Kopernicus.Components
             Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
 
             // Get Thermal Stats
-            if (vessel.mainBody.atmosphere && !vessel.mainBody.isStar)
+            if (vessel.mainBody.atmosphere)
             {
                 if (sun == GetBodyReferencing(vessel.mainBody))
                 {
