@@ -82,6 +82,7 @@ namespace Kopernicus
                                 Versioning.Revision;
             Debug.Log("[Kopernicus] Running Kopernicus " + kopernicusVersion + " on KSP " + kspVersion);
 
+
             // Wrap this in a try - catch block so we can display a warning if Kopernicus fails to load for some reason
             try
             {
@@ -89,6 +90,8 @@ namespace Kopernicus
                 IsInPrefab = true;
                 Logger.Default.SetAsActive();
                 Logger.Default.Log("Injector.Awake(): Begin");
+
+                //Utility.DumpBuiltinTextures();
 
                 // Parser Config
                 ParserOptions.Register("Kopernicus",
