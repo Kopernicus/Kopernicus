@@ -102,16 +102,6 @@ namespace Kopernicus
             Logger.Active.Log("--------------------------------------");
         }
 
-        public static void DumpBuiltinTextures() 
-        {
-            Logger.Active.Log("Dumping built-in textures...");
-            Texture2D[] textures = Resources.FindObjectsOfTypeAll<Texture2D>();
-            for (Int32 i = 0;  i < textures.Length; i++) 
-            {
-                Logger.Active.Log(textures[i].name);
-            }
-        }
-
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public static void DumpObjectProperties(Object o, String title = "---------")
         {

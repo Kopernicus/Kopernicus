@@ -215,6 +215,10 @@ namespace Kopernicus.Configuration
         [ParserTargetCollection("Rings", AllowMerge = true)]
         public List<RingLoader> Rings { get; set; }
 
+        // Wrapper around Particle class for editing/loading
+        [ParserTargetCollection("Particles", AllowMerge = true)]
+        public List<ParticleLoader> Particles { get; set; }
+
         [ParserTargetCollection("HazardousBody", AllowMerge = true)]
         public List<HazardousBodyLoader> HazardousBody { get; set; }
 
@@ -261,32 +265,63 @@ namespace Kopernicus.Configuration
             // If we have a template, generatedBody *is* the template body
             if (Template != null && Template.Body)
             {
-                GeneratedBody = Template.Body;
-
-                // Patch the game object names in the template
-                GeneratedBody.name = Name;
-                GeneratedBody.celestialBody.bodyName = Name;
-                GeneratedBody.celestialBody.transform.name = Name;
-                GeneratedBody.scaledVersion.name = Name;
-                if (GeneratedBody.pqsVersion != null)
+                if ((!Template.OriginalBody.scaledVersion.name.Equals("Jool")) || Name.Equals("Jool"))
                 {
-                    GeneratedBody.pqsVersion.name = Name;
-                    GeneratedBody.pqsVersion.gameObject.name = Name;
-                    GeneratedBody.pqsVersion.transform.name = Name;
-                    foreach (PQS p in GeneratedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
+                    GeneratedBody = Template.Body;
+                    // Patch the game object names in the template
+                    GeneratedBody.name = Name;
+                    GeneratedBody.celestialBody.bodyName = Name;
+                    GeneratedBody.celestialBody.transform.name = Name;
+                    GeneratedBody.scaledVersion.name = Name;
+                    if (GeneratedBody.pqsVersion != null)
                     {
-                        p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
+                        GeneratedBody.pqsVersion.name = Name;
+                        GeneratedBody.pqsVersion.gameObject.name = Name;
+                        GeneratedBody.pqsVersion.transform.name = Name;
+                        foreach (PQS p in GeneratedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
+                        {
+                            p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
+                        }
+                        GeneratedBody.celestialBody.pqsController = GeneratedBody.pqsVersion;
                     }
-                    GeneratedBody.celestialBody.pqsController = GeneratedBody.pqsVersion;
-                }
 
-                // If we've changed the name, reset use_The_InName
-                if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
+                    // If we've changed the name, reset use_The_InName
+                    if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
+                    {
+                        GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
+                    }
+                }
+                else if (Template.OriginalBody.scaledVersion.name.Equals("Jool")) // This is a Jool-clone, a gas giant but not the real Jool.  We have to handle it special.
                 {
-                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
+                    // Create the PSystemBody object
+                    GameObject generatedBodyGameObject = new GameObject(Name);
+                    generatedBodyGameObject.transform.parent = Utility.Deactivator;
+                    GeneratedBody = generatedBodyGameObject.AddComponent<PSystemBody>();
+                    GeneratedBody.flightGlobalsIndex = 0;
+                    GeneratedBody.orbitDriver = Template.Body.orbitDriver;
+                    GeneratedBody.orbitRenderer = Template.Body.orbitRenderer;
+                    GeneratedBody.planetariumCameraInitial = Template.Body.planetariumCameraInitial;
+                    // Grab the proper celestialBody
+                    GeneratedBody.celestialBody = Template.OriginalBody.celestialBody;
+                    // Patch the game object names in the template
+                    GeneratedBody.name = Name;
+                    GeneratedBody.celestialBody.bodyName = Name;
+                    GeneratedBody.celestialBody.transform.name = Name;
+                    // Create the scaled version
+                    GeneratedBody.scaledVersion = new GameObject(Name) { layer = GameLayers.SCALED_SPACE };
+                    GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
+                    if (GeneratedBody.pqsVersion != null)
+                    {
+                        GeneratedBody.pqsVersion.name = Name;
+                        GeneratedBody.pqsVersion.gameObject.name = Name;
+                        GeneratedBody.pqsVersion.transform.name = Name;
+                        foreach (PQS p in GeneratedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
+                        {
+                            p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
+                        }
+                    }
                 }
             }
-
             // Otherwise we have to generate all the things for this body
             else
             {
@@ -381,6 +416,7 @@ namespace Kopernicus.Configuration
         public Body()
         {
             Rings = new List<RingLoader>();
+            Particles = new List<ParticleLoader>();
         }
 
         /// <summary>
@@ -418,6 +454,13 @@ namespace Kopernicus.Configuration
             foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
             {
                 Rings.Add(new RingLoader(ring));
+            }
+
+            Particles = new List<ParticleLoader>();
+            foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
+                .GetComponentsInChildren<PlanetParticleEmitter>(true))
+            {
+                Particles.Add(new ParticleLoader(particle));
             }
 
             HazardousBody = new List<HazardousBodyLoader>();
