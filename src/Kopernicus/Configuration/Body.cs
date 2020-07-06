@@ -301,6 +301,7 @@ namespace Kopernicus.Configuration
                     GeneratedBody.orbitDriver = Template.Body.orbitDriver;
                     GeneratedBody.orbitRenderer = Template.Body.orbitRenderer;
                     GeneratedBody.planetariumCameraInitial = Template.Body.planetariumCameraInitial;
+                    GeneratedBody.name = Name;
                     // Grab the proper celestialBody
                     GeneratedBody.celestialBody = Template.OriginalBody.celestialBody;
                     // Patch the game object names in the template
@@ -319,6 +320,12 @@ namespace Kopernicus.Configuration
                         {
                             p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
                         }
+                    }
+                    GeneratedBody.celestialBody.pqsController = GeneratedBody.pqsVersion;
+                    // If we've changed the name, reset use_The_InName
+                    if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
+                    {
+                        GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                     }
                 }
             }
