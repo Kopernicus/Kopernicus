@@ -298,12 +298,14 @@ namespace Kopernicus.Configuration
                     generatedBodyGameObject.transform.parent = Utility.Deactivator;
                     GeneratedBody = generatedBodyGameObject.AddComponent<PSystemBody>();
                     GeneratedBody.flightGlobalsIndex = 0;
-                    // Create the proper celestialBody
+                    // Grab the proper celestialBody and set it's type
                     GeneratedBody.celestialBody = Template.Body.celestialBody;
+                    GeneratedBody.celestialBody.bodyType = Template.Body.celestialBody.bodyType;
                     // Sensible defaults 
                     GeneratedBody.celestialBody.bodyName = Name;
                     GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = Name;
                     GeneratedBody.celestialBody.atmosphere = true;
+                    GeneratedBody.celestialBody.hasSolidSurface = false;
                     GeneratedBody.celestialBody.ocean = false;
                     //Other setup
                     GeneratedBody.orbitDriver = Template.Body.orbitDriver;
