@@ -3,23 +3,19 @@
 February 04, 2020
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Maintained by: Thomas P., NathanKell and KillAshley
+* Further maintained by Prestja, R-T-B
 * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.8.1-1)
+New in this version (1.10.0-1)
 -------------------
-- Updated to KSP 1.8.1
-- Removed HazardousOcean
-- Removed particles support
-- Added Support for new terrain shaders
-- Added a fix for the flags going crazy
-- Improved Kopernicus Solar Panels
-- Improved Space Center Loader
-- Improved HazardousBody
-- Improved ModularScatter HeatEmitter
-- Improved ModularScatter LightEmitter
-- Fixed Tracking Station Atmospheric Info
-- 'displayName' now also changes 'bodyAdjectiveDisplayName'
+- Updated to KSP 1.10.0
+- Readded particles support
+- Support for Jool shaders on Jool and only Jool.
+
+This is the bleeding edge Kopernicus branch.  For the stable branch, please see:
+
+https://github.com/prestja/Kopernicus
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
