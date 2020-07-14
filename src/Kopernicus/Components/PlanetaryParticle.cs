@@ -80,7 +80,7 @@ namespace Kopernicus.Components
             if (!GetComponent<KSPParticleEmitter>())
             {
                 // Shouldn't happen
-                emitter = gameObj.AddComponent<KSPParticleEmitter>();
+                emitter = gameObject.AddComponent<KSPParticleEmitter>();
             }
             else
             {
