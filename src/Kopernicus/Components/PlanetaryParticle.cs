@@ -59,14 +59,17 @@ namespace Kopernicus.Components
         public static PlanetParticleEmitter Create(GameObject host)
         {
             // Create the GameObject
-            GameObject emitter = new GameObject();
-            emitter.transform.parent = host.transform;
-            emitter.transform.localPosition = Vector3.zero;
-            emitter.SetLayerRecursive(10);
-            emitter.name = "Particles";
+            GameObject emitterObj = new GameObject();
+            emitterObj.transform.parent = host.transform;
+            emitterObj.transform.localPosition = Vector3.zero;
+            emitterObj.SetLayerRecursive(10);
+            emitterObj.name = "Particles";
+            
+            PlanetParticleEmitter result = emitterObj.AddComponent<PlanetParticleEmitter>();
+            result.emitter = emitterObj.AddComponent<KSPParticleEmitter>();
 
             // Add the Particle Emitter
-            return emitter.AddComponent<PlanetParticleEmitter>();
+            return result;
         }
 
         /// <summary>
@@ -76,31 +79,32 @@ namespace Kopernicus.Components
         {
             if (!GetComponent<KSPParticleEmitter>())
             {
-                emitter = gameObject.AddComponent<KSPParticleEmitter>();
-                emitter.useWorldSpace = false;
-                emitter.emit = true;
-                emitter.material = new Material(Shader.Find(shaderName));
-                emitter.doesAnimateColor = true;
-                emitter.SetDirty();
-                emitter.particleRenderMode = ParticleSystemRenderMode.Mesh;
-
-                var sh = emitter.ps.shape;
-                sh.enabled = true;
-                sh.shapeType = ParticleSystemShapeType.Mesh;
-
-                var collision = emitter.ps.collision;
-                collision.enabled = collideable;
-                collision.type = ParticleSystemCollisionType.World;
-                collision.bounce = bounce;
-
-                var lifeColor = emitter.ps.colorOverLifetime;
-                lifeColor.enabled = lifetimeColors == null ? false : true;
-                lifeColor.color = new ParticleSystem.MinMaxGradient(lifetimeColors[0], lifetimeColors[1]);
+                // Shouldn't happen
+                emitter = gameObj.AddComponent<KSPParticleEmitter>();
             }
             else
             {
                 emitter = GetComponent<KSPParticleEmitter>();
             }
+            emitter.useWorldSpace = false;
+            emitter.emit = true;
+            emitter.material = new Material(Shader.Find(shaderName));
+            emitter.doesAnimateColor = true;
+            emitter.SetDirty();
+            emitter.particleRenderMode = ParticleSystemRenderMode.Mesh;
+
+            var sh = emitter.ps.shape;
+            sh.enabled = true;
+            sh.shapeType = ParticleSystemShapeType.Mesh;
+
+            var collision = emitter.ps.collision;
+            collision.enabled = collideable;
+            collision.type = ParticleSystemCollisionType.World;
+            collision.bounce = bounce;
+
+            var lifeColor = emitter.ps.colorOverLifetime;
+            lifeColor.enabled = lifetimeColors == null ? false : true;
+            lifeColor.color = new ParticleSystem.MinMaxGradient(lifetimeColors[0], lifetimeColors[1]);
         }
 
         /// <summary>
