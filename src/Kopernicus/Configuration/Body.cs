@@ -334,6 +334,7 @@ namespace Kopernicus.Configuration
                     {
                         GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                     }
+                    GeneratedBody.scaledVersion.AddOrGetComponent<MeshFilter>().sharedMesh = Templates.ReferenceGeosphere;
                 }
             }
             // Otherwise we have to generate all the things for this body
