@@ -334,6 +334,7 @@ namespace Kopernicus.Configuration
                     {
                         GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                     }
+                    //Fix Joolian Templated bodies geosphere.
                     GeneratedBody.scaledVersion.AddOrGetComponent<MeshFilter>().sharedMesh = Templates.ReferenceGeosphere;
                 }
             }
@@ -361,6 +362,8 @@ namespace Kopernicus.Configuration
                 // Create the scaled version
                 GeneratedBody.scaledVersion = new GameObject(Name) {layer = GameLayers.SCALED_SPACE};
                 GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
+                //Create a reference geosphere.
+                GeneratedBody.scaledVersion.AddOrGetComponent<MeshFilter>().sharedMesh = Templates.ReferenceGeosphere;
             }
 
             // Create accessors
