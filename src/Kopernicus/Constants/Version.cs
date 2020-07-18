@@ -54,7 +54,7 @@ namespace Kopernicus.Constants
 #else
                 const String DEVELOPMENT_BUILD = "";
 #endif
-                return "RTB Bleeding-Edge Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
+                return "RTB's Unified Bleeding-Edge Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
                        BuiltTime(Assembly.GetCallingAssembly()).ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " +
                        AssemblyHandle() + ")";
             }
