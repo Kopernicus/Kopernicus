@@ -284,13 +284,11 @@ namespace Kopernicus.Configuration
                         }
                         GeneratedBody.celestialBody.pqsController = GeneratedBody.pqsVersion;
                     }
-
                     // If we've changed the name, reset use_The_InName
                     if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
                     {
                         GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                     }
-
                     // Create accessors
                     Debug = new DebugLoader();
                     ScaledVersion = new ScaledVersionLoader();
@@ -338,10 +336,22 @@ namespace Kopernicus.Configuration
                     {
                         GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                     }
-
                     // Create accessors
                     Debug = new DebugLoader();
                     ScaledVersion = new ScaledVersionLoader();
+                    //Fix normals for gasgiants and newbodies (if needed, ignore the weird trycatch, it works)
+                    ScaledSpaceOnDemand onDemand = GeneratedBody.celestialBody.scaledBody.AddOrGetComponent<ScaledSpaceOnDemand>();
+                    try
+                    {
+                        if (onDemand.normals.Length < 1)
+                        {
+                            onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                        }
+                    }
+                    catch
+                    {
+                        onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                    }
                 }
             }
             // Otherwise we have to generate all the things for this body
@@ -368,14 +378,23 @@ namespace Kopernicus.Configuration
                 // Create the scaled version
                 GeneratedBody.scaledVersion = new GameObject(Name) {layer = GameLayers.SCALED_SPACE};
                 GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
-                //Create a reference geosphere.
-                GeneratedBody.scaledVersion.AddOrGetComponent<MeshFilter>().sharedMesh = Templates.ReferenceGeosphere;
-
                 // Create accessors
                 Debug = new DebugLoader();
                 ScaledVersion = new ScaledVersionLoader();
+                //Fix normals for gasgiants and newbodies (if needed, ignore the weird trycatch, it works)
+                ScaledSpaceOnDemand onDemand = GeneratedBody.celestialBody.scaledBody.AddOrGetComponent<ScaledSpaceOnDemand>();
+                try
+                {
+                    if (onDemand.normals.Length < 1)
+                    {
+                        onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                    }
+                }
+                catch
+                {
+                    onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                }
             }
-
             // Event
             Events.OnBodyApply.Fire(this, node);
         }
