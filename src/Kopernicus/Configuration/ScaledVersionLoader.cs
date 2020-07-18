@@ -336,7 +336,7 @@ namespace Kopernicus.Configuration
             }
             catch
             {
-                Type = ScaledMaterialType.Atmospheric;
+                Type = ScaledMaterialType.AtmosphericStandard;
             }
             // Are we a planet or moon?
             if (Type != ScaledMaterialType.Star)

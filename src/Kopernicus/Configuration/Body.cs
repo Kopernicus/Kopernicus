@@ -290,6 +290,10 @@ namespace Kopernicus.Configuration
                     {
                         GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                     }
+
+                    // Create accessors
+                    Debug = new DebugLoader();
+                    ScaledVersion = new ScaledVersionLoader();
                 }
                 else if (Template.OriginalBody.scaledVersion.name.Equals("Jool")) // This is a Jool-clone, a gas giant but not the real Jool.  We have to handle it special.
                 {
@@ -334,8 +338,10 @@ namespace Kopernicus.Configuration
                     {
                         GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                     }
-                    //Fix Joolian Templated bodies geosphere.
-                    GeneratedBody.scaledVersion.AddOrGetComponent<MeshFilter>().sharedMesh = Templates.ReferenceGeosphere;
+
+                    // Create accessors
+                    Debug = new DebugLoader();
+                    ScaledVersion = new ScaledVersionLoader();
                 }
             }
             // Otherwise we have to generate all the things for this body
@@ -364,11 +370,11 @@ namespace Kopernicus.Configuration
                 GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
                 //Create a reference geosphere.
                 GeneratedBody.scaledVersion.AddOrGetComponent<MeshFilter>().sharedMesh = Templates.ReferenceGeosphere;
-            }
 
-            // Create accessors
-            Debug = new DebugLoader();
-            ScaledVersion = new ScaledVersionLoader();
+                // Create accessors
+                Debug = new DebugLoader();
+                ScaledVersion = new ScaledVersionLoader();
+            }
 
             // Event
             Events.OnBodyApply.Fire(this, node);
