@@ -358,7 +358,7 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetBodyReferencing(CelestialBody body)
         {
-            while (body?.orbit?.referenceBody != null)
+            while (body?.orbit?.referenceBody != null  && !body.orbit.referenceBody.isStar)
             {
                 body = body.orbit.referenceBody;
             }
