@@ -360,7 +360,7 @@ namespace Kopernicus.Components
         {
             while (body?.orbit?.referenceBody != null)
             {
-                if (body.orbit.referenceBody.isStar)
+                if (body.isStar)
                 {
                     break;
                 }
