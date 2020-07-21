@@ -283,7 +283,7 @@ namespace Kopernicus.Components
             // Get Thermal Stats
             if (vessel.mainBody.atmosphere)
             {
-                if (GetLocalStar(vessel.mainBody).isStar)
+                if (sun == GetLocalStar(vessel.mainBody))
                 {
                     FlightIntegrator FI = vessel.GetComponent<FlightIntegrator>();
                     vessel.mainBody.GetAtmoThermalStats(true, sun, sunVector, Vector3d.Dot(sunVector, vessel.upAxis), vessel.upAxis, vessel.altitude, out FI.atmosphereTemperatureOffset, out FI.bodyEmissiveFlux, out FI.bodyAlbedoFlux);
@@ -362,10 +362,10 @@ namespace Kopernicus.Components
             {
                 if (body.orbit.referenceBody.isStar)
                 {
-                    body = body.orbit.referenceBody;
+                    break;
                 }
+                body = body.orbit.referenceBody;
             }
-
             return body;
         }
 
