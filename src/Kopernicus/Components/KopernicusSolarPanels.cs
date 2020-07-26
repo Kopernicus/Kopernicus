@@ -162,7 +162,7 @@ namespace Kopernicus.Components
                         SP.sunAOA = totalAoA;
                         SP.sunAOA /= _relativeSunAoa ? KopernicusStar.Stars.Count : 1;
                         //Clamping to EC-limit
-                        if (totalFlow > SP.chargeRate)
+                        if (totalFlow > SP.chargeRate || (totalFlow < 0))
                         {
                             _totalFlow = SP.chargeRate;
                             totalFlow = SP.chargeRate;
