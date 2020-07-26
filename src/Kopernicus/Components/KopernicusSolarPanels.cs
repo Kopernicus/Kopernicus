@@ -112,47 +112,43 @@ namespace Kopernicus.Components
                         Double bestFlux = vessel.solarFlux * 1360 / PhysicsGlobals.SolarLuminosityAtHome;
                         KopernicusStar bestStar = trackingStar;
                         Double totalFlux = 0;
-                        Single totalAoA = SP.sunAOA;
-                        Double _totalFlow = SP._flowRate;
-                        Single totalFlow = SP.flowRate;
+                        Single totalAoA = 0;
+                        Double _totalFlow = 0;
+                        Single totalFlow = 0;
 
                         for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
                         {
                             KopernicusStar star = KopernicusStar.Stars[s];
+                            // Use this star
+                            star.shifter.ApplyPhysics();
+                            double flux = star.CalculateFluxAt(vessel);
+                            vessel.solarFlux += flux * PhysicsGlobals.SolarLuminosityAtHome / 1360;
 
-                            if (star != trackingStar)
+                            // Change the tracking body
+                            SP.trackingBody = star.sun;
+                            SP.GetTrackingBodyTransforms();
+
+                            // Set Tracking Speed to zero
+                            Single trackingSpeed = SP.trackingSpeed;
+                            SP.trackingSpeed = 0;
+
+                            // Run The MDSP CalculateTracking
+                            SP.CalculateTracking();
+
+                            // Add to TotalFlux and TotalAoA
+                            totalAoA += SP.sunAOA;
+                            totalFlux += vessel.solarFlux;
+                            _totalFlow += SP._flowRate;
+                            totalFlow += SP.flowRate;
+
+                            if (bestFlux < flux)
                             {
-                                // Use this star
-                                star.shifter.ApplyPhysics();
-                                double flux = star.CalculateFluxAt(vessel);
-                                vessel.solarFlux += flux * PhysicsGlobals.SolarLuminosityAtHome / 1360;
-
-                                // Change the tracking body
-                                SP.trackingBody = star.sun;
-                                SP.GetTrackingBodyTransforms();
-
-                                // Set Tracking Speed to zero
-                                Single trackingSpeed = SP.trackingSpeed;
-                                SP.trackingSpeed = 0;
-
-                                // Run The MDSP CalculateTracking
-                                SP.CalculateTracking();
-
-                                // Add to TotalFlux and TotalAoA
-                                totalFlux += vessel.solarFlux;
-                                totalAoA += SP.sunAOA;
-                                _totalFlow += SP._flowRate;
-                                totalFlow += SP.flowRate;
-
-                                if (bestFlux < flux)
-                                {
-                                    bestFlux = flux;
-                                    bestStar = star;
-                                }
-
-                                // Restore Tracking Speed
-                                SP.trackingSpeed = trackingSpeed;
+                                bestFlux = flux;
+                                bestStar = star;
                             }
+
+                            // Restore Tracking Speed
+                            SP.trackingSpeed = trackingSpeed;
                         }
 
                         // Restore the tracking body
@@ -162,11 +158,15 @@ namespace Kopernicus.Components
                         // Restore the starting star
                         trackingStar.shifter.ApplyPhysics();
 
-                        totalFlux += trackingStar.CalculateFluxAt(vessel) * PhysicsGlobals.SolarLuminosityAtHome / 1360;
-
                         vessel.solarFlux = totalFlux;
                         SP.sunAOA = totalAoA;
                         SP.sunAOA /= _relativeSunAoa ? KopernicusStar.Stars.Count : 1;
+                        //Clamping to EC-limit
+                        if (totalFlow > SP.chargeRate)
+                        {
+                            _totalFlow = SP.chargeRate;
+                            totalFlow = SP.chargeRate;
+                        }
                         SP._flowRate = _totalFlow;
                         SP.flowRate = totalFlow;
 
