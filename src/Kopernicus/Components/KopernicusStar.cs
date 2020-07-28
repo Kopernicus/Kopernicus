@@ -336,7 +336,7 @@ namespace Kopernicus.Components
                 }
 
                 // Set Physics
-                star.shifter.ApplyPhysics();
+                star.shifter.ApplyPhysics();;
 
                 // Calculate Flux
                 solarFlux += star.CalculateFluxAt(MFI.Vessel) * PhysicsGlobals.SolarLuminosityAtHome / 1360;
@@ -361,6 +361,22 @@ namespace Kopernicus.Components
             while (body?.orbit?.referenceBody != null)
             {
                 if (body.isStar)
+                {
+                    break;
+                }
+                body = body.orbit.referenceBody;
+            }
+            return body;
+        }
+
+        /// <summary>
+        /// Returns the host planet directly above the current star.
+        /// </summary>
+        public static CelestialBody GetLocalPlanet(CelestialBody body)
+        {
+            while (body?.orbit?.referenceBody != null)
+            {
+                if (body.orbit.referenceBody.isStar)
                 {
                     break;
                 }
