@@ -138,7 +138,7 @@ namespace Kopernicus.Components
                             totalFlux += starFlux;
                             float panelEffectivness = ((SP.chargeRate / 24.4f) / 56.37091313591871f) * SP.sunAOA; //56.blahblah is a weird constant determined to convert flux to EC in stock game terminology.  We have reasons, honest.
                             totalFlow += (float)starFlux * panelEffectivness;
-                            _totalFlow += SP.chargeRate / totalFlow;
+                            _totalFlow += totalFlow / SP.chargeRate;
 
                             // Restore the starting star
                             trackingStar.shifter.ApplyPhysics();
