@@ -137,6 +137,14 @@ namespace Kopernicus.Components
                             // Add to TotalFlux and EC tally
                             totalFlux += starFlux;
                             float panelEffectivness = ((SP.chargeRate / 24.4f) / 56.37091313591871f) * SP.sunAOA; //56.blahblah is a weird constant determined to convert flux to EC in stock game terminology.  We have reasons, honest.
+                            if (KopernicusStar.GetLocalStar(FlightGlobals.GetHomeBody()).name != star.sun.name)
+                            {
+                                totalFlow += ((float)starFlux * panelEffectivness) * (1360 / (float)PhysicsGlobals.SolarLuminosityAtHome);
+                            }
+                            else
+                            {
+                                totalFlow += (float)starFlux * panelEffectivness;
+                            }
                             totalFlow += (float)starFlux * panelEffectivness;
                             _totalFlow += totalFlow / SP.chargeRate;
 
