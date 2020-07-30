@@ -109,7 +109,16 @@ namespace Kopernicus.Components
                         Double totalFlux = 0;
                         Double _totalFlow = 0;
                         Single totalFlow = 0;
-
+                        double homeStarLumaConstant = 1360;
+                        for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++) //yes, we have to iterate this twice to find the home star luma.  Fun.
+                        {
+                            KopernicusStar star = KopernicusStar.Stars[s];
+                            if (KopernicusStar.GetLocalStar(FlightGlobals.GetHomeBody()).name == star.sun.name)
+                            {
+                                star.shifter.ApplyPhysics();
+                                homeStarLumaConstant = PhysicsGlobals.SolarLuminosity;
+                            }
+                        }
                         for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
                         {
                             KopernicusStar star = KopernicusStar.Stars[s];
@@ -138,7 +147,8 @@ namespace Kopernicus.Components
                             totalFlux += starFlux;
                             float panelEffectivness = ((SP.chargeRate / 24.4f) / 56.37091313591871f) * SP.sunAOA; //56.blahblah is a weird constant determined to convert flux to EC in stock game terminology.  We have reasons, honest.
                             totalFlow += (float)starFlux * panelEffectivness;
-                            _totalFlow +=  totalFlow / SP.chargeRate;
+                            totalFlow += ((float)starFlux * panelEffectivness) * (1360 / (float)homeStarLumaConstant);
+                            _totalFlow += totalFlow / SP.chargeRate;
 
                             // Restore the starting star
                             trackingStar.shifter.ApplyPhysics();
