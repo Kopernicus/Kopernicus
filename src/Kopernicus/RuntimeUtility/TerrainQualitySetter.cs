@@ -50,11 +50,11 @@ namespace Kopernicus.RuntimeUtility
             }
 
             ScreenMessages.PostScreenMessage(
-                "Kopernicus only supports terrain quality ultra!\nThe settings will be updated automatically.",
+                "Kopernicus only supports terrain quality ultra!\nSome terrain packs may not work!.",
                 5f, ScreenMessageStyle.UPPER_LEFT);
 
-            GameSettings.TERRAIN_SHADER_QUALITY = 3;
-            GameSettings.SaveSettings();
+            //GameSettings.TERRAIN_SHADER_QUALITY = 3;
+            //GameSettings.SaveSettings();
         }
     }
 }
