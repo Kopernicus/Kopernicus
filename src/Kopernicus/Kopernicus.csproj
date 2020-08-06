@@ -60,7 +60,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\..\..\..\..\..\..\KSP1101\KSP_x64_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>H:\KSP1101\KSP_x64_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>H:\KSP1101\KSP_x64_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
