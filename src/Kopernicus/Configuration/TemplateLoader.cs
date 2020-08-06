@@ -244,7 +244,7 @@ namespace Kopernicus.Configuration
                         Body.pqsVersion.mapOcean = false;
                     }
                 }
-                if (HighLogic.LoadedScene != GameScenes.MAINMENU)
+                if ((HighLogic.LoadedSceneIsGame) || (HighLogic.LoadedSceneIsFlight))
                 {
                     // Selectively remove PQS Mods
                     if (RemovePqsMods != null && RemovePqsMods.Value.LongCount() > 0)
@@ -320,7 +320,7 @@ namespace Kopernicus.Configuration
                                         {
                                             foreach (GameObject o in range.objects)
                                             {
-                                                Object.DestroyImmediate(o);
+                                                o.DestroyGameObjectImmediate();
                                             }
                                         }
 
@@ -331,7 +331,7 @@ namespace Kopernicus.Configuration
                                         {
                                             foreach (GameObject o in range.renderers)
                                             {
-                                                Object.DestroyImmediate(o);
+                                                o.DestroyGameObjectImmediate();
                                             }
                                         }
                                     }

@@ -44,7 +44,7 @@ namespace Kopernicus.RuntimeUtility
 
         private void Update()
         {
-            if (GameSettings.TERRAIN_SHADER_QUALITY == 3)
+            if ((GameSettings.TERRAIN_SHADER_QUALITY == 3) || (HighLogic.LoadedScene != GameScenes.MAINMENU))
             {
                 return;
             }
