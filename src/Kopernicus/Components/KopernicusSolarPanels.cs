@@ -73,6 +73,8 @@ namespace Kopernicus.Components
         //Strings for Localization
         private static string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");  // "Direct Sunlight"
         private static string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");          // "Underwater"
+        private static string button_AbsoluteExposure = Localizer.Format("#Kopernicus_UI_AbsoluteExposure"); // "Use absolute exposure"
+        private static string button_RelativeExposure = Localizer.Format("#Kopernicus_UI_RelativeExposure"); // "Use relative exposure"
         private static string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");                 // "Auto"
         private static string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");                    // "Select Tracking Body"
         private static string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");            // "Please select the Body you want to track with this Solar Panel."
@@ -83,6 +85,9 @@ namespace Kopernicus.Components
 
         [KSPField(isPersistant = true)]
         private Boolean _manualTracking;
+
+        [KSPField(isPersistant = true)]
+        private Boolean _relativeSunAoa;
 
         /// <summary>
         /// The list of all <see cref="ModuleDeployableSolarPanel"/><i>s</i> on this <see cref="Part"/>.
@@ -107,86 +112,74 @@ namespace Kopernicus.Components
                         Double bestFlux = vessel.solarFlux * 1360 / PhysicsGlobals.SolarLuminosityAtHome;
                         KopernicusStar bestStar = trackingStar;
                         Double totalFlux = 0;
-                        Double _totalFlow = 0;
-                        Single totalFlow = 0;
-                        double homeStarLumaConstant = 1360;
-                        for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++) //yes, we have to iterate this twice to find the home star luma.  Fun.
-                        {
-                            KopernicusStar star = KopernicusStar.Stars[s];
-                            if (KopernicusStar.GetLocalStar(FlightGlobals.GetHomeBody()).name == star.sun.name)
-                            {
-                                star.shifter.ApplyPhysics();
-                                homeStarLumaConstant = PhysicsGlobals.SolarLuminosity;
-                            }
-                        }
+                        Single totalAoA = SP.sunAOA;
+                        Double _totalFlow = SP._flowRate;
+                        Single totalFlow = SP.flowRate;
+
                         for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
                         {
                             KopernicusStar star = KopernicusStar.Stars[s];
-                            // Use this star
-                            star.shifter.ApplyPhysics();
-                            double starFlux = star.CalculateFluxAt(vessel);
 
-                            // Change the tracking body
-                            SP.trackingBody = star.sun;
-                            SP.GetTrackingBodyTransforms();
-
-                            // Set Tracking Speed to zero
-                            Single trackingSpeed = SP.trackingSpeed;
-                            SP.trackingSpeed = 0;
-
-                            // Run The MDSP CalculateTracking
-                            SP.CalculateTracking();
-
-                            if (bestFlux < starFlux)
+                            if (star != trackingStar)
                             {
-                                bestFlux = starFlux;
-                                bestStar = star;
+                                // Use this star
+                                star.shifter.ApplyPhysics();
+                                double flux = star.CalculateFluxAt(vessel);
+                                vessel.solarFlux += flux * PhysicsGlobals.SolarLuminosityAtHome / 1360;
+
+                                // Change the tracking body
+                                SP.trackingBody = star.sun;
+                                SP.GetTrackingBodyTransforms();
+
+                                // Set Tracking Speed to zero
+                                Single trackingSpeed = SP.trackingSpeed;
+                                SP.trackingSpeed = 0;
+
+                                // Run The MDSP CalculateTracking
+                                SP.CalculateTracking();
+
+                                // Add to TotalFlux and TotalAoA
+                                totalFlux += vessel.solarFlux;
+                                totalAoA += SP.sunAOA;
+                                _totalFlow += SP._flowRate;
+                                totalFlow += SP.flowRate;
+
+                                if (bestFlux < flux)
+                                {
+                                    bestFlux = flux;
+                                    bestStar = star;
+                                }
+
+                                // Restore Tracking Speed
+                                SP.trackingSpeed = trackingSpeed;
                             }
-
-                            // Add to TotalFlux and EC tally
-                            totalFlux += starFlux;
-                            float panelEffectivness = ((SP.chargeRate / 24.4f) / 56.37091313591871f) * SP.sunAOA; //56.blahblah is a weird constant determined to convert flux to EC in stock game terminology.  We have reasons, honest.
-                            totalFlow += (float)starFlux * panelEffectivness;
-                            totalFlow += ((float)starFlux * panelEffectivness) * (1360 / (float)homeStarLumaConstant);
-                            _totalFlow += totalFlow / SP.chargeRate;
-
-                            // Restore the starting star
-                            trackingStar.shifter.ApplyPhysics();
-
-                            // Restore Tracking Speed
-                            SP.trackingSpeed = trackingSpeed;
-
-                            // Restore the old tracking body
-                            SP.trackingBody = trackingStar.sun;
-                            SP.GetTrackingBodyTransforms();
-
                         }
-                        // Restore the old tracking body
+
+                        // Restore the tracking body
                         SP.trackingBody = trackingStar.sun;
                         SP.GetTrackingBodyTransforms();
 
-                        // Run The MDSP CalculateTracking
-                        SP.CalculateTracking();
+                        // Restore the starting star
+                        trackingStar.shifter.ApplyPhysics();
 
-                        //see if tracked star is blocked or not
-                        if (SP.sunAOA > 0)
-                        {
-                            //this ensures the "blocked" GUI option is set right, if we're exposed to you we're not blocked
-                            vessel.directSunlight = true;
-                        }
-                        // We got the best star to use
-                        if ((bestStar != null && bestStar.sun != SP.trackingBody) && (!_manualTracking))
-                        {
-                            SP.trackingBody = bestStar.sun;
-                            SP.GetTrackingBodyTransforms();
-                        }
-                        else
-                        {
-                        }
+                        totalFlux += trackingStar.CalculateFluxAt(vessel) * PhysicsGlobals.SolarLuminosityAtHome / 1360;
 
                         vessel.solarFlux = totalFlux;
+                        SP.sunAOA = totalAoA;
+                        SP.sunAOA /= _relativeSunAoa ? KopernicusStar.Stars.Count : 1;
                         SP._flowRate = _totalFlow;
                         SP.flowRate = totalFlow;
+
+                        // We got the best star to use
+                        if (bestStar != null && bestStar.sun != SP.trackingBody)
+                        {
+                            if (!_manualTracking)
+                            {
+                                SP.trackingBody = bestStar.sun;
+                                SP.GetTrackingBodyTransforms();
+                                continue;
+                            }
+                        }
                     }
                 }
 
@@ -207,9 +200,10 @@ namespace Kopernicus.Components
                     trackingBodyName = SP.trackingBody.bodyDisplayName.Replace("^N", "");
 
                     if (!_manualTracking)
-                    {
                         trackingBodyName = Localizer.Format("#Kopernicus_UI_AutoTrackingBodyName", trackingBodyName);
-                    }
+
+                    // Update the guiName for SwitchAOAMode
+                    Events["SwitchAoaMode"].guiName = _relativeSunAoa ? button_AbsoluteExposure : button_RelativeExposure;
                 }
             }
         }
@@ -249,6 +243,12 @@ namespace Kopernicus.Components
                 SP.trackingBody = sun;
                 SP.GetTrackingBodyTransforms();
             }
+        }
+
+        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_UI_RelativeExposure")]
+        public void SwitchAoaMode()
+        {
+            _relativeSunAoa = !_relativeSunAoa;
         }
 
         public override void OnStart(StartState state)
