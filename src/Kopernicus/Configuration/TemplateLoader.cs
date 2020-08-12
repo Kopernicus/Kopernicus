@@ -307,7 +307,8 @@ namespace Kopernicus.Configuration
                         {
                             gameObject.DestroyGameObjectImmediate();
                         }
-                        Object.DestroyImmediate(allMods[index]);
+                        //this breaks main menu in 1.10+
+                        //Object.DestroyImmediate(allMods[index]);
                     }
                 }
 
