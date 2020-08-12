@@ -94,7 +94,30 @@ namespace Kopernicus.Components
 
                         // Add to TotalFlux and EC tally
                         totalFlux += starFlux;
-                        float panelEffectivness = ((chargeRate / 24.4f) / 56.37091313591871f) * sunAOA;  //56.blabla is a weird constant we use to turn flux into EC.
+                        float panelEffectivness = 0;
+                        //Now for some fancy atmospheric math
+                        float atmoMult = 1;
+                        float tempMult = 1;
+                        Vector3d localSpace = ScaledSpace.ScaledToLocalSpace(star.target.position);
+                        if (this.vessel.atmDensity > 0)
+                        {
+                            Double targetAltitude = FlightGlobals.getAltitudeAtPos(localSpace, FlightGlobals.currentMainBody);
+                            if (targetAltitude < 0)
+                            {
+                                targetAltitude = 0;
+                            }
+
+                            Double horizonAngle = Math.Acos(FlightGlobals.currentMainBody.Radius / (FlightGlobals.currentMainBody.Radius + targetAltitude));
+                            float horizonScalar = -Mathf.Sin((Single)horizonAngle);
+                            float dayNightRatio = 1f - Mathf.Abs(horizonScalar);
+                            float fadeStartAtAlt = horizonScalar + star.fadeStart * dayNightRatio;
+                            float fadeEndAtAlt = horizonScalar - star.fadeEnd * dayNightRatio;
+                            float localTime = Vector3.Dot(-FlightGlobals.getUpAxis(localSpace), transform.forward);
+                            atmoMult = (Mathf.Lerp(0f, star.light.intensity, Mathf.InverseLerp(fadeEndAtAlt, fadeStartAtAlt, localTime))) * 1.1f;
+                            tempMult = this.temperatureEfficCurve.Evaluate((float)this.vessel.atmosphericTemperature);
+                        }
+                        panelEffectivness = ((((chargeRate / 24.4f) / 56.37091313591871f) * sunAOA) * tempMult) * atmoMult;  //56.blabla is a weird constant we use to turn flux into EC
+
                         totalFlow += (starFlux * panelEffectivness) / (1360 / PhysicsGlobals.SolarLuminosityAtHome);
 
                         // Restore Tracking Speed
