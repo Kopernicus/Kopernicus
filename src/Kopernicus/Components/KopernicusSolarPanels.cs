@@ -104,7 +104,6 @@ namespace Kopernicus.Components
                         float atmoDensityMult = 1;
                         float atmoAngleMult = 1;
                         float tempMult = 1;
-                        float atmoDivisor = 1f;
                         Vector3d localSpace = ScaledSpace.ScaledToLocalSpace(star.target.position);
                         if (this.vessel.atmDensity > 0)
                         {
@@ -118,10 +117,9 @@ namespace Kopernicus.Components
                             tempMult = this.temperatureEfficCurve.Evaluate((float)this.vessel.atmosphericTemperature);
                             atmoDensityMult = AtmosphericAttenutationAirMassMultiplier.Evaluate(massOfAirColumn);
                             atmoAngleMult = AtmosphericAttenutationSolarAngleMultiplier.Evaluate(sunZenithAngleDeg);
-                            atmoDivisor = 1.05f;  //  For some reason this is needed in atmopsheric calcs
                         }
 
-                        panelEffectivness = (chargeRate / 24.4f) / (56.37091313591871f / atmoDivisor) * sunAOA * tempMult * atmoAngleMult * atmoDensityMult;  //56.blabla is a weird constant we use to turn flux into EC
+                        panelEffectivness = (chargeRate / 24.4f) / 56.37091313591871f * sunAOA * tempMult * atmoAngleMult * atmoDensityMult;  //56.blabla is a weird constant we use to turn flux into EC
                         totalFlow += (starFlux * panelEffectivness) / (1360 / PhysicsGlobals.SolarLuminosityAtHome);
 
                         // Restore Tracking Speed
@@ -251,29 +249,29 @@ namespace Kopernicus.Components
         {
             //Setup Floatcurves
             AtmosphericAttenutationAirMassMultiplier.Add(0f, 1f, 0f, 0f);
-            AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.958f, -0.017f, -0.017f);
-            AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.837f, -0.030f, -0.030f);
-            AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.683f, -0.023f, -0.023f);
-            AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.592f, -0.015f, -0.015f);
-            AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.483f, -0.0081f, -0.0081f);
-            AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.418f, -0.0052f, -0.0052f);
-            AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.374f, -0.0037f, -0.0037f);
-            AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.342f, -0.0028f, -0.0028f);
-            AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.296f, -0.0018f, -0.0018f);
-            AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.265f, -0.0013f, -0.0013f);
-            AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.216f, -0.00072f, -0.00072f);
-            AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.187f, -0.00047f, -0.00047f);
-            AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.153f, -0.00025f, -0.00025f);
-            AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.118f, -0.00012f, -0.00012f);
-            AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.094f, -0.00006f, -0.00006f);
-            AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.076f, -0.00003f, 0f);
+            AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.953f, -0.018f, -0.018f);
+            AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.835f, -0.032f, -0.032f);
+            AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.699f, -0.020f, -0.020f);
+            AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.616f, -0.014f, -0.014f);
+            AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.515f, -0.0076f, -0.0076f);
+            AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.454f, -0.0050f, -0.0050f);
+            AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.411f, -0.0036f, -0.0036f);
+            AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.380f, -0.0028f, -0.0028f);
+            AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.335f, -0.0018f, -0.0018f);
+            AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.303f, -0.0013f, -0.0013f);
+            AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.254f, -0.00074f, -0.00074f);
+            AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.224f, -0.00049f, -0.00049f);
+            AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.187f, -0.00027f, -0.00027f);
+            AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.149f, -0.00013f, -0.00013f);
+            AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.121f, -0.00007f, -0.00007f);
+            AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.102f, -0.00004f, 0f);
             AtmosphericAttenutationSolarAngleMultiplier.Add(0f, 1f, 0f, 0f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(15f, 0.983f, -0.0023f, -0.0023f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(30f, 0.932f, -0.0046f, -0.0046f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(45f, 0.845f, -0.0071f, -0.0071f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(60f, 0.717f, -0.0101f, -0.0101f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(75f, 0.537f, -0.0142f, -0.0142f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(90f, 0.290f, -0.0181f, -0.0181f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(15f, 0.985f, -0.0020f, -0.0020f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(30f, 0.940f, -0.0041f, -0.0041f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(45f, 0.862f, -0.0064f, -0.0064f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(60f, 0.746f, -0.0092f, -0.0092f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(75f, 0.579f, -0.0134f, -0.0134f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(90f, 0.336f, -0.0185f, -0.0185f);
             AtmosphericAttenutationSolarAngleMultiplier.Add(105f, 0.100f, -0.008f, -0.008f);
             AtmosphericAttenutationSolarAngleMultiplier.Add(120f, 0.050f, 0f, 0f);
             if (HighLogic.LoadedSceneIsFlight)
