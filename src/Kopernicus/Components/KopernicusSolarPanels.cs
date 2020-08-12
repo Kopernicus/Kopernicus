@@ -52,9 +52,14 @@ namespace Kopernicus.Components
         [KSPField(isPersistant = true)]
         private Boolean _manualTracking;
 
+        //declare internal float curves
+        private static FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
+        private static FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
+
         public override void FixedUpdate()
         {
             base.FixedUpdate();
+
             if (HighLogic.LoadedSceneIsFlight)
             {
                 if (deployState == ModuleDeployablePart.DeployState.EXTENDED)
@@ -96,28 +101,27 @@ namespace Kopernicus.Components
                         totalFlux += starFlux;
                         float panelEffectivness = 0;
                         //Now for some fancy atmospheric math
-                        float atmoMult = 1;
+                        float atmoDensityMult = 1;
+                        float atmoAngleMult = 1;
                         float tempMult = 1;
+                        float atmoDivisor = 1f;
                         Vector3d localSpace = ScaledSpace.ScaledToLocalSpace(star.target.position);
                         if (this.vessel.atmDensity > 0)
                         {
-                            Double targetAltitude = FlightGlobals.getAltitudeAtPos(localSpace, FlightGlobals.currentMainBody);
-                            if (targetAltitude < 0)
-                            {
-                                targetAltitude = 0;
-                            }
+                            float horizonAngle = (float)Math.Acos(FlightGlobals.currentMainBody.Radius / (FlightGlobals.currentMainBody.Radius + FlightGlobals.ship_altitude));
+                            Vector3 horizonVector = new Vector3(0, Mathf.Sin(Mathf.Deg2Rad * horizonAngle), Mathf.Cos(Mathf.Deg2Rad * horizonAngle));
+                            float sunZenithAngleDeg = Vector3.Angle(FlightGlobals.upAxis, star.sun.position);
 
-                            Double horizonAngle = Math.Acos(FlightGlobals.currentMainBody.Radius / (FlightGlobals.currentMainBody.Radius + targetAltitude));
-                            float horizonScalar = -Mathf.Sin((Single)horizonAngle);
-                            float dayNightRatio = 1f - Mathf.Abs(horizonScalar);
-                            float fadeStartAtAlt = horizonScalar + star.fadeStart * dayNightRatio;
-                            float fadeEndAtAlt = horizonScalar - star.fadeEnd * dayNightRatio;
-                            float localTime = Vector3.Dot(-FlightGlobals.getUpAxis(localSpace), transform.forward);
-                            atmoMult = (Mathf.Lerp(0f, star.light.intensity, Mathf.InverseLerp(fadeEndAtAlt, fadeStartAtAlt, localTime))) * 1.1f;
+                            Double gravAccelParameter = (vessel.mainBody.gravParameter / Math.Pow(vessel.mainBody.Radius + FlightGlobals.ship_altitude, 2));
+                            float massOfAirColumn = (float)(FlightGlobals.getStaticPressure() / gravAccelParameter);
+
                             tempMult = this.temperatureEfficCurve.Evaluate((float)this.vessel.atmosphericTemperature);
+                            atmoDensityMult = AtmosphericAttenutationAirMassMultiplier.Evaluate(massOfAirColumn);
+                            atmoAngleMult = AtmosphericAttenutationSolarAngleMultiplier.Evaluate(sunZenithAngleDeg);
+                            atmoDivisor = 1.05f;  //  For some reason this is needed in atmopsheric calcs
                         }
-                        panelEffectivness = ((((chargeRate / 24.4f) / 56.37091313591871f) * sunAOA) * tempMult) * atmoMult;  //56.blabla is a weird constant we use to turn flux into EC
 
+                        panelEffectivness = (chargeRate / 24.4f) / (56.37091313591871f / atmoDivisor) * sunAOA * tempMult * atmoAngleMult * atmoDensityMult;  //56.blabla is a weird constant we use to turn flux into EC
                         totalFlow += (starFlux * panelEffectivness) / (1360 / PhysicsGlobals.SolarLuminosityAtHome);
 
                         // Restore Tracking Speed
@@ -143,11 +147,12 @@ namespace Kopernicus.Components
                     {
                         trackingBody = bestStar.sun;
                         GetTrackingBodyTransforms();
+                        CalculateTracking();
                     }
                     vessel.solarFlux = totalFlux;
                     //Add to new output
                     flowRate = (float)totalFlow;
-                    _flowRate = (float)totalFlow / chargeRate;
+                    _flowRate = totalFlow / chargeRate;
                     resHandler.UpdateModuleResourceOutputs(_flowRate);
                 }
             }
@@ -244,6 +249,33 @@ namespace Kopernicus.Components
         }
         public override void OnStart(StartState state)
         {
+            //Setup Floatcurves
+            AtmosphericAttenutationAirMassMultiplier.Add(0f, 1f, 0f, 0f);
+            AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.958f, -0.017f, -0.017f);
+            AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.837f, -0.030f, -0.030f);
+            AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.683f, -0.023f, -0.023f);
+            AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.592f, -0.015f, -0.015f);
+            AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.483f, -0.0081f, -0.0081f);
+            AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.418f, -0.0052f, -0.0052f);
+            AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.374f, -0.0037f, -0.0037f);
+            AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.342f, -0.0028f, -0.0028f);
+            AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.296f, -0.0018f, -0.0018f);
+            AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.265f, -0.0013f, -0.0013f);
+            AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.216f, -0.00072f, -0.00072f);
+            AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.187f, -0.00047f, -0.00047f);
+            AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.153f, -0.00025f, -0.00025f);
+            AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.118f, -0.00012f, -0.00012f);
+            AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.094f, -0.00006f, -0.00006f);
+            AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.076f, -0.00003f, 0f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(0f, 1f, 0f, 0f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(15f, 0.983f, -0.0023f, -0.0023f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(30f, 0.932f, -0.0046f, -0.0046f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(45f, 0.845f, -0.0071f, -0.0071f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(60f, 0.717f, -0.0101f, -0.0101f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(75f, 0.537f, -0.0142f, -0.0142f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(90f, 0.290f, -0.0181f, -0.0181f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(105f, 0.100f, -0.008f, -0.008f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(120f, 0.050f, 0f, 0f);
             if (HighLogic.LoadedSceneIsFlight)
             {
                 TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
