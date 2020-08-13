@@ -184,6 +184,7 @@ namespace Kopernicus.RuntimeUtility
             if (contractTypeToRemove != null)
             {
                 ContractSystem.ContractTypes.Remove(contractTypeToRemove);
+                contractTypeToRemove = null;
             }
         }
 
