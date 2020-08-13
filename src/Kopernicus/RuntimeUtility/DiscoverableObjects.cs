@@ -68,17 +68,25 @@ namespace Kopernicus.RuntimeUtility
         {
             // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
             // @Squad: I stab you with a try { } catch { } block.
-            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
+            //RTB Thinks we should only do this if the config tells us to.
+            if (!RuntimeUtility.KopernicusConfig.UseStockAsteroidGenerator)
             {
-                // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
-                foreach (Object o in
-                    Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
+                if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
                 {
-                    ScenarioDiscoverableObjects scenario = (ScenarioDiscoverableObjects) o;
-                    scenario.StopAllCoroutines();
-                    Destroy(scenario);
+                    // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
+                    foreach (Object o in
+                        Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
+                    {
+                        ScenarioDiscoverableObjects scenario = (ScenarioDiscoverableObjects)o;
+                        scenario.StopAllCoroutines();
+                        Destroy(scenario);
+                    }
+                    Debug.Log("[Kopernicus] ScenarioDiscoverableObjects successfully removed.");
                 }
-                Debug.Log("[Kopernicus] ScenarioDiscoverableObjects successfully removed.");
+            }
+            else
+            {
+                Debug.Log("[Kopernicus] ScenarioDiscoverableObjects is being kept for this system.");
             }
 
             foreach (Asteroid asteroid in Asteroids)

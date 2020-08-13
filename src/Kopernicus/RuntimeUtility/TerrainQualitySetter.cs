@@ -44,17 +44,19 @@ namespace Kopernicus.RuntimeUtility
 
         private void Update()
         {
-            if ((GameSettings.TERRAIN_SHADER_QUALITY == 3) || (HighLogic.LoadedScene != GameScenes.MAINMENU))
+            if (GameSettings.TERRAIN_SHADER_QUALITY == 3)
             {
                 return;
             }
-
-            ScreenMessages.PostScreenMessage(
-                "Kopernicus only supports terrain quality ultra!\nSome terrain packs may not work!.",
-                5f, ScreenMessageStyle.UPPER_LEFT);
-
-            //GameSettings.TERRAIN_SHADER_QUALITY = 3;
-            //GameSettings.SaveSettings();
+            if ((RuntimeUtility.KopernicusConfig.WarnShaders) && (!HighLogic.LoadedSceneIsGame))
+            {
+                ScreenMessages.PostScreenMessage("Kopernicus only supports terrain quality ultra!\nSome terrain packs may not work!.", 5f, ScreenMessageStyle.UPPER_LEFT);
+            }
+            if (RuntimeUtility.KopernicusConfig.EnforceShaders)
+            {
+                GameSettings.TERRAIN_SHADER_QUALITY = 3;
+                GameSettings.SaveSettings();
+            }
         }
     }
 }

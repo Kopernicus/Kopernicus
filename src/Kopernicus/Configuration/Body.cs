@@ -268,6 +268,13 @@ namespace Kopernicus.Configuration
                 if ((!Template.OriginalBody.scaledVersion.name.Equals("Jool")) || Name.Equals("Jool"))
                 {
                     GeneratedBody = Template.Body;
+                    //Kludge to apply multistar fixes to everything but stars
+                    if (!Template.OriginalBody.scaledVersion.name.Equals("Sun") && (!Name.Equals(Template.OriginalBody.scaledVersion.name)))
+                    {
+                        GeneratedBody = Template.Body;
+                        GeneratedBody.scaledVersion = UnityEngine.Object.Instantiate(Templates.ReferenceEelooPSB.scaledVersion, Utility.Deactivator, true);
+                        GeneratedBody.celestialBody = Template.Body.celestialBody;
+                    }
                     // Patch the game object names in the template
                     GeneratedBody.name = Name;
                     GeneratedBody.celestialBody.bodyName = Name;
