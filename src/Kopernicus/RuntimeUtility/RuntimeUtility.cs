@@ -172,6 +172,14 @@ namespace Kopernicus.RuntimeUtility
                 PatchStarReferences(PSystemManager.Instance.localBodies[i]);
                 PatchContractWeight(PSystemManager.Instance.localBodies[i]);
             }
+            //Small Contract fixer to remove Sentinel Contracts:
+            foreach (Type contract in Contracts.ContractSystem.ContractTypes)
+            {
+                if (contract.FullName.Contains("SentinelContract"))
+                {
+                    ContractSystem.ContractTypes.Remove(contract);
+                }
+            }
         }
 
         // Transforms body references in the save games
