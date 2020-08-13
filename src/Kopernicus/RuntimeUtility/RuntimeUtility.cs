@@ -173,12 +173,17 @@ namespace Kopernicus.RuntimeUtility
                 PatchContractWeight(PSystemManager.Instance.localBodies[i]);
             }
             //Small Contract fixer to remove Sentinel Contracts:
+            Type contractTypeToRemove = null;
             foreach (Type contract in Contracts.ContractSystem.ContractTypes)
             {
                 if (contract.FullName.Contains("SentinelContract"))
                 {
-                    ContractSystem.ContractTypes.Remove(contract);
+                    contractTypeToRemove = contract;
                 }
+            }
+            if (contractTypeToRemove != null)
+            {
+                ContractSystem.ContractTypes.Remove(contractTypeToRemove);
             }
         }
 
