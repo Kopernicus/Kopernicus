@@ -44,16 +44,17 @@ namespace Kopernicus.Constants
         }
 
         // Get a String for the logging
+        // Get a String for the logging
         public static String VersionId
         {
             get
             {
-                #if DEBUG
+#if DEBUG
                 const String DEVELOPMENT_BUILD = " [Development Build]";
-                #else
+#else
                 const String DEVELOPMENT_BUILD = "";
-                #endif
-                return "Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
+#endif
+                return "RTB's Unified Bleeding-Edge Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
                        BuiltTime(Assembly.GetCallingAssembly()).ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " +
                        AssemblyHandle() + ")";
             }

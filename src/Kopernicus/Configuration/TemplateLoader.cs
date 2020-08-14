@@ -225,7 +225,7 @@ namespace Kopernicus.Configuration
                         }
                         else
                         {
-                            //modsPerName.Add(mName, Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+                            //modsPerName.Add(name, Type.GetType(modName + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
                             Type t = Parser.ModTypes.Find(m => m.Name == modName);
                             if (t != null)
                             {
@@ -237,34 +237,41 @@ namespace Kopernicus.Configuration
                     Utility.RemoveModsOfType(mods, Body.pqsVersion);
                     foreach (KeyValuePair<String, Type> kvP in modsPerName)
                     {
-                        try
+                        Int32 index = 0;
+                        String modName = kvP.Key;
+                        if (modName.Contains(';'))
                         {
-                            Int32 index = 0;
-                            String modName = kvP.Key;
-                            if (modName.Contains(';'))
-                            {
-                                String[] split = modName.Split(';');
-                                modName = split[0];
-                                Int32.TryParse(split[1], out index);
-                            }
+                            String[] split = modName.Split(';');
+                            modName = split[0];
+                            Int32.TryParse(split[1], out index);
+                        }
 
-                            PQSMod[] allMods = Body.pqsVersion.GetComponentsInChildren(kvP.Value, true)
-                                .OfType<PQSMod>().Where(m => m.name == modName).ToArray();
-                            if (allMods.Length <= 0)
+                        PQSMod[] allMods = Body.pqsVersion.GetComponentsInChildren(kvP.Value, true)
+                            .OfType<PQSMod>().Where(m => m.name == modName).ToArray();
+                        if (allMods.Length <= 0)
+                        {
+                            continue;
+                        }
+                        if (allMods[index] is PQSCity)
+                        {
+                            PQSCity city = (PQSCity)allMods[index];
+                            if (city.lod != null)
                             {
-                                continue;
-                            }
-                            if (allMods[index] is PQSCity)
-                            {
-                                PQSCity city = (PQSCity)allMods[index];
-                                if (city.lod != null)
+                                foreach (PQSCity.LODRange range in city.lod)
                                 {
-                                    foreach (PQSCity.LODRange range in city.lod)
+                                    if (range.objects != null)
                                     {
-                                        if (range.renderers == null)
+                                        foreach (GameObject o in range.objects)
                                         {
-                                            continue;
+                                            o.DestroyGameObjectImmediate();
                                         }
+                                    }
+
+                                    if (range.renderers == null)
+                                    {
+                                        continue;
+                                    }
+                                    {
                                         foreach (GameObject o in range.renderers)
                                         {
                                             o.DestroyGameObjectImmediate();
@@ -272,39 +279,36 @@ namespace Kopernicus.Configuration
                                     }
                                 }
                             }
+                        }
 
-                            if (allMods[index] is PQSCity2)
+                        if (allMods[index] is PQSCity2)
+                        {
+                            PQSCity2 city = (PQSCity2)allMods[index];
+                            if (city.objects != null)
                             {
-                                PQSCity2 city = (PQSCity2)allMods[index];
-                                if (city.objects != null)
+                                foreach (PQSCity2.LodObject range in city.objects)
                                 {
-                                    foreach (PQSCity2.LodObject range in city.objects)
+                                    if (range.objects == null)
                                     {
-                                        if (range.objects == null)
-                                        {
-                                            continue;
-                                        }
-                                        foreach (GameObject o in range.objects)
-                                        {
-                                            o.DestroyGameObjectImmediate();
-                                        }
+                                        continue;
+                                    }
+                                    foreach (GameObject o in range.objects)
+                                    {
+                                        o.DestroyGameObjectImmediate();
                                     }
                                 }
                             }
+                        }
 
-                            // If no mod is left, delete the game object too
-                            GameObject gameObject = allMods[index].gameObject;
-                            PQSMod[] allRemainingMods = gameObject.GetComponentsInChildren<PQSMod>(true);
-                            if (allRemainingMods.Length == 0)
-                            {
-                                gameObject.DestroyGameObjectImmediate();
-                            }
-                            Object.DestroyImmediate(allMods[index]);
-                        }
-                        catch
+                        // If no mod is left, delete the game object too
+                        GameObject gameObject = allMods[index].gameObject;
+                        PQSMod[] allRemainingMods = gameObject.GetComponentsInChildren<PQSMod>(true);
+                        if (allRemainingMods.Length == 0)
                         {
-                            continue;
+                            gameObject.DestroyGameObjectImmediate();
                         }
+                        //this breaks main menu in 1.10+
+                        //Object.DestroyImmediate(allMods[index]);
                     }
                 }
 

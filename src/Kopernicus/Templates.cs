@@ -36,6 +36,7 @@ namespace Kopernicus
     {
         // The reference mesh for ScaledSpace (Jools Mesh)
         public static readonly Mesh ReferenceGeosphere;
+        public static readonly PSystemBody ReferenceEelooPSB;
 
         // Finalize Orbits stuff
         public const Double SOI_MIN_RADIUS_MULTIPLIER = 2.0d;
@@ -78,6 +79,12 @@ namespace Kopernicus
 
             // Return it's mesh
             ReferenceGeosphere = jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
+
+            //We need eeloo too
+            PSystemBody eeloo = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Eeloo");
+
+            // We need to get the PS-body for Eeloo (to steal it's magic)
+            ReferenceEelooPSB = eeloo;
 
             // Main Menu body
             MenuBody = "Kerbin";

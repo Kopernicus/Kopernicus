@@ -215,6 +215,10 @@ namespace Kopernicus.Configuration
         [ParserTargetCollection("Rings", AllowMerge = true)]
         public List<RingLoader> Rings { get; set; }
 
+        // Wrapper around Particle class for editing/loading
+        [ParserTargetCollection("Particles", AllowMerge = true)]
+        public List<ParticleLoader> Particles { get; set; }
+
         [ParserTargetCollection("HazardousBody", AllowMerge = true)]
         public List<HazardousBodyLoader> HazardousBody { get; set; }
 
@@ -264,6 +268,13 @@ namespace Kopernicus.Configuration
                 if ((!Template.OriginalBody.scaledVersion.name.Equals("Jool")) || Name.Equals("Jool"))
                 {
                     GeneratedBody = Template.Body;
+                    //Kludge to apply multistar fixes to everything but stars
+                    if (!Template.OriginalBody.scaledVersion.name.Equals("Sun") && (!Name.Equals(Template.OriginalBody.scaledVersion.name)))
+                    {
+                        GeneratedBody = Template.Body;
+                        GeneratedBody.scaledVersion = UnityEngine.Object.Instantiate(Templates.ReferenceEelooPSB.scaledVersion, Utility.Deactivator, true);
+                        GeneratedBody.celestialBody = Template.Body.celestialBody;
+                    }
                     // Patch the game object names in the template
                     GeneratedBody.name = Name;
                     GeneratedBody.celestialBody.bodyName = Name;
@@ -455,6 +466,7 @@ namespace Kopernicus.Configuration
         public Body()
         {
             Rings = new List<RingLoader>();
+            Particles = new List<ParticleLoader>();
         }
 
         /// <summary>
@@ -492,6 +504,13 @@ namespace Kopernicus.Configuration
             foreach (Ring ring in celestialBody.scaledBody.GetComponentsInChildren<Ring>(true))
             {
                 Rings.Add(new RingLoader(ring));
+            }
+
+            Particles = new List<ParticleLoader>();
+            foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
+                .GetComponentsInChildren<PlanetParticleEmitter>(true))
+            {
+                Particles.Add(new ParticleLoader(particle));
             }
 
             HazardousBody = new List<HazardousBodyLoader>();
