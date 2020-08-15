@@ -352,12 +352,12 @@ namespace Kopernicus.Configuration
                     {
                         if (onDemand.normals.Length < 1)
                         {
-                            onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                            onDemand.normals = "BUILTIN/cloud_normal";
                         }
                     }
                     catch
                     {
-                        onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                        onDemand.normals = "BUILTIN/cloud_normal";
                     }
                 }
             }
