@@ -59,14 +59,13 @@ namespace Kopernicus.Components
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-
             if (HighLogic.LoadedSceneIsFlight)
             {
                 if (deployState == ModuleDeployablePart.DeployState.EXTENDED)
                 {
                     KopernicusStar trackingStar = KopernicusStar.CelestialBodies[trackingBody];
 
-                    Double bestFlux = vessel.solarFlux * 1360 / PhysicsGlobals.SolarLuminosityAtHome;
+                    Double bestFlux = 0;
                     KopernicusStar bestStar = trackingStar;
                     Double totalFlux = 0;
                     Double totalFlow = 0;
@@ -88,7 +87,7 @@ namespace Kopernicus.Components
                         CalculateTracking();
 
                         //Calculate flux
-                        double starFlux = star.CalculateFluxAt(vessel) * (1360 / PhysicsGlobals.SolarLuminosityAtHome);
+                        double starFlux = star.CalculateFluxAt(vessel) * 1360 / PhysicsGlobals.SolarLuminosityAtHome;
 
                         //Check if star has better flux
                         if (bestFlux < starFlux)
@@ -127,10 +126,8 @@ namespace Kopernicus.Components
 
                     }
                     // Restore the starting star
-                    trackingStar.shifter.ApplyPhysics();
-
-                    // Restore the old tracking body
                     trackingBody = trackingStar.sun;
+                    trackingStar.shifter.ApplyPhysics();
                     GetTrackingBodyTransforms();
                     CalculateTracking();
 
@@ -140,22 +137,23 @@ namespace Kopernicus.Components
                         //this ensures the "blocked" GUI option is set right, if we're exposed to you we're not blocked
                         vessel.directSunlight = true;
                     }
-                    // We got the best star to use
-                    if ((bestStar != null && bestStar.sun != trackingBody) && (!_manualTracking))
-                    {
-                        trackingBody = bestStar.sun;
-                        GetTrackingBodyTransforms();
-                        CalculateTracking();
-                    }
+
                     vessel.solarFlux = totalFlux;
                     //Add to new output
                     flowRate = (float)totalFlow;
                     _flowRate = totalFlow / chargeRate;
                     resHandler.UpdateModuleResourceOutputs(_flowRate);
+                    // Setup next tracking body
+                    if ((bestStar != null && bestStar != trackingStar) && (!_manualTracking))
+                    {
+                        trackingBody = bestStar.sun;
+                        GetTrackingBodyTransforms();
+                        CalculateTracking();
+                    }
                 }
+                // Restore The Current Star
+                KopernicusStar.Current.shifter.ApplyPhysics();
             }
-            // Restore The Current Star
-            KopernicusStar.Current.shifter.ApplyPhysics();
         }
 
         public override void PostCalculateTracking(bool trackingLOS, Vector3 trackingDirection)
@@ -249,22 +247,22 @@ namespace Kopernicus.Components
         {
             //Setup Floatcurves
             AtmosphericAttenutationAirMassMultiplier.Add(0f, 1f, 0f, 0f);
-            AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.953f, -0.018f, -0.018f);
-            AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.835f, -0.032f, -0.032f);
-            AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.699f, -0.020f, -0.020f);
-            AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.616f, -0.014f, -0.014f);
-            AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.515f, -0.0076f, -0.0076f);
-            AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.454f, -0.0050f, -0.0050f);
-            AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.411f, -0.0036f, -0.0036f);
-            AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.380f, -0.0028f, -0.0028f);
-            AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.335f, -0.0018f, -0.0018f);
-            AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.303f, -0.0013f, -0.0013f);
-            AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.254f, -0.00074f, -0.00074f);
-            AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.224f, -0.00049f, -0.00049f);
-            AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.187f, -0.00027f, -0.00027f);
-            AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.149f, -0.00013f, -0.00013f);
-            AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.121f, -0.00007f, -0.00007f);
-            AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.102f, -0.00004f, 0f);
+            AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.982f, -0.010f, -0.010f);
+            AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.891f, -0.032f, -0.032f);
+            AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.746f, -0.025f, -0.025f);
+            AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.657f, -0.014f, -0.014f);
+            AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.550f, -0.0081f, -0.0081f);
+            AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.484f, -0.0053f, -0.0053f);
+            AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.439f, -0.0039f, -0.0039f);
+            AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.405f, -0.0030f, -0.0030f);
+            AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.357f, -0.0020f, -0.0020f);
+            AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.324f, -0.0014f, -0.0014f);
+            AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.271f, -0.00079f, -0.00079f);
+            AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.239f, -0.00052f, -0.00052f);
+            AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.200f, -0.00029f, -0.00029f);
+            AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.159f, -0.00014f, -0.00014f);
+            AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.130f, -0.00007f, -0.00007f);
+            AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.108f, -0.00004f, 0f);
             AtmosphericAttenutationSolarAngleMultiplier.Add(0f, 1f, 0f, 0f);
             AtmosphericAttenutationSolarAngleMultiplier.Add(15f, 0.985f, -0.0020f, -0.0020f);
             AtmosphericAttenutationSolarAngleMultiplier.Add(30f, 0.940f, -0.0041f, -0.0041f);

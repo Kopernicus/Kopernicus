@@ -313,47 +313,6 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
-        /// Override for <see cref="FlightIntegrator.CalculateSunBodyFlux"/>
-        /// </summary>
-        public static void SunBodyFlux(ModularFlightIntegrator MFI)
-        {
-            // Nullchecks
-            if (MFI.Vessel == null || MFI.Vessel.state == Vessel.State.DEAD || MFI.CurrentMainBody == null)
-            {
-                return;
-            }
-
-            Double solarFlux = 0;
-
-            // Calculate the values for all bodies
-            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
-            {
-                KopernicusStar star = KopernicusStar.Stars[i];
-
-                if (star == KopernicusStar.Current)
-                {
-                    continue;
-                }
-
-                // Set Physics
-                star.shifter.ApplyPhysics();;
-
-                // Calculate Flux
-                solarFlux += star.CalculateFluxAt(MFI.Vessel) * PhysicsGlobals.SolarLuminosityAtHome / 1360;
-            }
-
-            // Set Physics to the Current Star
-            KopernicusStar.Current.shifter.ApplyPhysics();
-
-            // Calculate Flux
-            solarFlux += Current.CalculateFluxAt(MFI.Vessel) * PhysicsGlobals.SolarLuminosityAtHome / 1360;
-
-            // Reapply
-            MFI.Vessel.directSunlight = solarFlux > 0;
-            MFI.solarFlux = solarFlux;
-        }
-
-        /// <summary>
         /// Returns the host star directly from the given body.
         /// </summary>
         public static CelestialBody GetLocalStar(CelestialBody body)
