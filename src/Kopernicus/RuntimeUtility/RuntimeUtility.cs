@@ -51,6 +51,7 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
+        public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
         // Awake() - flag this class as don't destroy on load and register delegates
         [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
         private void Awake()
@@ -64,7 +65,8 @@ namespace Kopernicus.RuntimeUtility
 
             // Make sure the runtime utility isn't killed
             DontDestroyOnLoad(this);
-
+            //Load our settings
+            KopernicusConfig.loadMainSettings();
             // Init the runtime logging
             new Logger("Kopernicus.Runtime", true).SetAsActive();
 
@@ -166,7 +168,40 @@ namespace Kopernicus.RuntimeUtility
             FixCameras();
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
+            //Small Contract fixer to remove Sentinel Contracts, only runs if stockAsteroids are off
+            if (!RuntimeUtility.KopernicusConfig.UseStockAsteroidGenerator)
+            {
+                Type contractTypeToRemove = null;
+                try
+                {
+                    foreach (Type contract in Contracts.ContractSystem.ContractTypes)
+                    {
+                        try
+                        {
 
+                            if (contract.FullName.Contains("SentinelContract"))
+                            {
+                                contractTypeToRemove = contract;
+                            }
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+                    if (!(contractTypeToRemove == null))
+                    {
+                        ContractSystem.ContractTypes.Remove(contractTypeToRemove);
+                        contractTypeToRemove = null;
+                        Debug.Log("[Kopernicus] ScenarioDiscoverableObjects is removed, scrubbing SENTINEL contracts.");
+                    }
+                }
+                catch
+                {
+                    contractTypeToRemove = null;
+                }
+            }
+            //Patch weights of contracts
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 PatchStarReferences(PSystemManager.Instance.localBodies[i]);
@@ -231,6 +266,12 @@ namespace Kopernicus.RuntimeUtility
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
 
+            KopernicusStar.CelestialBodies =
+                new Dictionary<CelestialBody, KopernicusStar>
+                {
+                    { star.sun, star }
+                };
+
             // SunFlare
             gob = SunFlare.Instance.gameObject;
             KopernicusSunFlare flare = gob.AddComponent<KopernicusSunFlare>();
@@ -257,6 +298,8 @@ namespace Kopernicus.RuntimeUtility
             starObj.transform.localScale = Vector3.one;
             starObj.transform.position = body.position;
             starObj.transform.rotation = body.rotation;
+
+            KopernicusStar.CelestialBodies.Add(star.sun, star);
 
             GameObject flareObj = UnityEngine.Object.Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
             KopernicusSunFlare flare = flareObj.GetComponent<KopernicusSunFlare>();
@@ -732,7 +775,6 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
             Events.OnRuntimeUtilityPatchFI.Fire();
-            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
             ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
         }
 

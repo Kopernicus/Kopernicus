@@ -328,6 +328,16 @@ namespace Kopernicus.Configuration
         // Parser apply event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
+            //This odd sequence corrects some oddities in the Jool Template-handling code introduced in 1.10.
+            try 
+            {
+                if (Type == ScaledMaterialType.Star)
+                { }
+            }
+            catch
+            {
+                Type = ScaledMaterialType.AtmosphericStandard;
+            }
             // Are we a planet or moon?
             if (Type != ScaledMaterialType.Star)
             {
@@ -354,8 +364,8 @@ namespace Kopernicus.Configuration
                 }
             }
 
-            // Otherwise we are a star
-            else
+            // Otherwise we are (likely) a star
+            else if (Type == ScaledMaterialType.Star)
             {
                 // Add the SunShaderController behavior
                 SunShaderController controller = Value.scaledBody.GetComponent<SunShaderController>();
@@ -385,7 +395,6 @@ namespace Kopernicus.Configuration
                     corona.transform.parent = Utility.Deactivator;
                 }
             }
-
             // Event
             Events.OnScaledVersionLoaderApply.Fire(this, node);
         }

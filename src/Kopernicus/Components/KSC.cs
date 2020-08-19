@@ -370,7 +370,7 @@ namespace Kopernicus.Components
                     return;
                 }
 
-                Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(m => m?.shader?.name == "KSP/Scenery/Diffuse Ground KSC").ToArray();
+                Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(m => (m.shader.name.Contains("KSC"))).ToArray();
                 for (int i = materials.Length; i > 0; i--)
                 {
                     var material = materials[i - 1];

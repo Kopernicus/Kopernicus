@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus", "src\Kopernicus\Kopernicus.csproj", "{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus.Parser", "src\external\config-parser\src\Kopernicus.Parser.csproj", "{F9968D87-83DA-453C-8E28-B632367EACD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,13 +15,12 @@ Global
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9968D87-83DA-453C-8E28-B632367EACD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B9211D9D-0758-4C5A-8215-FE1107FBC928}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Kopernicus\Kopernicus\Kopernicus.csproj
