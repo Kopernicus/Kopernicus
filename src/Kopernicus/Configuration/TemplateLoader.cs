@@ -170,8 +170,34 @@ namespace Kopernicus.Configuration
             // If we have a PQS
             if (Body.pqsVersion != null)
             {
+                // We only support one surface material per body, so use the one with the highest quality available
+                Material surfaceMaterial = Body.pqsVersion.ultraQualitySurfaceMaterial;
+
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.highQualitySurfaceMaterial;
+                }
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.mediumQualitySurfaceMaterial;
+                }
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.lowQualitySurfaceMaterial;
+                }
+                if (!surfaceMaterial)
+                {
+                    surfaceMaterial = Body.pqsVersion.surfaceMaterial;
+                }
+
+                Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
+                Body.pqsVersion.surfaceMaterial = surfaceMaterial;
+
                 // Should we remove the ocean?
-                if (Body.celestialBody.ocean && RemoveOcean.Value)
+                if (Body.celestialBody.ocean)
                 {
                     // Find atmosphere the ocean PQS
                     PQS ocean = Body.pqsVersion.GetComponentsInChildren<PQS>(true)
@@ -179,16 +205,46 @@ namespace Kopernicus.Configuration
                     PQSMod_CelestialBodyTransform cbt = Body.pqsVersion
                         .GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).First();
 
-                    // Destroy the ocean PQS (this could be bad - destroying the secondary fades...)
-                    cbt.planetFade.secondaryRenderers.Remove(ocean.gameObject);
-                    cbt.secondaryFades = null;
-                    ocean.transform.parent = null;
-                    Object.Destroy(ocean);
+                    // We only support one surface material per body, so use the one with the highest quality available
+                    surfaceMaterial = ocean.ultraQualitySurfaceMaterial;
 
-                    // No more ocean :(
-                    Body.celestialBody.ocean = false;
-                    Body.pqsVersion.mapOcean = false;
+                    if (!surfaceMaterial)
+                    {
+                        surfaceMaterial = ocean.highQualitySurfaceMaterial;
+                    }
+                    if (!surfaceMaterial)
+                    {
+                        surfaceMaterial = ocean.mediumQualitySurfaceMaterial;
+                    }
+                    if (!surfaceMaterial)
+                    {
+                        surfaceMaterial = ocean.lowQualitySurfaceMaterial;
+                    }
+                    if (!surfaceMaterial)
+                    {
+                        surfaceMaterial = ocean.surfaceMaterial;
+                    }
+
+                    ocean.ultraQualitySurfaceMaterial = surfaceMaterial;
+                    ocean.highQualitySurfaceMaterial = surfaceMaterial;
+                    ocean.mediumQualitySurfaceMaterial = surfaceMaterial;
+                    ocean.lowQualitySurfaceMaterial = surfaceMaterial;
+                    ocean.surfaceMaterial = surfaceMaterial;
+
+                    if (RemoveOcean.Value)
+                    {
+                        // Destroy the ocean PQS (this could be bad - destroying the secondary fades...)
+                        cbt.planetFade.secondaryRenderers.Remove(ocean.gameObject);
+                        cbt.secondaryFades = null;
+                        ocean.transform.parent = null;
+                        Object.Destroy(ocean);
+
+                        // No more ocean :(
+                        Body.celestialBody.ocean = false;
+                        Body.pqsVersion.mapOcean = false;
+                    }
                 }
+
                 // Selectively remove PQS Mods
                 if (RemovePqsMods != null && RemovePqsMods.Value.LongCount() > 0)
                 {
@@ -263,7 +319,7 @@ namespace Kopernicus.Configuration
                                     {
                                         foreach (GameObject o in range.objects)
                                         {
-                                            o.DestroyGameObjectImmediate();
+                                            Object.DestroyImmediate(o);
                                         }
                                     }
 
@@ -274,7 +330,7 @@ namespace Kopernicus.Configuration
                                     {
                                         foreach (GameObject o in range.renderers)
                                         {
-                                            o.DestroyGameObjectImmediate();
+                                            Object.DestroyImmediate(o);
                                         }
                                     }
                                 }
@@ -294,7 +350,7 @@ namespace Kopernicus.Configuration
                                     }
                                     foreach (GameObject o in range.objects)
                                     {
-                                        o.DestroyGameObjectImmediate();
+                                        Object.DestroyImmediate(o);
                                     }
                                 }
                             }
@@ -302,13 +358,12 @@ namespace Kopernicus.Configuration
 
                         // If no mod is left, delete the game object too
                         GameObject gameObject = allMods[index].gameObject;
+                        Object.DestroyImmediate(allMods[index]);
                         PQSMod[] allRemainingMods = gameObject.GetComponentsInChildren<PQSMod>(true);
                         if (allRemainingMods.Length == 0)
                         {
-                            gameObject.DestroyGameObjectImmediate();
+                            Object.DestroyImmediate(gameObject);
                         }
-                        //this breaks main menu in 1.10+
-                        //Object.DestroyImmediate(allMods[index]);
                     }
                 }
 
