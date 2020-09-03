@@ -98,7 +98,10 @@ namespace Kopernicus.Configuration
                 {
                     return ScaledMaterialType.Star;
                 }
-
+                if (material.shader.name.Equals("Terrain/Gas Giant")) // Kludge for Joolian shader loading for now
+                {
+                    return ScaledMaterialType.Atmospheric;
+                }
                 throw new Exception("The shader '" + material.shader.name + "' is not supported.");
             }
             set
