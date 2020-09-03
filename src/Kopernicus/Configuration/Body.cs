@@ -266,10 +266,6 @@ namespace Kopernicus.Configuration
             {
                 // If we have a template, generatedBody *is* the template body
                 GeneratedBody = Template.Body;
-                //Kludge to apply multistar fixes to everything
-                Utility.GameObjectWalk(Template.OriginalBody.scaledVersion);
-                MaterialSetDirection MSD = GeneratedBody.scaledVersion.AddOrGetComponent<MaterialSetDirection>();
-                GameObject.DestroyImmediate(MSD);
                 // Patch the game object names in the template
                 GeneratedBody.name = Name;
                 GeneratedBody.celestialBody.bodyName = Name;
