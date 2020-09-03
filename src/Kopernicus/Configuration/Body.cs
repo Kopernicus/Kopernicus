@@ -269,9 +269,9 @@ namespace Kopernicus.Configuration
                 //Kludge to apply multistar fixes to everything but stars
                 if (!Template.OriginalBody.scaledVersion.name.Equals("Sun") && (!Name.Equals(Template.OriginalBody.scaledVersion.name)))
                 {
-                    GeneratedBody = Template.Body;
                     GeneratedBody.scaledVersion = UnityEngine.Object.Instantiate(Templates.ReferenceEelooPSB.scaledVersion, Utility.Deactivator, true);
-                    GeneratedBody.scaledVersion.GetComponent<Renderer>().sharedMaterial = Template.OriginalBody.scaledVersion.GetComponent<Renderer>().sharedMaterial;
+                    Renderer bodyRenderer = GeneratedBody.scaledVersion.GetComponent<Renderer>();
+                    bodyRenderer = Template.OriginalBody.scaledVersion.GetComponent<Renderer>();
                     GeneratedBody.celestialBody = Template.Body.celestialBody;
                 }
                 if (!Template.OriginalBody.scaledVersion.name.Equals("Jool"))
