@@ -331,16 +331,6 @@ namespace Kopernicus.Configuration
         // Parser apply event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            //This odd sequence corrects some oddities in the Jool Template-handling code introduced in 1.10.
-            try 
-            {
-                if (Type == ScaledMaterialType.Star)
-                { }
-            }
-            catch
-            {
-                Type = ScaledMaterialType.AtmosphericStandard;
-            }
             // Are we a planet or moon?
             if (Type != ScaledMaterialType.Star)
             {
