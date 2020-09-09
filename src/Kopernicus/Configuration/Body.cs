@@ -262,104 +262,47 @@ namespace Kopernicus.Configuration
         // Parser Apply Event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            // If we have a template, generatedBody *is* the template body
             if (Template != null && Template.Body)
             {
-                if ((!Template.OriginalBody.scaledVersion.name.Equals("Jool")) || Name.Equals("Jool"))
+                // If we have a template, generatedBody *is* the template body
+                GeneratedBody = Template.Body;
+                // Patch the game object names in the template
+                GeneratedBody.name = Name;
+                GeneratedBody.celestialBody.bodyName = Name;
+                GeneratedBody.celestialBody.transform.name = Name;
+                GeneratedBody.scaledVersion.name = Name;
+                if (GeneratedBody.pqsVersion != null)
                 {
-                    GeneratedBody = Template.Body;
-                    //Kludge to apply multistar fixes to everything but stars
-                    if (!Template.OriginalBody.scaledVersion.name.Equals("Sun") && (!Name.Equals(Template.OriginalBody.scaledVersion.name)))
+                    GeneratedBody.pqsVersion.name = Name;
+                    GeneratedBody.pqsVersion.gameObject.name = Name;
+                    GeneratedBody.pqsVersion.transform.name = Name;
+                    foreach (PQS p in GeneratedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
                     {
-                        GeneratedBody = Template.Body;
-                        GeneratedBody.scaledVersion = UnityEngine.Object.Instantiate(Templates.ReferenceEelooPSB.scaledVersion, Utility.Deactivator, true);
-                        GeneratedBody.celestialBody = Template.Body.celestialBody;
-                    }
-                    // Patch the game object names in the template
-                    GeneratedBody.name = Name;
-                    GeneratedBody.celestialBody.bodyName = Name;
-                    GeneratedBody.celestialBody.transform.name = Name;
-                    GeneratedBody.scaledVersion.name = Name;
-                    if (GeneratedBody.pqsVersion != null)
-                    {
-                        GeneratedBody.pqsVersion.name = Name;
-                        GeneratedBody.pqsVersion.gameObject.name = Name;
-                        GeneratedBody.pqsVersion.transform.name = Name;
-                        foreach (PQS p in GeneratedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
-                        {
-                            p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
-                        }
-                        GeneratedBody.celestialBody.pqsController = GeneratedBody.pqsVersion;
-                    }
-                    // If we've changed the name, reset use_The_InName
-                    if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
-                    {
-                        GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
-                    }
-                    // Create accessors
-                    Debug = new DebugLoader();
-                    ScaledVersion = new ScaledVersionLoader();
-                }
-                else if (Template.OriginalBody.scaledVersion.name.Equals("Jool")) // This is a Jool-clone, a gas giant but not the real Jool.  We have to handle it special.
-                {
-                    // Create the PSystemBody object
-                    GameObject generatedBodyGameObject = new GameObject(Name);
-                    generatedBodyGameObject.transform.parent = Utility.Deactivator;
-                    GeneratedBody = generatedBodyGameObject.AddComponent<PSystemBody>();
-                    GeneratedBody.flightGlobalsIndex = 0;
-                    // Grab the proper celestialBody and set it's type
-                    GeneratedBody.celestialBody = Template.Body.celestialBody;
-                    GeneratedBody.celestialBody.bodyType = Template.Body.celestialBody.bodyType;
-                    // Sensible defaults 
-                    GeneratedBody.celestialBody.bodyName = Name;
-                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = Name;
-                    GeneratedBody.celestialBody.atmosphere = true;
-                    GeneratedBody.celestialBody.hasSolidSurface = false;
-                    GeneratedBody.celestialBody.ocean = false;
-                    //Other setup
-                    GeneratedBody.orbitDriver = Template.Body.orbitDriver;
-                    GeneratedBody.orbitRenderer = Template.Body.orbitRenderer;
-                    GeneratedBody.planetariumCameraInitial = Template.Body.planetariumCameraInitial;
-                    // Patch the game object names in the template
-                    GeneratedBody.name = Name;
-                    GeneratedBody.celestialBody.bodyName = Name;
-                    GeneratedBody.celestialBody.transform.name = Name;
-                    // Create the scaled version
-                    GeneratedBody.scaledVersion = new GameObject(Name) { layer = GameLayers.SCALED_SPACE };
-                    GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
-                    if (GeneratedBody.pqsVersion != null)
-                    {
-                        GeneratedBody.pqsVersion.name = Name;
-                        GeneratedBody.pqsVersion.gameObject.name = Name;
-                        GeneratedBody.pqsVersion.transform.name = Name;
-                        foreach (PQS p in GeneratedBody.pqsVersion.GetComponentsInChildren<PQS>(true))
-                        {
-                            p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
-                        }
+                        p.name = p.name.Replace(Template.Body.celestialBody.bodyName, Name);
                     }
                     GeneratedBody.celestialBody.pqsController = GeneratedBody.pqsVersion;
-                    // If we've changed the name, reset use_The_InName
-                    if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
+                }
+                // If we've changed the name, reset use_The_InName
+                if (GeneratedBody.name != Template.OriginalBody.celestialBody.bodyName)
+                {
+                    GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
+                }
+#if KSP_VERSION_1_10_1
+                if ((Template.OriginalBody.scaledVersion.name.Equals("Jool")) && (Versioning.version_minor > 9))
+                {
+                    if ((!Name.Equals("Jool")) || (Name.Equals("Jool") && (Template.Body.celestialBody.Radius > 6000000))) // This is a Jool-clone, or resized Jool.  We have to handle it special.
                     {
-                        GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
-                    }
-                    // Create accessors
-                    Debug = new DebugLoader();
-                    ScaledVersion = new ScaledVersionLoader();
-                    //Fix normals for gasgiants and newbodies (if needed, ignore the weird trycatch, it works)
-                    ScaledSpaceOnDemand onDemand = GeneratedBody.celestialBody.scaledBody.AddOrGetComponent<ScaledSpaceOnDemand>();
-                    try
-                    {
-                        if (onDemand.normals.Length < 1)
-                        {
-                            onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
-                        }
-                    }
-                    catch
-                    {
-                        onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                        //Remove Gas Giant shaders for compatability
+                        GasGiantMaterialControls GGMC = GeneratedBody.scaledVersion.GetComponent<GasGiantMaterialControls>();
+                        MaterialBasedOnGraphicsSetting MBOGS = GeneratedBody.scaledVersion.GetComponent<MaterialBasedOnGraphicsSetting>();
+                        GameObject.DestroyImmediate(GGMC);
+                        GameObject.DestroyImmediate(MBOGS);
                     }
                 }
+#endif
+                // Create accessors
+                Debug = new DebugLoader();
+                ScaledVersion = new ScaledVersionLoader();
             }
             // Otherwise we have to generate all the things for this body
             else
@@ -404,7 +347,7 @@ namespace Kopernicus.Configuration
             }
             // Event
             Events.OnBodyApply.Fire(this, node);
-        }
+        } // ^^^ Everything up there needs cleanup, highly redundant code.
 
         // Parser Post Apply Event
         void IParserEventSubscriber.PostApply(ConfigNode node)

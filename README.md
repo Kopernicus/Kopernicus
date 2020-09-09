@@ -7,7 +7,11 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-1)
+New in this version (1.9.1-2)
+-------------------
+1.)  Performance Optimization and bugfixes enabling KittopiaTech support.
+
+New in version (1.9.1-1)
 -------------------
 1.) Particle support restored.
 
