@@ -288,7 +288,7 @@ namespace Kopernicus.Configuration
                     GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                 }
 #if KSP_VERSION_1_10_1
-                if ((Template.OriginalBody.scaledVersion.name.Equals("Jool")) && (Versioning.version_minor > 9))
+                if (Template.OriginalBody.scaledVersion.name.Equals("Jool"))
                 {
                     if ((!Name.Equals("Jool")) || (Name.Equals("Jool") && (Template.Body.celestialBody.Radius > 6000000))) // This is a Jool-clone, or resized Jool.  We have to handle it special.
                     {
