@@ -395,7 +395,7 @@ namespace Kopernicus.Configuration
             if (Value == null)
             {
                 // Add the material light direction behavior
-                MaterialSetDirection materialLightDirection = body.scaledBody.AddComponent<MaterialSetDirection>();
+                MaterialSetDirection materialLightDirection = body.scaledBody.AddOrGetComponent<MaterialSetDirection>();
                 materialLightDirection.valueName = "_localLightDirection";
 
                 // Create the atmosphere shell game object

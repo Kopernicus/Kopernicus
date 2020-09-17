@@ -347,7 +347,7 @@ namespace Kopernicus.Configuration
             }
             // Event
             Events.OnBodyApply.Fire(this, node);
-        } // ^^^ Everything up there needs cleanup, highly redundant code.
+        }
 
         // Parser Post Apply Event
         void IParserEventSubscriber.PostApply(ConfigNode node)
