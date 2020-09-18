@@ -254,7 +254,7 @@ namespace Kopernicus.Configuration
                 // Create a new PQS
                 GameObject controllerRoot = new GameObject();
                 controllerRoot.transform.parent = generatedBody.pqsVersion.transform;
-                Value = controllerRoot.AddComponent<PQS>();
+                Value = controllerRoot.AddOrGetComponent<PQS>();
 
                 // I (Teknoman) am at this time unable to determine some of the magic parameters which cause the PQS to work...
                 // And I (Thomas) am at this time just too lazy to do it differently...
