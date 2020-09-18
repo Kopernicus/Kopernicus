@@ -300,9 +300,6 @@ namespace Kopernicus.Configuration
                     }
                 }
 #endif
-                // Create accessors
-                Debug = new DebugLoader();
-                ScaledVersion = new ScaledVersionLoader();
             }
             // Otherwise we have to generate all the things for this body
             else
@@ -345,6 +342,9 @@ namespace Kopernicus.Configuration
                     onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
                 }
             }
+            // Create accessors
+            Debug = new DebugLoader();
+            ScaledVersion = new ScaledVersionLoader();
             // Event
             Events.OnBodyApply.Fire(this, node);
         }
