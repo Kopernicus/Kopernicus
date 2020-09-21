@@ -168,39 +168,6 @@ namespace Kopernicus.RuntimeUtility
             FixCameras();
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
-            //Small Contract fixer to remove Sentinel Contracts, only runs if stockAsteroids are off
-            if (!RuntimeUtility.KopernicusConfig.UseStockAsteroidGenerator)
-            {
-                Type contractTypeToRemove = null;
-                try
-                {
-                    foreach (Type contract in Contracts.ContractSystem.ContractTypes)
-                    {
-                        try
-                        {
-
-                            if (contract.FullName.Contains("SentinelContract"))
-                            {
-                                contractTypeToRemove = contract;
-                            }
-                        }
-                        catch
-                        {
-                            continue;
-                        }
-                    }
-                    if (!(contractTypeToRemove == null))
-                    {
-                        ContractSystem.ContractTypes.Remove(contractTypeToRemove);
-                        contractTypeToRemove = null;
-                        Debug.Log("[Kopernicus] ScenarioDiscoverableObjects is removed, scrubbing SENTINEL contracts.");
-                    }
-                }
-                catch
-                {
-                    contractTypeToRemove = null;
-                }
-            }
             //Patch weights of contracts
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
