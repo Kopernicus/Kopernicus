@@ -80,12 +80,6 @@ namespace Kopernicus
             // Return it's mesh
             ReferenceGeosphere = jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 
-            //We need eeloo too
-            PSystemBody eeloo = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Eeloo");
-
-            // We need to get the PS-body for Eeloo (to steal it's magic)
-            ReferenceEelooPSB = eeloo;
-
             // Main Menu body
             MenuBody = "Kerbin";
             
