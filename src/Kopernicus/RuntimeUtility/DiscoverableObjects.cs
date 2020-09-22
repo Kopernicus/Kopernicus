@@ -238,7 +238,6 @@ namespace Kopernicus.RuntimeUtility
             }
 
             Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
-            scenario.untrackedObjectIDs.Add(protoVessel.persistentId);
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
 #if KSP_VERSION_1_10_1
             if ((RuntimeUtility.KopernicusConfig.enableComets == true) && (Random.Range(0, 100) < RuntimeUtility.KopernicusConfig.CometPercentage))
