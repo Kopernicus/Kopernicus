@@ -36,20 +36,10 @@ using Random = UnityEngine.Random;
 
 namespace Kopernicus.RuntimeUtility
 {
-    public class KopernicusScenarioDiscoverableObjects : ScenarioDiscoverableObjects
-    {
-
-		new public int spawnOddsAgainst = 100;
-
-		new public int spawnGroupMinLimit = 0;
-
-		new public int spawnGroupMaxLimit = 0;
-
+	[KSPScenario(ScenarioCreationOptions.AddToAllGames, GameScenes.FLIGHT, GameScenes.TRACKSTATION, GameScenes.SPACECENTER)]
+	public class KopernicusScenarioDiscoverableObjects : ScenarioDiscoverableObjects
+	{
 		private bool discoveryUnlocked;
-
-		new public List<uint> untrackedObjectIDs;
-
-		new public List<uint> discoveredObjectIDs;
 
 		private string tmpIDs;
 
@@ -57,7 +47,7 @@ namespace Kopernicus.RuntimeUtility
 
 		private uint tmpId;
 
-		public static new ScenarioDiscoverableObjects Instance
+		new public static ScenarioDiscoverableObjects Instance
 		{
 			get;
 			protected set;
@@ -164,31 +154,38 @@ namespace Kopernicus.RuntimeUtility
 			discoveredObjectIDs = null;
 			untrackedObjectIDs = null;
 		}
-
-		//We don't spawn asteroids in this dummy class.
-		[ContextMenu("Spawn An Asteroid")]
+		//unused
 		new public void SpawnAsteroid()
 		{
 			return;
 		}
-		//We don't use this.
-		[ContextMenu("Spawn Last Asteroid")]
+		//unused
 		new public void SpawnLastAsteroid()
 		{
 			return;
 		}
-		//or this
+		//unusued
 		new public void SpawnHomeAsteroid(int asteroidSeed)
 		{
 			return;
 		}
 
-		//unused too
+		public ProtoVessel SpawnNewAsteroid(uint asteroidSeed, string name, Orbit orbit, UntrackedObjectClass asteroidClass, double lifeTime, double lifeTimeMax)
+		{
+			double randomDuration = GetRandomDuration();
+			ProtoVessel protoVessel = DiscoverableObjectsUtil.SpawnAsteroid(name, orbit, asteroidSeed, asteroidClass, lifeTime, lifeTimeMax);
+			discoveredObjectIDs.Add(protoVessel.persistentId);
+			untrackedObjectIDs.Add(protoVessel.persistentId);
+			return protoVessel;
+
+		}
+
+		//unused
 		new public void SpawnDresAsteroid(int asteroidSeed)
 		{
 			return;
 		}
-		//but we do need comet code
+
 		[ContextMenu("Spawn A Comet")]
 		new public void SpawnComet()
 		{
@@ -219,8 +216,26 @@ namespace Kopernicus.RuntimeUtility
 			UntrackedObjectClass randomObjClass = cometType.GetRandomObjClass();
 			CometDefinition cometDef = CometManager.GenerateDefinition(cometType, randomObjClass, seed);
 			Orbit o = cometType.CalculateHomeOrbit();
-			DiscoverableObjectsUtil.SpawnComet("UnknownComet", o, cometDef, (uint)seed, randomObjClass, lifeTime, lifeTimeMax, optimizedCollider: false, 0f);
+			DiscoverableObjectsUtil.SpawnComet(DiscoverableObjectsUtil.GenerateCometName(), o, cometDef, (uint)seed, randomObjClass, lifeTime, lifeTimeMax, optimizedCollider: false, 0f);
 			Debug.Log("[CometSpawner]: New object found near " + FlightGlobals.GetHomeBodyName());
+		}
+
+		private double GetRandomDuration()
+		{
+			return UnityEngine.Random.Range(15f, 60f);
+		}
+
+		private bool ReachedBody(string bodyName)
+		{
+			if (ProgressTracking.Instance != null)
+			{
+				CelestialBodySubtree bodyTree = ProgressTracking.Instance.GetBodyTree(bodyName);
+				if (bodyTree != null && bodyTree.IsReached)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }

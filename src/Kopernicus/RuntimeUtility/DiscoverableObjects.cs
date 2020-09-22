@@ -42,6 +42,7 @@ namespace Kopernicus.RuntimeUtility
     {
         //The ScenarioDiscoverableObjects system
         public ScenarioDiscoverableObjects scenario = null;
+        public KopernicusScenarioDiscoverableObjects kopernicusScenario = null;
 
         // All asteroid configurations we know
         public static List<Asteroid> Asteroids { get; }
@@ -79,7 +80,8 @@ namespace Kopernicus.RuntimeUtility
                     scenario.StopAllCoroutines();
                     Destroy(scenario);
                     scenario = new KopernicusScenarioDiscoverableObjects();
-                    scenario.OnAwake();
+                    kopernicusScenario = (KopernicusScenarioDiscoverableObjects)scenario;
+                    kopernicusScenario.OnAwake();
                 }
                 Debug.Log("[Kopernicus] ScenarioDiscoverableObjects successfully replaced.");
             }
@@ -114,12 +116,6 @@ namespace Kopernicus.RuntimeUtility
                     UInt32 seed = (UInt32)Random.Range(0, Int32.MaxValue);
                     Random.InitState((Int32)seed);
                     SpawnAsteroid(asteroid, seed);
-#if KSP_VERSION_1_10_1
-                    if ((RuntimeUtility.KopernicusConfig.enableComets == true) && (Random.Range(0, 100) < RuntimeUtility.KopernicusConfig.CometPercentage))
-                    {
-                        scenario.SpawnComet();
-                    }
-#endif
                 }
             }
             else
@@ -235,40 +231,22 @@ namespace Kopernicus.RuntimeUtility
             // Size
             UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
 
-            // Spawn
-            ConfigNode vessel = ProtoVessel.CreateVesselNode(
-                asteroidName,
-                VesselType.SpaceObject,
-                orbit,
-                0,
-                new[]
-                {
-                    ProtoVessel.CreatePartNode(
-                        "PotatoRoid",
-                        seed
-                    )
-                },
-                new ConfigNode("ACTIONGROUPS"),
-                ProtoVessel.CreateDiscoveryNode(
-                    DiscoveryLevels.Presence,
-                    size,
-                    lifetime,
-                    maxLifetime
-                )
-            );
-            OverrideNode(ref vessel, asteroid.Vessel);
-            ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
+            ProtoVessel protoVessel = kopernicusScenario.SpawnNewAsteroid(seed, asteroidName, orbit, size, lifetime, maxLifetime);
             if (asteroid.UniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0)
             {
                 return;
             }
 
             Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
-            protoVessel.Load(HighLogic.CurrentGame.flightState);
-            GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
-            GameEvents.onAsteroidSpawned.Fire(protoVessel.vesselRef);
             scenario.untrackedObjectIDs.Add(protoVessel.persistentId);
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
+#if KSP_VERSION_1_10_1
+            if ((RuntimeUtility.KopernicusConfig.enableComets == true) && (Random.Range(0, 100) < RuntimeUtility.KopernicusConfig.CometPercentage))
+            {
+                scenario.SpawnComet();
+                Debug.Log("[Kopernicus] A wild comet appears!");
+            }
+#endif
         }
 
         // Asteroid Spawner
