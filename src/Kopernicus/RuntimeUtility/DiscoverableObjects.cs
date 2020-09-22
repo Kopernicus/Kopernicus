@@ -105,7 +105,7 @@ namespace Kopernicus.RuntimeUtility
             }
             else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)) || HighLogic.CurrentGame.Mode == Game.Modes.SANDBOX)
             {
-                Int32 untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) - spaceObjects.Count;
+                Int32 untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.Owned)) - spaceObjects.Count;
                 Int32 max = Mathf.Max(untrackedCount, limit);
                 if (max <= untrackedCount)
                 {
