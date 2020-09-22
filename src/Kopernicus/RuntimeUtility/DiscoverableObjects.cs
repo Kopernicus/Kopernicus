@@ -103,7 +103,7 @@ namespace Kopernicus.RuntimeUtility
                 Debug.Log("[Kopernicus] " + vessel.vesselName + " has been untracked for too long and is now lost.");
                 vessel.Die();
             }
-            else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)))
+            else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)) || HighLogic.CurrentGame.Mode == Game.Modes.SANDBOX)
             {
                 Int32 untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) - spaceObjects.Count;
                 Int32 max = Mathf.Max(untrackedCount, limit);
