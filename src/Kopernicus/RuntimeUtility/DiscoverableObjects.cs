@@ -242,7 +242,7 @@ namespace Kopernicus.RuntimeUtility
 #if KSP_VERSION_1_10_1
             if ((RuntimeUtility.KopernicusConfig.enableComets == true) && (Random.Range(0, 100) < RuntimeUtility.KopernicusConfig.CometPercentage))
             {
-                scenario.SpawnComet();
+                kopernicusScenario.SpawnComet();
                 Debug.Log("[Kopernicus] A wild comet appears!");
             }
 #endif
