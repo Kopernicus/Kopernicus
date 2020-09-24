@@ -1,6 +1,6 @@
 # How to compile the ring shader
 
-1) Get [Unity version that matches KSP] (5.4.0p4 for 1.2.2 and 1.3.0)
+1) Get [Unity version that matches KSP] (2019.2.2f1 at this time for 1.9 and 1.10)
 
 2) Clone https://github.com/Kopernicus/shader-export
 

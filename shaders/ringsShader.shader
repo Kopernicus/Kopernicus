@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Ring shader for Kopernicus
 // by Ghassen Lahmar (blackrack)
 
@@ -10,6 +12,7 @@ Shader "Kopernicus/Rings"
       "Queue"           = "Transparent"
       "IgnoreProjector" = "True"
       "RenderType"      = "Transparent"
+      "LightMode"       = "ForwardBase"
     }
 
     Pass
@@ -55,9 +58,9 @@ Shader "Kopernicus/Rings"
       struct v2f
       {
         float4 pos:          SV_POSITION;
-        float3 worldPos:     TEXCOORD0;
+        float4 worldPos:     TEXCOORD0;
         // Moved from fragment shader
-        float3 planetOrigin: TEXCOORD1;
+        float4 planetOrigin: TEXCOORD1;
         float2 texCoord:     TEXCOORD2;
       };
 
@@ -65,9 +68,9 @@ Shader "Kopernicus/Rings"
       v2f vert(appdata_base v)
       {
         v2f o;
-        o.pos          = mul(UNITY_MATRIX_MVP,    v.vertex);
+        o.pos          = UnityObjectToClipPos(v.vertex);
         o.worldPos     = mul(unity_ObjectToWorld, v.vertex);
-        o.planetOrigin = mul(unity_ObjectToWorld, float4(0, 0, 0, 1)).xyz;
+        o.planetOrigin = mul(unity_ObjectToWorld, float4(0, 0, 0, 1));
         o.texCoord     = v.texcoord;
         return o;
       }
@@ -130,7 +133,7 @@ Shader "Kopernicus/Rings"
         } else {
           // Do everything relative to planet position
           // *6000 to convert to local space, might be simpler in scaled?
-          float3 worldPosRelPlanet = i.worldPos - i.planetOrigin;
+          float3 worldPosRelPlanet = i.worldPos.xyz/i.worldPos.w - i.planetOrigin.xyz/i.planetOrigin.w;
           return getEclipseShadow(worldPosRelPlanet * 6000, sunPosRelativeToPlanet, 0, planetRadius, sunRadius * penumbraMultiplier);
         }
       }
@@ -139,13 +142,13 @@ Shader "Kopernicus/Rings"
       float4 frag(v2f i): COLOR
       {
         // Lighting
-        // Fix this for additional lights later, will be useful when I do the Planetshine update for Scatterer
-        // Assuming directional light only for now
-        float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+        // The built-in unity directional light direction seem to be borked somehow, I guess it is only reliable for the current planet we are orbiting and planetarium shaders pass their own light directions
+        // In this case calculate lightDirection from the sun position
+        float3 lightDir = normalize(sunPosRelativeToPlanet);
 
         // Instead use the viewing direction (inspired from observing space engine rings)
         // Looks more interesting than I expected
-        float3 viewdir  = normalize(i.worldPos - _WorldSpaceCameraPos);
+        float3 viewdir  = normalize(i.worldPos.xyz/i.worldPos.w - _WorldSpaceCameraPos);
         float  mu       = dot(lightDir, -viewdir);
         float  dotLight = 0.5 * (mu + 1);
 
