@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Kopernicus.Constants;
 using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
@@ -171,30 +172,34 @@ namespace Kopernicus.Configuration
             if (Body.pqsVersion != null)
             {
                 // We only support one surface material per body, so use the one with the highest quality available
-                Material surfaceMaterial = Body.pqsVersion.ultraQualitySurfaceMaterial;
+                if (GameSettings.TERRAIN_SHADER_QUALITY == 3)
+                {
+                        Material surfaceMaterial = Body.pqsVersion.ultraQualitySurfaceMaterial;
 
-                if (!surfaceMaterial)
-                {
-                    surfaceMaterial = Body.pqsVersion.highQualitySurfaceMaterial;
-                }
-                if (!surfaceMaterial)
-                {
-                    surfaceMaterial = Body.pqsVersion.mediumQualitySurfaceMaterial;
-                }
-                if (!surfaceMaterial)
-                {
-                    surfaceMaterial = Body.pqsVersion.lowQualitySurfaceMaterial;
-                }
-                if (!surfaceMaterial)
-                {
-                    surfaceMaterial = Body.pqsVersion.surfaceMaterial;
-                }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = Body.pqsVersion.highQualitySurfaceMaterial;
+                        }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = Body.pqsVersion.mediumQualitySurfaceMaterial;
+                        }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = Body.pqsVersion.lowQualitySurfaceMaterial;
+                        }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = Body.pqsVersion.surfaceMaterial;
+                        }
 
-                Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
-                Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
-                Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
-                Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
-                Body.pqsVersion.surfaceMaterial = surfaceMaterial;
+
+                        Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
+                        Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
+                        Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
+                        Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
+                        Body.pqsVersion.surfaceMaterial = surfaceMaterial;
+                    }
 
                 // Should we remove the ocean?
                 if (Body.celestialBody.ocean)
@@ -206,30 +211,32 @@ namespace Kopernicus.Configuration
                         .GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true).First();
 
                     // We only support one surface material per body, so use the one with the highest quality available
-                    surfaceMaterial = ocean.ultraQualitySurfaceMaterial;
+                    if (GameSettings.TERRAIN_SHADER_QUALITY == 3)
+                    {
+                        Material surfaceMaterial = ocean.ultraQualitySurfaceMaterial;
 
-                    if (!surfaceMaterial)
-                    {
-                        surfaceMaterial = ocean.highQualitySurfaceMaterial;
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = ocean.highQualitySurfaceMaterial;
+                        }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = ocean.mediumQualitySurfaceMaterial;
+                        }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = ocean.lowQualitySurfaceMaterial;
+                        }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = ocean.surfaceMaterial;
+                        }
+                        ocean.ultraQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.highQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.mediumQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.lowQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.surfaceMaterial = surfaceMaterial;
                     }
-                    if (!surfaceMaterial)
-                    {
-                        surfaceMaterial = ocean.mediumQualitySurfaceMaterial;
-                    }
-                    if (!surfaceMaterial)
-                    {
-                        surfaceMaterial = ocean.lowQualitySurfaceMaterial;
-                    }
-                    if (!surfaceMaterial)
-                    {
-                        surfaceMaterial = ocean.surfaceMaterial;
-                    }
-
-                    ocean.ultraQualitySurfaceMaterial = surfaceMaterial;
-                    ocean.highQualitySurfaceMaterial = surfaceMaterial;
-                    ocean.mediumQualitySurfaceMaterial = surfaceMaterial;
-                    ocean.lowQualitySurfaceMaterial = surfaceMaterial;
-                    ocean.surfaceMaterial = surfaceMaterial;
 
                     if (RemoveOcean.Value)
                     {

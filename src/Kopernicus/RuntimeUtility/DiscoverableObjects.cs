@@ -40,10 +40,6 @@ namespace Kopernicus.RuntimeUtility
     [KSPScenario(ScenarioCreationOptions.AddToAllGames, GameScenes.FLIGHT, GameScenes.TRACKSTATION, GameScenes.SPACECENTER)]
     public class DiscoverableObjects : ScenarioModule
     {
-        //The ScenarioDiscoverableObjects system
-        public ScenarioDiscoverableObjects scenario = null;
-        public KopernicusScenarioDiscoverableObjects kopernicusScenario = null;
-
         // All asteroid configurations we know
         public static List<Asteroid> Asteroids { get; }
 
@@ -56,6 +52,7 @@ namespace Kopernicus.RuntimeUtility
             Asteroids = new List<Asteroid>();
         }
 
+        // Kill the old spawner
         public override void OnAwake()
         {
             if (!CompatibilityChecker.IsCompatible())
@@ -69,21 +66,20 @@ namespace Kopernicus.RuntimeUtility
         // Startup
         private void Start()
         {
-            //Replace ScenarioDiscoverableObjects with our Override class
+            // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
+            // @Squad: I stab you with a try { } catch { } block.
+
             if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
             {
                 // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
                 foreach (Object o in
                     Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
                 {
-                    scenario = (ScenarioDiscoverableObjects)o;
+                    ScenarioDiscoverableObjects scenario = (ScenarioDiscoverableObjects)o;
                     scenario.StopAllCoroutines();
                     Destroy(scenario);
-                    scenario = new KopernicusScenarioDiscoverableObjects();
-                    kopernicusScenario = (KopernicusScenarioDiscoverableObjects)scenario;
-                    kopernicusScenario.OnAwake();
                 }
-                Debug.Log("[Kopernicus] ScenarioDiscoverableObjects successfully replaced.");
+                Debug.Log("[Kopernicus] ScenarioDiscoverableObjects successfully removed.");
             }
 
             foreach (Asteroid asteroid in Asteroids)
@@ -103,9 +99,9 @@ namespace Kopernicus.RuntimeUtility
                 Debug.Log("[Kopernicus] " + vessel.vesselName + " has been untracked for too long and is now lost.");
                 vessel.Die();
             }
-            else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)) || HighLogic.CurrentGame.Mode == Game.Modes.SANDBOX)
+            else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)))
             {
-                Int32 untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.Owned)) - spaceObjects.Count;
+                Int32 untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) - spaceObjects.Count;
                 Int32 max = Mathf.Max(untrackedCount, limit);
                 if (max <= untrackedCount)
                 {
@@ -117,10 +113,10 @@ namespace Kopernicus.RuntimeUtility
                     Random.InitState((Int32)seed);
                     SpawnAsteroid(asteroid, seed);
                 }
-            }
-            else
-            {
-                Debug.Log("[Kopernicus] No new objects this time. (Probability is " + asteroid.Probability.Value + "%)");
+                else
+                {
+                    Debug.Log("[Kopernicus] No new objects this time. (Probability is " + asteroid.Probability.Value + "%)");
+                }
             }
         }
 
@@ -231,21 +227,63 @@ namespace Kopernicus.RuntimeUtility
             // Size
             UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
 
-            ProtoVessel protoVessel = kopernicusScenario.SpawnNewAsteroid(seed, asteroidName, orbit, size, lifetime, maxLifetime);
+            // Spawn
+            ConfigNode vessel = null;
+            if (Random.Range(0, 100) > RuntimeUtility.KopernicusConfig.CometPercentage)
+            {
+                vessel = ProtoVessel.CreateVesselNode(
+                    asteroidName,
+                    VesselType.SpaceObject,
+                    orbit,
+                    0,
+                    new[]
+                    {
+                    ProtoVessel.CreatePartNode(
+                        "PotatoRoid",
+                        seed
+                    )
+                    },
+                    new ConfigNode("ACTIONGROUPS"),
+                    ProtoVessel.CreateDiscoveryNode(
+                        DiscoveryLevels.Presence,
+                        size,
+                        lifetime,
+                        maxLifetime
+                    )
+                );
+            }
+            else
+            {
+                float fragmentDynamicPressureModifier = 0f;
+                bool optimizedCollider = false;
+                CometOrbitType cometType = CometManager.GenerateWeightedCometType();
+                Orbit cometOrbit = cometType.CalculateHomeOrbit();
+                UntrackedObjectClass randomObjClass = cometType.GetRandomObjClass();
+                CometDefinition cometDef = CometManager.GenerateDefinition(cometType, randomObjClass, (int)seed);
+                ConfigNode configNode = cometDef.CreateVesselNode(optimizedCollider, fragmentDynamicPressureModifier, hasName: false);
+                ConfigNode configNode2 = ProtoVessel.CreatePartNode("PotatoComet", seed);
+                uint value = 0u;
+                configNode2.TryGetValue("persistentId", ref value);
+                configNode.AddValue("cometPartId", value);
+                ConfigNode configNode3 = new ConfigNode("VESSELMODULES");
+                configNode3.AddNode(configNode);
+                vessel = ProtoVessel.CreateVesselNode(DiscoverableObjectsUtil.GenerateCometName(), VesselType.SpaceObject, cometOrbit, 0, new ConfigNode[1]
+                {
+            configNode2
+                }, new ConfigNode("ACTIONGROUPS"), ProtoVessel.CreateDiscoveryNode(DiscoveryLevels.Presence, randomObjClass, lifetime, maxLifetime), configNode3);
+            }
+            OverrideNode(ref vessel, asteroid.Vessel);
+            ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
             if (asteroid.UniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0)
             {
                 return;
             }
 
             Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
+            protoVessel.Load(HighLogic.CurrentGame.flightState);
+            GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
+            GameEvents.onAsteroidSpawned.Fire(protoVessel.vesselRef);
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
-#if KSP_VERSION_1_10_1
-            if ((RuntimeUtility.KopernicusConfig.enableComets == true) && (Random.Range(0, 100) < RuntimeUtility.KopernicusConfig.CometPercentage))
-            {
-                kopernicusScenario.SpawnComet();
-                Debug.Log("[Kopernicus] A wild comet appears!");
-            }
-#endif
         }
 
         // Asteroid Spawner

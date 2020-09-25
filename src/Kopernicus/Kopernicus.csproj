@@ -280,7 +280,6 @@
     <Compile Include="OnDemand\OnDemandStorage.cs" />
     <Compile Include="OnDemand\PQSMod_OnDemandHandler.cs" />
     <Compile Include="OnDemand\ScaledSpaceOnDemand.cs" />
-    <Compile Include="RuntimeUtility\KopernicusScenarioDiscoverableObjects.cs" />
     <Compile Include="RuntimeUtility\LogAggregator.cs" />
     <Compile Include="RuntimeUtility\MeshPreloader.cs" />
     <Compile Include="RuntimeUtility\RnDFixer.cs" />
