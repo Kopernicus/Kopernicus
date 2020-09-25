@@ -36,15 +36,14 @@ namespace Kopernicus.Configuration
 {
 	public class ConfigReader
     {
+		//even those EnforceShaders and WarnShaders are default True, we need to start them at false to prevent a race condition
 		[Persistent]
-		public bool EnforceShaders = true;
+		public bool EnforceShaders = false;
 		[Persistent]
-		public bool WarnShaders = true;
+		public bool WarnShaders = false;
 #if KSP_VERSION_1_10_1
 		[Persistent]
-		public bool enableComets = true;
-		[Persistent]
-		public int CometPercentage = 5;
+		public int CometPercentage = 25;
 #endif
 		public UrlDir.UrlConfig[] baseConfigs;
 		public void loadMainSettings()
