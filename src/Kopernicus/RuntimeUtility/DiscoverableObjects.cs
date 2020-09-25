@@ -229,9 +229,11 @@ namespace Kopernicus.RuntimeUtility
 
             // Spawn
             ConfigNode vessel = null;
+#if KSP_VERSION_1_10_1
             if (Random.Range(0, 100) > RuntimeUtility.KopernicusConfig.CometPercentage)
             {
-                vessel = ProtoVessel.CreateVesselNode(
+#endif
+            vessel = ProtoVessel.CreateVesselNode(
                     asteroidName,
                     VesselType.SpaceObject,
                     orbit,
@@ -251,10 +253,11 @@ namespace Kopernicus.RuntimeUtility
                         maxLifetime
                     )
                 );
+#if KSP_VERSION_1_10_1
             }
             else
             {
-                float fragmentDynamicPressureModifier = 0f;
+            float fragmentDynamicPressureModifier = 0f;
                 bool optimizedCollider = false;
                 CometOrbitType cometType = CometManager.GenerateWeightedCometType();
                 Orbit cometOrbit = cometType.CalculateHomeOrbit();
@@ -284,6 +287,7 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
             GameEvents.onAsteroidSpawned.Fire(protoVessel.vesselRef);
             Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
+#endif
         }
 
         // Asteroid Spawner
