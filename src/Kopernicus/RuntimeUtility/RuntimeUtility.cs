@@ -168,38 +168,35 @@ namespace Kopernicus.RuntimeUtility
             FixCameras();
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
-            //Small Contract fixer to remove Sentinel Contracts, only runs if stockAsteroids are off
-            if (!RuntimeUtility.KopernicusConfig.UseStockAsteroidGenerator)
+            //Small Contract fixer to remove Sentinel Contracts
+            Type contractTypeToRemove = null;
+            try
             {
-                Type contractTypeToRemove = null;
-                try
+                foreach (Type contract in Contracts.ContractSystem.ContractTypes)
                 {
-                    foreach (Type contract in Contracts.ContractSystem.ContractTypes)
+                    try
                     {
-                        try
-                        {
 
-                            if (contract.FullName.Contains("SentinelContract"))
-                            {
-                                contractTypeToRemove = contract;
-                            }
-                        }
-                        catch
+                        if (contract.FullName.Contains("SentinelContract"))
                         {
-                            continue;
+                            contractTypeToRemove = contract;
                         }
                     }
-                    if (!(contractTypeToRemove == null))
+                    catch
                     {
-                        ContractSystem.ContractTypes.Remove(contractTypeToRemove);
-                        contractTypeToRemove = null;
-                        Debug.Log("[Kopernicus] ScenarioDiscoverableObjects is removed, scrubbing SENTINEL contracts.");
+                        continue;
                     }
                 }
-                catch
+                if (!(contractTypeToRemove == null))
                 {
+                    ContractSystem.ContractTypes.Remove(contractTypeToRemove);
                     contractTypeToRemove = null;
+                    Debug.Log("[Kopernicus] ScenarioDiscoverableObjects is removed, scrubbing SENTINEL contracts.");
                 }
+            }
+            catch
+            {
+                contractTypeToRemove = null;
             }
             //Patch weights of contracts
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)

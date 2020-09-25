@@ -30,7 +30,7 @@
     <ConsolePause>False</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
-    <DefineConstants>KSP_VERSION_1_9_1</DefineConstants>
+    <DefineConstants>KSP_VERSION_1_10_1</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
