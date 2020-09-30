@@ -41,6 +41,8 @@ namespace Kopernicus.Configuration
 		public bool EnforceShaders = false;
 		[Persistent]
 		public bool WarnShaders = false;
+		[Persistent]
+		public int EnforcedShaderLevel = 2;
 #if KSP_VERSION_1_10_1
 		[Persistent]
 		public int CometPercentage = 25;
