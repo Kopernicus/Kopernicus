@@ -42,6 +42,16 @@ namespace Kopernicus.Components
         public override void OnSetup()
         {
             _mods = sphere.GetComponentsInChildren<PQSMod_TextureAtlas>(true);
+
+            if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(sphere.surfaceMaterial))
+            {
+                return;
+            }
+            // Make the TextureAtlas mods useless by removing the atlas map
+            for (Int32 i = 0; i < _mods.Length; i++)
+            {
+                _mods[i].textureAtlasMap = null;
+            }
         }
 
         public override void OnQuadPreBuild(PQ quad)
