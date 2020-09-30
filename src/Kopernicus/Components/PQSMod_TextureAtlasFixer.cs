@@ -42,41 +42,15 @@ namespace Kopernicus.Components
         public override void OnSetup()
         {
             _mods = sphere.GetComponentsInChildren<PQSMod_TextureAtlas>(true);
-
-            if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(sphere.surfaceMaterial))
-            {
-                return;
-            }
-
-            Boolean rescan = false;
-
-            for (Int32 i = 0; i < _mods.Length; i++)
-            {
-                if (_mods[i].modEnabled)
-                {
-                    rescan = true;
-                }
-
-                _mods[i].modEnabled = false;
-            }
-
-            if (modEnabled)
-            {
-                rescan = true;
-            }
-
-            modEnabled = false;
-
-            // Tell the PQS to rescan the PQSMods.
-            if (rescan)
-            {
-                MethodInfo setupMods = typeof(PQS).GetMethod("SetupMods");
-                setupMods?.Invoke(sphere, null);
-            }
         }
 
         public override void OnQuadPreBuild(PQ quad)
         {
+            if (!PQSTriplanarZoomRotationTextureArray.UsesSameShader(sphere.surfaceMaterial))
+            {
+                return;
+            }
+
             for (Int32 i = 0; i < _mods.Length; i++)
             {
                 PQSMod_TextureAtlas mod = _mods[i];
