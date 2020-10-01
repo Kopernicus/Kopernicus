@@ -506,6 +506,19 @@ namespace Kopernicus.Configuration
                 newScTree.name = "KSC";
             }
 
+            // Add the PQSROCControl mod for surface anomalies
+            if (!Utility.HasMod<PQSROCControl>(Value))
+            {
+                PQSROCControl roc = Utility.AddMod<PQSROCControl>(Value, 999999);
+                roc.rocs = new List<LandClassROC>();
+                roc.currentCBName = Value.name;
+            }
+            else
+            {
+                PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
+                roc.currentCBName = Value.name;
+            }
+
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
             for (Int32 i = 0; i < mods.Length; i++)
@@ -611,6 +624,19 @@ namespace Kopernicus.Configuration
             if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
             {
                 Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
+            }
+
+            // Add the PQSROCControl mod for surface anomalies
+            if (!Utility.HasMod<PQSROCControl>(Value))
+            {
+                PQSROCControl roc = Utility.AddMod<PQSROCControl>(Value, 999999);
+                roc.rocs = new List<LandClassROC>();
+                roc.currentCBName = Value.name;
+            }
+            else
+            {
+                PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
+                roc.currentCBName = Value.name;
             }
 
             // Load existing mods
