@@ -7,27 +7,29 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-7)
+New in this version (1.9.1-8)
 -------------------
-1.) We no longer enforce the default shader setting, you may choose whatever you wish by default. Planet pack authors may set restrictions, but we have none out the gate.
 
-2.) Planet pack authors (or you) may now specify the packs target shader level by by setting config/Kopernicus_Config.cfg EnforcedShaderLeve. 3 = Ultra/Atlas, 2 = High, 1 = Medium, and 0 = Low. Planet pack authors may use this via modulemanager module if needed as well. Note that we encourage of the KSP Parallax shader project over use of Squad's ATLAS shader. It is both equally performant and more flexible.
+1.) Bugfix for third party solar mods caused by syntax errors in Solarpanels.cfg.
 
 New in major release (1.9.1)
 
-1.) The longstanding ringshader bugs have been fixed.
+1.) 2.) Planet pack authors (or you) may now specify the packs target shader level by by setting config/Kopernicus_Config.cfg EnforcedShaderLeve. 3 = Ultra/Atlas, 2 = High, 1 = Medium, and 0 = Low. Planet pack authors may use this via modulemanager module if needed as well. Note that we encourage of the KSP Parallax shader project over use of Squad's ATLAS shader. It is both equally performant and more flexible.
 
-2.) Performance Optimization and bugfixes enabling KittopiaTech support.
+2.) The longstanding ringshader bugs have been fixed.
 
-3.) JNSQ & other large world "Farm patch" bug fixed.
+3.) Performance Optimization and bugfixes enabling KittopiaTech support.
 
-4.) Particle support restored.
+4.) JNSQ & other large world "Farm patch" bug fixed.
 
-5.) All 1.9.1 bugs that are known fixed. Full support for 1.9.1
+5.) Particle support restored.
 
-5.) Multistar support. The math on ECs in single star may be slightly different than stock in some situations, but it should be similar in most and not enough to matter.
+6.) All 1.9.1 bugs that are known fixed. Full support for 1.9.1
 
-4.) Added GameData\Kopernicus\Config\Kopernicus_Config.cfg file, with options to configure shader warnings and enable or disable shader locking, as well as set preferred shader level. Easy to edit, just look inside!
+7.) Multistar support. The math on ECs in single star may be slightly different than stock in some situations, but it should be similar in most and not enough to matter.
+
+8.) Added GameData\Kopernicus\Config\Kopernicus_Config.cfg file, with options to configure shader warnings and enable or disable shader locking, as well as set preferred shader level. Easy to edit, just look inside!
+
 
 Note - reparenting Kerbin or the Sun can cause the sky to be incorrect in the space center view. It is, however, correct in the flight view and the flight map view.
 
