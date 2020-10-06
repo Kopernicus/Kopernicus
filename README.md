@@ -7,10 +7,10 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-8)
+New in this version (1.9.1-9)
 -------------------
 
-1.) Bugfix for third party solar mods caused by syntax errors in Solarpanels.cfg.
+1.) Contributions to SolarPanels.cfg from forum user hemeac to help avoid errors in third party packs.
 
 New in major release (1.9.1)
 
