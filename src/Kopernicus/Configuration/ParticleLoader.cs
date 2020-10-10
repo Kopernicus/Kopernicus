@@ -271,7 +271,8 @@ namespace Kopernicus.Configuration
         }
 
         // Lifetime colors (length two)
-        [ParserTarget("lifetimeColors", Optional = true)]
+        [ParserTargetCollection("LifetimeColors", Optional = true)]
+        [ParserTargetCollection("lifetimeColors", Optional = true)]
         public List<ColorParser> LifetimeColors
         {
             get { return Value.lifetimeColors.Select(c => new ColorParser(c)).ToList(); }
