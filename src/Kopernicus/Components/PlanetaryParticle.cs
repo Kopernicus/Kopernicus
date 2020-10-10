@@ -101,6 +101,7 @@ namespace Kopernicus.Components
             collision.enabled = collideable;
             collision.type = ParticleSystemCollisionType.World;
             collision.bounce = bounce;
+            collision.enableDynamicColliders = true;
 
             var lifeColor = emitter.ps.colorOverLifetime;
             lifeColor.enabled = lifetimeColors == null ? false : true;
