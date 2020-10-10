@@ -36,13 +36,14 @@ namespace Kopernicus.Configuration
 {
 	public class ConfigReader
     {
-		//even those EnforceShaders and WarnShaders are default True, we need to start them at false to prevent a race condition
 		[Persistent]
 		public bool EnforceShaders = false;
 		[Persistent]
 		public bool WarnShaders = false;
 		[Persistent]
 		public int EnforcedShaderLevel = 2;
+		[Persistent]
+		public int ScatterCullDistance = 10000;
 #if KSP_VERSION_1_10_1
 		[Persistent]
 		public int CometPercentage = 25;

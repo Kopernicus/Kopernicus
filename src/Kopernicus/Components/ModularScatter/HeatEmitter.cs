@@ -103,19 +103,17 @@ namespace Kopernicus.Components.ModularScatter
 
         void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator, ModularScatter system)
         {
-            List<GameObject> scatters = system.scatterObjects;
+            PQSMod_LandClassScatterQuad[] quads = system.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
             Vessel vessel = flightIntegrator.Vessel;
             CelestialBody _body = system.body;
 
             if (_body != vessel.mainBody)
                 return;
 
-            for (Int32 i = 0; i < scatters.Count; i++)
+            for (Int32 i = 0; i < quads.Length; i++)
             {
-                GameObject scatter = scatters[i];
-
-                if (scatter?.activeSelf != true)
-                    continue;
+                var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
+                KopernicusSurfaceObject scatter = surfaceObjects[i];
 
                 if (!string.IsNullOrEmpty(biomeName))
                 {

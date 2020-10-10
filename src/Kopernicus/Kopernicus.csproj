@@ -121,6 +121,7 @@
     <Compile Include="Components\ModularScatter\LightEmitter.cs" />
     <Compile Include="Components\ModularScatter\ModularScatter.cs" />
     <Compile Include="Components\ModularScatter\ScatterColliders.cs" />
+    <Compile Include="Components\ModularScatter\ScatterDistanceCuller.cs" />
     <Compile Include="Components\ModularScatter\SeaLevelScatter.cs" />
     <Compile Include="Components\ModuleSurfaceObjectTrigger.cs" />
     <Compile Include="Components\NameChanger.cs" />

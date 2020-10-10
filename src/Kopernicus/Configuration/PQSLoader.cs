@@ -186,35 +186,35 @@ namespace Kopernicus.Configuration
                 }
                 if (PQSProjectionAerialQuadRelative.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericBasic;
+                    return SurfaceMaterialType.Basic;
                 }
                 if (PQSMainShader.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericMain;
+                    return SurfaceMaterialType.Main;
                 }
                 if (PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericOptimized;
+                    return SurfaceMaterialType.Optimized;
                 }
                 if (PQSMainExtras.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericExtra;
+                    return SurfaceMaterialType.Extra;
                 }
                 if (PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericMainFastBlend;
+                    return SurfaceMaterialType.MainFastBlend;
                 }
                 if (PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericOptimizedFastBlend;
+                    return SurfaceMaterialType.OptimizedFastBlend;
                 }
                 if (PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericTriplanarZoomRotation;
+                    return SurfaceMaterialType.Triplanar;
                 }
                 if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial))
                 {
-                    return SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray;
+                    return SurfaceMaterialType.TriplanarAtlas;
                 }
 
                 throw new Exception("The shader '" + BasicSurfaceMaterial.shader.name + "' is not supported.");
@@ -226,38 +226,38 @@ namespace Kopernicus.Configuration
                 Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isMainFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isRotation = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isRotationArray = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isTriplanar = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
+                Boolean isTriplanarAtlas = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
 
                 switch (value.Value)
                 {
                     case SurfaceMaterialType.Vacuum when !isVaccum:
                         BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericBasic when !isBasic:
+                    case SurfaceMaterialType.Basic when !isBasic:
                         BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericMain when !isMain:
+                    case SurfaceMaterialType.Main when !isMain:
                         BasicSurfaceMaterial = new PQSMainShaderLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
+                    case SurfaceMaterialType.Optimized when !isOptimised:
                         BasicSurfaceMaterial = new PQSMainOptimisedLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericExtra when !isExtra:
+                    case SurfaceMaterialType.Extra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                    case SurfaceMaterialType.MainFastBlend when !isMainFastBlend:
                         BasicSurfaceMaterial = new PQSMainFastBlendLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
+                    case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
+                    case SurfaceMaterialType.Triplanar when !isTriplanar:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader();
                         break;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
+                    case SurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader();
                         break;
                     default:
@@ -278,38 +278,38 @@ namespace Kopernicus.Configuration
                 Boolean isMain = BasicSurfaceMaterial is PQSMainShaderLoader;
                 Boolean isOptimised = BasicSurfaceMaterial is PQSMainOptimisedLoader;
                 Boolean isExtra = BasicSurfaceMaterial is PQSMainExtrasLoader;
-                Boolean isFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
+                Boolean isMainFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
                 Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
-                Boolean isRotation = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
-                Boolean isRotationArray = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
+                Boolean isTriplanar = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
+                Boolean isTriplanarAtlas = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
 
                 switch (MaterialType.Value)
                 {
                     case SurfaceMaterialType.Vacuum when !isVaccum:
                         BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericBasic when !isBasic:
+                    case SurfaceMaterialType.Basic when !isBasic:
                         BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericMain when !isMain:
+                    case SurfaceMaterialType.Main when !isMain:
                         BasicSurfaceMaterial = new PQSMainShaderLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
+                    case SurfaceMaterialType.Optimized when !isOptimised:
                         BasicSurfaceMaterial = new PQSMainOptimisedLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericExtra when !isExtra:
+                    case SurfaceMaterialType.Extra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                    case SurfaceMaterialType.MainFastBlend when !isMainFastBlend:
                         BasicSurfaceMaterial = new PQSMainFastBlendLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
+                    case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
+                    case SurfaceMaterialType.Triplanar when !isTriplanar:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial);
                         goto default;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
+                    case SurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(BasicSurfaceMaterial);
                         goto default;
                     default:
@@ -323,10 +323,10 @@ namespace Kopernicus.Configuration
                 Boolean isMain = value is PQSMainShaderLoader;
                 Boolean isOptimised = value is PQSMainOptimisedLoader;
                 Boolean isExtra = value is PQSMainExtrasLoader;
-                Boolean isFastBlend = value is PQSMainFastBlendLoader;
+                Boolean isMainFastBlend = value is PQSMainFastBlendLoader;
                 Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
-                Boolean isRotation = value is PQSTriplanarZoomRotationLoader;
-                Boolean isRotationArray = value is PQSTriplanarZoomRotationTextureArrayLoader;
+                Boolean isTriplanar = value is PQSTriplanarZoomRotationLoader;
+                Boolean isTriplanarAtlas = value is PQSTriplanarZoomRotationTextureArrayLoader;
 
                 // We need to set the material before we check it, so we can reuse the code in MaterialType
                 BasicSurfaceMaterial = value;
@@ -336,28 +336,28 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.Vacuum when !isVaccum:
                         BasicSurfaceMaterial = new PQSProjectionSurfaceQuadLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericBasic when !isBasic:
+                    case SurfaceMaterialType.Basic when !isBasic:
                         BasicSurfaceMaterial = new PQSProjectionAerialQuadRelativeLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericMain when !isMain:
+                    case SurfaceMaterialType.Main when !isMain:
                         BasicSurfaceMaterial = new PQSMainShaderLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimized when !isOptimised:
+                    case SurfaceMaterialType.Optimized when !isOptimised:
                         BasicSurfaceMaterial = new PQSMainOptimisedLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericExtra when !isExtra:
+                    case SurfaceMaterialType.Extra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericMainFastBlend when !isFastBlend:
+                    case SurfaceMaterialType.MainFastBlend when !isMainFastBlend:
                         BasicSurfaceMaterial = new PQSMainFastBlendLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericOptimizedFastBlend when !isOptimisedFastBlend:
+                    case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotation when !isRotation:
+                    case SurfaceMaterialType.Triplanar when !isTriplanar:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(value);
                         break;
-                    case SurfaceMaterialType.AtmosphericTriplanarZoomRotationTextureArray when !isRotationArray:
+                    case SurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(value);
                         break;
                     default:
@@ -506,6 +506,19 @@ namespace Kopernicus.Configuration
                 newScTree.name = "KSC";
             }
 
+            // Add the PQSROCControl mod for surface anomalies
+            if (!Utility.HasMod<PQSROCControl>(Value))
+            {
+                PQSROCControl roc = Utility.AddMod<PQSROCControl>(Value, 999999);
+                roc.rocs = new List<LandClassROC>();
+                roc.currentCBName = Value.name;
+            }
+            else
+            {
+                PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
+                roc.currentCBName = Value.name;
+            }
+
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
             for (Int32 i = 0; i < mods.Length; i++)
@@ -611,6 +624,19 @@ namespace Kopernicus.Configuration
             if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
             {
                 Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
+            }
+
+            // Add the PQSROCControl mod for surface anomalies
+            if (!Utility.HasMod<PQSROCControl>(Value))
+            {
+                PQSROCControl roc = Utility.AddMod<PQSROCControl>(Value, 999999);
+                roc.rocs = new List<LandClassROC>();
+                roc.currentCBName = Value.name;
+            }
+            else
+            {
+                PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
+                roc.currentCBName = Value.name;
             }
 
             // Load existing mods
