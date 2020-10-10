@@ -42,58 +42,61 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// The GameObjects that were already moved
         /// </summary>
-        private readonly List<GameObject> _moved = new List<GameObject>();
-        
+        private readonly List<KopernicusSurfaceObject> _moved = new List<KopernicusSurfaceObject>();
+
         /// <summary>
         /// Scatters will be moved up/down by a random value from this range
         /// </summary>
-        public List<Single> AltitudeVariance = new List<Single> {0f, 0f};
-        
+        public List<Single> AltitudeVariance = new List<Single> { 0f, 0f };
+
         /// <summary>
         /// Go through all spawned scatters, and move them so they are at sea level, and not on the terrain
         /// </summary>
         void IComponent<ModularScatter>.Update(ModularScatter system)
         {
-            // If there's nothing to do, discard any cached objects and abort
-            if (system.scatterObjects.Count == 0)
+            PQSMod_LandClassScatterQuad[] quads = system.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
+            for (Int32 i = 0; i < quads.Length; i++)
             {
-                if (!_moved.Any())
+                var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
+                // If there's nothing to do, discard any cached objects and abort
+                if (surfaceObjects.Count() == 0)
+                {
+                    if (!_moved.Any())
+                    {
+                        return;
+                    }
+
+                    _moved.Clear();
+                    return;
+                }
+
+                if (surfaceObjects.Count() != _moved.Count)
+                {
+                    _moved.Clear();
+                }
+
+                if (_moved.Count > 0)
                 {
                     return;
                 }
 
-                _moved.Clear();
-                return;
-            }
-            
-            if (system.scatterObjects.Count != _moved.Count)
-            {
-                _moved.Clear();
-            }
+                // Init the seed
+                Random.InitState(system.scatter.seed);
 
-            if (_moved.Count > 0)
-            {
-                return;
-            }
+                // Shift every object to sea level
 
-            // Init the seed
-            Random.InitState(system.scatter.seed);
-            
-            // Shift every object to sea level
-            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
-            {
-                GameObject scatter = system.scatterObjects[i];
+                KopernicusSurfaceObject scatter = surfaceObjects[i];
 
                 Vector3 position = system.body.pqsController.transform.position;
                 Vector3 direction = (scatter.transform.position - position).normalized;
                 scatter.transform.position = position +
-                                             direction * (Single) (system.body.Radius + system.scatter.verticalOffset +
+                                             direction * (Single)(system.body.Radius + system.scatter.verticalOffset +
                                                                    Random.Range(AltitudeVariance[0],
                                                                        AltitudeVariance[1]));
                 _moved.Add(scatter);
             }
         }
-        
+
         /// <summary>
         /// Clear the cache on a scene change
         /// </summary>
@@ -106,7 +109,7 @@ namespace Kopernicus.Components.ModularScatter
         {
             // We don't use this
         }
-        
+
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
