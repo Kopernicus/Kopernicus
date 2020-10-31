@@ -67,6 +67,11 @@ namespace Kopernicus.Components.ModularScatter
         public PQSLandControl.LandClassScatter scatter;
 
         /// <summary>
+        /// The actual models that are scattered over the surface
+        /// </summary>
+        public List<GameObject> scatterObjects;
+
+        /// <summary>
         /// Whether to treat the density calculation as an actual floating point value
         /// </summary>
         public Boolean useBetterDensity;
@@ -138,6 +143,7 @@ namespace Kopernicus.Components.ModularScatter
             scatter = landControl.scatters.First(s => s.scatterName == scatter.scatterName); // I hate Unity
             typeof(PQSLandControl.LandClassScatter).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
                 .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
+            scatterObjects = new List<GameObject>();
             body = Part.GetComponentUpwards<CelestialBody>(landControl.gameObject);
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
             if (!baseMesh && meshes.Count > 0)
@@ -193,23 +199,12 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         private void OnGameSceneLoadRequested(GameScenes data)
         {
-            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
-            for (Int32 i = 0; i < quads.Length; i++)
+            foreach (GameObject scatterObj in scatterObjects)
             {
-                var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
-
-                foreach (KopernicusSurfaceObject scatterObj in surfaceObjects)
-                {
-                    try
-                    {
-                        Destroy(scatterObj.gameObject);
-                    }
-                    catch
-                    {
-                        //We should probably figure out why this trycatch is needed to avoid nullrefs.
-                    }
-                }
+                Destroy(scatterObj);
             }
+
+            scatterObjects.Clear();
         }
 
         private void Update()
@@ -250,6 +245,23 @@ namespace Kopernicus.Components.ModularScatter
 
             }
 
+            for (Int32 i = 0; i < scatterObjects.Count; i++)
+            {
+                if (scatterObjects[i])
+                {
+                    if (scatterObjects[i].transform.parent.name == "Unass")
+                    {
+                        Destroy(scatterObjects[i]);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                scatterObjects.RemoveAt(i);
+                i--;
+            }
             // Update components
             for (int i = 0; i < Components.Count; i++)
             {
@@ -323,15 +335,16 @@ namespace Kopernicus.Components.ModularScatter
                 scatterObject.transform.localPosition = scatterPos;
                 scatterObject.transform.localRotation = scatterRot;
                 scatterObject.transform.localScale = Vector3.one * scatterScale;
-                scatterObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
+                scatterObject.AddComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
                 scatterObject.AddOrGetComponent<ScatterDistanceCuller>();
-                MeshFilter filter = scatterObject.AddOrGetComponent<MeshFilter>();
+                MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
                 filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
-                MeshRenderer renderer = scatterObject.AddOrGetComponent<MeshRenderer>();
+                MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
                 renderer.sharedMaterial = quad.scatter.material;
                 renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
                 renderer.receiveShadows = quad.scatter.recieveShadows;
                 scatterObject.layer = GameLayers.LOCAL_SPACE;
+                scatterObjects.Add(scatterObject);
             }
 
             quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;

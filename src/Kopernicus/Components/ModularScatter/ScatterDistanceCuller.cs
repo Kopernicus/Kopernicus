@@ -11,15 +11,16 @@ namespace Kopernicus.Components.ModularScatter
     class ScatterDistanceCuller : MonoBehaviour
     {
         private MeshRenderer surfaceObject;
+        private float maxdistance = 10000;
         private void Start()
         {
             surfaceObject = GetComponent<MeshRenderer>();
+            float maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
         }
         private void Update()
         {
-            float maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
             float distance = 0;
-            if (HighLogic.LoadedSceneIsFlight)
+            if (FlightGlobals.ActiveVessel != null)
             {
                 try
                 {
@@ -27,6 +28,7 @@ namespace Kopernicus.Components.ModularScatter
                 }
                 catch
                 {
+                    distance = Vector3.Distance(Camera.current.transform.position, surfaceObject.transform.position);
                     //If craft breaks up this prevents errors.
                 }
             }

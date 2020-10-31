@@ -56,50 +56,49 @@ namespace Kopernicus.Components.ModularScatter
         /// <param name="system"></param>
         void IComponent<ModularScatter>.Update(ModularScatter system)
         {
-            PQSMod_LandClassScatterQuad[] quads = system.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
-            for (Int32 i = 0; i < quads.Length; i++)
+            // If there's nothing to do, discard any old lights and abort
+            if (system.scatterObjects.Count == 0)
             {
-                var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
-                // If there's nothing to do, discard any old lights and abort
-                if (surfaceObjects.Count() == 0)
-                {
-                    if (!_lights.Any())
-                    {
-                        return;
-                    }
-
-                    Debug.LogWarning("[Kopernicus] Discard old lights");
-                    foreach (Light light in _lights.Where(l => l))
-                    {
-                        UnityEngine.Object.Destroy(light.gameObject);
-                    }
-
-                    _lights.Clear();
-                    return;
-                }
-
-                Boolean rebuild = false;
-                if (surfaceObjects.Count() > _lights.Count)
-                {
-                    Debug.LogWarning("[Kopernicus] Add " + (surfaceObjects.Count() - _lights.Count) +
-                                     " lights");
-                    rebuild = true;
-                }
-                else if (surfaceObjects.Count() < _lights.Count)
-                {
-                    Debug.LogWarning("[Kopernicus] Remove " + (_lights.Count - surfaceObjects.Count()) +
-                                     " lights");
-                    rebuild = true;
-                }
-
-                if (!rebuild)
+                if (!_lights.Any())
                 {
                     return;
                 }
-                KopernicusSurfaceObject scatter = surfaceObjects[i];
 
-                Light lightsource = scatter.GetComponentInChildren<Light>();
-                if (lightsource)
+                Debug.LogWarning("[Kopernicus] Discard old lights");
+                foreach (Light light in _lights.Where(l => l))
+                {
+                    UnityEngine.Object.Destroy(light.gameObject);
+                }
+
+                _lights.Clear();
+                return;
+            }
+
+            Boolean rebuild = false;
+            if (system.scatterObjects.Count > _lights.Count)
+            {
+                Debug.LogWarning("[Kopernicus] Add " + (system.scatterObjects.Count - _lights.Count) +
+                                 " lights");
+                rebuild = true;
+            }
+            else if (system.scatterObjects.Count < _lights.Count)
+            {
+                Debug.LogWarning("[Kopernicus] Remove " + (_lights.Count - system.scatterObjects.Count) +
+                                 " lights");
+                rebuild = true;
+            }
+
+            if (!rebuild)
+            {
+                return;
+            }
+
+            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
+            {
+                GameObject scatter = system.scatterObjects[i];
+
+                Light light = scatter.GetComponentInChildren<Light>();
+                if (light)
                 {
                     continue;
                 }

@@ -54,31 +54,25 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         void IComponent<ModularScatter>.Update(ModularScatter system)
         {
-
-            PQSMod_LandClassScatterQuad[] quads = system.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
-            for (Int32 i = 0; i < quads.Length; i++)
+            if (system.scatterObjects.Count == scatterCount)
             {
-                var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
-                scatterCount = surfaceObjects.Count();
-                if (surfaceObjects.Count() == scatterCount)
-                {
-                    return;
-                }
-                for (Int32 i2 = 0; i < surfaceObjects.Length; i++)
-                {
-                    KopernicusSurfaceObject scatter = surfaceObjects[i2];
-                    MeshCollider collider = scatter.GetComponent<MeshCollider>();
+                return;
+            }
 
-                    if (collider)
-                    {
-                        continue;
-                    }
-
-                    MeshFilter filter = scatter.gameObject.GetComponent<MeshFilter>();
-                    collider = scatter.gameObject.AddComponent<MeshCollider>();
-                    collider.sharedMesh = CollisionMesh ? CollisionMesh : filter.sharedMesh;
-                    collider.enabled = true;
+            scatterCount = system.scatterObjects.Count;
+            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
+            {
+                GameObject scatter = system.scatterObjects[i];
+                MeshCollider collider = scatter.GetComponent<MeshCollider>();
+                if (collider)
+                {
+                    continue;
                 }
+
+                MeshFilter filter = scatter.GetComponent<MeshFilter>();
+                collider = scatter.AddComponent<MeshCollider>();
+                collider.sharedMesh = CollisionMesh ? CollisionMesh : filter.sharedMesh;
+                collider.enabled = true;
             }
         }
 
@@ -86,7 +80,7 @@ namespace Kopernicus.Components.ModularScatter
         {
             // We don't use this
         }
-
+        
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             // We don't use this
