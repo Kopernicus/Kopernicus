@@ -200,7 +200,14 @@ namespace Kopernicus.Components.ModularScatter
 
                 foreach (KopernicusSurfaceObject scatterObj in surfaceObjects)
                 {
-                    Destroy(scatterObj.gameObject);
+                    try
+                    {
+                        Destroy(scatterObj.gameObject);
+                    }
+                    catch
+                    {
+                        //We should probably figure out why this trycatch is needed to avoid nullrefs.
+                    }
                 }
             }
         }
