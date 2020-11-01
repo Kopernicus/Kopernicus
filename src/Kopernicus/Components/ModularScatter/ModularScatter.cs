@@ -335,11 +335,11 @@ namespace Kopernicus.Components.ModularScatter
                 scatterObject.transform.localPosition = scatterPos;
                 scatterObject.transform.localRotation = scatterRot;
                 scatterObject.transform.localScale = Vector3.one * scatterScale;
-                scatterObject.AddComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
+                scatterObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
                 scatterObject.AddOrGetComponent<ScatterDistanceCuller>();
-                MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
+                MeshFilter filter = scatterObject.AddOrGetComponent<MeshFilter>();
                 filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
-                MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
+                MeshRenderer renderer = scatterObject.AddOrGetComponent<MeshRenderer>();
                 renderer.sharedMaterial = quad.scatter.material;
                 renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
                 renderer.receiveShadows = quad.scatter.recieveShadows;
