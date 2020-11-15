@@ -7,9 +7,11 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
+New in this version (1.9.1-12)
 
+1.) This is a hotfix to address logspam issues that were otherwise mostly harmless (may hurt performance but not your game). Updating is still advisable.
 
-New in this version (1.9.1-11)
+New in major release (1.9.1)
 
 1.) Solarpanel.cfg fixes to support more third party solar panels with less work.
 
@@ -17,31 +19,23 @@ New in this version (1.9.1-11)
 
 3.) Added an RGB+A parser (MapSOParserRGBA) for devs who requested it. Largely an under the hood change with no end-user impact immediately visible.
 
-New in major release (1.9.1)
+4.) Added a culling range to land scatters, by default at 10km, configurable by the Kopernicus_Config.cfg parameter ScatterCullDistance. This massively improves performance in scatter-heavy planet packs with land scatters on.
 
-1.) Added a culling range to land scatters, by default at 10km, configurable by the Kopernicus_Config.cfg parameter ScatterCullDistance. This massively improves performance in scatter-heavy planet packs with land scatters on.
+5.) We now support "Breaking Ground" anomalies out of the box, eliminating the need for "MyRocksAreBiggerThanYours."
 
-2.) We now support "Breaking Ground" anomalies out of the box, eliminating the need for "MyRocksAreBiggerThanYours."
+6.) Material names have been simplified. You can still use the old ones, but there are simpler alternatives now. You can see https://github.com/R-T-B/Kopernicus/pull/28/files for details, or simply wait for the wiki to update. Remember, the old names still work and we have no plans to change that, this is just for usability.
 
-3.) Material names have been simplified. You can still use the old ones, but there are simpler alternatives now. You can see https://github.com/R-T-B/Kopernicus/pull/28/files for details, or simply wait for the wiki to update. Remember, the old names still work and we have no plans to change that, this is just for usability.
+7.) Planet pack authors (or you) may now specify the packs target shader level by by setting config/Kopernicus_Config.cfg EnforcedShaderLeve. 3 = Ultra/Atlas, 2 = High, 1 = Medium, and 0 = Low. Planet pack authors may use this via modulemanager module if needed as well. Note that we encourage of the KSP Parallax shader project over use of Squad's ATLAS shader. It is both equally performant and more flexible.
 
-3.) Planet pack authors (or you) may now specify the packs target shader level by by setting config/Kopernicus_Config.cfg EnforcedShaderLeve. 3 = Ultra/Atlas, 2 = High, 1 = Medium, and 0 = Low. Planet pack authors may use this via modulemanager module if needed as well. Note that we encourage of the KSP Parallax shader project over use of Squad's ATLAS shader. It is both equally performant and more flexible.
+8.) Performance Optimization and bugfixes enabling KittopiaTech support.
 
-4.) The longstanding ringshader bugs have been fixed.
+    Particle support restored.
 
-5.) Performance Optimization and bugfixes enabling KittopiaTech support.
-
-6.) JNSQ & other large world "Farm patch" bug fixed.
-
-7.) Particle support restored.
-
-8.) All 1.9.1 bugs that are known fixed. Full support for 1.9.1
+10.) All 1.9.1 bugs that are known fixed. Full support for 1.9.1
 
 9.) Multistar support. The math on ECs in single star may be slightly different than stock in some situations, but it should be similar in most and not enough to matter.
 
 10.) Added GameData\Kopernicus\Config\Kopernicus_Config.cfg file, with options to configure shader warnings and enable or disable shader locking, as well as set preferred shader level. Easy to edit, just look inside!
-
-
 
 About
 -----
