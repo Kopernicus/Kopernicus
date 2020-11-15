@@ -7,9 +7,11 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-12)
 
-1.) This is a hotfix to address logspam issues that were otherwise mostly harmless (may hurt performance but not your game). Updating is still advisable.
+
+New in this version (1.9.1-13)
+
+1.) Land scatter cull range has been reduced to approximately 7.25km. This offeres reasonable performance boost without losing much of anything noticeable. It is still configurable in Kopernicus_config.cfg as per usual.
 
 New in major release (1.9.1)
 
@@ -29,13 +31,14 @@ New in major release (1.9.1)
 
 8.) Performance Optimization and bugfixes enabling KittopiaTech support.
 
-    Particle support restored.
+9.) Particle support restored.
 
 10.) All 1.9.1 bugs that are known fixed. Full support for 1.9.1
 
-9.) Multistar support. The math on ECs in single star may be slightly different than stock in some situations, but it should be similar in most and not enough to matter.
+11.) Multistar support. The math on ECs in single star may be slightly different than stock in some situations, but it should be similar in most and not enough to matter.
 
-10.) Added GameData\Kopernicus\Config\Kopernicus_Config.cfg file, with options to configure shader warnings and enable or disable shader locking, as well as set preferred shader level. Easy to edit, just look inside!
+12.) Added GameData\Kopernicus\Config\Kopernicus_Config.cfg file, with options to configure shader warnings and enable or disable shader locking, as well as set preferred shader level. Easy to edit, just look inside!
+
 
 About
 -----
