@@ -244,6 +244,26 @@ namespace Kopernicus.Configuration
                     Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
                     Body.pqsVersion.surfaceMaterial = surfaceMaterial;
                 }
+                else if (GameSettings.TERRAIN_SHADER_QUALITY == 0)
+                {
+                    Material surfaceMaterial = Body.pqsVersion.lowQualitySurfaceMaterial;
+
+                    if (!surfaceMaterial)
+                    {
+                        surfaceMaterial = Body.pqsVersion.lowQualitySurfaceMaterial;
+                    }
+                    if (!surfaceMaterial)
+                    {
+                        surfaceMaterial = Body.pqsVersion.surfaceMaterial;
+                    }
+
+
+                    Body.pqsVersion.ultraQualitySurfaceMaterial = surfaceMaterial;
+                    Body.pqsVersion.highQualitySurfaceMaterial = surfaceMaterial;
+                    Body.pqsVersion.mediumQualitySurfaceMaterial = surfaceMaterial;
+                    Body.pqsVersion.lowQualitySurfaceMaterial = surfaceMaterial;
+                    Body.pqsVersion.surfaceMaterial = surfaceMaterial;
+                }
 
                 // Should we remove the ocean?
                 if (Body.celestialBody.ocean)
@@ -321,6 +341,25 @@ namespace Kopernicus.Configuration
                         ocean.lowQualitySurfaceMaterial = surfaceMaterial;
                         ocean.surfaceMaterial = surfaceMaterial;
                     }
+                    else if (GameSettings.TERRAIN_SHADER_QUALITY == 0)
+                    {
+                        Material surfaceMaterial = ocean.lowQualitySurfaceMaterial;
+
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = ocean.lowQualitySurfaceMaterial;
+                        }
+                        if (!surfaceMaterial)
+                        {
+                            surfaceMaterial = ocean.surfaceMaterial;
+                        }
+                        ocean.ultraQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.highQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.mediumQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.lowQualitySurfaceMaterial = surfaceMaterial;
+                        ocean.surfaceMaterial = surfaceMaterial;
+                    }
+
 
                     if (RemoveOcean.Value)
                     {
