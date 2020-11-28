@@ -44,23 +44,12 @@ namespace Kopernicus.Components
         public static List<KopernicusStar> Stars;
 
         /// <summary>
-        /// A dictionary to get the <see cref="KopernicusStar"/> component using the <see cref="CelestialBody"/>.
+        /// The results of the latest flux calculation for each star
         /// </summary>
-        public static Dictionary<CelestialBody, KopernicusStar> CelestialBodies;
+        public static Dictionary<String, Double> SolarFlux;
 
         /// <summary>
-        /// A list of all <see cref="Sun"/><i>s</i> and their luminosity
-        /// </summary>
-        public static Dictionary<Sun, Double> StarsLuminosity
-        {
-            get
-            {
-                return Stars.ToDictionary(star => star as Sun, star => star.shifter.solarLuminosity);
-            }
-        }
-
-        /// <summary>
-        /// The currently active <see cref="KopernicusStar"/>, for stuff we can't patch
+        /// The currently active star, for stuff we cant patch
         /// </summary>
         public static KopernicusStar Current;
 
@@ -80,9 +69,143 @@ namespace Kopernicus.Components
         public LightShifter shifter;
 
         /// <summary>
-        /// The <see cref="SunFlare"/> component that controls the lensflare assigned to this star
+        /// The SunFlare component that controls the lensflare assigned to this star
         /// </summary>
         public KopernicusSunFlare lensFlare;
+
+        /// <summary>
+        /// Override for <see cref="FlightIntegrator.CalculateSunBodyFlux"/>
+        /// </summary>
+        public static void SunBodyFlux(ModularFlightIntegrator flightIntegrator)
+        {
+            // Set Physics
+            PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
+            PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
+            CalculatePhysics();
+
+            // Get "Correct" values
+            flightIntegrator.BaseFICalculateSunBodyFlux();
+
+            // FI Values
+            Boolean directSunlight = flightIntegrator.Vessel.directSunlight;
+            Double solarFlux = flightIntegrator.solarFlux;
+            if (!SolarFlux.ContainsKey(Current.name))
+            {
+                SolarFlux.Add(Current.name, solarFlux);
+            }
+            else
+            {
+                SolarFlux[Current.name] = solarFlux;
+            }
+
+            // Calculate the values for all bodies
+            foreach (KopernicusStar star in Stars.Where(s => s.sun != FlightIntegrator.sunBody))
+            {
+                // Set Physics
+                PhysicsGlobals.SolarLuminosityAtHome = star.shifter.solarLuminosity;
+                PhysicsGlobals.SolarInsolationAtHome = star.shifter.solarInsolation;
+                CalculatePhysics();
+
+                // Calculate Flux
+                Double flux = Flux(flightIntegrator, star);
+
+                // And save them
+                if (flux > 0)
+                {
+                    directSunlight = true;
+                }
+
+                solarFlux += flux;
+                if (!SolarFlux.ContainsKey(star.name))
+                {
+                    SolarFlux.Add(star.name, flux);
+                }
+                else
+                {
+                    SolarFlux[star.name] = flux;
+                }
+            }
+
+            // Reapply
+            flightIntegrator.Vessel.directSunlight = directSunlight;
+            flightIntegrator.solarFlux = solarFlux;
+
+            // Set Physics
+            PhysicsGlobals.SolarLuminosityAtHome = Current.shifter.solarLuminosity;
+            PhysicsGlobals.SolarInsolationAtHome = Current.shifter.solarInsolation;
+            CalculatePhysics();
+        }
+
+        /// <summary>
+        /// Fixes the Calculation for Luminosity
+        /// NEVER REMOVE THIS AGAIN!
+        /// EVEN IF SQUAD MAKES EVERY FIELD PUBLIC AND OPENSOURCE AND WHATNOT
+        /// </summary>
+        private static void CalculatePhysics()
+        {
+            if (!FlightGlobals.ready)
+            {
+                return;
+            }
+
+            CelestialBody homeBody = FlightGlobals.GetHomeBody();
+            if (homeBody == null)
+            {
+                return;
+            }
+
+            while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+            {
+                homeBody = homeBody.referenceBody;
+            }
+
+            typeof(PhysicsGlobals).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                .Where(f => f.FieldType == typeof(Double)).Skip(2).First().SetValue(PhysicsGlobals.Instance,
+                    Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 *
+                    PhysicsGlobals.SolarLuminosityAtHome);
+        }
+
+        /// <summary>
+        /// Small method to handle flux
+        /// </summary>
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+        private static Double Flux(ModularFlightIntegrator fi, KopernicusStar star)
+        {
+            // Nullchecks
+            if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
+            {
+                return 0;
+            }
+
+            // Get sunVector
+            Boolean directSunlight = false;
+            Vector3 integratorPosition = fi.transform.position;
+            Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
+            Vector3 position = star.sun.scaledBody.transform.position;
+            Double scale = Math.Max((position - scaledSpace).magnitude, 1);
+            Vector3 sunVector = (position - scaledSpace) / scale;
+            Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
+
+            // Get Solar Flux
+            Double realDistanceToSun = 0;
+            if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
+            {
+                directSunlight = true;
+                realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
+            }
+            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
+            {
+                realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
+                directSunlight = true;
+            }
+
+            if (directSunlight)
+            {
+                return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Returns the star the given body orbits
@@ -100,6 +223,11 @@ namespace Kopernicus.Components
             if (Stars == null)
             {
                 Stars = new List<KopernicusStar>();
+            }
+
+            if (SolarFlux == null)
+            {
+                SolarFlux = new Dictionary<String, Double>();
             }
 
             Stars.Add(this);
@@ -267,94 +395,16 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
-        /// Returns the <see cref="Vessel.solarFlux"/> at the given location.
-        /// </summary>
-        public Double CalculateFluxAt(Vessel vessel)
-        {
-            // Get sunVector
-            Boolean directSunlight = false;
-            Vector3 integratorPosition = vessel.transform.position;
-            Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-            Vector3 position = sun.scaledBody.transform.position;
-            Double scale = Math.Max((position - scaledSpace).magnitude, 1);
-            Vector3 sunVector = (position - scaledSpace) / scale;
-            Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
-
-            // Get Thermal Stats
-            if (vessel.mainBody.atmosphere)
-            {
-                if (sun == GetLocalStar(vessel.mainBody))
-                {
-                    FlightIntegrator FI = vessel.GetComponent<FlightIntegrator>();
-                    vessel.mainBody.GetAtmoThermalStats(true, sun, sunVector, Vector3d.Dot(sunVector, vessel.upAxis), vessel.upAxis, vessel.altitude, out FI.atmosphereTemperatureOffset, out FI.bodyEmissiveFlux, out FI.bodyAlbedoFlux);
-                }
-            }
-
-            // Get Solar Flux
-            Double realDistanceToSun = 0;
-            if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
-            {
-                directSunlight = true;
-                realDistanceToSun = scale * ScaledSpace.ScaleFactor - sun.Radius;
-            }
-            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == sun)
-            {
-                realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
-                directSunlight = true;
-            }
-
-            if (directSunlight)
-            {
-                Double output = PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
-                return output;
-            }
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Returns the host star directly from the given body.
-        /// </summary>
-        public static CelestialBody GetLocalStar(CelestialBody body)
-        {
-            while (body?.orbit?.referenceBody != null)
-            {
-                if (body.isStar)
-                {
-                    break;
-                }
-                body = body.orbit.referenceBody;
-            }
-            return body;
-        }
-
-        /// <summary>
-        /// Returns the host planet directly above the current star.
-        /// </summary>
-        public static CelestialBody GetLocalPlanet(CelestialBody body)
-        {
-            while (body?.orbit?.referenceBody != null)
-            {
-                if (body.orbit.referenceBody.isStar)
-                {
-                    break;
-                }
-                body = body.orbit.referenceBody;
-            }
-            return body;
-        }
-
-        /// <summary>
         /// Override this function and use <see cref="Current"/> instead of Planetarium sun
         /// </summary>
         public override Double GetLocalTimeAtPosition(Vector3d wPos, CelestialBody cb)
         {
             Vector3d pos1 = Vector3d.Exclude(cb.angularVelocity, FlightGlobals.getUpAxis(cb, wPos));
             Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
-            #pragma warning disable 618
+#pragma warning disable 618
             Double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) *
                            Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
-            #pragma warning restore 618
+#pragma warning restore 618
             if (angle > Math.PI * 2)
             {
                 angle -= Math.PI * 2;

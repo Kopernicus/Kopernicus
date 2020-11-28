@@ -199,9 +199,9 @@ namespace Kopernicus.Configuration
             set { Value.collideable = value; }
         }
 
-        // Collision mesh
+        // Bounce factor of the particles after collision
         [ParserTarget("bounce", Optional = true)]
-        public NumericParser<Single> CollisionMesh
+        public NumericParser<Single> Bounce
         {
             get { return Value.bounce; }
             set { Value.bounce = value; }
@@ -271,7 +271,8 @@ namespace Kopernicus.Configuration
         }
 
         // Lifetime colors (length two)
-        [ParserTarget("lifetimeColors", Optional = true)]
+        [ParserTargetCollection("LifetimeColors", Optional = true)]
+        [ParserTargetCollection("lifetimeColors", Optional = true)]
         public List<ColorParser> LifetimeColors
         {
             get { return Value.lifetimeColors.Select(c => new ColorParser(c)).ToList(); }

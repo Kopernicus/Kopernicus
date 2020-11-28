@@ -262,13 +262,6 @@ namespace Kopernicus.RuntimeUtility
             Utility.CopyObjectFields(Sun.Instance, star, false);
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
-
-            KopernicusStar.CelestialBodies =
-                new Dictionary<CelestialBody, KopernicusStar>
-                {
-                    { star.sun, star }
-                };
-
             // SunFlare
             gob = SunFlare.Instance.gameObject;
             KopernicusSunFlare flare = gob.AddComponent<KopernicusSunFlare>();
@@ -295,8 +288,6 @@ namespace Kopernicus.RuntimeUtility
             starObj.transform.localScale = Vector3.one;
             starObj.transform.position = body.position;
             starObj.transform.rotation = body.rotation;
-
-            KopernicusStar.CelestialBodies.Add(star.sun, star);
 
             GameObject flareObj = UnityEngine.Object.Instantiate(SunFlare.Instance.gameObject, SunFlare.Instance.transform.parent, true);
             KopernicusSunFlare flare = flareObj.GetComponent<KopernicusSunFlare>();
@@ -772,7 +763,7 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
             Events.OnRuntimeUtilityPatchFI.Fire();
-            ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
+            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
         }
 
         // Fix the Space Center Cameras

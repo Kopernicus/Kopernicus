@@ -326,7 +326,7 @@ namespace Kopernicus.Configuration.Parsing
         }
     }
 
-    // Parser for a MapSO
+    // Parser for a MapSO RGB
     [RequireConfigType(ConfigType.Value)]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class MapSOParserRGB<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
@@ -451,6 +451,134 @@ namespace Kopernicus.Configuration.Parsing
         public static implicit operator MapSOParserRGB<T>(T value)
         {
             return new MapSOParserRGB<T>(value);
+        }
+    }
+
+    // Parser for a MapSO RGBA
+    [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public class MapSOParserRGBA<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
+    {
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public T Value { get; set; }
+
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
+        public void SetFromString(String s)
+        {
+            // Should we use OnDemand?
+            Boolean useOnDemand = OnDemandStorage.UseOnDemand;
+            Boolean useOnDemandBiomes = OnDemandStorage.UseOnDemandBiomes;
+
+            if (s.StartsWith("BUILTIN/"))
+            {
+                s = s.Substring(8);
+                Value = Utility.FindMapSO<T>(s);
+            }
+            else
+            {
+                // check if OnDemand.
+                if (useOnDemand && typeof(T) == typeof(MapSO) ||
+                    useOnDemandBiomes && typeof(T) == typeof(CBAttributeMapSO))
+                {
+                    if (!Utility.TextureExists(s))
+                    {
+                        return;
+                    }
+                    if (typeof(T) == typeof(CBAttributeMapSO))
+                    {
+                        CBAttributeMapSODemand cbMap = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
+                        cbMap.Path = s;
+                        cbMap.Depth = MapSO.MapDepth.RGBA;
+                        cbMap.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
+                        OnDemandStorage.AddMap(generatedBody.name, cbMap);
+                        Value = cbMap as T;
+                    }
+                    else
+                    {
+                        MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
+                        map.Path = s;
+                        map.Depth = MapSO.MapDepth.RGBA;
+                        map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
+                        OnDemandStorage.AddMap(generatedBody.name, map);
+                        Value = map as T;
+                    }
+                }
+                else
+                {
+                    // Load the texture
+                    Texture2D map = Utility.LoadTexture(s, false, false, false);
+                    if (map == null)
+                    {
+                        return;
+                    }
+
+                    // Create a new map script object
+                    Value = ScriptableObject.CreateInstance<T>();
+                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                    Object.DestroyImmediate(map);
+                }
+            }
+
+            if (Value != null)
+            {
+                Value.name = s;
+            }
+        }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            if (Value == null)
+            {
+                return null;
+            }
+
+            if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+            {
+                return Value.name;
+            }
+
+            return "BUILTIN/" + Value.name;
+        }
+
+        /// <summary>
+        /// Create a new MapSOParser_RGBA
+        /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public MapSOParserRGBA()
+        {
+
+        }
+
+        /// <summary>
+        /// Create a new MapSOParser_RGB from an already existing Texture
+        /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public MapSOParserRGBA(T value)
+        {
+            Value = value;
+        }
+
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
+        public static implicit operator T(MapSOParserRGBA<T> parser)
+        {
+            return parser.Value;
+        }
+
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
+        public static implicit operator MapSOParserRGBA<T>(T value)
+        {
+            return new MapSOParserRGBA<T>(value);
         }
     }
 

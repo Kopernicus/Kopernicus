@@ -369,6 +369,7 @@ namespace Kopernicus.Configuration
                 scaledAtmosphere.layer = GameLayers.SCALED_SPACE_ATMOSPHERE;
                 MeshRenderer renderer = scaledAtmosphere.AddComponent<MeshRenderer>();
                 renderer.sharedMaterial = new Components.MaterialWrapper.AtmosphereFromGround();
+                renderer.sharedMaterial.renderQueue = 3020;
                 MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                 meshFilter.sharedMesh = Templates.ReferenceGeosphere;
                 Value = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
@@ -404,6 +405,7 @@ namespace Kopernicus.Configuration
                 scaledAtmosphere.layer = GameLayers.SCALED_SPACE_ATMOSPHERE;
                 MeshRenderer renderer = scaledAtmosphere.AddComponent<MeshRenderer>();
                 renderer.sharedMaterial = new Components.MaterialWrapper.AtmosphereFromGround();
+                renderer.sharedMaterial.renderQueue = 3020;
                 MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                 meshFilter.sharedMesh = Templates.ReferenceGeosphere;
                 Value = body.afg = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
