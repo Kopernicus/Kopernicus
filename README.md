@@ -7,9 +7,11 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-14)
+New in this version (1.9.1-15)
 
-1.) Solar panel fixes and optimizations for multistar.  Heating bug for non-root stars fixed.
+1.) A cosmetic bug in multistar tracking where a body would show as occuluding the panel when it was not has been fixed.
+
+2.) A bug where if the tracked star was occuluded, total EC output was set to zero has been fixed.
 
 New in major release (1.9.1)
 

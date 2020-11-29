@@ -75,15 +75,15 @@ namespace Kopernicus.Components
                 if (SP?.deployState == ModuleDeployablePart.DeployState.EXTENDED)
                 {
                     Vector3 normalized = (SP.trackingTransformLocal.position - SP.panelRotationTransform.position).normalized;
-                    LatePostCalculateTracking(SP, normalized);
+                    FieldInfo trackingLOS = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "trackingLOS");
+                    LatePostCalculateTracking((bool)trackingLOS.GetValue(SP), normalized,n);
                 }
             }
         }
 
-        public void LatePostCalculateTracking(ModuleDeployableSolarPanel SP, Vector3 trackingDirection)
+        public void LatePostCalculateTracking(Boolean trackingLos, Vector3 trackingDirection, int panelId)
         {
-            FieldInfo trackingLOS = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "trackingLOS");
-            Boolean trackingLos = (bool)trackingLOS.GetValue(SP);
+            ModuleDeployableSolarPanel SP = SPs[panelId];
 
             // Maximum values
             Double maxEnergy = 0;
@@ -113,10 +113,7 @@ namespace Kopernicus.Components
                 SP.trackingTransformLocal = sunTransform;
                 SP.trackingTransformScaled = star.sun.scaledBody.transform;
 
-                FieldInfo blockingObject = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "blockingObject");
-                string blockingObjectName = (string)blockingObject.GetValue(SP);
-                trackingLos = SP.CalculateTrackingLOS(trackDir, ref blockingObjectName);
-                blockingObject.SetValue(SP, blockingObjectName);
+
 
                 SP.trackingTransformLocal = old.transform;
                 SP.trackingTransformScaled = old.scaledBody.transform;
@@ -125,40 +122,41 @@ namespace Kopernicus.Components
                 Single sunAoa;
                 if (!trackingLos)
                 {
-                    sunAoa = 0f;
+                    FieldInfo blockingObject = typeof(ModuleDeployableSolarPanel).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.Name == "blockingObject");
+                    string blockingObjectName = (string)blockingObject.GetValue(SP);
                     SP.status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObjectName);//"Blocked by " + blockingObjectName
                 }
                 else
                 {
                     SP.status = SP_status_DirectSunlight;//"Direct Sunlight"
-                    if (SP.panelType == ModuleDeployableSolarPanel.PanelType.FLAT)
+                }
+                if (SP.panelType == ModuleDeployableSolarPanel.PanelType.FLAT)
+                {
+                    sunAoa = Mathf.Clamp(Vector3.Dot(SP.trackingDotTransform.forward, trackDir), 0f, 1f);
+                }
+                else if (SP.panelType != ModuleDeployableSolarPanel.PanelType.CYLINDRICAL)
+                {
+                    sunAoa = 0.25f;
+                }
+                else
+                {
+                    Vector3 direction;
+                    if (SP.alignType == ModuleDeployableSolarPanel.PanelAlignType.PIVOT)
                     {
-                        sunAoa = Mathf.Clamp(Vector3.Dot(SP.trackingDotTransform.forward, trackDir), 0f, 1f);
+                        direction = SP.trackingDotTransform.forward;
                     }
-                    else if (SP.panelType != ModuleDeployableSolarPanel.PanelType.CYLINDRICAL)
+                    else if (SP.alignType != ModuleDeployableSolarPanel.PanelAlignType.X)
                     {
-                        sunAoa = 0.25f;
+                        direction = SP.alignType != ModuleDeployableSolarPanel.PanelAlignType.Y
+                            ? part.partTransform.forward
+                            : part.partTransform.up;
                     }
                     else
                     {
-                        Vector3 direction;
-                        if (SP.alignType == ModuleDeployableSolarPanel.PanelAlignType.PIVOT)
-                        {
-                            direction = SP.trackingDotTransform.forward;
-                        }
-                        else if (SP.alignType != ModuleDeployableSolarPanel.PanelAlignType.X)
-                        {
-                            direction = SP.alignType != ModuleDeployableSolarPanel.PanelAlignType.Y
-                                ? part.partTransform.forward
-                                : part.partTransform.up;
-                        }
-                        else
-                        {
-                            direction = part.partTransform.right;
-                        }
-
-                        sunAoa = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
+                        direction = part.partTransform.right;
                     }
+
+                    sunAoa = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
                 }
 
                 // Calculate distance multiplier
@@ -247,6 +245,9 @@ namespace Kopernicus.Components
                 {
                     // Update the name
                     trackingBodyName = SP.trackingBody.bodyDisplayName.Replace("^N", "");
+
+                    if (!_manualTracking)
+                        trackingBodyName = Localizer.Format("#Kopernicus_UI_AutoTrackingBodyName", trackingBodyName);
 
                     // Update the guiName for SwitchAOAMode
                     Events["SwitchAoaMode"].guiName = _relativeSunAoa ? button_AbsoluteExposure : button_RelativeExposure;//Use absolute exposure//Use relative exposure
