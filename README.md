@@ -7,11 +7,11 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-15)
+New in this version (1.9.1-16)
 
-1.) A cosmetic bug in multistar tracking where a body would show as occuluding the panel when it was not has been fixed.
+1.) ModularFlightIntegrator has been patched to fix some landing bugs.  (Patches may not be appropriate outside Kopernicus, will discuss with Sarbian, source: https://github.com/R-T-B/ModularFlightIntegrator)
 
-2.) A bug where if the tracked star was occuluded, total EC output was set to zero has been fixed.
+2.) added FR localization file.
 
 New in major release (1.9.1)
 
