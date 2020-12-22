@@ -9,7 +9,7 @@ February 04, 2020
 
 New in this version (1.9.1-17)
 
-1.)
+1.) Asteroid spawning related bugfixes.
 
 New in major release (1.9.1)
 
