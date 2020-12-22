@@ -7,11 +7,9 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-16)
+New in this version (1.9.1-17)
 
-1.) ModularFlightIntegrator has been patched to fix some landing bugs.  (Patches may not be appropriate outside Kopernicus, will discuss with Sarbian, source: https://github.com/R-T-B/ModularFlightIntegrator)
-
-2.) added FR localization file.
+1.)
 
 New in major release (1.9.1)
 
@@ -38,6 +36,10 @@ New in major release (1.9.1)
 10.) Multistar support. The math on ECs in single star may be slightly different than stock in some situations, but it should be similar in most and not enough to matter.
 
 11.) Added GameData\Kopernicus\Config\Kopernicus_Config.cfg file, with options to configure shader warnings and enable or disable shader locking, as well as set preferred shader level. Easy to edit, just look inside!
+
+12.) ModularFlightIntegrator has been patched to fix some landing bugs.  (Patches may not be appropriate outside Kopernicus, will discuss with Sarbian, source: https://github.com/R-T-B/ModularFlightIntegrator)
+
+13.) added FR localization file.
 
 
 About
