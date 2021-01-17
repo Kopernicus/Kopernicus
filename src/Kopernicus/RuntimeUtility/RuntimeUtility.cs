@@ -759,7 +759,7 @@ namespace Kopernicus.RuntimeUtility
         // Patch FlightIntegrator
         private static void PatchFlightIntegrator()
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
 
                 Events.OnRuntimeUtilityPatchFI.Fire();

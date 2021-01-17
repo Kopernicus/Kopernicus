@@ -7,9 +7,11 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-18)
+New in this version (1.9.1-19)
 
-1.) HazardousBody related bugfixes.
+1.) Scatter distance-based culler has been fixed, it was broken for a release or two.
+
+2.) The default scatter cull distance has been reduced to 6250m to improve performance.
 
 New in major release (1.9.1)
 
