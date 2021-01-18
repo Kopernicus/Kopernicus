@@ -37,16 +37,16 @@ namespace Kopernicus.Configuration
 	public class ConfigReader
     {
 		[Persistent]
-		public bool EnforceShaders = false;
+		public bool EnforceShaders;
 		[Persistent]
-		public bool WarnShaders = false;
+		public bool WarnShaders;
 		[Persistent]
-		public int EnforcedShaderLevel = 2;
+		public int EnforcedShaderLevel;
 		[Persistent]
-		public int ScatterCullDistance = 10000;
-#if KSP_VERSION_1_10_1
+		public int ScatterCullDistance;
+#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11)
 		[Persistent]
-		public int CometPercentage = 25;
+		public int CometPercentage;
 #endif
 		public UrlDir.UrlConfig[] baseConfigs;
 		public void loadMainSettings()

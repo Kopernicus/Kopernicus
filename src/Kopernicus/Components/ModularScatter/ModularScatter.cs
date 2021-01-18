@@ -224,9 +224,15 @@ namespace Kopernicus.Components.ModularScatter
                     continue;
                 }
 
+                if (!quads[i].obj.activeSelf)
+                {
+                    continue;
+                }
+
                 if (quads[i].obj.name == "Unass")
                 {
                     var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
+
                     for (int j = 0; j < surfaceObjects.Length; j++)
                     {
                         Destroy(surfaceObjects[j].gameObject);
@@ -235,33 +241,20 @@ namespace Kopernicus.Components.ModularScatter
                     continue;
                 }
 
-                if (!quads[i].obj.activeSelf)
-                {
-                    continue;
-                }
-
                 CreateScatterMeshes(quads[i]);
                 quads[i].mesh.Clear();
-
             }
 
             for (Int32 i = 0; i < scatterObjects.Count; i++)
             {
                 if (scatterObjects[i])
                 {
-                    if (scatterObjects[i].transform.parent.name == "Unass")
-                    {
-                        Destroy(scatterObjects[i]);
-                    }
-                    else
-                    {
                         continue;
-                    }
                 }
-
                 scatterObjects.RemoveAt(i);
                 i--;
             }
+
             // Update components
             for (int i = 0; i < Components.Count; i++)
             {
@@ -335,11 +328,11 @@ namespace Kopernicus.Components.ModularScatter
                 scatterObject.transform.localPosition = scatterPos;
                 scatterObject.transform.localRotation = scatterRot;
                 scatterObject.transform.localScale = Vector3.one * scatterScale;
-                scatterObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
-                scatterObject.AddOrGetComponent<ScatterDistanceCuller>();
-                MeshFilter filter = scatterObject.AddOrGetComponent<MeshFilter>();
+                scatterObject.AddComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
+                MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
                 filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
-                MeshRenderer renderer = scatterObject.AddOrGetComponent<MeshRenderer>();
+                MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
+                scatterObject.AddComponent<ScatterDistanceCuller>();
                 renderer.sharedMaterial = quad.scatter.material;
                 renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
                 renderer.receiveShadows = quad.scatter.recieveShadows;
