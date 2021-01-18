@@ -12,7 +12,8 @@ namespace Kopernicus.Components.ModularScatter
     {
         private Boolean init = false;
         private int counter = 0;
-        private MeshRenderer surfaceObject;
+        private PQSMod_LandClassScatterQuad surfaceObjectQuad;
+        MeshRenderer[] surfaceObjects;
         private int maxdistance = 1;
         private void Start()
         {
@@ -20,7 +21,7 @@ namespace Kopernicus.Components.ModularScatter
         }
         private void Update()
         {
-            //Rate Limit it to doing a cull-calculation every 60 frames, which should be plenty.  These are very heavy.
+            //Rate Limit it to doing a cull-calculation every 60 frames, which should be plenty since we don't update more anyways.  These are very heavy.
             counter++;
             if (counter > 60)
             {
@@ -28,26 +29,30 @@ namespace Kopernicus.Components.ModularScatter
                 {
                     init = true;
                     maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
-                    surfaceObject = GetComponent<MeshRenderer>();
                 }
+                surfaceObjectQuad = GetComponentInParent<PQSMod_LandClassScatterQuad>();
+                surfaceObjects = surfaceObjectQuad.GetComponentsInChildren<MeshRenderer>(true);
                 counter = 0;
                 int distance = 15000;
                 if (HighLogic.LoadedSceneIsFlight)
                 {
-                    distance = (int)Vector3.Distance(Camera.current.transform.position, surfaceObject.transform.position);
+                    distance = (int)Vector3.Distance(Camera.current.transform.position, surfaceObjectQuad.transform.position);
                 }
                 else
                 {
                     distance = 0;
                 }
-
-                if (distance > maxdistance)
+                for (int i = 0; i < surfaceObjects.Length; i++)
                 {
-                    surfaceObject.enabled = false;
-                }
-                else
-                {
-                    surfaceObject.enabled = true;
+                    MeshRenderer surfaceObject = surfaceObjects[i];
+                    if (distance > maxdistance)
+                    {
+                        surfaceObject.enabled = false;
+                    }
+                    else
+                    {
+                        surfaceObject.enabled = true;
+                    }
                 }
             }
             else

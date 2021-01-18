@@ -51,6 +51,9 @@ namespace Kopernicus.Components.ModularScatter
             set { components = value; }
         }
 
+        //Rate limiting counter for update loop cleaning code
+        private int updateCounter = 0;
+
         /// <summary>
         /// The celestial body we are attached to
         /// </summary>
@@ -209,56 +212,70 @@ namespace Kopernicus.Components.ModularScatter
 
         private void Update()
         {
-            // Reprocess the stock scatter models, since they are merged into
-            // one gigantic mesh per quad, but we want unique objects
-            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
-            for (Int32 i = 0; i < quads.Length; i++)
+            updateCounter++;
+            //Rate limit garbage collection/updates to once every 1 seconds on a good day...
+            if (updateCounter > 60)
             {
-                if (quads[i].mr && quads[i].mr.enabled)
+                updateCounter = 0;
+                // Reprocess the stock scatter models, since they are merged into
+                // one gigantic mesh per quad, but we want unique objects
+                PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
+                for (Int32 i = 0; i < quads.Length; i++)
                 {
-                    quads[i].mr.enabled = false;
-                }
-
-                if (quads[i].obj.name.StartsWith("Kopernicus"))
-                {
-                    continue;
-                }
-
-                if (!quads[i].obj.activeSelf)
-                {
-                    continue;
-                }
-
-                if (quads[i].obj.name == "Unass")
-                {
-                    var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
-
-                    for (int j = 0; j < surfaceObjects.Length; j++)
+                    if (quads[i].mr && quads[i].mr.enabled)
                     {
-                        Destroy(surfaceObjects[j].gameObject);
+                        quads[i].mr.enabled = false;
                     }
 
-                    continue;
-                }
-
-                CreateScatterMeshes(quads[i]);
-                quads[i].mesh.Clear();
-            }
-
-            for (Int32 i = 0; i < scatterObjects.Count; i++)
-            {
-                if (scatterObjects[i])
-                {
+                    if (quads[i].obj.name.StartsWith("Kopernicus"))
+                    {
                         continue;
-                }
-                scatterObjects.RemoveAt(i);
-                i--;
-            }
+                    }
 
-            // Update components
-            for (int i = 0; i < Components.Count; i++)
-            {
-                Components[i].Update(this);
+                    if (!quads[i].obj.activeSelf)
+                    {
+                        continue;
+                    }
+
+                    if (quads[i].obj.name == "Unass")
+                    {
+                        var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
+
+                        for (int j = 0; j < surfaceObjects.Length; j++)
+                        {
+                            Destroy(surfaceObjects[j].gameObject);
+                        }
+
+                        continue;
+                    }
+
+                    CreateScatterMeshes(quads[i]);
+                    quads[i].mesh.Clear();
+                }
+
+                for (Int32 i = 0; i < scatterObjects.Count; i++)
+                {
+                    if (scatterObjects[i])
+                    {
+                        if (scatterObjects[i].transform.parent.name == "Unass")
+                        {
+                            Destroy(scatterObjects[i]);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                    }
+                    scatterObjects.RemoveAt(i);
+                    i--;
+                }
+
+                // Update components
+                for (int i = 0; i < Components.Count; i++)
+                {
+                    Components[i].Update(this);
+                }
             }
         }
 
@@ -332,7 +349,6 @@ namespace Kopernicus.Components.ModularScatter
                 MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
                 filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
                 MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
-                scatterObject.AddComponent<ScatterDistanceCuller>();
                 renderer.sharedMaterial = quad.scatter.material;
                 renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
                 renderer.receiveShadows = quad.scatter.recieveShadows;
@@ -341,6 +357,7 @@ namespace Kopernicus.Components.ModularScatter
             }
 
             quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
+            quad.obj.AddOrGetComponent<ScatterDistanceCuller>();
         }
     }
 }
