@@ -239,13 +239,6 @@ namespace Kopernicus.Components.ModularScatter
 
                     if (quads[i].obj.name == "Unass")
                     {
-                        var surfaceObjects = quads[i].obj.GetComponentsInChildren<KopernicusSurfaceObject>(true);
-
-                        for (int j = 0; j < surfaceObjects.Length; j++)
-                        {
-                            Destroy(surfaceObjects[j].gameObject);
-                        }
-
                         continue;
                     }
 

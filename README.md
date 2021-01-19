@@ -7,9 +7,9 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-21)
+New in this version (1.9.1-22)
 
-1.) Scatter distance-based culler additional hotfixes.
+1.) An additional fix for a regression in which scatters may under some circumstances levitate has been applied.
 
 New in major release (1.9.1)
 
