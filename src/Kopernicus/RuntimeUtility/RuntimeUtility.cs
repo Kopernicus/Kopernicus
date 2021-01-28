@@ -51,6 +51,7 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
+        public static int physicsCorrectionCounter = 0;
         public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
         // Awake() - flag this class as don't destroy on load and register delegates
         [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
@@ -141,6 +142,31 @@ namespace Kopernicus.RuntimeUtility
             }
         }
 
+        private void Update()
+        {
+            physicsCorrectionCounter++;
+            if (physicsCorrectionCounter > 60)
+            {
+                PatchColliders();
+                physicsCorrectionCounter = 0;
+            }
+        }
+
+        //Collision physics patcher
+        public static void PatchColliders()
+        {
+            if (HighLogic.LoadedSceneIsFlight && (CameraManager.GetCurrentCamera().cameraType == CameraType.Game))
+            {
+                if (FlightGlobals.ActiveVessel != null)
+                {
+                    CollisionEnhancer.bypass = false;
+                    CollisionEnhancer.UnderTerrainTolerance = 0;
+                    FlightGlobals.ActiveVessel.ResetCollisionIgnores();
+
+                }
+            }
+        }
+		
         // Stuff
         private void LateUpdate()
         {
@@ -159,11 +185,11 @@ namespace Kopernicus.RuntimeUtility
                 AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
             }
         }
-
         // Run patches every time a new scene was loaded
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
         private void OnLevelWasLoaded(GameScenes scene)
         {
+            PatchColliders();
             PatchFlightIntegrator();
             FixCameras();
             PatchTimeOfDayAnimation();
@@ -445,12 +471,9 @@ namespace Kopernicus.RuntimeUtility
                    continue;
                 }
        
-                Double rotPeriod = Utility
-                    .FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody
-                    .rotationPeriod;
-                Double num1 = Math.PI * 2 * Math.Sqrt(Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3) /
-                                                      body.orbit.referenceBody.gravParameter);
-                body.rotationPeriod = rotPeriod * num1 / (num1 + rotPeriod);
+                Double rotationPeriod = body.rotationPeriod;
+                Double orbitalPeriod = body.orbit.period;
+                body.rotationPeriod = rotationPeriod * orbitalPeriod / (orbitalPeriod + rotationPeriod);
             }
 
             // Update the order in the tracking station
@@ -648,7 +671,7 @@ namespace Kopernicus.RuntimeUtility
 
         private static void FixFlickeringOrbitLines()
         {
-#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1)
+#if ((KSP_VERSION_1_8_1 || KSP_VERSION_1_9_1) || KSP_VERSION_1_10_1)
             // Prevent the orbit lines from flickering in 1.9.1 and 1.10.1
             PlanetariumCamera.Camera.farClipPlane = 1e14f;
 #endif
@@ -759,17 +782,13 @@ namespace Kopernicus.RuntimeUtility
         // Patch FlightIntegrator
         private static void PatchFlightIntegrator()
         {
-            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
-            {
-
-                Events.OnRuntimeUtilityPatchFI.Fire();
-                ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
-                ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
-            }
-            else
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
                 return;
             }
+            Events.OnRuntimeUtilityPatchFI.Fire();
+            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+            ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
         }
 
         // Fix the Space Center Cameras

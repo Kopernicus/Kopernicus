@@ -440,7 +440,13 @@ namespace Kopernicus.Configuration
             {
                 return;
             }
-            
+
+            if (body.solarRotationPeriod)
+            {
+                double solarDayLength = (body.orbit.period * body.rotationPeriod) / (body.orbit.period - body.rotationPeriod);
+                body.rotationPeriod = (period * solarDayLength) / (period + solarDayLength);
+            }
+
             body.orbit.period = period;
             body.orbit.meanMotion =
                 2 * Math.PI / body.orbit.period; // in theory this should work but I haven't tested it
