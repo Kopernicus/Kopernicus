@@ -13,7 +13,8 @@ New in this version (1.9.1-23)
 
 2.) Numerous vetted bugfixes from bleeding edge.
 
-3.) Since we support more than one KSP version now, we have renamed this version tag to version 1.9.1-23. We still support 1.8.1, but the "mainline" version chosen is the latest KSP supported.
+3.) Since we support more than one KSP version now, you may have to look back a bit for the "1.8.1" or other "old" versions if you are looking for them.
+
 
 
 About
