@@ -1,20 +1,19 @@
 ﻿Kopernicus
 ==============================
-February 04, 2020
+January 29, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-23)
+New in this latest version (release-24)
 
-1.) We have moved to a universal build system supporting both 1.8.1 and 1.9.1.
+1.) A bug in which defining a PQS material would result in a load crash has been fixed.  It was most reported in RSS.  Sorry for letting that slip through!
 
-2.) Numerous vetted bugfixes from bleeding edge.
+2.) Stars now calculate aparent intensity when figuring their rim shaders, rather than just choosing the closest star regardless of how bright it may or may not be.
 
-3.) Since we support more than one KSP version now, you may have to look back a bit for the "1.8.1" or other "old" versions if you are looking for them.
-
+3.) A minor visual bug with rim shaders on gas giants has been fixed.
 
 
 About
