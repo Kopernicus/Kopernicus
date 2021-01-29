@@ -7,43 +7,13 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (USB-23)
+New in this version (1.9.1-23)
 
 1.) We have moved to a universal build system supporting both 1.8.1 and 1.9.1.
 
 2.) Numerous vetted bugfixes from bleeding edge.
 
-3.) Since we support more than one KSP version now, we have renamed this version tag to version USB-23 (USB stands for Universal Stable Build).
-
-New in major release (1.9.1)
-
-1.) Solarpanel.cfg fixes to support more third party solar panels with less work.
-
-2.) Fixes for the colliders on land scatters (due to a small bug in the distance-culling system).
-
-3.) Added an RGB+A parser (MapSOParserRGBA) for devs who requested it. Largely an under the hood change with no end-user impact immediately visible.
-
-4.) Added a culling range to land scatters, by default at 10km, configurable by the Kopernicus_Config.cfg parameter ScatterCullDistance. This massively improves performance in scatter-heavy planet packs with land scatters on.
-
-5.) We now support "Breaking Ground" anomalies out of the box, eliminating the need for "MyRocksAreBiggerThanYours."
-
-6.) Material names have been simplified. You can still use the old ones, but there are simpler alternatives now. You can see https://github.com/R-T-B/Kopernicus/pull/28/files for details, or simply wait for the wiki to update. Remember, the old names still work and we have no plans to change that, this is just for usability.
-
-7.) Planet pack authors (or you) may now specify the packs target shader level by by setting config/Kopernicus_Config.cfg EnforcedShaderLeve. 3 = Ultra/Atlas, 2 = High, 1 = Medium, and 0 = Low. Planet pack authors may use this via modulemanager module if needed as well. Note that we encourage of the KSP Parallax shader project over use of Squad's ATLAS shader. It is both equally performant and more flexible.
-
-8.) Performance Optimization and bugfixes enabling KittopiaTech support.
-
-9.) Particle support restored.
-
-10.) All 1.9.1 bugs that are known fixed. Full support for 1.9.1
-
-10.) Multistar support. The math on ECs in single star may be slightly different than stock in some situations, but it should be similar in most and not enough to matter.
-
-11.) Added GameData\Kopernicus\Config\Kopernicus_Config.cfg file, with options to configure shader warnings and enable or disable shader locking, as well as set preferred shader level. Easy to edit, just look inside!
-
-12.) ModularFlightIntegrator has been patched to fix some landing bugs.  (Patches may not be appropriate outside Kopernicus, will discuss with Sarbian, source: https://github.com/R-T-B/ModularFlightIntegrator)
-
-13.) added FR localization file.
+3.) Since we support more than one KSP version now, we have renamed this version tag to version 1.9.1-23. We still support 1.8.1, but the "mainline" version chosen is the latest KSP supported.
 
 
 About
