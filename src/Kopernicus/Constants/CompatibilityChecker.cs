@@ -49,9 +49,15 @@ namespace Kopernicus.Constants
     {
         // Compatible version
         internal const Int32 VERSION_MAJOR = 1;
+#if (KSP_VERSION_1_8_1)
+        internal const Int32 VERSION_MINOR = 8;
+        internal const Int32 REVISION = 1;
+#endif
+#if (KSP_VERSION_1_9_1)
         internal const Int32 VERSION_MINOR = 9;
         internal const Int32 REVISION = 1;
-        internal const Int32 KOPERNICUS = 22;
+#endif
+        internal const Int32 KOPERNICUS = 23;
 
         public static Boolean IsCompatible()
         {
@@ -59,14 +65,14 @@ namespace Kopernicus.Constants
             |    BEGIN IMPLEMENTATION-SPECIFIC EDITS HERE.    |
             \*-----------------------------------------------*/
 
-            #if !DEBUG
+#if !DEBUG
             return
                 Versioning.version_major == VERSION_MAJOR &&
                 Versioning.version_minor == VERSION_MINOR &&
                 Versioning.Revision == REVISION;
-            #else
+#else
             return true;
-            #endif
+#endif
 
             /*-----------------------------------------------*\
             | IMPLEMENTERS SHOULD NOT EDIT BEYOND THIS POINT! |

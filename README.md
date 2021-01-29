@@ -7,9 +7,11 @@ February 04, 2020
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this version (1.9.1-22)
+New in this version (USB-23)
 
-1.) An additional fix for a regression in which scatters may under some circumstances levitate has been applied.
+1.) We have moved to a universal build system supporting both 1.8.1 and 1.9.1.
+
+2.) Numerous vetted bugfixes from bleeding edge.
 
 New in major release (1.9.1)
 

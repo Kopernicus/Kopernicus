@@ -135,12 +135,14 @@ namespace Kopernicus.Configuration
             {
                 switch (GameSettings.TERRAIN_SHADER_QUALITY)
                 {
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case 3:
                         if (Value.ultraQualitySurfaceMaterial != null)
                         {
                             return Value.ultraQualitySurfaceMaterial;
                         }
                         goto case 2;
+#endif
                     case 2:
                         if (Value.highQualitySurfaceMaterial != null)
                         {
@@ -165,7 +167,9 @@ namespace Kopernicus.Configuration
             }
             set
             {
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 Value.ultraQualitySurfaceMaterial = value;
+#endif
                 Value.highQualitySurfaceMaterial = value;
                 Value.mediumQualitySurfaceMaterial = value;
                 Value.lowQualitySurfaceMaterial = value;
@@ -212,11 +216,12 @@ namespace Kopernicus.Configuration
                 {
                     return SurfaceMaterialType.Triplanar;
                 }
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.TriplanarAtlas;
                 }
-
+#endif
                 throw new Exception("The shader '" + BasicSurfaceMaterial.shader.name + "' is not supported.");
             }
             set
@@ -229,8 +234,9 @@ namespace Kopernicus.Configuration
                 Boolean isMainFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isTriplanar = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 Boolean isTriplanarAtlas = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
-
+#endif
                 switch (value.Value)
                 {
                     case SurfaceMaterialType.Vacuum when !isVaccum:
@@ -257,9 +263,11 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.Triplanar when !isTriplanar:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader();
                         break;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case SurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader();
                         break;
+#endif
                     default:
                         return;
                 }
@@ -281,8 +289,9 @@ namespace Kopernicus.Configuration
                 Boolean isMainFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
                 Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 Boolean isTriplanarAtlas = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
-
+#endif
                 switch (MaterialType.Value)
                 {
                     case SurfaceMaterialType.Vacuum when !isVaccum:
@@ -309,9 +318,11 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.Triplanar when !isTriplanar:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(BasicSurfaceMaterial);
                         goto default;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case SurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(BasicSurfaceMaterial);
                         goto default;
+#endif
                     default:
                         return BasicSurfaceMaterial;
                 }
@@ -326,8 +337,9 @@ namespace Kopernicus.Configuration
                 Boolean isMainFastBlend = value is PQSMainFastBlendLoader;
                 Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = value is PQSTriplanarZoomRotationLoader;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 Boolean isTriplanarAtlas = value is PQSTriplanarZoomRotationTextureArrayLoader;
-
+#endif
                 // We need to set the material before we check it, so we can reuse the code in MaterialType
                 BasicSurfaceMaterial = value;
 
@@ -357,9 +369,11 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.Triplanar when !isTriplanar:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader(value);
                         break;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case SurfaceMaterialType.TriplanarAtlas when !isTriplanarAtlas:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationTextureArrayLoader(value);
                         break;
+#endif
                     default:
                         BasicSurfaceMaterial = value;
                         break;
@@ -489,10 +503,12 @@ namespace Kopernicus.Configuration
             {
                 Utility.AddMod<PQSLandControlFixer>(Value, 0);
             }
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
             if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
             {
                 Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
             }
+#endif
 
             // hacky hack
             if (generatedBody.celestialBody.isHomeWorld && Value.gameObject.GetChild("KSC") == null)
@@ -620,12 +636,12 @@ namespace Kopernicus.Configuration
             {
                 Utility.AddMod<PQSLandControlFixer>(Value, 0);
             }
-
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
             if (!Utility.HasMod<PQSMod_TextureAtlasFixer>(Value))
             {
                 Utility.AddMod<PQSMod_TextureAtlasFixer>(Value, 0);
             }
-
+#endif
             // Add the PQSROCControl mod for surface anomalies
             if (!Utility.HasMod<PQSROCControl>(Value))
             {

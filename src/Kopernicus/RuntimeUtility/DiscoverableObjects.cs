@@ -229,7 +229,7 @@ namespace Kopernicus.RuntimeUtility
 
             // Spawn
             ConfigNode vessel = null;
-#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11)
+#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
             if (Random.Range(0, 100) > RuntimeUtility.KopernicusConfig.CometPercentage)
             {
 #endif
@@ -265,11 +265,11 @@ namespace Kopernicus.RuntimeUtility
                 GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
                 GameEvents.onAsteroidSpawned.Fire(protoVessel.vesselRef);
                 Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
-#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11)
+#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
             }
             else
             {
-            float fragmentDynamicPressureModifier = 0f;
+                float fragmentDynamicPressureModifier = 0f;
                 bool optimizedCollider = false;
                 CometOrbitType cometType = CometManager.GenerateWeightedCometType();
                 Orbit cometOrbit = cometType.CalculateHomeOrbit();
@@ -282,24 +282,13 @@ namespace Kopernicus.RuntimeUtility
                 configNode.AddValue("cometPartId", value);
                 ConfigNode configNode3 = new ConfigNode("VESSELMODULES");
                 configNode3.AddNode(configNode);
-                vessel = ProtoVessel.CreateVesselNode(DiscoverableObjectsUtil.GenerateCometName(), VesselType.SpaceObject, cometOrbit, 0, new ConfigNode[1]
-                {
-            configNode2
-                }, new ConfigNode("ACTIONGROUPS"), ProtoVessel.CreateDiscoveryNode(DiscoveryLevels.Presence, randomObjClass, lifetime, maxLifetime), configNode3);
+                vessel = ProtoVessel.CreateVesselNode(DiscoverableObjectsUtil.GenerateCometName(), VesselType.SpaceObject, cometOrbit, 0, new ConfigNode[1] { configNode2 }, new ConfigNode("ACTIONGROUPS"), ProtoVessel.CreateDiscoveryNode(DiscoveryLevels.Presence, randomObjClass, lifetime, maxLifetime), configNode3);
                 OverrideNode(ref vessel, asteroid.Vessel);
                 ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
-                try
-                {
-                    Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
-                    GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
-                    GameEvents.onAsteroidSpawned.Fire(protoVessel.vesselRef);
-                }
-                catch
-                {
-                    //I don't know why this is needed.
-                }
+                Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
                 protoVessel.Load(HighLogic.CurrentGame.flightState);
-
+                GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
+                GameEvents.onAsteroidSpawned.Fire(protoVessel.vesselRef);
                 Debug.Log("[Kopernicus] New object found near " + body.name + ": " + protoVessel.vesselName + "!");
             }
 #endif
