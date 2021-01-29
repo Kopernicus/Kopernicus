@@ -11,7 +11,7 @@ New in this latest version (release-24)
 
 1.) A bug in which defining a PQS material would result in a load crash has been fixed.  It was most reported in RSS.  Sorry for letting that slip through!
 
-2.) Stars now calculate aparent intensity when figuring their rim shaders, rather than just choosing the closest star regardless of how bright it may or may not be.
+2.) Bodies now calculate a stars aparent intensity when figuring their rim shaders, rather than just choosing the closest star regardless of how bright it may or may not be.
 
 3.) A minor visual bug with rim shaders on gas giants has been fixed.
 
