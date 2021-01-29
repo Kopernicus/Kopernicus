@@ -22,7 +22,7 @@
  *
  * https://kerbalspaceprogram.com
  */
-
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.Components.MaterialWrapper;
@@ -492,3 +492,4 @@ namespace Kopernicus.Configuration.MaterialLoader
         }
     }
 }
+#endif

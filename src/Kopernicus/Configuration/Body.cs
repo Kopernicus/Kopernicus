@@ -287,9 +287,13 @@ namespace Kopernicus.Configuration
                 {
                     GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                 }
-#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
+
+                // Create accessors
+                Debug = new DebugLoader();
+                ScaledVersion = new ScaledVersionLoader();
                 if (Template.OriginalBody.scaledVersion.name.Equals("Jool"))
                 {
+#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     if ((!Name.Equals("Jool")) || (Name.Equals("Jool") && (Template.Body.celestialBody.Radius > 6000000))) // This is a Jool-clone, or resized Jool.  We have to handle it special.
                     {
                         //Remove Gas Giant shaders for compatability
@@ -298,11 +302,23 @@ namespace Kopernicus.Configuration
                         GameObject.DestroyImmediate(GGMC);
                         GameObject.DestroyImmediate(MBOGS);
                     }
-                }
 #endif
-                // Create accessors
-                Debug = new DebugLoader();
-                ScaledVersion = new ScaledVersionLoader();
+                    //We need to destroy the stock gas giant MSD, it is bugged.
+                    MaterialSetDirection MSD = GeneratedBody.celestialBody.scaledBody.GetComponent<MaterialSetDirection>();
+                    GameObject.DestroyImmediate(MSD);
+                    ScaledSpaceOnDemand onDemand = GeneratedBody.celestialBody.scaledBody.AddOrGetComponent<ScaledSpaceOnDemand>();
+                    try
+                    {
+                        if (onDemand.normals.Length < 1)
+                        {
+                            onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                        }
+                    }
+                    catch
+                    {
+                        onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
+                    }
+                }
             }
             // Otherwise we have to generate all the things for this body
             else

@@ -944,15 +944,12 @@ namespace Kopernicus.RuntimeUtility
         // Patch various references to point to the nearest star
         private static void PatchStarReferences(CelestialBody body)
         {
-            GameObject star = KopernicusStar.GetNearest(body).gameObject;
+            GameObject star = KopernicusStar.GetBrightestStar(body).gameObject;
             if (body.afg != null)
             {
                 body.afg.sunLight = star;
             }
-            if (body.scaledBody.GetComponent<MaterialSetDirection>() != null)
-            {
-                body.scaledBody.GetComponent<MaterialSetDirection>().target = star.transform;
-            }
+            body.scaledBody.AddOrGetComponent<MaterialSetDirection>().target = star.transform;
             foreach (PQSMod_MaterialSetDirection msd in
                 body.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true))
             {

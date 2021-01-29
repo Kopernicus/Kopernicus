@@ -204,10 +204,12 @@ namespace Kopernicus.Configuration
                 {
                     return SurfaceMaterialType.Extra;
                 }
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 if (PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.MainFastBlend;
                 }
+#endif
                 if (PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial))
                 {
                     return SurfaceMaterialType.OptimizedFastBlend;
@@ -231,7 +233,9 @@ namespace Kopernicus.Configuration
                 Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 Boolean isMainFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
+#endif
                 Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isTriplanar = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
 #if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
@@ -254,12 +258,15 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.Extra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader();
                         break;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case SurfaceMaterialType.MainFastBlend when !isMainFastBlend:
                         BasicSurfaceMaterial = new PQSMainFastBlendLoader();
                         break;
+#endif
                     case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader();
                         break;
+
                     case SurfaceMaterialType.Triplanar when !isTriplanar:
                         BasicSurfaceMaterial = new PQSTriplanarZoomRotationLoader();
                         break;
@@ -286,7 +293,9 @@ namespace Kopernicus.Configuration
                 Boolean isMain = BasicSurfaceMaterial is PQSMainShaderLoader;
                 Boolean isOptimised = BasicSurfaceMaterial is PQSMainOptimisedLoader;
                 Boolean isExtra = BasicSurfaceMaterial is PQSMainExtrasLoader;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 Boolean isMainFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
+#endif
                 Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
 #if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
@@ -309,9 +318,11 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.Extra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader(BasicSurfaceMaterial);
                         goto default;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case SurfaceMaterialType.MainFastBlend when !isMainFastBlend:
                         BasicSurfaceMaterial = new PQSMainFastBlendLoader(BasicSurfaceMaterial);
                         goto default;
+#endif
                     case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(BasicSurfaceMaterial);
                         goto default;
@@ -334,7 +345,9 @@ namespace Kopernicus.Configuration
                 Boolean isMain = value is PQSMainShaderLoader;
                 Boolean isOptimised = value is PQSMainOptimisedLoader;
                 Boolean isExtra = value is PQSMainExtrasLoader;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                 Boolean isMainFastBlend = value is PQSMainFastBlendLoader;
+#endif
                 Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = value is PQSTriplanarZoomRotationLoader;
 #if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
@@ -360,9 +373,11 @@ namespace Kopernicus.Configuration
                     case SurfaceMaterialType.Extra when !isExtra:
                         BasicSurfaceMaterial = new PQSMainExtrasLoader(value);
                         break;
+#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case SurfaceMaterialType.MainFastBlend when !isMainFastBlend:
                         BasicSurfaceMaterial = new PQSMainFastBlendLoader(value);
                         break;
+#endif
                     case SurfaceMaterialType.OptimizedFastBlend when !isOptimisedFastBlend:
                         BasicSurfaceMaterial = new PQSMainOptimisedFastBlendLoader(value);
                         break;
