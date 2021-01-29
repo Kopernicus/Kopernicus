@@ -13,6 +13,8 @@ New in this version (USB-23)
 
 2.) Numerous vetted bugfixes from bleeding edge.
 
+3.) Since we support more than one KSP version now, we have renamed this version tag to version USB-23 (USB stands for Universal Stable Build).
+
 New in major release (1.9.1)
 
 1.) Solarpanel.cfg fixes to support more third party solar panels with less work.
