@@ -287,7 +287,6 @@ namespace Kopernicus.Configuration
                 {
                     GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                 }
-
                 // Create accessors
                 Debug = new DebugLoader();
                 ScaledVersion = new ScaledVersionLoader();
@@ -303,22 +302,11 @@ namespace Kopernicus.Configuration
                         GameObject.DestroyImmediate(MBOGS);
                     }
 #endif
-                    //We need to destroy the stock gas giant MSD, it is bugged.
+                    //We need to destroy the stock GG MSD, it is bugged for our needs.
                     MaterialSetDirection MSD = GeneratedBody.celestialBody.scaledBody.GetComponent<MaterialSetDirection>();
                     GameObject.DestroyImmediate(MSD);
-                    ScaledSpaceOnDemand onDemand = GeneratedBody.celestialBody.scaledBody.AddOrGetComponent<ScaledSpaceOnDemand>();
-                    try
-                    {
-                        if (onDemand.normals.Length < 1)
-                        {
-                            onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
-                        }
-                    }
-                    catch
-                    {
-                        onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
-                    }
                 }
+
             }
             // Otherwise we have to generate all the things for this body
             else
@@ -347,19 +335,6 @@ namespace Kopernicus.Configuration
                 // Create accessors
                 Debug = new DebugLoader();
                 ScaledVersion = new ScaledVersionLoader();
-                //Fix normals for gasgiants and newbodies (if needed, ignore the weird trycatch, it works)
-                ScaledSpaceOnDemand onDemand = GeneratedBody.celestialBody.scaledBody.AddOrGetComponent<ScaledSpaceOnDemand>();
-                try
-                {
-                    if (onDemand.normals.Length < 1)
-                    {
-                        onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
-                    }
-                }
-                catch
-                {
-                    onDemand.normals = "Kopernicus/Textures/generic_nm.dds";
-                }
             }
             // Event
             Events.OnBodyApply.Fire(this, node);
