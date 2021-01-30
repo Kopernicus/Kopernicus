@@ -7,13 +7,9 @@ January 29, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-24)
+New in this latest version (release-25)
 
-1.) A bug in which defining a PQS material would result in a load crash has been fixed.  It was most reported in RSS.  Sorry for letting that slip through!
-
-2.) Bodies now calculate a stars aparent intensity when figuring their rim shaders, rather than just choosing the closest star regardless of how bright it may or may not be.
-
-3.) A minor visual bug with rim shaders on gas giants has been fixed.
+1.) A bug in which all stars were treated as equal luminosity for the rimshader inverse square law calculations has been fixed.
 
 
 About
