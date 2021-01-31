@@ -1,10 +1,6 @@
 ﻿Kopernicus
 ==============================
-<<<<<<< HEAD
-January 30, 2021
-=======
 January 31, 2021
->>>>>>> 1c27e8f6 (Release 26.  Solarpanel.cfg updates, Laythe ocean fixes, and rimshader tweaks.)
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
