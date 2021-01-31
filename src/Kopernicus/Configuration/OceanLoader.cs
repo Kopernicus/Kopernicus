@@ -132,9 +132,9 @@ namespace Kopernicus.Configuration
                 {
 #if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
                     case 3:
-                        if (Value.ultraQualitySurfaceMaterial != null)
+                        if (Value.highQualitySurfaceMaterial != null) //high is the highest that works for oceans.
                         {
-                            return Value.ultraQualitySurfaceMaterial;
+                            return Value.highQualitySurfaceMaterial;
                         }
                         goto case 2;
 #endif
@@ -163,7 +163,7 @@ namespace Kopernicus.Configuration
             set
             {
 #if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
-                Value.ultraQualitySurfaceMaterial = value;
+                Value.highQualitySurfaceMaterial = value; //high is the highest that works for oceans.
 #endif
                 Value.highQualitySurfaceMaterial = value;
                 Value.mediumQualitySurfaceMaterial = value;

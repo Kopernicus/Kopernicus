@@ -772,7 +772,7 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            GameObject star = KopernicusStar.GetNearest(body).gameObject;
+            GameObject star = KopernicusStar.GetBrightest(body).gameObject;
             Vector3 afgCamPosition = body.afg.mainCamera.transform.position;
             Vector3 distance = body.scaledBody.transform.position - afgCamPosition;
             body.afg.lightDot = Mathf.Clamp01(Vector3.Dot(distance, afgCamPosition - star.transform.position) * body.afg.dawnFactor);
@@ -937,7 +937,7 @@ namespace Kopernicus.RuntimeUtility
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
             for (Int32 i = 0; i < animations.Length; i++)
             {
-                animations[i].target = KopernicusStar.GetNearest(FlightGlobals.GetHomeBody()).gameObject.transform;
+                animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
             }
         }
 
@@ -949,9 +949,13 @@ namespace Kopernicus.RuntimeUtility
             {
                 body.afg.sunLight = star;
             }
-            if (body.scaledBody.GetComponent<MaterialSetDirection>() != null)
+            if (body.scaledBody.GetComponents<MaterialSetDirection>() != null)
             {
-                body.scaledBody.GetComponent<MaterialSetDirection>().target = star.transform;
+                MaterialSetDirection[] MSDs = body.scaledBody.GetComponents<MaterialSetDirection>();
+                foreach (MaterialSetDirection MSD in MSDs)
+                {
+                    MSD.target = star.transform;
+                }
             }
             foreach (PQSMod_MaterialSetDirection msd in
                 body.GetComponentsInChildren<PQSMod_MaterialSetDirection>(true))

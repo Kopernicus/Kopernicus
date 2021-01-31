@@ -298,7 +298,7 @@ namespace Kopernicus.RuntimeUtility
         [SuppressMessage("ReSharper", "IteratorNeverReturns")]
         private IEnumerator<WaitForSeconds> AsteroidDaemon(Asteroid asteroid)
         {
-            while (true)
+            while (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem)
             {
                 // Update Asteroids
                 UpdateAsteroid(asteroid, Planetarium.GetUniversalTime());
@@ -306,6 +306,7 @@ namespace Kopernicus.RuntimeUtility
                 // Wait
                 yield return new WaitForSeconds(Mathf.Max(asteroid.Interval / TimeWarp.CurrentRate, spawnInterval));
             }
+            yield break;
         }
 
         // Gets a list to reflect probabilities

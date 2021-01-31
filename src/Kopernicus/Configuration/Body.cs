@@ -287,9 +287,6 @@ namespace Kopernicus.Configuration
                 {
                     GeneratedBody.celestialBody.bodyDisplayName = GeneratedBody.celestialBody.bodyAdjectiveDisplayName = GeneratedBody.celestialBody.bodyName;
                 }
-                // Create accessors
-                Debug = new DebugLoader();
-                ScaledVersion = new ScaledVersionLoader();
                 if (Template.OriginalBody.scaledVersion.name.Equals("Jool"))
                 {
 #if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
@@ -302,11 +299,10 @@ namespace Kopernicus.Configuration
                         GameObject.DestroyImmediate(MBOGS);
                     }
 #endif
-                    //We need to destroy the stock GG MSD, it is bugged for our needs.
-                    MaterialSetDirection MSD = GeneratedBody.celestialBody.scaledBody.GetComponent<MaterialSetDirection>();
-                    GameObject.DestroyImmediate(MSD);
                 }
-
+                // Create accessors
+                Debug = new DebugLoader();
+                ScaledVersion = new ScaledVersionLoader();
             }
             // Otherwise we have to generate all the things for this body
             else

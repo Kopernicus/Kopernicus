@@ -1,15 +1,29 @@
 ﻿Kopernicus
 ==============================
+<<<<<<< HEAD
 January 30, 2021
+=======
+January 31, 2021
+>>>>>>> 1c27e8f6 (Release 26.  Solarpanel.cfg updates, Laythe ocean fixes, and rimshader tweaks.)
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
+<<<<<<< HEAD
 New in this latest version (release-25)
 
 1.) A bug in which all stars were treated as equal luminosity for the rimshader inverse square law calculations has been fixed.
+=======
+New in this latest version (release-26)
+
+1.) A bug in which rarely, certain bodies would have their rimshader targets incorrectly assigned has been fixed.
+
+2.) Solarpanels.cfg update for broader mod support.
+
+3.) A fix for laythe oceans on Ultra Shaders has been applied.
+>>>>>>> 1c27e8f6 (Release 26.  Solarpanel.cfg updates, Laythe ocean fixes, and rimshader tweaks.)
 
 
 About
