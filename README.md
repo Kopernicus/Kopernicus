@@ -15,6 +15,8 @@ New in this latest version (release-26)
 
 3.) A fix for laythe oceans on Ultra Shaders has been applied.
 
+4.) We now support disabling Kopernicus Asteroid Control entirely (for external modpacks like Custom Asteroids) by setting Kopernicus_Config.cfg parameter UseKopernicusAsteroidSystem = False.
+
 
 About
 -----
