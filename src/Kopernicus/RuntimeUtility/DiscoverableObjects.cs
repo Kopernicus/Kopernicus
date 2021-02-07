@@ -66,25 +66,45 @@ namespace Kopernicus.RuntimeUtility
         // Startup
         private void Start()
         {
-            // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
-            // @Squad: I stab you with a try { } catch { } block.
-
-            if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
+            if (!RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
             {
-                // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
-                foreach (Object o in
-                    Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
+
+                // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
+                // @Squad: I stab you with a try { } catch { } block.
+
+                if (HighLogic.CurrentGame.RemoveProtoScenarioModule(typeof(ScenarioDiscoverableObjects)))
                 {
-                    ScenarioDiscoverableObjects scenario = (ScenarioDiscoverableObjects)o;
-                    scenario.StopAllCoroutines();
-                    Destroy(scenario);
+                    // RemoveProtoScenarioModule doesn't remove the actual Scenario; workaround!
+                    foreach (Object o in
+                        Resources.FindObjectsOfTypeAll(typeof(ScenarioDiscoverableObjects)))
+                    {
+                        ScenarioDiscoverableObjects scenario = (ScenarioDiscoverableObjects)o;
+                        scenario.StopAllCoroutines();
+                        Destroy(scenario);
+                    }
                 }
-                Debug.Log("[Kopernicus] ScenarioDiscoverableObjects successfully removed.");
+                if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
+                {
+                    Debug.Log("[Kopernicus] Using Kopernicus Asteroid Spawner.");
+                    foreach (Asteroid asteroid in Asteroids)
+                    {
+                        StartCoroutine(AsteroidDaemon(asteroid));
+                    }
+                }
+                else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("false"))
+                {
+                    Debug.Log("[Kopernicus] Asteroid Spawners disabled.  Unless external spawner mod is installed no discoverable objects will be spawned.");
+                }
+                else
+                {
+                    Injector.DisplayWarning();
+                    throw new InvalidCastException("Invalid value for Enum UseKopernicusAsteroidSystem.  Valid values are true, false, and stock.");
+                }
+                    
             }
-
-            foreach (Asteroid asteroid in Asteroids)
+            else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
             {
-                StartCoroutine(AsteroidDaemon(asteroid));
+                Debug.Log("[Kopernicus] Using stock Squad Asteroid Spawner.");
             }
         }
 
@@ -298,7 +318,7 @@ namespace Kopernicus.RuntimeUtility
         [SuppressMessage("ReSharper", "IteratorNeverReturns")]
         private IEnumerator<WaitForSeconds> AsteroidDaemon(Asteroid asteroid)
         {
-            while (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem)
+            while (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
             {
                 // Update Asteroids
                 UpdateAsteroid(asteroid, Planetarium.GetUniversalTime());

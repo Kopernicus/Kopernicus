@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -51,6 +52,22 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
+        //Plugin Path finding logic
+        private static string pluginPath;
+        public static string PluginPath
+        {
+            get
+            {
+                if (ReferenceEquals(null, pluginPath))
+                {
+                    string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                    UriBuilder uri = new UriBuilder(codeBase);
+                    pluginPath = Uri.UnescapeDataString(uri.Path);
+                    pluginPath = Path.GetDirectoryName(pluginPath);
+                }
+                return pluginPath;
+            }
+        }
         public static int physicsCorrectionCounter = 0;
         public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
         // Awake() - flag this class as don't destroy on load and register delegates
@@ -128,6 +145,7 @@ namespace Kopernicus.RuntimeUtility
         // Execute MainMenu functions
         private void Start()
         {
+            WriteConfigIfNoneExists();
             RemoveUnselectableObjects();
             ApplyLaunchSitePatches();
             ApplyMusicAltitude();
@@ -195,34 +213,37 @@ namespace Kopernicus.RuntimeUtility
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             //Small Contract fixer to remove Sentinel Contracts
-            Type contractTypeToRemove = null;
-            try
+            if (!RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
             {
-                foreach (Type contract in Contracts.ContractSystem.ContractTypes)
+                Type contractTypeToRemove = null;
+                try
                 {
-                    try
+                    foreach (Type contract in Contracts.ContractSystem.ContractTypes)
                     {
-
-                        if (contract.FullName.Contains("SentinelContract"))
+                        try
                         {
-                            contractTypeToRemove = contract;
+
+                            if (contract.FullName.Contains("SentinelContract"))
+                            {
+                                contractTypeToRemove = contract;
+                            }
+                        }
+                        catch
+                        {
+                            continue;
                         }
                     }
-                    catch
+                    if (!(contractTypeToRemove == null))
                     {
-                        continue;
+                        ContractSystem.ContractTypes.Remove(contractTypeToRemove);
+                        contractTypeToRemove = null;
+                        Debug.Log("[Kopernicus] Due to selected asteroid spawner, SENTINEL Contracts are broken and have been scrubbed!");
                     }
                 }
-                if (!(contractTypeToRemove == null))
+                catch
                 {
-                    ContractSystem.ContractTypes.Remove(contractTypeToRemove);
                     contractTypeToRemove = null;
-                    Debug.Log("[Kopernicus] ScenarioDiscoverableObjects is removed, scrubbing SENTINEL contracts.");
                 }
-            }
-            catch
-            {
-                contractTypeToRemove = null;
             }
             //Patch weights of contracts
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
@@ -782,13 +803,12 @@ namespace Kopernicus.RuntimeUtility
         // Patch FlightIntegrator
         private static void PatchFlightIntegrator()
         {
-            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
             {
-                return;
+                Events.OnRuntimeUtilityPatchFI.Fire();
+                ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+                ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
             }
-            Events.OnRuntimeUtilityPatchFI.Fire();
-            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
-            ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
         }
 
         // Fix the Space Center Cameras
@@ -1011,6 +1031,26 @@ namespace Kopernicus.RuntimeUtility
             for (int i = 0; i < flags?.Length; i++)
             {
                 flags[i].rootBone = flags[i]?.rootBone?.parent?.gameObject?.GetChild("bn_upper_flag_a01")?.transform;
+            }
+        }
+
+        private void WriteConfigIfNoneExists()
+        {
+            if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
+            {
+                Debug.Log("[Kopernicus] Generating default Kopernicus_Config.cfg");
+                StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg");
+                configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock system and warnings config.");
+                configFile.WriteLine("Kopernicus_config");
+                configFile.WriteLine("{");
+                configFile.WriteLine("	EnforceShaders = false");
+                configFile.WriteLine("	WarnShaders = false");
+                configFile.WriteLine("	EnforcedShaderLevel = 2");
+                configFile.WriteLine("	ScatterCullDistance = 7250");
+                configFile.WriteLine("	UseKopernicusAsteroidSystem = True");
+                configFile.WriteLine("}");
+                configFile.Flush();
+                configFile.Close();
             }
         }
 

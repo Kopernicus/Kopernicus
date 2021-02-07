@@ -1,21 +1,29 @@
 ﻿Kopernicus
 ==============================
-January 31, 2021
+February 07, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-26)
+New in this latest version (release-27)
 
-1.) A bug in which rarely, certain bodies would have their rimshader targets incorrectly assigned has been fixed.
+1.) 1.10.1 and 1.11.1 support has been added to stable branch.
 
-2.) Solarpanels.cfg update for broader mod support.
+2.) Kopernicus_Config.cfg now accepts parameter UseKopernicusAsteroidSystem with accepted values "true" (default, use Kopernicus Custom Asteroid Generator and scrub Sentinel contracts), "false" (use external mod asteroid generator, or none at all), and "stock" (uses stock game generator, only good for stock system). These values are case insensitive and DO NOT use quotes.
 
-3.) A fix for laythe oceans on Ultra Shaders has been applied.
+3.) Various vetted bugfixes to many things (shaders, solar code, etc) from the bleeding edge have been imported.  This fixes nearly all known bugs across all platforms (other than those listed below), and should result in a very stable experience.
 
-4.) We now support disabling Kopernicus Asteroid Control entirely (for external modpacks like Custom Asteroids) by setting Kopernicus_Config.cfg parameter UseKopernicusAsteroidSystem = False.
+4.) Performance improvements were managed as well, also taken from tested bleeding edge experiments.
+
+5.) ModularFlightIntegrator updated to latest mainline 1.2.9 (you may update this with updates sourced from Sarbian freely).
+
+Known Bugs:
+
+1.) At interstellar ranges, heat can sometimes behave strangely. It is best to turn off part heating when traveling far far away.
+
+2.) When zooming out all the way in map view at interstellar ranges, the navbal sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
 
 About

@@ -45,7 +45,7 @@ namespace Kopernicus.Configuration
 		[Persistent]
 		public int ScatterCullDistance;
 		[Persistent]
-		public bool UseKopernicusAsteroidSystem = true;
+		public string UseKopernicusAsteroidSystem = "True";
 #if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
 		[Persistent]
 		public int CometPercentage;
@@ -72,9 +72,6 @@ namespace Kopernicus.Configuration
             {
 				Debug.LogWarning("Error loading config, using defaults");
 			}
-
-
-
 		}
 	}
 }
