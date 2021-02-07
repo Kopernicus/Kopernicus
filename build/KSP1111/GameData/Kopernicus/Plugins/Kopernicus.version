@@ -1,6 +1,6 @@
 {
-	"NAME": "<b><color=#CA7B3C>Kopernicus</color></b>",
-	"URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP191/GameData/Kopernicus/Plugins/Kopernicus.version",
+	"NAME": "Kopernicus",
+	"URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP1111/GameData/Kopernicus/Plugins/Kopernicus.version",
 	"DOWNLOAD": "https://github.com/Kopernicus/Kopernicus/releases/latest",
 	"CHANGE_LOG_URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/README.md",
 	"VERSION":
@@ -13,7 +13,7 @@
 	"KSP_VERSION":
 	{
 		"MAJOR": 1,
-		"MINOR": 9,
+		"MINOR": 11,
 		"PATCH": 1
 	}
 }
