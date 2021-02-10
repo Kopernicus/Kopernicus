@@ -1,6 +1,6 @@
 ﻿Kopernicus
 ==============================
-February 07, 2021
+February 10, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
