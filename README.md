@@ -7,19 +7,10 @@ February 07, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-28)
+New in this latest version (release-29)
 
-1.) This release corrects a CKAN versioing error and is otherwise identical to version 28.  The release notes below are the same from here.
 
-2.) 1.10.1 and 1.11.1 support has been added to stable branch.
-
-3.) Kopernicus_Config.cfg now accepts parameter UseKopernicusAsteroidSystem with accepted values "true" (default, use Kopernicus Custom Asteroid Generator and scrub Sentinel contracts), "false" (use external mod asteroid generator, or none at all), and "stock" (uses stock game generator, only good for stock system). These values are case insensitive and DO NOT use quotes.
-
-4.) Various vetted bugfixes to many things (shaders, solar code, etc) from the bleeding edge have been imported.  This fixes nearly all known bugs across all platforms (other than those listed below), and should result in a very stable experience.
-
-5.) Performance improvements were managed as well, also taken from tested bleeding edge experiments.
-
-6.) ModularFlightIntegrator updated to latest mainline 1.2.9 (you may update this with updates sourced from Sarbian freely).
+1.) This release corrects a race condition that prevented land scatterers from spawning under some circumstances, due to a misbehaving distance culler.
 
 Known Bugs:
 
