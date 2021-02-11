@@ -7,12 +7,10 @@ February 11, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-32)
+New in this latest version (release-33)
 
 
-1.) Fixed a bug on saveload that could cause the KSC to sink (purely cosmetic, but still annoying).
-
-2.) Tried to fix the ringshader on MacOS builds.  This is largely untested, and may see a followup patch based on user feedback (will only impact Mac Users).
+1.) Reverted ringshader changes on MacOS 1.8.1 after discovering the culprit is EVE having 1.8.1 issues exclusively with KSRSS on Mac.  The changes didn't hurt anything really, but our ringshader was fine, heh.
 
 Known Bugs:
 
