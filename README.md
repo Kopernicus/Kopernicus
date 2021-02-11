@@ -1,16 +1,18 @@
 ﻿Kopernicus
 ==============================
-February 10, 2021
+February 11, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-31)
+New in this latest version (release-32)
 
 
-1.) Removed a debugline that was causing logspam related lag.
+1.) Fixed a bug on saveload that could cause the KSC to sink (purely cosmetic, but still annoying).
+
+2.) Tried to fix the ringshader on MacOS builds.  This is largely untested, and may see a followup patch based on user feedback (will only impact Mac Users).
 
 Known Bugs:
 
