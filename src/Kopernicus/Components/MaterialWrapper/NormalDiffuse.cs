@@ -18,7 +18,8 @@ namespace Kopernicus.Components.MaterialWrapper
             private const String SHADER_NAME = "Legacy Shaders/Diffuse";
 
             //For those weird diffuse shaders
-            public const string ALT_SHADER_NAME = "Standard (Specular setup)";
+            public const String ALT_SHADER_NAME = "Standard (Specular setup)";
+            public const String SHADER_NAME_ABRV = "Diffuse";
 
             public static Shader Shader
             {
@@ -60,7 +61,7 @@ namespace Kopernicus.Components.MaterialWrapper
                 return false;
             }
 
-            return m.shader.name == Properties.Shader.name;
+            return ((m.shader.name == Properties.Shader.name) && (!(m.shader.name.Contains("Wrap"))));
         }
 
         // Main Color, default = (1,1,1,1)
@@ -102,9 +103,10 @@ namespace Kopernicus.Components.MaterialWrapper
         public NormalDiffuse(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
-            if ((material.shader.name != Properties.Shader.name) && (material.shader.name != Properties.ALT_SHADER_NAME))
+            if ((material.shader.name != Properties.Shader.name) && (material.shader.name != Properties.ALT_SHADER_NAME)  && (!(material.shader.name.Contains(Properties.SHADER_NAME_ABRV))))
             {
-                throw new InvalidOperationException("Type Mismatch: Diffuse shader required");
+                Debug.LogWarning("SHADE:" + material.shader.name);
+                throw new InvalidOperationException("Type Mismatch: Legacy Shaders/Diffuse shader required");
             }
         }
 
