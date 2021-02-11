@@ -7,10 +7,10 @@ February 10, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-30)
+New in this latest version (release-31)
 
 
-1.) A bug in the diffuse material handler that was preventing some packs using Diffused-Wrapped shaders from loading has been fixed.
+1.) Removed a debugline that was causing logspam related lag.
 
 Known Bugs:
 
