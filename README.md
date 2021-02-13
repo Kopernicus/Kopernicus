@@ -7,7 +7,7 @@ February 12, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-33)
+New in this latest version (release-34)
 
 
 1.) Some additional fixes to the space center camera, which was occasionally appearing slightly too high up in elevation.
