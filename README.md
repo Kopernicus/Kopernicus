@@ -1,6 +1,6 @@
 ﻿Kopernicus
 ==============================
-February 11, 2021
+February 12, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
@@ -10,7 +10,7 @@ February 11, 2021
 New in this latest version (release-33)
 
 
-1.) Reverted ringshader changes on MacOS 1.8.1 after discovering the culprit is EVE having 1.8.1 issues exclusively with KSRSS on Mac.  The changes didn't hurt anything really, but our ringshader was fine, heh.
+1.) Some additional fixes to the space center camera, which was occasionally appearing slightly too high up in elevation.
 
 Known Bugs:
 

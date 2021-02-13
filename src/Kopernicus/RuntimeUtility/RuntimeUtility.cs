@@ -823,7 +823,7 @@ namespace Kopernicus.RuntimeUtility
         private static void FixCameras()
         {
             // Only run in the space center or the editor
-            if ((HighLogic.LoadedScene != GameScenes.SPACECENTER && !HighLogic.LoadedSceneIsEditor) || (previousScene != GameScenes.SPACECENTER && previousScene != GameScenes.EDITOR))
+            if ((((previousScene != GameScenes.LOADING) || (previousScene != GameScenes.MAINMENU)) && ((HighLogic.LoadedScene != GameScenes.SPACECENTER && !HighLogic.LoadedSceneIsEditor))) || ((previousScene == GameScenes.SPACECENTER) && ((HighLogic.LoadedScene != GameScenes.SPACECENTER && !HighLogic.LoadedSceneIsEditor))))
             {
                 return;
             }
