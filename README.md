@@ -18,6 +18,8 @@ Known Bugs:
 
 2.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
+3.) The multistar solar EC logic is still buggy in some complex systems.  This is being worked on. 
+
 
 About
 -----
