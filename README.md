@@ -9,11 +9,11 @@ March 14, 2021
 
 New in this latest version (release-35)
 
-1.)  Release bundling has changed.  There are now two releases, the legacy release series 1.8.1 that supports all 1.8.x releases and the modern release series whose version number stays in sync with the latest KSP.  It supports all releases post 1.9.0, including 1.9.0, with the same dll.  Like magic.  Please download the right version.
+1.) Release bundling has changed. There are now two releases, the legacy release series 1.8.1 that supports all 1.8.x releases and the modern release series whose version number stays in sync with the latest KSP. The modern series supports all releases post 1.9.0, including 1.9.0, with the same dll. Like magic. Please download the right version.
 
-2.) Disabled multistar EC math calculation by default, as some modded inflight vessels may not behave well with it (limited testing).  To enable it, please back up your save, and download the .cfg included with this release, and place it in GameData/Kopernicus/Config.
+2.) Disabled new multistar EC math calculation by default, as some modded inflight vessels may not behave well with it (limited testing honestly). To enable it, please back up your save, and download the MultiStarSolarPanels.cfg linked with this release, and place it in GameData/Kopernicus/Config. It may work fine, we really need additional data.
 
-3.) Added a new parameter to Kopernicus_Config.cfg called SolarRefreshRate, which controls the amount of time in seconds between calculations of the multistar solar EC math (when enabled, see above).  Raise it if you suffer performance issues from the multistar math.
+3.) Added a new parameter to Kopernicus_Config.cfg called SolarRefreshRate, which controls the amount of time in seconds between calculations of the multistar solar EC math (when enabled, see above). Raise it if you suffer performance issues from the multistar math. Must be an integer, and the default of 1 second is slower than stock but should be fine for most all instances and strike a balance between performance and speed.
 
 4.) A bug in which freshly generated config files were not loaded has been fixed.
 
@@ -21,13 +21,14 @@ New in this latest version (release-35)
 
 6.) Updated MFI build included in zip where possible (not legacy) to latest version (1.2.10.0).
 
+7.) Nyan cats are no longer used to signify an error, we use a simple error message now (we were using reflection to activate them and that's bad practice).
+
 Known Bugs:
 
 1.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
 2.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
-3.) The multistar solar EC logic is still buggy in some complex systems.  This is being worked on. 
 
 
 About
