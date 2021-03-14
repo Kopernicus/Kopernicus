@@ -26,9 +26,9 @@
 namespace Kopernicus.Configuration.Enumerations
 {
 	// PQS Material Type Enum
-	public enum SurfaceMaterialType
+#if (!KSP_VERSION_1_8)
+	public enum NewShaderSurfaceMaterialType
 	{
-#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
 		// pre-1.8 Shaders
 		Vacuum = 0,
 		Basic = 1,
@@ -53,8 +53,10 @@ namespace Kopernicus.Configuration.Enumerations
 		AtmosphericOptimizedFastBlend = 32,
 		AtmosphericTriplanarZoomRotation = 64,
 		AtmosphericTriplanarZoomRotationTextureArray = 128,
+	}
 #endif
-#if (KSP_VERSION_1_8_1)
+	public enum SurfaceMaterialType
+	{
 		// pre-1.8 Shaders
 		Vacuum = 0,
 		Basic = 1,
@@ -73,6 +75,5 @@ namespace Kopernicus.Configuration.Enumerations
 		AtmosphericExtra = 8,
 		AtmosphericOptimizedFastBlend = 16,
 		AtmosphericTriplanarZoomRotation = 32,
-#endif
 	}
 }

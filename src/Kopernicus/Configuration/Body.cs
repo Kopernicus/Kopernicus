@@ -289,16 +289,25 @@ namespace Kopernicus.Configuration
                 }
                 if (Template.OriginalBody.scaledVersion.name.Equals("Jool"))
                 {
-#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
-                    if ((!Name.Equals("Jool")) || (Name.Equals("Jool") && (Template.Body.celestialBody.Radius > 6000000))) // This is a Jool-clone, or resized Jool.  We have to handle it special.
+                    if (Versioning.version_minor > 9)
                     {
-                        //Remove Gas Giant shaders for compatability
-                        GasGiantMaterialControls GGMC = GeneratedBody.scaledVersion.GetComponent<GasGiantMaterialControls>();
-                        MaterialBasedOnGraphicsSetting MBOGS = GeneratedBody.scaledVersion.GetComponent<MaterialBasedOnGraphicsSetting>();
-                        GameObject.DestroyImmediate(GGMC);
-                        GameObject.DestroyImmediate(MBOGS);
+                        if ((!Name.Equals("Jool")) || (Name.Equals("Jool") && (Template.Body.celestialBody.Radius > 6000000))) // This is a Jool-clone, or resized Jool.  We have to handle it special.
+                        {
+                            try
+                            {
+                                //Remove Gas Giant shaders for compatability
+                                MonoBehaviour GGMC = GasGiantMaterialControls(GeneratedBody);
+                                MonoBehaviour MBOGS = MaterialBasedOnGraphicsSetting(GeneratedBody);
+                                GameObject.DestroyImmediate(GGMC);
+                                GameObject.DestroyImmediate(MBOGS);
+                                UnityEngine.Debug.Log("[Kopernicus] New Jool detected, shaders stripped!");
+                            }
+                            catch
+                            {
+                                UnityEngine.Debug.Log("[Kopernicus] Old Jool detected, leaving shaders alone!");
+                            }
+                        }
                     }
-#endif
                 }
                 // Create accessors
                 Debug = new DebugLoader();
@@ -334,6 +343,33 @@ namespace Kopernicus.Configuration
             }
             // Event
             Events.OnBodyApply.Fire(this, node);
+        }
+
+        internal MonoBehaviour GasGiantMaterialControls(PSystemBody generatedBody)
+        {
+            MonoBehaviour[] components = generatedBody.scaledVersion.GetComponents<MonoBehaviour>();
+            if ((Versioning.version_minor == 10) || (Versioning.version_minor == 11))
+            {
+                MonoBehaviour component = components[3]; //strict index, likely to break
+                if (component.name.Equals(generatedBody.scaledVersion.name))
+                {
+                    return component;
+                }
+            }
+            throw new Exception();
+        }
+        internal MonoBehaviour MaterialBasedOnGraphicsSetting(PSystemBody generatedBody)
+        {
+            MonoBehaviour[] components = generatedBody.scaledVersion.GetComponents<MonoBehaviour>();
+            if ((Versioning.version_minor == 10) || (Versioning.version_minor == 11))
+            {
+                MonoBehaviour component = components[2]; //strict index, likely to break
+                if (component.name.Equals(generatedBody.scaledVersion.name))
+                {
+                    return component;
+                }
+            }
+            throw new Exception();
         }
 
         // Parser Post Apply Event

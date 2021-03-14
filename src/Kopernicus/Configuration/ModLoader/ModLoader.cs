@@ -120,13 +120,27 @@ namespace Kopernicus.Configuration.ModLoader
         // Creates the a PQSMod of type T
         void ICreatable.Create()
         {
-            Create(PqsVersion);
+            try
+            {
+                Create(PqsVersion);
+            }
+            catch
+            {
+
+            }
         }
 
         // Creates the a PQSMod of type T
         void ICreatable<PQSMod>.Create(PQSMod value)
         {
-            Create((T) value, PqsVersion);
+            try
+            {
+                Create((T)value, PqsVersion);
+            }
+            catch
+            {
+
+            }
         }
 
         // Creates the a PQSMod from the specified body

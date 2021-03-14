@@ -35,21 +35,19 @@ using UnityEngine;
 namespace Kopernicus.Configuration
 {
 	public class ConfigReader
-    {
+	{
 		[Persistent]
-		public bool EnforceShaders;
+		public bool EnforceShaders = false;
 		[Persistent]
-		public bool WarnShaders;
+		public bool WarnShaders = false;
 		[Persistent]
-		public int EnforcedShaderLevel;
+		public int EnforcedShaderLevel = 2;
 		[Persistent]
-		public int ScatterCullDistance;
+		public int ScatterCullDistance = 7250;
 		[Persistent]
 		public string UseKopernicusAsteroidSystem = "True";
-#if (KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
 		[Persistent]
-		public int CometPercentage;
-#endif
+		public int SolarRefreshRate = 1;
 		public UrlDir.UrlConfig[] baseConfigs;
 		public void loadMainSettings()
 		{

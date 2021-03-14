@@ -22,10 +22,9 @@
 *
 * https://kerbalspaceprogram.com
 */
-#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
+#if (!KSP_VERSION_1_8)
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Kopernicus.Components.MaterialWrapper;
 using UnityEngine;
 namespace Kopernicus.Components
@@ -42,7 +41,6 @@ namespace Kopernicus.Components
         public override void OnSetup()
         {
             _mods = sphere.GetComponentsInChildren<PQSMod_TextureAtlas>(true);
-
             if (PQSTriplanarZoomRotationTextureArray.UsesSameShader(sphere.surfaceMaterial))
             {
                 return;
@@ -53,7 +51,6 @@ namespace Kopernicus.Components
                 _mods[i].textureAtlasMap = null;
             }
         }
-
         public override void OnQuadPreBuild(PQ quad)
         {
             if (!PQSTriplanarZoomRotationTextureArray.UsesSameShader(sphere.surfaceMaterial))
@@ -64,19 +61,18 @@ namespace Kopernicus.Components
             for (Int32 i = 0; i < _mods.Length; i++)
             {
                 PQSMod_TextureAtlas mod = _mods[i];
-
-                Texture2DArray atlas = (Texture2DArray) sphere.surfaceMaterial.GetTexture(AtlasTex);
+                Texture2DArray atlas = (Texture2DArray)sphere.surfaceMaterial.GetTexture(AtlasTex);
 
                 if (atlas == null)
                 {
-                    atlas = (Texture2DArray) mod.material1Blend.GetTexture(AtlasTex);
+                    atlas = (Texture2DArray)mod.material1Blend.GetTexture(AtlasTex);
                 }
 
-                Texture2DArray normal = (Texture2DArray) sphere.surfaceMaterial.GetTexture(NormalTex);
+                Texture2DArray normal = (Texture2DArray)sphere.surfaceMaterial.GetTexture(NormalTex);
 
                 if (normal == null)
                 {
-                    normal = (Texture2DArray) mod.material1Blend.GetTexture(NormalTex);
+                    normal = (Texture2DArray)mod.material1Blend.GetTexture(NormalTex);
                 }
 
                 mod.material1Blend.CopyPropertiesFromMaterial(sphere.surfaceMaterial);

@@ -49,23 +49,14 @@ namespace Kopernicus.Constants
     {
         // Compatible version
         internal const Int32 VERSION_MAJOR = 1;
-#if (KSP_VERSION_1_8_1)
-        internal const Int32 VERSION_MINOR = 8;
-        internal const Int32 REVISION = 1;
-#endif
-#if (KSP_VERSION_1_9_1)
-        internal const Int32 VERSION_MINOR = 9;
-        internal const Int32 REVISION = 1;
-#endif
-#if (KSP_VERSION_1_10_1)
-        internal const Int32 VERSION_MINOR = 10;
-        internal const Int32 REVISION = 1;
-#endif
-#if (KSP_VERSION_1_11_1)
+#if (!KSP_VERSION_1_8)
         internal const Int32 VERSION_MINOR = 11;
-        internal const Int32 REVISION = 1;
+#else
+        internal const Int32 VERSION_MINOR = 8;
 #endif
-        internal const Int32 KOPERNICUS = 34;
+        internal const Int32 VERSION_MINOR_LOWER_LIMIT = 8;
+        internal const Int32 REVISION = 99;
+        internal const Int32 KOPERNICUS = 35;
 
         public static Boolean IsCompatible()
         {
@@ -75,9 +66,10 @@ namespace Kopernicus.Constants
 
 #if !DEBUG
             return
-                Versioning.version_major == VERSION_MAJOR &&
-                Versioning.version_minor == VERSION_MINOR &&
-                Versioning.Revision == REVISION;
+                Versioning.version_major <= VERSION_MAJOR &&
+                Versioning.version_minor <= VERSION_MINOR &&
+                Versioning.version_minor >= VERSION_MINOR_LOWER_LIMIT &&
+                Versioning.Revision <= REVISION;
 #else
             return true;
 #endif
@@ -98,24 +90,8 @@ namespace Kopernicus.Constants
                 return;
             }
 
-            Type moduleManager =
-                Parser.ModTypes.FirstOrDefault(t => t.Name == "ModuleManager" && t.Namespace == "ModuleManager");
-            if (moduleManager == null)
-            {
-                return; // no cat :(
-            }
-
-            FieldInfo nyan = moduleManager.GetField("nyan", BindingFlags.Instance | BindingFlags.NonPublic);
-            FieldInfo ncats = moduleManager.GetField("nCats", BindingFlags.Instance | BindingFlags.NonPublic);
-            Object mm = FindObjectOfType(moduleManager);
-            nyan?.SetValue(mm, true);
-            ncats?.SetValue(mm, true);
-
             // Nobody can read that popup
-            ScreenMessages.PostScreenMessage(
-                "Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!",
-                Single.MaxValue,
-                ScreenMessageStyle.UPPER_LEFT, true);
+            ScreenMessages.PostScreenMessage("Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!", 5f, ScreenMessageStyle.UPPER_CENTER);
         }
 
         public void Start()

@@ -10,24 +10,18 @@ namespace Kopernicus.Components.ModularScatter
     [RequireComponent(typeof(MeshRenderer))]
     class ScatterDistanceCuller : MonoBehaviour
     {
-        private Boolean init = false;
         private int counter = 0;
         private PQSMod_LandClassScatterQuad surfaceObjectQuad;
         MeshRenderer[] surfaceObjects;
-        private int maxdistance = 1;
-        private void Start()
-        {
-
-        }
+        private static int maxdistance = -1;
         private void Update()
         {
             //Rate Limit it to doing a cull-calculation every 120 frames, which should be plenty since we don't update more anyways.  These are very heavy.
             counter++;
             if (counter > 120)
             {
-                if (!init)
+                if (maxdistance == -1)
                 {
-                    init = true;
                     maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
                 }
                 surfaceObjectQuad = GetComponentInParent<PQSMod_LandClassScatterQuad>();

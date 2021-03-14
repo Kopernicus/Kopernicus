@@ -58,7 +58,7 @@ namespace Kopernicus.Components
 
             // Pick correct bundle for platform
             if (Application.platform == RuntimePlatform.WindowsPlayer &&
-                SystemInfo.graphicsDeviceVersion.StartsWith("OpenGL"))
+            SystemInfo.graphicsDeviceVersion.StartsWith("OpenGL"))
             {
                 path = Path.Combine(path, bundleName + "-linux.unity3d"); // fixes OpenGL on windows
             }

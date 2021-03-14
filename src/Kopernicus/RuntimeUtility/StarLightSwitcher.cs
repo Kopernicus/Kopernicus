@@ -73,7 +73,7 @@ namespace Kopernicus.RuntimeUtility
 
             // Apply Ambient Light
             KopernicusStar.Current.shifter.ApplyAmbient();
-            PhysicsGlobals.RadiationFactor = KopernicusStar.Current.shifter.radiationFactor;
+            KopernicusStar.Current.shifter.ApplyPhysics();
 
             // Apply Sky
             GalaxyCubeControl.Instance.sunRef = KopernicusStar.Current;
@@ -106,18 +106,18 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            Logger.Default.Log ("StarLightSwitcher.Awake(): Begin");
-            Logger.Default.Flush ();
-            DontDestroyOnLoad (this);
+            Logger.Default.Log("StarLightSwitcher.Awake(): Begin");
+            Logger.Default.Flush();
+            DontDestroyOnLoad(this);
         }
 
         private void Start()
         {
             // find all the stars in the system
-            stars = PSystemManager.Instance.localBodies.SelectMany (body => body.scaledBody.GetComponentsInChildren<StarComponent>(true)).ToList();
+            stars = PSystemManager.Instance.localBodies.SelectMany(body => body.scaledBody.GetComponentsInChildren<StarComponent>(true)).ToList();
 
             // Flush the log
-            Logger.Default.Flush ();
+            Logger.Default.Flush();
 
             // GameScenes
             GameEvents.onLevelWasLoadedGUIReady.Add(scene => HomeStar().SetAsActive());
@@ -133,17 +133,17 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             // Get the current position of the active vessel
-            if (PlanetariumCamera.fetch.enabled) 
+            if (PlanetariumCamera.fetch.enabled)
             {
-                Vector3 position = ScaledSpace.ScaledToLocalSpace (PlanetariumCamera.fetch.GetCameraTransform ().position);
-                selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.CelestialBody)).First ();
-            } 
-            else if (FlightGlobals.ActiveVessel) 
+                Vector3 position = ScaledSpace.ScaledToLocalSpace(PlanetariumCamera.fetch.GetCameraTransform().position);
+                selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody)).First();
+            }
+            else if (FlightGlobals.ActiveVessel)
             {
-                Vector3 position = FlightGlobals.ActiveVessel.GetTransform ().position;
-                selectedStar = stars.OrderBy (star => FlightGlobals.getAltitudeAtPos (position, star.CelestialBody)).First ();
+                Vector3 position = FlightGlobals.ActiveVessel.GetTransform().position;
+                selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody)).First();
             }
             else if (SpaceCenter.Instance && SpaceCenter.Instance.SpaceCenterTransform)
             {
@@ -165,7 +165,7 @@ namespace Kopernicus.RuntimeUtility
         // Select the home star
         private static StarComponent HomeStar()
         {
-            return PSystemManager.Instance.localBodies.First (body => body.flightGlobalsIndex == 0).scaledBody.GetComponent<StarComponent> ();
+            return PSystemManager.Instance.localBodies.First(body => body.flightGlobalsIndex == 0).scaledBody.GetComponent<StarComponent>();
         }
     }
 }

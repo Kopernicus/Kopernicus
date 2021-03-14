@@ -22,7 +22,6 @@
  *
  * https://kerbalspaceprogram.com
  */
-#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -34,7 +33,7 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
 using UnityEngine;
-
+#if (!KSP_VERSION_1_8)
 namespace Kopernicus.Configuration.MaterialLoader
 {
     [RequireConfigType(ConfigType.Node)]
@@ -49,7 +48,6 @@ namespace Kopernicus.Configuration.MaterialLoader
             get { return ColorLerpModifier; }
             set { ColorLerpModifier = value; }
         }
-#if (KSP_VERSION_1_9_1 || KSP_VERSION_1_10_1 || KSP_VERSION_1_11_1)
         // Atlas Texture, default = 100000
         [ParserTarget("atlasTiling")]
         public NumericParser<Single> AtlasTilingSetter
@@ -95,7 +93,6 @@ namespace Kopernicus.Configuration.MaterialLoader
                 NormalTex = KSPUtil.GenerateTexture2DArray(textures, TextureFormat.RGBA32, true);
             }
         }
-#endif
         // Factor, default = 10
         [ParserTarget("factor")]
         public NumericParser<Single> FactorSetter

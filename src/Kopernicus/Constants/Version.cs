@@ -38,8 +38,11 @@ namespace Kopernicus.Constants
         {
             get
             {
-                return CompatibilityChecker.VERSION_MAJOR + "." + CompatibilityChecker.VERSION_MINOR + "." +
-                       CompatibilityChecker.REVISION + "-" + CompatibilityChecker.KOPERNICUS;
+#if (!KSP_VERSION_1_8)
+                return "UBE-78";
+#else
+                return "LEGACY18_UBE-78";
+#endif
             }
         }
 
@@ -54,7 +57,7 @@ namespace Kopernicus.Constants
 #else
                 const String DEVELOPMENT_BUILD = "";
 #endif
-                return "CKAN Release-grade Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
+                return "CKAN Stable Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
                        BuiltTime(Assembly.GetCallingAssembly()).ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " +
                        AssemblyHandle() + ")";
             }

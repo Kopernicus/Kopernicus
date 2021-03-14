@@ -1,16 +1,21 @@
 ﻿Kopernicus
 ==============================
-February 12, 2021
+March 14, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-34)
+New in this latest version (release-35)
 
+1.) Disabled multistar EC math calculation by default, as some modded inflight vessels may not behave well with it (limited testing).  To enable it, please back up your save, and download the .cfg included with this release, and place it in GameData/Kopernicus/Config.
 
-1.) Some additional fixes to the space center camera, which was occasionally appearing slightly too high up in elevation.
+2.) Added a new parameter to Kopernicus_Config.cfg called SolarRefreshRate, which controls the amount of time in seconds between calculations of the multistar solar EC math (when enabled, see above).  Raise it if you suffer performance issues from the multistar math.
+
+3.) A bug in which freshly generated config files were not loaded has been fixed.
+
+4.) Some minor scatter related bugs have been corrected.
 
 Known Bugs:
 
