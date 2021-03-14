@@ -9,13 +9,15 @@ March 14, 2021
 
 New in this latest version (release-35)
 
-1.) Disabled multistar EC math calculation by default, as some modded inflight vessels may not behave well with it (limited testing).  To enable it, please back up your save, and download the .cfg included with this release, and place it in GameData/Kopernicus/Config.
+1.)  Release bundling has changed.  There are now two releases, the legacy release series 1.8.1 that supports all 1.8.x releases and the modern release series whose version number stays in sync with the latest KSP.  It supports all releases post 1.9.0, including 1.9.0, with the same dll.  Like magic.  Please download the right version.
 
-2.) Added a new parameter to Kopernicus_Config.cfg called SolarRefreshRate, which controls the amount of time in seconds between calculations of the multistar solar EC math (when enabled, see above).  Raise it if you suffer performance issues from the multistar math.
+2.) Disabled multistar EC math calculation by default, as some modded inflight vessels may not behave well with it (limited testing).  To enable it, please back up your save, and download the .cfg included with this release, and place it in GameData/Kopernicus/Config.
 
-3.) A bug in which freshly generated config files were not loaded has been fixed.
+3.) Added a new parameter to Kopernicus_Config.cfg called SolarRefreshRate, which controls the amount of time in seconds between calculations of the multistar solar EC math (when enabled, see above).  Raise it if you suffer performance issues from the multistar math.
 
-4.) Some minor scatter related bugs have been corrected.
+4.) A bug in which freshly generated config files were not loaded has been fixed.
+
+5.) Some minor scatter related bugs have been corrected.
 
 Known Bugs:
 
