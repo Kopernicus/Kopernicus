@@ -19,6 +19,8 @@ New in this latest version (release-35)
 
 5.) Some minor scatter related bugs have been corrected.
 
+6.) Updated MFI build included in zip where possible (not legacy) to latest version (1.2.10.0).
+
 Known Bugs:
 
 1.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
