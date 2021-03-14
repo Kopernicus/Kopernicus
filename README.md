@@ -25,11 +25,11 @@ New in this latest version (release-35)
 
 Known Bugs:
 
-1.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
+1.) Old craft files may complain about a missing module.  This is a cosmetic error and can be ignored.  Reload and re-save the craft to remove the error.
 
-2.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
+2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
-
+3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
 About
 -----
