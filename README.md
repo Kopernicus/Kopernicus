@@ -7,7 +7,11 @@ March 14, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-35)
+New in this latest version (release-36):
+
+1.) A minor bugfix for the ModuleManager patches has been applied that prevents them from spawning over 1000 patches that do pretty much nothing, increasing load time.  This release is otherwise identical, so the prior releases notes are included below as they are important:
+
+New in last version (release-35):
 
 1.) Release bundling has changed. There are now two releases, the legacy release series 1.8.1 that supports all 1.8.x releases and the modern release series whose version number stays in sync with the latest KSP. The modern series supports all releases post 1.9.0, including 1.9.0, with the same dll. Like magic. Please download the right version.
 
@@ -22,6 +26,8 @@ New in this latest version (release-35)
 6.) Updated MFI build included in zip where possible (not legacy) to latest version (1.2.10.0).
 
 7.) Nyan cats are no longer used to signify an error, we use a simple error message now (we were using reflection to activate them and that's bad practice).
+
+8.) Kopernicus Asteroid Generator support no longer generates comets, which were being spawned in a buggy way anyhow. Use an external mod if you want these for now.
 
 Known Bugs:
 
