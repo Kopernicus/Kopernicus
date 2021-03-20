@@ -1,33 +1,17 @@
 ﻿Kopernicus
 ==============================
-March 14, 2021
+March 20, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-36):
+New in this latest version (release-37):
 
-1.) A minor bugfix for the ModuleManager patches has been applied that prevents them from spawning over 1000 patches that do pretty much nothing, increasing load time.  This release is otherwise identical, so the prior releases notes are included below as they are important:
+1.) Scatter optimizations and bugfixes.  They now run pretty dang close to stock performance.
 
-New in last version (release-35):
-
-1.) Release bundling has changed. There are now two releases, the legacy release series 1.8.1 that supports all 1.8.x releases and the modern release series whose version number stays in sync with the latest KSP. The modern series supports all releases post 1.9.0, including 1.9.0, with the same dll. Like magic. Please download the right version.
-
-2.) Disabled new multistar EC math calculation by default, as some modded inflight vessels may not behave well with it (limited testing honestly). To enable it, please back up your save, and download the MultiStarSolarPanels.cfg linked with this release, and place it in GameData/Kopernicus/Config. It may work fine, we really need additional data.
-
-3.) Added a new parameter to Kopernicus_Config.cfg called SolarRefreshRate, which controls the amount of time in seconds between calculations of the multistar solar EC math (when enabled, see above). Raise it if you suffer performance issues from the multistar math. Must be an integer, and the default of 1 second is slower than stock but should be fine for most all instances and strike a balance between performance and speed.
-
-4.) A bug in which freshly generated config files were not loaded has been fixed.
-
-5.) Some minor scatter related bugs have been corrected.
-
-6.) Updated MFI build included in zip where possible (not legacy) to latest version (1.2.10.0).
-
-7.) Nyan cats are no longer used to signify an error, we use a simple error message now (we were using reflection to activate them and that's bad practice).
-
-8.) Kopernicus Asteroid Generator support no longer generates comets, which were being spawned in a buggy way anyhow. Use an external mod if you want these for now.
+2.) Because of the new scatter centric performance, the scatter culler is disabled (it now costs more performance to run than the performance it gains, so what is the point?).  The Kopernicus_config.cfg commands for it are furthermore no longer obeyed, but may be left intact without harm.
 
 Known Bugs:
 
@@ -36,6 +20,8 @@ Known Bugs:
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
 3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
+
+4.) Hazardous Body object is presently broken, and has been for some time aparently.  We are working on this for next release.  Don't go driving in lava you shouldn't drive in, now...
 
 About
 -----

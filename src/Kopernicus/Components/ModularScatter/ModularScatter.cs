@@ -210,11 +210,11 @@ namespace Kopernicus.Components.ModularScatter
             scatterObjects.Clear();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             updateCounter++;
-            //Rate limit garbage collection/updates to once every 1 seconds on a good day...
-            if (updateCounter > 60)
+            //Rate limit garbage collection/updates to once every ~.5 seconds on a good day...
+            if (updateCounter > 24)
             {
                 updateCounter = 0;
                 // Reprocess the stock scatter models, since they are merged into
@@ -350,7 +350,6 @@ namespace Kopernicus.Components.ModularScatter
             }
 
             quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
-            quad.obj.AddOrGetComponent<ScatterDistanceCuller>();
         }
     }
 }
