@@ -43,7 +43,7 @@ namespace Kopernicus.Configuration
 		[Persistent]
 		public int EnforcedShaderLevel = 2;
 		[Persistent]
-		public int ScatterCullDistance = 7250;
+		public int ScatterCullDistance = 5000;
 		[Persistent]
 		public string UseKopernicusAsteroidSystem = "True";
 		[Persistent]
