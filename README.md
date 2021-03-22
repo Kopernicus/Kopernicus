@@ -21,7 +21,7 @@ Known Bugs:
 
 3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
-4.) Hazardous Body object is presently broken, and has been for some time aparently.  We are working on this for next release.  Don't go driving in lava you shouldn't drive in, now...
+4.) Hazardous Body object is presently broken, and has been for some time aparently.  We are working on this for a near future release.  Don't go driving in lava you shouldn't drive in, now...
 
 About
 -----
