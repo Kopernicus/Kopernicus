@@ -1,17 +1,17 @@
 ﻿Kopernicus
 ==============================
-March 20, 2021
+March 22, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-37):
+New in this latest version (release-38):
 
-1.) Scatter optimizations and bugfixes.  They now run pretty dang close to stock performance.
+1.) Yet more landscatter optimizations and bugfixes.
 
-2.) Because of the new scatter centric performance, the scatter culler is disabled (it now costs more performance to run than the performance it gains, so what is the point?).  The Kopernicus_config.cfg commands for it are furthermore no longer obeyed, but may be left intact without harm.
+2.) Restored the distance culler with a default cull distance of 5000m, because large rescales need it.
 
 Known Bugs:
 
