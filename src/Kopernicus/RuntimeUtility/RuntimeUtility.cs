@@ -573,8 +573,11 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            MapView.fetch.max3DlineDrawDist = Single.MaxValue;
-            GameSettings.MAP_MAX_ORBIT_BEFORE_FORCE2D = Int32.MaxValue;
+            if (MapView.fetch)
+            {
+                MapView.fetch.max3DlineDrawDist = Single.MaxValue;
+                GameSettings.MAP_MAX_ORBIT_BEFORE_FORCE2D = Int32.MaxValue;
+            }
         }
 
         // The preset names

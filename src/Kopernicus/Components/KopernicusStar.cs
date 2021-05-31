@@ -94,30 +94,37 @@ namespace Kopernicus.Components
         /// <summary>
         /// Returns the star the given body orbits
         /// </summary>
-        public static KopernicusStar GetNearest(CelestialBody body)
+        public static CelestialBody GetNearest(CelestialBody body)
         {
-            KopernicusStar nearestStar = Stars.OrderBy(s => Vector3.Distance(body.position, s.sun.position)).First();
-            double greatestDistance = 0;
-            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+            try
             {
-                KopernicusStar star = KopernicusStar.Stars[i];
-                double distance = Vector3d.Distance(body.position, star.sun.position);
-                if (star.shifter.givesOffLight && distance > greatestDistance)
+                KopernicusStar nearestStar = Stars.OrderBy(s => Vector3.Distance(body.position, s.sun.position)).First();
+                double greatestDistance = 0;
+                for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
                 {
-                    greatestDistance = distance;
-                    nearestStar = star;
+                    KopernicusStar star = KopernicusStar.Stars[i];
+                    double distance = Vector3d.Distance(body.position, star.sun.position);
+                    if (star.shifter.givesOffLight && distance > greatestDistance)
+                    {
+                        greatestDistance = distance;
+                        nearestStar = star;
+                    }
                 }
+                return nearestStar.sun;
             }
-            return nearestStar;
+            catch
+            {
+                return GetLocalStar(body);
+            }
         }
 
         /// <summary>
         /// Returns the brightest star near the given body.
         /// </summary>
-        public static KopernicusStar GetBrightest(CelestialBody body)
+        public static CelestialBody GetBrightest(CelestialBody body)
         {
             double greatestLuminosity = 0;
-            KopernicusStar BrightestStar = GetNearest(body);
+            CelestialBody BrightestStar = GetNearest(body);
             for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
             {
                 KopernicusStar star = KopernicusStar.Stars[i];
@@ -130,7 +137,7 @@ namespace Kopernicus.Components
                 if (aparentLuminosity > greatestLuminosity)
                 {
                     greatestLuminosity = aparentLuminosity;
-                    BrightestStar = star;
+                    BrightestStar = star.sun;
                 }
             }
             return BrightestStar;
