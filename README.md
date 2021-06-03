@@ -1,17 +1,15 @@
 ﻿Kopernicus
 ==============================
-May 31, 2021
+June 3, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-39):
+New in this latest version (release-40):
 
-1.) added numerous nullchecks to the "nearest/brightest" star detection routines.
-
-2.) Added a nullcheck to prevent logspam that was producing lag when using 3dorbit forcing (thanks Al2Me6).
+1.) Fixed a day/night cycle/KSP lights on/off bug caused by faulty star detection code, introduced in last release.
 
 Known Bugs:
 
