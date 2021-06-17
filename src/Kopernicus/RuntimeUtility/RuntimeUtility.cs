@@ -164,7 +164,7 @@ namespace Kopernicus.RuntimeUtility
         private void Update()
         {
             physicsCorrectionCounter++;
-            if (physicsCorrectionCounter > 60)
+            if (physicsCorrectionCounter > 45)
             {
                 PatchColliders();
                 physicsCorrectionCounter = 0;
@@ -781,12 +781,13 @@ namespace Kopernicus.RuntimeUtility
         // Patch FlightIntegrator
         private static void PatchFlightIntegrator()
         {
-            if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
+            if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
-                Events.OnRuntimeUtilityPatchFI.Fire();
-                ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
-                ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
+                return;
             }
+            Events.OnRuntimeUtilityPatchFI.Fire();
+            ModularFlightIntegrator.RegisterCalculateSunBodyFluxOverride(KopernicusStar.SunBodyFlux);
+            ModularFlightIntegrator.RegisterCalculateBackgroundRadiationTemperatureOverride(KopernicusHeatManager.RadiationTemperature);
         }
 
         private static void PatchContracts()
