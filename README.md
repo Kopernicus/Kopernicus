@@ -7,11 +7,9 @@ June 16, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-41):
+New in this latest version (release-42):
 
-1.) Hazbod is now functional.  It has been for a bit actually.  Note:  Kerbal parts are extermely heat tolerant and may take time to burn!
-
-2.) Experimental fixes for landing gear sinking in distant bodies, worth testing.  May/may not work but won't hurt either way.
+1.) Hopefully the final, proper fix for incorrectly vertically elevated land scatters.  Will have a performance impact, but hopefully not more than the culler can handle for most configs.
 
 Known Bugs:
 

@@ -214,7 +214,7 @@ namespace Kopernicus.Components.ModularScatter
         {
             updateCounter++;
             //Rate limit garbage collection/updates to once every ~5 seconds on a good day...
-            if (updateCounter > 250)
+            if (updateCounter > 24)
             {
                 updateCounter = 0;
                 // Reprocess the stock scatter models, since they are merged into
