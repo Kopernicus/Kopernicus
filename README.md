@@ -21,8 +21,6 @@ Known Bugs:
 
 3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
-4.) Hazardous Body object is presently broken, and has been for some time aparently.  We are working on this for a near future release.  Don't go driving in lava you shouldn't drive in, now...
-
 About
 -----
 Kopernicus is a KSP add-on that allows for modification of stock planets and the creation of new planets via modification of the system prefab.  Why is this advantageous you might ask?  Previous planet adder mods, such as Planet Factory, modified the live planetary system and had to keep multiple hacks actively running to provide these worlds.  We strive to provide the least hacky solution by introducing planets into the game in the exact same manner Squad would.  
