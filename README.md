@@ -1,15 +1,18 @@
 ﻿Kopernicus
 ==============================
-June 16, 2021
+June 19, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-42):
+New in this latest version (release-43):
 
-1.) Hopefully the final, proper fix for incorrectly vertically elevated land scatters.  Will have a performance impact, but hopefully not more than the culler can handle for most configs.
+1.) Removed the workaround code for distant world langing gear sinking.  This is a bug caused by Making History's mission creator, disabling it (see below) will fix the bug.
+
+2.) Moved the scatter culler code to FixedUpdate for more consistent performance across varrying FPS-situations.
+
 
 Known Bugs:
 
@@ -18,6 +21,12 @@ Known Bugs:
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
 3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
+
+Known Caveats:
+
+1.)  The mission creator module in Making History somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain.  The general work around for this is to a.) stay within the standard solar system distance, or b.) install MakingLessHistory, linked below:
+
+https://github.com/DMagic1/KSP_MakingLessHistory/releases
 
 About
 -----

@@ -14,7 +14,7 @@ namespace Kopernicus.Components.ModularScatter
         private PQSMod_LandClassScatterQuad surfaceObjectQuad;
         KopernicusSurfaceObject[] kopSurfaceObjects;
         private static int maxdistance = -1;
-        private void Update()
+        private void FixedUpdate()
         {
             //Rate Limit it to doing a cull-calculation every 10 physics-second frames, which should be plenty.  These are very heavy.
             counter++;

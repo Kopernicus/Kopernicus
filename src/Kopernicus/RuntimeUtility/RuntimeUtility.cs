@@ -160,31 +160,6 @@ namespace Kopernicus.RuntimeUtility
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
         }
-
-        private void Update()
-        {
-            physicsCorrectionCounter++;
-            if (physicsCorrectionCounter > 45)
-            {
-                PatchColliders();
-                physicsCorrectionCounter = 0;
-            }
-        }
-
-        //Collision physics patcher
-        public static void PatchColliders()
-        {
-            if (HighLogic.LoadedSceneIsFlight && (CameraManager.GetCurrentCamera().cameraType == CameraType.Game))
-            {
-                if (FlightGlobals.ActiveVessel != null)
-                {
-                    CollisionEnhancer.bypass = false;
-                    CollisionEnhancer.UnderTerrainTolerance = 0;
-                    FlightGlobals.ActiveVessel.ResetCollisionIgnores();
-
-                }
-            }
-        }
 		
         // Stuff
         private void LateUpdate()
@@ -208,7 +183,6 @@ namespace Kopernicus.RuntimeUtility
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
         private void OnLevelWasLoaded(GameScenes scene)
         {
-            PatchColliders();
             PatchFlightIntegrator();
             FixCameras();
             PatchTimeOfDayAnimation();
