@@ -56,7 +56,7 @@ namespace Kopernicus.Constants
 #endif
         internal const Int32 VERSION_MINOR_LOWER_LIMIT = 8;
         internal const Int32 REVISION = 99;
-        internal const Int32 KOPERNICUS = 44;
+        internal const Int32 KOPERNICUS = 45;
 
         public static Boolean IsCompatible()
         {
@@ -91,14 +91,13 @@ namespace Kopernicus.Constants
                 // warn about unsupported versions
                 if (((Versioning.version_major == 11) && (Versioning.version_minor > 2)) || (Versioning.version_major > 11))
                 {
-                    ScreenMessages.PostScreenMessage("Kopernicus is in beta on this version of KSP...  Bugs may be present!", 10f, ScreenMessageStyle.UPPER_CENTER);
+                    PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus","Kopernicus","Kopernicus is in beta on this version of KSP...  Bugs may be present!", "OK", true, UISkinManager.defaultSkin);
                 }
 #endif
                 return;
             }
 
-            // Nobody can read that popup
-            ScreenMessages.PostScreenMessage("Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!", 25f, ScreenMessageStyle.UPPER_CENTER);
+            PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!", "OK", true, UISkinManager.defaultSkin);
         }
 
         public void Start()
