@@ -68,7 +68,6 @@ namespace Kopernicus.RuntimeUtility
                 return pluginPath;
             }
         }
-        public static int physicsCorrectionCounter = 0;
         public static GameScenes previousScene = GameScenes.MAINMENU;
         public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
         // Awake() - flag this class as don't destroy on load and register delegates
@@ -160,7 +159,7 @@ namespace Kopernicus.RuntimeUtility
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
         }
-		
+
         // Stuff
         private void LateUpdate()
         {
@@ -412,14 +411,14 @@ namespace Kopernicus.RuntimeUtility
                     Destroy(this);
                     return;
                 }
-         
+
                 fixes.Add(body.transform.name,
                     new KeyValuePair<CelestialBody, CelestialBody>(oldRef, body.referenceBody));
                 body.referenceBody.orbitingBodies.Add(body);
                 body.referenceBody.orbitingBodies =
                     body.referenceBody.orbitingBodies.OrderBy(cb => cb.orbit.semiMajorAxis).ToList();
                 body.orbit.Init();
-    
+
                 //body.orbitDriver.UpdateOrbit();
 
                 // Calculations
@@ -428,18 +427,18 @@ namespace Kopernicus.RuntimeUtility
                     body.sphereOfInfluence = body.orbit.semiMajorAxis *
                                              Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
                 }
-              
+
                 if (!body.Has("hillSphere"))
                 {
                     body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) *
                                       Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
                 }
-              
+
                 if (!body.solarRotationPeriod)
                 {
-                   continue;
+                    continue;
                 }
-       
+
                 Double rotationPeriod = body.rotationPeriod;
                 Double orbitalPeriod = body.orbit.period;
                 body.rotationPeriod = rotationPeriod * orbitalPeriod / (orbitalPeriod + rotationPeriod);
@@ -594,7 +593,7 @@ namespace Kopernicus.RuntimeUtility
                 FieldInfo castField = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                     .FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
 
-                _fields = new[] {modeField, contextField, castField};
+                _fields = new[] { modeField, contextField, castField };
             }
 
             // Remove buttons in map view for barycenters
@@ -609,7 +608,7 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            Int32 mode = (Int32) _fields[0].GetValue(targeter);
+            Int32 mode = (Int32)_fields[0].GetValue(targeter);
             if (mode != 2)
             {
                 return;
@@ -1004,23 +1003,23 @@ namespace Kopernicus.RuntimeUtility
         }
 
         // Flag Fixer
-        private  void ApplyFlagFixes()
+        private void ApplyFlagFixes()
         {
             GameEvents.OnKSCFacilityUpgraded.Add(FixFlags);
             GameEvents.OnKSCStructureRepaired.Add(FixFlags);
         }
 
-        private  void FixFlags(DestructibleBuilding data)
+        private void FixFlags(DestructibleBuilding data)
         {
             FixFlags();
         }
 
-        private  void FixFlags(Upgradeables.UpgradeableFacility data0, int data1)
+        private void FixFlags(Upgradeables.UpgradeableFacility data0, int data1)
         {
             FixFlags();
         }
 
-        private  void FixFlags()
+        private void FixFlags()
         {
             PQSCity KSC = FlightGlobals.GetHomeBody()?.pqsController?.GetComponentsInChildren<PQSCity>(true)?.FirstOrDefault(p => p?.name == "KSC");
             SkinnedMeshRenderer[] flags = KSC?.GetComponentsInChildren<SkinnedMeshRenderer>(true)?.Where(smr => smr?.name == "Flag")?.ToArray();

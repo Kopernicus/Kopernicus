@@ -50,13 +50,13 @@ namespace Kopernicus.Constants
         // Compatible version
         internal const Int32 VERSION_MAJOR = 1;
 #if (!KSP_VERSION_1_8)
-        internal const Int32 VERSION_MINOR = 11;
+        internal const Int32 VERSION_MINOR = 12;
 #else
         internal const Int32 VERSION_MINOR = 8;
 #endif
         internal const Int32 VERSION_MINOR_LOWER_LIMIT = 8;
         internal const Int32 REVISION = 99;
-        internal const Int32 KOPERNICUS = 43;
+        internal const Int32 KOPERNICUS = 44;
 
         public static Boolean IsCompatible()
         {
@@ -87,11 +87,18 @@ namespace Kopernicus.Constants
             // If Kopernicus isn't compatible, activate the cats
             if (IsCompatible())
             {
+#if (!KSP_VERSION_1_8)
+                // warn about unsupported versions
+                if (((Versioning.version_major == 11) && (Versioning.version_minor > 2)) || (Versioning.version_major > 11))
+                {
+                    ScreenMessages.PostScreenMessage("Kopernicus is in beta on this version of KSP...  Bugs may be present!", 10f, ScreenMessageStyle.UPPER_CENTER);
+                }
+#endif
                 return;
             }
 
             // Nobody can read that popup
-            ScreenMessages.PostScreenMessage("Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!", 5f, ScreenMessageStyle.UPPER_CENTER);
+            ScreenMessages.PostScreenMessage("Kopernicus will not work on this version of KSP!\nPlease don't try to open your saved games!", 25f, ScreenMessageStyle.UPPER_CENTER);
         }
 
         public void Start()

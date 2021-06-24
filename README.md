@@ -1,17 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 19, 2021
+June 24, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-43):
+New in this latest version (release-44):
 
-1.) Removed the workaround code for distant world langing gear sinking.  This is a bug caused by Making History's mission creator, disabling it (see below) will fix the bug.
-
-2.) Moved the scatter culler code to FixedUpdate for more consistent performance across varrying FPS-situations.
+1.) Preliminary support for the autoupdating code to handle 1.12.0.  May/may not work come launch, let's find out!
 
 
 Known Bugs:
@@ -24,9 +22,11 @@ Known Bugs:
 
 Known Caveats:
 
-1.)  The mission creator module in Making History somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain.  The general work around for this is to a.) stay within the standard solar system distance, or b.) install MakingLessHistory, linked below:
+1.) The mission creator module in Making History somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: either Parallax which does it's own colliders, or alternatively, "MakingLessHistory", linked below:
 
 https://github.com/DMagic1/KSP_MakingLessHistory/releases
+
+2.) Mutlistar Solar panel support requires an additonal config file, attatched to release. 
 
 About
 -----
