@@ -7,9 +7,9 @@ June 24, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-45):
+New in this latest version (release-46):
 
-1.) Improve beta-release version support warning.
+1.) Made the beta-warning actually work (fixed a version-detect typo).
 
 
 Known Bugs:
