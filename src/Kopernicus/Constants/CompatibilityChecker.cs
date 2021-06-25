@@ -56,7 +56,7 @@ namespace Kopernicus.Constants
 #endif
         internal const Int32 VERSION_MINOR_LOWER_LIMIT = 8;
         internal const Int32 REVISION = 99;
-        internal const Int32 KOPERNICUS = 46;
+        internal const Int32 KOPERNICUS = 47;
 
         public static Boolean IsCompatible()
         {
@@ -84,7 +84,7 @@ namespace Kopernicus.Constants
 
         private void Awake()
         {
-            // If Kopernicus isn't compatible, activate the cats
+            // If Kopernicus isn't compatible, no longer activate the cats (RIP)
             if (IsCompatible())
             {
 #if (!KSP_VERSION_1_8)

@@ -307,6 +307,10 @@ namespace Kopernicus.Configuration
                                 UnityEngine.Debug.Log("[Kopernicus] Old Jool detected, leaving shaders alone!");
                             }
                         }
+                        else
+                        {
+                            UnityEngine.Debug.Log("[Kopernicus] Original Jool detected, leaving shaders alone!");
+                        }
                     }
                 }
                 // Create accessors
@@ -348,7 +352,7 @@ namespace Kopernicus.Configuration
         internal MonoBehaviour GasGiantMaterialControls(PSystemBody generatedBody)
         {
             MonoBehaviour[] components = generatedBody.scaledVersion.GetComponents<MonoBehaviour>();
-            if ((Versioning.version_minor == 10) || (Versioning.version_minor == 11))
+            if (Versioning.version_minor > 9)
             {
                 MonoBehaviour component = components[3]; //strict index, likely to break
                 if (component.name.Equals(generatedBody.scaledVersion.name))
@@ -361,7 +365,7 @@ namespace Kopernicus.Configuration
         internal MonoBehaviour MaterialBasedOnGraphicsSetting(PSystemBody generatedBody)
         {
             MonoBehaviour[] components = generatedBody.scaledVersion.GetComponents<MonoBehaviour>();
-            if ((Versioning.version_minor == 10) || (Versioning.version_minor == 11))
+            if (Versioning.version_minor > 9)
             {
                 MonoBehaviour component = components[2]; //strict index, likely to break
                 if (component.name.Equals(generatedBody.scaledVersion.name))
