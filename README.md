@@ -9,7 +9,7 @@ June 24, 2021
 
 New in this latest version (release-47):
 
-1.) Fixed a 1.12 series bug that caused gas giants to turn Joolian Green.
+1.) Fixed a 1.12 series bug that caused the beta-support warning dialog to stick across scenes on non-windows machines.
 
 
 Known Bugs:
