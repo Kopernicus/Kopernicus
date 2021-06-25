@@ -7,7 +7,7 @@ June 24, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-47):
+New in this latest version (release-48):
 
 1.) Fixed a 1.12 series bug that caused the beta-support warning dialog to stick across scenes on non-windows machines.
 
