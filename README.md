@@ -24,7 +24,7 @@ Known Caveats:
 
 1.) Mutlistar Solar panel support requires an additonal config file, attatched to release. 
 
-2.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: either Parallax which does it's own colliders, or alternatively, "MakingLessHistory", linked below:
+2.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: either Parallax which does it's own colliders, or alternatively, "MakingLessHistory."
 
 About
 -----
