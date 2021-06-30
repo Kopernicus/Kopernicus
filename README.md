@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 25, 2021
+June 29, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-48):
+New in this latest version (release-49):
 
-1.) Fixed a 1.12 series bug that caused the beta-support warning dialog to stick across scenes on non-windows machines.
+1.) Official support for 1.12.0 and 1.12.1 added, warning on those removed.
 
 
 Known Bugs:
@@ -23,6 +23,8 @@ Known Bugs:
 Known Caveats:
 
 1.) Mutlistar Solar panel support requires an additonal config file, attatched to release. 
+
+2.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: either Parallax which does it's own colliders, or alternatively, "MakingLessHistory", linked below:
 
 About
 -----
