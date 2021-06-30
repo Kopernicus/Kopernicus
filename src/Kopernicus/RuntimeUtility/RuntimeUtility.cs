@@ -87,7 +87,6 @@ namespace Kopernicus.RuntimeUtility
             KopernicusConfig.loadMainSettings();
             // Init the runtime logging
             new Logger("Kopernicus.Runtime", true).SetAsActive();
-
             // Add handlers
             GameEvents.OnMapEntered.Add(() => OnMapEntered());
             GameEvents.onLevelWasLoaded.Add(s => OnLevelWasLoaded(s));
