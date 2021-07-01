@@ -152,11 +152,18 @@ namespace Kopernicus.RuntimeUtility
             ApplyOrbitPatches();
             ApplyStarPatchSun();
             ApplyFlagFixes();
+            FixShadows();
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
+        }
+
+        private void FixShadows()
+        {
+            QualitySettings.shadowCascade4Split = new Vector3(0.003f, 0.034f, 0.101f);
+            QualitySettings.shadowProjection = ShadowProjection.StableFit;
         }
 
         // Stuff
@@ -186,6 +193,7 @@ namespace Kopernicus.RuntimeUtility
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
+            FixShadows();
             previousScene = HighLogic.LoadedScene;
 
         }

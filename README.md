@@ -7,9 +7,9 @@ July 1, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-50):
+New in this latest version (release-51):
 
-1.) Scaled meshes set to invisible no longer feature colliiders.  Furthermore, those without the invisible trait now DO feature colliders, allowing proper occulusion on oblate spheres.
+1.) A stock shadow bug that was being exposed by Kopernicus is now patched on level load, effectively hiding/fixing it.
 
 
 Known Bugs:
