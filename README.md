@@ -7,9 +7,9 @@ June 29, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-49):
+New in this latest version (release-50):
 
-1.) Official support for 1.12.0 and 1.12.1 added, warning on those removed.
+1.) Scaled meshes set to invisible no longer feature colliiders.  Furthermore, those without the invisible trait now DO feature colliders, allowing proper occulusion on oblate spheres.
 
 
 Known Bugs:

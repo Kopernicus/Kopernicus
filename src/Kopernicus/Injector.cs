@@ -234,10 +234,28 @@ namespace Kopernicus
                             renderer.enabled = false;
                         }
 
+                        foreach (Collider collider in body.scaledBody.GetComponentsInChildren<Collider>(true))
+                        {
+                            collider.enabled = false;
+                        }
+
                         foreach (ScaledSpaceFader fader in body.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(
                             true))
                         {
                             fader.enabled = false;
+                        }
+                    }
+                    else
+                    {
+                        foreach (Renderer renderer in body.scaledBody.GetComponentsInChildren<Renderer>(true))
+                        {
+                            if (renderer.enabled)
+                            {
+                                foreach (Collider collider in body.scaledBody.GetComponentsInChildren<Collider>(true))
+                                {
+                                    collider.enabled = false;
+                                }
+                            }
                         }
                     }
 
