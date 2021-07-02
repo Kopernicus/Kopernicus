@@ -12,13 +12,13 @@ namespace Kopernicus.Components.ModularScatter
     {
         private int counter = 0;
         private PQSMod_LandClassScatterQuad surfaceObjectQuad;
-        KopernicusSurfaceObject[] kopSurfaceObjects;
         private static int maxdistance = -1;
+        private bool isEnabled = true;
         private void FixedUpdate()
         {
-            //Rate Limit it to doing a cull-calculation every 10 physics-second frames, which should be plenty.  These are very heavy.
+            //Rate Limit it to doing a cull-calculation every 5 physics-second frames, which should be plenty.  These are very heavy.
             counter++;
-            if (counter > 500)
+            if (counter > 250)
             {
                 counter = 0;
                 if (maxdistance == -1)
@@ -31,11 +31,7 @@ namespace Kopernicus.Components.ModularScatter
                     return;
                 }
                 surfaceObjectQuad = GetComponentInParent<PQSMod_LandClassScatterQuad>();
-                kopSurfaceObjects = surfaceObjectQuad.GetComponentsInChildren<KopernicusSurfaceObject>(true);
-                if (kopSurfaceObjects.Length == 0)
-                {
-                    return;
-                }
+
                 int distance = 15000;
                 if (HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel)
                 {
@@ -46,24 +42,27 @@ namespace Kopernicus.Components.ModularScatter
                     distance = 0;
                 }
                 //Optimization checks
-                if ((distance > maxdistance) && (kopSurfaceObjects[0].GetComponent<MeshRenderer>().enabled == false))
+                if ((distance > maxdistance) && (isEnabled == false))
                 {
                     return;
                 }
-                if ((distance <= maxdistance) && (kopSurfaceObjects[0].GetComponent<MeshRenderer>().enabled == true))
+                if ((distance <= maxdistance) && (isEnabled == true))
                 {
                     return;
                 }
-                for (int i = 0; i < kopSurfaceObjects.Length; i++)
+                if (distance > maxdistance)
                 {
-                    MeshRenderer surfaceObject = kopSurfaceObjects[i].GetComponent<MeshRenderer>();
-                    if (distance > maxdistance)
+                    surfaceObjectQuad.SendMessage("SetActive", false);
+                    isEnabled = false;
+                }
+                else
+                {
+                    KopernicusSurfaceObject[] kopSurfaceObjects = surfaceObjectQuad.GetComponentsInChildren<KopernicusSurfaceObject>(true);
+                    for (int i = 0; i < kopSurfaceObjects.Length; i++)
                     {
-                        surfaceObject.enabled = false;
-                    }
-                    else
-                    {
+                        MeshRenderer surfaceObject = kopSurfaceObjects[i].GetComponent<MeshRenderer>();
                         surfaceObject.enabled = true;
+                        isEnabled = true;
                     }
                 }
             }
