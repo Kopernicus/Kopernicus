@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-July 2, 2021
+July 3, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-52):
+New in this latest version (release-53):
 
-1.) Small performance improvements to the scatter-based distance culler.
+1.) Yet more performance improvements to the scatter-based distance culler.
 
 Known Bugs:
 

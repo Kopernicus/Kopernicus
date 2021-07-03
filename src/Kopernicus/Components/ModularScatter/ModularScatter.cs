@@ -256,6 +256,30 @@ namespace Kopernicus.Components.ModularScatter
                         }
                         else
                         {
+                            int maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
+                            //if 0 abort.
+                            if (maxdistance == 0)
+                            {
+                                continue;
+                            }
+                            int distance = 15000;
+                            if (HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel)
+                            {
+                                distance = (int)Vector3.Distance(FlightGlobals.ActiveVessel.transform.position, scatterObjects[i].transform.position);
+                            }
+                            else
+                            {
+                                distance = 0;
+                            }
+                            MeshRenderer thisMesh = scatterObjects[i].GetComponent<MeshRenderer>();
+                            if (distance > maxdistance)
+                            {
+                                thisMesh.enabled = false;
+                            }
+                            else
+                            {
+                                thisMesh.enabled = true;
+                            }
                             continue;
                         }
 
@@ -350,7 +374,6 @@ namespace Kopernicus.Components.ModularScatter
             }
 
             quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
-            quad.obj.AddOrGetComponent<ScatterDistanceCuller>();
         }
     }
 }
