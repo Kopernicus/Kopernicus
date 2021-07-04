@@ -45,6 +45,8 @@ namespace Kopernicus.Configuration
 		[Persistent]
 		public int ScatterCullDistance = 5000;
 		[Persistent]
+		public int ScatterCleanupDelta = 10;
+		[Persistent]
 		public string UseKopernicusAsteroidSystem = "True";
 		[Persistent]
 		public int SolarRefreshRate = 1;

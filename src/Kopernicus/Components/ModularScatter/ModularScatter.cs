@@ -213,8 +213,8 @@ namespace Kopernicus.Components.ModularScatter
         private void FixedUpdate()
         {
             updateCounter++;
-            //Rate limit garbage collection/updates to once every ~5 seconds on a good day...
-            if (updateCounter > 24)
+            //Rate limit garbage collection/updates to setting
+            if (updateCounter > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCleanupDelta)
             {
                 updateCounter = 0;
                 // Reprocess the stock scatter models, since they are merged into
@@ -244,48 +244,49 @@ namespace Kopernicus.Components.ModularScatter
 
                     CreateScatterMeshes(quads[i]);
                     quads[i].mesh.Clear();
-                }
-
-                for (Int32 i = 0; i < scatterObjects.Count; i++)
-                {
-                    if (scatterObjects[i])
+                    int maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
+                    //if 0 abort.
+                    if (maxdistance == 0)
                     {
-                        if (scatterObjects[i].transform.parent.name == "Unass")
+                        continue;
+                    }
+                    int distance = 15000;
+                    if (HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel)
+                    {
+                        distance = (int)Vector3.Distance(FlightGlobals.ActiveVessel.transform.position, quads[i].transform.position);
+                    }
+                    else
+                    {
+                        distance = 0;
+                    }
+
+                    KopernicusSurfaceObject[] kopSurfaceObjects = quads[i].GetComponentsInChildren<KopernicusSurfaceObject>(true);
+                    for (int i2 = 0; i2 < kopSurfaceObjects.Length; i2++)
+                    {
+                        MeshRenderer surfaceObject = kopSurfaceObjects[i2].GetComponent<MeshRenderer>();
+                        if (distance > maxdistance)
                         {
-                            Destroy(scatterObjects[i]);
+
+                            surfaceObject.enabled = false;
                         }
                         else
                         {
-                            int maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
-                            //if 0 abort.
-                            if (maxdistance == 0)
+                            surfaceObject.enabled = true;
+                        }
+                        GameObject thisGameObject = kopSurfaceObjects[i2].gameObject;
+                        if (thisGameObject)
+                        {
+                            if (thisGameObject.transform.parent.name == "Unass")
+                            {
+                                Destroy(thisGameObject);
+                            }
+                            else
                             {
                                 continue;
                             }
-                            int distance = 15000;
-                            if (HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel)
-                            {
-                                distance = (int)Vector3.Distance(FlightGlobals.ActiveVessel.transform.position, scatterObjects[i].transform.position);
-                            }
-                            else
-                            {
-                                distance = 0;
-                            }
-                            MeshRenderer thisMesh = scatterObjects[i].GetComponent<MeshRenderer>();
-                            if (distance > maxdistance)
-                            {
-                                thisMesh.enabled = false;
-                            }
-                            else
-                            {
-                                thisMesh.enabled = true;
-                            }
-                            continue;
                         }
-
+                        scatterObjects.Remove(thisGameObject);
                     }
-                    scatterObjects.RemoveAt(i);
-                    i--;
                 }
 
                 // Update components
