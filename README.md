@@ -7,9 +7,11 @@ July 3, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-54):
+New in this latest version (release-55):
 
-1.) New update coming out that will fix the incorrectly elevated scatters.  Unfortunately fixing them completely is quite expensive, so I have implemented a setting balancing performance and their complete elimination.  It is called "ScatterCleanupDelta" and accepts a positive number (integer).  The higher the number, the more your FPS will rise, but also the odds of a scatter spawning incorrectly elevated.  The default is 10, and offers very good protections (nearly 100%) against this issue without going to absolutely insane speeds across the terrain, while not hurting performance much.  Don't set it to zero or lower, things will break.
+1.) Fix for sunflares shining through planets.  Oops!
+
+2.) From last update but important: New update coming out that will fix the incorrectly elevated scatters.  Unfortunately fixing them completely is quite expensive, so I have implemented a setting balancing performance and their complete elimination.  It is called "ScatterCleanupDelta" and accepts a positive number (integer).  The higher the number, the more your FPS will rise, but also the odds of a scatter spawning incorrectly elevated.  The default is 10, and offers very good protections (nearly 100%) against this issue without going to absolutely insane speeds across the terrain, while not hurting performance much.  Don't set it to zero or lower, things will break.
 
 Known Bugs:
 

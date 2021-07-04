@@ -253,7 +253,7 @@ namespace Kopernicus
                             {
                                 foreach (Collider collider in body.scaledBody.GetComponentsInChildren<Collider>(true))
                                 {
-                                    collider.enabled = false;
+                                    collider.enabled = true;
                                 }
                             }
                         }
