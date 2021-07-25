@@ -212,38 +212,38 @@ namespace Kopernicus.Components.ModularScatter
 
         private void FixedUpdate()
         {
-            updateCounter++;
-            //Rate limit garbage collection/updates to setting
-            if (updateCounter > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCleanupDelta)
+            // Reprocess the stock scatter models, since they are merged into
+            // one gigantic mesh per quad, but we want unique objects
+            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
+            for (Int32 i = 0; i < quads.Length; i++)
             {
-                updateCounter = 0;
-                // Reprocess the stock scatter models, since they are merged into
-                // one gigantic mesh per quad, but we want unique objects
-                PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
-                for (Int32 i = 0; i < quads.Length; i++)
+                if (quads[i].mr && quads[i].mr.enabled)
                 {
-                    if (quads[i].mr && quads[i].mr.enabled)
-                    {
-                        quads[i].mr.enabled = false;
-                    }
+                    quads[i].mr.enabled = false;
+                }
 
-                    if (quads[i].obj.name.StartsWith("Kopernicus"))
-                    {
-                        continue;
-                    }
+                if (quads[i].obj.name.StartsWith("Kopernicus"))
+                {
+                    continue;
+                }
 
-                    if (!quads[i].obj.activeSelf)
-                    {
-                        continue;
-                    }
+                if (!quads[i].obj.activeSelf)
+                {
+                    continue;
+                }
 
-                    if (quads[i].obj.name == "Unass")
-                    {
-                        continue;
-                    }
+                if (quads[i].obj.name == "Unass")
+                {
+                    continue;
+                }
 
-                    CreateScatterMeshes(quads[i]);
-                    quads[i].mesh.Clear();
+                CreateScatterMeshes(quads[i]);
+                quads[i].mesh.Clear();
+                updateCounter++;
+                //Rate limit garbage collection/updates to setting
+                if (updateCounter > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCleanupDelta)
+                {
+                    updateCounter = 0;
                     int maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
                     //if 0 abort.
                     if (maxdistance == 0)
@@ -288,12 +288,11 @@ namespace Kopernicus.Components.ModularScatter
                         scatterObjects.Remove(thisGameObject);
                     }
                 }
-
-                // Update components
-                for (int i = 0; i < Components.Count; i++)
-                {
-                    Components[i].Update(this);
-                }
+            }
+            // Update components
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Update(this);
             }
         }
 

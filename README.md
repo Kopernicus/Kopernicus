@@ -1,17 +1,15 @@
 ﻿Kopernicus
 ==============================
-July 3, 2021
+July 24, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-55):
+New in this latest version (release-56):
 
-1.) Fix for sunflares shining through planets. Oops!
-
-2.) From last update but important: New update coming out that will fix the incorrectly elevated scatters. Unfortunately fixing them completely is quite expensive, so I have implemented a setting balancing performance and their complete elimination. It is called "ScatterCleanupDelta" and accepts a positive number (integer). The higher the number, the more your FPS will rise, but also the odds of a scatter spawning incorrectly elevated. The default is 10, and offers very good protections (nearly 100%) against this issue without going to absolutely insane speeds across the terrain, while not hurting performance much. Don't set it lower than zero though, it's pointless. If you want it to act like before, 25 is a very performant setting I'd consider the "safe ceiling."
+1.) ScatterCleanup speed increased, allowing us to decrease (make faster) the default of the setting that controls it; ScatterCleanupDelta from 10 to 4 with no performance impact.  This should result in less "floaters."  This will not update automatically if you already have a Kopernicus_Config.cfg, you will need to manually edit it to your preference (valid values are between 1 (best) and 10 (fastest)).  I advise 4.
 
 Known Bugs:
 
