@@ -25,6 +25,8 @@ Known Caveats:
 
 2.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: either Parallax which does it's own colliders, or alternatively, "MakingLessHistory."
 
+3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
+
 About
 -----
 Kopernicus is a KSP add-on that allows for modification of stock planets and the creation of new planets via modification of the system prefab.  Why is this advantageous you might ask?  Previous planet adder mods, such as Planet Factory, modified the live planetary system and had to keep multiple hacks actively running to provide these worlds.  We strive to provide the least hacky solution by introducing planets into the game in the exact same manner Squad would.  
