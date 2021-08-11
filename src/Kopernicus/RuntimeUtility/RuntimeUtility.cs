@@ -1050,6 +1050,7 @@ namespace Kopernicus.RuntimeUtility
                 configFile.WriteLine("	EnforcedShaderLevel = 2");
                 configFile.WriteLine("	ScatterCullDistance = 5000");
                 configFile.WriteLine("	ScatterCleanupDelta = 4");
+                configFile.WriteLine("	UsePureStockScatters = False");
                 configFile.WriteLine("	UseKopernicusAsteroidSystem = True");
                 configFile.WriteLine("	SolarRefreshRate = 1");
                 configFile.WriteLine("}");

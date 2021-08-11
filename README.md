@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-July 24, 2021
+August 11, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-56):
+New in this latest version (release-57):
 
-1.) ScatterCleanup speed increased, allowing us to decrease (make faster) the default of the setting that controls it; ScatterCleanupDelta from 10 to 4 with no performance impact.  This should result in less "floaters."  This will not update automatically if you already have a Kopernicus_Config.cfg, you will need to manually edit it to your preference (valid values are between 1 (best) and 10 (fastest)).  I advise 4.
+1.)  New Kopernicus_Config.cfg boolean parameter UsePureStockScatters, hands off stock body scatters to stock system for performance reasons (stock system is much faster).  Do not expect any scatter customizations when this is set to true!  Will work for stock rescales but not much else.  Defaults to false.  Is incompataible with distance culler (not that it needs it).
 
 Known Bugs:
 

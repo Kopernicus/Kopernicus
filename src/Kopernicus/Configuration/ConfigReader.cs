@@ -49,6 +49,8 @@ namespace Kopernicus.Configuration
 		[Persistent]
 		public string UseKopernicusAsteroidSystem = "True";
 		[Persistent]
+		public Boolean UsePureStockScatters = false;
+		[Persistent]
 		public int SolarRefreshRate = 1;
 		public UrlDir.UrlConfig[] baseConfigs;
 		public void loadMainSettings()
