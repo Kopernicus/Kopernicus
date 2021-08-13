@@ -7,9 +7,9 @@ August 13, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-58):
+New in this latest version (release-59):
 
-1.)  New, better, configless cross-platform fix for stock shadows.  Should work everywhere and look good!
+1.)  Fix for bad shadows fix code on internal version 1.9.x code branch.
 
 Known Bugs:
 
