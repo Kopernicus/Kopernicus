@@ -162,8 +162,16 @@ namespace Kopernicus.RuntimeUtility
 
         private void FixShadows()
         {
-            QualitySettings.shadowCascade4Split = new Vector3(0.003f, 0.034f, 0.101f);
-            QualitySettings.shadowProjection = ShadowProjection.StableFit;
+            if ((Versioning.version_minor > 9) && (SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11")))
+            {
+                QualitySettings.shadowCascade4Split = new Vector3(0.0015f, 0.015f, 0.15f);
+                QualitySettings.shadowProjection = ShadowProjection.StableFit;
+            }
+            else
+            {
+                QualitySettings.shadowCascade4Split = new Vector3(0.005f, 0.025f, 0.125f);
+                QualitySettings.shadowProjection = ShadowProjection.CloseFit;
+            }
         }
 
         // Stuff
