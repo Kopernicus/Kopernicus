@@ -1,6 +1,6 @@
 ﻿Kopernicus
 ==============================
-October 29, 2021
+October 30, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
@@ -9,7 +9,9 @@ October 29, 2021
 
 New in this latest version (release-60):
 
-1.)  Minor fix to grass texturing at KSC in some custom mods.
+1.)  Shadow fixes for KSC scene and in general on DirectX 11, to act slightly more like stock (and look better).
+
+2.)  Minor fix to grass customization at KSC in some custom mods.
 
 Known Bugs:
 
@@ -21,11 +23,13 @@ Known Bugs:
 
 Known Caveats:
 
-1.) Mutlistar Solar panel support requires an additonal config file, attatched to release.
+1.)  The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x.  The 1.8 release is for 1.8.x.
 
-2.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: either Parallax which does it's own colliders, or alternatively, "MakingLessHistory."
+2.) Mutlistar Solar panel support requires an additonal config file, attatched to release.
 
-3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
+3.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: "MakingLessHistory."
+
+4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
 
 About
 -----

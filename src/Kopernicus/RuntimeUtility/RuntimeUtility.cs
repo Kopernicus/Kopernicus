@@ -164,8 +164,31 @@ namespace Kopernicus.RuntimeUtility
         {
             if ((Versioning.version_minor >= 9) && (SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11")))
             {
-                QualitySettings.shadowCascade4Split = new Vector3(0.0015f, 0.015f, 0.15f);
-                QualitySettings.shadowProjection = ShadowProjection.StableFit;
+                if (!HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
+                {
+                    QualitySettings.shadowCascade4Split = new Vector3(0.0015f, 0.015f, 0.15f);
+                }
+                else
+                {
+                    QualitySettings.shadowCascade4Split = new Vector3(0.01f, 0.25f, 0.5f);
+                }
+                Light[] lights;
+                lights = (Light[])UnityEngine.Object.FindObjectsOfType(typeof(Light));
+                foreach (Light light in lights)
+                {
+                    if (light.gameObject.name == "SunLight")
+                    {
+                        light.shadowCustomResolution = 8192;
+                    }
+                    else if (light.gameObject.name == "Scaledspace SunLight")
+                    {
+                        light.shadowCustomResolution = 8192;
+                    }
+                    else if (light.gameObject.name.Contains("PlanetLight") || light.gameObject.name.Contains("Directional light"))
+                    {
+                        light.shadowCustomResolution = 8192;
+                    }
+                }
             }
             else
             {
