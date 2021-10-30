@@ -55,8 +55,8 @@ namespace Kopernicus.Constants
         internal const Int32 VERSION_MINOR = 8;
 #endif
         internal const Int32 VERSION_MINOR_LOWER_LIMIT = 8;
-        internal const Int32 REVISION = 99;
-        internal const Int32 KOPERNICUS = 59;
+        internal const Int32 REVISION = 1;
+        internal const Int32 KOPERNICUS = 60;
 
         public static Boolean IsCompatible()
         {
@@ -69,7 +69,7 @@ namespace Kopernicus.Constants
                 Versioning.version_major <= VERSION_MAJOR &&
                 Versioning.version_minor <= VERSION_MINOR &&
                 Versioning.version_minor >= VERSION_MINOR_LOWER_LIMIT &&
-                Versioning.Revision <= REVISION;
+                Versioning.Revision <= 99;
 #else
             return true;
 #endif

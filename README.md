@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-August 13, 2021
+October 29, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-59):
+New in this latest version (release-60):
 
-1.)  Fix for bad shadows fix code on internal version 1.9.x code branch.
+1.)  Minor fix to grass texturing at KSC in some custom mods.
 
 Known Bugs:
 
