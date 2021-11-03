@@ -27,7 +27,7 @@ Known Caveats:
 
 2.) Mutlistar Solar panel support requires an additonal config file, attatched to release.
 
-3.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: "MakingLessHistory."
+3.) The mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: "MakingLessHistory."
 
 4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
 
