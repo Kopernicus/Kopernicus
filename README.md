@@ -1,33 +1,32 @@
 ﻿Kopernicus
 ==============================
-October 30, 2021
+November 19, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-60):
+New in this latest version (release-61):
 
-1.)  Shadow fixes for KSC scene and in general on DirectX 11, to act slightly more like stock (and look better).
-
-2.)  Minor fix to grass customization at KSC in some custom mods.
+1.)  Experimental fix for sinking landing gear at extreme ranges.  See caveat noote #3 for details on how this is done.
 
 Known Bugs:
 
-1.) Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
+1.) The ingame shadows without an external mod like scatterer can be glitchy.  It is advisable to use an external mod for best experience at the moment.
 
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
 3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
+4.) 1.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
 Known Caveats:
 
 1.)  The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x.  The 1.8 release is for 1.8.x.
 
-2.) Mutlistar Solar panel support requires an additonal config file, attatched to release.
+2.)  Mutlistar Solar panel support requires an additonal config file, attatched to release.
 
-3.) Before 1.12.0, the mission creator module in Making History is somehow, amazingly, is bugged in such a way as to make landing at bodies more distant than say, Stock Eeloo, impossible, due to sinking landing gear and lethal-to-kerbalkind terrain. The general work around for this is to a.) stay within the standard solar system distance, or b.) install another mod: "MakingLessHistory."
+3.)  A fake celestial body is now used to fix the distant sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not benefit from this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.
 
 4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
 
