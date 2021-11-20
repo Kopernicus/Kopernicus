@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-November 19, 2021
+November 20, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-61):
+New in this latest version (release-62:
 
-1.)  Experimental fix for sinking landing gear at extreme ranges.  See caveat noote #3 for details on how this is done.
+1.)  Fix for error on loading a customized sun in last release.
+
+2.)  Experimental fix for sinking landing gear at extreme ranges.  See caveat noote #3 for details on how this is done.
 
 Known Bugs:
 
