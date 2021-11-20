@@ -7,9 +7,9 @@ November 20, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-62:
+New in this latest version (release-63:
 
-1.)  Fix for error on loading a customized sun in last release.
+1.)  Fix for various mod crashes by applying better KopernicusWatchdog celestial masking.
 
 2.)  Experimental fix for sinking landing gear at extreme ranges.  See caveat noote #3 for details on how this is done.
 

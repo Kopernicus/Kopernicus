@@ -186,6 +186,38 @@ namespace Kopernicus
                     SpaceCenter.Instance.Start();
                 }
 
+                //Catch the watchdog and remove it from list
+                CelestialBody mockBody = null; 
+                foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+                {
+                    if (body.name.Equals("KopernicusWatchdog"))
+                    {
+                        mockBody = body;
+                        mockBody.enabled = false;
+                        foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
+                        {
+                            renderer.enabled = false;
+                        }
+
+                        foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
+                        {
+                            collider.enabled = true;
+                        }
+
+                        foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(
+                            true))
+                        {
+                            fader.enabled = false;
+                        }
+                    }
+                }
+                PSystemManager.Instance.localBodies.Remove(mockBody);
+                if (FlightGlobals.fetch.bodies.Contains(mockBody))
+                {
+                    FlightGlobals.fetch.bodies.Remove(mockBody);
+                    Debug.Log("Masking KopernicusWatchdog!");
+                }
+                RuntimeUtility.RuntimeUtility.mockBody = mockBody;
                 // Fix the flight globals index of each body and patch it's SOI
                 Int32 counter = 0;
                 foreach (CelestialBody body in FlightGlobals.Bodies)
