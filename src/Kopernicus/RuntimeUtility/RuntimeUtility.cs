@@ -52,7 +52,7 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
-        public static CelestialBody mockBody;
+        public static CelestialBody mockBody = null;
         //Plugin Path finding logic
         private static string pluginPath;
         public static string PluginPath
@@ -551,18 +551,29 @@ namespace Kopernicus.RuntimeUtility
 
         private void UpdateMockBodyColliderFix()
         {
-            try
+            if (mockBody != null)
             {
-                if (FlightGlobals.currentMainBody != null)
+                try
                 {
-                    mockBody.orbit.SetOrbit(0d, 0d, FlightGlobals.ActiveVessel.distanceToSun * 2, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, KopernicusStar.GetLocalStar(FlightGlobals.currentMainBody));
+                    if (FlightGlobals.currentMainBody != null)
+                    {
+                        mockBody.orbit.SetOrbit(0d, 0d, FlightGlobals.ActiveVessel.distanceToSun * 2, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, KopernicusStar.GetLocalStar(FlightGlobals.currentMainBody));
+                    }
+                    else
+                    {
+                        mockBody.orbit.SetOrbit(0d, 0d, 100000000000, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, Planetarium.fetch.Sun);
+                    }
+                    mockBody.orbitDriver.Renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
+                    mockBody.MapObject = null;
+                    mockBody.Mass = 0;
+                    if (Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Contains(mockBody))
+                    {
+                        Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Remove(mockBody);
+                    }
                 }
-                mockBody.orbitDriver.Renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
-                mockBody.MapObject = null;
-                mockBody.Mass = 0;
-            }
-            catch
-            { 
+                catch
+                {
+                }
             }
         }
 

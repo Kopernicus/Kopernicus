@@ -7,29 +7,31 @@ November 20, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version (release-63):
+New in this latest version release-64:
 
-1.) Fix for various mod crashes by applying better KopernicusWatchdog celestial masking.
+1.)  Yet more fixes/workarounds for various mod crashes by applying better KopernicusWatchdog celestial masking.  This will be an uphill battle, if you have a mod that does not work with this please report it and use Release-60 in the meantime.
 
-2.) Experimental fix for sinking landing gear at extreme ranges. See caveat note #3 for details on how this is done.
+2.)  Experimental fix for sinking landing gear at extreme ranges.  See caveat note #3 for details on how this is done.
 
 Known Bugs:
 
-1.) The ingame shadows without an external mod like scatterer can be glitchy. It is advisable to use an external mod for best experience at the moment.
+1.) The ingame shadows without an external mod like scatterer can be glitchy.  It is advisable to use an external mod for best experience at the moment.
 
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
 3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
 
-4.) 1.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error. Known Caveats:
+4.) 1.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
+Known Caveats:
 
-1.) The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x. The 1.8 release is for 1.8.x.
+1.)  The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x.  The 1.8 release is for 1.8.x.
 
-2.) Mutlistar Solar panel support requires an additonal config file, attatched to release.
+2.)  Mutlistar Solar panel support requires an additonal config file, attatched to release.
 
-3.) A fake celestial body is now used to fix the distant sinking bug. This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible. The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects. Also, Principia does not work at this time, unfortunately. Those users may try "MakingLessHistory" mod, the old workaround.  Also, if this change is causing issues for your other mods, we will have options soon.  For now you can revert to release-60.
+3.)  A fake celestial body is now used to fix the distant sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not benefit from this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.  Other legacy mods that are broken may work with the last release before this change happened, Release-60.
 
-4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
+4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
+
 About
 -----
 Kopernicus is a KSP add-on that allows for modification of stock planets and the creation of new planets via modification of the system prefab.  Why is this advantageous you might ask?  Previous planet adder mods, such as Planet Factory, modified the live planetary system and had to keep multiple hacks actively running to provide these worlds.  We strive to provide the least hacky solution by introducing planets into the game in the exact same manner Squad would.  
