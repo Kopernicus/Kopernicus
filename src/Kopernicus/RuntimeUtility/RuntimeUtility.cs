@@ -559,16 +559,9 @@ namespace Kopernicus.RuntimeUtility
                     {
                         mockBody.orbit.SetOrbit(0d, 0d, FlightGlobals.ActiveVessel.distanceToSun * 2, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, KopernicusStar.GetLocalStar(FlightGlobals.currentMainBody));
                     }
-                    else
+                    else if (mockBody.orbit != null)
                     {
                         mockBody.orbit.SetOrbit(0d, 0d, 100000000000, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, Planetarium.fetch.Sun);
-                    }
-                    mockBody.orbitDriver.Renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
-                    mockBody.MapObject = null;
-                    mockBody.Mass = 0;
-                    if (Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Contains(mockBody))
-                    {
-                        Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Remove(mockBody);
                     }
                 }
                 catch

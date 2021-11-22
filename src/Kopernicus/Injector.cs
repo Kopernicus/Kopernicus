@@ -213,16 +213,15 @@ namespace Kopernicus
                 }
                 if (mockBody != null)
                 {
-                    if (Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Contains(mockBody))
+                    if (PSystemManager.Instance.localBodies.Contains(mockBody))
                     {
-                        Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Remove(mockBody);
+                        PSystemManager.Instance.localBodies.Remove(mockBody);
                     }
-                    PSystemManager.Instance.localBodies.Remove(mockBody);
                     if (FlightGlobals.fetch.bodies.Contains(mockBody))
                     {
                         FlightGlobals.fetch.bodies.Remove(mockBody);
-                        Debug.Log("Masking KopernicusWatchdog!");
                     }
+                    mockBody.Mass = 0;
                     RuntimeUtility.RuntimeUtility.mockBody = mockBody;
                 }
                 // Fix the flight globals index of each body and patch it's SOI

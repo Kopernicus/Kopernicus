@@ -1,17 +1,17 @@
 ﻿Kopernicus
 ==============================
-November 20, 2021
+November 21, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-64:
+New in this latest version release-65:
 
-1.)  Yet more fixes/workarounds for various mod crashes by applying better KopernicusWatchdog celestial masking.  This will be an uphill battle, if you have a mod that does not work with this please report it and use Release-60 in the meantime.
+1.)  Some slightly too agressive masking was rolled back to fix the fact that the KopernicusWatchdog fake-celestial ceased to function.  Some mods may break because of this, I will be patching mods and making PRs actively as I can over the next few weeks.  Until then, see change #2 if you want an immediate fix for a broken mod.
 
-2.)  Experimental fix for sinking landing gear at extreme ranges.  See caveat note #3 for details on how this is done.
+2.)  An optional cfg was added to release to disable the KopernicusWatchdog fake celestial body (at the cost of losing the distant body terrain sinking issue fix).  This may help with mod compatibility for out-of-date mods.  Simply drop in the Gamedata/Kopernicus/Config folder.
 
 Known Bugs:
 
@@ -28,7 +28,7 @@ Known Caveats:
 
 2.)  Mutlistar Solar panel support requires an additonal config file, attatched to release.
 
-3.)  A fake celestial body is now used to fix the distant sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not benefit from this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.  Other legacy mods that are broken may work with the last release before this change happened, Release-60.
+3.)  A fake celestial body is now used to fix the distant sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not benefit from this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.  Other legacy mods that are broken from this change may use the optional RemoveWatchdog.cfg to bypass this and work again.
 
 4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
 
