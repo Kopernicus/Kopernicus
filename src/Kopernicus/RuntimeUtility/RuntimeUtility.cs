@@ -557,7 +557,7 @@ namespace Kopernicus.RuntimeUtility
                 {
                     if (FlightGlobals.currentMainBody != null)
                     {
-                        mockBody.orbit.SetOrbit(0d, 0d, FlightGlobals.ActiveVessel.distanceToSun * 2, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, KopernicusStar.GetLocalStar(FlightGlobals.currentMainBody));
+                        mockBody.orbit.SetOrbit(0d, 0d, FlightGlobals.ActiveVessel.distanceToSun * 2, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, Planetarium.fetch.Sun);
                     }
                     else if (mockBody.orbit != null)
                     {

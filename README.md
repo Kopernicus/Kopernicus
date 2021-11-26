@@ -1,25 +1,27 @@
 ﻿Kopernicus
 ==============================
-November 21, 2021
+November 25, 2021
 * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-65:
+New in this latest version release-66:
 
-1.)  Some slightly too agressive masking was rolled back to fix the fact that the KopernicusWatchdog fake-celestial ceased to function.  Some mods may break because of this, I will be patching mods and making PRs actively as I can over the next few weeks.  Until then, see change #2 if you want an immediate fix for a broken mod.
+1.)  "Turned off the sinking landing gear on distant bodies" -fix by default because of mod incompatabilites.  You can still get this fix (see change #2) it just isn't on by default because of how much it broke certain types of mods.
 
-2.)  An optional cfg was added to release to disable the KopernicusWatchdog fake celestial body (at the cost of losing the distant body terrain sinking issue fix).  This may help with mod compatibility for out-of-date mods.  Simply drop in the Gamedata/Kopernicus/Config folder.
+2.)  If you need the fix for landing gear sinking on distant bodies and are ok with the side-effects of it, Simply download attatched "AddWatchdog.cfg" and drop in the Gamedata/Kopernicus/Config folder.
 
 Known Bugs:
 
 1.) The ingame shadows without an external mod like scatterer can be glitchy.  It is advisable to use an external mod for best experience at the moment.
 
+2.) Land scatters can appear at incorrect elevations if you don't use Kopernicus option "UsePureStockSCatters," which sadly, only works on pure stock systems.
+
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
-3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and all the interstellar bugs actively.
+3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and nmonitoring all the interstellar bugs actively.
 
 4.) 1.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
 Known Caveats:
@@ -28,7 +30,7 @@ Known Caveats:
 
 2.)  Mutlistar Solar panel support requires an additonal config file, attatched to release.
 
-3.)  A fake celestial body is now used to fix the distant sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not benefit from this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.  Other legacy mods that are broken from this change may use the optional RemoveWatchdog.cfg to bypass this and work again.
+3.)  If you use the "AddWatchdog.cfg" file, A fake celestial body isthen used to fix the distant landing-gear sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not benefit from this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.
 
 4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
 
