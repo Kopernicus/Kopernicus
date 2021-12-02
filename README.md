@@ -1,7 +1,7 @@
 ﻿Kopernicus
 ==============================
 November 25, 2021
-* Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+* Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
