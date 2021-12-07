@@ -530,6 +530,22 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
+        /// Returns the host star cb directly from the given body.
+        /// </summary>
+        public static CelestialBody GetNearestBodyOverSystenRoot(CelestialBody body)
+        {
+            while (body?.orbit?.referenceBody != null)
+            {
+                if (body.name.Equals("Sun"))
+                {
+                    break;
+                }
+                body = body.orbit.referenceBody;
+            }
+            return body;
+        }
+
+        /// <summary>
         /// Returns the host planet directly above the current star.
         /// </summary>
         public static CelestialBody GetLocalPlanet(CelestialBody body)

@@ -160,7 +160,6 @@ namespace Kopernicus.RuntimeUtility
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
         }
-
         private void FixShadows()
         {
             if ((Versioning.version_minor >= 9) && (SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11")))
@@ -179,15 +178,15 @@ namespace Kopernicus.RuntimeUtility
                 {
                     if (light.gameObject.name == "SunLight")
                     {
-                        light.shadowCustomResolution = 8192;
+                        light.shadowCustomResolution = 16384;
                     }
                     else if (light.gameObject.name == "Scaledspace SunLight")
                     {
-                        light.shadowCustomResolution = 8192;
+                        light.shadowCustomResolution = 16384;
                     }
                     else if (light.gameObject.name.Contains("PlanetLight") || light.gameObject.name.Contains("Directional light"))
                     {
-                        light.shadowCustomResolution = 8192;
+                        light.shadowCustomResolution = 16384;
                     }
                 }
             }
@@ -557,11 +556,14 @@ namespace Kopernicus.RuntimeUtility
                 {
                     if (FlightGlobals.currentMainBody != null)
                     {
-                        mockBody.orbit.SetOrbit(0d, 0d, FlightGlobals.ActiveVessel.distanceToSun * 2, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, Planetarium.fetch.Sun);
+                        CelestialBody rootSun = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Sun").celestialBody;
+                        //mockBody.orbit.SetOrbit(0d, 0d, 50000000000000000, 0, 0, 0, 0, Planetarium.fetch.Sun);
+                        float distanceToRoot = Vector3.Distance(FlightGlobals.ActiveVessel.GetWorldPos3D(), FlightGlobals.currentMainBody.position);
+                        mockBody.orbit.SetOrbit(0d, 0d, distanceToRoot * 2, 0, 0, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, Planetarium.fetch.Sun);
                     }
                     else if (mockBody.orbit != null)
                     {
-                        mockBody.orbit.SetOrbit(0d, 0d, 100000000000, 0, 0, KopernicusStar.GetLocalPlanet(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, Planetarium.fetch.Sun);
+                        mockBody.orbit.SetOrbit(0d, 0d, 50000000000000000, 0, 0, 0, 0, Planetarium.fetch.Sun);
                     }
                 }
                 catch
@@ -1102,9 +1104,6 @@ namespace Kopernicus.RuntimeUtility
                 configFile.WriteLine("	EnforceShaders = false");
                 configFile.WriteLine("	WarnShaders = false");
                 configFile.WriteLine("	EnforcedShaderLevel = 2");
-                configFile.WriteLine("	ScatterCullDistance = 5000");
-                configFile.WriteLine("	ScatterCleanupDelta = 4");
-                configFile.WriteLine("	UsePureStockScatters = False");
                 configFile.WriteLine("	UseKopernicusAsteroidSystem = True");
                 configFile.WriteLine("	SolarRefreshRate = 1");
                 configFile.WriteLine("}");

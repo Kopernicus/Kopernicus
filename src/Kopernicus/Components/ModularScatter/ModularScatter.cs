@@ -50,10 +50,7 @@ namespace Kopernicus.Components.ModularScatter
             get { return components; }
             set { components = value; }
         }
-
-        //Rate limiting counter for update loop cleaning code
-        private int updateCounter = 0;
-
+        private int counter = 20;
         /// <summary>
         /// The celestial body we are attached to
         /// </summary>
@@ -210,12 +207,14 @@ namespace Kopernicus.Components.ModularScatter
             scatterObjects.Clear();
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            // Reprocess the stock scatter models, since they are merged into
-            // one gigantic mesh per quad, but we want unique objects
-            if (!Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.UsePureStockScatters)
+            counter--;
+            if (counter < 1)
             {
+                counter = 20;
+                // Reprocess the stock scatter models, since they are merged into
+                // one gigantic mesh per quad, but we want unique objects
                 PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
                 for (Int32 i = 0; i < quads.Length; i++)
                 {
@@ -238,64 +237,33 @@ namespace Kopernicus.Components.ModularScatter
                     {
                         continue;
                     }
-
                     CreateScatterMeshes(quads[i]);
                     quads[i].mesh.Clear();
-                    updateCounter++;
-                    //Rate limit garbage collection/updates to setting
-                    if (updateCounter > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCleanupDelta)
+                }
+
+
+                for (Int32 i = 0; i < scatterObjects.Count; i++)
+                {
+                    if (scatterObjects[i])
                     {
-                        updateCounter = 0;
-                        int maxdistance = Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCullDistance;
-                        //if 0 abort.
-                        if (maxdistance == 0)
+                        if (scatterObjects[i].transform.parent.name == "Unass")
                         {
-                            continue;
-                        }
-                        int distance = 15000;
-                        if (HighLogic.LoadedSceneIsFlight && FlightGlobals.ActiveVessel)
-                        {
-                            distance = (int)Vector3.Distance(FlightGlobals.ActiveVessel.transform.position, quads[i].transform.position);
+                            Destroy(scatterObjects[i]);
                         }
                         else
                         {
-                            distance = 0;
-                        }
-
-                        KopernicusSurfaceObject[] kopSurfaceObjects = quads[i].GetComponentsInChildren<KopernicusSurfaceObject>(true);
-                        for (int i2 = 0; i2 < kopSurfaceObjects.Length; i2++)
-                        {
-                            MeshRenderer surfaceObject = kopSurfaceObjects[i2].GetComponent<MeshRenderer>();
-                            if (distance > maxdistance)
-                            {
-
-                                surfaceObject.enabled = false;
-                            }
-                            else
-                            {
-                                surfaceObject.enabled = true;
-                            }
-                            GameObject thisGameObject = kopSurfaceObjects[i2].gameObject;
-                            if (thisGameObject)
-                            {
-                                if (thisGameObject.transform.parent.name == "Unass")
-                                {
-                                    Destroy(thisGameObject);
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            scatterObjects.Remove(thisGameObject);
+                            continue;
                         }
                     }
+
+                    scatterObjects.RemoveAt(i);
+                    i--;
                 }
-            }
-            // Update components
-            for (int i = 0; i < Components.Count; i++)
-            {
-                Components[i].Update(this);
+                // Update components
+                for (int i = 0; i < Components.Count; i++)
+                {
+                    Components[i].Update(this);
+                }
             }
         }
 
@@ -325,7 +293,6 @@ namespace Kopernicus.Components.ModularScatter
                     quad.count = Math.Min((Int32)Math.Round(scatterN), quad.scatter.maxScatter);
                 }
             }
-
             for (Int32 i = 0; i < quad.count; i++)
             {
                 if (useBetterDensity)
@@ -333,7 +300,8 @@ namespace Kopernicus.Components.ModularScatter
                     // Generate a random number between 0 and 1. If it is above the spawn chance, abort
                     if (Random.value > spawnChance)
                     {
-                        continue;
+                        quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
+                        return;
                     }
                 }
 
@@ -375,7 +343,6 @@ namespace Kopernicus.Components.ModularScatter
                 scatterObject.layer = GameLayers.LOCAL_SPACE;
                 scatterObjects.Add(scatterObject);
             }
-
             quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
         }
     }

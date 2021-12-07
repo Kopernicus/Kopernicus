@@ -1,17 +1,19 @@
 ﻿Kopernicus
 ==============================
-November 25, 2021
+December 7th, 2021
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-66:
+New in this latest version release-67:
 
-1.)  "Turned off the sinking landing gear on distant bodies" -fix by default because of mod incompatabilites.  You can still get this fix (see change #2) it just isn't on by default because of how much it broke certain types of mods.
+1.)  First attempt to fix scatter subsystem.  This represents a major rewrite.  It has gone through extensive testing but I am still curious a.) how it performs on lower end hardware and b.) if it really eliminated the vertical elevation bug.
 
-2.)  If you need the fix for landing gear sinking on distant bodies and are ok with the side-effects of it, Simply download attatched "AddWatchdog.cfg" and drop in the Gamedata/Kopernicus/Config folder.
+2.)  The old Kopernicus_Config.cfg options relating to scatters are now deprecated and no longer function.  With any luck, the new system won't need any of those complex parameters anyways, as it should perform and function better "out of the box."
+
+3.)  I upped the shadow map size to attempt to fix the glitchy stock shadows.  Untested, but may help.
 
 Known Bugs:
 
@@ -24,6 +26,7 @@ Known Bugs:
 3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and nmonitoring all the interstellar bugs actively.
 
 4.) 1.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
+
 Known Caveats:
 
 1.)  The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x.  The 1.8 release is for 1.8.x.
