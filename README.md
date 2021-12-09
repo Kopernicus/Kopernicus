@@ -1,19 +1,15 @@
 ﻿Kopernicus
 ==============================
-December 7th, 2021
+December 8th, 2021
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-67:
+New in this latest version release-68:
 
-1.)  First attempt to fix scatter subsystem.  This represents a major rewrite.  It has gone through extensive testing but I am still curious a.) how it performs on lower end hardware and b.) if it really eliminated the vertical elevation bug.
-
-2.)  The old Kopernicus_Config.cfg options relating to scatters are now deprecated and no longer function.  With any luck, the new system won't need any of those complex parameters anyways, as it should perform and function better "out of the box."
-
-3.)  I upped the shadow map size to attempt to fix the glitchy stock shadows.  Untested, but may help.
+1.)  The upped shadow map size in last release was hurting performance for some users and outright crashing for others, so we reverted that.  I am trying a different shadow fix with this release that should work with all hardware, and not just "modern" cards.
 
 Known Bugs:
 
