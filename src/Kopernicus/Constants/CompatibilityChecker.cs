@@ -56,7 +56,7 @@ namespace Kopernicus.Constants
 #endif
         internal const Int32 VERSION_MINOR_LOWER_LIMIT = 8;
         internal const Int32 REVISION = 1;
-        internal const Int32 KOPERNICUS = 68;
+        internal const Int32 KOPERNICUS = 69;
 
         public static Boolean IsCompatible()
         {
@@ -89,7 +89,7 @@ namespace Kopernicus.Constants
             {
 #if !KSP_VERSION_1_8
                 // warn about unsupported versions
-                if (((Versioning.version_minor == 11) && (Versioning.Revision > 2)) || ((Versioning.version_minor == 12) && (Versioning.Revision > 2)) || (Versioning.version_minor > 12))
+                if (((Versioning.version_minor == 11) && (Versioning.Revision > 3)) || ((Versioning.version_minor == 12) && (Versioning.Revision > 2)) || (Versioning.version_minor > 12))
                 {
                     PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus","Kopernicus","Kopernicus is in beta on this version of KSP...  Bugs may be present!", "OK", false, UISkinManager.defaultSkin);
                 }

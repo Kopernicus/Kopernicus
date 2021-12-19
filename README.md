@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-December 8th, 2021
+December 19th, 2021
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-68:
+New in this latest version release-69:
 
-1.)  The upped shadow map size in last release was hurting performance for some users and outright crashing for others, so we reverted that.  I am trying a different shadow fix with this release that should work with all hardware, and not just "modern" cards.
+1.)  Upped the value of the minor 1.12.x version check since all seems well with 1.12.3.
 
 Known Bugs:
 
