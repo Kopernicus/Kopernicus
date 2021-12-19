@@ -7,9 +7,9 @@ December 19th, 2021
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-69:
+New in this latest version release-70:
 
-1.)  Upped the value of the minor 1.12.x version check since all seems well with 1.12.3.
+1.)  Correct warning dialog displaying despite last update to remove it on 1.12.3 (oops!).
 
 Known Bugs:
 
