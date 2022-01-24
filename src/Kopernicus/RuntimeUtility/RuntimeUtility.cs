@@ -165,14 +165,6 @@ namespace Kopernicus.RuntimeUtility
             if ((Versioning.version_minor >= 9) && (SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11")))
             {
                 QualitySettings.shadowProjection = ShadowProjection.StableFit;
-                if (!HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
-                {
-                    QualitySettings.shadowCascade4Split = new Vector3(0.0015f, 0.015f, 0.15f);
-                }
-                else
-                {
-                    QualitySettings.shadowCascade4Split = new Vector3(0.01f, 0.25f, 0.5f);
-                }
                 Light[] lights;
                 lights = (Light[])UnityEngine.Object.FindObjectsOfType(typeof(Light));
                 foreach (Light light in lights)
@@ -193,7 +185,6 @@ namespace Kopernicus.RuntimeUtility
             }
             else
             {
-                QualitySettings.shadowCascade4Split = new Vector3(0.005f, 0.025f, 0.125f);
                 QualitySettings.shadowProjection = ShadowProjection.CloseFit;
                 Light[] lights;
                 lights = (Light[])UnityEngine.Object.FindObjectsOfType(typeof(Light));

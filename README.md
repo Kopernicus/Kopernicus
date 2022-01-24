@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-December 19th, 2021
+January 24th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-70:
+New in this latest version release-71:
 
-1.)  Correct warning dialog displaying despite last update to remove it on 1.12.3 (oops!).
+1.)  More shadow related bugfixes, as always somewhat experimental.  Please report back results on how good/bad they work.  In my testing, it does seem improved.
 
 Known Bugs:
 
