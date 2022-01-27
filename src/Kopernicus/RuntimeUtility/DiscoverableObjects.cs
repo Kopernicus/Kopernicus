@@ -287,15 +287,17 @@ namespace Kopernicus.RuntimeUtility
         [SuppressMessage("ReSharper", "IteratorNeverReturns")]
         private IEnumerator<WaitForSeconds> AsteroidDaemon(Asteroid asteroid)
         {
-            while (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
+            while (true)
             {
-                // Update Asteroids
-                UpdateAsteroid(asteroid, Planetarium.GetUniversalTime());
+                if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
+                {
+                    // Update Asteroids
+                    UpdateAsteroid(asteroid, Planetarium.GetUniversalTime());
 
-                // Wait
-                yield return new WaitForSeconds(Mathf.Max(asteroid.Interval / TimeWarp.CurrentRate, spawnInterval));
+                    // Wait
+                    yield return new WaitForSeconds(Mathf.Max(asteroid.Interval / TimeWarp.CurrentRate, spawnInterval));
+                }
             }
-            yield break;
         }
 
         // Gets a list to reflect probabilities

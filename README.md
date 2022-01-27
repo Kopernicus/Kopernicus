@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-January 24th, 2022
+January 27th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-71:
+New in this latest version release-72:
 
-1.)  More shadow related bugfixes, as always somewhat experimental.  Please report back results on how good/bad they work.  In my testing, it does seem improved.
+1.)  A fix to the Kopernicus Standard Asteroid customizer has been applied.  The bug that it addresses was preventing asteroids from spawning without setting UseKopernicusAsteroidSystem = Stock.  Stock setting is still needed for comets, of course, but Asteroids should now function and be customizable as intended.
 
 Known Bugs:
 
