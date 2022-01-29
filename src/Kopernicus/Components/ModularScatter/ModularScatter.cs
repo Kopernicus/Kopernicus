@@ -50,7 +50,6 @@ namespace Kopernicus.Components.ModularScatter
             get { return components; }
             set { components = value; }
         }
-        private int counter = 20;
         /// <summary>
         /// The celestial body we are attached to
         /// </summary>
@@ -209,61 +208,59 @@ namespace Kopernicus.Components.ModularScatter
 
         private void Update()
         {
-            counter--;
-            if (counter < 1)
+            // Reprocess the stock scatter models, since they are merged into
+            // one gigantic mesh per quad, but we want unique objects
+            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
+            for (Int32 i = 0; i < quads.Length; i++)
             {
-                counter = 20;
-                // Reprocess the stock scatter models, since they are merged into
-                // one gigantic mesh per quad, but we want unique objects
-                PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
-                for (Int32 i = 0; i < quads.Length; i++)
+                if (quads[i].mr && quads[i].mr.enabled)
                 {
-                    if (quads[i].mr && quads[i].mr.enabled)
-                    {
-                        quads[i].mr.enabled = false;
-                    }
+                    quads[i].mr.enabled = false;
+                }
 
-                    if (quads[i].obj.name.StartsWith("Kopernicus"))
-                    {
-                        continue;
-                    }
+                if (quads[i].obj.name.StartsWith("Kopernicus"))
+                {
+                    continue;
+                }
 
-                    if (!quads[i].obj.activeSelf)
-                    {
-                        continue;
-                    }
+                if (!quads[i].obj.activeSelf)
+                {
+                    continue;
+                }
 
-                    if (quads[i].obj.name == "Unass")
-                    {
-                        continue;
-                    }
+                if (quads[i].obj.name == "Unass")
+                {
+                    continue;
+                }
+                if ((scatterObjects.Count <= 5000) && (Vector3.Distance(quads[i].transform.position, Camera.allCameras[0].transform.position) <= 5000))
+                {
                     CreateScatterMeshes(quads[i]);
-                    quads[i].mesh.Clear();
                 }
+                quads[i].mesh.Clear();
+            }
 
 
-                for (Int32 i = 0; i < scatterObjects.Count; i++)
+            for (Int32 i = 0; i < scatterObjects.Count; i++)
+            {
+                if (scatterObjects[i])
                 {
-                    if (scatterObjects[i])
+                    if (scatterObjects[i].transform.parent.name == "Unass")
                     {
-                        if (scatterObjects[i].transform.parent.name == "Unass")
-                        {
-                            Destroy(scatterObjects[i]);
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        Destroy(scatterObjects[i]);
                     }
+                    else
+                    {
+                        continue;
+                    }
+                }
 
-                    scatterObjects.RemoveAt(i);
-                    i--;
-                }
-                // Update components
-                for (int i = 0; i < Components.Count; i++)
-                {
-                    Components[i].Update(this);
-                }
+                scatterObjects.RemoveAt(i);
+                i--;
+            }
+            // Update components
+            for (int i = 0; i < Components.Count; i++)
+            {
+                Components[i].Update(this);
             }
         }
 

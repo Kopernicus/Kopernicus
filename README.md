@@ -7,9 +7,11 @@ January 27th, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-72:
+New in this latest version release-73:
 
-1.)  A fix to the Kopernicus Standard Asteroid customizer has been applied.  The bug that it addresses was preventing asteroids from spawning without setting UseKopernicusAsteroidSystem = Stock.  Stock setting is still needed for comets, of course, but Asteroids should now function and be customizable as intended.
+1.)  Floating scatters have been fixed (for real this time)
+
+2.)  The system was rewritten to only consider quads close to the camera (7500m, so decent visibility).  This results in a pretty decent speedup.  100% scatters + Woomerang forest has 80+ FPS at 4K in stock on my Ryzen 5800X/RTX 3070 system, that seems playable.  1080p will of course do much better. :)
 
 Known Bugs:
 
