@@ -46,6 +46,10 @@ namespace Kopernicus.Configuration
 		public string UseKopernicusAsteroidSystem = "False";
 		[Persistent]
 		public int SolarRefreshRate = 1;
+		[Persistent]
+		public int ScatterCountLimit = 4250;
+		[Persistent]
+		public int ScatterDistanceLimit = 4250;
 		public UrlDir.UrlConfig[] baseConfigs;
 		public void loadMainSettings()
 		{

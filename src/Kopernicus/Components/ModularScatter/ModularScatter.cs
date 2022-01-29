@@ -232,9 +232,16 @@ namespace Kopernicus.Components.ModularScatter
                 {
                     continue;
                 }
-                if ((scatterObjects.Count <= 5000) && (Vector3.Distance(quads[i].transform.position, Camera.allCameras[0].transform.position) <= 5000))
+                if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (Vector3.Distance(quads[i].transform.position, Camera.allCameras[0].transform.position) <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit))
                 {
                     CreateScatterMeshes(quads[i]);
+                }
+                else if (FlightIntegrator.ActiveVesselFI.Vessel)
+                {
+                    if (Vector3.Distance(quads[i].transform.position, FlightIntegrator.ActiveVesselFI.Vessel.transform.position) < 60)
+                    {
+                        CreateScatterMeshes(quads[i]);
+                    }
                 }
                 quads[i].mesh.Clear();
             }

@@ -1,17 +1,19 @@
 ﻿Kopernicus
 ==============================
-January 27th, 2022
+January 29th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-73:
+New in this latest version release-74:
 
-1.)  Floating scatters have been fixed (for real this time)
+1.)  The new parameters the landscatter system uses to improve performance have now been made tweakable.  Most users will find the default settings fine, but should you care, the new settings offered are ScatterCountLimit (a number that limits the number of scatters in a scene) and ScatterDistanceLimit (a number that limits the visible distance at which scatters will be drawn).  Note setting these numbers too far apart may cause bad scatter patterning behavior.
 
-2.)  The system was rewritten to only consider quads close to the camera (7500m, so decent visibility).  This results in a pretty decent speedup.  100% scatters + Woomerang forest has 80+ FPS at 4K in stock on my Ryzen 5800X/RTX 3070 system, that seems playable.  1080p will of course do much better. :)
+2.)  The default landscatter parameters were optimized one final time in an effort to earn more FPS for minimal (if any) visual loss.  The new parameter defaults are 4250/4250.
+
+3.)  The scatters near the active vessel will now always be rendered, to avoid them despawning when the camera moves (and potentially killing kerbals if colliders are on).
 
 Known Bugs:
 

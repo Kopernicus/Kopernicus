@@ -1115,6 +1115,8 @@ namespace Kopernicus.RuntimeUtility
                 configFile.WriteLine("	EnforcedShaderLevel = 2");
                 configFile.WriteLine("	UseKopernicusAsteroidSystem = True");
                 configFile.WriteLine("	SolarRefreshRate = 1");
+                configFile.WriteLine("	ScatterCountLimit = 4250");
+                configFile.WriteLine("	ScatterDistanceLimit = 4250");
                 configFile.WriteLine("}");
                 configFile.Flush();
                 configFile.Close();
