@@ -56,9 +56,11 @@ namespace Kopernicus.RuntimeUtility
                 Debug.LogError("[Kopernicus] Not enough scenes");
                 return;
             }
-
-            logic.areas[0].SetActive(false);
-            logic.areas[1].SetActive(true);
+            if (Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene)
+            {
+                logic.areas[0].SetActive(false);
+                logic.areas[1].SetActive(true);
+            }
         }
 
         private const Single KERBIN_ROTATION_PERIOD = 21600f;

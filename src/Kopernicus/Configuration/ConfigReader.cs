@@ -43,13 +43,15 @@ namespace Kopernicus.Configuration
 		[Persistent]
 		public int EnforcedShaderLevel = 2;
 		[Persistent]
-		public string UseKopernicusAsteroidSystem = "False";
+		public string UseKopernicusAsteroidSystem = "true";
 		[Persistent]
 		public int SolarRefreshRate = 1;
 		[Persistent]
 		public int ScatterCountLimit = 4250;
 		[Persistent]
 		public int ScatterDistanceLimit = 4250;
+		[Persistent]
+		public bool DisableMainMenuMunScene = true;
 		public UrlDir.UrlConfig[] baseConfigs;
 		public void loadMainSettings()
 		{

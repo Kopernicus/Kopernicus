@@ -236,13 +236,6 @@ namespace Kopernicus.Components.ModularScatter
                 {
                     CreateScatterMeshes(quads[i]);
                 }
-                else if (FlightIntegrator.ActiveVesselFI.Vessel)
-                {
-                    if (Vector3.Distance(quads[i].transform.position, FlightIntegrator.ActiveVesselFI.Vessel.transform.position) < 60)
-                    {
-                        CreateScatterMeshes(quads[i]);
-                    }
-                }
                 quads[i].mesh.Clear();
             }
 
@@ -343,7 +336,7 @@ namespace Kopernicus.Components.ModularScatter
                 MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
                 renderer.sharedMaterial = quad.scatter.material;
                 renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
-                renderer.receiveShadows = quad.scatter.recieveShadows;
+                renderer.receiveShadows = quad.scatter.castShadows;
                 scatterObject.layer = GameLayers.LOCAL_SPACE;
                 scatterObjects.Add(scatterObject);
             }

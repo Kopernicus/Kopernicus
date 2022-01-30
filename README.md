@@ -1,19 +1,19 @@
 ﻿Kopernicus
 ==============================
-January 29th, 2022
+January 30th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-74:
+New in this latest version release-75:
 
-1.)  The new parameters the landscatter system uses to improve performance have now been made tweakable.  Most users will find the default settings fine, but should you care, the new settings offered are ScatterCountLimit (a number that limits the number of scatters in a scene) and ScatterDistanceLimit (a number that limits the visible distance at which scatters will be drawn).  Note setting these numbers too far apart may cause bad scatter patterning behavior.
+1.)  A new Kopernicus_Config.cfg parameter was added, "DisableMainMenuMunScene," boolean, defaults to true.  Can be toggled to false if and only if you have a Mun in your system.  It will restore the Mun scene in the main menu.
 
-2.)  The default landscatter parameters were optimized one final time in an effort to earn more FPS for minimal (if any) visual loss.  The new parameter defaults are 4250/4250.
+2.)  Fixed harmless but annoying nullref ksp.log spam introduced by some leftover debug logging code.
 
-3.)  The scatters near the active vessel will now always be rendered, to avoid them despawning when the camera moves (and potentially killing kerbals if colliders are on).
+3.)  Attempted to fix a reported bug where shadows on scatters could not be disabled.
 
 Known Bugs:
 
