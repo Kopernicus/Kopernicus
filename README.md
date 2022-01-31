@@ -7,13 +7,9 @@ January 30th, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-75:
+New in this latest version release-76:
 
-1.)  A new Kopernicus_Config.cfg parameter was added, "DisableMainMenuMunScene," boolean, defaults to true.  Can be toggled to false if and only if you have a Mun in your system.  It will restore the Mun scene in the main menu.
-
-2.)  Fixed harmless but annoying nullref ksp.log spam introduced by some leftover debug logging code.
-
-3.)  Attempted to fix a reported bug where shadows on scatters could not be disabled.
+1.)  A new shadow manager has been implemented to try to calculate the best shadow settings for each scene in stock mode.  This won't affect scatterer users, but may greatly help our stock players with the quality issues we've had for some time.
 
 Known Bugs:
 

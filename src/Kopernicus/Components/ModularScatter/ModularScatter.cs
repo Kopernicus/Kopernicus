@@ -336,7 +336,7 @@ namespace Kopernicus.Components.ModularScatter
                 MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
                 renderer.sharedMaterial = quad.scatter.material;
                 renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
-                renderer.receiveShadows = quad.scatter.castShadows;
+                renderer.receiveShadows = quad.scatter.recieveShadows;
                 scatterObject.layer = GameLayers.LOCAL_SPACE;
                 scatterObjects.Add(scatterObject);
             }

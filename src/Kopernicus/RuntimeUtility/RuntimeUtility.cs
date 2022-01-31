@@ -153,59 +153,71 @@ namespace Kopernicus.RuntimeUtility
             ApplyOrbitPatches();
             ApplyStarPatchSun();
             ApplyFlagFixes();
-            FixShadows();
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
         }
-        private void FixShadows()
+        private void FixShadows(GameScenes level)
         {
-            if ((Versioning.version_minor >= 9) && (SystemInfo.graphicsDeviceVersion.Contains("Direct3D 11")))
+            switch (level)
             {
-                QualitySettings.shadowProjection = ShadowProjection.StableFit;
-                Light[] lights;
-                lights = (Light[])UnityEngine.Object.FindObjectsOfType(typeof(Light));
-                foreach (Light light in lights)
-                {
-                    if (light.gameObject.name == "SunLight")
-                    {
-                        light.shadowCustomResolution = 8192;
-                    }
-                    else if (light.gameObject.name == "Scaledspace SunLight")
-                    {
-                        light.shadowCustomResolution = 8192;
-                    }
-                    else if (light.gameObject.name.Contains("PlanetLight") || light.gameObject.name.Contains("Directional light"))
-                    {
-                        light.shadowCustomResolution = 8192;
-                    }
-                }
+                case GameScenes.MAINMENU:
+                    this.ApplyShadowSettings(DynamicShadowSettings.Instance.MainMenu);
+                    return;
+                case GameScenes.SPACECENTER:
+                    this.ApplyShadowSettings(DynamicShadowSettings.Instance.KSC);
+                    return;
+                case GameScenes.EDITOR:
+                    this.ApplyShadowSettings(DynamicShadowSettings.Instance.Editors);
+                    return;
+                case GameScenes.FLIGHT:
+                    this.ApplyShadowSettings(DynamicShadowSettings.Instance.Flight);
+                    return;
+                case GameScenes.TRACKSTATION:
+                    this.ApplyShadowSettings(DynamicShadowSettings.Instance.TrackingStation);
+                    return;
             }
-            else
+            this.ApplyShadowSettings(DynamicShadowSettings.Instance.Default);
+
+        }
+        public void ApplyShadowSettings(DynamicShadowSettings.SceneShadowSettings sss)
+        {
+            switch (QualitySettings.GetQualityLevel())
             {
-                QualitySettings.shadowProjection = ShadowProjection.CloseFit;
-                Light[] lights;
-                lights = (Light[])UnityEngine.Object.FindObjectsOfType(typeof(Light));
-                foreach (Light light in lights)
-                {
-                    if (light.gameObject.name == "SunLight")
-                    {
-                        light.shadowCustomResolution = 8192;
-                    }
-                    else if (light.gameObject.name == "Scaledspace SunLight")
-                    {
-                        light.shadowCustomResolution = 8192;
-                    }
-                    else if (light.gameObject.name.Contains("PlanetLight") || light.gameObject.name.Contains("Directional light"))
-                    {
-                        light.shadowCustomResolution = 8192;
-                    }
-                }
+                case 0:
+                    QualitySettings.shadowProjection = sss.shadowProjection;
+                    return;
+                case 1:
+                    QualitySettings.shadowProjection = sss.shadowProjection;
+                    return;
+                case 2:
+                    QualitySettings.shadowDistance = sss.distanceSimple;
+                    QualitySettings.shadowCascades = 2;
+                    QualitySettings.shadowCascade2Split = sss.cascadeSimple;
+                    QualitySettings.shadowProjection = sss.shadowProjection;
+                    return;
+                case 3:
+                    QualitySettings.shadowDistance = sss.distanceGood;
+                    QualitySettings.shadowCascades = 4;
+                    QualitySettings.shadowCascade4Split = sss.cascadeGood;
+                    QualitySettings.shadowProjection = sss.shadowProjection;
+                    return;
+                case 4:
+                    QualitySettings.shadowDistance = sss.distanceBeautiful;
+                    QualitySettings.shadowCascades = 4;
+                    QualitySettings.shadowCascade4Split = sss.cascadeBeautiful;
+                    QualitySettings.shadowProjection = sss.shadowProjection;
+                    return;
+                case 5:
+                    QualitySettings.shadowDistance = sss.distanceFantastic;
+                    QualitySettings.shadowCascades = 4;
+                    QualitySettings.shadowCascade4Split = sss.cascadeFantastic;
+                    QualitySettings.shadowProjection = sss.shadowProjection;
+                    return;
             }
         }
-
         // Stuff
         private void LateUpdate()
         {
@@ -234,7 +246,7 @@ namespace Kopernicus.RuntimeUtility
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
-            FixShadows();
+            FixShadows(scene);
             previousScene = HighLogic.LoadedScene;
 
         }
