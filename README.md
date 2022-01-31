@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-January 30th, 2022
+January 31st, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-76:
+New in this latest version release-77:
 
-1.)  A new shadow manager has been implemented to try to calculate the best shadow settings for each scene in stock mode.  This won't affect scatterer users, but may greatly help our stock players with the quality issues we've had for some time.
+1.)  A bugfix for a critical visual bug in the new shadow manager, in which it was conflicting with KSP's builtin shadow system (oops!), creating visual artifacts.
 
 Known Bugs:
 
