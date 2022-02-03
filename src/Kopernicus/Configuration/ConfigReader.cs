@@ -43,7 +43,7 @@ namespace Kopernicus.Configuration
 		[Persistent]
 		public int EnforcedShaderLevel = 2;
 		[Persistent]
-		public string UseKopernicusAsteroidSystem = "true";
+		public string UseKopernicusAsteroidSystem = "True";
 		[Persistent]
 		public int SolarRefreshRate = 1;
 		[Persistent]

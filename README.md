@@ -1,21 +1,23 @@
 ﻿Kopernicus
 ==============================
-January 31st, 2022
+February 3rd, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-77:
+New in this latest version release-78:
 
-1.)  A bugfix for a critical visual bug in the new shadow manager, in which it was conflicting with KSP's builtin shadow system (oops!), creating visual artifacts.
+1.)  Comments have been introduced to Kopernicus_Config.cfg, saying in explicit detail what every option does.  The config files further more now autoupdate, adding new options, removing outdated ones, and preserving the old configs while doing so.  Snazzy!
+
+2.)  A few lighting issues in 1.8.x caused by bad camera selection have been patched.  (Dual camera still is the norm there).
+
+3.)  The readme doc was updated to remove old outdated entries on some fixed bugs.  It furthermore had bad guidance on how to deal with those bugs, which has also been removed.
 
 Known Bugs:
 
-1.) The ingame shadows without an external mod like scatterer can be glitchy.  It is advisable to use an external mod for best experience at the moment.
-
-2.) Land scatters can appear at incorrect elevations if you don't use Kopernicus option "UsePureStockSCatters," which sadly, only works on pure stock systems.
+1.) Not exactly a bug, but worth mentioning:  The Kopernicus_Config.cfg file is rewritten when the game exits.  This means any edits made while playing the game will not be preserved.  Edit the file only with the game exited, please.
 
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
