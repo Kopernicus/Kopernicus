@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-February 9th, 2022
+February 10th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-79:
+New in this latest version release-80:
 
-1.)  Major updates to the "KopernicusWatchdog" optional config-based bugfix for the "sinking on distant bodies" issue.  If you are using this, please replace the cfg.  This new version works in far more scenarios, including many situations not around the stock sun.  It's also reasonably compatible, though some mods may still need to be updated to be aware of this weird fake celestial tech it uses.
+1.)  More situational edge-cases covered by the KopernicusWatchdog config mode.  In particular, multistar systems and systems with deep trees (moons of moons) are now much better supported.
 
 Known Bugs:
 
