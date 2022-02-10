@@ -166,8 +166,8 @@ namespace Kopernicus.RuntimeUtility
         // Stuff
         private void LateUpdate()
         {
-            FixZooming();
             UpdateMockBodyColliderFix();
+            FixZooming();
             ApplyRnDPatches();
             Force3DRendering();
             UpdatePresetNames();
@@ -520,20 +520,36 @@ namespace Kopernicus.RuntimeUtility
             {
                 try
                 {
-                    if (FlightGlobals.currentMainBody != null)
+                    if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                     {
-                        CelestialBody rootSun = Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, "Sun").celestialBody;
-                        //mockBody.orbit.SetOrbit(0d, 0d, 50000000000000000, 0, 0, 0, 0, Planetarium.fetch.Sun);
-                        float distanceToRoot = Vector3.Distance(FlightGlobals.ActiveVessel.GetWorldPos3D(), FlightGlobals.currentMainBody.position);
-                        mockBody.orbit.SetOrbit(0d, 0d, distanceToRoot * 2, 0, 0, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, 0, Planetarium.fetch.Sun);
-                    }
-                    else if (mockBody.orbit != null)
-                    {
-                        mockBody.orbit.SetOrbit(0d, 0d, 50000000000000000, 0, 0, 0, 0, Planetarium.fetch.Sun);
+                        if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
+                        {
+                            mockBody.referenceBody.orbitingBodies.Remove(mockBody);
+                        }
+                        float distanceToRoot = Vector3.Distance(FlightGlobals.ActiveVessel.GetWorldPos3D(), FlightGlobals.currentMainBody.referenceBody.position);
+                        mockBody.orbit.SetOrbit(FlightGlobals.currentMainBody.orbit.inclination, FlightGlobals.currentMainBody.orbit.eccentricity, distanceToRoot * 1.001, FlightGlobals.currentMainBody.orbit.LAN, FlightGlobals.currentMainBody.orbit.argumentOfPeriapsis, FlightGlobals.currentMainBody.orbit.meanAnomalyAtEpoch, 0, FlightGlobals.currentMainBody.referenceBody);
+                        if (!FlightGlobals.currentMainBody.referenceBody.orbitingBodies.Contains(mockBody))
+                        {
+                            FlightGlobals.currentMainBody.referenceBody.orbitingBodies.Add(mockBody);
+                        }
                     }
                 }
                 catch
+                { }
+                mockBody.enabled = false;
+                foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
                 {
+                    renderer.enabled = false;
+                }
+
+                foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
+                {
+                    collider.enabled = true;
+                }
+
+                foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
+                {
+                    fader.enabled = false;
                 }
             }
         }

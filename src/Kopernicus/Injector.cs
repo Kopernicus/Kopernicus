@@ -186,7 +186,7 @@ namespace Kopernicus
                     SpaceCenter.Instance.Start();
                 }
 
-                //Catch the watchdog and remove it from list
+                //Catch the watchdog and remove it from display
                 CelestialBody mockBody = null; 
                 foreach (CelestialBody body in PSystemManager.Instance.localBodies)
                 {
@@ -208,18 +208,12 @@ namespace Kopernicus
                         {
                             fader.enabled = false;
                         }
+                        mockBody.orbitDriver.drawOrbit = false;
+                        mockBody.orbitDriver.enabled = false;
                     }
                 }
                 if (mockBody != null)
                 {
-                    if (PSystemManager.Instance.localBodies.Contains(mockBody))
-                    {
-                        PSystemManager.Instance.localBodies.Remove(mockBody);
-                    }
-                    if (FlightGlobals.fetch.bodies.Contains(mockBody))
-                    {
-                        FlightGlobals.fetch.bodies.Remove(mockBody);
-                    }
                     mockBody.Mass = 0;
                     RuntimeUtility.RuntimeUtility.mockBody = mockBody;
                 }
