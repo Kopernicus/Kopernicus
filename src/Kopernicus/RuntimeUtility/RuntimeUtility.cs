@@ -524,10 +524,10 @@ namespace Kopernicus.RuntimeUtility
                     {
                         mockBody.referenceBody.orbitingBodies.Remove(mockBody);
                     }
-                    mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.0001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody));
-                    if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Contains(mockBody))
+                    mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody);
+                    if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Contains(mockBody))
                     {
-                        KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Add(mockBody);
+                        KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Add(mockBody);
                     }
                 }
                 mockBody.enabled = false;

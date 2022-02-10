@@ -7,9 +7,9 @@ February 10th, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-80:
+New in this latest version release-81:
 
-1.)  More situational edge-cases covered by the KopernicusWatchdog config mode.  In particular, multistar systems and systems with deep trees (moons of moons) are now much better supported.
+1.)  Yet more situational edge-cases covered by the KopernicusWatchdog config mode.  In particular, multistar systems and systems with deep trees (moons of moons) are now much better supported.
 
 Known Bugs:
 
