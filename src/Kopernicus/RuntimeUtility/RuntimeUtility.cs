@@ -518,7 +518,19 @@ namespace Kopernicus.RuntimeUtility
         {
             if ((mockBody != null) && (FlightGlobals.currentMainBody))
             {
-                if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+                if (!FlightGlobals.currentMainBody.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+                {
+                    if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
+                    {
+                        mockBody.referenceBody.orbitingBodies.Remove(mockBody);
+                    }
+                    mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody);
+                    if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Contains(mockBody))
+                    {
+                        KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Add(mockBody);
+                    }
+                }
+                else if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                 {
                     if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
                     {
