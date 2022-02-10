@@ -518,7 +518,7 @@ namespace Kopernicus.RuntimeUtility
         {
             if ((mockBody != null) && (FlightGlobals.currentMainBody))
             {
-                if (!FlightGlobals.currentMainBody.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+                if (FlightGlobals.currentMainBody.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                 {
                     if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
                     {
