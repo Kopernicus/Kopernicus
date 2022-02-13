@@ -53,6 +53,7 @@ namespace Kopernicus.RuntimeUtility
     public class RuntimeUtility : MonoBehaviour
     {
         public static CelestialBody mockBody = null;
+
         //Plugin Path finding logic
         private static string pluginPath;
         public static string PluginPath
@@ -184,7 +185,9 @@ namespace Kopernicus.RuntimeUtility
         }
         // Run patches every time a new scene was loaded
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
+#pragma warning disable UNT0006 // Incorrect message signature
         private void OnLevelWasLoaded(GameScenes scene)
+#pragma warning restore UNT0006 // Incorrect message signature
         {
             PatchFlightIntegrator();
             FixCameras();
@@ -193,7 +196,6 @@ namespace Kopernicus.RuntimeUtility
             PatchContracts();
             //FixShadows(HighLogic.LoadedScene);
             previousScene = HighLogic.LoadedScene;
-
         }
 
         // Transforms body references in the save games
@@ -1070,23 +1072,28 @@ namespace Kopernicus.RuntimeUtility
 
         private void FixFlags()
         {
-            PQSCity KSC = FlightGlobals
-                .GetHomeBody()?
-                .pqsController?
-                .GetComponentsInChildren<PQSCity>(true)?
-                .FirstOrDefault(p => p?.name == "KSC");
-            SkinnedMeshRenderer[] flags = KSC?
-                .GetComponentsInChildren<SkinnedMeshRenderer>(true)?
-                .Where(smr => smr?.name == "Flag")?
-                .ToArray();
-            for (int i = 0; i < flags?.Length; i++)
+            if (FlightGlobals.GetHomeBody() != null && FlightGlobals.GetHomeBody().pqsController != null)
             {
-                flags[i].rootBone = flags[i]?
-                    .rootBone?
-                    .parent?
-                    .gameObject?
-                    .GetChild("bn_upper_flag_a01")?
-                    .transform;
+                PQSCity KSC = FlightGlobals
+                .GetHomeBody()
+                .pqsController
+                .GetComponentsInChildren<PQSCity>(true)?
+                .FirstOrDefault(p => p.name == "KSC");
+
+                SkinnedMeshRenderer[] flags = KSC
+                .GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                .Where(smr => smr.name == "Flag")?
+                .ToArray();
+
+                flags.ToList().ForEach(flag =>
+                {
+                    flag.rootBone = flag
+                        .rootBone
+                        .parent
+                        .gameObject
+                        .GetChild("bn_upper_flag_a01")
+                        .transform;
+                });
             }
         }
 

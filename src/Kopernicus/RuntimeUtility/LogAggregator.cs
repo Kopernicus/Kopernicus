@@ -363,6 +363,7 @@ namespace System.IO.Compression
                 throw new InvalidOperationException("Stream cannot seek");
             }
 
+            ZipStorer activeZip = null;
             using (ZipStorer zip = new ZipStorer
             {
                 ZipFileStream = _stream,
@@ -374,11 +375,12 @@ namespace System.IO.Compression
 
                 if (zip.ReadFileInfo())
                 {
-                    return zip;
+                    activeZip = zip;
                 }
-
-                throw new InvalidDataException();
             }
+            if (activeZip != null) return activeZip;
+            else activeZip.Dispose();
+            throw new InvalidDataException();
         }
         /// <summary>
         /// Add full contents of a file into the Zip storage
@@ -627,10 +629,10 @@ namespace System.IO.Compression
             }
             _stream.Flush();
 
-            if (_zfe.Method == Compression.Deflate)
-            {
-                inStream.Dispose();
-            }
+            //if (_zfe.Method == Compression.Deflate)
+            //{
+            inStream.Dispose();
+            //}
             return true;
         }
 

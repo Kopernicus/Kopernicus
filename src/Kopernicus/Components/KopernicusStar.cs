@@ -518,7 +518,8 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalStar(CelestialBody body)
         {
-            while (body?.orbit?.referenceBody != null)
+            if (body is null) throw new ArgumentNullException(nameof(body));
+            while (body.orbit.referenceBody != null)
             {
                 if (body.isStar)
                 {
@@ -550,7 +551,8 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalPlanet(CelestialBody body)
         {
-            while (body?.orbit?.referenceBody != null)
+            if (body is null) throw new ArgumentNullException(nameof(body));
+            while (body.orbit.referenceBody != null)
             {
                 if (body.orbit.referenceBody.isStar)
                 {

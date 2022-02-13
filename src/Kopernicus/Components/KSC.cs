@@ -369,10 +369,8 @@ namespace Kopernicus.Components
             GameObject scenery = (GameObject.Find("VABscenery") != null)
                 ? GameObject.Find("VABscenery")
                 : GameObject.Find("SPHscenery");
-            Material material = scenery?
-                .GetChild("ksc_terrain")?
-                .GetComponent<Renderer>()?
-                .sharedMaterial;
+            Material material = null;
+            if (scenery != null) material = scenery.GetChild("ksc_terrain").GetComponent<Renderer>().sharedMaterial;
 
             if (material == null)
             {

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -27,33 +27,33 @@ namespace Kopernicus.Configuration.Enumerations
 {
     // PQS Material Type Enum
 #if (!KSP_VERSION_1_8)
-	public enum NewShaderSurfaceMaterialType
-	{
-		// pre-1.8 Shaders
-		Vacuum = 0,
-		Basic = 1,
-		Main = 2,
-		Optimized = 4,
-		Extra = 8,
+    public enum NewShaderSurfaceMaterialType
+    {
+        // pre-1.8 Shaders
+        Vacuum = 0,
+        Basic = 1,
+        Main = 2,
+        Optimized = 4,
+        Extra = 8,
 
-		// 1.8 Shaders (Kerbin, Terrain Quality Low - High)
-		MainFastBlend = 16,
-		OptimizedFastBlend = 32,
-		Triplanar = 64,
+        // 1.8 Shaders (Kerbin, Terrain Quality Low - High)
+        MainFastBlend = 16,
+        OptimizedFastBlend = 32,
+        Triplanar = 64,
 
-		// 1.9 Atlas Shader (Kerbin, Terrain Quality Ultra)
-		TriplanarAtlas = 128,
+        // 1.9 Atlas Shader (Kerbin, Terrain Quality Ultra)
+        TriplanarAtlas = 128,
 
-		// Old names, kept around for compatibility
-		AtmosphericBasic = 1,
-		AtmosphericMain = 2,
-		AtmosphericOptimized = 4,
-		AtmosphericExtra = 8,
-		AtmosphericMainFastBlend = 16,
-		AtmosphericOptimizedFastBlend = 32,
-		AtmosphericTriplanarZoomRotation = 64,
-		AtmosphericTriplanarZoomRotationTextureArray = 128,
-	}
+        // Old names, kept around for compatibility
+        AtmosphericBasic = 1,
+        AtmosphericMain = 2,
+        AtmosphericOptimized = 4,
+        AtmosphericExtra = 8,
+        AtmosphericMainFastBlend = 16,
+        AtmosphericOptimizedFastBlend = 32,
+        AtmosphericTriplanarZoomRotation = 64,
+        AtmosphericTriplanarZoomRotationTextureArray = 128,
+    }
 #endif
     public enum SurfaceMaterialType
     {

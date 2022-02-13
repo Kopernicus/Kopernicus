@@ -57,14 +57,11 @@ namespace Kopernicus
         {
             get
             {
-                if (_defaultLogger != null)
+                if (_defaultLogger == null)
                 {
-                    return _defaultLogger;
+                    _defaultLogger = new Logger(typeof(Logger).Assembly.GetName().Name);
+                    Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
                 }
-
-                _defaultLogger?.Dispose();
-                _defaultLogger = new Logger(typeof(Logger).Assembly.GetName().Name);
-                Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
                 return _defaultLogger;
             }
         }
@@ -197,7 +194,6 @@ namespace Kopernicus
 
             _disposed = true;
             _loggerStream?.Dispose();
-            GC.SuppressFinalize(this);
         }
 
         private void ThrowIfDisposed()
@@ -210,10 +206,10 @@ namespace Kopernicus
 
 
         // Cleanup the logger
-        ~Logger()
-        {
-            Close();
-        }
+        //~Logger()
+        //{
+        //    Close();
+        //}
 
         // Initialize the Logger (i.e. delete old logs) 
         static Logger()

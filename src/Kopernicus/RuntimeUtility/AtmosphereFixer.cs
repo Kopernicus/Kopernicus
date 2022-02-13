@@ -136,7 +136,8 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
+            if ((FlightGlobals.GetHomeBody() != null)
+                && (FlightGlobals.GetHomeBody().atmosphericAmbientColor != null))
             {
                 RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
             }

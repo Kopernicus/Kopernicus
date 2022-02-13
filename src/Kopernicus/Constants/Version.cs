@@ -66,7 +66,12 @@ namespace Kopernicus.Constants
         private static String AssemblyHandle()
         {
             String filePath = Assembly.GetCallingAssembly().Location;
-            return Convert.ToBase64String(SHA1.Create().ComputeHash(File.ReadAllBytes(filePath)));
+            string hash;
+            using (var sha1 = SHA1.Create())
+            {
+                hash = Convert.ToBase64String(sha1.ComputeHash(File.ReadAllBytes(filePath)));
+            }
+            return hash;
         }
 
         // Returns the time when the assembly was built
