@@ -286,7 +286,7 @@ namespace Kopernicus.UI
 
                     // Set the Pixels
                     heightMapValues[y * options.Resolution + x] =
-                        new Color((Single) height, (Single) height, (Single) height);
+                        new Color((Single)height, (Single)height, (Single)height);
                 }
 
                 yield return null;

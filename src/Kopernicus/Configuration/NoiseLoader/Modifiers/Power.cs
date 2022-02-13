@@ -35,11 +35,11 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Power : NoiseLoader<LibNoise.Modifiers.Power>
     {
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Base", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader BaseModule { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Power", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader PowerModule { get; set; }
 

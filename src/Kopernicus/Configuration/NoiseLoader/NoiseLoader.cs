@@ -51,7 +51,7 @@ namespace Kopernicus.Configuration.NoiseLoader
         IModule INoiseLoader.Noise
         {
             get { return Noise; }
-            set { Noise = (T) value; }
+            set { Noise = (T)value; }
         }
 
         [SuppressMessage("ReSharper", "UnusedParameter.Global")]
@@ -78,7 +78,7 @@ namespace Kopernicus.Configuration.NoiseLoader
 
         public void Create(IModule value)
         {
-            Create((T) value);
+            Create((T)value);
         }
     }
 }

@@ -96,7 +96,7 @@ namespace Kopernicus.Configuration.ModLoader
                 }
                 set
                 {
-                    Value.objects = new[] {value.Value};
+                    Value.objects = new[] { value.Value };
                     Value.renderers = value.Value.GetComponentsInChildren<Renderer>().Select(r => r.gameObject)
                         .ToArray();
                 }

@@ -103,7 +103,7 @@ namespace Kopernicus.Components.MaterialWrapper
         public NormalDiffuse(Material material) : base(material)
         {
             // Throw exception if this material was not the proper material
-            if ((material.shader.name != Properties.Shader.name) && (material.shader.name != Properties.ALT_SHADER_NAME)  && (!(material.shader.name.Contains(Properties.SHADER_NAME_ABRV))))
+            if ((material.shader.name != Properties.Shader.name) && (material.shader.name != Properties.ALT_SHADER_NAME) && (!(material.shader.name.Contains(Properties.SHADER_NAME_ABRV))))
             {
                 Debug.LogWarning("SHADE:" + material.shader.name);
                 throw new InvalidOperationException("Type Mismatch: Legacy Shaders/Diffuse shader required");

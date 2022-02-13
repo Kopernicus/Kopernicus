@@ -36,7 +36,7 @@ using UnityEngine;
 public static class UBI
 {
     private static readonly Regex Parser = new Regex(@"^.+/.+$");
-    
+
     /// <summary>
     /// Returns the name of the first found body implementing a UBI
     /// </summary>
@@ -75,12 +75,12 @@ public static class UBI
         List<CelestialBody> bodies = new List<CelestialBody>();
 
         // Check if the UBI is valid
-        #if LOG_FALLBACK_NAME
+#if LOG_FALLBACK_NAME
         if (String.IsNullOrEmpty(ubi) || !Parser.IsMatch(ubi))
         {
             Debug.Log("[UBI] Encountered invalid UBI \"" + ubi + "\". Falling back to internal name.");
         }
-        #endif
+#endif
 
         for (Int32 i = 0; i < localBodies.Length; i++)
         {
@@ -144,13 +144,13 @@ public static class UBI
                 }
             }
         }
-        
+
         // Check if the UBI is already assigned
         if (GetBodies(ubi, localBodies).Contains(body))
         {
             throw new InvalidOperationException("The specified UBI was already assigned to this body!");
         }
-        
+
         // Check if the body already has a primary UBI
         if (FetchUBIs(body).All(u => u.IsAbstract) && isAbstract)
         {
@@ -205,7 +205,7 @@ public static class UBI
     public static String[] GetUBIs(CelestialBody body)
     {
         List<String> idents = FetchUBIs(body).OrderBy(u => u.IsAbstract ? 1 : 0).Select(u => u.UBI).ToList();
-        
+
         // Add the internal name at the end for compatibility reasons
         idents.Add(body.transform.name);
 
@@ -230,13 +230,16 @@ public static class UBI
             String[] split = ident.name.Split(';');
             idents.Add(new UBIIdent
             {
-                System = split[0], Body = split[1], IsAbstract = Boolean.Parse(split[2]), Object = ident.gameObject
+                System = split[0],
+                Body = split[1],
+                IsAbstract = Boolean.Parse(split[2]),
+                Object = ident.gameObject
             });
         }
 
         return idents.ToArray();
     }
-    
+
     private struct UBIIdent
     {
         public String UBI
@@ -248,12 +251,12 @@ public static class UBI
         /// The name of the system the body is assigned to
         /// </summary>
         public String System;
-        
+
         /// <summary>
         /// The name of the body
         /// </summary>
         public String Body;
-        
+
         /// <summary>
         /// Whether this UBI is an abstract one. When this is set to false, the UBI must be unique in the loaded
         /// solar system, preferably unique in all planets ever made. If it is set to true the body implements the

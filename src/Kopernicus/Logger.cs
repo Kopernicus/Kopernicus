@@ -39,7 +39,7 @@ namespace Kopernicus
         // Logger output path
         private static String LogDirectory
         {
-            get { return KSPUtil.ApplicationRootPath + "Logs/" + typeof (Logger).Assembly.GetName().Name + "/"; }
+            get { return KSPUtil.ApplicationRootPath + "Logs/" + typeof(Logger).Assembly.GetName().Name + "/"; }
         }
 
         // ==> Implement own version
@@ -59,7 +59,7 @@ namespace Kopernicus
                 {
                     return _defaultLogger;
                 }
-                
+
                 _defaultLogger = new Logger(typeof(Logger).Assembly.GetName().Name);
                 Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
                 return _defaultLogger;
@@ -203,7 +203,7 @@ namespace Kopernicus
                 // Clear out the old log files
                 Directory.Delete(LogDirectory, true);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Debug.LogException(e);
                 return;

@@ -102,7 +102,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                     return new MuParser(obj);
                 }
-                set { Value.objects = new[] {value.Value}; }
+                set { Value.objects = new[] { value.Value }; }
             }
 
             // scale
@@ -138,7 +138,7 @@ namespace Kopernicus.Configuration.ModLoader
             public LodRangeLoader()
             {
                 // Initialize the LOD range
-                Value = new PQSCity2.LodObject {objects = new GameObject[0]};
+                Value = new PQSCity2.LodObject { objects = new GameObject[0] };
             }
 
             public LodRangeLoader(PQSCity2.LodObject c)

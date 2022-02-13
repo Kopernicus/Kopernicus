@@ -135,41 +135,41 @@ namespace Kopernicus.OnDemand
                 _name = tex.name;
                 _width = tex.width;
                 _height = tex.height;
-                _bpp = (Int32) depth;
+                _bpp = (Int32)depth;
                 _rowWidth = _width * _bpp;
                 switch (depth)
                 {
                     case MapDepth.Greyscale:
-                    {
-                        if (tex.format != TextureFormat.Alpha8)
                         {
-                            CreateGreyscaleFromRgb(tex);
-                        }
-                        else
-                        {
-                            CreateGreyscaleFromAlpha(tex);
-                        }
+                            if (tex.format != TextureFormat.Alpha8)
+                            {
+                                CreateGreyscaleFromRgb(tex);
+                            }
+                            else
+                            {
+                                CreateGreyscaleFromAlpha(tex);
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
 
                     case MapDepth.HeightAlpha:
-                    {
-                        CreateHeightAlpha(tex);
-                        break;
-                    }
+                        {
+                            CreateHeightAlpha(tex);
+                            break;
+                        }
 
                     case MapDepth.RGB:
-                    {
-                        CreateRgb(tex);
-                        break;
-                    }
+                        {
+                            CreateRgb(tex);
+                            break;
+                        }
 
                     case MapDepth.RGBA:
-                    {
-                        CreateRgba(tex);
-                        break;
-                    }
+                        {
+                            CreateRgba(tex);
+                            break;
+                        }
 
                     default:
                         throw new ArgumentOutOfRangeException(nameof(depth), depth, null);
@@ -277,7 +277,7 @@ namespace Kopernicus.OnDemand
 
             if (!OnDemandStorage.UseManualMemoryManagement)
             {
-                return (Byte) (Data.GetPixel(x, y).r * Float2Byte);
+                return (Byte)(Data.GetPixel(x, y).r * Float2Byte);
             }
 
             if (x < 0)
@@ -608,7 +608,7 @@ namespace Kopernicus.OnDemand
                 value = pixel.a;
             }
 
-            return value / (Int32) Depth;
+            return value / (Int32)Depth;
         }
 
         // GetPixelHeightAlpha - Double
@@ -736,7 +736,7 @@ namespace Kopernicus.OnDemand
                 return Image[PixelIndex(x, y)];
             }
 
-            return (Byte) (Float2Byte * Data.GetPixel(x, y).r);
+            return (Byte)(Float2Byte * Data.GetPixel(x, y).r);
         }
 
         // GreyFloat
@@ -805,13 +805,13 @@ namespace Kopernicus.OnDemand
             switch (Depth)
             {
                 case MapDepth.Greyscale:
-                    return new[] {(Byte) c.r};
+                    return new[] { (Byte)c.r };
                 case MapDepth.HeightAlpha:
-                    return new[] {(Byte) c.r, (Byte) c.a};
+                    return new[] { (Byte)c.r, (Byte)c.a };
                 case MapDepth.RGB:
-                    return new[] {(Byte) c.r, (Byte) c.g, (Byte) c.b};
+                    return new[] { (Byte)c.r, (Byte)c.g, (Byte)c.b };
                 default:
-                    return new[] {(Byte) c.r, (Byte) c.g, (Byte) c.b, (Byte) c.a};
+                    return new[] { (Byte)c.r, (Byte)c.g, (Byte)c.b, (Byte)c.a };
             }
         }
 
@@ -841,7 +841,7 @@ namespace Kopernicus.OnDemand
                 Color32[] color32 = new Color32[Size];
                 for (Int32 i = 0; i < Size; i++)
                 {
-                    val = (Byte) ((Image[i] & filter) == 0 ? 0 : 255);
+                    val = (Byte)((Image[i] & filter) == 0 ? 0 : 255);
                     color32[i] = new Color32(val, val, val, 255);
                 }
 

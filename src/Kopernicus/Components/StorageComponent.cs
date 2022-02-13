@@ -41,7 +41,7 @@ namespace Kopernicus.Components
         /// The data stored by the component
         /// </summary>
         [SerializeField]
-        private Dictionary<String, Object> data = new Dictionary<String, Object>();
+        private readonly Dictionary<String, Object> data = new Dictionary<String, Object>();
 
         /// <summary>
         /// Gets data from the storage
@@ -50,7 +50,7 @@ namespace Kopernicus.Components
         {
             if (data.ContainsKey(id))
             {
-                return (T) data[id];
+                return (T)data[id];
             }
 
             throw new IndexOutOfRangeException();
@@ -84,7 +84,7 @@ namespace Kopernicus.Components
         /// </summary>
         public void Remove(String id)
         {
-            if(data.ContainsKey(id))
+            if (data.ContainsKey(id))
             {
                 data.Remove(id);
             }

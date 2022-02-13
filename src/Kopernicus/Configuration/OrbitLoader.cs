@@ -238,7 +238,7 @@ namespace Kopernicus.Configuration
                 }
 
                 OrbitRendererData data = PSystemManager.OrbitRendererDataCache[Value];
-                return new List<Single> {data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio};
+                return new List<Single> { data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio };
             }
             set
             {

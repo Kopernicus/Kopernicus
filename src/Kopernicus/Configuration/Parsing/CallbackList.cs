@@ -70,8 +70,8 @@ namespace Kopernicus.Configuration.Parsing
 
         Int32 IList.Add(Object value)
         {
-            Add((T) value);
-            return IndexOf((T) value);
+            Add((T)value);
+            return IndexOf((T)value);
         }
 
         public void Clear()
@@ -91,22 +91,22 @@ namespace Kopernicus.Configuration.Parsing
 
         Boolean IList.Contains(Object value)
         {
-            return Contains((T) value);
+            return Contains((T)value);
         }
 
         Int32 IList.IndexOf(Object value)
         {
-            return IndexOf((T) value);
+            return IndexOf((T)value);
         }
 
         void IList.Insert(Int32 index, Object value)
         {
-            Insert(index, (T) value);
+            Insert(index, (T)value);
         }
 
         void IList.Remove(Object value)
         {
-            Remove((T) value);
+            Remove((T)value);
         }
 
         public Boolean Contains(T item)
@@ -138,17 +138,17 @@ namespace Kopernicus.Configuration.Parsing
 
         Boolean ICollection.IsSynchronized
         {
-            get { return ((IList) _list).IsSynchronized; }
+            get { return ((IList)_list).IsSynchronized; }
         }
 
         Object ICollection.SyncRoot
         {
-            get { return ((IList) _list).SyncRoot; }
+            get { return ((IList)_list).SyncRoot; }
         }
 
         public Boolean IsReadOnly
         {
-            get { return ((IList<T>) _list).IsReadOnly; }
+            get { return ((IList<T>)_list).IsReadOnly; }
         }
 
         Object IList.this[Int32 index]
@@ -156,8 +156,8 @@ namespace Kopernicus.Configuration.Parsing
             get { return _list[index]; }
             set
             {
-                _list[index] = (T) value;
-                _callback((T) value);
+                _list[index] = (T)value;
+                _callback((T)value);
             }
         }
 
@@ -180,7 +180,7 @@ namespace Kopernicus.Configuration.Parsing
 
         Boolean IList.IsFixedSize
         {
-            get { return ((IList) _list).IsFixedSize; }
+            get { return ((IList)_list).IsFixedSize; }
         }
 
         public T this[Int32 index]

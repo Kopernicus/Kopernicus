@@ -55,8 +55,8 @@ namespace Kopernicus.Configuration.NoiseLoader.Noise
         [ParserTarget("quality")]
         public EnumParser<KopernicusNoiseQuality> Quality
         {
-            get { return (KopernicusNoiseQuality) (Int32) Noise.NoiseQuality; }
-            set { Noise.NoiseQuality = (NoiseQuality) (Int32) value.Value; }
+            get { return (KopernicusNoiseQuality)(Int32)Noise.NoiseQuality; }
+            set { Noise.NoiseQuality = (NoiseQuality)(Int32)value.Value; }
         }
 
         [ParserTarget("octaves")]

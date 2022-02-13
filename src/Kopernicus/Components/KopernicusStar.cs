@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -119,7 +119,7 @@ namespace Kopernicus.Components
             double greatestLuminosity = 0;
             KopernicusStar BrightestStar = GetNearest(body);
             for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
-            { 
+            {
                 KopernicusStar star = KopernicusStar.Stars[i];
                 double distance = Vector3d.Distance(body.position, star.sun.position);
                 double aparentLuminosity = 0;

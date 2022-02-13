@@ -184,8 +184,8 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("localLightDirection")]
         public Vector4Parser LocalLightDirectionSetter
         {
-             get { return LocalLightDirection; }
-             set { LocalLightDirection = value; }
+            get { return LocalLightDirection; }
+            set { LocalLightDirection = value; }
         }
 
         // Resource Map (RGB), default = "black" { }

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -368,8 +368,8 @@ namespace Kopernicus.Configuration
             }
         }
 #endif
-    // Surface Material of the PQS
-    [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+        // Surface Material of the PQS
+        [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
         public Material SurfaceMaterial
         {
@@ -458,7 +458,6 @@ namespace Kopernicus.Configuration
                 Boolean isMain = value is PQSMainShaderLoader;
                 Boolean isOptimised = value is PQSMainOptimisedLoader;
                 Boolean isExtra = value is PQSMainExtrasLoader;
-                Boolean isMainFastBlend = true;
 #if (!KSP_VERSION_1_8)
                 if (!(Versioning.version_minor < 9))
                 {
@@ -467,7 +466,6 @@ namespace Kopernicus.Configuration
 #endif
                 Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = value is PQSTriplanarZoomRotationLoader;
-                Boolean isTriplanarAtlas = true;
 #if (!KSP_VERSION_1_8)
                 if (!(Versioning.version_minor < 9))
                 {

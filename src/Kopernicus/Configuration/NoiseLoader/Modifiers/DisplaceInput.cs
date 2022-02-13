@@ -35,19 +35,19 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class DisplaceInput : NoiseLoader<LibNoise.Modifiers.DisplaceInput>
     {
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModule { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("DisplaceX", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader DisplaceXModule { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("DisplaceY", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader DisplaceYModule { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("DisplaceZ", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader DisplaceZModule { get; set; }
 

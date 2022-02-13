@@ -310,7 +310,7 @@ namespace Kopernicus.OnDemand
             // If we can't patch array length then just use the normal function
             if (_arrayLengthOffset == 1)
             {
-                return reader.ReadBytes((Int32) chunkBytes);
+                return reader.ReadBytes((Int32)chunkBytes);
             }
 
             // Otherwise we do cunning stuff
@@ -430,19 +430,19 @@ namespace Kopernicus.OnDemand
                             {
                                 if (ddsHeader.ddspf.dwFourCC == DDSValues.uintDXT1)
                                 {
-                                    map = new Texture2D((Int32) ddsHeader.dwWidth, (Int32) ddsHeader.dwHeight,
+                                    map = new Texture2D((Int32)ddsHeader.dwWidth, (Int32)ddsHeader.dwHeight,
                                         TextureFormat.DXT1, mipmap);
                                     map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                 }
                                 else if (ddsHeader.ddspf.dwFourCC == DDSValues.uintDXT3)
                                 {
-                                    map = new Texture2D((Int32) ddsHeader.dwWidth, (Int32) ddsHeader.dwHeight,
-                                        (TextureFormat) 11, mipmap);
+                                    map = new Texture2D((Int32)ddsHeader.dwWidth, (Int32)ddsHeader.dwHeight,
+                                        (TextureFormat)11, mipmap);
                                     map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                 }
                                 else if (ddsHeader.ddspf.dwFourCC == DDSValues.uintDXT5)
                                 {
-                                    map = new Texture2D((Int32) ddsHeader.dwWidth, (Int32) ddsHeader.dwHeight,
+                                    map = new Texture2D((Int32)ddsHeader.dwWidth, (Int32)ddsHeader.dwHeight,
                                         TextureFormat.DXT5, mipmap);
                                     map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                 }
@@ -572,7 +572,7 @@ namespace Kopernicus.OnDemand
 
                                 if (ok)
                                 {
-                                    map = new Texture2D((Int32) ddsHeader.dwWidth, (Int32) ddsHeader.dwHeight,
+                                    map = new Texture2D((Int32)ddsHeader.dwWidth, (Int32)ddsHeader.dwHeight,
                                         textureFormat, mipmap);
                                     map.LoadRawTextureData(LoadRestOfReader(binaryReader));
                                 }

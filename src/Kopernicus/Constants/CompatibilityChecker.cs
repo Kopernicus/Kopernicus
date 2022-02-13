@@ -112,7 +112,7 @@ namespace Kopernicus.Constants
                     .ToArray();
 
             // Let the latest version of the checker execute.
-            if (_version != fields.Max(f => (Int32) f.GetValue(null)))
+            if (_version != fields.Max(f => (Int32)f.GetValue(null)))
             {
                 return;
             }

@@ -263,7 +263,7 @@ namespace Kopernicus
             }
             if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
             {
-                scaledVersion.gameObject.transform.localScale = Vector3.one * (Single) (pqs.radius / R_JOOL);
+                scaledVersion.gameObject.transform.localScale = Vector3.one * (Single)(pqs.radius / R_JOOL);
             }
         }
 
@@ -922,51 +922,51 @@ namespace Kopernicus
                     switch (delMod)
                     {
                         case PQSCity mod:
-                        {
-                            PQSCity city = mod;
-                            if (city.lod != null)
                             {
-                                foreach (PQSCity.LODRange range in city.lod)
+                                PQSCity city = mod;
+                                if (city.lod != null)
                                 {
-                                    if (range.objects != null)
+                                    foreach (PQSCity.LODRange range in city.lod)
                                     {
+                                        if (range.objects != null)
+                                        {
+                                            foreach (GameObject o in range.objects)
+                                            {
+                                                UnityEngine.Object.DestroyImmediate(o);
+                                            }
+                                        }
+
+                                        if (range.renderers == null)
+                                        {
+                                            continue;
+                                        }
+                                        foreach (GameObject o in range.renderers)
+                                        {
+                                            UnityEngine.Object.DestroyImmediate(o);
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        case PQSCity2 mod:
+                            {
+                                PQSCity2 city = mod;
+                                if (city.objects != null)
+                                {
+                                    foreach (PQSCity2.LodObject range in city.objects)
+                                    {
+                                        if (range.objects == null)
+                                        {
+                                            continue;
+                                        }
                                         foreach (GameObject o in range.objects)
                                         {
                                             UnityEngine.Object.DestroyImmediate(o);
                                         }
                                     }
-
-                                    if (range.renderers == null)
-                                    {
-                                        continue;
-                                    }
-                                    foreach (GameObject o in range.renderers)
-                                    {
-                                        UnityEngine.Object.DestroyImmediate(o);
-                                    }
                                 }
+                                break;
                             }
-                            break;
-                        }
-                        case PQSCity2 mod:
-                        {
-                            PQSCity2 city = mod;
-                            if (city.objects != null)
-                            {
-                                foreach (PQSCity2.LodObject range in city.objects)
-                                {
-                                    if (range.objects == null)
-                                    {
-                                        continue;
-                                    }
-                                    foreach (GameObject o in range.objects)
-                                    {
-                                        UnityEngine.Object.DestroyImmediate(o);
-                                    }
-                                }
-                            }
-                            break;
-                        }
                     }
 
                     cpMods.Remove(delMod);
@@ -1162,7 +1162,7 @@ namespace Kopernicus
             for (Int32 i = 0; i < curve.Curve.length; i++)
             {
                 Keyframe key = curve.Curve.keys[i];
-                list.Add(new List<Single> {key.time, key.value, key.inTangent, key.outTangent});
+                list.Add(new List<Single> { key.time, key.value, key.inTangent, key.outTangent });
             }
 
             return list;

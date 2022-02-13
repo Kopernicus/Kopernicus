@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -64,7 +64,7 @@ namespace Kopernicus.Components
             emitterObj.transform.localPosition = Vector3.zero;
             emitterObj.SetLayerRecursive(10);
             emitterObj.name = "Particles";
-            
+
             PlanetParticleEmitter result = emitterObj.AddComponent<PlanetParticleEmitter>();
             result.emitter = emitterObj.AddComponent<KSPParticleEmitter>();
 

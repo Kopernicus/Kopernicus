@@ -182,7 +182,7 @@ namespace Kopernicus.Configuration
             NameSignificance = NameSignificance.Key)]
         public List<StringCollectionParser> RemoveLaunchSites
         {
-            get { return new List<StringCollectionParser> {new StringCollectionParser(Templates.RemoveLaunchSites)}; }
+            get { return new List<StringCollectionParser> { new StringCollectionParser(Templates.RemoveLaunchSites) }; }
             set { Templates.RemoveLaunchSites = value.SelectMany(v => v.Value).ToList(); }
         }
 
@@ -448,7 +448,7 @@ namespace Kopernicus.Configuration
                 {
                     body.flightGlobalsIndex = 0; // Sun
                 }
-                
+
                 numbers.Add(body.flightGlobalsIndex);
                 // ReSharper restore AccessToModifiedClosure
             });

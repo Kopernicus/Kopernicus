@@ -53,7 +53,7 @@ namespace Kopernicus.Components
 
         public new Simplex simplex
         {
-            get { return (Simplex) _simplex.GetValue(this, null); }
+            get { return (Simplex)_simplex.GetValue(this, null); }
             set { _simplex.SetValue(this, value, null); }
         }
 

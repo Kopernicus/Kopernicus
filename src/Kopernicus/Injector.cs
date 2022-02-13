@@ -93,7 +93,7 @@ namespace Kopernicus
                 // Parser Config
                 ParserOptions.Register("Kopernicus",
                     new ParserOptions.Data
-                        {ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s)});
+                    { ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s) });
 
                 // Yo garbage collector - we have work to do man
                 DontDestroyOnLoad(this);
@@ -108,7 +108,7 @@ namespace Kopernicus
                 }
 
                 // Was the system template modified?
-                #if !DEBUG
+#if !DEBUG
                 String systemCfgPath = KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Config/System.cfg";
                 if (File.Exists(systemCfgPath))
                 {
@@ -123,7 +123,7 @@ namespace Kopernicus
                             "The file 'Kopernicus/Config/System.cfg' was modified directly without ModuleManager");
                     }
                 }
-                #endif
+#endif
 
                 // Backup the old prefab
                 StockSystemPrefab = PSystemManager.Instance.systemPrefab;
@@ -187,7 +187,7 @@ namespace Kopernicus
                 }
 
                 //Catch the watchdog and remove it from display
-                CelestialBody mockBody = null; 
+                CelestialBody mockBody = null;
                 foreach (CelestialBody body in PSystemManager.Instance.localBodies)
                 {
                     if (body.name.Equals("KopernicusWatchdog"))
@@ -340,7 +340,7 @@ namespace Kopernicus
                 }
 
                 PlanetariumCamera.fetch.maxDistance =
-                    (Single) maximumDistance * 3.0f / ScaledSpace.Instance.scaleFactor;
+                    (Single)maximumDistance * 3.0f / ScaledSpace.Instance.scaleFactor;
 
                 // Call the event
                 Events.OnPostFixing.Fire();

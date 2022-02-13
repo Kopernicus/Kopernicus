@@ -38,11 +38,11 @@ namespace Kopernicus.Components
     public class KopernicusSolarPanel : ModuleDeployableSolarPanel
     {
         //Strings for Localization
-        private static string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");  // "Direct Sunlight"
-        private static string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");          // "Underwater"
-        private static string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");                 // "Auto"
-        private static string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");                    // "Select Tracking Body"
-        private static string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");            // "Please select the Body you want to track with this Solar Panel."
+        private static readonly string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");  // "Direct Sunlight"
+        private static readonly string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");          // "Underwater"
+        private static readonly string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");                 // "Auto"
+        private static readonly string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");                    // "Select Tracking Body"
+        private static readonly string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");            // "Please select the Body you want to track with this Solar Panel."
 
         //panel power cached value
         private double _cachedFlowRate = 0;
@@ -59,8 +59,8 @@ namespace Kopernicus.Components
         private Boolean _manualTracking;
 
         //declare internal float curves
-        private static FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
-        private static FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
+        private static readonly FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
+        private static readonly FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
 
         public override void FixedUpdate()
         {

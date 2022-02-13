@@ -25,12 +25,12 @@
 
 namespace Kopernicus.Configuration.Enumerations
 {
-	// Scaled Space Material Type Enum
-	public enum ScaledMaterialType
-	{
-		Vacuum,
-		Atmospheric,
-		AtmosphericStandard,
-		Star,
-	}
+    // Scaled Space Material Type Enum
+    public enum ScaledMaterialType
+    {
+        Vacuum,
+        Atmospheric,
+        AtmosphericStandard,
+        Star,
+    }
 }

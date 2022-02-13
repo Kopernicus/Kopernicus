@@ -43,7 +43,7 @@ namespace Kopernicus.RuntimeUtility
     {
         public LogAggregator(String description) : base(description) { }
     }
-    
+
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class LogAggregatorWorker : MonoBehaviour
     {
@@ -53,18 +53,18 @@ namespace Kopernicus.RuntimeUtility
         {
             // Create the storage 
             _files = new Dictionary<String, String[]>();
-            
+
             // Select the Assembly that should run
             Type type = Parser.ModTypes.Where(t => t.Name == "LogAggregator")
                 .OrderByDescending(t => Version.BuiltTime(t.Assembly)).FirstOrDefault();
-            
+
             // Are we the type?
             if (type != typeof(LogAggregator))
             {
                 Destroy(this);
                 return;
             }
-            
+
             // This aggregator got selected to run
             Assembly[] assemblies = Parser.ModTypes.Select(t => t.Assembly).ToArray();
             for (Int32 i = 0; i < assemblies.Length; i++)
@@ -78,13 +78,13 @@ namespace Kopernicus.RuntimeUtility
 
                 descriptionAttributes = descriptionAttributes.Where(d => d.GetType().Name == "LogAggregator")
                     .ToArray();
-            
+
                 // Read the files
                 List<String> filesToBackup = new List<String>();
                 for (Int32 j = 0; j < descriptionAttributes.Length; j++)
                 {
                     String file = descriptionAttributes[j].Description;
-                    
+
                     // Prevent breaking out of KSPs folder
                     if (file.Contains("../") || file.Contains("/..") || file.Contains("\\..") || file.Contains("..\\"))
                     {
@@ -92,7 +92,7 @@ namespace Kopernicus.RuntimeUtility
                                   ", Path: " + file);
                         continue;
                     }
-                    
+
                     // Add the file
                     filesToBackup.Add(file);
                 }
@@ -102,7 +102,7 @@ namespace Kopernicus.RuntimeUtility
                     _files.Add(assemblies[i].GetName().Name, filesToBackup.ToArray());
                 }
             }
-            
+
             // Keep this behaviour alive
             DontDestroyOnLoad(this);
             GameEvents.onCrash.Add(AggregateLogs);
@@ -119,7 +119,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 String modName = kvP.Key;
                 String[] filePaths = kvP.Value;
-                
+
                 // Does the file already exist?
                 String path = KSPUtil.ApplicationRootPath + "Logs/" + "Logs-" + modName + ".zip";
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -133,13 +133,13 @@ namespace Kopernicus.RuntimeUtility
                     for (Int32 i = 0; i < filePaths.Length; i++)
                     {
                         String fullPath = Path.Combine(KSPUtil.ApplicationRootPath, filePaths[i]);
-                        
+
                         // Is it a file?
                         if (File.Exists(fullPath))
                         {
                             // Make a temporary copy to avoid IO errors
                             File.Copy(fullPath, "tmpfile", true);
-                            
+
                             using (FileStream stream = File.OpenRead("tmpfile"))
                             {
                                 zip.AddStream(ZipStorer.Compression.Deflate, filePaths[i], stream, DateTime.Now, "");
@@ -148,7 +148,7 @@ namespace Kopernicus.RuntimeUtility
                             // Remove the temporary file
                             File.Delete("tmpfile");
                         }
-                        
+
                         // Is it a directory?
                         if (!Directory.Exists(fullPath))
                         {
@@ -177,7 +177,7 @@ namespace Kopernicus.RuntimeUtility
                     }
                 }
             }
-            
+
             // I don't know if both events might fire so clean the storage to be sure the other method doesn't run
             _files.Clear();
         }
@@ -203,11 +203,12 @@ namespace System.IO.Compression
         /// <summary>
         /// Compression method enumeration
         /// </summary>
-        public enum Compression : ushort { 
+        public enum Compression : ushort
+        {
             /// <summary>Uncompressed storage</summary> 
-            Store = 0, 
+            Store = 0,
             /// <summary>Deflate compression method</summary>
-            Deflate = 8 
+            Deflate = 8
         }
 
         /// <summary>
@@ -216,7 +217,7 @@ namespace System.IO.Compression
         public struct ZipFileEntry
         {
             /// <summary>Compression method</summary>
-            public Compression Method; 
+            public Compression Method;
             /// <summary>Full path and filename as stored in Zip</summary>
             public String FilenameInZip;
             /// <summary>Original file size</summary>
@@ -244,18 +245,18 @@ namespace System.IO.Compression
             }
         }
 
-#region Public fields
+        #region Public fields
         /// <summary>True if UTF8 encoding for filename and comments, false if default (CP 437)</summary>
         // ReSharper disable ConvertToConstant.Global
         public Boolean EncodeUTF8 = false;
         /// <summary>Force deflate algorithm even if it inflates the stored file. Off by default.</summary>
         public Boolean ForceDeflating = false;
         // ReSharper restore ConvertToConstant.Global
-#endregion
+        #endregion
 
-#region Private fields
+        #region Private fields
         // List of files to store
-        private List<ZipFileEntry> Files = new List<ZipFileEntry>();
+        private readonly List<ZipFileEntry> Files = new List<ZipFileEntry>();
         // Filename of storage file
         private String FileName;
         // Stream object of storage file
@@ -271,12 +272,12 @@ namespace System.IO.Compression
         // leave the stream open after the ZipStorer object is disposed
         private Boolean leaveOpen;
         // Static CRC32 Table
-        private static UInt32[] CrcTable;
+        private static readonly UInt32[] CrcTable;
         // Default filename encoder
-        private static Encoding DefaultEncoding = Encoding.GetEncoding(437);
-#endregion
+        private static readonly Encoding DefaultEncoding = Encoding.GetEncoding(437);
+        #endregion
 
-#region Public methods
+        #region Public methods
         // Static constructor. Just invoked once in order to create the CRC32 lookup table.
         static ZipStorer()
         {
@@ -322,13 +323,13 @@ namespace System.IO.Compression
         /// <param name="_comment"></param>
         /// <param name="_leaveOpen">true to leave the stream open after the ZipStorer object is disposed; otherwise, false (default).</param>
         /// <returns>A valid ZipStorer object</returns>
-        public static ZipStorer Create(Stream _stream, String _comment, Boolean _leaveOpen=false)
+        public static ZipStorer Create(Stream _stream, String _comment, Boolean _leaveOpen = false)
         {
             ZipStorer zip = new ZipStorer
             {
-                Comment = _comment, 
+                Comment = _comment,
                 ZipFileStream = _stream,
-                Access = FileAccess.Write, 
+                Access = FileAccess.Write,
                 leaveOpen = _leaveOpen
             };
             return zip;
@@ -362,10 +363,10 @@ namespace System.IO.Compression
                 throw new InvalidOperationException("Stream cannot seek");
             }
 
-            ZipStorer zip = new ZipStorer 
+            ZipStorer zip = new ZipStorer
             {
-                ZipFileStream = _stream, 
-                Access = _access, 
+                ZipFileStream = _stream,
+                Access = _access,
                 leaveOpen = _leaveOpen
             };
             //zip.FileName = _filename;
@@ -493,7 +494,7 @@ namespace System.IO.Compression
 
             List<ZipFileEntry> result = new List<ZipFileEntry>();
 
-            for (Int32 pointer = 0; pointer < CentralDirImage.Length; )
+            for (Int32 pointer = 0; pointer < CentralDirImage.Length;)
             {
                 UInt32 signature = BitConverter.ToUInt32(CentralDirImage, pointer);
                 if (signature != 0x02014b50)
@@ -561,7 +562,7 @@ namespace System.IO.Compression
             }
 
             Boolean result;
-            using(FileStream output = new FileStream(_filename, FileMode.Create, FileAccess.Write))
+            using (FileStream output = new FileStream(_filename, FileMode.Create, FileAccess.Write))
             {
                 result = ExtractFile(_zfe, output);
             }
@@ -630,7 +631,7 @@ namespace System.IO.Compression
             }
             return true;
         }
-        
+
         /// <summary>
         /// Copy the contents of a stored file into a byte array
         /// </summary>
@@ -715,9 +716,9 @@ namespace System.IO.Compression
             }
             return true;
         }
-#endregion
+        #endregion
 
-#region Private methods
+        #region Private methods
         // Calculate the file offset by reading the corresponding local header
         private UInt32 GetFileOffset(UInt32 _headerOffset)
         {
@@ -752,7 +753,7 @@ namespace System.IO.Compression
             Encoding encoder = _zfe.EncodeUTF8 ? Encoding.UTF8 : DefaultEncoding;
             Byte[] encodedFilename = encoder.GetBytes(_zfe.FilenameInZip);
 
-            ZipFileStream.Write(new Byte[] { 80, 75, 3, 4, 20, 0}, 0, 6); // No extra header
+            ZipFileStream.Write(new Byte[] { 80, 75, 3, 4, 20, 0 }, 0, 6); // No extra header
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)(_zfe.EncodeUTF8 ? 0x0800 : 0)), 0, 2); // filename and comment encoding 
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)_zfe.Method), 0, 2);  // zipping method
             ZipFileStream.Write(BitConverter.GetBytes(DateTimeToDosTime(_zfe.ModifyTime)), 0, 4); // zipping date and time
@@ -833,8 +834,8 @@ namespace System.IO.Compression
             Byte[] encodedComment = encoder.GetBytes(Comment);
 
             ZipFileStream.Write(new Byte[] { 80, 75, 5, 6, 0, 0, 0, 0 }, 0, 8);
-            ZipFileStream.Write(BitConverter.GetBytes((UInt16)Files.Count+ExistingFiles), 0, 2);
-            ZipFileStream.Write(BitConverter.GetBytes((UInt16)Files.Count+ExistingFiles), 0, 2);
+            ZipFileStream.Write(BitConverter.GetBytes((UInt16)Files.Count + ExistingFiles), 0, 2);
+            ZipFileStream.Write(BitConverter.GetBytes((UInt16)Files.Count + ExistingFiles), 0, 2);
             ZipFileStream.Write(BitConverter.GetBytes(_size), 0, 4);
             ZipFileStream.Write(BitConverter.GetBytes(_offset), 0, 4);
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)encodedComment.Length), 0, 2);
@@ -859,7 +860,7 @@ namespace System.IO.Compression
                 do
                 {
                     bytesRead = _source.Read(buffer, 0, buffer.Length);
-                    totalRead += (UInt32) bytesRead;
+                    totalRead += (UInt32)bytesRead;
                     if (bytesRead <= 0)
                     {
                         continue;
@@ -881,7 +882,7 @@ namespace System.IO.Compression
 
                 _zfe.Crc32 ^= 0xffffffff;
                 _zfe.FileSize = totalRead;
-                _zfe.CompressedSize = (UInt32) (ZipFileStream.Position - posStart);
+                _zfe.CompressedSize = (UInt32)(ZipFileStream.Position - posStart);
 
                 // Verify for real compression
                 if (_zfe.Method == Compression.Deflate && !ForceDeflating && _source.CanSeek && _zfe.CompressedSize > _zfe.FileSize)
@@ -911,8 +912,8 @@ namespace System.IO.Compression
         private static UInt32 DateTimeToDosTime(DateTime _dt)
         {
             return (UInt32)(
-                (_dt.Second / 2) | (_dt.Minute << 5) | (_dt.Hour << 11) | 
-                (_dt.Day<<16) | (_dt.Month << 21) | ((_dt.Year - 1980) << 25));
+                (_dt.Second / 2) | (_dt.Minute << 5) | (_dt.Hour << 11) |
+                (_dt.Day << 16) | (_dt.Month << 21) | ((_dt.Year - 1980) << 25));
         }
         private static DateTime? DosTimeToDateTime(UInt32 _dt)
         {
@@ -923,7 +924,7 @@ namespace System.IO.Compression
             Int32 minutes = (Int32)(_dt >> 5) & 63;
             Int32 seconds = (Int32)(_dt & 31) * 2;
 
-            if (month==0 || day == 0)
+            if (month == 0 || day == 0)
             {
                 return null;
             }
@@ -1017,9 +1018,9 @@ namespace System.IO.Compression
 
             return false;
         }
-#endregion
+        #endregion
 
-#region IDisposable Members
+        #region IDisposable Members
         /// <summary>
         /// Closes the Zip file stream
         /// </summary>
@@ -1027,7 +1028,7 @@ namespace System.IO.Compression
         {
             Close();
         }
-#endregion
+        #endregion
     }
 }
 #endregion

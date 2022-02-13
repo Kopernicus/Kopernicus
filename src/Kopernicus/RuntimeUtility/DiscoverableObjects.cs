@@ -100,7 +100,7 @@ namespace Kopernicus.RuntimeUtility
                     Injector.DisplayWarning();
                     throw new InvalidCastException("Invalid value for Enum UseKopernicusAsteroidSystem.  Valid values are true, false, and stock.");
                 }
-                    
+
             }
             else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
             {

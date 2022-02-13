@@ -93,9 +93,9 @@ namespace Kopernicus.UI
         {
             if (member.MemberType == MemberTypes.Field)
             {
-                return ((FieldInfo) member).FieldType;
+                return ((FieldInfo)member).FieldType;
             }
-            return member.MemberType == MemberTypes.Property ? ((PropertyInfo) member).PropertyType : null;
+            return member.MemberType == MemberTypes.Property ? ((PropertyInfo)member).PropertyType : null;
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Kopernicus.UI
         {
             if (member.MemberType == MemberTypes.Field)
             {
-                return ((FieldInfo) member).GetValue(reference);
+                return ((FieldInfo)member).GetValue(reference);
             }
 
             if (member.MemberType != MemberTypes.Property)
@@ -165,7 +165,7 @@ namespace Kopernicus.UI
         {
             if (member.MemberType == MemberTypes.Field)
             {
-                ((FieldInfo) member).SetValue(reference, value);
+                ((FieldInfo)member).SetValue(reference, value);
             }
 
             if (member.MemberType != MemberTypes.Property)
@@ -370,7 +370,7 @@ namespace Kopernicus.UI
                         value = methods[i].Invoke(null);
                         break;
                     case KittopiaConstructor.ParameterType.CelestialBody:
-                        value = methods[i].Invoke(new Object[] {body});
+                        value = methods[i].Invoke(new Object[] { body });
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

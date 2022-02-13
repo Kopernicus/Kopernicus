@@ -73,7 +73,7 @@ namespace Kopernicus.Configuration
         {
             set
             {
-                Value.intensityCurve = new FloatCurve(new []
+                Value.intensityCurve = new FloatCurve(new[]
                 {
                     new Keyframe(0, value),
                     new Keyframe(1, value)
@@ -108,7 +108,7 @@ namespace Kopernicus.Configuration
         {
             set
             {
-                Value.scaledIntensityCurve = new FloatCurve(new []
+                Value.scaledIntensityCurve = new FloatCurve(new[]
                 {
                     new Keyframe(0, value),
                     new Keyframe(1, value)

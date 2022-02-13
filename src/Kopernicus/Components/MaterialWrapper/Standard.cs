@@ -253,8 +253,8 @@ namespace Kopernicus.Components.MaterialWrapper
         // Smoothness texture channel, default = 0.000000
         public TextureChannel SmoothnessTextureChannel
         {
-            get { return (TextureChannel) GetFloat(Properties.Instance.SmoothnessTextureChannelId); }
-            set { SetFloat(Properties.Instance.SmoothnessTextureChannelId, (Int32) value); }
+            get { return (TextureChannel)GetFloat(Properties.Instance.SmoothnessTextureChannelId); }
+            set { SetFloat(Properties.Instance.SmoothnessTextureChannelId, (Int32)value); }
         }
 
         // Metallic, default = 0.000000
@@ -486,17 +486,17 @@ namespace Kopernicus.Components.MaterialWrapper
         // UV Set for secondary textures, default = 0.000000
         public UvSet UvSec
         {
-            get { return (UvSet) GetFloat(Properties.Instance.UvSecId); }
-            set { SetFloat(Properties.Instance.UvSecId, (Int32) value); }
+            get { return (UvSet)GetFloat(Properties.Instance.UvSecId); }
+            set { SetFloat(Properties.Instance.UvSecId, (Int32)value); }
         }
 
         // __mode, default = 0.000000
         public BlendMode Mode
         {
-            get { return (BlendMode) GetFloat(Properties.Instance.ModeId); }
+            get { return (BlendMode)GetFloat(Properties.Instance.ModeId); }
             set
             {
-                SetFloat(Properties.Instance.ModeId, (Int32) value);
+                SetFloat(Properties.Instance.ModeId, (Int32)value);
                 SetupMaterial();
             }
         }
@@ -530,8 +530,8 @@ namespace Kopernicus.Components.MaterialWrapper
                 DisableKeyword("_ALPHATEST_ON");
                 DisableKeyword("_ALPHABLEND_ON");
                 DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                SrcBlend = (Int32) UnityEngine.Rendering.BlendMode.One;
-                DstBlend = (Int32) UnityEngine.Rendering.BlendMode.Zero;
+                SrcBlend = (Int32)UnityEngine.Rendering.BlendMode.One;
+                DstBlend = (Int32)UnityEngine.Rendering.BlendMode.Zero;
                 ZWrite = 1;
                 renderQueue = -1;
             }
@@ -542,10 +542,10 @@ namespace Kopernicus.Components.MaterialWrapper
                 EnableKeyword("_ALPHATEST_ON");
                 DisableKeyword("_ALPHABLEND_ON");
                 DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                SrcBlend = (Int32) UnityEngine.Rendering.BlendMode.One;
-                DstBlend = (Int32) UnityEngine.Rendering.BlendMode.Zero;
+                SrcBlend = (Int32)UnityEngine.Rendering.BlendMode.One;
+                DstBlend = (Int32)UnityEngine.Rendering.BlendMode.Zero;
                 ZWrite = 1;
-                renderQueue = (Int32) RenderQueue.AlphaTest;
+                renderQueue = (Int32)RenderQueue.AlphaTest;
             }
 
             if (Mode == BlendMode.Fade)
@@ -554,10 +554,10 @@ namespace Kopernicus.Components.MaterialWrapper
                 DisableKeyword("_ALPHATEST_ON");
                 EnableKeyword("_ALPHABLEND_ON");
                 DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                SrcBlend = (Int32) UnityEngine.Rendering.BlendMode.SrcAlpha;
-                DstBlend = (Int32) UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
+                SrcBlend = (Int32)UnityEngine.Rendering.BlendMode.SrcAlpha;
+                DstBlend = (Int32)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
                 ZWrite = 0;
-                renderQueue = (Int32) RenderQueue.Transparent;
+                renderQueue = (Int32)RenderQueue.Transparent;
             }
 
             if (Mode == BlendMode.Transparent)
@@ -566,10 +566,10 @@ namespace Kopernicus.Components.MaterialWrapper
                 DisableKeyword("_ALPHATEST_ON");
                 DisableKeyword("_ALPHABLEND_ON");
                 EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                SrcBlend = (Int32) UnityEngine.Rendering.BlendMode.One;
-                DstBlend = (Int32) UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
+                SrcBlend = (Int32)UnityEngine.Rendering.BlendMode.One;
+                DstBlend = (Int32)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
                 ZWrite = 0;
-                renderQueue = (Int32) RenderQueue.Transparent;
+                renderQueue = (Int32)RenderQueue.Transparent;
             }
 
             SetKeyword("_NORMALMAP", BumpMap || DetailNormalMap);

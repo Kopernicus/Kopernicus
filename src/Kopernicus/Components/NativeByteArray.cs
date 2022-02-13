@@ -43,7 +43,7 @@ namespace Kopernicus.Components
         /// The address of our array in memory
         /// </summary>
         private IntPtr _items;
-        
+
         /// <summary>
         /// Create a new Array using unmanaged memory
         /// </summary>
@@ -72,24 +72,24 @@ namespace Kopernicus.Components
         {
             // Allocate a new array
             IntPtr newItems = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Byte)) * newSize);
-            
+
             // Copy the old one
             for (Int32 i = 0; i < Size; i++)
             {
-                ((Byte*) newItems)[i] = this[i];
+                ((Byte*)newItems)[i] = this[i];
             }
-            
+
             // Free the old memory
             Marshal.FreeHGlobal(_items);
-            
+
             // Assign the new values
             Size = newSize;
             _items = newItems;
         }
-        
+
         public ref Byte this[Int32 index]
         {
-            get { return ref ((Byte*) _items)[index]; }
+            get { return ref ((Byte*)_items)[index]; }
         }
     }
 }

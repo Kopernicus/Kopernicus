@@ -339,7 +339,7 @@ namespace Kopernicus.Configuration
                 GeneratedBody.celestialBody.ocean = false;
 
                 // Create the scaled version
-                GeneratedBody.scaledVersion = new GameObject(Name) {layer = GameLayers.SCALED_SPACE};
+                GeneratedBody.scaledVersion = new GameObject(Name) { layer = GameLayers.SCALED_SPACE };
                 GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
                 // Create accessors
                 Debug = new DebugLoader();

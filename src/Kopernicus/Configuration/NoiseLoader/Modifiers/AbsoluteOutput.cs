@@ -33,7 +33,7 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class AbsoluteOutput : NoiseLoader<LibNoise.Modifiers.AbsoluteOutput>
     {
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

@@ -91,7 +91,7 @@ namespace Kopernicus.Configuration
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public ParticleAddSmoothLoader Material
         {
-            get { return (ParticleAddSmoothLoader) Value.GetComponent<Renderer>().sharedMaterial; }
+            get { return (ParticleAddSmoothLoader)Value.GetComponent<Renderer>().sharedMaterial; }
             set { Value.GetComponent<Renderer>().sharedMaterial = value; }
         }
 
