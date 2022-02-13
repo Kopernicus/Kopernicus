@@ -81,7 +81,7 @@ namespace Kopernicus.Components
 
         void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator)
         {
-            Vessel vessel = flightIntegrator?.Vessel;
+            Vessel vessel = flightIntegrator != null ? flightIntegrator.Vessel : null;
             CelestialBody _body = GetComponent<CelestialBody>();
 
             if (_body != vessel.mainBody)

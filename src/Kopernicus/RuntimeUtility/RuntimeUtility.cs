@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -283,8 +283,7 @@ namespace Kopernicus.RuntimeUtility
             starObj.transform.localPosition = Vector3.zero;
             starObj.transform.localRotation = Quaternion.identity;
             starObj.transform.localScale = Vector3.one;
-            starObj.transform.position = body.position;
-            starObj.transform.rotation = body.rotation;
+            starObj.transform.SetPositionAndRotation(body.position, body.rotation);
 
             KopernicusStar.CelestialBodies.Add(star.sun, star);
 
@@ -295,8 +294,7 @@ namespace Kopernicus.RuntimeUtility
             flareObj.transform.localPosition = Vector3.zero;
             flareObj.transform.localRotation = Quaternion.identity;
             flareObj.transform.localScale = Vector3.one;
-            flareObj.transform.position = body.position;
-            flareObj.transform.rotation = body.rotation;
+            flareObj.transform.SetPositionAndRotation(body.position, body.rotation);
         }
 
         private static void ApplyLaunchSitePatches()
@@ -1072,11 +1070,23 @@ namespace Kopernicus.RuntimeUtility
 
         private void FixFlags()
         {
-            PQSCity KSC = FlightGlobals.GetHomeBody()?.pqsController?.GetComponentsInChildren<PQSCity>(true)?.FirstOrDefault(p => p?.name == "KSC");
-            SkinnedMeshRenderer[] flags = KSC?.GetComponentsInChildren<SkinnedMeshRenderer>(true)?.Where(smr => smr?.name == "Flag")?.ToArray();
+            PQSCity KSC = FlightGlobals
+                .GetHomeBody()?
+                .pqsController?
+                .GetComponentsInChildren<PQSCity>(true)?
+                .FirstOrDefault(p => p?.name == "KSC");
+            SkinnedMeshRenderer[] flags = KSC?
+                .GetComponentsInChildren<SkinnedMeshRenderer>(true)?
+                .Where(smr => smr?.name == "Flag")?
+                .ToArray();
             for (int i = 0; i < flags?.Length; i++)
             {
-                flags[i].rootBone = flags[i]?.rootBone?.parent?.gameObject?.GetChild("bn_upper_flag_a01")?.transform;
+                flags[i].rootBone = flags[i]?
+                    .rootBone?
+                    .parent?
+                    .gameObject?
+                    .GetChild("bn_upper_flag_a01")?
+                    .transform;
             }
         }
 
@@ -1085,21 +1095,23 @@ namespace Kopernicus.RuntimeUtility
             if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
             {
                 Debug.Log("[Kopernicus] Generating default Kopernicus_Config.cfg");
-                StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg");
-                configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock settings and warnings config.");
-                configFile.WriteLine("Kopernicus_config");
-                configFile.WriteLine("{");
-                configFile.WriteLine("	EnforceShaders = False //Boolean.  Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
-                configFile.WriteLine("	WarnShaders = False //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
-                configFile.WriteLine("	EnforcedShaderLevel = 2 //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
-                configFile.WriteLine("	UseKopernicusAsteroidSystem = True");
-                configFile.WriteLine("	SolarRefreshRate = 1 //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetine performance (higher runs faster).  Otherwise irrelevant.");
-                configFile.WriteLine("	ScatterCountLimit = 4250 //Integer.  A number defining the maximum number of land scatters that may spawn.  Works best set close to ScatterDistanceLimit, setting them far apart can lead to odd patterning behavior.");
-                configFile.WriteLine("	ScatterDistanceLimit = 4250 //Integer.  A number defining the maximum distance away at which a land scatter may spawn.  Works best set close to ScatterCountLimit, setting them far apart can lead to odd patterning behavior.");
-                configFile.WriteLine("	DisableMainMenuMunScene = true //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
-                configFile.WriteLine("}");
-                configFile.Flush();
-                configFile.Close();
+                using (StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg"))
+                {
+                    configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock settings and warnings config.");
+                    configFile.WriteLine("Kopernicus_config");
+                    configFile.WriteLine("{");
+                    configFile.WriteLine("	EnforceShaders = False //Boolean.  Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
+                    configFile.WriteLine("	WarnShaders = False //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
+                    configFile.WriteLine("	EnforcedShaderLevel = 2 //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
+                    configFile.WriteLine("	UseKopernicusAsteroidSystem = True");
+                    configFile.WriteLine("	SolarRefreshRate = 1 //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetine performance (higher runs faster).  Otherwise irrelevant.");
+                    configFile.WriteLine("	ScatterCountLimit = 4250 //Integer.  A number defining the maximum number of land scatters that may spawn.  Works best set close to ScatterDistanceLimit, setting them far apart can lead to odd patterning behavior.");
+                    configFile.WriteLine("	ScatterDistanceLimit = 4250 //Integer.  A number defining the maximum distance away at which a land scatter may spawn.  Works best set close to ScatterCountLimit, setting them far apart can lead to odd patterning behavior.");
+                    configFile.WriteLine("	DisableMainMenuMunScene = true //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
+                    configFile.WriteLine("}");
+                    configFile.Flush();
+                    configFile.Close();
+                }
             }
         }
 
@@ -1112,21 +1124,23 @@ namespace Kopernicus.RuntimeUtility
             if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
             {
                 Debug.Log("[Kopernicus] Writing out updated Kopernicus_Config.cfg");
-                StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg");
-                configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock settings and warnings config.");
-                configFile.WriteLine("Kopernicus_config");
-                configFile.WriteLine("{");
-                configFile.WriteLine("	EnforceShaders = " + KopernicusConfig.EnforceShaders.ToString() + " //Boolean.  Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
-                configFile.WriteLine("	WarnShaders = " + KopernicusConfig.WarnShaders.ToString() + " //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
-                configFile.WriteLine("	EnforcedShaderLevel = " + KopernicusConfig.EnforcedShaderLevel.ToString() + " //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
-                configFile.WriteLine("	UseKopernicusAsteroidSystem = " + KopernicusConfig.UseKopernicusAsteroidSystem + " //String with three valid values, True,False, and Stock.  True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default).  False means don't generate anything, or wait for an external generator.  Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
-                configFile.WriteLine("	SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate.ToString() + " //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetine performance (higher runs faster).  Otherwise irrelevant.");
-                configFile.WriteLine("	ScatterCountLimit = " + KopernicusConfig.ScatterCountLimit.ToString() + " //Integer.  A number defining the maximum number of land scatters that may spawn.  Works best set close to ScatterDistanceLimit, setting them far apart can lead to odd patterning behavior.");
-                configFile.WriteLine("	ScatterDistanceLimit = " + KopernicusConfig.ScatterDistanceLimit.ToString() + " //Integer.  A number defining the maximum distance away at which a land scatter may spawn.  Works best set close to ScatterCountLimit, setting them far apart can lead to odd patterning behavior.");
-                configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
-                configFile.WriteLine("}");
-                configFile.Flush();
-                configFile.Close();
+                using (StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg"))
+                {
+                    configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock settings and warnings config.");
+                    configFile.WriteLine("Kopernicus_config");
+                    configFile.WriteLine("{");
+                    configFile.WriteLine("	EnforceShaders = " + KopernicusConfig.EnforceShaders.ToString() + " //Boolean.  Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
+                    configFile.WriteLine("	WarnShaders = " + KopernicusConfig.WarnShaders.ToString() + " //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
+                    configFile.WriteLine("	EnforcedShaderLevel = " + KopernicusConfig.EnforcedShaderLevel.ToString() + " //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
+                    configFile.WriteLine("	UseKopernicusAsteroidSystem = " + KopernicusConfig.UseKopernicusAsteroidSystem + " //String with three valid values, True,False, and Stock.  True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default).  False means don't generate anything, or wait for an external generator.  Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
+                    configFile.WriteLine("	SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate.ToString() + " //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetine performance (higher runs faster).  Otherwise irrelevant.");
+                    configFile.WriteLine("	ScatterCountLimit = " + KopernicusConfig.ScatterCountLimit.ToString() + " //Integer.  A number defining the maximum number of land scatters that may spawn.  Works best set close to ScatterDistanceLimit, setting them far apart can lead to odd patterning behavior.");
+                    configFile.WriteLine("	ScatterDistanceLimit = " + KopernicusConfig.ScatterDistanceLimit.ToString() + " //Integer.  A number defining the maximum distance away at which a land scatter may spawn.  Works best set close to ScatterCountLimit, setting them far apart can lead to odd patterning behavior.");
+                    configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
+                    configFile.WriteLine("}");
+                    configFile.Flush();
+                    configFile.Close();
+                }
             }
         }
         // Remove the Handlers

@@ -285,7 +285,7 @@ namespace Kopernicus.Configuration.ModLoader
                     obj.transform.parent = Mod.transform;
                     obj.transform.localPosition = Vector3.zero;
                     obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
-                    obj.gameObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
+                    obj.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
                 }
             });
             Mod.objects = new PQSCity2.LodObject[0];
@@ -306,7 +306,7 @@ namespace Kopernicus.Configuration.ModLoader
                     obj.transform.parent = Mod.transform;
                     obj.transform.localPosition = Vector3.zero;
                     obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
-                    obj.gameObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
+                    obj.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
                 }
             });
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -148,7 +148,7 @@ namespace Kopernicus.Components
             PhysicsGlobals.SolarInsolationAtHome = solarInsolation;
             PhysicsGlobals.RadiationFactor = radiationFactor;
 
-            FieldInfo SolarLuminosity = typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo SolarLuminosity = typeof(PhysicsGlobals).GetField("solarLuminosity", BindingFlags.NonPublic | BindingFlags.Instance);
             SolarLuminosity.SetValue(PhysicsGlobals.Instance, SolarIntensityAtHomeMultiplier * PhysicsGlobals.SolarLuminosityAtHome);
         }
     }

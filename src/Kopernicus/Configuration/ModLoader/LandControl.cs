@@ -496,7 +496,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                 // Get the Scatter-Parent
                 GameObject scatterParent = typeof(PQSLandControl.LandClassScatter)
-                    .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                     .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.GetValue(Value) as GameObject;
 
                 // If the GameObject is null, create one

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -140,7 +140,7 @@ namespace Kopernicus.Components.ModularScatter
             transform.localRotation = Quaternion.identity;
             transform.localScale = Vector3.one;
             scatter = landControl.scatters.First(s => s.scatterName == scatter.scatterName); // I hate Unity
-            typeof(PQSLandControl.LandClassScatter).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+            typeof(PQSLandControl.LandClassScatter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                 .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
             scatterObjects = new List<GameObject>();
             body = Part.GetComponentUpwards<CelestialBody>(landControl.gameObject);

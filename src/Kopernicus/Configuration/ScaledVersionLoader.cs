@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -408,8 +408,7 @@ namespace Kopernicus.Configuration
             if (Type != ScaledMaterialType.Star)
             {
                 // If we are not a star, we need a scaled space fader and a sphere collider
-                ScaledSpaceFader fader = Value.scaledBody.GetComponent<ScaledSpaceFader>();
-                if (fader == null)
+                if (!Value.scaledBody.TryGetComponent<ScaledSpaceFader>(out var fader))
                 {
                     fader = Value.scaledBody.AddComponent<SharedScaledSpaceFader>();
                     fader.floatName = "_Opacity";
@@ -434,8 +433,7 @@ namespace Kopernicus.Configuration
             else if (Type == ScaledMaterialType.Star)
             {
                 // Add the SunShaderController behavior
-                SunShaderController controller = Value.scaledBody.GetComponent<SunShaderController>();
-                if (controller == null)
+                if (!Value.scaledBody.TryGetComponent<SunShaderController>(out var controller))
                 {
                     Value.scaledBody.AddComponent<SharedSunShaderController>();
                 }

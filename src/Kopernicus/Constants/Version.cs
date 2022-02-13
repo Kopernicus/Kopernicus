@@ -80,8 +80,10 @@ namespace Kopernicus.Constants
 
             try
             {
-                s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                s.Read(b, 0, 2048);
+                using (s = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    s.Read(b, 0, 2048);
+                }
             }
             finally
             {

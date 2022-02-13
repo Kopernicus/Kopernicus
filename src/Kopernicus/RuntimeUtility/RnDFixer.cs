@@ -341,8 +341,8 @@ namespace Kopernicus.RuntimeUtility
             }
 
             // Stuff needed for AddPlanets
-            FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).FirstOrDefault();
-            MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Skip(26).FirstOrDefault();
+            FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Skip(7).FirstOrDefault();
+            MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Skip(26).FirstOrDefault();
             RDArchivesController rdac = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
 
             // AddPlanets requires this list to be empty when triggered

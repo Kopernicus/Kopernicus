@@ -40,7 +40,6 @@ namespace Kopernicus.Components
         /// <summary>
         /// The data stored by the component
         /// </summary>
-        [SerializeField]
         private readonly Dictionary<String, Object> data = new Dictionary<String, Object>();
 
         /// <summary>

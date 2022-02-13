@@ -106,7 +106,7 @@ namespace Kopernicus.Constants
             FieldInfo[] fields =
                 Parser.ModTypes
                     .Where(t => t.Name == "CompatibilityChecker")
-                    .Select(t => t.GetField("_version", BindingFlags.Static | BindingFlags.NonPublic))
+                    .Select(t => t.GetField("_version", BindingFlags.NonPublic | BindingFlags.Static))
                     .Where(f => f != null)
                     .Where(f => f.FieldType == typeof(Int32))
                     .ToArray();
@@ -134,7 +134,7 @@ namespace Kopernicus.Constants
                     {
                         try
                         {
-                            return !(Boolean) m.Invoke(null, new System.Object[0]);
+                            return !(Boolean) m.Invoke(null, null);
                         }
                         catch (Exception e)
                         {
@@ -158,7 +158,7 @@ namespace Kopernicus.Constants
                     {
                         try
                         {
-                            return !(Boolean) m.Invoke(null, new System.Object[0]);
+                            return !(Boolean) m.Invoke(null, null);
                         }
                         catch (Exception e)
                         {

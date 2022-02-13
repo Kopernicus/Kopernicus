@@ -43,7 +43,7 @@ namespace Kopernicus.Components
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
         {
-            typeof(PQS).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+            typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                 .First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
             base.OnSetup();
 
@@ -54,7 +54,7 @@ namespace Kopernicus.Components
                 return;
             }
 
-            lcScatterListField = typeof(PQSLandControl).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+            lcScatterListField = typeof(PQSLandControl).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                 .First(f => f.FieldType == typeof(Double[]));
             Debug.Log(lcScatterListField.Name);
         }

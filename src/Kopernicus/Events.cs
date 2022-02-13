@@ -327,7 +327,7 @@ namespace Kopernicus
 
         private void Awake()
         {
-            PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             for (Int32 i = 0; i < events.Length; i++)
             {
                 PropertyInfo info = events[i];

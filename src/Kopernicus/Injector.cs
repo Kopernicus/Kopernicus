@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -113,14 +113,16 @@ namespace Kopernicus
                 if (File.Exists(systemCfgPath))
                 {
                     Byte[] data = File.ReadAllBytes(systemCfgPath);
-                    SHA256 sha256 = SHA256.Create();
-                    String checksum = BitConverter.ToString(sha256.ComputeHash(data));
-                    checksum = checksum.Replace("-", "");
-                    checksum = checksum.ToLower();
-                    if (checksum != CONFIG_CHECKSUM)
+                    using (SHA256 sha256 = SHA256.Create())
                     {
-                        throw new Exception(
-                            "The file 'Kopernicus/Config/System.cfg' was modified directly without ModuleManager");
+                        String checksum = BitConverter.ToString(sha256.ComputeHash(data));
+                        checksum = checksum.Replace("-", "");
+                        checksum = checksum.ToLower();
+                        if (checksum != CONFIG_CHECKSUM)
+                        {
+                            throw new Exception(
+                                "The file 'Kopernicus/Config/System.cfg' was modified directly without ModuleManager");
+                        }
                     }
                 }
 #endif

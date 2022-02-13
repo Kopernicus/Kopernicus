@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -63,7 +63,6 @@ namespace Kopernicus.Components
         [ParserTarget("module")]
         public String module;
 
-        [SerializeField]
         [ParserTargetCollection("Properties", NameSignificance = NameSignificance.None)]
         public Dictionary<String, String> properties;
 
@@ -73,7 +72,6 @@ namespace Kopernicus.Components
         [ParserTargetCollection("Objects", NameSignificance = NameSignificance.Key, Key = "name")]
         public List<String> objects;
 
-        [SerializeField]
         [ParserTarget("distance")]
         public NumericParser<Single> distance;
 

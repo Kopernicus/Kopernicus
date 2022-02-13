@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -651,8 +651,7 @@ namespace Kopernicus.Configuration
             }
 
             // Store values
-            KSC ksc = body.GetComponent<KSC>();
-            if (ksc != null)
+            if (body.TryGetComponent<KSC>(out var ksc))
             {
                 Value = ksc.Material;
                 if (Value != null)

@@ -31,10 +31,12 @@ using Object = System.Object;
 namespace Kopernicus
 {
     // A generic message logging class to replace Debug.Log
-    public class Logger
+    public sealed class Logger : IDisposable
     {
         // Is the logger initialized?
         private static readonly Boolean IsInitialized;
+        private bool _disposed;
+
 
         // Logger output path
         private static String LogDirectory
@@ -60,6 +62,7 @@ namespace Kopernicus
                     return _defaultLogger;
                 }
 
+                _defaultLogger?.Dispose();
                 _defaultLogger = new Logger(typeof(Logger).Assembly.GetName().Name);
                 Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
                 return _defaultLogger;
@@ -137,6 +140,7 @@ namespace Kopernicus
 
             _loggerStream.Flush();
             _loggerStream.Close();
+            _loggerStream?.Dispose();
             _loggerStream = null;
         }
 
@@ -167,6 +171,7 @@ namespace Kopernicus
                 // Open the log file (overwrite existing logs)
                 String logFile = LogDirectory + logFileName + ".log";
                 Directory.CreateDirectory(Path.GetDirectoryName(logFile));
+                _loggerStream?.Dispose();
                 _loggerStream = new StreamWriter(logFile);
 
                 // Write an opening message
@@ -182,6 +187,27 @@ namespace Kopernicus
                 Debug.LogException(e);
             }
         }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _loggerStream?.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(typeof(Logger).FullName);
+            }
+        }
+
 
         // Cleanup the logger
         ~Logger()

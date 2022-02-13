@@ -35,7 +35,7 @@ namespace Kopernicus.Components
     {
         // Accessor for the nodeColor field
         private static readonly FieldInfo NodeColor = typeof(OrbitRendererData)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
+            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault();
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public Color nodeColor

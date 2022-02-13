@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -198,7 +198,7 @@ namespace System.IO.Compression
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class ZipStorer : IDisposable
+    public sealed class ZipStorer : IDisposable
     {
         /// <summary>
         /// Compression method enumeration
@@ -363,20 +363,22 @@ namespace System.IO.Compression
                 throw new InvalidOperationException("Stream cannot seek");
             }
 
-            ZipStorer zip = new ZipStorer
+            using (ZipStorer zip = new ZipStorer
             {
                 ZipFileStream = _stream,
                 Access = _access,
                 leaveOpen = _leaveOpen
-            };
-            //zip.FileName = _filename;
-
-            if (zip.ReadFileInfo())
+            })
             {
-                return zip;
-            }
+                //zip.FileName = _filename;
 
-            throw new InvalidDataException();
+                if (zip.ReadFileInfo())
+                {
+                    return zip;
+                }
+
+                throw new InvalidDataException();
+            }
         }
         /// <summary>
         /// Add full contents of a file into the Zip storage
@@ -677,26 +679,27 @@ namespace System.IO.Compression
 
             try
             {
-                ZipStorer tempZip = Create(tempZipName, String.Empty);
-
-                foreach (ZipFileEntry zfe in fullList)
+                using (ZipStorer tempZip = Create(tempZipName, String.Empty))
                 {
-                    if (_zfes.Contains(zfe))
+                    foreach (ZipFileEntry zfe in fullList)
                     {
-                        continue;
+                        if (_zfes.Contains(zfe))
+                        {
+                            continue;
+                        }
+                        if (_zip.ExtractFile(zfe, tempEntryName))
+                        {
+                            tempZip.AddFile(zfe.Method, tempEntryName, zfe.FilenameInZip, zfe.Comment);
+                        }
                     }
-                    if (_zip.ExtractFile(zfe, tempEntryName))
-                    {
-                        tempZip.AddFile(zfe.Method, tempEntryName, zfe.FilenameInZip, zfe.Comment);
-                    }
+                    _zip.Close();
+                    tempZip.Close();
+
+                    File.Delete(_zip.FileName);
+                    File.Move(tempZipName, _zip.FileName);
+
+                    _zip = Open(_zip.FileName, _zip.Access);
                 }
-                _zip.Close();
-                tempZip.Close();
-
-                File.Delete(_zip.FileName);
-                File.Move(tempZipName, _zip.FileName);
-
-                _zip = Open(_zip.FileName, _zip.Access);
             }
             catch
             {
@@ -853,49 +856,50 @@ namespace System.IO.Compression
                 Int64 posStart = ZipFileStream.Position;
                 Int64 sourceStart = _source.CanSeek ? _source.Position : 0;
 
-                Stream outStream = _zfe.Method == Compression.Store ? ZipFileStream : new DeflateStream(ZipFileStream, CompressionMode.Compress, true);
-
-                _zfe.Crc32 = 0 ^ 0xffffffff;
-
-                do
+                using (Stream outStream = _zfe.Method == Compression.Store ? ZipFileStream : new DeflateStream(ZipFileStream, CompressionMode.Compress, true))
                 {
-                    bytesRead = _source.Read(buffer, 0, buffer.Length);
-                    totalRead += (UInt32)bytesRead;
-                    if (bytesRead <= 0)
+                    _zfe.Crc32 = 0 ^ 0xffffffff;
+
+                    do
                     {
+                        bytesRead = _source.Read(buffer, 0, buffer.Length);
+                        totalRead += (UInt32)bytesRead;
+                        if (bytesRead <= 0)
+                        {
+                            continue;
+                        }
+                        outStream.Write(buffer, 0, bytesRead);
+
+                        for (UInt32 i = 0; i < bytesRead; i++)
+                        {
+                            _zfe.Crc32 = CrcTable[(_zfe.Crc32 ^ buffer[i]) & 0xFF] ^ (_zfe.Crc32 >> 8);
+                        }
+                    } while (bytesRead > 0);
+
+                    outStream.Flush();
+
+                    if (_zfe.Method == Compression.Deflate)
+                    {
+                        outStream.Dispose();
+                    }
+
+                    _zfe.Crc32 ^= 0xffffffff;
+                    _zfe.FileSize = totalRead;
+                    _zfe.CompressedSize = (UInt32)(ZipFileStream.Position - posStart);
+
+                    // Verify for real compression
+                    if (_zfe.Method == Compression.Deflate && !ForceDeflating && _source.CanSeek && _zfe.CompressedSize > _zfe.FileSize)
+                    {
+                        // Start operation again with Store algorithm
+                        _zfe.Method = Compression.Store;
+                        ZipFileStream.Position = posStart;
+                        ZipFileStream.SetLength(posStart);
+                        _source.Position = sourceStart;
                         continue;
                     }
-                    outStream.Write(buffer, 0, bytesRead);
 
-                    for (UInt32 i = 0; i < bytesRead; i++)
-                    {
-                        _zfe.Crc32 = CrcTable[(_zfe.Crc32 ^ buffer[i]) & 0xFF] ^ (_zfe.Crc32 >> 8);
-                    }
-                } while (bytesRead > 0);
-
-                outStream.Flush();
-
-                if (_zfe.Method == Compression.Deflate)
-                {
-                    outStream.Dispose();
+                    break;
                 }
-
-                _zfe.Crc32 ^= 0xffffffff;
-                _zfe.FileSize = totalRead;
-                _zfe.CompressedSize = (UInt32)(ZipFileStream.Position - posStart);
-
-                // Verify for real compression
-                if (_zfe.Method == Compression.Deflate && !ForceDeflating && _source.CanSeek && _zfe.CompressedSize > _zfe.FileSize)
-                {
-                    // Start operation again with Store algorithm
-                    _zfe.Method = Compression.Store;
-                    ZipFileStream.Position = posStart;
-                    ZipFileStream.SetLength(posStart);
-                    _source.Position = sourceStart;
-                    continue;
-                }
-
-                break;
             }
         }
 
@@ -978,38 +982,40 @@ namespace System.IO.Compression
             try
             {
                 ZipFileStream.Seek(-17, SeekOrigin.End);
-                BinaryReader br = new BinaryReader(ZipFileStream);
-                do
+                using (BinaryReader br = new BinaryReader(ZipFileStream))
                 {
-                    ZipFileStream.Seek(-5, SeekOrigin.Current);
-                    UInt32 sig = br.ReadUInt32();
-                    if (sig != 0x06054b50)
+                    do
                     {
-                        continue;
-                    }
-                    ZipFileStream.Seek(6, SeekOrigin.Current);
+                        ZipFileStream.Seek(-5, SeekOrigin.Current);
+                        UInt32 sig = br.ReadUInt32();
+                        if (sig != 0x06054b50)
+                        {
+                            continue;
+                        }
+                        ZipFileStream.Seek(6, SeekOrigin.Current);
 
-                    UInt16 entries = br.ReadUInt16();
-                    Int32 centralSize = br.ReadInt32();
-                    UInt32 centralDirOffset = br.ReadUInt32();
-                    UInt16 commentSize = br.ReadUInt16();
+                        UInt16 entries = br.ReadUInt16();
+                        Int32 centralSize = br.ReadInt32();
+                        UInt32 centralDirOffset = br.ReadUInt32();
+                        UInt16 commentSize = br.ReadUInt16();
 
-                    // check if comment field is the very last data in file
-                    if (ZipFileStream.Position + commentSize != ZipFileStream.Length)
-                    {
-                        return false;
-                    }
+                        // check if comment field is the very last data in file
+                        if (ZipFileStream.Position + commentSize != ZipFileStream.Length)
+                        {
+                            return false;
+                        }
 
-                    // Copy entire central directory to a memory buffer
-                    ExistingFiles = entries;
-                    CentralDirImage = new Byte[centralSize];
-                    ZipFileStream.Seek(centralDirOffset, SeekOrigin.Begin);
-                    ZipFileStream.Read(CentralDirImage, 0, centralSize);
+                        // Copy entire central directory to a memory buffer
+                        ExistingFiles = entries;
+                        CentralDirImage = new Byte[centralSize];
+                        ZipFileStream.Seek(centralDirOffset, SeekOrigin.Begin);
+                        ZipFileStream.Read(CentralDirImage, 0, centralSize);
 
-                    // Leave the pointer at the beginning of central dir, to append new files
-                    ZipFileStream.Seek(centralDirOffset, SeekOrigin.Begin);
-                    return true;
-                } while (ZipFileStream.Position > 0);
+                        // Leave the pointer at the beginning of central dir, to append new files
+                        ZipFileStream.Seek(centralDirOffset, SeekOrigin.Begin);
+                        return true;
+                    } while (ZipFileStream.Position > 0);
+                }
             }
             catch
             {
