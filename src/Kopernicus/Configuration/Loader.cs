@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -182,7 +182,7 @@ namespace Kopernicus.Configuration
             NameSignificance = NameSignificance.Key)]
         public List<StringCollectionParser> RemoveLaunchSites
         {
-            get { return new List<StringCollectionParser> {new StringCollectionParser(Templates.RemoveLaunchSites)}; }
+            get { return new List<StringCollectionParser> { new StringCollectionParser(Templates.RemoveLaunchSites) }; }
             set { Templates.RemoveLaunchSites = value.SelectMany(v => v.Value).ToList(); }
         }
 
@@ -221,240 +221,242 @@ namespace Kopernicus.Configuration
 
             // Dictionary of bodies generated
             List<Body> bodies = new List<Body>();
-            Logger logger = new Logger();
-
-            // Load all of the bodies
-            foreach (ConfigNode bodyNode in node.GetNodes(BODY_NODE_NAME))
+            using (Logger logger = new Logger())
             {
-                // Grab the name of the body
-                String name = bodyNode.GetValue("name");
-                if (bodyNode.HasValue("identifier"))
+
+                // Load all of the bodies
+                foreach (ConfigNode bodyNode in node.GetNodes(BODY_NODE_NAME))
                 {
-                    name = bodyNode.GetValue("identifier");
+                    // Grab the name of the body
+                    String name = bodyNode.GetValue("name");
+                    if (bodyNode.HasValue("identifier"))
+                    {
+                        name = bodyNode.GetValue("identifier");
+                    }
+
+                    if (seen.Contains(name))
+                    {
+                        Logger.Default.Log("[Kopernicus::PostApply] Skipped duplicate body " + name);
+                        continue; //next body, please
+                    }
+                    seen.Add(name);
+
+                    try
+                    {
+                        // Create a logfile for this body
+                        logger.SetFilename(name + ".Body");
+                        logger.SetAsActive();
+
+                        // Attempt to create the body
+                        Body currentBody = new Body();
+                        Parser.SetState("Kopernicus:currentBody", () => currentBody);
+                        Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode, "Kopernicus"); //logs to active logger
+                        bodies.Add(currentBody);
+                        Events.OnLoaderLoadBody.Fire(currentBody, bodyNode);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.Name);
+                        Parser.ClearState("Kopernicus:currentBody");
+
+                        // Restore default logger
+                        Logger.Default.SetAsActive();
+                        logger.Close(); //implicit flush
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogException(e);
+                        logger.Close(); //implicit flush
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + name + ": " +
+                                           e.Message);
+                        throw new Exception("Failed to load Body: " + name);
+                    }
                 }
 
-                if (seen.Contains(name))
+                seen.Clear();
+
+                // Load all of the asteroids
+                foreach (ConfigNode asteroidNode in node.GetNodes(ASTEROID_NODE_NAME))
                 {
-                    Logger.Default.Log("[Kopernicus::PostApply] Skipped duplicate body " + name);
-                    continue; //next body, please
-                }
-                seen.Add(name);
+                    if (seen.Contains(asteroidNode.GetValue("name")))
+                    {
+                        Logger.Default.Log("[Kopernicus::PostApply] Skipped duplicate asteroid " +
+                                           asteroidNode.GetValue("name"));
+                        continue; //next roid, please
+                    }
+                    seen.Add(asteroidNode.GetValue("name"));
 
-                try
-                {
-                    // Create a logfile for this body
-                    logger.SetFilename(name + ".Body");
-                    logger.SetAsActive();
+                    try
+                    {
+                        // Create a logfile for this asteroid
+                        logger.SetFilename(asteroidNode.GetValue("name") + ".Asteroid");
+                        logger.SetAsActive();
 
-                    // Attempt to create the body
-                    Body currentBody = new Body();
-                    Parser.SetState("Kopernicus:currentBody", () => currentBody);
-                    Parser.LoadObjectFromConfigurationNode(currentBody, bodyNode, "Kopernicus"); //logs to active logger
-                    bodies.Add(currentBody);
-                    Events.OnLoaderLoadBody.Fire(currentBody, bodyNode);
-                    Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Body: " + currentBody.Name);
-                    Parser.ClearState("Kopernicus:currentBody");
-
-                    // Restore default logger
-                    Logger.Default.SetAsActive();
-                    logger.Close(); //implicit flush
-                }
-                catch (Exception e)
-                {
-                    logger.LogException(e);
-                    logger.Close(); //implicit flush
-                    Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + name + ": " +
-                                       e.Message);
-                    throw new Exception("Failed to load Body: " + name);
-                }
-            }
-
-            seen.Clear();
-
-            // Load all of the asteroids
-            foreach (ConfigNode asteroidNode in node.GetNodes(ASTEROID_NODE_NAME))
-            {
-                if (seen.Contains(asteroidNode.GetValue("name")))
-                {
-                    Logger.Default.Log("[Kopernicus::PostApply] Skipped duplicate asteroid " +
-                                       asteroidNode.GetValue("name"));
-                    continue; //next roid, please
-                }
-                seen.Add(asteroidNode.GetValue("name"));
-
-                try
-                {
-                    // Create a logfile for this asteroid
-                    logger.SetFilename(asteroidNode.GetValue("name") + ".Asteroid");
-                    logger.SetAsActive();
-
-                    // Attempt to create the Asteroid
-                    Asteroid asteroid =
+                        // Attempt to create the Asteroid
+                        Asteroid asteroid =
                         Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus"); //logs to active logger
-                    DiscoverableObjects.Asteroids.Add(asteroid);
-                    Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
-                    Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.Name);
+                        DiscoverableObjects.Asteroids.Add(asteroid);
+                        Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.Name);
 
-                    // Restore default logger
-                    Logger.Default.SetAsActive();
-                    logger.Close(); //implicit flush
-                }
-                catch (Exception e)
-                {
-                    Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Asteroid: " +
-                                       asteroidNode.GetValue("name") + ": " + e.Message);
-                    logger.LogException(e);
-                    logger.Close();
-                    throw new Exception("Failed to load Asteroid: " + asteroidNode.GetValue("name"));
-                }
-
-            }
-
-            seen.Clear();
-            logger.Close();
-
-            // Load all of the PQS Presets                
-            foreach (ConfigNode presetNode in node.GetNodes(PRESET_NODE_NAME))
-            {
-                // Attempt to create the Preset
-                try
-                {
-                    PQSCache.PQSPreset preset = new PQSCache.PQSPreset();
-                    preset.Load(presetNode);
-                    if (PQSCache.PresetList.presets.Any(p => p.name == preset.name))
+                        // Restore default logger
+                        Logger.Default.SetAsActive();
+                        logger.Close(); //implicit flush
+                    }
+                    catch (Exception e)
                     {
-                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Preset: " + preset.name);
-                        continue;
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Asteroid: " +
+                                           asteroidNode.GetValue("name") + ": " + e.Message);
+                        logger.LogException(e);
+                        logger.Close();
+                        throw new Exception("Failed to load Asteroid: " + asteroidNode.GetValue("name"));
                     }
 
-                    PQSCache.PresetList.presets.Add(preset);
+                }
 
-                    // Display name
-                    String displayName = preset.name;
-                    if (presetNode.HasValue("displayName"))
+                seen.Clear();
+                logger.Close();
+
+                // Load all of the PQS Presets                
+                foreach (ConfigNode presetNode in node.GetNodes(PRESET_NODE_NAME))
+                {
+                    // Attempt to create the Preset
+                    try
                     {
-                        displayName = presetNode.GetValue("displayName");
-                    }
-
-                    Templates.PresetDisplayNames.Add(displayName);
-                    Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Preset: " + preset.name);
-                }
-                catch
-                {
-                    Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Preset: " +
-                                       presetNode.GetValue("name"));
-                    throw new Exception("Failed to load Asteroid: " + presetNode.GetValue("name"));
-                }
-            }
-
-            // Register UBIs for all bodies
-            CelestialBody[] localBodies = bodies.Select(b => b.GeneratedBody.celestialBody).ToArray();
-            foreach (Body body in bodies)
-            {
-                // Register the primary UBI
-                if (!String.IsNullOrEmpty(body.Identifier))
-                {
-                    UBI.RegisterUBI(body.CelestialBody, body.Identifier, localBodies: localBodies);
-                }
-
-                // Register all implemented UBIs
-                foreach (String ubi in body.Implements.SelectMany(u => u.Value).Distinct())
-                {
-                    if (!String.IsNullOrEmpty(ubi))
-                    {
-                        UBI.RegisterUBI(body.CelestialBody, ubi, true, localBodies);
-                    }
-                }
-            }
-
-            // Event
-            Events.OnLoaderLoadedAllBodies.Fire(this, node);
-
-            // Glue all the orbits together in the defined pattern
-            foreach (Body body in bodies)
-            {
-                // If this body is in orbit around another body
-                if (body.Orbit != null)
-                {
-                    // Convert a UBI reference into a normal one
-                    String referenceBody = UBI.GetName(body.Orbit.ReferenceBody, localBodies);
-
-                    // Get the Body object for the reference body
-                    Body parent = bodies.Find(b => b.Name == referenceBody);
-                    if (parent == null)
-                    {
-                        throw new Exception("Reference body for \"" + (body.Identifier ?? body.Name) +
-                                            "\" could not be found. Missing body name is \"" +
-                                            body.Orbit.ReferenceBody + "\".");
-                    }
-
-                    // Setup the orbit of the body
-                    parent.GeneratedBody.children.Add(body.GeneratedBody);
-                    body.GeneratedBody.orbitDriver.referenceBody = parent.GeneratedBody.celestialBody;
-                    body.GeneratedBody.orbitDriver.orbit.referenceBody = parent.GeneratedBody.celestialBody;
-                }
-
-                // Parent the generated body to the PSystem
-                body.GeneratedBody.transform.parent = SystemPrefab.transform;
-
-                // Delete ghost space centers
-                if (!body.GeneratedBody.celestialBody.isHomeWorld && body.GeneratedBody.pqsVersion != null)
-                {
-                    SpaceCenter[] centers = body.GeneratedBody.pqsVersion.GetComponentsInChildren<SpaceCenter>(true);
-                    if (centers != null)
-                    {
-                        foreach (SpaceCenter c in centers)
+                        PQSCache.PQSPreset preset = new PQSCache.PQSPreset();
+                        preset.Load(presetNode);
+                        if (PQSCache.PresetList.presets.Any(p => p.name == preset.name))
                         {
-                            Object.Destroy(c);
+                            Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Preset: " + preset.name);
+                            continue;
+                        }
+
+                        PQSCache.PresetList.presets.Add(preset);
+
+                        // Display name
+                        String displayName = preset.name;
+                        if (presetNode.HasValue("displayName"))
+                        {
+                            displayName = presetNode.GetValue("displayName");
+                        }
+
+                        Templates.PresetDisplayNames.Add(displayName);
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Preset: " + preset.name);
+                    }
+                    catch
+                    {
+                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Preset: " +
+                                           presetNode.GetValue("name"));
+                        throw new Exception("Failed to load Asteroid: " + presetNode.GetValue("name"));
+                    }
+                }
+
+                // Register UBIs for all bodies
+                CelestialBody[] localBodies = bodies.Select(b => b.GeneratedBody.celestialBody).ToArray();
+                foreach (Body body in bodies)
+                {
+                    // Register the primary UBI
+                    if (!String.IsNullOrEmpty(body.Identifier))
+                    {
+                        UBI.RegisterUBI(body.CelestialBody, body.Identifier, localBodies: localBodies);
+                    }
+
+                    // Register all implemented UBIs
+                    foreach (String ubi in body.Implements.SelectMany(u => u.Value).Distinct())
+                    {
+                        if (!String.IsNullOrEmpty(ubi))
+                        {
+                            UBI.RegisterUBI(body.CelestialBody, ubi, true, localBodies);
                         }
                     }
                 }
 
                 // Event
-                Events.OnLoaderFinalizeBody.Fire(body);
+                Events.OnLoaderLoadedAllBodies.Fire(this, node);
+
+                // Glue all the orbits together in the defined pattern
+                foreach (Body body in bodies)
+                {
+                    // If this body is in orbit around another body
+                    if (body.Orbit != null)
+                    {
+                        // Convert a UBI reference into a normal one
+                        String referenceBody = UBI.GetName(body.Orbit.ReferenceBody, localBodies);
+
+                        // Get the Body object for the reference body
+                        Body parent = bodies.Find(b => b.Name == referenceBody);
+                        if (parent == null)
+                        {
+                            throw new Exception("Reference body for \"" + (body.Identifier ?? body.Name) +
+                                                "\" could not be found. Missing body name is \"" +
+                                                body.Orbit.ReferenceBody + "\".");
+                        }
+
+                        // Setup the orbit of the body
+                        parent.GeneratedBody.children.Add(body.GeneratedBody);
+                        body.GeneratedBody.orbitDriver.referenceBody = parent.GeneratedBody.celestialBody;
+                        body.GeneratedBody.orbitDriver.orbit.referenceBody = parent.GeneratedBody.celestialBody;
+                    }
+
+                    // Parent the generated body to the PSystem
+                    body.GeneratedBody.transform.parent = SystemPrefab.transform;
+
+                    // Delete ghost space centers
+                    if (!body.GeneratedBody.celestialBody.isHomeWorld && body.GeneratedBody.pqsVersion != null)
+                    {
+                        SpaceCenter[] centers = body.GeneratedBody.pqsVersion.GetComponentsInChildren<SpaceCenter>(true);
+                        if (centers != null)
+                        {
+                            foreach (SpaceCenter c in centers)
+                            {
+                                Object.Destroy(c);
+                            }
+                        }
+                    }
+
+                    // Event
+                    Events.OnLoaderFinalizeBody.Fire(body);
+                }
+
+                // Elect root body
+                SystemPrefab.rootBody = bodies.First(p => p.Orbit == null).GeneratedBody;
+
+                // Try to find a home world
+                Body home = bodies.FirstOrDefault(p => p.GeneratedBody.celestialBody.isHomeWorld);
+                if (home == null)
+                {
+                    throw new Exception("Homeworld body could not be found.");
+                }
+
+                // Sort by distance from parent (discover how this effects local bodies)
+                Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body => body.children = body.children
+                    .OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList());
+
+                // Fix doubled flightGlobals
+                List<Int32> numbers = new List<Int32> {0, 1};
+                Int32 index = bodies.Sum(b => b.GeneratedBody.flightGlobalsIndex);
+                Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body =>
+                {
+                    // ReSharper disable AccessToModifiedClosure
+                    if (numbers.Contains(body.flightGlobalsIndex))
+                    {
+                        body.flightGlobalsIndex = index++;
+                    }
+
+                    if (body.celestialBody.isHomeWorld)
+                    {
+                        body.flightGlobalsIndex = 1; // Kerbin
+                    }
+
+                    if (body == SystemPrefab.rootBody)
+                    {
+                        body.flightGlobalsIndex = 0; // Sun
+                    }
+
+                    numbers.Add(body.flightGlobalsIndex);
+                    // ReSharper restore AccessToModifiedClosure
+                });
+
+                // Event
+                Events.OnLoaderPostApply.Fire(this, node);
             }
-
-            // Elect root body
-            SystemPrefab.rootBody = bodies.First(p => p.Orbit == null).GeneratedBody;
-
-            // Try to find a home world
-            Body home = bodies.FirstOrDefault(p => p.GeneratedBody.celestialBody.isHomeWorld);
-            if (home == null)
-            {
-                throw new Exception("Homeworld body could not be found.");
-            }
-
-            // Sort by distance from parent (discover how this effects local bodies)
-            Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body => body.children = body.children
-                .OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList());
-
-            // Fix doubled flightGlobals
-            List<Int32> numbers = new List<Int32> {0, 1};
-            Int32 index = bodies.Sum(b => b.GeneratedBody.flightGlobalsIndex);
-            Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body =>
-            {
-                // ReSharper disable AccessToModifiedClosure
-                if (numbers.Contains(body.flightGlobalsIndex))
-                {
-                    body.flightGlobalsIndex = index++;
-                }
-
-                if (body.celestialBody.isHomeWorld)
-                {
-                    body.flightGlobalsIndex = 1; // Kerbin
-                }
-
-                if (body == SystemPrefab.rootBody)
-                {
-                    body.flightGlobalsIndex = 0; // Sun
-                }
-                
-                numbers.Add(body.flightGlobalsIndex);
-                // ReSharper restore AccessToModifiedClosure
-            });
-
-            // Event
-            Events.OnLoaderPostApply.Fire(this, node);
         }
     }
 }

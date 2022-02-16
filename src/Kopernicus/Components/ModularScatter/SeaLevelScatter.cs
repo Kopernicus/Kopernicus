@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -43,12 +43,12 @@ namespace Kopernicus.Components.ModularScatter
         /// The GameObjects that were already moved
         /// </summary>
         private readonly List<GameObject> _moved = new List<GameObject>();
-        
+
         /// <summary>
         /// Scatters will be moved up/down by a random value from this range
         /// </summary>
         public List<Single> AltitudeVariance = new List<Single> {0f, 0f};
-        
+
         /// <summary>
         /// Go through all spawned scatters, and move them so they are at sea level, and not on the terrain
         /// </summary>
@@ -65,7 +65,7 @@ namespace Kopernicus.Components.ModularScatter
                 _moved.Clear();
                 return;
             }
-            
+
             if (system.scatterObjects.Count != _moved.Count)
             {
                 _moved.Clear();
@@ -78,7 +78,7 @@ namespace Kopernicus.Components.ModularScatter
 
             // Init the seed
             Random.InitState(system.scatter.seed);
-            
+
             // Shift every object to sea level
             for (Int32 i = 0; i < system.scatterObjects.Count; i++)
             {
@@ -87,13 +87,13 @@ namespace Kopernicus.Components.ModularScatter
                 Vector3 position = system.body.pqsController.transform.position;
                 Vector3 direction = (scatter.transform.position - position).normalized;
                 scatter.transform.position = position +
-                                             direction * (Single) (system.body.Radius + system.scatter.verticalOffset +
+                                             direction * (Single)(system.body.Radius + system.scatter.verticalOffset +
                                                                    Random.Range(AltitudeVariance[0],
                                                                        AltitudeVariance[1]));
                 _moved.Add(scatter);
             }
         }
-        
+
         /// <summary>
         /// Clear the cache on a scene change
         /// </summary>
@@ -106,7 +106,7 @@ namespace Kopernicus.Components.ModularScatter
         {
             // We don't use this
         }
-        
+
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);

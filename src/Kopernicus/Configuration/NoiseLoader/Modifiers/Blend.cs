@@ -36,15 +36,15 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Blend : NoiseLoader<LibNoise.Modifiers.Blend>
     {
-        [PreApply] 
+        [PreApply]
         [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModuleA { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModuleB { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Weight", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader WeightModule { get; set; }
 

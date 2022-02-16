@@ -119,7 +119,7 @@ namespace Kopernicus.Components
         /// </summary>
         public CelestialBody referenceBody;
         public MeshRenderer ringMr;
-        
+
         [SerializeField]
         private List<IComponent<Ring>> components;
 
@@ -471,9 +471,9 @@ namespace Kopernicus.Components
             {
                 return;
             }
-            
+
             Int32 firstTop = vertices.Count;
-            
+
             // Mesh wrapping - top faces
             // We need to generate one extra pair of vertices
             // so the last triangles' texture coordinates don't
@@ -557,12 +557,12 @@ namespace Kopernicus.Components
                              && KopernicusStar.Current != null && KopernicusStar.Current.sun.transform != null)
             {
                 ringMr.sharedMaterial.SetFloat(SunRadius,
-                    (Single) KopernicusStar.Current.sun.Radius);
+                    (Single)KopernicusStar.Current.sun.Radius);
                 ringMr.sharedMaterial.SetVector(SunPosRelativeToPlanet,
-                    (Vector3) (KopernicusStar.Current.sun.transform.position -
+                    (Vector3)(KopernicusStar.Current.sun.transform.position -
                                ScaledSpace.ScaledToLocalSpace(transform.position)));
                 ringMr.sharedMaterial.SetFloat(InnerShadeOffset,
-                    (Single) (Planetarium.GetUniversalTime() * _innerShadeOffsetRate));
+                    (Single)(Planetarium.GetUniversalTime() * _innerShadeOffsetRate));
             }
 
             // Call Modules
@@ -630,7 +630,7 @@ namespace Kopernicus.Components
                 transform.localRotation =
                     Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
                     * rotation
-                    * Quaternion.Euler(0, (Single) Planetarium.GetUniversalTime() * degreesPerSecond, 0);
+                    * Quaternion.Euler(0, (Single)Planetarium.GetUniversalTime() * degreesPerSecond, 0);
             }
             else
             {

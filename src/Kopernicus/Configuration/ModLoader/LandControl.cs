@@ -316,7 +316,7 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTargetCollection("Meshes", AllowMerge = true)]
             public List<MeshParser> Meshes
             {
-                get { return Scatter.meshes.Select(m => (MeshParser) m).ToList(); }
+                get { return Scatter.meshes.Select(m => (MeshParser)m).ToList(); }
                 set { Scatter.meshes = value.Select(m => m.Value).ToList(); }
             }
 
@@ -469,7 +469,9 @@ namespace Kopernicus.Configuration.ModLoader
                 // Initialize default parameters
                 Value = new PQSLandControl.LandClassScatter
                 {
-                    maxCache = 512, maxCacheDelta = 32, maxSpeed = 1000
+                    maxCache = 512,
+                    maxCacheDelta = 32,
+                    maxSpeed = 1000
                 };
 
                 // Get the Scatter-Parent
@@ -494,7 +496,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                 // Get the Scatter-Parent
                 GameObject scatterParent = typeof(PQSLandControl.LandClassScatter)
-                    .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                     .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.GetValue(Value) as GameObject;
 
                 // If the GameObject is null, create one

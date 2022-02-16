@@ -135,8 +135,9 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
-            if (FlightGlobals.GetHomeBody()?.atmosphericAmbientColor != null)
+
+            if ((FlightGlobals.GetHomeBody() != null)
+                && (FlightGlobals.GetHomeBody().atmosphericAmbientColor != null))
             {
                 RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
             }
@@ -164,7 +165,7 @@ namespace Kopernicus.RuntimeUtility
                 {
                     continue;
                 }
-                
+
                 if (AtmosphereInfo.PatchAfg(afg))
                 {
                     Debug.Log("[Kopernicus] AtmosphereFixer => Patched AtmosphereFromGround for " +

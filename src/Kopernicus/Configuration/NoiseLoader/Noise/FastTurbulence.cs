@@ -64,7 +64,7 @@ namespace Kopernicus.Configuration.NoiseLoader.Noise
             set { Noise.Seed = value; }
         }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Source", NameSignificance = NameSignificance.Type)]
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

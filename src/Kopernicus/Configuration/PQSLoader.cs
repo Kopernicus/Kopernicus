@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -58,6 +58,8 @@ namespace Kopernicus.Configuration
         // Required PQSMods
         private readonly PQSMod_CelestialBodyTransform _transform;
         private readonly PQSMod_QuadMeshColliders _collider;
+        private bool isMainFastBlend;
+        private bool isTriplanarAtlas;
 
         // Surface physics material
         [ParserTarget("PhysicsMaterial", AllowMerge = true)]
@@ -192,7 +194,7 @@ namespace Kopernicus.Configuration
             set
             {
 #if (!KSP_VERSION_1_8)
-                    Value.ultraQualitySurfaceMaterial = value;
+                Value.ultraQualitySurfaceMaterial = value;
 #endif
                 Value.highQualitySurfaceMaterial = value;
                 Value.mediumQualitySurfaceMaterial = value;
@@ -329,10 +331,10 @@ namespace Kopernicus.Configuration
                 Boolean isMain = PQSMainShader.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isOptimised = PQSMainOptimised.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isExtra = PQSMainExtras.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isMainFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
+                isMainFastBlend = PQSMainFastBlend.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isOptimisedFastBlend = PQSMainOptimisedFastBlend.UsesSameShader(BasicSurfaceMaterial);
                 Boolean isTriplanar = PQSTriplanarZoomRotation.UsesSameShader(BasicSurfaceMaterial);
-                Boolean isTriplanarAtlas = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
+                isTriplanarAtlas = PQSTriplanarZoomRotationTextureArray.UsesSameShader(BasicSurfaceMaterial);
                 switch (value.Value)
                 {
                     case NewShaderSurfaceMaterialType.Vacuum when !isVaccum:
@@ -368,8 +370,8 @@ namespace Kopernicus.Configuration
             }
         }
 #endif
-    // Surface Material of the PQS
-    [ParserTarget("Material", AllowMerge = true, GetChild = false)]
+        // Surface Material of the PQS
+        [ParserTarget("Material", AllowMerge = true, GetChild = false)]
         [KittopiaUntouchable]
         public Material SurfaceMaterial
         {
@@ -381,12 +383,12 @@ namespace Kopernicus.Configuration
                 Boolean isOptimised = BasicSurfaceMaterial is PQSMainOptimisedLoader;
                 Boolean isExtra = BasicSurfaceMaterial is PQSMainExtrasLoader;
 #if (!KSP_VERSION_1_8)
-                Boolean isMainFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
+                isMainFastBlend = BasicSurfaceMaterial is PQSMainFastBlendLoader;
 #endif
                 Boolean isOptimisedFastBlend = BasicSurfaceMaterial is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = BasicSurfaceMaterial is PQSTriplanarZoomRotationLoader;
 #if (!KSP_VERSION_1_8)
-                Boolean isTriplanarAtlas = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
+                isTriplanarAtlas = BasicSurfaceMaterial is PQSTriplanarZoomRotationTextureArrayLoader;
 #endif
 #if (KSP_VERSION_1_8)
                 switch (MaterialType.Value)
@@ -458,7 +460,6 @@ namespace Kopernicus.Configuration
                 Boolean isMain = value is PQSMainShaderLoader;
                 Boolean isOptimised = value is PQSMainOptimisedLoader;
                 Boolean isExtra = value is PQSMainExtrasLoader;
-                Boolean isMainFastBlend = true;
 #if (!KSP_VERSION_1_8)
                 if (!(Versioning.version_minor < 9))
                 {
@@ -467,7 +468,6 @@ namespace Kopernicus.Configuration
 #endif
                 Boolean isOptimisedFastBlend = value is PQSMainOptimisedFastBlendLoader;
                 Boolean isTriplanar = value is PQSTriplanarZoomRotationLoader;
-                Boolean isTriplanarAtlas = true;
 #if (!KSP_VERSION_1_8)
                 if (!(Versioning.version_minor < 9))
                 {

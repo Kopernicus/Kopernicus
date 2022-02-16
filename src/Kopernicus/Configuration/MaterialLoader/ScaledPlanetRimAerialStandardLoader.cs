@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -164,7 +164,7 @@ namespace Kopernicus.Configuration.MaterialLoader
             {
                 // Generate the ramp from a gradient 
                 Texture2D ramp = new Texture2D(512, 1);
-                Color[] colors = ramp.GetPixels(0);
+                Color32[] colors = ramp.GetPixels32(0);
                 for (Int32 i = 0; i < colors.Length; i++)
                 {
                     // Compute the position in the gradient 
@@ -172,7 +172,7 @@ namespace Kopernicus.Configuration.MaterialLoader
                     colors[i] = value.ColorAt(k);
                 }
 
-                ramp.SetPixels(colors, 0);
+                ramp.SetPixels32(colors, 0);
                 ramp.Apply(true, false);
 
                 // Set the color ramp 
@@ -184,8 +184,8 @@ namespace Kopernicus.Configuration.MaterialLoader
         [ParserTarget("localLightDirection")]
         public Vector4Parser LocalLightDirectionSetter
         {
-             get { return LocalLightDirection; }
-             set { LocalLightDirection = value; }
+            get { return LocalLightDirection; }
+            set { LocalLightDirection = value; }
         }
 
         // Resource Map (RGB), default = "black" { }

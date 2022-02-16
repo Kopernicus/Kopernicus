@@ -118,9 +118,9 @@ namespace Kopernicus.Configuration
             set
             {
                 Value.invWaveLength = value;
-                Value.waveLength = new Color((Single) Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[0])),
-                    (Single) Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[1])),
-                    (Single) Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[2])), 0.5f);
+                Value.waveLength = new Color((Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[0])),
+                    (Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[1])),
+                    (Single)Math.Sqrt(Math.Sqrt(1d / Value.invWaveLength[2])), 0.5f);
                 if (Injector.IsInPrefab)
                 {
                     return;
@@ -196,9 +196,9 @@ namespace Kopernicus.Configuration
             set
             {
                 Value.waveLength = value;
-                Value.invWaveLength = new Color((Single) (1d / Math.Pow(Value.waveLength[0], 4)),
-                    (Single) (1d / Math.Pow(Value.waveLength[1], 4)),
-                    (Single) (1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);
+                Value.invWaveLength = new Color((Single)(1d / Math.Pow(Value.waveLength[0], 4)),
+                    (Single)(1d / Math.Pow(Value.waveLength[1], 4)),
+                    (Single)(1d / Math.Pow(Value.waveLength[2], 4)), 0.5f);
                 if (Injector.IsInPrefab)
                 {
                     return;
@@ -214,10 +214,10 @@ namespace Kopernicus.Configuration
         [KittopiaDescription("A multiplier that automatically sets outerRadius based on the planets radius.")]
         public NumericParser<Single> OuterRadiusMult
         {
-            get { return Value.outerRadius / INVSCALEFACTOR / (Single) Value.planet.Radius; }
+            get { return Value.outerRadius / INVSCALEFACTOR / (Single)Value.planet.Radius; }
             set
             {
-                Value.outerRadius = (Single) Value.planet.Radius * value * INVSCALEFACTOR;
+                Value.outerRadius = (Single)Value.planet.Radius * value * INVSCALEFACTOR;
                 if (Injector.IsInPrefab)
                 {
                     return;
@@ -290,11 +290,11 @@ namespace Kopernicus.Configuration
                 Value.waveLength = new Color(0.65f, 0.57f, 0.475f, 0.5f);
             }
 
-            Value.outerRadius = (Single) Value.planet.Radius * 1.025f * INVSCALEFACTOR;
+            Value.outerRadius = (Single)Value.planet.Radius * 1.025f * INVSCALEFACTOR;
             Value.innerRadius = Value.outerRadius * 0.975f;
             Value.scaleDepth = -0.25f;
-            Value.invWaveLength = new Color((Single) (1d / Math.Pow(Value.waveLength[0], 4)),
-                (Single) (1d / Math.Pow(Value.waveLength[1], 4)), (Single) (1d / Math.Pow(Value.waveLength[2], 4)),
+            Value.invWaveLength = new Color((Single)(1d / Math.Pow(Value.waveLength[0], 4)),
+                (Single)(1d / Math.Pow(Value.waveLength[1], 4)), (Single)(1d / Math.Pow(Value.waveLength[2], 4)),
                 0.5f);
             CalculatedMembers(Value);
         }

@@ -44,7 +44,7 @@ namespace Kopernicus.Configuration.Asteroids
         public class NearbyLoader
         {
             // The body we are passing
-            [ParserTarget("body")] 
+            [ParserTarget("body")]
             public String Body { get; set; }
 
             // eccentricity
@@ -71,11 +71,11 @@ namespace Kopernicus.Configuration.Asteroids
             public RandomRangeLoader MeanAnomalyAtEpoch = new RandomRangeLoader(0.999f, 1.001f);
 
             // The probability of this Orbit type
-            [ParserTarget("probability")] 
+            [ParserTarget("probability")]
             public NumericParser<Single> Probability { get; set; }
 
             // Whether the body must be reached
-            [ParserTarget("reached")] 
+            [ParserTarget("reached")]
             public NumericParser<Boolean> Reached { get; set; }
         }
 
@@ -84,23 +84,23 @@ namespace Kopernicus.Configuration.Asteroids
         public class FlybyLoader
         {
             // The body we are passing
-            [ParserTarget("body")] 
+            [ParserTarget("body")]
             public String Body { get; set; }
 
             // The minimum amount of days to closest approach
-            [ParserTarget("minDuration")] 
+            [ParserTarget("minDuration")]
             public NumericParser<Single> MinDuration { get; set; }
 
             // The maximum amount of days to closest approach
-            [ParserTarget("maxDuration")] 
+            [ParserTarget("maxDuration")]
             public NumericParser<Single> MaxDuration { get; set; }
 
             // The probability of this Orbit type
-            [ParserTarget("probability")] 
+            [ParserTarget("probability")]
             public NumericParser<Single> Probability { get; set; }
 
             // Whether the body must be reached
-            [ParserTarget("reached")] 
+            [ParserTarget("reached")]
             public NumericParser<Boolean> Reached { get; set; }
         }
 
@@ -109,7 +109,7 @@ namespace Kopernicus.Configuration.Asteroids
         public class AroundLoader
         {
             // The body we are passing
-            [ParserTarget("body")] 
+            [ParserTarget("body")]
             public String Body { get; set; }
 
             // eccentricity
@@ -117,11 +117,11 @@ namespace Kopernicus.Configuration.Asteroids
             public RandomRangeLoader Eccentricity = new RandomRangeLoader(0.0001f, 0.01f);
 
             // semiMajorAxis
-            [ParserTarget("semiMajorAxis")] 
+            [ParserTarget("semiMajorAxis")]
             public RandomRangeLoader SemiMajorAxis { get; set; }
 
             // inclination
-            [ParserTarget("inclination")] 
+            [ParserTarget("inclination")]
             public RandomRangeLoader Inclination = new RandomRangeLoader(-0.001f, 0.001f);
 
             // longitudeOfAscendingNode
@@ -137,15 +137,15 @@ namespace Kopernicus.Configuration.Asteroids
             public RandomRangeLoader MeanAnomalyAtEpoch = new RandomRangeLoader(0.999f, 1.001f);
 
             // epoch
-            [ParserTarget("epoch")] 
+            [ParserTarget("epoch")]
             public RandomRangeLoader Epoch = new RandomRangeLoader(0.999f, 1.001f);
 
             // The probability of this Orbit type
-            [ParserTarget("probability")] 
+            [ParserTarget("probability")]
             public NumericParser<Single> Probability { get; set; }
 
             // Whether the body must be reached
-            [ParserTarget("reached")] 
+            [ParserTarget("reached")]
             public NumericParser<Boolean> Reached { get; set; }
         }
 
@@ -156,11 +156,11 @@ namespace Kopernicus.Configuration.Asteroids
         public class RandomRangeLoader
         {
             // The min value
-            [ParserTarget("minValue")] 
+            [ParserTarget("minValue")]
             public NumericParser<Single> MinValue { get; set; }
 
             // The max value
-            [ParserTarget("maxValue")] 
+            [ParserTarget("maxValue")]
             public NumericParser<Single> MaxValue { get; set; }
 
             // Convert this to Int32, and return a random value

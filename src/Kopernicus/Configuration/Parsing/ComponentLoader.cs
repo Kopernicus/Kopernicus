@@ -56,7 +56,7 @@ namespace Kopernicus.Configuration.Parsing
     {
         public new TComponent Value
         {
-            get { return (TComponent) base.Value; }
+            get { return (TComponent)base.Value; }
             set { base.Value = value; }
         }
 

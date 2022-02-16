@@ -49,11 +49,13 @@ namespace Kopernicus.Components
             }
         }
 
-        private readonly PropertyInfo _simplex = typeof(PQSMod_VertexPlanet.SimplexWrapper).GetProperty("simplex");
+        private readonly PropertyInfo _simplex = typeof(PQSMod_VertexPlanet.SimplexWrapper).GetProperty(nameof(simplex), BindingFlags.Public
+            | BindingFlags.Instance
+            | BindingFlags.DeclaredOnly);
 
         public new Simplex simplex
         {
-            get { return (Simplex) _simplex.GetValue(this, null); }
+            get { return (Simplex)_simplex.GetValue(this, null); }
             set { _simplex.SetValue(this, value, null); }
         }
 

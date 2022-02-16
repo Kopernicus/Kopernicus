@@ -266,7 +266,7 @@ namespace Kopernicus
         private static EventData<ConfigNode> OnBodyPostApplyNR { get; set; }
         [Description("Body.GenerateScaledSpace.NR")]
         private static EventData<ConfigNode> OnBodyGenerateScaledSpaceNR { get; set; }
-        
+
         [Description("RuntimeUtility.PatchAFG")]
         public static EventData<AtmosphereFromGround> OnRuntimeUtilityPatchAFG { get; private set; }
         [Description("RuntimeUtility.SpawnAsteroid")]
@@ -282,7 +282,7 @@ namespace Kopernicus
         private static EventData<ProtoVessel> OnRuntimeUtilitySpawnAsteroidNR { get; set; }
         [Description("RuntimeUtility.SwitchStar.NR")]
         private static EventVoid OnRuntimeUtilitySwitchStarNR { get; set; }
-        
+
         [Description("Components.SwitchKSC")]
         public static EventData<KSC> OnSwitchKSC { get; private set; }
         [Description("Components.ApplyNameChange")]
@@ -294,12 +294,12 @@ namespace Kopernicus
         private static EventVoid OnSwitchKSCNR { get; set; }
         [Description("Components.ApplyNameChange.NR")]
         private static EventData<CelestialBody> OnApplyNameChangeNR { get; set; }
-        
+
         [Description("OnDemand.MapSO.Load")]
         public static EventData<MapSODemand> OnMapSOLoad { get; private set; }
         [Description("OnDemand.MapSO.Unload")]
         public static EventData<MapSODemand> OnMapSOUnload { get; private set; }
-            
+
         [Description("OnDemand.CBMapSO.Load")]
         public static EventData<CBAttributeMapSODemand> OnCBMapSOLoad { get; private set; }
         [Description("OnDemand.CBMapSO.Unload")]
@@ -309,7 +309,7 @@ namespace Kopernicus
         public static EventData<ScaledSpaceOnDemand> OnScaledSpaceLoad { get; private set; }
         [Description("OnDemand.ScaledSpace.Unload")]
         public static EventData<ScaledSpaceOnDemand> OnScaledSpaceUnload { get; private set; }
-            
+
         [Description("OnDemand.MapSO.Load.NR")]
         private static EventVoid OnMapSOLoadNR { get; set; }
         [Description("OnDemand.MapSO.Unload.NR")]
@@ -327,7 +327,7 @@ namespace Kopernicus
 
         private void Awake()
         {
-            PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            PropertyInfo[] events = typeof(Events).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             for (Int32 i = 0; i < events.Length; i++)
             {
                 PropertyInfo info = events[i];
@@ -339,7 +339,7 @@ namespace Kopernicus
         }
 
         private static void RegisterNREvents()
-        {            
+        {
             OnAFGLoaderApply.Add((a, c) => OnAFGLoaderApplyNR.Fire(c));
             OnAFGLoaderPostApply.Add((a, c) => OnAFGLoaderPostApplyNR.Fire(c));
             OnAtmosphereLoaderApply.Add((a, c) => OnAtmosphereLoaderApplyNR.Fire(c));

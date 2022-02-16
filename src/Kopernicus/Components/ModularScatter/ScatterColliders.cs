@@ -80,7 +80,7 @@ namespace Kopernicus.Components.ModularScatter
         {
             // We don't use this
         }
-        
+
         void IComponent<ModularScatter>.PostApply(ModularScatter system)
         {
             // We don't use this

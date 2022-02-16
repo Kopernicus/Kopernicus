@@ -35,10 +35,10 @@ namespace Kopernicus.RuntimeUtility
     public class MeshPreloader : LoadingSystem
     {
         public static readonly Dictionary<String, Mesh> Meshes = new Dictionary<String, Mesh>();
-        
+
         private Boolean _ready;
         private String _progressTitle = "Kopernicus: Loading ScaledSpace Meshes";
-        
+
         public override Boolean IsReady() => _ready;
         public override Single LoadWeight() => 0;
         public override Single ProgressFraction() => 1;

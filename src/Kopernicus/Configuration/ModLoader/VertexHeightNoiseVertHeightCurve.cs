@@ -115,16 +115,16 @@ namespace Kopernicus.Configuration.ModLoader
         [ParserTarget("mode")]
         public EnumParser<KopernicusNoiseQuality> Mode
         {
-            get { return (KopernicusNoiseQuality) (Int32) Mod.mode; }
-            set { Mod.mode = (NoiseQuality) (Int32) value.Value; }
+            get { return (KopernicusNoiseQuality)(Int32)Mod.mode; }
+            set { Mod.mode = (NoiseQuality)(Int32)value.Value; }
         }
 
         // mode
         [ParserTarget("noiseType")]
         public EnumParser<KopernicusNoiseType> NoiseType
         {
-            get { return (KopernicusNoiseType) (Int32) Mod.noiseType; }
-            set { Mod.noiseType = (PQSMod_VertexHeightNoiseVertHeightCurve.NoiseType) (Int32) value.Value; }
+            get { return (KopernicusNoiseType)(Int32)Mod.noiseType; }
+            set { Mod.noiseType = (PQSMod_VertexHeightNoiseVertHeightCurve.NoiseType)(Int32)value.Value; }
         }
     }
 }

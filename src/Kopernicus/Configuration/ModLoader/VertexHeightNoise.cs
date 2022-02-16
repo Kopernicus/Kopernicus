@@ -82,16 +82,16 @@ namespace Kopernicus.Configuration.ModLoader
         [ParserTarget("noiseType")]
         public EnumParser<KopernicusNoiseType> NoiseType
         {
-            get { return (KopernicusNoiseType) (Int32) Mod.noiseType; }
-            set { Mod.noiseType = (PQSMod_VertexHeightNoise.NoiseType) (Int32) value.Value; }
+            get { return (KopernicusNoiseType)(Int32)Mod.noiseType; }
+            set { Mod.noiseType = (PQSMod_VertexHeightNoise.NoiseType)(Int32)value.Value; }
         }
 
         // The mode of the simplex height noise
         [ParserTarget("mode")]
         public EnumParser<KopernicusNoiseQuality> Mode
         {
-            get { return (KopernicusNoiseQuality) (Int32) Mod.mode; }
-            set { Mod.mode = (NoiseQuality) (Int32) value.Value; }
+            get { return (KopernicusNoiseQuality)(Int32)Mod.mode; }
+            set { Mod.mode = (NoiseQuality)(Int32)value.Value; }
         }
 
         // The lacunarity of the simplex height noise

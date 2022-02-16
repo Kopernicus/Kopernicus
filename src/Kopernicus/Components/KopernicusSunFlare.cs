@@ -65,7 +65,7 @@ namespace Kopernicus.Components
             transform.forward = sunDirection;
             sunFlare.brightness = brightnessMultiplier *
                                   brightnessCurve.Evaluate(
-                                      (Single) (1.0 / (Vector3d.Distance(position,
+                                      (Single)(1.0 / (Vector3d.Distance(position,
                                                            ScaledSpace.LocalToScaledSpace(sun.position)) /
                                                        (AU * ScaledSpace.InverseScaleFactor))));
 

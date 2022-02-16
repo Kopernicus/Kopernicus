@@ -43,7 +43,7 @@ namespace Kopernicus
             {
                 return default(T);
             }
-            
+
             StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
             return !c ? default(T) : c.Get<T>(id);
         }
@@ -66,7 +66,7 @@ namespace Kopernicus
             {
                 return false;
             }
-            
+
             StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
             return c && c.Has(id);
         }
@@ -89,7 +89,7 @@ namespace Kopernicus
             {
                 return;
             }
-            
+
             StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
             if (!c)
             {
@@ -116,7 +116,7 @@ namespace Kopernicus
             {
                 return;
             }
-            
+
             StorageComponent c = body.gameObject.AddOrGetComponent<StorageComponent>();
             if (!c)
             {

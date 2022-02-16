@@ -37,16 +37,16 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class RotateInput : NoiseLoader<LibNoise.Modifiers.RotateInput>
     {
-        [ParserTarget("xAngle")] 
+        [ParserTarget("xAngle")]
         public NumericParser<Double> XAngle { get; set; }
 
-        [ParserTarget("yAngle")] 
+        [ParserTarget("yAngle")]
         public NumericParser<Double> YAngle { get; set; }
 
-        [ParserTarget("zAngle")] 
+        [ParserTarget("zAngle")]
         public NumericParser<Double> ZAngle { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModule { get; set; }
 

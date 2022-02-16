@@ -25,18 +25,18 @@
 
 namespace Kopernicus.Configuration.Enumerations
 {
-	// Scaled Space Material Type Enum
-	public enum ScatterMaterialType
-	{
-		Diffuse,
-		BumpedDiffuse,
-		DiffuseDetail,
-		DiffuseWrapped,
-		CutoutDiffuse,
-		AerialCutout,
-		Standard,
-		StandardSpecular,
-		KSPBumped,
-		KSPBumpedSpecular
-	}
+    // Scaled Space Material Type Enum
+    public enum ScatterMaterialType
+    {
+        Diffuse,
+        BumpedDiffuse,
+        DiffuseDetail,
+        DiffuseWrapped,
+        CutoutDiffuse,
+        AerialCutout,
+        Standard,
+        StandardSpecular,
+        KSPBumped,
+        KSPBumpedSpecular
+    }
 }

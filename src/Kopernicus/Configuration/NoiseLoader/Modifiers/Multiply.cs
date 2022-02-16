@@ -35,11 +35,11 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Multiply : NoiseLoader<LibNoise.Modifiers.Multiply>
     {
-        [PreApply] 
+        [PreApply]
         [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModuleA { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModuleB { get; set; }
 

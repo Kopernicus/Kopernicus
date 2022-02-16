@@ -114,7 +114,7 @@ namespace Kopernicus.Components.ModularScatter
             {
                 GameObject scatter = scatters[i];
 
-                if (scatter?.activeSelf != true)
+                if (scatter != null ? scatter.activeSelf : true)
                     continue;
 
                 if (!string.IsNullOrEmpty(biomeName))

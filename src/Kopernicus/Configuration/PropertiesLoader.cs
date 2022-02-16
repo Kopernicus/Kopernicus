@@ -242,7 +242,7 @@ namespace Kopernicus.Configuration
             get { return Value.BiomeMap; }
             set
             {
-                if ((CBAttributeMapSO) value == null)
+                if ((CBAttributeMapSO)value == null)
                 {
                     return;
                 }

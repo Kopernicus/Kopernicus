@@ -59,7 +59,7 @@ namespace Kopernicus.Configuration.ModLoader
         PQSMod IModLoader.Mod
         {
             get { return Mod; }
-            set { Mod = (T) value; }
+            set { Mod = (T)value; }
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Kopernicus.Configuration.ModLoader
         // Creates the a PQSMod of type T with given PQS
         void IModLoader.Create(PQSMod mod, PQS pqsVersion)
         {
-            Create((T) mod, pqsVersion);
+            Create((T)mod, pqsVersion);
         }
 
         // Grabs a PQSMod of type T from a parameter with a given PQS

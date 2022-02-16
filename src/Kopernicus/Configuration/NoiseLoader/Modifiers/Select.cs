@@ -37,24 +37,24 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Select : NoiseLoader<LibNoise.Modifiers.Select>
     {
-        [ParserTarget("lowerBound")] 
+        [ParserTarget("lowerBound")]
         public NumericParser<Double> Lower { get; set; }
 
-        [ParserTarget("upperBound")] 
+        [ParserTarget("upperBound")]
         public NumericParser<Double> Upper { get; set; }
 
-        [ParserTarget("edgeFalloff")] 
+        [ParserTarget("edgeFalloff")]
         public NumericParser<Double> EdgeFalloff { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Control", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader ControlModule { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("SourceA", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModuleA { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("SourceB", NameSignificance = NameSignificance.Type, Optional = false)]
         public INoiseLoader SourceModuleB { get; set; }
 

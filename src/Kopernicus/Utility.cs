@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -256,14 +256,13 @@ namespace Kopernicus
             }
 
             // Apply mesh to the body
-            SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
-            if (collider != null)
+            if (scaledVersion.TryGetComponent<SphereCollider>(out var collider))
             {
                 collider.radius = R_SCALED;
             }
-            if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
+            if (pqs != null && scaledVersion.gameObject != null && scaledVersion.transform != null)
             {
-                scaledVersion.gameObject.transform.localScale = Vector3.one * (Single) (pqs.radius / R_JOOL);
+                scaledVersion.transform.localScale = Vector3.one * (Single)(pqs.radius / R_JOOL);
             }
         }
 
@@ -521,55 +520,57 @@ namespace Kopernicus
         {
             // Open an output file stream
             FileStream outputStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-            BinaryWriter writer = new BinaryWriter(outputStream);
+            using (BinaryWriter writer = new BinaryWriter(outputStream))
+            {
 
-            // Indicate that this is version two of the .bin format
-            writer.Write(-2);
+                // Indicate that this is version two of the .bin format
+                writer.Write(-2);
 
-            // Write the vertex count of the mesh
-            writer.Write(mesh.vertices.Length);
-            foreach (Vector3 vertex in mesh.vertices)
-            {
-                writer.Write(vertex.x);
-                writer.Write(vertex.y);
-                writer.Write(vertex.z);
-            }
-            writer.Write(mesh.uv.Length);
-            foreach (Vector2 uv in mesh.uv)
-            {
-                writer.Write(uv.x);
-                writer.Write(uv.y);
-            }
-            writer.Write(mesh.triangles.Length);
-            foreach (Int32 triangle in mesh.triangles)
-            {
-                writer.Write(triangle);
-            }
-            writer.Write(mesh.uv2.Length);
-            foreach (Vector2 uv2 in mesh.uv2)
-            {
-                writer.Write(uv2.x);
-                writer.Write(uv2.y);
-            }
-            writer.Write(mesh.normals.Length);
-            foreach (Vector3 normal in mesh.normals)
-            {
-                writer.Write(normal.x);
-                writer.Write(normal.y);
-                writer.Write(normal.z);
-            }
-            writer.Write(mesh.tangents.Length);
-            foreach (Vector4 tangent in mesh.tangents)
-            {
-                writer.Write(tangent.x);
-                writer.Write(tangent.y);
-                writer.Write(tangent.z);
-                writer.Write(tangent.w);
-            }
+                // Write the vertex count of the mesh
+                writer.Write(mesh.vertices.Length);
+                foreach (Vector3 vertex in mesh.vertices)
+                {
+                    writer.Write(vertex.x);
+                    writer.Write(vertex.y);
+                    writer.Write(vertex.z);
+                }
+                writer.Write(mesh.uv.Length);
+                foreach (Vector2 uv in mesh.uv)
+                {
+                    writer.Write(uv.x);
+                    writer.Write(uv.y);
+                }
+                writer.Write(mesh.triangles.Length);
+                foreach (Int32 triangle in mesh.triangles)
+                {
+                    writer.Write(triangle);
+                }
+                writer.Write(mesh.uv2.Length);
+                foreach (Vector2 uv2 in mesh.uv2)
+                {
+                    writer.Write(uv2.x);
+                    writer.Write(uv2.y);
+                }
+                writer.Write(mesh.normals.Length);
+                foreach (Vector3 normal in mesh.normals)
+                {
+                    writer.Write(normal.x);
+                    writer.Write(normal.y);
+                    writer.Write(normal.z);
+                }
+                writer.Write(mesh.tangents.Length);
+                foreach (Vector4 tangent in mesh.tangents)
+                {
+                    writer.Write(tangent.x);
+                    writer.Write(tangent.y);
+                    writer.Write(tangent.z);
+                    writer.Write(tangent.w);
+                }
 
-            // Finish writing
-            writer.Close();
-            outputStream.Close();
+                // Finish writing
+                writer.Close();
+                outputStream.Close();
+            }
         }
 
         // Deserialize a mesh from disk
@@ -577,144 +578,146 @@ namespace Kopernicus
         public static Mesh DeserializeMesh(String path)
         {
             FileStream inputStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            BinaryReader reader = new BinaryReader(inputStream);
-            Mesh m;
-
-            // Check if the file is bin v1 or v2
-            Int32 first = reader.ReadInt32();
-            Boolean v2 = first == -2;
-
-            // Parse a v1 mesh
-            if (!v2)
+            using (BinaryReader reader = new BinaryReader(inputStream))
             {
-                // Get the vertices
-                Int32 count = first;
-                Vector3[] vertices = new Vector3[count];
-                for (Int32 i = 0; i < count; i++)
+                Mesh m;
+
+                // Check if the file is bin v1 or v2
+                Int32 first = reader.ReadInt32();
+                Boolean v2 = first == -2;
+
+                // Parse a v1 mesh
+                if (!v2)
                 {
-                    Vector3 vertex;
-                    vertex.x = reader.ReadSingle();
-                    vertex.y = reader.ReadSingle();
-                    vertex.z = reader.ReadSingle();
-                    vertices[i] = vertex;
+                    // Get the vertices
+                    Int32 count = first;
+                    Vector3[] vertices = new Vector3[count];
+                    for (Int32 i = 0; i < count; i++)
+                    {
+                        Vector3 vertex;
+                        vertex.x = reader.ReadSingle();
+                        vertex.y = reader.ReadSingle();
+                        vertex.z = reader.ReadSingle();
+                        vertices[i] = vertex;
+                    }
+
+                    // Get the uvs
+                    Int32 uvCount = reader.ReadInt32();
+                    Vector2[] uvs = new Vector2[uvCount];
+                    for (Int32 i = 0; i < uvCount; i++)
+                    {
+                        Vector2 uv;
+                        uv.x = reader.ReadSingle();
+                        uv.y = reader.ReadSingle();
+                        uvs[i] = uv;
+                    }
+
+                    // Get the triangles
+                    Int32 trisCount = reader.ReadInt32();
+                    Int32[] triangles = new Int32[trisCount];
+                    for (Int32 i = 0; i < trisCount; i++)
+                    {
+                        triangles[i] = reader.ReadInt32();
+                    }
+
+                    // Create the mesh
+                    m = new Mesh
+                    {
+                        vertices = vertices,
+                        triangles = triangles,
+                        uv = uvs
+                    };
+                    m.RecalculateNormals();
+                    RecalculateTangents(m);
+                }
+                else
+                {
+                    // Get the vertices
+                    Int32 count = reader.ReadInt32();
+                    Vector3[] vertices = new Vector3[count];
+                    for (Int32 i = 0; i < count; i++)
+                    {
+                        Vector3 vertex;
+                        vertex.x = reader.ReadSingle();
+                        vertex.y = reader.ReadSingle();
+                        vertex.z = reader.ReadSingle();
+                        vertices[i] = vertex;
+                    }
+
+                    // Get the uvs
+                    Int32 uvCount = reader.ReadInt32();
+                    Vector2[] uvs = new Vector2[uvCount];
+                    for (Int32 i = 0; i < uvCount; i++)
+                    {
+                        Vector2 uv;
+                        uv.x = reader.ReadSingle();
+                        uv.y = reader.ReadSingle();
+                        uvs[i] = uv;
+                    }
+
+                    // Get the triangles
+                    Int32 trisCount = reader.ReadInt32();
+                    Int32[] triangles = new Int32[trisCount];
+                    for (Int32 i = 0; i < trisCount; i++)
+                    {
+                        triangles[i] = reader.ReadInt32();
+                    }
+
+                    // Get the uv2s
+                    Int32 uv2Count = reader.ReadInt32();
+                    // ReSharper disable once InconsistentNaming
+                    Vector2[] uv2s = new Vector2[uv2Count];
+                    for (Int32 i = 0; i < uv2Count; i++)
+                    {
+                        Vector2 uv2;
+                        uv2.x = reader.ReadSingle();
+                        uv2.y = reader.ReadSingle();
+                        uv2s[i] = uv2;
+                    }
+
+                    // Get the normals
+                    Int32 normalCount = reader.ReadInt32();
+                    Vector3[] normals = new Vector3[normalCount];
+                    for (Int32 i = 0; i < normalCount; i++)
+                    {
+                        Vector3 normal;
+                        normal.x = reader.ReadSingle();
+                        normal.y = reader.ReadSingle();
+                        normal.z = reader.ReadSingle();
+                        normals[i] = normal;
+                    }
+
+                    // Get the tangents
+                    Int32 tangentCount = reader.ReadInt32();
+                    Vector4[] tangents = new Vector4[tangentCount];
+                    for (Int32 i = 0; i < tangentCount; i++)
+                    {
+                        Vector4 tangent;
+                        tangent.x = reader.ReadSingle();
+                        tangent.y = reader.ReadSingle();
+                        tangent.z = reader.ReadSingle();
+                        tangent.w = reader.ReadSingle();
+                        tangents[i] = tangent;
+                    }
+
+                    // Create the mesh
+                    m = new Mesh
+                    {
+                        vertices = vertices,
+                        triangles = triangles,
+                        uv = uvs,
+                        uv2 = uv2s,
+                        normals = normals,
+                        tangents = tangents
+                    };
                 }
 
-                // Get the uvs
-                Int32 uvCount = reader.ReadInt32();
-                Vector2[] uvs = new Vector2[uvCount];
-                for (Int32 i = 0; i < uvCount; i++)
-                {
-                    Vector2 uv;
-                    uv.x = reader.ReadSingle();
-                    uv.y = reader.ReadSingle();
-                    uvs[i] = uv;
-                }
+                // Close
+                reader.Close();
+                inputStream.Close();
 
-                // Get the triangles
-                Int32 trisCount = reader.ReadInt32();
-                Int32[] triangles = new Int32[trisCount];
-                for (Int32 i = 0; i < trisCount; i++)
-                {
-                    triangles[i] = reader.ReadInt32();
-                }
-
-                // Create the mesh
-                m = new Mesh
-                {
-                    vertices = vertices,
-                    triangles = triangles,
-                    uv = uvs
-                };
-                m.RecalculateNormals();
-                RecalculateTangents(m);
+                return m;
             }
-            else
-            {
-                // Get the vertices
-                Int32 count = reader.ReadInt32();
-                Vector3[] vertices = new Vector3[count];
-                for (Int32 i = 0; i < count; i++)
-                {
-                    Vector3 vertex;
-                    vertex.x = reader.ReadSingle();
-                    vertex.y = reader.ReadSingle();
-                    vertex.z = reader.ReadSingle();
-                    vertices[i] = vertex;
-                }
-
-                // Get the uvs
-                Int32 uvCount = reader.ReadInt32();
-                Vector2[] uvs = new Vector2[uvCount];
-                for (Int32 i = 0; i < uvCount; i++)
-                {
-                    Vector2 uv;
-                    uv.x = reader.ReadSingle();
-                    uv.y = reader.ReadSingle();
-                    uvs[i] = uv;
-                }
-
-                // Get the triangles
-                Int32 trisCount = reader.ReadInt32();
-                Int32[] triangles = new Int32[trisCount];
-                for (Int32 i = 0; i < trisCount; i++)
-                {
-                    triangles[i] = reader.ReadInt32();
-                }
-
-                // Get the uv2s
-                Int32 uv2Count = reader.ReadInt32();
-                // ReSharper disable once InconsistentNaming
-                Vector2[] uv2s = new Vector2[uv2Count];
-                for (Int32 i = 0; i < uv2Count; i++)
-                {
-                    Vector2 uv2;
-                    uv2.x = reader.ReadSingle();
-                    uv2.y = reader.ReadSingle();
-                    uv2s[i] = uv2;
-                }
-
-                // Get the normals
-                Int32 normalCount = reader.ReadInt32();
-                Vector3[] normals = new Vector3[normalCount];
-                for (Int32 i = 0; i < normalCount; i++)
-                {
-                    Vector3 normal;
-                    normal.x = reader.ReadSingle();
-                    normal.y = reader.ReadSingle();
-                    normal.z = reader.ReadSingle();
-                    normals[i] = normal;
-                }
-
-                // Get the tangents
-                Int32 tangentCount = reader.ReadInt32();
-                Vector4[] tangents = new Vector4[tangentCount];
-                for (Int32 i = 0; i < tangentCount; i++)
-                {
-                    Vector4 tangent;
-                    tangent.x = reader.ReadSingle();
-                    tangent.y = reader.ReadSingle();
-                    tangent.z = reader.ReadSingle();
-                    tangent.w = reader.ReadSingle();
-                    tangents[i] = tangent;
-                }
-
-                // Create the mesh
-                m = new Mesh
-                {
-                    vertices = vertices,
-                    triangles = triangles,
-                    uv = uvs,
-                    uv2 = uv2s,
-                    normals = normals,
-                    tangents = tangents
-                };
-            }
-
-            // Close
-            reader.Close();
-            inputStream.Close();
-
-            return m;
         }
 
         // Credit goes to Sigma88.
@@ -922,51 +925,51 @@ namespace Kopernicus
                     switch (delMod)
                     {
                         case PQSCity mod:
-                        {
-                            PQSCity city = mod;
-                            if (city.lod != null)
                             {
-                                foreach (PQSCity.LODRange range in city.lod)
+                                PQSCity city = mod;
+                                if (city.lod != null)
                                 {
-                                    if (range.objects != null)
+                                    foreach (PQSCity.LODRange range in city.lod)
                                     {
+                                        if (range.objects != null)
+                                        {
+                                            foreach (GameObject o in range.objects)
+                                            {
+                                                UnityEngine.Object.DestroyImmediate(o);
+                                            }
+                                        }
+
+                                        if (range.renderers == null)
+                                        {
+                                            continue;
+                                        }
+                                        foreach (GameObject o in range.renderers)
+                                        {
+                                            UnityEngine.Object.DestroyImmediate(o);
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        case PQSCity2 mod:
+                            {
+                                PQSCity2 city = mod;
+                                if (city.objects != null)
+                                {
+                                    foreach (PQSCity2.LodObject range in city.objects)
+                                    {
+                                        if (range.objects == null)
+                                        {
+                                            continue;
+                                        }
                                         foreach (GameObject o in range.objects)
                                         {
                                             UnityEngine.Object.DestroyImmediate(o);
                                         }
                                     }
-
-                                    if (range.renderers == null)
-                                    {
-                                        continue;
-                                    }
-                                    foreach (GameObject o in range.renderers)
-                                    {
-                                        UnityEngine.Object.DestroyImmediate(o);
-                                    }
                                 }
+                                break;
                             }
-                            break;
-                        }
-                        case PQSCity2 mod:
-                        {
-                            PQSCity2 city = mod;
-                            if (city.objects != null)
-                            {
-                                foreach (PQSCity2.LodObject range in city.objects)
-                                {
-                                    if (range.objects == null)
-                                    {
-                                        continue;
-                                    }
-                                    foreach (GameObject o in range.objects)
-                                    {
-                                        UnityEngine.Object.DestroyImmediate(o);
-                                    }
-                                }
-                            }
-                            break;
-                        }
                     }
 
                     cpMods.Remove(delMod);
@@ -1162,7 +1165,7 @@ namespace Kopernicus
             for (Int32 i = 0; i < curve.Curve.length; i++)
             {
                 Keyframe key = curve.Curve.keys[i];
-                list.Add(new List<Single> {key.time, key.value, key.inTangent, key.outTangent});
+                list.Add(new List<Single> { key.time, key.value, key.inTangent, key.outTangent });
             }
 
             return list;

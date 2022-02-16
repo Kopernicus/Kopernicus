@@ -48,7 +48,7 @@ namespace Kopernicus
         public static Double Epoch;
 
         // Whether the main menu should be edited by Kopernicus
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")] 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
         [SuppressMessage("ReSharper", "ConvertToConstant.Global")]
         public static Boolean KopernicusMainMenu = true;
 
@@ -57,19 +57,19 @@ namespace Kopernicus
 
         // Whether the main menu body should be randomized
         public static readonly List<String> RandomMainMenuBodies;
-        
+
         // The localized names of the presets
         public static readonly List<String> PresetDisplayNames;
-        
+
         // The launch sites that should get removed
         public static List<String> RemoveLaunchSites;
 
         // Whether to force 3D rendering on orbits.
         public static Boolean Force3DOrbits;
-        
+
         // A backup of all targets available in MapView
         public static List<MapObject> MapTargets;
-        
+
         // Initialisation
         static Templates()
         {
@@ -81,10 +81,10 @@ namespace Kopernicus
 
             // Main Menu body
             MenuBody = "Kerbin";
-            
+
             // Random Main Menu bodies
             RandomMainMenuBodies = new List<String>();
-            
+
             // Presets
             PresetDisplayNames = new List<String>
             {
@@ -92,7 +92,7 @@ namespace Kopernicus
                 Localizer.Format("#autoLOC_6001507"),
                 Localizer.Format("#autoLOC_6001508")
             };
-            
+
             // Launch Sites
             RemoveLaunchSites = new List<String>();
         }

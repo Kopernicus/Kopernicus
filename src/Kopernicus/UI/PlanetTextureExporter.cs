@@ -129,11 +129,11 @@ namespace Kopernicus.UI
                     typeof(Action<PQS.VertexBuildData, Boolean>),
                     pqsVersion,
                     typeof(PQS).GetMethod("Mod_OnVertexBuildHeight",
-                        BindingFlags.Instance | BindingFlags.NonPublic));
+                        BindingFlags.NonPublic | BindingFlags.Instance));
             Action<PQS.VertexBuildData> modOnVertexBuild = (Action<PQS.VertexBuildData>) Delegate.CreateDelegate(
                 typeof(Action<PQS.VertexBuildData>),
                 pqsVersion,
-                typeof(PQS).GetMethod("Mod_OnVertexBuild", BindingFlags.Instance | BindingFlags.NonPublic));
+                typeof(PQS).GetMethod("Mod_OnVertexBuild", BindingFlags.NonPublic | BindingFlags.Instance));
 
             // Prevent the PQS from updating
             pqsVersion.enabled = false;
@@ -147,8 +147,8 @@ namespace Kopernicus.UI
                 true);
 
             // Arrays
-            Color[] colorMapValues = new Color[options.Resolution * (options.Resolution / 2)];
-            Color[] heightMapValues = new Color[options.Resolution * (options.Resolution / 2)];
+            Color32[] colorMapValues = new Color32[options.Resolution * (options.Resolution / 2)];
+            Color32[] heightMapValues = new Color32[options.Resolution * (options.Resolution / 2)];
 
             // Create a VertexBuildData
             PQS.VertexBuildData data = new PQS.VertexBuildData();
@@ -286,7 +286,7 @@ namespace Kopernicus.UI
 
                     // Set the Pixels
                     heightMapValues[y * options.Resolution + x] =
-                        new Color((Single) height, (Single) height, (Single) height);
+                        new Color((Single)height, (Single)height, (Single)height);
                 }
 
                 yield return null;
@@ -310,7 +310,7 @@ namespace Kopernicus.UI
                 message.textInstance.text.text = "Exporting planet maps: Color";
 
                 // Save it
-                colorMap.SetPixels(colorMapValues);
+                colorMap.SetPixels32(colorMapValues);
                 yield return null;
 
                 if (options.SaveToDisk)
@@ -323,8 +323,7 @@ namespace Kopernicus.UI
                 // Apply it
                 if (options.ApplyToScaled)
                 {
-                    ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
-                    if (od != null)
+                    if (celestialBody.scaledBody.TryGetComponent<ScaledSpaceOnDemand>(out var od))
                     {
                         od.texture = colorMap.name;
                         Object.DestroyImmediate(colorMap);
@@ -358,7 +357,7 @@ namespace Kopernicus.UI
 
                 message.textInstance.text.text = "Exporting planet maps: Height";
 
-                heightMap.SetPixels(heightMapValues);
+                heightMap.SetPixels32(heightMapValues);
                 yield return null;
 
                 if (options.SaveToDisk)
@@ -393,8 +392,7 @@ namespace Kopernicus.UI
                     // Apply it
                     if (options.ApplyToScaled)
                     {
-                        ScaledSpaceOnDemand od = celestialBody.scaledBody.GetComponent<ScaledSpaceOnDemand>();
-                        if (od != null)
+                        if (celestialBody.scaledBody.TryGetComponent<ScaledSpaceOnDemand>(out var od))
                         {
                             od.normals = normalMap.name;
                             Object.DestroyImmediate(normalMap);

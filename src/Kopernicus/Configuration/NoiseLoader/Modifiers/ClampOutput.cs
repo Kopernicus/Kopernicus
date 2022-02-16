@@ -36,13 +36,13 @@ namespace Kopernicus.Configuration.NoiseLoader.Modifiers
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ClampOutput : NoiseLoader<LibNoise.Modifiers.ClampOutput>
     {
-        [ParserTarget("lower")] 
+        [ParserTarget("lower")]
         public NumericParser<Double> Lower { get; set; }
 
-        [ParserTarget("upper")] 
+        [ParserTarget("upper")]
         public NumericParser<Double> Upper { get; set; }
 
-        [PreApply] 
+        [PreApply]
         [ParserTarget("Source", NameSignificance = NameSignificance.Type, Optional = false)]
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
         public INoiseLoader SourceModule { get; set; }

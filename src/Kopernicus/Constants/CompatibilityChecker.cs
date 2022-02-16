@@ -91,7 +91,7 @@ namespace Kopernicus.Constants
                 // warn about unsupported versions
                 if (((Versioning.version_minor == 11) && (Versioning.Revision > 2)) || ((Versioning.version_minor == 12) && (Versioning.Revision > 3)) || (Versioning.version_minor > 12))
                 {
-                    PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus","Kopernicus","Kopernicus is in beta on this version of KSP...  Bugs may be present!", "OK", false, UISkinManager.defaultSkin);
+                    PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "Kopernicus is in beta on this version of KSP...  Bugs may be present!", "OK", false, UISkinManager.defaultSkin);
                 }
 #endif
                 return;
@@ -106,13 +106,13 @@ namespace Kopernicus.Constants
             FieldInfo[] fields =
                 Parser.ModTypes
                     .Where(t => t.Name == "CompatibilityChecker")
-                    .Select(t => t.GetField("_version", BindingFlags.Static | BindingFlags.NonPublic))
+                    .Select(t => t.GetField("_version", BindingFlags.NonPublic | BindingFlags.Static))
                     .Where(f => f != null)
                     .Where(f => f.FieldType == typeof(Int32))
                     .ToArray();
 
             // Let the latest version of the checker execute.
-            if (_version != fields.Max(f => (Int32) f.GetValue(null)))
+            if (_version != fields.Max(f => (Int32)f.GetValue(null)))
             {
                 return;
             }
@@ -134,7 +134,7 @@ namespace Kopernicus.Constants
                     {
                         try
                         {
-                            return !(Boolean) m.Invoke(null, new System.Object[0]);
+                            return !(Boolean) m.Invoke(null, null);
                         }
                         catch (Exception e)
                         {
@@ -158,7 +158,7 @@ namespace Kopernicus.Constants
                     {
                         try
                         {
-                            return !(Boolean) m.Invoke(null, new System.Object[0]);
+                            return !(Boolean) m.Invoke(null, null);
                         }
                         catch (Exception e)
                         {

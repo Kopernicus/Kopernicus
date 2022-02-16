@@ -35,12 +35,12 @@ namespace Kopernicus.Components
     {
         // Accessor for the nodeColor field
         private static readonly FieldInfo NodeColor = typeof(OrbitRendererData)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault();
+            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault();
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public Color nodeColor
         {
-            get { return (Color) NodeColor.GetValue(this); }
+            get { return (Color)NodeColor.GetValue(this); }
             set { NodeColor.SetValue(this, value); }
         }
 
@@ -55,7 +55,7 @@ namespace Kopernicus.Components
         public KopernicusOrbitRendererData(CelestialBody body, OrbitRendererData data) : base(body)
         {
             orbitColor = data.orbitColor;
-            nodeColor = (Color) NodeColor.GetValue(data);
+            nodeColor = (Color)NodeColor.GetValue(data);
             lowerCamVsSmaRatio = data.lowerCamVsSmaRatio;
             upperCamVsSmaRatio = data.upperCamVsSmaRatio;
         }

@@ -96,7 +96,7 @@ namespace Kopernicus.Configuration.ModLoader
                 }
                 set
                 {
-                    Value.objects = new[] {value.Value};
+                    Value.objects = new[] { value.Value };
                     Value.renderers = value.Value.GetComponentsInChildren<Renderer>().Select(r => r.gameObject)
                         .ToArray();
                 }
@@ -323,7 +323,7 @@ namespace Kopernicus.Configuration.ModLoader
                     obj.transform.parent = Mod.transform;
                     obj.transform.localPosition = Vector3.zero;
                     obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
-                    obj.gameObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
+                    obj.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
                 }
             });
             Mod.lod = new PQSCity.LODRange[0];
@@ -344,7 +344,7 @@ namespace Kopernicus.Configuration.ModLoader
                     obj.transform.parent = Mod.transform;
                     obj.transform.localPosition = Vector3.zero;
                     obj.SetLayerRecursive(GameLayers.LOCAL_SPACE);
-                    obj.gameObject.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
+                    obj.AddOrGetComponent<KopernicusSurfaceObject>().objectName = Mod.name;
                 }
             });
 

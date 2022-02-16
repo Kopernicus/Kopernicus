@@ -91,8 +91,8 @@ namespace Kopernicus.Configuration.ModLoader
         [ParserTarget("ridgedMode")]
         public EnumParser<KopernicusNoiseQuality> RidgedMode
         {
-            get { return (KopernicusNoiseQuality) (Int32) Mod.ridgedMode; }
-            set { Mod.ridgedMode = (NoiseQuality) (Int32) value.Value; }
+            get { return (KopernicusNoiseQuality)(Int32)Mod.ridgedMode; }
+            set { Mod.ridgedMode = (NoiseQuality)(Int32)value.Value; }
         }
 
         // simplexCurve

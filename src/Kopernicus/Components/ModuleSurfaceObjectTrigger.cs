@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -59,11 +59,10 @@ namespace Kopernicus.Components
          *     }
          * }
          */
-        
+
         [ParserTarget("module")]
         public String module;
 
-        [SerializeField]
         [ParserTargetCollection("Properties", NameSignificance = NameSignificance.None)]
         public Dictionary<String, String> properties;
 
@@ -73,10 +72,9 @@ namespace Kopernicus.Components
         [ParserTargetCollection("Objects", NameSignificance = NameSignificance.Key, Key = "name")]
         public List<String> objects;
 
-        [SerializeField]
         [ParserTarget("distance")]
         public NumericParser<Single> distance;
-        
+
         private PartModule _targetModule;
         private Boolean _isNearObject = true;
         private readonly Collider[] _colliders = new Collider[128];
@@ -157,12 +155,12 @@ namespace Kopernicus.Components
             }
 
             _isNearObject = isNearObject;
-            
+
             if (toggles == null)
             {
                 return;
             }
-            
+
             for (Int32 i = 0; i < toggles.Count; i++)
             {
                 if (_targetModule.Events[toggles[i]] != null)

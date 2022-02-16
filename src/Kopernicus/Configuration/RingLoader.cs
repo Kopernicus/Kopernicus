@@ -282,7 +282,7 @@ namespace Kopernicus.Configuration
 
             Value = new GameObject(generatedBody.name + "Ring").AddComponent<Ring>();
             Value.transform.parent = generatedBody.scaledVersion.transform;
-            Value.planetRadius = (Single) generatedBody.celestialBody.Radius;
+            Value.planetRadius = (Single)generatedBody.celestialBody.Radius;
 
             // Need to check the parent body's rotation to orient the LAN properly
             Value.referenceBody = generatedBody.celestialBody;
@@ -294,12 +294,12 @@ namespace Kopernicus.Configuration
             });
             if (Value.innerMultCurve == null)
             {
-                Value.innerMultCurve = new FloatCurve(new [] {new Keyframe(0, 1), new Keyframe(1, 1)});
+                Value.innerMultCurve = new FloatCurve(new[] { new Keyframe(0, 1), new Keyframe(1, 1) });
             }
 
             if (Value.outerMultCurve == null)
             {
-                Value.outerMultCurve = new FloatCurve(new [] {new Keyframe(0, 1), new Keyframe(1, 1)});
+                Value.outerMultCurve = new FloatCurve(new[] { new Keyframe(0, 1), new Keyframe(1, 1) });
             }
         }
 
@@ -317,7 +317,7 @@ namespace Kopernicus.Configuration
 
             Value = new GameObject(body.transform.name + "Ring").AddComponent<Ring>();
             Value.transform.parent = body.scaledBody.transform;
-            Value.planetRadius = (Single) body.Radius;
+            Value.planetRadius = (Single)body.Radius;
 
             // Need to check the parent body's rotation to orient the LAN properly
             Value.referenceBody = body;
@@ -349,12 +349,12 @@ namespace Kopernicus.Configuration
 
             if (Value.innerMultCurve == null)
             {
-                Value.innerMultCurve = new FloatCurve(new [] {new Keyframe(0, 1), new Keyframe(1, 1)});
+                Value.innerMultCurve = new FloatCurve(new[] { new Keyframe(0, 1), new Keyframe(1, 1) });
             }
 
             if (Value.outerMultCurve == null)
             {
-                Value.outerMultCurve = new FloatCurve(new [] {new Keyframe(0, 1), new Keyframe(1, 1)});
+                Value.outerMultCurve = new FloatCurve(new[] { new Keyframe(0, 1), new Keyframe(1, 1) });
             }
         }
 
@@ -390,12 +390,12 @@ namespace Kopernicus.Configuration
 
             if (Value.innerMultCurve == null)
             {
-                Value.innerMultCurve = new FloatCurve(new[] {new Keyframe(0, 1), new Keyframe(1, 1)});
+                Value.innerMultCurve = new FloatCurve(new[] { new Keyframe(0, 1), new Keyframe(1, 1) });
             }
 
             if (Value.outerMultCurve == null)
             {
-                Value.outerMultCurve = new FloatCurve(new[] {new Keyframe(0, 1), new Keyframe(1, 1)});
+                Value.outerMultCurve = new FloatCurve(new[] { new Keyframe(0, 1), new Keyframe(1, 1) });
             }
         }
     }

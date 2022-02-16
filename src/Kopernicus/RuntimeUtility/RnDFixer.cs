@@ -53,7 +53,7 @@ namespace Kopernicus.RuntimeUtility
                     RnDRotationKill.RemoveAt(i - 1);
                     continue;
                 }
-                    planetItem.planet.transform.rotation = Quaternion.identity;
+                planetItem.planet.transform.rotation = Quaternion.identity;
             }
         }
 
@@ -83,7 +83,7 @@ namespace Kopernicus.RuntimeUtility
                 {
                     continue;
                 }
-                
+
                 // Get the body
                 PSystemBody body = PSystemManager.Instance.systemPrefab.GetComponentsInChildren<PSystemBody>(true).FirstOrDefault(b => b.name == cb.transform.name);
                 if (body == null)
@@ -153,7 +153,7 @@ namespace Kopernicus.RuntimeUtility
 
             // Create a list with body to hide and their parent
             List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>> hideList = new List<KeyValuePair<PSystemBody, KeyValuePair<PSystemBody, Int32>>>();
-            
+
             // Create a list with body to skip and their parent
             List<KeyValuePair<PSystemBody, PSystemBody>> skipList = new List<KeyValuePair<PSystemBody, PSystemBody>>();
 
@@ -230,7 +230,7 @@ namespace Kopernicus.RuntimeUtility
                 // Get hidden body and parent
                 PSystemBody hidden = pair.Key;
                 PSystemBody parent = bodies.FirstOrDefault(b => b.children.Contains(hidden));
-                
+
                 if (parent == null)
                 {
                     continue;
@@ -341,8 +341,8 @@ namespace Kopernicus.RuntimeUtility
             }
 
             // Stuff needed for AddPlanets
-            FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Skip(7).FirstOrDefault();
-            MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).Skip(26).FirstOrDefault();
+            FieldInfo list = typeof(RDArchivesController).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Skip(7).FirstOrDefault();
+            MethodInfo add = typeof(RDArchivesController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Skip(26).FirstOrDefault();
             RDArchivesController rdac = Resources.FindObjectsOfTypeAll<RDArchivesController>().FirstOrDefault();
 
             // AddPlanets requires this list to be empty when triggered

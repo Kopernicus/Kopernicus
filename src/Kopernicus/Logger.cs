@@ -31,15 +31,17 @@ using Object = System.Object;
 namespace Kopernicus
 {
     // A generic message logging class to replace Debug.Log
-    public class Logger
+    public sealed class Logger : IDisposable
     {
         // Is the logger initialized?
         private static readonly Boolean IsInitialized;
+        private bool _disposed;
+
 
         // Logger output path
         private static String LogDirectory
         {
-            get { return KSPUtil.ApplicationRootPath + "Logs/" + typeof (Logger).Assembly.GetName().Name + "/"; }
+            get { return KSPUtil.ApplicationRootPath + "Logs/" + typeof(Logger).Assembly.GetName().Name + "/"; }
         }
 
         // ==> Implement own version
@@ -55,13 +57,11 @@ namespace Kopernicus
         {
             get
             {
-                if (_defaultLogger != null)
+                if (_defaultLogger == null)
                 {
-                    return _defaultLogger;
+                    _defaultLogger = new Logger(typeof(Logger).Assembly.GetName().Name);
+                    Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
                 }
-                
-                _defaultLogger = new Logger(typeof(Logger).Assembly.GetName().Name);
-                Debug.Log("[Kopernicus] Default logger initialized as " + typeof(Logger).Assembly.GetName().Name);
                 return _defaultLogger;
             }
         }
@@ -137,6 +137,7 @@ namespace Kopernicus
 
             _loggerStream.Flush();
             _loggerStream.Close();
+            _loggerStream?.Dispose();
             _loggerStream = null;
         }
 
@@ -167,6 +168,7 @@ namespace Kopernicus
                 // Open the log file (overwrite existing logs)
                 String logFile = LogDirectory + logFileName + ".log";
                 Directory.CreateDirectory(Path.GetDirectoryName(logFile));
+                _loggerStream?.Dispose();
                 _loggerStream = new StreamWriter(logFile);
 
                 // Write an opening message
@@ -183,11 +185,31 @@ namespace Kopernicus
             }
         }
 
-        // Cleanup the logger
-        ~Logger()
+        public void Dispose()
         {
-            Close();
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _loggerStream?.Dispose();
         }
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(typeof(Logger).FullName);
+            }
+        }
+
+
+        // Cleanup the logger
+        //~Logger()
+        //{
+        //    Close();
+        //}
 
         // Initialize the Logger (i.e. delete old logs) 
         static Logger()
@@ -203,7 +225,7 @@ namespace Kopernicus
                 // Clear out the old log files
                 Directory.Delete(LogDirectory, true);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Debug.LogException(e);
                 return;
