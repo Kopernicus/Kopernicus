@@ -518,8 +518,7 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalStar(CelestialBody body)
         {
-            if (body is null) throw new ArgumentNullException(nameof(body));
-            while (body.orbit.referenceBody != null)
+            while (body?.orbit?.referenceBody != null)
             {
                 if (body.isStar)
                 {
@@ -535,7 +534,7 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetNearestBodyOverSystenRoot(CelestialBody body)
         {
-            while (body != null ? body.referenceBody : null != null)
+            while (body?.referenceBody != null)
             {
                 if (body.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                 {
@@ -551,8 +550,7 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalPlanet(CelestialBody body)
         {
-            if (body is null) throw new ArgumentNullException(nameof(body));
-            while (body.orbit.referenceBody != null)
+            while (body?.orbit?.referenceBody != null)
             {
                 if (body.orbit.referenceBody.isStar)
                 {
