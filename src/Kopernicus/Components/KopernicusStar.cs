@@ -518,7 +518,9 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalStar(CelestialBody body)
         {
+#pragma warning disable UNT0008 // Null propagation on Unity objects
             while (body?.orbit?.referenceBody != null)
+#pragma warning restore UNT0008 // Null propagation on Unity objects
             {
                 if (body.isStar)
                 {
@@ -534,7 +536,9 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetNearestBodyOverSystenRoot(CelestialBody body)
         {
+#pragma warning disable UNT0008 // Null propagation on Unity objects
             while (body?.referenceBody != null)
+#pragma warning restore UNT0008 // Null propagation on Unity objects
             {
                 if (body.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                 {
@@ -550,7 +554,9 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalPlanet(CelestialBody body)
         {
+#pragma warning disable UNT0008 // Null propagation on Unity objects
             while (body?.orbit?.referenceBody != null)
+#pragma warning restore UNT0008 // Null propagation on Unity objects
             {
                 if (body.orbit.referenceBody.isStar)
                 {
