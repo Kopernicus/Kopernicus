@@ -210,8 +210,12 @@ namespace Kopernicus
                         {
                             fader.enabled = false;
                         }
-                        mockBody.orbitDriver.drawOrbit = false;
-                        mockBody.orbitDriver.enabled = false;
+                        foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
+                        {
+                            renderer.enabled = true;
+                            renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
+                            renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
+                        }
                     }
                 }
                 if (mockBody != null)

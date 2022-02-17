@@ -547,15 +547,19 @@ namespace Kopernicus.RuntimeUtility
                 {
                     renderer.enabled = false;
                 }
-
                 foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
                 {
                     collider.enabled = true;
                 }
-
                 foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
                 {
                     fader.enabled = false;
+                }
+                foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
+                {
+                    renderer.enabled = true;
+                    renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
+                    renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
                 }
             }
         }
