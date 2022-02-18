@@ -518,47 +518,53 @@ namespace Kopernicus.RuntimeUtility
         {
             if ((mockBody != null) && (FlightGlobals.currentMainBody))
             {
-                if (FlightGlobals.currentMainBody.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+                try
                 {
-                    if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
+                    if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                     {
-                        mockBody.referenceBody.orbitingBodies.Remove(mockBody);
+                        if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
+                        {
+                            mockBody.referenceBody.orbitingBodies.Remove(mockBody);
+                        }
+                        mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody));
+                        if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Contains(mockBody))
+                        {
+                            KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Add(mockBody);
+                        }
                     }
-                    mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody);
-                    if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Contains(mockBody))
+                    else if (FlightGlobals.currentMainBody.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                     {
-                        KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Add(mockBody);
+                        if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
+                        {
+                            mockBody.referenceBody.orbitingBodies.Remove(mockBody);
+                        }
+                        mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody);
+                        if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Contains(mockBody))
+                        {
+                            KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Add(mockBody);
+                        }
                     }
-                }
-                else if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
-                {
-                    if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
+                    mockBody.enabled = false;
+                    foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
                     {
-                        mockBody.referenceBody.orbitingBodies.Remove(mockBody);
+                        renderer.enabled = false;
                     }
-                    mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody));
-                    if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Contains(mockBody))
+                    foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
                     {
-                        KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Add(mockBody);
+                        collider.enabled = true;
+                    }
+                    foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
+                    {
+                        fader.enabled = false;
+                    }
+                    foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
+                    {
+                        renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
+                        renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
                     }
                 }
-                mockBody.enabled = false;
-                foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
+                catch
                 {
-                    renderer.enabled = false;
-                }
-                foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
-                {
-                    collider.enabled = true;
-                }
-                foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
-                {
-                    fader.enabled = false;
-                }
-                foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
-                {
-                    renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
-                    renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
                 }
             }
         }

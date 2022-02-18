@@ -1,15 +1,19 @@
 ﻿Kopernicus
 ==============================
-February 10th, 2022
+February 18th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-81:
+New in this latest version release-82:
 
-1.)  Yet more situational edge-cases covered by the KopernicusWatchdog config mode.  In particular, multistar systems and systems with deep trees (moons of moons) are now much better supported.
+1.)  A major codebase refactor and cleanup contributed by unquietwiki .  See https://github.com/Kopernicus/Kopernicus/pull/512
+
+2.)  The above changes were first tested in a beta program.  Since RC2 of said beta, things have been proven and stable.  This should be a solid release.
+
+3.) Furthermore, since Release-81, some instances of the optional KopernicusWatchdog nullreffing or appearing in map view have been dealt with.
 
 Known Bugs:
 
