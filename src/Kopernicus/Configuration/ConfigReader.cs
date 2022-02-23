@@ -52,6 +52,8 @@ namespace Kopernicus.Configuration
         public int ScatterDistanceLimit = 4250;
         [Persistent]
         public bool DisableMainMenuMunScene = true;
+        [Persistent]
+        public bool HandleHomeworldAtmosphericUnitDisplay = true;
         public UrlDir.UrlConfig[] baseConfigs;
         public void loadMainSettings()
         {

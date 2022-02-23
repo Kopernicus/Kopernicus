@@ -1,19 +1,17 @@
 ﻿Kopernicus
 ==============================
-February 18th, 2022
+February 23rd, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-82:
+New in this latest version release-83:
 
-1.)  A major codebase refactor and cleanup contributed by unquietwiki .  See https://github.com/Kopernicus/Kopernicus/pull/512
+1.)  A new parameter useful for infopane modders (like PlanetInfoPlus) has been added to Kopernicus_Config.cfg.  Shouldn't need any touching by end users, but documented just in case.  The parameter is boolean HandleHomeworldAtmosphericUnitDisplay, default true.  Will be autoadded by upgrade pipeline.
 
-2.)  The above changes were first tested in a beta program.  Since RC2 of said beta, things have been proven and stable.  This should be a solid release.
-
-3.) Furthermore, since Release-81, some instances of the optional KopernicusWatchdog nullreffing or appearing in map view have been dealt with.
+2.)  Some minor performance enhancing measures for the KopernicusWatchdog were added, to ensure we aren't setting it's orbit constantly when not needed.
 
 Known Bugs:
 

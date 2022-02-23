@@ -96,8 +96,11 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
 
             // Add Callback only if necessary
-            if (FlightGlobals.GetHomeBody().atmospherePressureSeaLevel != 101.324996948242)
-                KbApp_PlanetParameters.CallbackAfterActivate += CallbackAfterActivate;
+            if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay)
+            {
+                if (FlightGlobals.GetHomeBody().atmospherePressureSeaLevel != 101.324996948242)
+                    KbApp_PlanetParameters.CallbackAfterActivate += CallbackAfterActivate;
+            }
 
             // Log
             Logger.Default.Log("[Kopernicus] RuntimeUtility Started");
@@ -520,7 +523,29 @@ namespace Kopernicus.RuntimeUtility
             {
                 try
                 {
-                    if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+                    if (FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+                    {
+                        mockBody.enabled = false;
+                        foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
+                        {
+                            renderer.enabled = false;
+                        }
+                        foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
+                        {
+                            collider.enabled = false;
+                        }
+                        foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
+                        {
+                            fader.enabled = false;
+                        }
+                        foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
+                        {
+                            renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
+                            renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
+                        }
+                        return;
+                    }
+                    else if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
                     {
                         if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
                         {
@@ -1124,6 +1149,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	ScatterCountLimit = 4250 //Integer.  A number defining the maximum number of land scatters that may spawn.  Works best set close to ScatterDistanceLimit, setting them far apart can lead to odd patterning behavior.");
                     configFile.WriteLine("	ScatterDistanceLimit = 4250 //Integer.  A number defining the maximum distance away at which a land scatter may spawn.  Works best set close to ScatterCountLimit, setting them far apart can lead to odd patterning behavior.");
                     configFile.WriteLine("	DisableMainMenuMunScene = true //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
+                    configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay  = true //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
@@ -1153,6 +1179,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	ScatterCountLimit = " + KopernicusConfig.ScatterCountLimit.ToString() + " //Integer.  A number defining the maximum number of land scatters that may spawn.  Works best set close to ScatterDistanceLimit, setting them far apart can lead to odd patterning behavior.");
                     configFile.WriteLine("	ScatterDistanceLimit = " + KopernicusConfig.ScatterDistanceLimit.ToString() + " //Integer.  A number defining the maximum distance away at which a land scatter may spawn.  Works best set close to ScatterCountLimit, setting them far apart can lead to odd patterning behavior.");
                     configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
+                    configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay  = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
