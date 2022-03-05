@@ -1,17 +1,15 @@
 ﻿Kopernicus
 ==============================
-February 23rd, 2022
+March 5th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-83:
+New in this latest version release-84:
 
-1.)  A new parameter useful for infopane modders (like PlanetInfoPlus) has been added to Kopernicus_Config.cfg.  Shouldn't need any touching by end users, but documented just in case.  The parameter is boolean HandleHomeworldAtmosphericUnitDisplay, default true.  Will be autoadded by upgrade pipeline.
-
-2.)  Some minor performance enhancing measures for the KopernicusWatchdog were added, to ensure we aren't setting it's orbit constantly when not needed.
+1.)  The bug where quickloads would sometimes cause the KSC to sink, requiring yet another quickload to fix, has been patched (finally).
 
 Known Bugs:
 
