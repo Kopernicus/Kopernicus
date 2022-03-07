@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-March 5th, 2022
+March 6th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-84:
+New in this latest version release-85:
 
-1.)  The bug where quickloads would sometimes cause the KSC to sink, requiring yet another quickload to fix, has been patched (finally).
+1.)  Attempt to correct a bug where the game camera would respawn at the KSC sometimes at an incorrect angle or elevation.  Needs testing, but seems improved.
 
 Known Bugs:
 

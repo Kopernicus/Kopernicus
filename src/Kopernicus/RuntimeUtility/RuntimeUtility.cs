@@ -70,7 +70,7 @@ namespace Kopernicus.RuntimeUtility
                 return pluginPath;
             }
         }
-        public static GameScenes previousScene = GameScenes.MAINMENU;
+        public static GameScenes previousScene = GameScenes.SPACECENTER;
         public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
         // Awake() - flag this class as don't destroy on load and register delegates
         [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
@@ -198,7 +198,6 @@ namespace Kopernicus.RuntimeUtility
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
             //FixShadows(HighLogic.LoadedScene);
-            previousScene = HighLogic.LoadedScene;
         }
 
         // Transforms body references in the save games
@@ -895,140 +894,143 @@ namespace Kopernicus.RuntimeUtility
         private static void FixCameras()
         {
             // Only run in the space center or the editor
-            if ((HighLogic.LoadedScene != GameScenes.SPACECENTER && !HighLogic.LoadedSceneIsEditor) || (previousScene != GameScenes.SPACECENTER))
+            if ((HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor) && (previousScene != GameScenes.SPACECENTER))
             {
-                return;
-            }
+                // Get the parental body
+                CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
 
-            // Get the parental body
-            CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
-
-            // If there's no body, exit.
-            if (body == null)
-            {
-                Logger.Active.Log("[Kopernicus] Couldn't find the parental body!");
-                return;
-            }
-
-            // Get the KSC object
-            PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
-
-            // If there's no KSC, exit.
-            if (ksc == null)
-            {
-                Logger.Active.Log("[Kopernicus] Couldn't find the KSC object!");
-                return;
-            }
-
-            // Go through the SpaceCenterCameras and fix them
-            foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
-            {
-                if (ksc.repositionToSphere || ksc.repositionToSphereSurface)
+                // If there's no body, exit.
+                if (body == null)
                 {
-                    Double normalHeight = body.pqsController.GetSurfaceHeight(ksc.repositionRadial.normalized) - body.Radius;
-                    if (ksc.repositionToSphereSurface)
-                    {
-                        normalHeight += ksc.repositionRadiusOffset;
-                    }
-                    cam.altitudeInitial = 0f - (Single)normalHeight;
-                }
-                else
-                {
-                    cam.altitudeInitial = 0f - (Single)ksc.repositionRadiusOffset;
+                    Logger.Active.Log("[Kopernicus] Couldn't find the parental body!");
+                    return;
                 }
 
-                // re-implement cam.Start()
-                // fields
-                Type camType = cam.GetType();
-                FieldInfo camSphere = null;
-                FieldInfo transform1 = null;
-                FieldInfo transform2 = null;
-                FieldInfo surfaceObj = null;
+                // Get the KSC object
+                PQSCity ksc = body.pqsController.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC");
 
-                // get fields
-                FieldInfo[] fields = camType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-                for (Int32 i = 0; i < fields.Length; ++i)
+                // If there's no KSC, exit.
+                if (ksc == null)
                 {
-                    FieldInfo fi = fields[i];
-                    if (fi.FieldType == typeof(PQS))
-                    {
-                        camSphere = fi;
-                    }
-                    else if (fi.FieldType == typeof(Transform) && transform1 == null)
-                    {
-                        transform1 = fi;
-                    }
-                    else if (fi.FieldType == typeof(Transform) && transform2 == null)
-                    {
-                        transform2 = fi;
-                    }
-                    else if (fi.FieldType == typeof(SurfaceObject))
-                    {
-                        surfaceObj = fi;
-                    }
+                    Logger.Active.Log("[Kopernicus] Couldn't find the KSC object!");
+                    return;
                 }
-                if (camSphere != null && transform1 != null && transform2 != null && surfaceObj != null)
-                {
-                    camSphere.SetValue(cam, body.pqsController);
 
-                    Transform initialTransform = body.pqsController.transform.Find(cam.initialPositionTransformName);
-                    if (initialTransform != null)
+                // Go through the SpaceCenterCameras and fix them
+                foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
+                {
+                    if (ksc.repositionToSphere || ksc.repositionToSphereSurface)
                     {
-                        transform1.SetValue(cam, initialTransform);
-                        cam.transform.NestToParent(initialTransform);
+                        Double normalHeight = body.pqsController.GetSurfaceHeight(ksc.repositionRadial.normalized) - body.Radius;
+                        if (ksc.repositionToSphereSurface)
+                        {
+                            normalHeight += ksc.repositionRadiusOffset;
+                        }
+                        cam.altitudeInitial = 0f - (Single)normalHeight;
                     }
                     else
                     {
-                        Logger.Active.Log("[Kopernicus] SSC2 can't find initial transform!");
-                        Transform initialTrfOrig = transform1.GetValue(cam) as Transform;
-                        if (initialTrfOrig != null)
+                        cam.altitudeInitial = 0f - (Single)ksc.repositionRadiusOffset;
+                    }
+
+                    // re-implement cam.Start()
+                    // fields
+                    Type camType = cam.GetType();
+                    FieldInfo camSphere = null;
+                    FieldInfo transform1 = null;
+                    FieldInfo transform2 = null;
+                    FieldInfo surfaceObj = null;
+
+                    // get fields
+                    FieldInfo[] fields = camType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                    for (Int32 i = 0; i < fields.Length; ++i)
+                    {
+                        FieldInfo fi = fields[i];
+                        if (fi.FieldType == typeof(PQS))
                         {
-                            cam.transform.NestToParent(initialTrfOrig);
+                            camSphere = fi;
+                        }
+                        else if (fi.FieldType == typeof(Transform) && transform1 == null)
+                        {
+                            transform1 = fi;
+                        }
+                        else if (fi.FieldType == typeof(Transform) && transform2 == null)
+                        {
+                            transform2 = fi;
+                        }
+                        else if (fi.FieldType == typeof(SurfaceObject))
+                        {
+                            surfaceObj = fi;
+                        }
+                    }
+                    if (camSphere != null && transform1 != null && transform2 != null && surfaceObj != null)
+                    {
+                        camSphere.SetValue(cam, body.pqsController);
+
+                        Transform initialTransform = body.pqsController.transform.Find(cam.initialPositionTransformName);
+                        if (initialTransform != null)
+                        {
+                            transform1.SetValue(cam, initialTransform);
+                            cam.transform.NestToParent(initialTransform);
                         }
                         else
                         {
-                            Logger.Active.Log("[Kopernicus] SSC2 own initial transform null!");
+                            Logger.Active.Log("[Kopernicus] SSC2 can't find initial transform!");
+                            Transform initialTrfOrig = transform1.GetValue(cam) as Transform;
+                            if (initialTrfOrig != null)
+                            {
+                                cam.transform.NestToParent(initialTrfOrig);
+                            }
+                            else
+                            {
+                                Logger.Active.Log("[Kopernicus] SSC2 own initial transform null!");
+                            }
                         }
-                    }
-                    Transform camTransform = transform2.GetValue(cam) as Transform;
-                    if (camTransform != null)
-                    {
-                        camTransform.NestToParent(cam.transform);
-                        if (FlightCamera.fetch != null && FlightCamera.fetch.transform != null)
+                        Transform camTransform = transform2.GetValue(cam) as Transform;
+                        if (camTransform != null)
                         {
-                            FlightCamera.fetch.transform.NestToParent(camTransform);
+                            camTransform.NestToParent(cam.transform);
+                            if (FlightCamera.fetch != null && FlightCamera.fetch.transform != null)
+                            {
+                                FlightCamera.fetch.transform.NestToParent(camTransform);
+                            }
+                            if (LocalSpace.fetch != null && LocalSpace.fetch.transform != null)
+                            {
+                                LocalSpace.fetch.transform.position = camTransform.position;
+                            }
                         }
-                        if (LocalSpace.fetch != null && LocalSpace.fetch.transform != null)
+                        else
                         {
-                            LocalSpace.fetch.transform.position = camTransform.position;
+                            Logger.Active.Log("[Kopernicus] SSC2 cam transform null!");
                         }
+
+                        cam.ResetCamera();
+
+                        SurfaceObject so = surfaceObj.GetValue(cam) as SurfaceObject;
+                        if (so != null)
+                        {
+                            so.ReturnToParent();
+                            DestroyImmediate(so);
+                        }
+                        else
+                        {
+                            Logger.Active.Log("[Kopernicus] SSC2 surfaceObject is null!");
+                        }
+
+                        surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
+                        Logger.Active.Log("[Kopernicus] Fixed SpaceCenterCamera");
                     }
                     else
                     {
-                        Logger.Active.Log("[Kopernicus] SSC2 cam transform null!");
+                        Logger.Active.Log("[Kopernicus] ERROR fixing space center camera, could not find some fields");
                     }
-
-                    cam.ResetCamera();
-
-                    SurfaceObject so = surfaceObj.GetValue(cam) as SurfaceObject;
-                    if (so != null)
-                    {
-                        so.ReturnToParent();
-                        DestroyImmediate(so);
-                    }
-                    else
-                    {
-                        Logger.Active.Log("[Kopernicus] SSC2 surfaceObject is null!");
-                    }
-
-                    surfaceObj.SetValue(cam, SurfaceObject.Create(initialTransform.gameObject, FlightGlobals.currentMainBody, 3, KFSMUpdateMode.FIXEDUPDATE));
-                    Logger.Active.Log("[Kopernicus] Fixed SpaceCenterCamera");
-                }
-                else
-                {
-                    Logger.Active.Log("[Kopernicus] ERROR fixing space center camera, could not find some fields");
                 }
             }
+            else
+            {
+                return;
+            }
+            previousScene = HighLogic.LoadedScene;
         }
 
         // Patch the KSC light animation
