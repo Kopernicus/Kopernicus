@@ -1,6 +1,6 @@
 ﻿Kopernicus
 ==============================
-March 6th, 2022
+March 10th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
