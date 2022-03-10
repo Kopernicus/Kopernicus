@@ -70,7 +70,6 @@ namespace Kopernicus.RuntimeUtility
                 return pluginPath;
             }
         }
-        public static GameScenes previousScene = GameScenes.SPACECENTER;
         public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
         // Awake() - flag this class as don't destroy on load and register delegates
         [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
@@ -163,10 +162,6 @@ namespace Kopernicus.RuntimeUtility
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
         }
-        private void FixShadows(GameScenes level)
-        {
-            //JIC
-        }
         // Stuff
         private void LateUpdate()
         {
@@ -197,7 +192,6 @@ namespace Kopernicus.RuntimeUtility
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
-            //FixShadows(HighLogic.LoadedScene);
         }
 
         // Transforms body references in the save games
@@ -894,7 +888,7 @@ namespace Kopernicus.RuntimeUtility
         private static void FixCameras()
         {
             // Only run in the space center or the editor
-            if ((HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor) && (previousScene != GameScenes.SPACECENTER))
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor)
             {
                 // Get the parental body
                 CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
@@ -1030,7 +1024,6 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            previousScene = HighLogic.LoadedScene;
         }
 
         // Patch the KSC light animation

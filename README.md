@@ -7,9 +7,9 @@ March 6th, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-85:
+New in this latest version release-86:
 
-1.)  Attempt to correct a bug where the game camera would respawn at the KSC sometimes at an incorrect angle or elevation.  Needs testing, but seems improved.
+1.)  Revert the KSC-sinking on load fixes, as they were causing camera issues.  The KSC now sinks sometimes on quicksave load again, as a result (lesser of two evils in this case).  To work around this, reload save, same as always.  The KSC never sinks permanently.
 
 Known Bugs:
 
