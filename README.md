@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-March 10th, 2022
+March 27, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-86:
+New in this latest version release-87:
 
-1.)  Revert the KSC-sinking on load fixes, as they were causing camera issues.  The KSC now sinks sometimes on quicksave load again, as a result (lesser of two evils in this case).  To work around this, reload save, same as always.  The KSC never sinks permanently.
+1.)  Some minor changes to how OnDemand functions to avoid a edge case where the craft could have the body it is on  be unloaded, resulting in it falling to it's doom.  This did not happen often mind, but was very annoying when it did.  Now fixed.
 
 Known Bugs:
 
