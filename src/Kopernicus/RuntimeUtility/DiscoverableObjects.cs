@@ -68,7 +68,6 @@ namespace Kopernicus.RuntimeUtility
         {
             if (!RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
             {
-
                 // Kill old Scenario Discoverable Objects without editing the collection while iterating through the same collection
                 // @Squad: I stab you with a try { } catch { } block.
 
@@ -111,33 +110,52 @@ namespace Kopernicus.RuntimeUtility
         // Update the Asteroids
         public void UpdateAsteroid(Asteroid asteroid, Double time)
         {
-            List<Vessel> spaceObjects = FlightGlobals.Vessels.Where(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors) && Math.Abs(v.DiscoveryInfo.GetSignalLife(Planetarium.GetUniversalTime())) < 0.01).ToList();
-            Int32 limit = Random.Range(asteroid.SpawnGroupMinLimit, asteroid.SpawnGroupMaxLimit);
-            if (spaceObjects.Any())
+            // Get a list of only space objects.
+            List<Vessel> spaceObjects = FlightGlobals.Vessels.Where(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)).ToList();
+            int asteroidGroupCount = 0;
+            string launchedFromMatch = $"AST-{asteroid.Name}";
+            foreach (Vessel vessel in spaceObjects)
             {
-                Vessel vessel = spaceObjects.First();
-                Debug.Log("[Kopernicus] " + vessel.vesselName + " has been untracked for too long and is now lost.");
-                vessel.Die();
-            }
-            else if (GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)))
-            {
-                Int32 untrackedCount = FlightGlobals.Vessels.Count(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) - spaceObjects.Count;
-                Int32 max = Mathf.Max(untrackedCount, limit);
-                if (max <= untrackedCount)
+                // If any vessel has been untracked for too long, delete it and exit.
+                if (Math.Abs(vessel.DiscoveryInfo.GetSignalLife(Planetarium.GetUniversalTime())) < 0.01)
                 {
+                    Debug.Log($"[Kopernicus] {vessel.vesselName} has been untracked for too long and is now lost.");
+                    vessel.Die();
                     return;
                 }
-                if (Random.Range(0, 100) < asteroid.Probability)
+
+                // If the vessel was created by this asteroid group, increment group count.
+                if (vessel.launchedFrom == launchedFromMatch)
                 {
-                    UInt32 seed = (UInt32)Random.Range(0, Int32.MaxValue);
-                    Random.InitState((Int32)seed);
-                    SpawnAsteroid(asteroid, seed);
-                }
-                else
-                {
-                    Debug.Log("[Kopernicus] No new objects this time. (Probability is " + asteroid.Probability.Value + "%)");
+                    asteroidGroupCount++;
                 }
             }
+
+            // Get random limit count, and exit if our current group count is higher than the limit.
+            int limit = Random.Range(asteroid.SpawnGroupMinLimit, asteroid.SpawnGroupMaxLimit);
+            if (asteroidGroupCount > limit)
+            {
+                return;
+            }
+
+            // If we don't have access to space object discovery, exit.
+            if (!GameVariables.Instance.UnlockedSpaceObjectDiscovery(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.TrackingStation)))
+            {
+                return;
+            }
+
+            // See if the asteroid will pass the probability chance to spawn, otherwise exit with a debug log.
+            float randomRange = Random.Range(0f, 100f);
+            if (randomRange < asteroid.Probability)
+            {
+                Debug.Log($"[Kopernicus] No new objects for {asteroid.Name} at this time. (Probability is {asteroid.Probability.Value}%)");
+                return;
+            }
+
+            // Spawn the asteroid.
+            int seed = Random.Range(0, int.MaxValue);
+            Random.InitState(seed);
+            SpawnAsteroid(asteroid, (uint)seed);
         }
 
         // Spawn the actual asteroid
@@ -276,6 +294,7 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
+            protoVessel.launchedFrom = $"AST-{asteroid.Name}";
             Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
             protoVessel.Load(HighLogic.CurrentGame.flightState);
             GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
