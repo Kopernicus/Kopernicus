@@ -80,15 +80,18 @@ namespace Kopernicus.OnDemand
         private void LateUpdate()
         {
             // If we are in flight with a vessel, update the cached active body.
-            if (FlightGlobals.ActiveVessel)
+            if (FlightGlobals.ActiveVessel.mainBody)
             {
-                activeBodyName = FlightGlobals.currentMainBody.name;
+                activeBodyName = FlightGlobals.ActiveVessel.mainBody.name;
             }
 
             // If we are the currently active body, do not unload.
-            if (activeBodyName == sphere.name)
+            if (sphere)
             {
-                return;
+                if (activeBodyName == sphere.name)
+                {
+                    return;
+                }
             }
 
             // If we aren't loaded or we're not wanting to unload then do nothing
