@@ -80,7 +80,7 @@ namespace Kopernicus.OnDemand
         private void LateUpdate()
         {
             // If we are in flight with a vessel, update the cached active body.
-            if (FlightGlobals.ActiveVessel.mainBody)
+            if (FlightGlobals.ActiveVessel)
             {
                 activeBodyName = FlightGlobals.ActiveVessel.mainBody.name;
             }
