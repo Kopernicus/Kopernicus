@@ -1,15 +1,20 @@
 ﻿Kopernicus
 ==============================
-March 27, 2022
+April 9, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-87:
+New in this latest version release-88:
 
-1.)  Some minor changes to how OnDemand functions to avoid a edge case where the craft could have the body it is on  be unloaded, resulting in it falling to it's doom.  This did not happen often mind, but was very annoying when it did.  Now fixed.
+1.)  Some minor changes to how OnDemand functions to avoid a harmless nullref on scene switches.  Now fixed.
+
+2.) The Kopernicus asteroid generator was underspawning asteroids for a very long time.  This has been fixed.  Credit to github user @TuckMeIntoBread.
+
+3.)  Some minor syntax fixes for CKAN.
+
 
 Known Bugs:
 
