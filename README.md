@@ -7,10 +7,9 @@ April 10, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-89:
+New in this latest version release-90:
 
-1.)  An emergency fix for nonstop logspam that got triggered by of all things, the main menu appearing.  Sorry about that!
-
+1.)  A fix for some less severe but still annoying logspam regarding asteroid probabilities.  We don't need to know the probability for an asteroid spawning every moment, KSP...
 
 Known Bugs:
 

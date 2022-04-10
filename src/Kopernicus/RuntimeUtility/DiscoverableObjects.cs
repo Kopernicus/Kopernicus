@@ -119,7 +119,7 @@ namespace Kopernicus.RuntimeUtility
                 // If any vessel has been untracked for too long, delete it and exit.
                 if (Math.Abs(vessel.DiscoveryInfo.GetSignalLife(Planetarium.GetUniversalTime())) < 0.01)
                 {
-                    Debug.Log($"[Kopernicus] {vessel.vesselName} has been untracked for too long and is now lost.");
+                    //Debug.Log($"[Kopernicus] {vessel.vesselName} has been untracked for too long and is now lost.");
                     vessel.Die();
                     return;
                 }
@@ -148,7 +148,7 @@ namespace Kopernicus.RuntimeUtility
             float randomRange = Random.Range(0f, 100f);
             if (randomRange < asteroid.Probability)
             {
-                Debug.Log($"[Kopernicus] No new objects for {asteroid.Name} at this time. (Probability is {asteroid.Probability.Value}%)");
+                //Debug.Log($"[Kopernicus] No new objects for {asteroid.Name} at this time. (Probability is {asteroid.Probability.Value}%)");
                 return;
             }
 
