@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-April 10, 2022
+May 23, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-90:
+New in this latest version release-91:
 
-1.)  A fix for some less severe but still annoying logspam regarding asteroid probabilities.  We don't need to know the probability for an asteroid spawning every moment, KSP...
+1.)  A change to the internal Kopernicus naming system for PQS Spheres to allow some mods to better work with it (you know who you are).  If you have no idea what I am talking about, this does not affect you, but you should still update to ensure future upcoming mods "play nice" with Kopernicus.
 
 Known Bugs:
 

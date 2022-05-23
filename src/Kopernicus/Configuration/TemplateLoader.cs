@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -119,18 +119,31 @@ namespace Kopernicus.Configuration
             // Instantiate (clone) the template body
             GameObject bodyGameObject = UnityEngine.Object.Instantiate(OriginalBody.gameObject, Utility.Deactivator, true);
             bodyGameObject.name = OriginalBody.name;
+            if (bodyGameObject.name.Contains("(Clone)"))
+            {
+                bodyGameObject.name = bodyGameObject.name.Replace("(Clone)", "");
+            }
+
             Body = bodyGameObject.GetComponent<PSystemBody>();
             Body.children = new List<PSystemBody>();
 
             // Clone the scaled version
             Body.scaledVersion = UnityEngine.Object.Instantiate(OriginalBody.scaledVersion, Utility.Deactivator, true);
             Body.scaledVersion.name = OriginalBody.scaledVersion.name;
+            if (Body.scaledVersion.name.Contains("(Clone)"))
+            {
+                Body.scaledVersion.name = Body.scaledVersion.name.Replace("(Clone)", "");
+            }
 
             // Clone the PQS version (if it has one) and we want the PQS
             if (Body.pqsVersion != null && RemovePqs.Value != true)
             {
                 Body.pqsVersion = UnityEngine.Object.Instantiate(OriginalBody.pqsVersion, Utility.Deactivator, true);
                 Body.pqsVersion.name = OriginalBody.pqsVersion.name;
+                if (Body.pqsVersion.name.Contains("(Clone)"))
+                {
+                    Body.pqsVersion.name = Body.pqsVersion.name.Replace("(Clone)", "");
+                }
             }
             else
             {
