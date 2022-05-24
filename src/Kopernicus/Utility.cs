@@ -297,6 +297,7 @@ namespace Kopernicus
             GameObject pqsVersionGameObject =
                 Injector.IsInPrefab ? Instantiate(pqs.gameObject) : pqs.gameObject;
             PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
+            pqsVersion.name = pqsVersion.name.Replace("(Clone)", "");
 
             // Deactivate blacklisted Mods
             PQSMod[] mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).OrderBy(m => m.order).ToArray();
