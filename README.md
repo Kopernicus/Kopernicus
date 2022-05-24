@@ -7,9 +7,9 @@ May 23, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-91:
+New in this latest version release-92:
 
-1.)  A change to the internal Kopernicus naming system for PQS Spheres to allow some mods to better work with it (you know who you are).  If you have no idea what I am talking about, this does not affect you, but you should still update to ensure future upcoming mods "play nice" with Kopernicus.
+1.)  A bugfix to the prior modder centered change that only affected a small number of users (specifically, those that had exportmesh=false in their body config and were getting odd body names with "clone" in it, this is very very few people I imagine).
 
 Known Bugs:
 
