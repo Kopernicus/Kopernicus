@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-May 23, 2022
+May 27, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-92:
+New in this latest version release-93:
 
-1.)  A bugfix to the prior modder centered change that only affected a small number of users (specifically, those that had exportmesh=false in their body config and were getting odd body names with "clone" in it, this is very very few people I imagine).
+1.)  Some code in Kopernicus.Parser has been optimized for decently good game loadtime gains.  This section of the code is largely unexplored, and more optimizations may follow as we poke through it.  Thanks to KSP forum user GamesLinx for pointing this out!
+
+2.)  More modder requested changes mostly invisible to end user.
 
 Known Bugs:
 

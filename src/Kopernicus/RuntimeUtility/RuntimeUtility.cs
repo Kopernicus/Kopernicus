@@ -162,6 +162,7 @@ namespace Kopernicus.RuntimeUtility
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
         }
+
         // Stuff
         private void LateUpdate()
         {

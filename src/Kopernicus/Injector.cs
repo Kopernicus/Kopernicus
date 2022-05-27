@@ -188,10 +188,12 @@ namespace Kopernicus
                     SpaceCenter.Instance.Start();
                 }
 
-                //Catch the watchdog and remove it from display
+                // Fix the flight globals index of each body and patch it's SOI
+                Int32 counter = 0;
                 CelestialBody mockBody = null;
-                foreach (CelestialBody body in PSystemManager.Instance.localBodies)
+                foreach (CelestialBody body in FlightGlobals.Bodies)
                 {
+                    //Find the watchdog
                     if (body.name.Equals("KopernicusWatchdog"))
                     {
                         mockBody = body;
@@ -216,16 +218,6 @@ namespace Kopernicus
                             renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
                         }
                     }
-                }
-                if (mockBody != null)
-                {
-                    mockBody.Mass = 0;
-                    RuntimeUtility.RuntimeUtility.mockBody = mockBody;
-                }
-                // Fix the flight globals index of each body and patch it's SOI
-                Int32 counter = 0;
-                foreach (CelestialBody body in FlightGlobals.Bodies)
-                {
                     // Event
                     Events.OnPreBodyFixing.Fire(body);
 
@@ -301,6 +293,12 @@ namespace Kopernicus
                     // Log
                     Logger.Default.Log("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " +
                                        body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
+                }
+                //Mark the watchdog
+                if (mockBody != null)
+                {
+                    mockBody.Mass = 0;
+                    RuntimeUtility.RuntimeUtility.mockBody = mockBody;
                 }
 
                 // Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)
