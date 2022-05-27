@@ -33,17 +33,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>C:\Program Files\Kerbal Space Program\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\Program Files\Kerbal Space Program\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>C:\Program Files\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>D:\Program Files\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>C:\Program Files\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>D:\Program Files\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -54,7 +54,6 @@
     <Compile Include="Attributes\RequireConfigType.cs" />
     <Compile Include="BuiltinTypeParsers\ColorParser.cs" />
     <Compile Include="BuiltinTypeParsers\EnumParser.cs" />
-    <Compile Include="BuiltinTypeParsers\FloatCurveParser.cs" />
     <Compile Include="BuiltinTypeParsers\NumericCollectionParser.cs" />
     <Compile Include="BuiltinTypeParsers\NumericParser.cs" />
     <Compile Include="BuiltinTypeParsers\QuaternionParser.cs" />

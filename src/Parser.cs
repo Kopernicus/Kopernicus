@@ -828,6 +828,9 @@ namespace Kopernicus.ConfigParser
         private static void LoadExternalParserTargets(ConfigNode node, String calling, String configName = "Default",
             Boolean getChildren = true)
         {
+            ParserTargetExternal[] attributes;
+            String nodeName;
+            ConfigNode nodeToLoad;
             // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
             try
             {
@@ -835,8 +838,7 @@ namespace Kopernicus.ConfigParser
                 {
                     try
                     {
-                        ParserTargetExternal[] attributes =
-                            (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
+                        attributes = (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
                         if (attributes.Length == 0)
                         {
                             continue;
@@ -853,7 +855,7 @@ namespace Kopernicus.ConfigParser
                             continue;
                         }
 
-                        String nodeName = external.ConfigNodeName ?? type.Name;
+                        nodeName = external.ConfigNodeName ?? type.Name;
 
                         // Get settings data
                         ParserOptions.Data data = ParserOptions.Options[configName];
@@ -867,7 +869,7 @@ namespace Kopernicus.ConfigParser
                         {
                             data.LogCallback("Parsing ParserTarget " + nodeName + " in node " +
                                              external.ParentNodeName + " from Assembly " + type.Assembly.FullName);
-                            ConfigNode nodeToLoad = node.GetNode(nodeName);
+                            nodeToLoad = node.GetNode(nodeName);
                             CreateObjectFromConfigNode(type, nodeToLoad, configName, getChildren);
                         }
                         catch (MissingMethodException missingMethod)
