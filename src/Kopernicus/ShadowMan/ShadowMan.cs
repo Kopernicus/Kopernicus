@@ -29,10 +29,6 @@ namespace Kopernicus.ShadowMan
         public Camera farCamera, scaledSpaceCamera, nearCamera;
         static float originalShadowDistance = 0f;
 
-        //classic SQUAD
-        ReflectionProbeChecker reflectionProbeChecker;
-        GameObject ReflectionProbeCheckerGO;
-
         bool coreInitiated = false;
         public bool isActive = false;
         public bool unifiedCameraMode = false;
@@ -88,8 +84,6 @@ namespace Kopernicus.ShadowMan
 
             Utils.FixKopernicusRingsRenderQueue();
             Utils.FixSunsCoronaRenderQueue();
-
-            AddReflectionProbeFixer();
 
             if (HighLogic.LoadedScene != GameScenes.TRACKSTATION)
             {
@@ -147,17 +141,6 @@ namespace Kopernicus.ShadowMan
                 {
                     bufferManager.OnDestroy();
                     Component.DestroyImmediate(bufferManager);
-                }
-
-                if (reflectionProbeChecker)
-                {
-                    reflectionProbeChecker.OnDestroy();
-                    Component.DestroyImmediate(reflectionProbeChecker);
-                }
-
-                if (ReflectionProbeCheckerGO)
-                {
-                    UnityEngine.GameObject.DestroyImmediate(ReflectionProbeCheckerGO);
                 }
             }
         }
@@ -285,28 +268,6 @@ namespace Kopernicus.ShadowMan
                     mainMenuLight = _light;
                 }
             }
-        }
-
-        // Just a dummy gameObject so the reflectionProbeChecker can capture the reflection Camera
-        public void AddReflectionProbeFixer()
-        {
-            ReflectionProbeCheckerGO = new GameObject("ShadowMan ReflectionProbeCheckerGO");
-            //ReflectionProbeCheckerGO.transform.parent = nearCamera.transform; //VesselViewer doesn't like this for some reason
-            ReflectionProbeCheckerGO.layer = 15;
-
-            reflectionProbeChecker = ReflectionProbeCheckerGO.AddComponent<ReflectionProbeChecker>();
-
-            MeshFilter _mf = ReflectionProbeCheckerGO.AddComponent<MeshFilter> ();
-            _mf.mesh.Clear();
-            _mf.mesh = MeshFactory.MakePlane(2, 2, MeshFactory.PLANE.XY, false, false);
-            _mf.mesh.bounds = new Bounds(Vector4.zero, new Vector3(Mathf.Infinity, Mathf.Infinity, Mathf.Infinity));
-
-            MeshRenderer _mr = ReflectionProbeCheckerGO.AddComponent<MeshRenderer> ();
-            _mr.sharedMaterial = new Material(ShaderReplacer.Instance.LoadedShaders[("Scatterer/invisible")]);
-            _mr.material = new Material(ShaderReplacer.Instance.LoadedShaders[("Scatterer/invisible")]);
-            _mr.receiveShadows = false;
-            _mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            _mr.enabled = true;
         }
     }
 }

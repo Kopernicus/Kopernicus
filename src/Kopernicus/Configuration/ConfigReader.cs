@@ -53,7 +53,7 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool EnableKopernicusShadowManager = true;
         [Persistent]
-        public int ShadowDistanceLimit = 17500;
+        public int ShadowDistanceLimit = 25000;
         [Persistent]
         public bool DisableMainMenuMunScene = true;
         [Persistent]

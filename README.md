@@ -1,17 +1,17 @@
 ﻿Kopernicus
 ==============================
-May 27, 2022
+May 28, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
-* Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack (shaders/GPL'd scatterer code)
+* Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-94:
+New in this latest version release-95:
 
-1.)  The long awaited shadow fixes have made it in!  Thanks to blackrack for donating a small piece of scatterer code/shaders to help with this!  Please see the next entry for more information, and please pay attention to any new/bolded points.
+1.)  The scatterer donated shaders have been trimmed, resulting in a far smaller release binary size.
 
-2.)  Two new Kopernicus_Config.cfg parameters have been introduced related to the shadow system.  The first, a boolean that defaults to true, is EnableKopernicusShadowManager, which allows the stock style shadow fixes to work.  You can turn this off to save a tiny bit of memory if you use say, scatterer, but the difference is not major.  The second is ShadowDistanceLimit, which controls the distance at which shadows are cast in meters (higher distances lower quality of shadows).  Default for that integer value is 17500.  These will all be autoadded to your existing config on first run.
+2.)  The shadow draw distance default was changed to 250000 meters, as that was found to have no visual impairment.  If you had a previous install with the 17500 meter default, you may need to adjust your Kopernicus_Config.cfg's shadow limit line manually if you want this additional distance.  Alternatively, you can simply delete that file and let it regenerate.
 
 Known Bugs:
 
@@ -31,9 +31,7 @@ Known Caveats:
 
 3.)  If you use the "AddWatchdog.cfg" file, A fake celestial body isthen used to fix the distant landing-gear sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not work with this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.
 
-4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
-
-5.) As of release-94 with the adition of some scatterer shaders, release sizes have balooned.  This is normal, and due to including the complete 0.772 scatterer shader bundles rather than trimming them. Trimming will be done to reduce the binary size in a later release. 
+4.)  When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
 
 About
 -----

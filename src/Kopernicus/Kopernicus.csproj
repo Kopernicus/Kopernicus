@@ -299,8 +299,6 @@
     <Compile Include="ShadowMan\CelestialBodySortableByDistance.cs" />
     <Compile Include="ShadowMan\ShadowMan.cs" />
     <Compile Include="ShadowMan\Utilities\BufferManager.cs" />
-    <Compile Include="ShadowMan\Utilities\Camera\ReflectionProbeChecker.cs" />
-    <Compile Include="ShadowMan\Utilities\Camera\ReflectionProbeFixer.cs" />
     <Compile Include="ShadowMan\Utilities\Camera\ScreenCopyCommandBuffer.cs" />
     <Compile Include="ShadowMan\Utilities\Camera\TweakShadowCascades.cs" />
     <Compile Include="ShadowMan\Utilities\Camera\WireFrame.cs" />
