@@ -51,6 +51,10 @@ namespace Kopernicus.Configuration
         [Persistent]
         public int ScatterDistanceLimit = 4250;
         [Persistent]
+        public bool EnableKopernicusShadowManager = true;
+        [Persistent]
+        public int ShadowDistanceLimit = 17500;
+        [Persistent]
         public bool DisableMainMenuMunScene = true;
         [Persistent]
         public bool HandleHomeworldAtmosphericUnitDisplay = true;

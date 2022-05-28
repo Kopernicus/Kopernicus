@@ -297,6 +297,7 @@ namespace Kopernicus
             GameObject pqsVersionGameObject =
                 Injector.IsInPrefab ? Instantiate(pqs.gameObject) : pqs.gameObject;
             PQS pqsVersion = pqsVersionGameObject.GetComponent<PQS>();
+
             try
             {
                 pqsVersion.name = pqsVersion.name.Replace("(Clone)", "");
