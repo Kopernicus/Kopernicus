@@ -11,7 +11,7 @@ New in this latest version release-95:
 
 1.)  The scatterer donated shaders have been trimmed, resulting in a far smaller release binary size.
 
-2.)  The shadow draw distance default was changed to 250000 meters, as that was found to have no visual impairment.  If you had a previous install with the 17500 meter default, you may need to adjust your Kopernicus_Config.cfg's shadow limit line manually if you want this additional distance.  Alternatively, you can simply delete that file and let it regenerate.
+2.)  The shadow draw distance default was changed to 25000 meters, as that was found to have no visual impairment.  If you had a previous install with the 17500 meter default, you may need to adjust your Kopernicus_Config.cfg's shadow limit line manually if you want this additional distance.  Alternatively, you can simply delete that file and let it regenerate.
 
 Known Bugs:
 
