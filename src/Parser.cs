@@ -113,46 +113,18 @@ namespace Kopernicus.ConfigParser
             IParserApplyEventSubscriber applySubscriber = o as IParserApplyEventSubscriber;
             IParserPostApplyEventSubscriber postApplySubscriber = o as IParserPostApplyEventSubscriber;
 
-            // Generate two lists -> those tagged preApply and those not
-            List<KeyValuePair<Boolean, MemberInfo>> preApplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
-            List<KeyValuePair<Boolean, MemberInfo>> postApplyMembers = new List<KeyValuePair<Boolean, MemberInfo>>();
-
-            // Discover members tagged with parser attributes
-            foreach (MemberInfo member in o.GetType()
-                .GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
-            {
-                // Is this member a parser target?
-                ParserTarget[] attributes = (ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true);
-
-                if (attributes.Length <= 0)
-                {
-                    continue;
-                }
-
-                // If this member is a collection
-                Boolean isCollection = attributes[0].GetType() == typeof(ParserTargetCollection);
-
-                // If this member has the preApply attribute, we need to process it
-                if (member.GetCustomAttributes(typeof(PreApply), true).Length > 0)
-                {
-                    preApplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
-                }
-                else
-                {
-                    postApplyMembers.Add(new KeyValuePair<Boolean, MemberInfo>(isCollection, member));
-                }
-            }
+            ParsedObjectInfo objectInfo = ParsedObjectInfo.GetInfo(o);
 
             // Process the preApply members
-            foreach (KeyValuePair<Boolean, MemberInfo> member in preApplyMembers)
+            foreach (ParsedMemberInfoBase member in objectInfo.preApplyMembers)
             {
-                if (member.Key)
+                if (member is ParsedCollectionMemberInfo collectionMember)
                 {
-                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName, getChildren);
+                    LoadCollectionMemberFromConfigurationNode(collectionMember, o, node, configName, getChildren);
                 }
                 else
                 {
-                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, configName, getChildren);
+                    LoadObjectMemberFromConfigurationNode((ParsedMemberInfo)member, o, node, configName, getChildren);
                 }
             }
 
@@ -161,15 +133,15 @@ namespace Kopernicus.ConfigParser
             subscriber?.Apply(node);
 
             // Process the postApply members
-            foreach (KeyValuePair<Boolean, MemberInfo> member in postApplyMembers)
+            foreach (ParsedMemberInfoBase member in objectInfo.postApplyMembers)
             {
-                if (member.Key)
+                if (member is ParsedCollectionMemberInfo collectionMember)
                 {
-                    LoadCollectionMemberFromConfigurationNode(member.Value, o, node, configName, getChildren);
+                    LoadCollectionMemberFromConfigurationNode(collectionMember, o, node, configName, getChildren);
                 }
                 else
                 {
-                    LoadObjectMemberFromConfigurationNode(member.Value, o, node, configName, getChildren);
+                    LoadObjectMemberFromConfigurationNode((ParsedMemberInfo)member, o, node, configName, getChildren);
                 }
             }
 
@@ -181,17 +153,17 @@ namespace Kopernicus.ConfigParser
         /// <summary>
         /// Load collection for ParserTargetCollection
         /// </summary>
-        /// <param name="member">Member to load data for</param>
+        /// <param name="parsedMember">Member to load data for</param>
         /// <param name="o">Instance of the object which owns member</param>
         /// <param name="node">Configuration node from which to load data</param>
         /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChildren">Whether getters on the object should get called</param>
-        private static void LoadCollectionMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node,
+        private static void LoadCollectionMemberFromConfigurationNode(ParsedCollectionMemberInfo parsedMember, Object o, ConfigNode node,
             String configName = "Default", Boolean getChildren = true)
         {
             // Get the target attributes
-            ParserTargetCollection[] targets =
-                (ParserTargetCollection[]) member.GetCustomAttributes(typeof(ParserTargetCollection), true);
+            ParserTargetCollection[] targets = parsedMember.attributes;
+            MemberInfo member = parsedMember.memberInfo;
 
             // Process the target attributes
             foreach (ParserTargetCollection target in targets)
@@ -228,8 +200,7 @@ namespace Kopernicus.ConfigParser
                 ParserOptions.Data data = ParserOptions.Options[configName];
 
                 // Log
-                data.LogCallback("Parsing Target " + target.FieldName + " in (" + o.GetType() + ") as (" + targetType +
-                                 ")");
+                data.LogCallback("Parsing Target " + target.FieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
 
                 // If there was no data found for this node
                 if (!isNode && !isValue)
@@ -462,10 +433,7 @@ namespace Kopernicus.ConfigParser
                                         case NameSignificance.Type:
 
                                             // Generate the type from the name
-                                            Type elementType = ModTypes.FirstOrDefault(t =>
-                                                t.Name == subnode.name &&
-                                                !Equals(t.Assembly, typeof(HighLogic).Assembly) &&
-                                                genericType.IsAssignableFrom(t));
+                                            Type elementType = NameToTypeCache.GetElementType(subnode.name, genericType);
 
                                             // Check if the type represents patchable data
                                             current = null;
@@ -566,10 +534,7 @@ namespace Kopernicus.ConfigParser
                                         case NameSignificance.Type:
 
                                             // Generate the type from the name
-                                            Type elementType = ModTypes.FirstOrDefault(t =>
-                                                t.Name == value.name &&
-                                                !Equals(t.Assembly, typeof(HighLogic).Assembly) &&
-                                                genericType.IsAssignableFrom(t));
+                                            Type elementType = NameToTypeCache.GetElementType(value.name, genericType);
 
                                             // Add the object to the collection
                                             collection?.Add(ProcessValue(elementType, value.value));
@@ -618,24 +583,40 @@ namespace Kopernicus.ConfigParser
         /// <summary>
         /// Load data for ParserTarget field or property from a configuration node
         /// </summary>
-        /// <param name="member">Member to load data for</param>
+        /// <param name="parsedMember">Member to load data for</param>
         /// <param name="o">Instance of the object which owns member</param>
         /// <param name="node">Configuration node from which to load data</param>
         /// <param name="configName">The name of the mod that corresponds to the entry in ParserOptions</param>
         /// <param name="getChildren">Whether getters on the object should get called</param>
-        private static void LoadObjectMemberFromConfigurationNode(MemberInfo member, Object o, ConfigNode node,
+        private static void LoadObjectMemberFromConfigurationNode(ParsedMemberInfo parsedMember, Object o, ConfigNode node,
             String configName = "Default", Boolean getChildren = true)
         {
             // Get the parser targets
-            ParserTarget[] targets = (ParserTarget[]) member.GetCustomAttributes(typeof(ParserTarget), true);
+            ParserTarget[] targets = parsedMember.attributes;
+            MemberInfo member = parsedMember.memberInfo;
 
             // Process the targets
             foreach (ParserTarget target in targets)
             {
                 // Figure out if this field exists and if we care
-                Boolean isNode = node.GetNodes()
-                    .Any(n => n.name.StartsWith(target.FieldName + ":") || n.name == target.FieldName);
-                Boolean isValue = node.HasValue(target.FieldName);
+                bool isValue = node.HasValue(target.FieldName);
+                bool isNode = false;
+                foreach (ConfigNode childNode in node.nodes)
+                {
+                    if (childNode.name.StartsWith(target.FieldName))
+                    {
+                        if (childNode.name.Length == target.FieldName.Length)
+                        {
+                            isNode = true;
+                            break;
+                        }
+                        else if (childNode.name.Length > target.FieldName.Length && childNode.name[target.FieldName.Length] == ':')
+                        {
+                            isNode = true;
+                            break;
+                        }
+                    }
+                }
 
                 // Obtain the type the member is (can only be field or property)
                 Type targetType;
@@ -665,8 +646,7 @@ namespace Kopernicus.ConfigParser
                 ParserOptions.Data data = ParserOptions.Options[configName];
 
                 // Log
-                data.LogCallback("Parsing Target " + target.FieldName + " in (" + o.GetType() + ") as (" + targetType +
-                                 ")");
+                data.LogCallback("Parsing Target " + target.FieldName + " in (" + o.GetType() + ") as (" + targetType + ")");
 
                 // If there was no data found for this node
                 if (!isNode && !isValue)
@@ -737,20 +717,26 @@ namespace Kopernicus.ConfigParser
                     switch (target.NameSignificance)
                     {
                         case NameSignificance.None:
-
                             // Just processes the contents of the node
                             LoadObjectFromConfigurationNode(targetValue, node.GetNode(target.FieldName), configName,
                                 target.GetChild);
                             break;
 
                         case NameSignificance.Type:
-
                             // Generate the type from the name
-                            ConfigNode subnode = node.GetNodes().First(n => n.name.StartsWith(target.FieldName + ":"));
+                            ConfigNode subnode = null;
+                            string searchPattern = target.FieldName + ":";
+                            foreach (ConfigNode childNode in node.nodes)
+                            {
+                                if (childNode.name.StartsWith(searchPattern))
+                                {
+                                    subnode = childNode;
+                                    break;
+                                }
+                            }
+
                             String[] split = subnode.name.Split(':');
-                            Type elementType = ModTypes.FirstOrDefault(t =>
-                                t.Name == split[1] && !Equals(t.Assembly, typeof(HighLogic).Assembly) &&
-                                targetType.IsAssignableFrom(t));
+                            Type elementType = NameToTypeCache.GetElementType(split[1], targetType);
 
                             // If no object was found, check if the type implements custom constructors
                             targetValue = Activator.CreateInstance(elementType);
@@ -816,7 +802,7 @@ namespace Kopernicus.ConfigParser
             Boolean getChildren = true)
         {
             LoadExternalParserTargets(node, modName, configName, getChildren);
-            foreach (ConfigNode childNode in node.GetNodes())
+            foreach (ConfigNode childNode in node.nodes)
             {
                 LoadParserTargetsExternal(childNode, configName, modName, getChildren);
             }
@@ -828,39 +814,31 @@ namespace Kopernicus.ConfigParser
         private static void LoadExternalParserTargets(ConfigNode node, String calling, String configName = "Default",
             Boolean getChildren = true)
         {
-            ParserTargetExternal[] attributes;
-            String nodeName;
-            ConfigNode nodeToLoad;
             // Look for types in other assemblies with the ExternalParserTarget attribute and the parentNodeName equal to this node's name
             try
             {
-                foreach (Type type in ModTypes)
+                foreach (ParserTargetExternalInfo attributeInfo in ParserTargetExternalInfo.Cache)
                 {
                     try
                     {
-                        attributes = (ParserTargetExternal[]) type.GetCustomAttributes(typeof(ParserTargetExternal), false);
-                        if (attributes.Length == 0)
+                        if (node.name != attributeInfo.attribute.ParentNodeName)
                         {
                             continue;
                         }
 
-                        ParserTargetExternal external = attributes[0];
-                        if (node.name != external.ParentNodeName)
+                        if (calling != attributeInfo.attribute.ModName)
                         {
                             continue;
                         }
 
-                        if (calling != external.ModName)
-                        {
-                            continue;
-                        }
-
-                        nodeName = external.ConfigNodeName ?? type.Name;
+                        string nodeName = attributeInfo.attribute.ConfigNodeName ?? attributeInfo.type.Name;
 
                         // Get settings data
                         ParserOptions.Data data = ParserOptions.Options[configName];
 
-                        if (!node.HasNode(nodeName))
+                        ConfigNode nodeToLoad = node.GetNode(nodeName);
+
+                        if (nodeToLoad == null)
                         {
                             continue;
                         }
@@ -868,9 +846,9 @@ namespace Kopernicus.ConfigParser
                         try
                         {
                             data.LogCallback("Parsing ParserTarget " + nodeName + " in node " +
-                                             external.ParentNodeName + " from Assembly " + type.Assembly.FullName);
-                            nodeToLoad = node.GetNode(nodeName);
-                            CreateObjectFromConfigNode(type, nodeToLoad, configName, getChildren);
+                            attributeInfo.attribute.ParentNodeName + " from Assembly " + attributeInfo.type.Assembly.FullName);
+                            
+                            CreateObjectFromConfigNode(attributeInfo.type, nodeToLoad, configName, getChildren);
                         }
                         catch (MissingMethodException missingMethod)
                         {
@@ -881,7 +859,7 @@ namespace Kopernicus.ConfigParser
                         catch (Exception exception)
                         {
                             data.LogCallback("Failed to load ParserTargetExternal " + nodeName + " from node " +
-                                             external.ParentNodeName);
+                                             attributeInfo.attribute.ParentNodeName);
                             data.ErrorCallback(exception);
                         }
                     }
@@ -961,6 +939,174 @@ namespace Kopernicus.ConfigParser
             foreach (Type t in assemblies.SelectMany(a => a.GetTypes()))
             {
                 _modTypes.Add(t);
+            }
+        }
+
+        private class ParserTargetExternalInfo
+        {
+            private static List<ParserTargetExternalInfo> _cache;
+
+            public static List<ParserTargetExternalInfo> Cache
+            {
+                get
+                {
+                    if (_cache != null)
+                        return _cache;
+
+                    _cache = new List<ParserTargetExternalInfo>();
+                    try
+                    {
+                        foreach (Type type in ModTypes)
+                        {
+                            try
+                            {
+                                if (!type.IsDefined(typeof(ParserTargetExternal), false))
+                                    continue;
+
+                                ParserTargetExternal[] attributes = (ParserTargetExternal[])type.GetCustomAttributes(typeof(ParserTargetExternal), false);
+                                if (attributes.Length == 0)
+                                    continue;
+
+                                _cache.Add(new ParserTargetExternalInfo(type, attributes[0]));
+                            }
+                            catch (TypeLoadException)
+                            {
+                                // ignore
+                            }
+                        }
+                    }
+                    catch (ReflectionTypeLoadException)
+                    {
+                        // ignore
+                    }
+
+                    return _cache;
+                }
+            }
+
+            public readonly Type type;
+            public readonly ParserTargetExternal attribute;
+
+            private ParserTargetExternalInfo(Type type, ParserTargetExternal attribute)
+            {
+                this.type = type;
+                this.attribute = attribute;
+            }
+        }
+
+        private class NameToTypeCache
+        {
+            private static Dictionary<string, Dictionary<Type, Type>> nameToType = new Dictionary<string, Dictionary<Type, Type>>();
+
+            public static Type GetElementType(string name, Type targetType)
+            {
+                if (!nameToType.TryGetValue(name, out Dictionary<Type, Type> potentialTypes))
+                {
+                    potentialTypes = new Dictionary<Type, Type>();
+                    nameToType.Add(name, potentialTypes);
+                }
+
+                if (!potentialTypes.TryGetValue(targetType, out Type elementType))
+                {
+                    elementType = null;
+                    foreach (Type potentialType in ModTypes)
+                    {
+                        if (potentialType.Name == name
+                            && !Equals(potentialType.Assembly, typeof(HighLogic).Assembly)
+                            && targetType.IsAssignableFrom(potentialType))
+                        {
+                            elementType = potentialType;
+                            break;
+                        }
+                    }
+                    potentialTypes.Add(targetType, elementType);
+                }
+
+                return elementType;
+            }
+        }
+
+        private class ParsedObjectInfo
+        {
+            private static Dictionary<Type, ParsedObjectInfo> cache = new Dictionary<Type, ParsedObjectInfo>();
+
+            // Generate two lists -> those tagged preApply and those not
+            public List<ParsedMemberInfoBase> preApplyMembers = new List<ParsedMemberInfoBase>();
+            public List<ParsedMemberInfoBase> postApplyMembers = new List<ParsedMemberInfoBase>();
+
+            public static ParsedObjectInfo GetInfo(Object o)
+            {
+                Type objectType = o.GetType();
+                if (cache.TryGetValue(objectType, out ParsedObjectInfo parsedObjectInfo))
+                    return parsedObjectInfo;
+
+                parsedObjectInfo = new ParsedObjectInfo();
+                cache.Add(objectType, parsedObjectInfo);
+
+                // Discover members tagged with parser attributes
+                foreach (MemberInfo member in o.GetType()
+                    .GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+                {
+                    // Is this member a parser target?
+
+                    if (!member.IsDefined(typeof(ParserTarget), true))
+                    {
+                        continue;
+                    }
+
+                    ParsedMemberInfoBase parsedMemberInfoBase;
+                    if (!member.IsDefined(typeof(ParserTargetCollection), true))
+                    {
+                        parsedMemberInfoBase = new ParsedMemberInfo(member);
+                    }
+                    else
+                    {
+                        parsedMemberInfoBase = new ParsedCollectionMemberInfo(member);
+                    }
+
+                    // If this member has the preApply attribute, we need to process it
+                    if (member.IsDefined(typeof(PreApply), true))
+                    {
+                        parsedObjectInfo.preApplyMembers.Add(parsedMemberInfoBase);
+                    }
+                    else
+                    {
+                        parsedObjectInfo.postApplyMembers.Add(parsedMemberInfoBase);
+                    }
+                }
+
+                return parsedObjectInfo;
+            }
+
+        }
+
+        private class ParsedMemberInfoBase
+        {
+            public MemberInfo memberInfo;
+
+            public ParsedMemberInfoBase(MemberInfo memberInfo)
+            {
+                this.memberInfo = memberInfo;
+            }
+        }
+
+        private class ParsedMemberInfo : ParsedMemberInfoBase
+        {
+            public ParserTarget[] attributes;
+
+            public ParsedMemberInfo(MemberInfo memberInfo) : base(memberInfo)
+            {
+                attributes = (ParserTarget[])memberInfo.GetCustomAttributes(typeof(ParserTarget), true);
+            }
+        }
+
+        private class ParsedCollectionMemberInfo : ParsedMemberInfoBase
+        {
+            public ParserTargetCollection[] attributes;
+
+            public ParsedCollectionMemberInfo(MemberInfo memberInfo) : base(memberInfo)
+            {
+                attributes = (ParserTargetCollection[])memberInfo.GetCustomAttributes(typeof(ParserTargetCollection), true);
             }
         }
     }
