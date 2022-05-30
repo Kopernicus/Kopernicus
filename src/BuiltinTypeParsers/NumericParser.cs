@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Kopernicus.ConfigParser.Attributes;
@@ -39,6 +40,8 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class NumericParser<T> : IParsable, ITypeParser<T>
     {
+        private static Dictionary<Type, Func<string, T>> parsers = new Dictionary<Type, Func<string, T>>();
+
         /// <summary>
         /// The value that is being parsed
         /// </summary>
@@ -47,14 +50,14 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// <summary>
         /// The method that is used to parse the string
         /// </summary>
-        private readonly MethodInfo _parserMethod;
-        
+        private readonly Func<string, T> _parserDelegate;
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
         public void SetFromString(String s)
         {
-            Value = (T)_parserMethod.Invoke(null, new Object[] { s });
+            Value = _parserDelegate(s);
         }
 
         /// <summary>
@@ -70,8 +73,13 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// </summary>
         public NumericParser()
         {
-            // Get the parse method for this object
-            _parserMethod = typeof(T).GetMethod("Parse", new [] { typeof(String) });
+            Type t = typeof(T);
+            if (parsers.TryGetValue(t, out _parserDelegate))
+                return;
+
+            MethodInfo methodInfo = t.GetMethod("Parse", new[] {typeof(String)});
+            _parserDelegate = (Func<string, T>)Delegate.CreateDelegate(typeof(Func<string, T>), methodInfo);
+            parsers.Add(t, _parserDelegate);
         }
         
         /// <summary>

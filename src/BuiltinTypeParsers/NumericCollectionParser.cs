@@ -41,16 +41,20 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class NumericCollectionParser<T> : IParsable, ITypeParser<List<T>>
     {
+        private static readonly char[] splitChars = new[] {' ', ',', ';', '\t'};
+
+        private static Dictionary<Type, Func<string, T>> parsers = new Dictionary<Type, Func<string, T>>();
+
         /// <summary>
         /// The value that is being parsed
         /// </summary>
         public List<T> Value { get; set; }
-        
+
         /// <summary>
         /// The method that is used to parse the string
         /// </summary>
-        private readonly MethodInfo _parserMethod;
-        
+        private readonly Func<string, T> _parserDelegate;
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -60,9 +64,9 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
             Value = new List<T>();
 
             // Get the tokens of this String
-            foreach (String e in s.Split(new[] { ' ', ',', ';', '\t' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (String e in s.Split(splitChars, StringSplitOptions.RemoveEmptyEntries))
             {
-                Value.Add((T) _parserMethod.Invoke(null, new Object[] {e}));
+                Value.Add(_parserDelegate(e));
             }
         }
 
@@ -79,9 +83,15 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// </summary>
         public NumericCollectionParser()
         {
-            // Get the parse method for this object
-            _parserMethod = typeof(T).GetMethod("Parse", new [] { typeof(String) });
             Value = new List<T>();
+
+            Type t = typeof(T);
+            if (parsers.TryGetValue(t, out _parserDelegate))
+                return;
+
+            MethodInfo methodInfo = t.GetMethod("Parse", new[] { typeof(String) });
+            _parserDelegate = (Func<string, T>)Delegate.CreateDelegate(typeof(Func<string, T>), methodInfo);
+            parsers.Add(t, _parserDelegate);
         }
         
         /// <summary>
