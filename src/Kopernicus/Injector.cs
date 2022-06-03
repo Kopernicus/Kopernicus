@@ -297,8 +297,22 @@ namespace Kopernicus
                 //Mark the watchdog
                 if (mockBody != null)
                 {
-                    mockBody.Mass = 0;
-                    RuntimeUtility.RuntimeUtility.mockBody = mockBody;
+                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusWatchdog)
+                    {
+                        mockBody.Mass = 0;
+                        RuntimeUtility.RuntimeUtility.mockBody = mockBody;
+                        //Cloak the watchdog
+                        FlightGlobals.Bodies.Remove(mockBody);
+                    }
+                    else
+                    {
+                        FlightGlobals.Bodies.Remove(mockBody);
+                        if (Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Contains(mockBody))
+                        {
+                            Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Remove(mockBody);
+                        }
+                        mockBody.gameObject.DestroyGameObject();
+                    }
                 }
 
                 // Fix the maximum viewing distance of the map view camera (get the farthest away something can be from the root object)

@@ -28,8 +28,6 @@ namespace Kopernicus.ShadowMan
         public Light[] lights;
         public Camera farCamera, scaledSpaceCamera, nearCamera;
         static float originalShadowDistance = 0f;
-
-        bool coreInitiated = false;
         public bool isActive = false;
         public bool unifiedCameraMode = false;
 
@@ -102,8 +100,6 @@ namespace Kopernicus.ShadowMan
                 MapView.MapIsEnabled = false;
             }
 
-            coreInitiated = true;
-
             Utils.LogDebug("Kopernicus.ShadowMan setup done");
         }
 
@@ -111,7 +107,6 @@ namespace Kopernicus.ShadowMan
         {
             if (isActive)
             {
-
                 if (nearCamera)
                 {
                     if (nearCamera.gameObject.GetComponent(typeof(Wireframe)))

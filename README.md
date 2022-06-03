@@ -1,17 +1,19 @@
 ﻿Kopernicus
 ==============================
-May 28, 2022
+June 2, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-95:
+New in this latest version release-96:
 
-1.)  The scatterer donated shaders have been trimmed, resulting in a far smaller release binary size.
+1.)  AddWatchdog.cfg, the sinking landgear fix, has been reintegrated into the stock mod, since we have found a way to cloak it much better.  This cloaking means no side effects like unattainable missions, though some mods may still not like this.  If you find a mod that does not like the Watchdog, you can disable it.  See next point.
 
-2.)  The shadow draw distance default was changed to 25000 meters, as that was found to have no visual impairment.  If you had a previous install with the 17500 meter default, you may need to adjust your Kopernicus_Config.cfg's shadow limit line manually if you want this additional distance.  Alternatively, you can simply delete that file and let it regenerate.
+2.)  Added Kopernicus_Config.cfs parameter EnableKopernicusWatchdog, boolean, default true.  Turn to false if you have a mod with a compatability/loading issue with the Watchdog present (this should be far less mods since we now cloak it properly, but Principia still has issues without a custom build, for example).
+
+3.)  Kopernicus.Parser.dll has been optimized quite a bit, resulting in a 20% load time performance increase on average.  Remember to extract the complete Kopernicus release zip to and replace file to get this benefit (CKAN does this automatically).
 
 Known Bugs:
 
@@ -29,7 +31,7 @@ Known Caveats:
 
 2.)  Mutlistar Solar panel support requires an additonal config file, attatched to release.
 
-3.)  If you use the "AddWatchdog.cfg" file, A fake celestial body isthen used to fix the distant landing-gear sinking bug.  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be side effects.  Also, Principia does not work with this fix at this time, unfortunately.  Those users may try "MakingLessHistory" mod, the old workaround.
+3.)  If you use the default config of Kopernicus, A fake, invisible celestial body is then used to fix the distant landing-gear sinking bug and other graphical issues (why this works is quite the mystery).  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be older mods that don't work.  Please report them if so.  Principia is a known mod that does not work, a fork (including source) fixing it's issues is available upon PM request to R-T-B.
 
 4.)  When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
 

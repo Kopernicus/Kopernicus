@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,7 +90,9 @@ namespace Kopernicus.ShadowMan
 
             foreach (object _obj in objectList)
             {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 String body = _obj.GetType().GetField("body", flags).GetValue(_obj) as String;
+#pragma warning restore REFL009 // The referenced member is not known to exist
 
                 if (EVECloudObjects.ContainsKey(body))
                 {
@@ -106,18 +108,24 @@ namespace Kopernicus.ShadowMan
                 object cloud2dObj;
                 if (HighLogic.LoadedScene == GameScenes.MAINMENU)
                 {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                     object cloudsPQS = _obj.GetType().GetField("cloudsPQS", flags).GetValue(_obj) as object;
+#pragma warning restore REFL009 // The referenced member is not known to exist
 
                     if (cloudsPQS == null)
                     {
                         Utils.LogDebug("cloudsPQS not found for layer on planet :" + body);
                         continue;
                     }
+#pragma warning disable REFL009 // The referenced member is not known to exist
                     cloud2dObj = cloudsPQS.GetType().GetField("mainMenuLayer", flags).GetValue(cloudsPQS) as object;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                 }
                 else
                 {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                     cloud2dObj = _obj.GetType().GetField("layer2D", flags).GetValue(_obj) as object;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                 }
 
                 if (cloud2dObj == null)
@@ -126,7 +134,9 @@ namespace Kopernicus.ShadowMan
                     continue;
                 }
 
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 GameObject cloudmesh = cloud2dObj.GetType().GetField("CloudMesh", flags).GetValue(cloud2dObj) as GameObject;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                 if (cloudmesh == null)
                 {
                     Utils.LogDebug("cloudmesh null");
@@ -142,17 +152,23 @@ namespace Kopernicus.ShadowMan
 
                 try
                 {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                     screenSpaceShadow = cloud2dObj.GetType().GetField("screenSpaceShadow", flags).GetValue(cloud2dObj) as object;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                 }
                 catch (Exception) { }
 
                 if (screenSpaceShadow != null)
                 {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                     shadowMaterial = screenSpaceShadow.GetType().GetField("material", flags).GetValue(screenSpaceShadow) as Material;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                 }
                 else
                 {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                     Projector shadowProjector = cloud2dObj.GetType().GetField("ShadowProjector", flags).GetValue(cloud2dObj) as Projector;
+#pragma warning restore REFL009 // The referenced member is not known to exist
 
                     if (shadowProjector != null && shadowProjector.material != null)
                     {
@@ -196,17 +212,25 @@ namespace Kopernicus.ShadowMan
 
             foreach (object _obj in ShadowMan.Instance.eveReflectionHandler.EVECloudObjects[celestialBodyName])
             {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 object cloud2dObj = _obj.GetType ().GetField ("layer2D", flags).GetValue (_obj) as object;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                 if (cloud2dObj == null)
                 {
                     Utils.LogDebug(" layer2d not found for layer on planet: " + celestialBodyName);
                     continue;
                 }
 
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 bool cloud2dScaled = (bool)cloud2dObj.GetType ().GetField ("isScaled", flags).GetValue (cloud2dObj);
+#pragma warning restore REFL009 // The referenced member is not known to exist
 
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 MethodInfo scaledGetter = cloud2dObj.GetType ().GetProperty ("Scaled").GetGetMethod ();
+#pragma warning restore REFL009 // The referenced member is not known to exist
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 MethodInfo scaledSetter = cloud2dObj.GetType ().GetProperty ("Scaled").GetSetMethod ();
+#pragma warning restore REFL009 // The referenced member is not known to exist
 
                 //if in scaled mode, switch it to local then back to scaled, to set all the properties
                 if (cloud2dScaled)
@@ -215,8 +239,12 @@ namespace Kopernicus.ShadowMan
                 scaledSetter.Invoke(cloud2dObj, new object[] { cloud2dScaled });
 
                 //set the radius for use in the scatterer shader to have smooth scattering
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 float radius = (float) cloud2dObj.GetType ().GetField ("radius", flags).GetValue (cloud2dObj);
+#pragma warning restore REFL009 // The referenced member is not known to exist
+#pragma warning disable REFL009 // The referenced member is not known to exist
                 GameObject cloudmesh = cloud2dObj.GetType().GetField("CloudMesh", flags).GetValue(cloud2dObj) as GameObject;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                 cloudmesh.GetComponent<MeshRenderer>().material.SetFloat("_Radius", radius);
 
             }
@@ -240,15 +268,21 @@ namespace Kopernicus.ShadowMan
                 {
                     try
                     {
+#pragma warning disable REFL009 // The referenced member is not known to exist
                         object cloudsPQS = _obj.GetType ().GetField ("cloudsPQS", flags).GetValue (_obj) as object;
+#pragma warning restore REFL009 // The referenced member is not known to exist
+#pragma warning disable REFL009 // The referenced member is not known to exist
                         object layerVolume = cloudsPQS.GetType ().GetField ("layerVolume", flags).GetValue (cloudsPQS) as object;
+#pragma warning restore REFL009 // The referenced member is not known to exist
                         if (ReferenceEquals(layerVolume, null))
                         {
                             Utils.LogDebug(" No volumetric cloud for layer on planet: " + celestialBodyName);
                             continue;
                         }
 
+#pragma warning disable REFL009 // The referenced member is not known to exist
                         Material ParticleMaterial = layerVolume.GetType ().GetField ("ParticleMaterial", flags).GetValue (layerVolume) as Material;
+#pragma warning restore REFL009 // The referenced member is not known to exist
 
                         if (ReferenceEquals(layerVolume, null))
                         {
