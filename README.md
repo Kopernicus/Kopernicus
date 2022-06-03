@@ -9,31 +9,32 @@ June 2, 2022
 
 New in this latest version release-96:
 
-1.)  AddWatchdog.cfg, the sinking landgear fix, has been reintegrated into the stock mod, since we have found a way to cloak it much better.  This cloaking means no side effects like unattainable missions, though some mods may still not like this.  If you find a mod that does not like the Watchdog, you can disable it.  See next point.
+1.) AddWatchdog.cfg, the sinking landgear fix, has been reintegrated into the stock mod, since we have found a way to cloak it much better. This cloaking means no side effects like unattainable missions, though some mods may still not like this. If you find a mod that does not like the Watchdog, you can disable it. See next point.
 
-2.)  Added Kopernicus_Config.cfs parameter EnableKopernicusWatchdog, boolean, default true.  Turn to false if you have a mod with a compatability/loading issue with the Watchdog present (this should be far less mods since we now cloak it properly, but Principia still has issues without a custom build, for example).
+2.) Added Kopernicus_Config.cfg parameter EnableKopernicusWatchdog, boolean, default true. Turn to false if you have a mod with a compatability/loading issue with the Watchdog present (this should be far less mods since we now cloak it properly, but Principia still has issues without a custom build, for example). If you have to use that option, please report the mod in question in the KSP Forums Kopernicus thread for updating/fixing.
 
-3.)  Kopernicus.Parser.dll has been optimized quite a bit, resulting in a 20% load time performance increase on average.  Remember to extract the complete Kopernicus release zip to and replace file to get this benefit (CKAN does this automatically).
+3.) Kopernicus.Parser.dll has been optimized quite a bit, resulting in a 20% load time performance increase on average. Remember to extract the complete Kopernicus release zip to and replace file to get this benefit (CKAN does this automatically).
 
 Known Bugs:
 
-1.) Not exactly a bug, but worth mentioning:  The Kopernicus_Config.cfg file is rewritten when the game exits.  This means any edits made while playing the game will not be preserved.  Edit the file only with the game exited, please.
+1.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten when the game exits. This means any edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
 
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
-3.) When zooming out all the way out in map view at interstellar ranges, the navbal furthermore sometimes behaves oddly. We are working on this and nmonitoring all the interstellar bugs actively.
+3.) When zooming out all the way out in map view at interstellar ranges, the navball furthermore sometimes behaves oddly. We are working on this and nmonitoring all the interstellar bugs actively.
 
 4.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
 
 Known Caveats:
 
-1.)  The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x.  The 1.8 release is for 1.8.x.
+1.) The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x. The 1.8 release is for 1.8.x.
 
-2.)  Mutlistar Solar panel support requires an additonal config file, attatched to release.
+2.) Mutlistar Solar panel support requires an additional config file, attached to release.
 
-3.)  If you use the default config of Kopernicus, A fake, invisible celestial body is then used to fix the distant landing-gear sinking bug and other graphical issues (why this works is quite the mystery).  This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible.  The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be older mods that don't work.  Please report them if so.  Principia is a known mod that does not work, a fork (including source) fixing it's issues is available upon PM request to R-T-B.
+3.) If you use the default config of Kopernicus, A fake, invisible celestial body is then used to fix the distant landing-gear sinking bug and other graphical issues (why this works is quite the mystery). This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible. The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be older mods that don't work. Please report them if so. Principia is a known mod that does not work, a fork (including source) fixing it's issues is available upon PM request to R-T-B.
 
-4.)  When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable.  Please use only high shader level (shader level 2) or lower if working with stock ocean effects.  This does not effect scatterer or other ocean rendering mods. 
+4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
+
 
 About
 -----
