@@ -1,19 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 2, 2022
+June 3, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-96:
+New in this latest version release-97:
 
-1.) AddWatchdog.cfg, the sinking landgear fix, has been reintegrated into the stock mod, since we have found a way to cloak it much better. This cloaking means no side effects like unattainable missions, though some mods may still not like this. If you find a mod that does not like the Watchdog, you can disable it. See next point.
-
-2.) Added Kopernicus_Config.cfg parameter EnableKopernicusWatchdog, boolean, default true. Turn to false if you have a mod with a compatability/loading issue with the Watchdog present (this should be far less mods since we now cloak it properly, but Principia still has issues without a custom build, for example). If you have to use that option, please report the mod in question in the KSP Forums Kopernicus thread for updating/fixing.
-
-3.) Kopernicus.Parser.dll has been optimized quite a bit, resulting in a 20% load time performance increase on average. Remember to extract the complete Kopernicus release zip to and replace file to get this benefit (CKAN does this automatically).
+1.) Implement an autoblacklist for known watchdog incompatible mods (currently only Principia).
 
 Known Bugs:
 
