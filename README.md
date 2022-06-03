@@ -7,9 +7,9 @@ June 3, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-97:
+New in this latest version release-98:
 
-1.) Implement an autoblacklist for known watchdog incompatible mods (currently only Principia).
+1.) The watchdog hack has been killed in favor of a new method that is universally compatible.  Thanks for @gotmachine for the code suggestion!  The new method does not need forked mods or anything, and should work with everyone.  This will be transparently migrated to and is invisible to the end user, for once it just works (tm).
 
 Known Bugs:
 
@@ -27,9 +27,7 @@ Known Caveats:
 
 2.) Mutlistar Solar panel support requires an additional config file, attached to release.
 
-3.) If you use the default config of Kopernicus, A fake, invisible celestial body is then used to fix the distant landing-gear sinking bug and other graphical issues (why this works is quite the mystery). This body is called "KopernicusWatchdog" and will a.) intentionally keep it's distance from you at all times and is b.) invisible. The body is usually hidden from in game processes, but this is new territory having to use another moving celestial to correct a bug, so there may be older mods that don't work. Please report them if so. Principia is a known mod that does not work, a fork (including source) fixing it's issues is available upon PM request to R-T-B.
-
-4.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
+3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
 
 
 About

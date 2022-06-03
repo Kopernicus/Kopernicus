@@ -57,8 +57,6 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool DisableMainMenuMunScene = true;
         [Persistent]
-        public bool EnableKopernicusWatchdog = true;
-        [Persistent]
         public bool HandleHomeworldAtmosphericUnitDisplay = true;
         public UrlDir.UrlConfig[] baseConfigs;
         public void loadMainSettings()

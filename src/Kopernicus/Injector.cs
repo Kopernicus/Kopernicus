@@ -193,7 +193,7 @@ namespace Kopernicus
                 CelestialBody mockBody = null;
                 foreach (CelestialBody body in FlightGlobals.Bodies)
                 {
-                    //Find the watchdog
+                    //Find ye old watchdog for slaying (if it exists)
                     if (body.name.Equals("KopernicusWatchdog"))
                     {
                         mockBody = body;
@@ -294,17 +294,10 @@ namespace Kopernicus
                     Logger.Default.Log("Found Body: " + body.bodyName + ":" + body.flightGlobalsIndex + " -> SOI = " +
                                        body.sphereOfInfluence + ", Hill Sphere = " + body.hillSphere);
                 }
-                //Mark the watchdog
+                //Mark the watchdog for proper removal
                 if (mockBody != null)
                 {
-                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusWatchdog)
-                    {
-                        mockBody.Mass = 0;
-                        RuntimeUtility.RuntimeUtility.mockBody = mockBody;
-                        //Cloak the watchdog
-                        FlightGlobals.Bodies.Remove(mockBody);
-                    }
-                    else
+                    try
                     {
                         FlightGlobals.Bodies.Remove(mockBody);
                         if (Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Contains(mockBody))
@@ -312,6 +305,10 @@ namespace Kopernicus
                             Kopernicus.Components.KopernicusStar.GetLocalStar(mockBody).orbitingBodies.Remove(mockBody);
                         }
                         mockBody.gameObject.DestroyGameObject();
+                    }
+                    catch
+                    {
+
                     }
                 }
 

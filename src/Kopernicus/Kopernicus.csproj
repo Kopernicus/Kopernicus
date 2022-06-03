@@ -293,6 +293,7 @@
     <Compile Include="RuntimeUtility\RuntimeUtility.cs" />
     <Compile Include="Injector.cs" />
     <Compile Include="RuntimeUtility\DiscoverableObjects.cs" />
+    <Compile Include="RuntimeUtility\SinkingBugFix.cs" />
     <Compile Include="RuntimeUtility\StarLightSwitcher.cs" />
     <Compile Include="RuntimeUtility\MainMenuFixer.cs" />
     <Compile Include="RuntimeUtility\TerrainQualitySetter.cs" />

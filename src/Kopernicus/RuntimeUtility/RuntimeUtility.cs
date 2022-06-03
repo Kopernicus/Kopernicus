@@ -52,8 +52,6 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
-        public static CelestialBody mockBody = null;
-
         //Plugin Path finding logic
         private static string pluginPath;
         public static string PluginPath
@@ -166,7 +164,6 @@ namespace Kopernicus.RuntimeUtility
         // Stuff
         private void LateUpdate()
         {
-            UpdateMockBodyColliderFix();
             FixZooming();
             ApplyRnDPatches();
             Force3DRendering();
@@ -508,83 +505,6 @@ namespace Kopernicus.RuntimeUtility
             else
             {
                 PlanetariumCamera.fetch.minDistance = 10;
-            }
-        }
-
-        private void UpdateMockBodyColliderFix()
-        {
-            if ((mockBody != null) && (FlightGlobals.currentMainBody))
-            {
-                try
-                {
-                    if (FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
-                    {
-                        mockBody.enabled = false;
-                        foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
-                        {
-                            renderer.enabled = false;
-                        }
-                        foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
-                        {
-                            collider.enabled = false;
-                        }
-                        foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
-                        {
-                            fader.enabled = false;
-                        }
-                        foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
-                        {
-                            renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
-                            renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
-                        }
-                        return;
-                    }
-                    else if (!FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
-                    {
-                        if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
-                        {
-                            mockBody.referenceBody.orbitingBodies.Remove(mockBody);
-                        }
-                        mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody));
-                        if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Contains(mockBody))
-                        {
-                            KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbitingBodies.Add(mockBody);
-                        }
-                    }
-                    else if (FlightGlobals.currentMainBody.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
-                    {
-                        if (mockBody.referenceBody.orbitingBodies.Contains(mockBody))
-                        {
-                            mockBody.referenceBody.orbitingBodies.Remove(mockBody);
-                        }
-                        mockBody.orbit.SetOrbit(KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.inclination, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.eccentricity, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.semiMajorAxis * 1.001, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.LAN, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.argumentOfPeriapsis, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.meanAnomalyAtEpoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).orbit.epoch, KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody);
-                        if (!KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Contains(mockBody))
-                        {
-                            KopernicusStar.GetNearestBodyOverSystenRoot(FlightGlobals.currentMainBody).referenceBody.orbitingBodies.Add(mockBody);
-                        }
-                    }
-                    mockBody.enabled = false;
-                    foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
-                    {
-                        renderer.enabled = false;
-                    }
-                    foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
-                    {
-                        collider.enabled = true;
-                    }
-                    foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
-                    {
-                        fader.enabled = false;
-                    }
-                    foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
-                    {
-                        renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
-                        renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
-                    }
-                }
-                catch
-                {
-                }
             }
         }
 
@@ -1147,7 +1067,6 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	EnableKopernicusShadowManager = True //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
                     configFile.WriteLine("	ShadowDistanceLimit = 25000 //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers tend to yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 25000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
                     configFile.WriteLine("	DisableMainMenuMunScene = True //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
-                    configFile.WriteLine("	EnableKopernicusWatchdog = True //Boolean.  Whether or not to enable the Kopernicus Watchdog hack, default true. The hack fixes some very bad landing gear and graphical bugs, but may cause some outdated mods to not load.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay  = true //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("}");
                     configFile.Flush();
@@ -1180,7 +1099,6 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	EnableKopernicusShadowManager = " + KopernicusConfig.EnableKopernicusShadowManager.ToString() + " //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
                     configFile.WriteLine("	ShadowDistanceLimit = " + KopernicusConfig.ShadowDistanceLimit + " //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 25000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
                     configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
-                    configFile.WriteLine("	EnableKopernicusWatchdog = " + KopernicusConfig.EnableKopernicusWatchdog.ToString() + " //Boolean.  Whether or not to enable the Kopernicus Watchdog hack, default true. The hack fixes some very bad landing gear and graphical bugs, but may cause some outdated mods to not load.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay  = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("}");
                     configFile.Flush();
