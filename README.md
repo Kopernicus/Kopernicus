@@ -7,11 +7,9 @@ June 5, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-99:
+New in this latest version release-100:
 
-1.) For a long time, there has been a bug with PQS and the ATZR shader which produces shadow-like flickers across the terrain.  The system.cfg has been altered to provide a new known workaround to this bug to stock bodies (Tylo was really bad).  Your custom bodies should probably also adopt this workaround if using ATZR shader, look at the config/system.cfg @PQS section of various stock bodies for an example of how to do so in your cfg.
-
-2.) Added back a data structure related to the old watchdog for compatability reasons, as some old mods expect to find it and will error out violently if it's missing (the watchdog is still dead, don't worry).
+1.) Hotfix for a typo in system.cfg which resulted in black skies on modded worlds (as well as harmless buy annoying incorrectly setup scaledspace).
 
 Known Bugs:
 
