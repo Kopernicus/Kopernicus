@@ -52,6 +52,8 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
+        //old mockbody for compat
+        public static CelestialBody mockBody = null;
         //Plugin Path finding logic
         private static string pluginPath;
         public static string PluginPath

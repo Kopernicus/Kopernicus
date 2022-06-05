@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-June 3, 2022
+June 5, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-98:
+New in this latest version release-99:
 
-1.) The watchdog hack has been killed in favor of a new method that is universally compatible.  Thanks for @gotmachine for the code suggestion!  The new method does not need forked mods or anything, and should work with everyone.  This will be transparently migrated to and is invisible to the end user, for once it just works (tm).
+1.) For a long time, there has been a bug with PQS and the ATZR shader which produces shadow-like flickers across the terrain.  The system.cfg has been altered to provide a new known workaround to this bug to stock bodies (Tylo was really bad).  Your custom bodies should probably also adopt this workaround if using ATZR shader, look at the config/system.cfg @PQS section of various stock bodies for an example of how to do so in your cfg.
+
+2.) Added back a data structure related to the old watchdog for compatability reasons, as some old mods expect to find it and will error out violently if it's missing (the watchdog is still dead, don't worry).
 
 Known Bugs:
 
@@ -28,6 +30,8 @@ Known Caveats:
 2.) Mutlistar Solar panel support requires an additional config file, attached to release.
 
 3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
+
+4.) For a long time, there has been a bug with PQS and the ATZR shader which produces shadow-like flickers across the terrain.  The system.cfg has been altered to provide a new known workaround to this bug to stock bodies (Tylo was really bad).  Your custom bodies should probably also adopt this workaround if using ATZR shader, look at the config/system.cfg @PQS section of various stock bodies for an example of how to do so in your cfg.
 
 
 About
