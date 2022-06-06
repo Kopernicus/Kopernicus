@@ -7,9 +7,9 @@ June 5, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-100:
+New in this latest version release-101:
 
-1.) Hotfix for a typo in system.cfg which resulted in black skies on modded worlds (as well as harmless buy annoying incorrectly setup scaledspace).
+1.) Internal restructuring of the system.cfg, moving some non-Kerbin PQS bugfixes to a new file, BodyPQSFix.cfg.  This is mostly for future ease of maintainence, but also ensures modded bodies get prior fixes.
 
 Known Bugs:
 
@@ -28,8 +28,6 @@ Known Caveats:
 2.) Mutlistar Solar panel support requires an additional config file, attached to release.
 
 3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
-
-4.) For a long time, there has been a bug with PQS and the ATZR shader which produces shadow-like flickers across the terrain.  The system.cfg has been altered to provide a new known workaround to this bug to stock bodies (Tylo was really bad).  Your custom bodies should probably also adopt this workaround if using ATZR shader, look at the config/system.cfg @PQS section of various stock bodies for an example of how to do so in your cfg.
 
 
 About
