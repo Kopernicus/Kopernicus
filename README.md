@@ -1,15 +1,19 @@
 ﻿Kopernicus
 ==============================
-June 5, 2022
+June 8, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-101:
+New in this latest version release-102:
 
-1.) Internal restructuring of the system.cfg, moving some non-Kerbin PQS bugfixes to a new file, BodyPQSFix.cfg.  This is mostly for future ease of maintainence, but also ensures modded bodies get prior fixes.
+1.) LandControl scatters have been updated to have a per biome filter, declared in the scatter node as allowedBiomes, a comma delimitted string of biome names.  If this list is empty or not present, all biomes are spawned in.  If it's present, only the biomes listed are spawned in.  Can be used in conjunction with existing controls.
+
+2.) A new internal Kopernicus class has been exposed to modders, called PQSMod_BiomeSampler.  This is for mods to access the following methods, GetCachedBiome(double lat, double lon, CelestialBody cb), and GetPreciseBiome(double lat, double lon, CelestialBody cb).  GetCached is faster than GetPrcise, but uses a downsampled and cached biome map (roughly per quad).
+
+3.) Tweaks to the sinking landing gear fix.  It should now work in more cirumstances (the watchdog is still gone).
 
 Known Bugs:
 

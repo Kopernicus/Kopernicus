@@ -76,6 +76,11 @@ namespace Kopernicus.Components.ModularScatter
         public Boolean useBetterDensity;
 
         /// <summary>
+        /// What biomes this scatter may spawn in.  Empty means all.
+        /// </summary>
+        public List<String> allowedBiomes = new List<String>();
+
+        /// <summary>
         /// Makes the density calculation ignore the game setting for scatter density
         /// </summary>
         public Boolean ignoreDensityGameSetting;
@@ -323,7 +328,19 @@ namespace Kopernicus.Components.ModularScatter
                 Single scatterAngle = Random.Range(rotation[0], rotation[1]);
                 Quaternion scatterRot = QuaternionD.AngleAxis(scatterAngle, scatterUp) * quad.quad.quadRotation;
                 Single scatterScale = Random.Range(quad.scatter.minScale, quad.scatter.maxScale);
-
+                if (allowedBiomes.Count > 0)
+                {
+                    if (FlightGlobals.currentMainBody)
+                    {
+                        UnityEngine.Vector2d latLon = latLon = FlightGlobals.currentMainBody.GetLatitudeAndLongitude(scatterPos);
+                        string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, FlightGlobals.currentMainBody);
+                        if (!allowedBiomes.Contains(scatterBiome))
+                        {
+                            quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
+                            return;
+                        }
+                    }
+                }
                 // Create a new object for the scatter
                 GameObject scatterObject = new GameObject("Scatter");
                 scatterObject.transform.parent = quad.obj.transform;

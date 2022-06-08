@@ -718,6 +718,11 @@ namespace Kopernicus.Configuration
                     Mods.Add(loader);
                 }
             }
+            //Add the biome sampler
+            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
+            {
+                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
+            }
         }
 
         /// <summary>
@@ -788,7 +793,6 @@ namespace Kopernicus.Configuration
             body.pqsController.transform.name = transform.name;
             body.pqsController.gameObject.name = transform.name;
             body.pqsController.radius = body.Radius;
-
             // Add an OnDemand Handler
             if (!Utility.HasMod<PQSMod_OnDemandHandler>(Value))
             {
@@ -820,7 +824,6 @@ namespace Kopernicus.Configuration
                 PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
                 roc.currentCBName = Value.name;
             }
-
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
             for (Int32 i = 0; i < mods.Length; i++)

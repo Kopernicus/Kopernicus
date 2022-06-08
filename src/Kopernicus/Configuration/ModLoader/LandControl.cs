@@ -304,7 +304,34 @@ namespace Kopernicus.Configuration.ModLoader
                 get { return Material; }
                 set { Material = value; }
             }
+            // The biome list of the landclass
+            [ParserTarget("allowedBiomes")]
+            public String allowedBiomes
+            {
+                get
+                {
+                    if (Scatter.allowedBiomes.Count > 0)
+                    {
+                        return String.Join(",", Scatter.allowedBiomes);
+                    }
+                    else
+                    {
+                        return "";
+                    }
 
+                }
+                set
+                {
+                    if (allowedBiomes.Contains(","))
+                    {
+                        Scatter.allowedBiomes = allowedBiomes.Split(',').ToList();
+                    }
+                    else
+                    {
+                        Scatter.allowedBiomes.Add(allowedBiomes);
+                    }
+                }
+            }
             // The mesh
             [ParserTarget("mesh")]
             public MeshParser BaseMesh
@@ -801,7 +828,6 @@ namespace Kopernicus.Configuration.ModLoader
                 get { return Value.landClassName; }
                 set { Value.landClassName = value; }
             }
-
             // latDelta
             [ParserTarget("latDelta")]
             public NumericParser<Double> LatDelta

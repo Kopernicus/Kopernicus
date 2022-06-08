@@ -132,6 +132,7 @@
     <Compile Include="Components\OrbitRendererUpdater.cs" />
     <Compile Include="Components\PlanetaryParticle.cs" />
     <Compile Include="Components\PQSLandControlFixer.cs" />
+    <Compile Include="Components\PQSMod_BiomeSampler.cs" />
     <Compile Include="Components\PQSMod_TextureAtlasFixer.cs" />
     <Compile Include="Components\Ring.cs" />
     <Compile Include="Components\Serialization\SerializableMonoBehaviour.cs" />
