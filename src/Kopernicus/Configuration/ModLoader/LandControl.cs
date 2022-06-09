@@ -310,9 +310,13 @@ namespace Kopernicus.Configuration.ModLoader
             {
                 get
                 {
-                    if (Scatter.allowedBiomes.Count > 0)
+                    if (Scatter.allowedBiomes.Count > 1)
                     {
                         return String.Join(",", Scatter.allowedBiomes);
+                    }
+                    else if (Scatter.allowedBiomes.Count == 1)
+                    {
+                        return Scatter.allowedBiomes.First<String>();
                     }
                     else
                     {
@@ -322,13 +326,13 @@ namespace Kopernicus.Configuration.ModLoader
                 }
                 set
                 {
-                    if (allowedBiomes.Contains(","))
+                    if (value.Contains(","))
                     {
-                        Scatter.allowedBiomes = allowedBiomes.Split(',').ToList();
+                        Scatter.allowedBiomes = value.Split(',').ToList();
                     }
                     else
                     {
-                        Scatter.allowedBiomes.Add(allowedBiomes);
+                        Scatter.allowedBiomes.Add(value);
                     }
                 }
             }
