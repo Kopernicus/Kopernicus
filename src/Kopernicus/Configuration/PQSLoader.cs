@@ -718,11 +718,6 @@ namespace Kopernicus.Configuration
                     Mods.Add(loader);
                 }
             }
-            //Add the biome sampler
-            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
-            {
-                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
-            }
         }
 
         /// <summary>
@@ -842,6 +837,11 @@ namespace Kopernicus.Configuration
                     loader.Create(mods[i], Value);
                     Mods.Add(loader);
                 }
+            }
+            //Add the biome sampler
+            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
+            {
+                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
             }
         }
 

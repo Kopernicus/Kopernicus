@@ -7,9 +7,9 @@ June 8, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-103:
+New in this latest version release-104:
 
-1.) LandControl scatters per biome filter system was not obeying single entry filters, this has been fixed.
+1.) A few more fixes for the new landcontrol biome filters.  Mainly reduced spawns when using them.
 
 Known Bugs:
 

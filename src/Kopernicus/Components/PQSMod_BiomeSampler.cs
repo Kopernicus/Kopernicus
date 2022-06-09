@@ -9,10 +9,9 @@ namespace Kopernicus.Components
     public class PQSMod_BiomeSampler : PQSMod
     {
         internal static IDictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
+        internal static CelestialBody currentBody = null;
         public override void OnVertexBuildHeight(PQS.VertexBuildData data)
         {
-            CelestialBody currentBody = null;
-            base.OnVertexBuildHeight(data);
             if (FlightGlobals.currentMainBody)
             {
                 if (FlightGlobals.currentMainBody != currentBody)

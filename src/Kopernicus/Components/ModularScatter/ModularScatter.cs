@@ -336,8 +336,7 @@ namespace Kopernicus.Components.ModularScatter
                         string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, FlightGlobals.currentMainBody);
                         if (!allowedBiomes.Contains(scatterBiome))
                         {
-                            quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
-                            return;
+                            continue;
                         }
                     }
                 }
