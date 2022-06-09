@@ -25,7 +25,7 @@ Known Caveats:
 
 1.) The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x. The 1.8 release is for 1.8.x.
 
-2.) Mutlistar Solar panel support requires an additional config file, attached to release.
+2.) Multistar Solar panel support requires an additional config file, attached to release.
 
 3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
 
