@@ -31,7 +31,7 @@ Known Caveats:
 
 3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
 
-4.) If your modded body is experiencing terrain flicker, it may benefit from a fix similar to what is found in BodyPQSFix.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
+4.) If your modded body is experiencing terrain flicker, it may benefit from a fix similar to what is found in body Tylo's PQS system.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
 
 5.) Please note the allowedBiomes filter is currently experimental.  It's fine to dev a mod with it but it's behavior may change as we tweak it, so best to be on top of that.
 
