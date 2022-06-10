@@ -7,11 +7,9 @@ June 10, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-105:
+New in this latest version release-106:
 
-1.) Fixed a nullref in the new biome filter that was hurting FPS.  Considered a critical bugfix unless you like FPS-loss in solar orbit, please download.
-
-2.) Furthermore, the PQS fixes have been scaled back to only where they are most needed (Stock Tylo).  If your modded body is experiencing flicker, it may benefit from a fix similar to what is found in BodyPQSFix.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
+1.) Fixed a nullref resulting from a bug in MFI, did not hurt performance but did create logspam.
 
 Known Bugs:
 

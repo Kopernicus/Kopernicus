@@ -11,7 +11,6 @@ namespace Kopernicus.Components
         internal static IDictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
         public override void OnVertexBuildHeight(PQS.VertexBuildData data)
         {
-            base.OnVertexBuildHeight(data);
             try
             {
                 Vector2 coordVector = new Vector2((float)Math.Round(data.latitude,3),(float)Math.Round(data.longitude,3));

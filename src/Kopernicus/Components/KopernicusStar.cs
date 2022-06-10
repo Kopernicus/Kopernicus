@@ -373,7 +373,14 @@ namespace Kopernicus.Components
             CalculatePhysics();
 
             // Get "Correct" values
-            flightIntegrator.BaseFICalculateSunBodyFlux();
+            try
+            {
+                flightIntegrator.BaseFICalculateSunBodyFlux();
+            }
+            catch
+            {
+                //Why is this happening?
+            }
 
             // FI Values
             Boolean directSunlight = flightIntegrator.Vessel.directSunlight;
