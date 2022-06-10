@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-June 8, 2022
+June 10, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-104:
+New in this latest version release-105:
 
-1.) A few more fixes for the new landcontrol biome filters.  Mainly reduced spawns when using them.
+1.) Fixed a nullref in the new biome filter that was hurting FPS.  Considered a critical bugfix unless you like FPS-loss in solar orbit, please download.
+
+2.) Furthermore, the PQS fixes have been scaled back to only where they are most needed (Stock Tylo).  If your modded body is experiencing flicker, it may benefit from a fix similar to what is found in BodyPQSFix.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
 
 Known Bugs:
 
@@ -17,7 +19,7 @@ Known Bugs:
 
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 
-3.) When zooming out all the way out in map view at interstellar ranges, the navball furthermore sometimes behaves oddly. We are working on this and nmonitoring all the interstellar bugs actively.
+3.) When zooming out all the way out in map view at interstellar ranges, the navball furthermore sometimes behaves oddly. We are working on this and monitoring all the interstellar bugs actively.
 
 4.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
 
@@ -28,6 +30,10 @@ Known Caveats:
 2.) Multistar Solar panel support requires an additional config file, attached to release.
 
 3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
+
+4.) If your modded body is experiencing terrain flicker, it may benefit from a fix similar to what is found in BodyPQSFix.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
+
+5.) Please note the allowedBiomes filter is currently experimental.  It's fine to dev a mod with it but it's behavior may change as we tweak it, so best to be on top of that.
 
 
 About

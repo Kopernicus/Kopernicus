@@ -330,14 +330,18 @@ namespace Kopernicus.Components.ModularScatter
                 Single scatterScale = Random.Range(quad.scatter.minScale, quad.scatter.maxScale);
                 if (allowedBiomes.Count > 0)
                 {
-                    if (FlightGlobals.currentMainBody)
+                    try
                     {
                         UnityEngine.Vector2d latLon = latLon = FlightGlobals.currentMainBody.GetLatitudeAndLongitude(scatterPos);
-                        string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, FlightGlobals.currentMainBody);
+                        string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, FlightGlobals.GetBodyByName(quad.quad.sphereRoot.name));
                         if (!allowedBiomes.Contains(scatterBiome))
                         {
                             continue;
                         }
+                    }
+                    catch
+                    {
+                        continue;
                     }
                 }
                 // Create a new object for the scatter

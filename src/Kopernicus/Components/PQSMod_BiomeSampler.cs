@@ -9,16 +9,11 @@ namespace Kopernicus.Components
     public class PQSMod_BiomeSampler : PQSMod
     {
         internal static IDictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
-        internal static CelestialBody currentBody = null;
         public override void OnVertexBuildHeight(PQS.VertexBuildData data)
         {
-            if (FlightGlobals.currentMainBody)
+            base.OnVertexBuildHeight(data);
+            try
             {
-                if (FlightGlobals.currentMainBody != currentBody)
-                {
-                    currentBody = FlightGlobals.currentMainBody;
-                    biomeCoordCacheDictionary.Clear();
-                }
                 Vector2 coordVector = new Vector2((float)Math.Round(data.latitude,3),(float)Math.Round(data.longitude,3));
                 if (biomeCoordCacheDictionary.ContainsKey(coordVector))
                 {
@@ -26,8 +21,12 @@ namespace Kopernicus.Components
                 }
                 else
                 {
-                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x, coordVector.y, FlightGlobals.currentMainBody).name);
+                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x, coordVector.y, FlightGlobals.GetBodyByName(sphere.name)).name);
                 }
+            }
+            catch
+            {
+                //Just in case data is not available
             }
         }
         public static string GetCachedBiome(double lat, double lon, CelestialBody cb)
