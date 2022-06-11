@@ -296,64 +296,72 @@ namespace Kopernicus.Components.ModularScatter
                 }
                 for (Int32 i = 0; i < quad.count; i++)
                 {
-                    if (useBetterDensity)
+                    if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (quad.isVisible) && (Vector3.Distance(quad.transform.position, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position) <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit * 1.25))
                     {
-                        // Generate a random number between 0 and 1. If it is above the spawn chance, abort
-                        if (Random.value > spawnChance)
+                        if (useBetterDensity)
                         {
-                            continue;
+                            // Generate a random number between 0 and 1. If it is above the spawn chance, abort
+                            if (Random.value > spawnChance)
+                            {
+                                continue;
+                            }
                         }
-                    }
 
-                    Int32 num2 = -1;
-                    Int32 num3 = -1;
-                    while (num3 == num2)
-                    {
-                        Int32 num4 = Random.Range(1, PQS.cacheRes + 1);
-                        Int32 num5 = Random.Range(1, PQS.cacheRes + 1);
-                        Int32 x = num4 + Random.Range(-1, 1);
-                        Int32 z = num5 + Random.Range(-1, 1);
-                        num3 = PQS.vi(num4, num5);
-                        num2 = PQS.vi(x, z);
-                    }
+                        Int32 num2 = -1;
+                        Int32 num3 = -1;
+                        while (num3 == num2)
+                        {
+                            Int32 num4 = Random.Range(1, PQS.cacheRes + 1);
+                            Int32 num5 = Random.Range(1, PQS.cacheRes + 1);
+                            Int32 x = num4 + Random.Range(-1, 1);
+                            Int32 z = num5 + Random.Range(-1, 1);
+                            num3 = PQS.vi(num4, num5);
+                            num2 = PQS.vi(x, z);
+                        }
 
-                    Vector3 scatterPos = Vector3.Lerp(quad.quad.verts[num3], quad.quad.verts[num2], Random.value);
-                    Vector3 scatterUp = quad.quad.sphereRoot.surfaceRelativeQuads
+                        Vector3 scatterPos = Vector3.Lerp(quad.quad.verts[num3], quad.quad.verts[num2], Random.value);
+                        Vector3 scatterUp = quad.quad.sphereRoot.surfaceRelativeQuads
                     ? (Vector3)(scatterPos + quad.quad.positionPlanet).normalized
                     : scatterPos.normalized;
 
-                    scatterPos += scatterUp * quad.scatter.verticalOffset;
-                    Single scatterAngle = Random.Range(rotation[0], rotation[1]);
-                    Quaternion scatterRot = QuaternionD.AngleAxis(scatterAngle, scatterUp) * quad.quad.quadRotation;
-                    Single scatterScale = Random.Range(quad.scatter.minScale, quad.scatter.maxScale);
-                    if (Vector3.Distance(scatterPos, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position) > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit)
-                    {
-                        continue;
-                    }
-                    if (allowedBiomes.Count > 0)
-                    {
-                        UnityEngine.Vector2d latLon = latLon = FlightGlobals.currentMainBody.GetLatitudeAndLongitude(scatterPos);
-                        string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, FlightGlobals.GetBodyByName(quad.quad.sphereRoot.name));
-                        if (!allowedBiomes.Contains(scatterBiome))
+                        scatterPos += scatterUp * quad.scatter.verticalOffset;
+                        Single scatterAngle = Random.Range(rotation[0], rotation[1]);
+                        Quaternion scatterRot = QuaternionD.AngleAxis(scatterAngle, scatterUp) * quad.quad.quadRotation;
+                        Single scatterScale = Random.Range(quad.scatter.minScale, quad.scatter.maxScale);
+                        if (Vector3.Distance(scatterPos, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position) > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit)
                         {
                             continue;
                         }
+                        if (allowedBiomes.Count > 0)
+                        {
+                            UnityEngine.Vector2d latLon = latLon = FlightGlobals.currentMainBody.GetLatitudeAndLongitude(scatterPos);
+                            string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, FlightGlobals.GetBodyByName(quad.quad.sphereRoot.name));
+                            if (!allowedBiomes.Contains(scatterBiome))
+                            {
+                                continue;
+                            }
+                        }
+                        // Create a new object for the scatter
+                        GameObject scatterObject = new GameObject("Scatter");
+                        scatterObject.transform.parent = quad.obj.transform;
+                        scatterObject.transform.localPosition = scatterPos;
+                        scatterObject.transform.localRotation = scatterRot;
+                        scatterObject.transform.localScale = Vector3.one * scatterScale;
+                        scatterObject.AddComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
+                        MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
+                        filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
+                        MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
+                        renderer.sharedMaterial = quad.scatter.material;
+                        renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
+                        renderer.receiveShadows = quad.scatter.recieveShadows;
+                        scatterObject.layer = GameLayers.LOCAL_SPACE;
+                        scatterObjects.Add(scatterObject);
                     }
-                    // Create a new object for the scatter
-                    GameObject scatterObject = new GameObject("Scatter");
-                    scatterObject.transform.parent = quad.obj.transform;
-                    scatterObject.transform.localPosition = scatterPos;
-                    scatterObject.transform.localRotation = scatterRot;
-                    scatterObject.transform.localScale = Vector3.one * scatterScale;
-                    scatterObject.AddComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
-                    MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
-                    filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
-                    MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
-                    renderer.sharedMaterial = quad.scatter.material;
-                    renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
-                    renderer.receiveShadows = quad.scatter.recieveShadows;
-                    scatterObject.layer = GameLayers.LOCAL_SPACE;
-                    scatterObjects.Add(scatterObject);
+                    else
+                    {
+                        quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
+                        return;
+                    }
                 }
             }
             quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;

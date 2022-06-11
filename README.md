@@ -7,9 +7,11 @@ June 11, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-107:
+New in this latest version release-108:
 
-1.) Following a final drop of bugfixes, the biome filter parameter allowedBiomes for scatters is now stable and usable.  It now performs as expected, and very quickly to boot!
+1.) Scatter density went out of control in some custom modded scenarios, this was due to a simple typo and has been fixed.
+
+2.) The modder-centered Public method PQSMod_BiomeSampler.GetPreciseBiome(double lat, double lon, CelestialBody cb) was not translating coordinates correctly.  This has been fixed.  The more commonly used method PQSMod_BiomeSampler.GetCachedBiome was not affected by this bug.
 
 Known Bugs:
 

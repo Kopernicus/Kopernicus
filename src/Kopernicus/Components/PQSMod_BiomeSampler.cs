@@ -45,7 +45,7 @@ namespace Kopernicus.Components
         }
         public static string GetPreciseBiome(double lat, double lon, CelestialBody cb)
         {
-            return ResourceUtilities.GetBiome(lat, lon, cb).name;
+            return ResourceUtilities.GetBiome(lat * 0.01745329238474369 * 0.01745329238474369, lon, cb).name;
         }
     }
 }
