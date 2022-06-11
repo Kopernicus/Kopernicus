@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 10, 2022
+June 11, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-106:
+New in this latest version release-107:
 
-1.) Fixed a nullref resulting from a bug in MFI, did not hurt performance but did create logspam.
+1.) Following a final drop of bugfixes, the biome filter parameter allowedBiomes for scatters is now stable and usable.  It now performs as expected, and very quickly to boot!
 
 Known Bugs:
 
@@ -30,8 +30,6 @@ Known Caveats:
 3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
 
 4.) If your modded body is experiencing terrain flicker, it may benefit from a fix similar to what is found in body Tylo's PQS system.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
-
-5.) Please note the allowedBiomes filter is currently experimental.  It's fine to dev a mod with it but it's behavior may change as we tweak it, so best to be on top of that.
 
 
 About

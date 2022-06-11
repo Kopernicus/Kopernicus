@@ -20,7 +20,7 @@ namespace Kopernicus.Components
                 }
                 else
                 {
-                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x, coordVector.y, FlightGlobals.GetBodyByName(sphere.name)).name);
+                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, FlightGlobals.GetBodyByName(sphere.name)).name);
                 }
             }
             catch
@@ -34,12 +34,11 @@ namespace Kopernicus.Components
             Vector2 coordVector = new Vector2((float)Math.Round(lat,3),(float)Math.Round(lon,3));
             if (biomeCoordCacheDictionary.ContainsKey(coordVector))
             {
-                biomeCoordCacheDictionary.TryGetValue(coordVector, out result);
-                return result;
+                return biomeCoordCacheDictionary[coordVector];
             }
             else
             {
-                result = ResourceUtilities.GetBiome(coordVector.x, coordVector.y, cb).name;
+                result = ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, cb).name;
                 biomeCoordCacheDictionary.Add(coordVector, result);
                 return result;
             }
