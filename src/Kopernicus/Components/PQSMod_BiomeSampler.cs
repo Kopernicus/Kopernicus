@@ -11,9 +11,12 @@ namespace Kopernicus.Components
         internal static IDictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
         public override void OnVertexBuildHeight(PQS.VertexBuildData data)
         {
+            base.OnVertexBuildHeight(data);
             try
             {
-                Vector2 coordVector = new Vector2((float)Math.Round(data.latitude,3),(float)Math.Round(data.longitude,3));
+                float latitude = (float)Math.Round(UtilMath.ClampDegrees180(((UtilMath.ClampRadians(data.latitude) / 0.01745329238474369))),2);
+                float longitude = (float)Math.Round(UtilMath.ClampDegrees180((((UtilMath.ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),2);
+                Vector2 coordVector = new Vector2(latitude,longitude);
                 if (biomeCoordCacheDictionary.ContainsKey(coordVector))
                 {
                     return;
@@ -31,21 +34,23 @@ namespace Kopernicus.Components
         public static string GetCachedBiome(double lat, double lon, CelestialBody cb)
         {
             string result;
-            Vector2 coordVector = new Vector2((float)Math.Round(lat,3),(float)Math.Round(lon,3));
+            lat = UtilMath.ClampDegrees180(lat);
+            lon = UtilMath.ClampDegrees180(lon);
+            Vector2 coordVector = new Vector2((float)Math.Round(lat,2),(float)Math.Round(lon,2));
             if (biomeCoordCacheDictionary.ContainsKey(coordVector))
             {
                 return biomeCoordCacheDictionary[coordVector];
             }
             else
             {
-                result = ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, cb).name;
+                result = ResourceUtilities.GetBiome(UtilMath.ClampRadians(coordVector.x * 0.01745329238474369), UtilMath.ClampRadians(coordVector.y * 0.01745329238474369), cb).name;
                 biomeCoordCacheDictionary.Add(coordVector, result);
                 return result;
             }
         }
         public static string GetPreciseBiome(double lat, double lon, CelestialBody cb)
         {
-            return ResourceUtilities.GetBiome(lat * 0.01745329238474369 * 0.01745329238474369, lon, cb).name;
+            return ResourceUtilities.GetBiome(lat * 0.01745329238474369, lon * 0.01745329238474369, cb).name;
         }
     }
 }

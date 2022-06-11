@@ -7,9 +7,9 @@ June 11, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-108:
+New in this latest version release-109:
 
-1.) The modder-centered Public method PQSMod_BiomeSampler.GetPreciseBiome(double lat, double lon, CelestialBody cb) was not translating coordinates correctly.  This has been fixed.  The more commonly used method PQSMod_BiomeSampler.GetCachedBiome was not affected by this bug.
+1.) Activate a new PQS-biome coordinate caching mechanism.  Uses a dictionary lookup on nearby biome coordinate queries to speed up the process (yes, we had a command for this before, but it didn't use the caching system until now.  It's ready for primetime).
 
 Known Bugs:
 
@@ -31,7 +31,7 @@ Known Caveats:
 
 4.) If your modded body is experiencing terrain flicker, it may benefit from a fix similar to what is found in body Tylo's PQS system.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
 
-5.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more well...  dense than before.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...
+5.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...
 
 
 About

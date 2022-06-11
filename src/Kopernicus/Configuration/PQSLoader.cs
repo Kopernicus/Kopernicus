@@ -699,6 +699,11 @@ namespace Kopernicus.Configuration
                 roc.currentCBName = Value.name;
             }
 
+            //Add the biome sampler
+            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
+            {
+                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
+            }
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
             for (Int32 i = 0; i < mods.Length; i++)
@@ -819,6 +824,12 @@ namespace Kopernicus.Configuration
                 PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
                 roc.currentCBName = Value.name;
             }
+
+            //Add the biome sampler
+            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
+            {
+                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
+            }
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
             for (Int32 i = 0; i < mods.Length; i++)
@@ -837,11 +848,6 @@ namespace Kopernicus.Configuration
                     loader.Create(mods[i], Value);
                     Mods.Add(loader);
                 }
-            }
-            //Add the biome sampler
-            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
-            {
-                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
             }
         }
 
