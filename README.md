@@ -9,9 +9,7 @@ June 11, 2022
 
 New in this latest version release-108:
 
-1.) Scatter density went out of control in some custom modded scenarios, this was due to a simple typo and has been fixed.
-
-2.) The modder-centered Public method PQSMod_BiomeSampler.GetPreciseBiome(double lat, double lon, CelestialBody cb) was not translating coordinates correctly.  This has been fixed.  The more commonly used method PQSMod_BiomeSampler.GetCachedBiome was not affected by this bug.
+1.) The modder-centered Public method PQSMod_BiomeSampler.GetPreciseBiome(double lat, double lon, CelestialBody cb) was not translating coordinates correctly.  This has been fixed.  The more commonly used method PQSMod_BiomeSampler.GetCachedBiome was not affected by this bug.
 
 Known Bugs:
 
@@ -32,6 +30,8 @@ Known Caveats:
 3.) When using the ultra/atlas shader, ocean effect customization (color etc) is unreliable. Please use only high shader level (shader level 2) or lower if working with stock ocean effects. This does not effect scatterer or other ocean rendering mods.
 
 4.) If your modded body is experiencing terrain flicker, it may benefit from a fix similar to what is found in body Tylo's PQS system.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
+
+5.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more well...  dense than before.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...
 
 
 About
