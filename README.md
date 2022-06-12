@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 11, 2022
+June 12, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-109:
+New in this latest version release-110:
 
-1.) Activate a new PQS-biome coordinate caching mechanism.  Uses a dictionary lookup on nearby biome coordinate queries to speed up the process (yes, we had a command for this before, but it didn't use the caching system until now.  It's ready for primetime).
+1.) Bugfix for new biomecacheloader to properly load on 1.10.x and earlier (yes, including 1.8.x).
 
 Known Bugs:
 

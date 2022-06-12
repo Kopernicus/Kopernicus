@@ -14,8 +14,8 @@ namespace Kopernicus.Components
             base.OnVertexBuildHeight(data);
             try
             {
-                float latitude = (float)Math.Round(UtilMath.ClampDegrees180(((UtilMath.ClampRadians(data.latitude) / 0.01745329238474369))),2);
-                float longitude = (float)Math.Round(UtilMath.ClampDegrees180((((UtilMath.ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),2);
+                float latitude = (float)Math.Round(ClampDegrees180(((ClampRadians(data.latitude) / 0.01745329238474369))),2);
+                float longitude = (float)Math.Round(ClampDegrees180((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),2);
                 Vector2 coordVector = new Vector2(latitude,longitude);
                 if (biomeCoordCacheDictionary.ContainsKey(coordVector))
                 {
@@ -34,8 +34,8 @@ namespace Kopernicus.Components
         public static string GetCachedBiome(double lat, double lon, CelestialBody cb)
         {
             string result;
-            lat = UtilMath.ClampDegrees180(lat);
-            lon = UtilMath.ClampDegrees180(lon);
+            lat = ClampDegrees180(lat);
+            lon = ClampDegrees180(lon);
             Vector2 coordVector = new Vector2((float)Math.Round(lat,2),(float)Math.Round(lon,2));
             if (biomeCoordCacheDictionary.ContainsKey(coordVector))
             {
@@ -43,7 +43,7 @@ namespace Kopernicus.Components
             }
             else
             {
-                result = ResourceUtilities.GetBiome(UtilMath.ClampRadians(coordVector.x * 0.01745329238474369), UtilMath.ClampRadians(coordVector.y * 0.01745329238474369), cb).name;
+                result = ResourceUtilities.GetBiome(ClampRadians(coordVector.x * 0.01745329238474369), ClampRadians(coordVector.y * 0.01745329238474369), cb).name;
                 biomeCoordCacheDictionary.Add(coordVector, result);
                 return result;
             }
@@ -51,6 +51,36 @@ namespace Kopernicus.Components
         public static string GetPreciseBiome(double lat, double lon, CelestialBody cb)
         {
             return ResourceUtilities.GetBiome(lat * 0.01745329238474369, lon * 0.01745329238474369, cb).name;
+        }
+        private static double ClampDegrees360(double angle)
+        {
+            angle %= 360.0;
+            if (angle < 0.0)
+            {
+                return angle + 360.0;
+            }
+            return angle;
+        }
+        private static double ClampDegrees180(double angle)
+        {
+            angle = ClampDegrees360(angle);
+            if (angle > 180.0)
+            {
+                angle -= 360.0;
+            }
+            return angle;
+        }
+        private static double ClampRadians(double angle)
+        {
+            while (angle > 6.283185307179586)
+            {
+                angle -= 6.283185307179586;
+            }
+            while (angle < 0.0)
+            {
+                angle += 6.283185307179586;
+            }
+            return angle;
         }
     }
 }
