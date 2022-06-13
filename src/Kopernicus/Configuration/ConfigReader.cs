@@ -58,6 +58,9 @@ namespace Kopernicus.Configuration
         public bool DisableMainMenuMunScene = true;
         [Persistent]
         public bool HandleHomeworldAtmosphericUnitDisplay = true;
+        [Persistent]
+        public bool UseIncorrectScatterDensityLogic = false;
+
         public UrlDir.UrlConfig[] baseConfigs;
         public void loadMainSettings()
         {

@@ -312,7 +312,15 @@ namespace Kopernicus.Components.ModularScatter
                             // Generate a random number between 0 and 1. If it is above the spawn chance, abort
                             if (Random.value > spawnChance)
                             {
-                                continue;
+                                if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
+                                    return;
+                                }
                             }
                         }
 

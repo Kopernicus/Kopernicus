@@ -1069,7 +1069,8 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	EnableKopernicusShadowManager = True //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
                     configFile.WriteLine("	ShadowDistanceLimit = 25000 //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers tend to yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 25000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
                     configFile.WriteLine("	DisableMainMenuMunScene = True //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
-                    configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay  = true //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
+                    configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay  = True //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
+                    configFile.WriteLine("	UseIncorrectScatterDensityLogic  = False //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
@@ -1102,6 +1103,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	ShadowDistanceLimit = " + KopernicusConfig.ShadowDistanceLimit + " //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 25000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
                     configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay  = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
+                    configFile.WriteLine("	UseIncorrectScatterDensityLogic  = " + KopernicusConfig.UseIncorrectScatterDensityLogic.ToString() + " //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
