@@ -272,7 +272,16 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         private void CreateScatterMeshes(PQSMod_LandClassScatterQuad quad)
         {
-            if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (quad.isVisible) && (Vector3.Distance(quad.transform.position, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position) <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit * 1.25))
+            double cameraDistance = double.MaxValue;
+            try
+            {
+                cameraDistance = Vector3.Distance(quad.transform.position, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position);
+            }
+            catch
+            {
+                return;
+            }
+            if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (quad.isVisible) && (cameraDistance <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit * 1.25))
             {
                 Random.InitState(quad.seed);
 
@@ -296,7 +305,7 @@ namespace Kopernicus.Components.ModularScatter
                 }
                 for (Int32 i = 0; i < quad.count; i++)
                 {
-                    if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (quad.isVisible) && (Vector3.Distance(quad.transform.position, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position) <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit * 1.25))
+                    if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (quad.isVisible) && (cameraDistance <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit * 1.25))
                     {
                         if (useBetterDensity)
                         {
@@ -328,7 +337,9 @@ namespace Kopernicus.Components.ModularScatter
                         Single scatterAngle = Random.Range(rotation[0], rotation[1]);
                         Quaternion scatterRot = QuaternionD.AngleAxis(scatterAngle, scatterUp) * quad.quad.quadRotation;
                         Single scatterScale = Random.Range(quad.scatter.minScale, quad.scatter.maxScale);
-                        if (Vector3.Distance(scatterPos, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position) > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit)
+                        double scatterDist = double.MaxValue;
+                        scatterDist = Vector3.Distance(scatterPos, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position);
+                        if (scatterDist > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit)
                         {
                             continue;
                         }

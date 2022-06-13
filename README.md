@@ -7,9 +7,9 @@ June 12, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-110:
+New in this latest version release-111:
 
-1.) Bugfix for new biomecacheloader to properly load on 1.10.x and earlier (yes, including 1.8.x).
+1.) Patch for nullref spam when a camera was not available (such as in mission control).
 
 Known Bugs:
 
