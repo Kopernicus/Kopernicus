@@ -197,26 +197,6 @@ namespace Kopernicus
                     if (body.name.Equals("KopernicusWatchdog"))
                     {
                         mockBody = body;
-                        mockBody.enabled = false;
-                        foreach (Renderer renderer in mockBody.scaledBody.GetComponentsInChildren<Renderer>(true))
-                        {
-                            renderer.enabled = false;
-                        }
-
-                        foreach (Collider collider in mockBody.scaledBody.GetComponentsInChildren<Collider>(true))
-                        {
-                            collider.enabled = true;
-                        }
-
-                        foreach (ScaledSpaceFader fader in mockBody.scaledBody.GetComponentsInChildren<ScaledSpaceFader>(true))
-                        {
-                            fader.enabled = false;
-                        }
-                        foreach (OrbitRenderer renderer in mockBody.GetComponentsInChildren<OrbitRenderer>(true))
-                        {
-                            renderer.drawMode = OrbitRendererBase.DrawMode.OFF;
-                            renderer.drawIcons = OrbitRendererBase.DrawIcons.NONE;
-                        }
                     }
                     // Event
                     Events.OnPreBodyFixing.Fire(body);

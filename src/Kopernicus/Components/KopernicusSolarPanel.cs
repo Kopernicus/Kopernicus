@@ -187,37 +187,38 @@ namespace Kopernicus.Components
             Vector3 trackDir = (trackingBody.transform.position - panelRotationTransform.position).normalized;
             if (!trackingLOS)
             {
-                sunAOA = 0f;
-                status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObject);
+                if (!blockingObject.Equals("SinkingBugFix"))
+                {
+                    sunAOA = 0f;
+                    status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObject);
+                    return;
+                }
+            }
+            status = "Direct Sunlight";
+            if (panelType == PanelType.FLAT)
+            {
+                sunAOA = Mathf.Clamp(Vector3.Dot(trackingDotTransform.forward, trackDir), 0f, 1f);
+            }
+            else if (panelType != PanelType.CYLINDRICAL)
+            {
+                sunAOA = 0.25f;
             }
             else
             {
-                status = "Direct Sunlight";
-                if (panelType == PanelType.FLAT)
+                Vector3 direction;
+                if (alignType == PanelAlignType.PIVOT)
                 {
-                    sunAOA = Mathf.Clamp(Vector3.Dot(trackingDotTransform.forward, trackDir), 0f, 1f);
+                    direction = trackingDotTransform.forward;
                 }
-                else if (panelType != PanelType.CYLINDRICAL)
+                else if (alignType != PanelAlignType.X)
                 {
-                    sunAOA = 0.25f;
+                    direction = alignType != PanelAlignType.Y ? part.partTransform.forward : part.partTransform.up;
                 }
                 else
                 {
-                    Vector3 direction;
-                    if (alignType == PanelAlignType.PIVOT)
-                    {
-                        direction = trackingDotTransform.forward;
-                    }
-                    else if (alignType != PanelAlignType.X)
-                    {
-                        direction = alignType != PanelAlignType.Y ? part.partTransform.forward : part.partTransform.up;
-                    }
-                    else
-                    {
-                        direction = part.partTransform.right;
-                    }
-                    sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
+                    direction = part.partTransform.right;
                 }
+                sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
             }
         }
 

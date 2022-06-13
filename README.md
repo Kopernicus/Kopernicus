@@ -7,9 +7,9 @@ June 13, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-112:
+New in this latest version release-113:
 
-1.) Added compatability boolean parameter to Kopernicus_Config.cfg "UseIncorrectScatterDensityLogic."  Default false.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.
+1.) Fixed some more distant-sinking body fix scenarios.  Also fixed a bug where solar panels would occasionally be blocked by the fix gameobject.
 
 Known Bugs:
 
