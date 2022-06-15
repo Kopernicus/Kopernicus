@@ -37,13 +37,15 @@ namespace Kopernicus.Components
             lat = clampLat(lat);
             lon = clampLon(lon);
             Vector2 coordVector = new Vector2((float)Math.Round(lat,2),(float)Math.Round(lon,2));
+            lat = ResourceUtilities.Deg2Rad(clampLat(coordVector.x));
+            lon = ResourceUtilities.Deg2Rad(clampLon(coordVector.y));
             if (biomeCoordCacheDictionary.ContainsKey(coordVector))
             {
                 return biomeCoordCacheDictionary[coordVector];
             }
             else
             {
-                result = ResourceUtilities.GetBiome(ClampRadians(coordVector.x * 0.01745329238474369), ClampRadians(coordVector.y * 0.01745329238474369), cb).name;
+                result = ResourceUtilities.GetBiome(ClampRadians(lat), ClampRadians(lon), cb).name;
                 biomeCoordCacheDictionary.Add(coordVector, result);
                 return result;
             }
@@ -52,7 +54,9 @@ namespace Kopernicus.Components
         {
             lat = clampLat(lat);
             lon = clampLon(lon);
-            return ResourceUtilities.GetBiome(lat * 0.01745329238474369, lon * 0.01745329238474369, cb).name;
+            lat = ResourceUtilities.Deg2Rad(clampLat(lat));
+            lon = ResourceUtilities.Deg2Rad(clampLon(lon));
+            return ResourceUtilities.GetBiome(lat, lon, cb).name;
         }
         public static Vector2 RoundPosition(double lat, double lon)
         {

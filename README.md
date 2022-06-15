@@ -7,9 +7,9 @@ June 15, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-115:
+New in this latest version release-116:
 
-1.) Better coordinate clamping for the allowedBiomes filter, this helps when it is fed improperly wrapped coordinates.
+1.) Biome clamping bugfix.  For secret modder projects, won't effect end users much.
 
 Known Bugs:
 
