@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 13, 2022
+June 15, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-113:
+New in this latest version release-115:
 
-1.) Fixed some more distant-sinking body fix scenarios.  Also fixed a bug where solar panels would occasionally be blocked by the fix gameobject.
+1.) Better coordinate clamping for the allowedBiomes filter, this helps when it is fed improperly wrapped coordinates.
 
 Known Bugs:
 

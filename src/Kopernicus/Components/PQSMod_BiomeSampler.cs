@@ -14,8 +14,8 @@ namespace Kopernicus.Components
             base.OnVertexBuildHeight(data);
             try
             {
-                float latitude = (float)Math.Round(ClampDegrees180(((ClampRadians(data.latitude) / 0.01745329238474369))),2);
-                float longitude = (float)Math.Round(ClampDegrees180((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),2);
+                float latitude = (float)Math.Round(clampLat(((ClampRadians(data.latitude) / 0.01745329238474369))),2);
+                float longitude = (float)Math.Round(clampLon((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),2);
                 Vector2 coordVector = new Vector2(latitude,longitude);
                 if (biomeCoordCacheDictionary.ContainsKey(coordVector))
                 {
@@ -34,8 +34,8 @@ namespace Kopernicus.Components
         public static string GetCachedBiome(double lat, double lon, CelestialBody cb)
         {
             string result;
-            lat = ClampDegrees180(lat);
-            lon = ClampDegrees180(lon);
+            lat = clampLat(lat);
+            lon = clampLon(lon);
             Vector2 coordVector = new Vector2((float)Math.Round(lat,2),(float)Math.Round(lon,2));
             if (biomeCoordCacheDictionary.ContainsKey(coordVector))
             {
@@ -50,7 +50,15 @@ namespace Kopernicus.Components
         }
         public static string GetPreciseBiome(double lat, double lon, CelestialBody cb)
         {
+            lat = clampLat(lat);
+            lon = clampLon(lon);
             return ResourceUtilities.GetBiome(lat * 0.01745329238474369, lon * 0.01745329238474369, cb).name;
+        }
+        public static Vector2 RoundPosition(double lat, double lon)
+        {
+            lat = clampLat(lat);
+            lon = clampLon(lon);
+            return new Vector2((float)Math.Round(lat, 2), (float)Math.Round(lon, 2));
         }
         private static double ClampDegrees360(double angle)
         {
@@ -81,6 +89,15 @@ namespace Kopernicus.Components
                 angle += 6.283185307179586;
             }
             return angle;
+        }
+        private static double clampLat(double lat)
+        {
+            return (lat + 180.0 + 90.0) % 180.0 - 90.0;
+        }
+
+        private static double clampLon(double lon)
+        {
+            return (lon + 360.0 + 180.0) % 360.0 - 180.0;
         }
     }
 }

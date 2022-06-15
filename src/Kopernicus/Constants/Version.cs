@@ -39,9 +39,9 @@ namespace Kopernicus.Constants
             get
             {
 #if (!KSP_VERSION_1_8)
-                return "Release-113";
+                return "Release-115";
 #else
-                return "LEGACY18_Release-113";
+                return "LEGACY18_Release-115";
 #endif
             }
         }
@@ -56,7 +56,7 @@ namespace Kopernicus.Constants
 #else
                 const String DEVELOPMENT_BUILD = "";
 #endif
-                return "CKAN Stable Kopernicus " + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
+                return "Kopernicus Stable Branch" + VersionNumber + DEVELOPMENT_BUILD + " - (BuildDate: " +
                        BuiltTime(Assembly.GetCallingAssembly()).ToString("dd.MM.yyyy HH:mm:ss") + "; AssemblyHash: " +
                        AssemblyHandle() + ")";
             }
