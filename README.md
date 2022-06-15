@@ -7,9 +7,9 @@ June 15, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-116:
+New in this latest version release-117:
 
-1.) Biome clamping bugfix.  For secret modder projects, won't effect end users much.
+1.) Ultra shader fixes.  Particularly, oceans now obey their settings with the Ultra shader setting.
 
 Known Bugs:
 

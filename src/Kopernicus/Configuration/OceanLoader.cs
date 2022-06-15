@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -131,9 +131,9 @@ namespace Kopernicus.Configuration
                 switch (GameSettings.TERRAIN_SHADER_QUALITY)
                 {
                     case 3:
-                        if (Value.highQualitySurfaceMaterial != null) //high is the highest that works for oceans.
+                        if (Value.ultraQualitySurfaceMaterial != null)
                         {
-                            return Value.highQualitySurfaceMaterial;
+                            return Value.ultraQualitySurfaceMaterial;
                         }
                         goto case 2;
                     case 2:
@@ -160,6 +160,7 @@ namespace Kopernicus.Configuration
             }
             set
             {
+                Value.ultraQualitySurfaceMaterial = value;
                 Value.highQualitySurfaceMaterial = value;
                 Value.mediumQualitySurfaceMaterial = value;
                 Value.lowQualitySurfaceMaterial = value;
