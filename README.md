@@ -7,9 +7,9 @@ June 15, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-117:
+New in this latest version release-118:
 
-1.) Ultra shader fixes.  Particularly, oceans now obey their settings with the Ultra shader setting.
+1.) The longstanding bug in which PQS/terrain would sometimes flicker on bodies that weren't setup JUST RIGHT has been fixed.  Now you can use whatever PQS maxlevel (and other settings) you want.
 
 Known Bugs:
 

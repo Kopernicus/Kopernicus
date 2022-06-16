@@ -46,7 +46,7 @@ namespace Kopernicus
 
         // The checksum of the System.cfg file.
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
-        private const String CONFIG_CHECKSUM = "f828e7c354b14e167477afd43e6952bfae943403efb3affb1f108011ad66986d";
+        private const String CONFIG_CHECKSUM = "cc7bda69901a41a4231c0a84696615029c4116834e0fceda70cc18d863279533";
 
         // Backup of the old system prefab, in case someone deletes planet templates we need at Runtime (Kittopia)
         public static PSystem StockSystemPrefab { get; private set; }

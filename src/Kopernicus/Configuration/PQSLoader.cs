@@ -877,7 +877,7 @@ namespace Kopernicus.Configuration
 
             // ----------- DEBUG -------------
             // Utility.DumpObjectProperties(pqsVersion.surfaceMaterial, " ---- Surface Material (Post PQS Loader) ---- ");
-            Utility.GameObjectWalk(Value.gameObject, "  ");
+            //Utility.GameObjectWalk(Value.gameObject, "  ");
             // -------------------------------
         }
     }

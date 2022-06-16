@@ -43,8 +43,7 @@ namespace Kopernicus.Components
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
         {
-            typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                .First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
+            //typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
             base.OnSetup();
 
             // Try to cache density values that are used to distribute scatters
@@ -56,7 +55,6 @@ namespace Kopernicus.Components
 
             lcScatterListField = typeof(PQSLandControl).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                 .First(f => f.FieldType == typeof(Double[]));
-            Debug.Log(lcScatterListField.Name);
         }
 
         public override void OnQuadPreBuild(PQ quad)
