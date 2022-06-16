@@ -27,9 +27,7 @@ Known Caveats:
 
 2.) Multistar Solar panel support requires an additional config file, attached to release.
 
-3.) If your modded body is experiencing terrain flicker, it may benefit from a fix similar to what is found in body Tylo's PQS system.cfg, but we are no longer playing babysitter for all mods there due to unwanted side effects.
-
-4.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
+3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
 
 About
