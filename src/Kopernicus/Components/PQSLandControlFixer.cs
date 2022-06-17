@@ -68,24 +68,31 @@ namespace Kopernicus.Components
                 createColors = true;
                 createScatter = true;
             }
-            if (pqsLC)
+            try
             {
-                if (cb.isHomeWorld)
+                if (pqsLC)
                 {
-                    if ((cb.BiomeMap.ToString().Contains("JNSQ_Textures") && (cb.name.Equals("Kerbin") && cb.displayName.Contains("Kerbin"))))
+                    if (cb.isHomeWorld)
                     {
-                        pqsLC.createColors = false;
+                        if ((cb.BiomeMap.ToString().Contains("JNSQ_Textures") && (cb.name.Equals("Kerbin") && cb.displayName.Contains("Kerbin"))))
+                        {
+                            pqsLC.createColors = false;
+                        }
+                        else
+                        {
+                            pqsLC.createColors = createColors;
+                            pqsLC.createScatter = createScatter;
+                        }
                     }
                     else
                     {
-                        pqsLC.createColors = createColors;
-                        pqsLC.createScatter = createScatter;
+                        pqsLC.createColors = true;
                     }
                 }
-                else
-                {
-                    pqsLC.createColors = true;
-                }
+            }
+            catch
+            {
+                //woo, no LandControl at all.
             }
             // Try to cache density values that are used to distribute scatters
             _landControls = sphere.GetComponentsInChildren<PQSLandControl>(true);
