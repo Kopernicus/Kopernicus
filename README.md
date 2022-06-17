@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 15, 2022
+June 16, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-118:
+New in this latest version release-119:
 
-1.) The longstanding bug in which PQS/terrain would sometimes flicker on bodies that weren't setup JUST RIGHT has been fixed.  Now you can use whatever PQS maxlevel (and other settings) you want.
+1.) The last PQS patch somehow broke a single mod (JNSQ).  The way in which the breakage occured was for a long time a mystery, but we finally narrowed it down to the atlas shader applying to a parameter (createColors) that is used on Kerbin and is now somehow forced on on Kerbin templates after the PQS fix.  This is not a widely used parameter, so the workaround we have developed is to force createColors off on modded Kerbin worlds.  Feedback welcome.
 
 Known Bugs:
 
@@ -29,6 +29,7 @@ Known Caveats:
 
 3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
+4.) As of Release-119, LandControl createColors is no longer obeyed on homeworlds, it is forced off.  Feedback is welcome on this decision, but it is better than the bug we had before (it being forced on and creating neon worlds).  Very few mods to my knowledge use this parameter, but I am open to being proven wrong.
 
 About
 -----

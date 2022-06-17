@@ -28,6 +28,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Kopernicus.Components.MaterialWrapper;
+using Kopernicus.Configuration;
 using UnityEngine;
 
 namespace Kopernicus.Components
@@ -43,9 +45,26 @@ namespace Kopernicus.Components
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
         {
-            //typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).SetValue(sphere, null);
-            base.OnSetup();
+            CelestialBody cb = FlightGlobals.GetBodyByName(sphere.name);
+            if (cb.isHomeWorld)
+            {
+                PQSLandControl pqsLC = null;
+                try
+                {
+                    pqsLC = ((PQSLandControl)typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).GetValue(sphere));
+                }
+                catch
+                {
 
+                }
+                if (pqsLC)
+                {
+                    if (!(cb.BiomeMap.ToString().Contains("kerbin_biome")))
+                    {
+                        pqsLC.createColors = false;
+                    }
+                }
+            }
             // Try to cache density values that are used to distribute scatters
             _landControls = sphere.GetComponentsInChildren<PQSLandControl>(true);
             if (lcScatterListField != null)

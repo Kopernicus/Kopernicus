@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -298,8 +298,8 @@ namespace Kopernicus.Configuration
                                 //Remove Gas Giant shaders for compatability
                                 MonoBehaviour GGMC = GasGiantMaterialControls(GeneratedBody);
                                 MonoBehaviour MBOGS = MaterialBasedOnGraphicsSetting(GeneratedBody);
-                                GameObject.DestroyImmediate(GGMC);
-                                GameObject.DestroyImmediate(MBOGS);
+                                GameObject.Destroy(GGMC);
+                                GameObject.Destroy(MBOGS);
                                 UnityEngine.Debug.Log("[Kopernicus] New Jool detected, shaders stripped!");
                             }
                             catch

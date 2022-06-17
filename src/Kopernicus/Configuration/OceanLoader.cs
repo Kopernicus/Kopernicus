@@ -128,6 +128,7 @@ namespace Kopernicus.Configuration
         {
             get
             {
+#if (!KSP_VERSION_1_8)
                 switch (GameSettings.TERRAIN_SHADER_QUALITY)
                 {
                     case 3:
@@ -157,14 +158,48 @@ namespace Kopernicus.Configuration
                     default:
                         return Value.surfaceMaterial;
                 }
+#endif
+#if (KSP_VERSION_1_8)
+                switch (GameSettings.TERRAIN_SHADER_QUALITY)
+                {
+                    case 2:
+                        if (Value.highQualitySurfaceMaterial != null)
+                        {
+                            return Value.highQualitySurfaceMaterial;
+                        }
+                        goto case 1;
+                    case 1:
+                        if (Value.mediumQualitySurfaceMaterial != null)
+                        {
+                            return Value.mediumQualitySurfaceMaterial;
+                        }
+                        goto case 0;
+                    case 0:
+                        if (Value.lowQualitySurfaceMaterial != null)
+                        {
+                            return Value.lowQualitySurfaceMaterial;
+                        }
+                        goto default;
+                    default:
+                        return Value.surfaceMaterial;
+                }
+#endif
             }
             set
             {
+#if (!KSP_VERSION_1_8)
                 Value.ultraQualitySurfaceMaterial = value;
                 Value.highQualitySurfaceMaterial = value;
                 Value.mediumQualitySurfaceMaterial = value;
                 Value.lowQualitySurfaceMaterial = value;
                 Value.surfaceMaterial = value;
+#endif
+#if (KSP_VERSION_1_8)
+                Value.highQualitySurfaceMaterial = value;
+                Value.mediumQualitySurfaceMaterial = value;
+                Value.lowQualitySurfaceMaterial = value;
+                Value.surfaceMaterial = value;
+#endif
             }
         }
 
