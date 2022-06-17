@@ -59,7 +59,7 @@ namespace Kopernicus.Components
                 }
                 if (pqsLC)
                 {
-                    if (!(cb.BiomeMap.ToString().Contains("kerbin_biome")))
+                    if (!(cb.BiomeMap.ToString().Contains("kerbin_biome") && (cb.Radius < 600001) && (cb.Radius > 599999) && (cb.name.Equals("Kerbin")) && (cb.displayName.Contains("Kerbin"))))
                     {
                         pqsLC.createColors = false;
                     }

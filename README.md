@@ -7,9 +7,9 @@ June 16, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-120:
+New in this latest version release-121:
 
-1.) The last patch featured a nice regression where gas giants turned Jool green.  Fixed.  Now some sleep.
+1.) Improved the Kerbin-specific workarounds for the PQS flickering fix.
 
 Known Bugs:
 
