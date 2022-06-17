@@ -24,13 +24,15 @@ namespace Kopernicus.RuntimeUtility
             {
                 collider.enabled = true;
             }
-            if (FlightGlobals.currentMainBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+            if (mainBody.name.Equals(FlightGlobals.Bodies[0].name))
             {
                 collider.enabled = false;
                 return;
             }
             Vector3 dir = mainBody.scaledBody.transform.position - FlightGlobals.Bodies[0].scaledBody.transform.position;
             transform.position = mainBody.scaledBody.transform.position + dir * 0.01f;
+            double distance = Vector3d.Distance(FlightGlobals.Bodies[0].scaledBody.transform.position,mainBody.scaledBody.transform.position) * 0.01;
+            collider.radius = (float)distance;
 
         }
     }

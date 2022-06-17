@@ -45,25 +45,25 @@ namespace Kopernicus.Components
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
         {
-            CelestialBody cb = FlightGlobals.GetBodyByName(sphere.name);
-            if (cb.isHomeWorld)
+            try
             {
-                PQSLandControl pqsLC = null;
-                try
+                CelestialBody cb = FlightGlobals.GetBodyByName(sphere.name);
+                if (cb.isHomeWorld)
                 {
+                    PQSLandControl pqsLC = null;
                     pqsLC = ((PQSLandControl)typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).GetValue(sphere));
-                }
-                catch
-                {
-
-                }
-                if (pqsLC)
-                {
-                    if (!(cb.BiomeMap.ToString().Contains("kerbin_biome") && (cb.Radius < 600001) && (cb.Radius > 599999) && (cb.name.Equals("Kerbin")) && (cb.displayName.Contains("Kerbin"))))
+                    if (pqsLC)
                     {
-                        pqsLC.createColors = false;
+                        if (!(cb.BiomeMap.ToString().Contains("kerbin_biome") && (cb.name.Equals("Kerbin")) && (cb.displayName.Contains("Kerbin"))))
+                        {
+                            pqsLC.createColors = false;
+                        }
                     }
                 }
+            }
+            catch
+            {
+
             }
             // Try to cache density values that are used to distribute scatters
             _landControls = sphere.GetComponentsInChildren<PQSLandControl>(true);

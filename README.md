@@ -7,9 +7,9 @@ June 16, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-121:
+New in this latest version release-122:
 
-1.) Improved the Kerbin-specific workarounds for the PQS flickering fix.
+1.) Improved the Kerbin-specific workarounds for the PQS flickering fix to avoid loadloop erros, and also help with regards to rescales (they produced black terrain).
 
 Known Bugs:
 
