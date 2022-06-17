@@ -41,29 +41,55 @@ namespace Kopernicus.Components
         private PQSLandControl[] _landControls;
         private static FieldInfo lcScatterListField;
         private PQ _quad;
+        private bool createColors = false;
+        private bool createScatter = false;
 
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
         {
+            CelestialBody cb = null;
+            PQSLandControl pqsLC = null;
             try
             {
-                CelestialBody cb = FlightGlobals.GetBodyByName(sphere.name);
-                if (cb.isHomeWorld)
-                {
-                    PQSLandControl pqsLC = null;
-                    pqsLC = ((PQSLandControl)typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).GetValue(sphere));
-                    if (pqsLC)
-                    {
-                        if (!(cb.BiomeMap.ToString().Contains("kerbin_biome") && (cb.name.Equals("Kerbin")) && (cb.displayName.Contains("Kerbin"))))
-                        {
-                            pqsLC.createColors = false;
-                        }
-                    }
-                }
+                cb = FlightGlobals.GetBodyByName(sphere.name);
             }
             catch
             {
-
+                cb = FlightGlobals.Bodies[0];
+            }
+            try
+            {
+                pqsLC = ((PQSLandControl)typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).GetValue(sphere));
+                createColors = pqsLC.createColors;
+                createScatter = pqsLC.createScatter;
+            }
+            catch
+            {
+                createColors = true;
+                createScatter = true;
+            }
+            if ((!pqsLC) && (cb != FlightGlobals.Bodies[0]))
+            {
+                pqsLC = cb.pqsController.gameObject.AddComponent<PQSLandControl>();
+            }
+            if (pqsLC)
+            {
+                if (cb.isHomeWorld)
+                {
+                    if ((cb.BiomeMap.ToString().Contains("JNSQ_Textures") && (cb.name.Equals("Kerbin") && cb.displayName.Contains("Kerbin"))))
+                    {
+                        pqsLC.createColors = false;
+                    }
+                    else
+                    {
+                        pqsLC.createColors = createColors;
+                        pqsLC.createScatter = createScatter;
+                    }
+                }
+                else
+                {
+                    pqsLC.createColors = true;
+                }
             }
             // Try to cache density values that are used to distribute scatters
             _landControls = sphere.GetComponentsInChildren<PQSLandControl>(true);

@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-June 16, 2022
+June 17, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-122:
+New in this latest version release-123:
 
-1.) Improved the Kerbin-specific workarounds for the PQS flickering fix to avoid loadloop erros, and also help with regards to rescales (they produced black terrain).
+1.) Final round of improvements to the JNSQ-specific workarounds for the PQS flickering fix to avoid loadloop erros, and also help with regards to rescales (they produced black terrain).
+
+2.) Holy crap this is actually stable now. #Famouslastwords
 
 Known Bugs:
 
