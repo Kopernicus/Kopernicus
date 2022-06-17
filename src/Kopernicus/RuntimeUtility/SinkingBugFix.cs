@@ -31,7 +31,7 @@ namespace Kopernicus.RuntimeUtility
             }
             Vector3 dir = mainBody.scaledBody.transform.position - FlightGlobals.Bodies[0].scaledBody.transform.position;
             transform.position = mainBody.scaledBody.transform.position + dir * 0.01f;
-            double distance = Vector3d.Distance(FlightGlobals.Bodies[0].scaledBody.transform.position,mainBody.scaledBody.transform.position) * 0.01;
+            double distance = Vector3d.Distance(FlightGlobals.Bodies[0].scaledBody.transform.position,mainBody.scaledBody.transform.position) * 0.0001;
             collider.radius = (float)distance;
 
         }
