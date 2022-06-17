@@ -7,11 +7,9 @@ June 17, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-123:
+New in this latest version release-124:
 
-1.) Final round of improvements to the JNSQ-specific workarounds for the PQS flickering fix to avoid loadloop erros, and also help with regards to rescales (they produced black terrain).
-
-2.) Holy crap this is actually stable now. #Famouslastwords
+1.) Fixed a bug where using some templates without a LandControl node and failing to declare a LandControl node would result in a failure to load.
 
 Known Bugs:
 

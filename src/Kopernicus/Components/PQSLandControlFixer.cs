@@ -68,10 +68,6 @@ namespace Kopernicus.Components
                 createColors = true;
                 createScatter = true;
             }
-            if ((!pqsLC) && (cb != FlightGlobals.Bodies[0]))
-            {
-                pqsLC = cb.pqsController.gameObject.AddComponent<PQSLandControl>();
-            }
             if (pqsLC)
             {
                 if (cb.isHomeWorld)
