@@ -298,8 +298,8 @@ namespace Kopernicus.Configuration
                                 //Remove Gas Giant shaders for compatability
                                 MonoBehaviour GGMC = GasGiantMaterialControls(GeneratedBody);
                                 MonoBehaviour MBOGS = MaterialBasedOnGraphicsSetting(GeneratedBody);
-                                GameObject.Destroy(GGMC);
-                                GameObject.Destroy(MBOGS);
+                                GameObject.DestroyImmediate(GGMC);
+                                GameObject.DestroyImmediate(MBOGS);
                                 UnityEngine.Debug.Log("[Kopernicus] New Jool detected, shaders stripped!");
                             }
                             catch

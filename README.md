@@ -7,9 +7,9 @@ June 16, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-119:
+New in this latest version release-120:
 
-1.) The last PQS patch somehow broke a single mod (JNSQ).  The way in which the breakage occured was for a long time a mystery, but we finally narrowed it down to the atlas shader applying to a parameter (createColors) that is used on Kerbin and is now somehow forced on on Kerbin templates after the PQS fix.  This is not a widely used parameter, so the workaround we have developed is to force createColors off on modded Kerbin worlds.  Feedback welcome.
+1.) The last patch featured a nice regression where gas giants turned Jool green.  Fixed.  Now some sleep.
 
 Known Bugs:
 
