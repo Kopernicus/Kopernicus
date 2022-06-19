@@ -547,7 +547,7 @@ namespace Kopernicus.Components
             while (body?.referenceBody != null)
 #pragma warning restore UNT0008 // Null propagation on Unity objects
             {
-                if (body.referenceBody.name.Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody.name))
+                if (body.referenceBody == FlightGlobals.Bodies[0])
                 {
                     break;
                 }

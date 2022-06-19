@@ -1,15 +1,19 @@
 ﻿Kopernicus
 ==============================
-June 17, 2022
+June 18, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-124:
+New in this latest version release-125:
 
-1.) Fixed a bug where using some templates without a LandControl node and failing to declare a LandControl node would result in a failure to load.
+1.) Added a new version of the Sinking-terrain body fix that works in a lot more instances (always?).  It works by disabling colliders that are "out of bounds" for the current scene (more distant than say, stock eeloo).  This incurs a small performance hit to keep track of their state for reenabling, but is configurable.
+
+2.) Added a new Kopernicus_Config.cfg parameter, DisableFarAwayColliders, Default True, Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to keep on unless you have a small system.
+
+3.) Some garbage collection optimizations for the Biome filter.
 
 Known Bugs:
 
@@ -29,7 +33,7 @@ Known Caveats:
 
 3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
-4.) As of Release-119, LandControl createColors is no longer obeyed on homeworlds, it is forced off.  Feedback is welcome on this decision, but it is better than the bug we had before (it being forced on and creating neon worlds).  Very few mods to my knowledge use this parameter, but I am open to being proven wrong.
+4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but I am open to being proven wrong.  You can work around this if affected by setting your LandControl color to be all zeroes.
 
 About
 -----

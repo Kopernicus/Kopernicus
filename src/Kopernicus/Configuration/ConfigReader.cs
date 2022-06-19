@@ -60,6 +60,8 @@ namespace Kopernicus.Configuration
         public bool HandleHomeworldAtmosphericUnitDisplay = true;
         [Persistent]
         public bool UseIncorrectScatterDensityLogic = false;
+        [Persistent]
+        public bool DisableFarAwayColliders = true;
 
         public UrlDir.UrlConfig[] baseConfigs;
         public void loadMainSettings()

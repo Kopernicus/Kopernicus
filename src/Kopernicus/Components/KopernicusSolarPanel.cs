@@ -187,12 +187,9 @@ namespace Kopernicus.Components
             Vector3 trackDir = (trackingBody.transform.position - panelRotationTransform.position).normalized;
             if (!trackingLOS)
             {
-                if (!blockingObject.Equals("SinkingBugFix"))
-                {
-                    sunAOA = 0f;
-                    status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObject);
-                    return;
-                }
+                sunAOA = 0f;
+                status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObject);
+                return;
             }
             status = "Direct Sunlight";
             if (panelType == PanelType.FLAT)

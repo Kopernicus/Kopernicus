@@ -231,6 +231,10 @@ namespace Kopernicus
                     // Make the Body a barycenter
                     if (body.Get("barycenter", false))
                     {
+                        foreach (Collider collider in body.scaledBody.GetComponentsInChildren<Collider>(true))
+                        {
+                            collider.enabled = false;
+                        }
                         body.scaledBody.SetActive(false);
                     }
 

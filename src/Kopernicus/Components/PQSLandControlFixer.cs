@@ -41,8 +41,8 @@ namespace Kopernicus.Components
         private PQSLandControl[] _landControls;
         private static FieldInfo lcScatterListField;
         private PQ _quad;
-        private bool createColors = false;
-        private bool createScatter = false;
+        private bool createColors = true;
+        private bool createScatter = true;
 
         // I have no idea what Squad did to LandControl but it worked just fine before
         public override void OnSetup()
@@ -55,7 +55,6 @@ namespace Kopernicus.Components
             }
             catch
             {
-                cb = FlightGlobals.Bodies[0];
             }
             try
             {

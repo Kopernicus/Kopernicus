@@ -8,7 +8,13 @@ namespace Kopernicus.Components
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class PQSMod_BiomeSampler : PQSMod
     {
-        internal static IDictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
+        internal static Dictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
+        internal CelestialBody cb = null;
+        public override void OnSetup()
+        {
+            cb = FlightGlobals.GetBodyByName(sphere.name);
+            base.OnSetup();
+        }
         public override void OnVertexBuildHeight(PQS.VertexBuildData data)
         {
             base.OnVertexBuildHeight(data);
@@ -23,7 +29,7 @@ namespace Kopernicus.Components
                 }
                 else
                 {
-                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, FlightGlobals.GetBodyByName(sphere.name)).name);
+                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, cb).name);
                 }
             }
             catch
