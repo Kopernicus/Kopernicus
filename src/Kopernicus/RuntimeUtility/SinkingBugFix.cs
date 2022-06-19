@@ -7,6 +7,7 @@ namespace Kopernicus.RuntimeUtility
     public class SinkingBugFix : MonoBehaviour
     {
         internal static Dictionary<int, bool>[] colliderStatus = new Dictionary<int, bool>[FlightGlobals.Bodies.Count];
+        internal uint counter = 0;
 
         private void Start()
         {
@@ -18,25 +19,30 @@ namespace Kopernicus.RuntimeUtility
                 }
             }
         }
-        private void Update()
+        private void FixedUpdate()
         {
             if ((RuntimeUtility.KopernicusConfig.DisableFarAwayColliders) && (HighLogic.LoadedSceneIsFlight))
             {
-                CelestialBody mainBody = FlightGlobals.currentMainBody;
-                for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+                counter++;
+                if (counter > 20)
                 {
-                    CelestialBody cb = FlightGlobals.Bodies[i];
-                    if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                    counter = 0;
+                    CelestialBody mainBody = FlightGlobals.currentMainBody;
+                    for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
                     {
-                        continue;
-                    }
-                    if (cb == FlightGlobals.currentMainBody)
-                    {
-                        RestoreColliderState(cb, i);
-                    }
-                    else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) > 100000000000)
-                    {
-                        HibernateColliderState(cb, i);
+                        CelestialBody cb = FlightGlobals.Bodies[i];
+                        if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                        {
+                            continue;
+                        }
+                        else if (cb == FlightGlobals.currentMainBody || (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) < 100000000000))
+                        {
+                            RestoreColliderState(cb, i);
+                        }
+                        else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) > 100000000000)
+                        {
+                            HibernateColliderState(cb, i);
+                        }
                     }
                 }
             }
@@ -54,7 +60,6 @@ namespace Kopernicus.RuntimeUtility
                     colliderStatus[index].Add(collider.gameObject.GetInstanceID(), collider.enabled);
                 }
             }
-            return;
         }
         private void HibernateColliderState(CelestialBody cb, int index)
         {
@@ -63,10 +68,6 @@ namespace Kopernicus.RuntimeUtility
                 if (!colliderStatus[index].ContainsKey(collider.gameObject.GetInstanceID()))
                 {
                     colliderStatus[index].Add(collider.gameObject.GetInstanceID(), collider.enabled);
-                }
-                else
-                {
-                    colliderStatus[index][collider.gameObject.GetInstanceID()] = collider.enabled;
                 }
                 collider.enabled = false;
             }
