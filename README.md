@@ -1,19 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 18, 2022
+June 19, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-125:
+New in this latest version release-126:
 
-1.) Added a new version of the Sinking-terrain body fix that works in a lot more instances (always?).  It works by disabling colliders that are "out of bounds" for the current scene (more distant than say, stock eeloo).  This incurs a small performance hit to keep track of their state for reenabling, but is configurable.
-
-2.) Added a new Kopernicus_Config.cfg parameter, DisableFarAwayColliders, Default True, Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to keep on unless you have a small system.
-
-3.) Some garbage collection optimizations for the Biome filter.
+1.) Corrected a bug which could result in a situation in which the DisableFarAwayColliders setting being set to false would be ignored.
 
 Known Bugs:
 

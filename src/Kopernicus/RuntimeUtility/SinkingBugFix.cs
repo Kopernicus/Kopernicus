@@ -10,28 +10,34 @@ namespace Kopernicus.RuntimeUtility
 
         private void Start()
         {
-            for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+            if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
             {
-                colliderStatus[i] = new Dictionary<int, bool>();
+                for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+                {
+                    colliderStatus[i] = new Dictionary<int, bool>();
+                }
             }
         }
         private void Update()
         {
-            CelestialBody mainBody = FlightGlobals.currentMainBody;
-            for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+            if ((RuntimeUtility.KopernicusConfig.DisableFarAwayColliders) && (HighLogic.LoadedSceneIsFlight))
             {
-                CelestialBody cb = FlightGlobals.Bodies[i];
-                if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                CelestialBody mainBody = FlightGlobals.currentMainBody;
+                for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
                 {
-                    continue;
-                }
-                if (cb == FlightGlobals.currentMainBody)
-                {
-                    RestoreColliderState(cb, i);
-                }
-                else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) > 100000000000)
-                {
-                    HibernateColliderState(cb, i);
+                    CelestialBody cb = FlightGlobals.Bodies[i];
+                    if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                    {
+                        continue;
+                    }
+                    if (cb == FlightGlobals.currentMainBody)
+                    {
+                        RestoreColliderState(cb, i);
+                    }
+                    else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) > 100000000000)
+                    {
+                        HibernateColliderState(cb, i);
+                    }
                 }
             }
         }
