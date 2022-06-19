@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-June 18, 2022
+June 19, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-127:
+New in this latest version release-128:
 
-1.) Performance optimizations for the new collider fix.
+1.) A bug was locking colliders in state on the mainbody.  Normally this is harmless, but mods that like to change collider states (RSS/RP1 has one such thing) may not like this.  It's now fixed.
+
+2.) DisableFarAwayColliders is now false by default until we can better test it.  Turn it on if and only if you really need the sinking body fix, and are willing to deal with potential bugs.
 
 Known Bugs:
 
