@@ -64,7 +64,7 @@ namespace Kopernicus.RuntimeUtility
                         {
                             RestoreColliderState(cb, i);
                         }
-                        else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) > 100000000000)
+                        else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) >= 100000000000)
                         {
                             HibernateColliderState(cb, i);
                         }
@@ -82,16 +82,54 @@ namespace Kopernicus.RuntimeUtility
                     colliderStatus[index].Remove(collider.gameObject.GetInstanceID());
                 }
             }
+            foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
+            {
+                if (colliderStatus[index].ContainsKey(collider.gameObject.GetInstanceID()))
+                {
+                    collider.enabled = colliderStatus[index][collider.gameObject.GetInstanceID()];
+                    colliderStatus[index].Remove(collider.gameObject.GetInstanceID());
+                }
+            }
         }
         private void HibernateColliderState(CelestialBody cb, int index)
         {
             foreach (Collider collider in cb.GetComponentsInChildren<Collider>(true))
+            {
+                if ((!colliderStatus[index].ContainsKey(collider.gameObject.GetInstanceID())))
+                {
+                    colliderStatus[index].Add(collider.gameObject.GetInstanceID(), collider.enabled);
+                }
+                collider.enabled = false;
+            }
+            foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
             {
                 if (!colliderStatus[index].ContainsKey(collider.gameObject.GetInstanceID()))
                 {
                     colliderStatus[index].Add(collider.gameObject.GetInstanceID(), collider.enabled);
                 }
                 collider.enabled = false;
+            }
+        }
+        private void OnDisable()
+        {
+            ReenableAll();
+        }
+
+        private void OnDestroy()
+        {
+            ReenableAll();
+        }
+
+        private void ReenableAll()
+        {
+            for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+            {
+                CelestialBody cb = FlightGlobals.Bodies[i];
+                if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                {
+                    continue;
+                }
+                RestoreColliderState(cb, i);
             }
         }
     }

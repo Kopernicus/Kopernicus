@@ -1071,7 +1071,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableMainMenuMunScene = True //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = True //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = False //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
-                    configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems.");
+                    configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
@@ -1105,7 +1105,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = " + KopernicusConfig.UseIncorrectScatterDensityLogic.ToString() + " //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
-                    configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems.");
+                    configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();

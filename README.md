@@ -7,11 +7,9 @@ June 19, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-128:
+New in this latest version release-129:
 
-1.) A bug was locking colliders in state on the mainbody.  Normally this is harmless, but mods that like to change collider states (RSS/RP1 has one such thing) may not like this.  It's now fixed.
-
-2.) DisableFarAwayColliders is now false by default until we can better test it.  Turn it on if and only if you really need the sinking body fix, and are willing to deal with potential bugs.
+1.) A couple potential bugs and performance issues with the collider fix have been patched.  Collider fix is still off by default, and is only advisable if you have a system larger than stock Eeloo in orbital radius.
 
 Known Bugs:
 
@@ -32,6 +30,8 @@ Known Caveats:
 3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
 4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but I am open to being proven wrong.  You can work around this if affected by setting your LandControl color to be all zeroes.
+
+5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is off by default.  If you have a system larger than stock, please see Kopernicus_Config.cfg option DisableFarAwayColliders, read about the fix/workaround, and set it as you feel appropriate.
 
 About
 -----
