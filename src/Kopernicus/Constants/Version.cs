@@ -34,7 +34,7 @@ namespace Kopernicus.Constants
     public static class Version
     {
         // Version information
-        private static String VersionNumber
+        public static String VersionNumber
         {
             get
             {

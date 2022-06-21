@@ -62,6 +62,10 @@ namespace Kopernicus.Configuration
         public bool UseIncorrectScatterDensityLogic = false;
         [Persistent]
         public bool DisableFarAwayColliders = true;
+        [Persistent]
+        public float SettingsWindowXcoord = 0;
+        [Persistent]
+        public float SettingsWindowYcoord = 0;
 
         public UrlDir.UrlConfig[] baseConfigs;
         public void loadMainSettings()

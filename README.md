@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 19, 2022
+June 21, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-129:
+New in this latest version release-130:
 
-1.) A couple potential bugs and performance issues with the collider fix have been patched.  Collider fix is still off by default, and is only advisable if you have a system larger than stock Eeloo in orbital radius.
+1.) A ingame GUI has been added to the toolbar to edit Kopernicus_Config.cfg.  Not all settings are live, but nearly all take effect with a scene switch.  Very handy!  Feel free to explore the settings...  if you ever mess it up, you can just delete GameData/Kopernicus/Config/Kopernicus_config.cfg to start over.
 
 Known Bugs:
 

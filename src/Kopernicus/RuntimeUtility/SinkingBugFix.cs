@@ -49,7 +49,7 @@ namespace Kopernicus.RuntimeUtility
             if ((RuntimeUtility.KopernicusConfig.DisableFarAwayColliders) && (HighLogic.LoadedSceneIsFlight) && (!HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER)))
             {
                 counter++;
-                if (counter > 20)
+                if (counter > 25)
                 {
                     counter = 0;
                     CelestialBody mainBody = FlightGlobals.currentMainBody;
