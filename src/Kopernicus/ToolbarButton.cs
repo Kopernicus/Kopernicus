@@ -14,8 +14,9 @@ namespace Kopernicus
         bool addedButton = false;
         bool draw = false;
         public ApplicationLauncherButton button;
-        public Rect windowRect = new Rect (RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord, RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord, 400, 50);
+        public static Rect windowRect;
         public int windowId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        public bool loaded = false;
         private void Awake()
         {
             if (instance == null)
@@ -36,6 +37,11 @@ namespace Kopernicus
         }
         void Start()
         {
+            if (!loaded)
+            {
+                windowRect = new Rect(RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord, RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord, 400, 50);
+                loaded = true;
+            }
             try
             {
                 if (!addedButton)
@@ -62,11 +68,6 @@ namespace Kopernicus
         {
             if (draw)
             {
-                if ((windowRect.x == 0) && (windowRect.y == 0))
-                {
-                    windowRect.x = RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord;
-                    windowRect.y = RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord;
-                }
                 windowRect = GUILayout.Window(windowId, windowRect, DrawKopernicusWindow, "Kopernicus " + Kopernicus.Constants.Version.VersionNumber);
             }
         }
@@ -109,66 +110,62 @@ namespace Kopernicus
             GUILayout.Label("ScatterCountLimit: A number defining the maximum number of land scatters that may spawn. Works best set close to ScatterDistanceLimit, setting them far apart can lead to odd patterning behavior.");
             try
             {
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit.ToString()));
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString());
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit.ToString()));
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING");
                 GUILayout.EndHorizontal();
             }
             catch
             {
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit = 4250;
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit.ToString()));
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString());
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit.ToString()));
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING");
                 GUILayout.EndHorizontal();
             }
             GUILayout.Label("ScatterDistanceLimit: ShadowDistanceLimit: A number defining the maximum distance away at which a land scatter may spawn. Works best set close to ScatterCountLimit, setting them far apart can lead to odd patterning behavior.");
             try
             {
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit.ToString()));
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString());
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit.ToString()));
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING");
                 GUILayout.EndHorizontal();
             }
             catch
             {
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit = 4250;
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit.ToString()));
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString());
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit.ToString()));
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING");
                 GUILayout.EndHorizontal();
             }
             GUILayout.Label("A number defining the maximum distance at which shadows may be cast. Lower numbers yield less shadow cascading artifacts.");
             try
             {
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit.ToString()));
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString());
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit.ToString()));
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING");
                 GUILayout.EndHorizontal();
             }
             catch
             {
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit = 25000;
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem = GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToString());
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit = 25000;
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING");
                 GUILayout.EndHorizontal();
             }
             GUI.DragWindow();
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord = windowRect.x;
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord = windowRect.y;
         }
         void OnDestroy()
         {
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord = windowRect.x;
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord = windowRect.y;
             if (button)
             {
                 ApplicationLauncher.Instance.RemoveModApplication(button);
             }
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord = windowRect.x;
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord = windowRect.y;
         }
         void DummyFunction()
         {
