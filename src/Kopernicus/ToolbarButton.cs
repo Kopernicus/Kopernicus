@@ -62,6 +62,11 @@ namespace Kopernicus
         {
             if (draw)
             {
+                if ((windowRect.x == 0) && (windowRect.y == 0))
+                {
+                    windowRect.x = RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord;
+                    windowRect.y = RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord;
+                }
                 windowRect = GUILayout.Window(windowId, windowRect, DrawKopernicusWindow, "Kopernicus " + Kopernicus.Constants.Version.VersionNumber);
             }
         }
