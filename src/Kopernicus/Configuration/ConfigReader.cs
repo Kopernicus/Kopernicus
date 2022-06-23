@@ -61,7 +61,7 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool UseIncorrectScatterDensityLogic = false;
         [Persistent]
-        public bool DisableFarAwayColliders = true;
+        public bool DisableFarAwayColliders = false;
         [Persistent]
         public float SettingsWindowXcoord = 0;
         [Persistent]

@@ -1,15 +1,19 @@
 ﻿Kopernicus
 ==============================
-June 21, 2022
+June 23, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-130:
+New in this latest version release-131:
 
-1.) A ingame GUI has been added to the toolbar to edit Kopernicus_Config.cfg.  Not all settings are live, but nearly all take effect with a scene switch.  Very handy!  Feel free to explore the settings...  if you ever mess it up, you can just delete GameData/Kopernicus/Config/Kopernicus_config.cfg to start over.
+1.) Improvements to the PQS flicker fix.
+
+2.) Removed the JNSQ-specific workarounds (they have a official release fixing the issue). Please ensure you grab their fix from the thread if playing JNSQ. https://forum.kerbalspaceprogram.com/index.php?/topic/184880-1121-jnsq-0100-23-sept-2021/&do=findComment&comment=4148035
+
+3.) Prevented the experimental "disableCollider" fix from automatically turning on in some situations.
 
 Known Bugs:
 

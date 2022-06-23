@@ -71,22 +71,8 @@ namespace Kopernicus.Components
             {
                 if (pqsLC)
                 {
-                    if (cb.isHomeWorld)
-                    {
-                        if ((cb.BiomeMap.ToString().Contains("JNSQ_Textures") && (cb.name.Equals("Kerbin") && cb.displayName.Contains("Kerbin"))))
-                        {
-                            pqsLC.createColors = false;
-                        }
-                        else
-                        {
-                            pqsLC.createColors = createColors;
-                            pqsLC.createScatter = createScatter;
-                        }
-                    }
-                    else
-                    {
-                        pqsLC.createColors = true;
-                    }
+                    pqsLC.createColors = true;
+                    pqsLC.createScatter = createScatter;
                 }
             }
             catch
