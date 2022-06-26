@@ -46,13 +46,21 @@ namespace Kopernicus
             {
                 if (!addedButton)
                 {
-                    Texture buttonTexture = GameDatabase.Instance.GetTexture("Kopernicus/Graphics/KopernicusIcon", false);
-                    button = ApplicationLauncher.Instance.AddModApplication(ShowToolbarGUI, HideToolbarGUI, DummyFunction, DummyFunction, DummyFunction, DummyFunction, ApplicationLauncher.AppScenes.ALWAYS, buttonTexture);
-                    addedButton = true;
+                    if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
+                    {
+                        Texture buttonTexture = GameDatabase.Instance.GetTexture("Kopernicus/Graphics/KopernicusIcon", false);
+                        button = ApplicationLauncher.Instance.AddModApplication(ShowToolbarGUI, HideToolbarGUI, DummyFunction, DummyFunction, DummyFunction, DummyFunction, ApplicationLauncher.AppScenes.ALWAYS, buttonTexture);
+                        addedButton = true;
+                    }
+                    else
+                    {
+                        addedButton = true;
+                    }
                 }
             }
             catch
             {
+                addedButton = true;
                 //No button. :(
             }
         }

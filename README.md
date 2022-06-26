@@ -1,19 +1,19 @@
 ﻿Kopernicus
 ==============================
-June 23, 2022
+June 25, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-131:
+New in this latest version release-132:
 
-1.) Improvements to the PQS flicker fix.
+1.) The Kopernicus widget now only appears in the spacecenter to reduce toolbar clutter.
 
-2.) Removed the JNSQ-specific workarounds (they have a official release fixing the issue). Please ensure you grab their fix from the thread if playing JNSQ. https://forum.kerbalspaceprogram.com/index.php?/topic/184880-1121-jnsq-0100-23-sept-2021/&do=findComment&comment=4148035
+2.) We now include a small .cfg file attatched to each release to work around potential terrain color issues with old mods (like JNSQ in particular).  Download if needed, and place anywhere in gamedata.   It is called "ColorFix.cfg"
 
-3.) Prevented the experimental "disableCollider" fix from automatically turning on in some situations.
+3.) Removed some debug spam from the internal Kopernicus shadow manager in an effort to combat balooning logfile sizes.
 
 Known Bugs:
 
@@ -33,7 +33,7 @@ Known Caveats:
 
 3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
-4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but I am open to being proven wrong.  You can work around this if affected by setting your LandControl color to be all zeroes.
+4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but a few do (JNSQ for example).  You can work around this if affected by setting your LandControl color to be all zeroes. See attatched cfg for a mod that does this.
 
 5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is off by default.  If you have a system larger than stock, please see Kopernicus_Config.cfg option DisableFarAwayColliders, read about the fix/workaround, and set it as you feel appropriate.
 

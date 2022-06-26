@@ -40,8 +40,6 @@ namespace Kopernicus.ShadowMan
             }
             else
             {
-                //destroy any duplicate instances that may be created by a duplicate install
-                Utils.LogError("Destroying duplicate instance, check your install for duplicate scatterer folders, or nested GameData folders");
                 UnityEngine.Object.DestroyImmediate(this);
             }
 
