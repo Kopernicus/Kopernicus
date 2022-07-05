@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -35,10 +35,10 @@ namespace Kopernicus.Components.ModularScatter
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class LightEmitterComponent : IComponent<ModularScatter>
     {
-        /// <summary>
-        /// Contains a List of lights for the scatter
-        /// </summary>
-        private readonly List<Light> _lights = new List<Light>();
+        ///// <summary>
+        ///// Contains a List of lights for the scatter
+        ///// </summary>
+        //private readonly List<Light> _lights = new List<Light>();
 
         /// <summary>
         /// The prefab object that is instantiated to every scatter objects
@@ -50,88 +50,71 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         public Vector3 Offset = Vector3.zero;
 
-        /// <summary>
-        /// Gets executed every frame and checks if some of the scatters don't have
-        /// </summary>
-        /// <param name="system"></param>
-        void IComponent<ModularScatter>.Update(ModularScatter system)
-        {
-            // If there's nothing to do, discard any old lights and abort
-            if (system.scatterObjects.Count == 0)
-            {
-                if (!_lights.Any())
-                {
-                    return;
-                }
+        public void Apply(ModularScatter system) => throw new NotImplementedException();
 
-                Debug.LogWarning("[Kopernicus] Discard old lights");
-                foreach (Light light in _lights.Where(l => l))
-                {
-                    UnityEngine.Object.Destroy(light.gameObject);
-                }
+        public void PostApply(ModularScatter system) => throw new NotImplementedException();
 
-                _lights.Clear();
-                return;
-            }
+        public void Update(ModularScatter system) => throw new NotImplementedException();
 
-            Boolean rebuild = false;
-            if (system.scatterObjects.Count > _lights.Count)
-            {
-                Debug.LogWarning("[Kopernicus] Add " + (system.scatterObjects.Count - _lights.Count) +
-                                 " lights");
-                rebuild = true;
-            }
-            else if (system.scatterObjects.Count < _lights.Count)
-            {
-                Debug.LogWarning("[Kopernicus] Remove " + (_lights.Count - system.scatterObjects.Count) +
-                                 " lights");
-                rebuild = true;
-            }
+        ///// <summary>
+        ///// Gets executed every frame and checks if some of the scatters don't have
+        ///// </summary>
+        ///// <param name="system"></param>
+        //void IComponent<ModularScatter>.Update(ModularScatter system)
+        //{
+        //    // If there's nothing to do, discard any old lights and abort
+        //    if (system.scatterObjects.Count == 0)
+        //    {
+        //        if (!_lights.Any())
+        //        {
+        //            return;
+        //        }
 
-            if (!rebuild)
-            {
-                return;
-            }
+        //        Debug.LogWarning("[Kopernicus] Discard old lights");
+        //        foreach (Light light in _lights.Where(l => l))
+        //        {
+        //            UnityEngine.Object.Destroy(light.gameObject);
+        //        }
 
-            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
-            {
-                GameObject scatter = system.scatterObjects[i];
+        //        _lights.Clear();
+        //        return;
+        //    }
 
-                Light light = scatter.GetComponentInChildren<Light>();
-                if (light)
-                {
-                    continue;
-                }
+        //    Boolean rebuild = false;
+        //    if (system.scatterObjects.Count > _lights.Count)
+        //    {
+        //        Debug.LogWarning("[Kopernicus] Add " + (system.scatterObjects.Count - _lights.Count) +
+        //                         " lights");
+        //        rebuild = true;
+        //    }
+        //    else if (system.scatterObjects.Count < _lights.Count)
+        //    {
+        //        Debug.LogWarning("[Kopernicus] Remove " + (_lights.Count - system.scatterObjects.Count) +
+        //                         " lights");
+        //        rebuild = true;
+        //    }
 
-                GameObject lightObject = UnityEngine.Object.Instantiate(Prefab.gameObject, scatter.transform, true);
-                lightObject.transform.localPosition = Offset;
-                lightObject.transform.localScale = Vector3.one;
-                lightObject.transform.localRotation = Quaternion.identity;
-                _lights.Add(lightObject.GetComponent<Light>());
-            }
-        }
+        //    if (!rebuild)
+        //    {
+        //        return;
+        //    }
 
-        /// <summary>
-        /// Destroy the generated objects on a scene change so they don't appear in random positions
-        /// </summary>
-        private void OnGameSceneLoadRequested(GameScenes data)
-        {
-            foreach (Light light in _lights)
-            {
-                UnityEngine.Object.Destroy(light);
-            }
+        //    for (Int32 i = 0; i < system.scatterObjects.Count; i++)
+        //    {
+        //        GameObject scatter = system.scatterObjects[i];
 
-            _lights.Clear();
-        }
+        //        Light light = scatter.GetComponentInChildren<Light>();
+        //        if (light)
+        //        {
+        //            continue;
+        //        }
 
-        void IComponent<ModularScatter>.Apply(ModularScatter system)
-        {
-            // We don't use this
-        }
-
-        void IComponent<ModularScatter>.PostApply(ModularScatter system)
-        {
-            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
-        }
+        //        GameObject lightObject = UnityEngine.Object.Instantiate(Prefab.gameObject, scatter.transform, true);
+        //        lightObject.transform.localPosition = Offset;
+        //        lightObject.transform.localScale = Vector3.one;
+        //        lightObject.transform.localRotation = Quaternion.identity;
+        //        _lights.Add(lightObject.GetComponent<Light>());
+        //    }
+        //}
     }
 }

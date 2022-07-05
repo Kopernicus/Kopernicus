@@ -103,46 +103,46 @@ namespace Kopernicus.Components.ModularScatter
 
         void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator, ModularScatter system)
         {
-            List<GameObject> scatters = system.scatterObjects;
-            Vessel vessel = flightIntegrator.Vessel;
-            CelestialBody _body = system.body;
+            //List<GameObject> scatters = system.scatterObjects;
+            //Vessel vessel = flightIntegrator.Vessel;
+            //CelestialBody _body = system.body;
 
-            if (_body != vessel.mainBody)
-                return;
+            //if (_body != vessel.mainBody)
+            //    return;
 
-            for (Int32 i = 0; i < scatters.Count; i++)
-            {
-                GameObject scatter = scatters[i];
+            //for (Int32 i = 0; i < scatters.Count; i++)
+            //{
+            //    GameObject scatter = scatters[i];
 
-                if (scatter != null ? scatter.activeSelf : true)
-                    continue;
+            //    if (scatter != null ? scatter.activeSelf : true)
+            //        continue;
 
-                if (!string.IsNullOrEmpty(biomeName))
-                {
-                    String biome = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
+            //    if (!string.IsNullOrEmpty(biomeName))
+            //    {
+            //        String biome = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
 
-                    if (biomeName != biome)
-                        continue;
-                }
+            //        if (biomeName != biome)
+            //            continue;
+            //    }
 
-                Single distance = distanceCurve.Evaluate(Vector3.Distance(vessel.transform.position, scatter.transform.position));
+            //    Single distance = distanceCurve.Evaluate(Vector3.Distance(vessel.transform.position, scatter.transform.position));
 
-                Double altitude = altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
-                Double latitude = latitudeCurve.Evaluate((Single)vessel.latitude);
-                Double longitude = longitudeCurve.Evaluate((Single)vessel.longitude);
+            //    Double altitude = altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
+            //    Double latitude = latitudeCurve.Evaluate((Single)vessel.latitude);
+            //    Double longitude = longitudeCurve.Evaluate((Single)vessel.longitude);
 
-                Double newTemp = altitude * latitude * longitude * ambientTemp;
+            //    Double newTemp = altitude * latitude * longitude * ambientTemp;
 
-                if (heatMap)
-                {
-                    Double x = ((450 - vessel.longitude) % 360) / 360.0;
-                    Double y = (vessel.latitude + 90) / 180.0;
-                    Double m = heatMap.GetPixelFloat(x, y);
-                    newTemp *= m;
-                }
+            //    if (heatMap)
+            //    {
+            //        Double x = ((450 - vessel.longitude) % 360) / 360.0;
+            //        Double y = (vessel.latitude + 90) / 180.0;
+            //        Double m = heatMap.GetPixelFloat(x, y);
+            //        newTemp *= m;
+            //    }
 
-                KopernicusHeatManager.NewTemp(newTemp, sumTemp);
-            }
+            //    KopernicusHeatManager.NewTemp(newTemp, sumTemp);
+            //}
         }
     }
 }

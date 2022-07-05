@@ -30,6 +30,7 @@ using System.IO;
 using System.Linq;
 // ReSharper disable once RedundantUsingDirective
 using System.Security.Cryptography;
+using HarmonyLib;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
@@ -81,6 +82,9 @@ namespace Kopernicus
             String kspVersion = Versioning.version_major + "." + Versioning.version_minor + "." +
                                 Versioning.Revision;
             Debug.Log("[Kopernicus] Running Kopernicus " + kopernicusVersion + " on KSP " + kspVersion);
+
+            Harmony harmony = new Harmony("Kopernicus");
+            harmony.PatchAll();
 
             // Wrap this in a try - catch block so we can display a warning if Kopernicus fails to load for some reason
             try
