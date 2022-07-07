@@ -256,3 +256,5 @@ $RECYCLE.BIN/
 
 # Kopernicus
 build/GameData/Kopernicus/Cache/
+!dependencies/*
+!dependencies/*/*
