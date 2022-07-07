@@ -23,11 +23,9 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Kopernicus.Components.ModularComponentSystem;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Kopernicus.Components.ModularScatter
@@ -35,11 +33,6 @@ namespace Kopernicus.Components.ModularScatter
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class LightEmitterComponent : IComponent<ModularScatter>
     {
-        ///// <summary>
-        ///// Contains a List of lights for the scatter
-        ///// </summary>
-        //private readonly List<Light> _lights = new List<Light>();
-
         /// <summary>
         /// The prefab object that is instantiated to every scatter objects
         /// </summary>
@@ -55,66 +48,5 @@ namespace Kopernicus.Components.ModularScatter
         public void PostApply(ModularScatter system) => throw new NotImplementedException();
 
         public void Update(ModularScatter system) => throw new NotImplementedException();
-
-        ///// <summary>
-        ///// Gets executed every frame and checks if some of the scatters don't have
-        ///// </summary>
-        ///// <param name="system"></param>
-        //void IComponent<ModularScatter>.Update(ModularScatter system)
-        //{
-        //    // If there's nothing to do, discard any old lights and abort
-        //    if (system.scatterObjects.Count == 0)
-        //    {
-        //        if (!_lights.Any())
-        //        {
-        //            return;
-        //        }
-
-        //        Debug.LogWarning("[Kopernicus] Discard old lights");
-        //        foreach (Light light in _lights.Where(l => l))
-        //        {
-        //            UnityEngine.Object.Destroy(light.gameObject);
-        //        }
-
-        //        _lights.Clear();
-        //        return;
-        //    }
-
-        //    Boolean rebuild = false;
-        //    if (system.scatterObjects.Count > _lights.Count)
-        //    {
-        //        Debug.LogWarning("[Kopernicus] Add " + (system.scatterObjects.Count - _lights.Count) +
-        //                         " lights");
-        //        rebuild = true;
-        //    }
-        //    else if (system.scatterObjects.Count < _lights.Count)
-        //    {
-        //        Debug.LogWarning("[Kopernicus] Remove " + (_lights.Count - system.scatterObjects.Count) +
-        //                         " lights");
-        //        rebuild = true;
-        //    }
-
-        //    if (!rebuild)
-        //    {
-        //        return;
-        //    }
-
-        //    for (Int32 i = 0; i < system.scatterObjects.Count; i++)
-        //    {
-        //        GameObject scatter = system.scatterObjects[i];
-
-        //        Light light = scatter.GetComponentInChildren<Light>();
-        //        if (light)
-        //        {
-        //            continue;
-        //        }
-
-        //        GameObject lightObject = UnityEngine.Object.Instantiate(Prefab.gameObject, scatter.transform, true);
-        //        lightObject.transform.localPosition = Offset;
-        //        lightObject.transform.localScale = Vector3.one;
-        //        lightObject.transform.localRotation = Quaternion.identity;
-        //        _lights.Add(lightObject.GetComponent<Light>());
-        //    }
-        //}
     }
 }

@@ -76,15 +76,30 @@
       <Name>Kopernicus.Parser</Name>
       <Private>True</Private>
     </Reference>
-    <Reference Include="..\..\dependencies\ModularFlightIntegrator\ModularFlightIntegrator.dll">
-      <Name>ModularFlightIntegrator</Name>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="0Harmony, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+
+      <Reference Include="0Harmony, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Lib.Harmony.2.2.1\lib\net472\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <Choose>
+      <When Condition="'$(Configuration)' == 'ReleaseKSP18'">
+          <ItemGroup>
+          <Reference  Include="..\..\dependencies\MFI_1.2.7_KSP1.8\ModularFlightIntegrator.dll">
+              <Name>ModularFlightIntegrator</Name>
+              <Private>False</Private>
+          </Reference>
+          </ItemGroup>
+      </When>
+      <Otherwise>
+          <ItemGroup>
+          <Reference Include="..\..\dependencies\MFI_latest\ModularFlightIntegrator.dll">
+              <Name>ModularFlightIntegrator</Name>
+              <Private>False</Private>
+          </Reference>
+          </ItemGroup>
+      </Otherwise>
+  </Choose>
   <!--Krafs.Publicizer items-->
   <ItemGroup>
     <Publicize Include="UnityEngine.CoreModule:UnityEngine.Object.m_CachedPtr" />
@@ -94,9 +109,16 @@
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.scatterParent" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheTotalCount" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheUnassignedCount" />
+    <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheAssignedCount" />
+    <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.BuildCache" />
+    <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.scatterN" />
+    <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.qc" />
+    <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.minLevel" />
+    <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheCreated" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>
+    <Compile Include="Components\ModularScatter\PQSMod_KopernicusLandClassScatterQuad.cs" />
     <Compile Include="ToolbarButton.cs" />
     <Compile Include="Components\DrawTools.cs" />
     <Compile Include="Components\HazardousBody.cs" />
@@ -150,7 +172,6 @@
     <Compile Include="Components\NativeByteArray.cs" />
     <Compile Include="Components\OrbitRendererUpdater.cs" />
     <Compile Include="Components\PlanetaryParticle.cs" />
-    <Compile Include="Components\PQSLandControlFixer.cs" />
     <Compile Include="Components\PQSMod_BiomeSampler.cs" />
     <Compile Include="Components\PQSMod_TextureAtlasFixer.cs" />
     <Compile Include="Components\Ring.cs" />
@@ -399,7 +420,9 @@
   <!--Copy to build folder and to the local KSP install on build-->
   <Target Name="AfterBuild">
     <ItemGroup>
-      <BuildFiles Include="$(OutputPath)Kopernicus.pdb;$(OutputPath)Kopernicus.dll;$(OutputPath)Kopernicus.Parser.dll" />
+      <BuildFiles Include="$(OutputPath)Kopernicus.dll" />
+      <BuildFiles Include="$(OutputPath)Kopernicus.Parser.dll" />
+      <BuildFiles Condition="Exists('$(OutputPath)Kopernicus.pdb')" Include="$(OutputPath)Kopernicus.pdb" />
     </ItemGroup>
     <Copy Condition="'$(Configuration)' == 'ReleaseKSP19Plus'" SourceFiles="@(BuildFiles)" DestinationFolder="$(ProjectDir)..\..\build\KSP19PLUS\GameData\Kopernicus\Plugins" />
     <Copy Condition="'$(Configuration)' == 'ReleaseKSP18'" SourceFiles="@(BuildFiles)" DestinationFolder="$(ProjectDir)..\..\build\KSP18\GameData\Kopernicus\Plugins" />

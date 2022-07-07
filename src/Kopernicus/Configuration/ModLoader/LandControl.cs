@@ -483,13 +483,6 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.ignoreDensityGameSetting = value; }
             }
 
-            [ParserTarget("densityVariance")]
-            public NumericCollectionParser<Single> DensityVariance
-            {
-                get { return Scatter.densityVariance; }
-                set { Scatter.densityVariance = value; }
-            }
-
             [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
             public CallbackList<ComponentLoader<ModularScatter>> Components { get; set; }
 

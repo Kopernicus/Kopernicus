@@ -23,11 +23,9 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Kopernicus.Components.ModularComponentSystem;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Kopernicus.Components.ModularScatter

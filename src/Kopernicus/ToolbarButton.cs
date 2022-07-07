@@ -15,10 +15,11 @@ namespace Kopernicus
         bool draw = false;
         public ApplicationLauncherButton button;
         public static Rect windowRect;
-        public int windowId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+        public int windowId;
         public bool loaded = false;
         private void Awake()
         {
+            windowId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
             if (instance == null)
             {
                 instance = this;

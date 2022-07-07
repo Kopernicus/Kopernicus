@@ -90,7 +90,7 @@ namespace Kopernicus.RuntimeUtility
             new Logger("Kopernicus.Runtime", true).SetAsActive();
             // Add handlers
             GameEvents.OnMapEntered.Add(() => OnMapEntered());
-            GameEvents.onLevelWasLoaded.Add(s => OnLevelWasLoaded(s));
+            GameEvents.onLevelWasLoaded.Add(s => OnLevelLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
 
@@ -182,10 +182,7 @@ namespace Kopernicus.RuntimeUtility
             }
         }
         // Run patches every time a new scene was loaded
-        [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
-#pragma warning disable UNT0006 // Incorrect message signature
-        private void OnLevelWasLoaded(GameScenes scene)
-#pragma warning restore UNT0006 // Incorrect message signature
+        private void OnLevelLoaded(GameScenes scene)
         {
             PatchFlightIntegrator();
             FixCameras();
@@ -1128,7 +1125,7 @@ namespace Kopernicus.RuntimeUtility
         {
             UpdateConfig();
             GameEvents.OnMapEntered.Remove(OnMapEntered);
-            GameEvents.onLevelWasLoaded.Remove(OnLevelWasLoaded);
+            GameEvents.onLevelWasLoaded.Remove(OnLevelLoaded);
             GameEvents.onProtoVesselLoad.Remove(TransformBodyReferencesOnLoad);
             GameEvents.onProtoVesselSave.Remove(TransformBodyReferencesOnSave);
         }
