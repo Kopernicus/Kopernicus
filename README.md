@@ -7,17 +7,9 @@ July 8th, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-133:
+New in this latest version release-134:
 
-1.) Rewrote large parts of the scatter system to use a new clever logic developed in conjunction with @gotmachine. Major thanks to him, as this realizes major performance benefits!  This has been well tested in bleedinge edge for 2 days now and is stable.
-
-2.) Kopernicus_Config.cfg parameters ScatterDistanceLimit and ScatterCountLimit are removed, and will be scrubbed from your cfgs automatically. This level of tweaking is no longer needed or required with the new high performance scatter system.
-
-3.) We now depend on KSPHarmony framework to do a few small things that would be messy to do via reflection. Please ensure you extract your release zip fully, it includes everything you need (CKAN is also aware of this).
-
-4.) Added es-es localization.
-
-5.) Updated included ModuleManager to 4.2.2.
+1.) Minor hotfix for some logspam regressions in the optional collider bugfix.
 
 Known Bugs:
 
