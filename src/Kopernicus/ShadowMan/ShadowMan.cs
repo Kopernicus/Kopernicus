@@ -36,7 +36,6 @@ namespace Kopernicus.ShadowMan
             if (instance == null)
             {
                 instance = this;
-                Utils.LogDebug("Core instance created");
             }
             else
             {

@@ -76,29 +76,28 @@
       <Name>Kopernicus.Parser</Name>
       <Private>True</Private>
     </Reference>
-
-      <Reference Include="0Harmony, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="0Harmony, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Lib.Harmony.2.2.1\lib\net472\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <Choose>
-      <When Condition="'$(Configuration)' == 'ReleaseKSP18'">
-          <ItemGroup>
-          <Reference  Include="..\..\dependencies\MFI_1.2.7_KSP1.8\ModularFlightIntegrator.dll">
-              <Name>ModularFlightIntegrator</Name>
-              <Private>False</Private>
-          </Reference>
-          </ItemGroup>
-      </When>
-      <Otherwise>
-          <ItemGroup>
-          <Reference Include="..\..\dependencies\MFI_latest\ModularFlightIntegrator.dll">
-              <Name>ModularFlightIntegrator</Name>
-              <Private>False</Private>
-          </Reference>
-          </ItemGroup>
-      </Otherwise>
+    <When Condition="'$(Configuration)' == 'ReleaseKSP18'">
+      <ItemGroup>
+        <Reference Include="..\..\dependencies\MFI_1.2.7_KSP1.8\ModularFlightIntegrator.dll">
+          <Name>ModularFlightIntegrator</Name>
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="..\..\dependencies\MFI_latest\ModularFlightIntegrator.dll">
+          <Name>ModularFlightIntegrator</Name>
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </Otherwise>
   </Choose>
   <!--Krafs.Publicizer items-->
   <ItemGroup>

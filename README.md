@@ -1,23 +1,27 @@
 ﻿Kopernicus
 ==============================
-June 25, 2022
+July 8th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-132:
+New in this latest version release-133:
 
-1.) The Kopernicus widget now only appears in the spacecenter to reduce toolbar clutter.
+1.) Rewrote large parts of the scatter system to use a new clever logic developed in conjunction with @gotmachine. Major thanks to him, as this realizes major performance benefits!  This has been well tested in bleedinge edge for 2 days now and is stable.
 
-2.) We now include a small .cfg file attatched to each release to work around potential terrain color issues with old mods (like JNSQ in particular).  Download if needed, and place anywhere in gamedata.   It is called "ColorFix.cfg"
+2.) Kopernicus_Config.cfg parameters ScatterDistanceLimit and ScatterCountLimit are removed, and will be scrubbed from your cfgs automatically. This level of tweaking is no longer needed or required with the new high performance scatter system.
 
-3.) Removed some debug spam from the internal Kopernicus shadow manager in an effort to combat balooning logfile sizes.
+3.) We now depend on KSPHarmony framework to do a few small things that would be messy to do via reflection. Please ensure you extract your release zip fully, it includes everything you need (CKAN is also aware of this).
+
+4.) Added es-es localization.
+
+5.) Updated included ModuleManager to 4.2.2.
 
 Known Bugs:
 
-1.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten when the game exits. This means any edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
+1.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
 
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
 

@@ -47,10 +47,6 @@ namespace Kopernicus.Configuration
         [Persistent]
         public int SolarRefreshRate = 1;
         [Persistent]
-        public int ScatterCountLimit = 4250;
-        [Persistent]
-        public int ScatterDistanceLimit = 4250;
-        [Persistent]
         public bool EnableKopernicusShadowManager = true;
         [Persistent]
         public int ShadowDistanceLimit = 25000;
