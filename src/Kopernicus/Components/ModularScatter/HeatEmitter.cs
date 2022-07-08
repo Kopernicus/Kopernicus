@@ -23,11 +23,10 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Kopernicus.Components.ModularComponentSystem;
 using ModularFI;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Kopernicus.Components.ModularScatter
@@ -41,108 +40,37 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// The maximum temperature that will eventually be reached.
         /// </summary>
-        public Double ambientTemp = 0;
+        public double temperature = 0;
 
         /// <summary>
-        /// If the ambientTemp should be added.
-        /// </summary>
-        public Boolean sumTemp = false;
-
-        /// <summary>
-        /// The name of the biome.
-        /// </summary>
-        public String biomeName;
-
-        /// <summary>
-        /// Multiplier curve to change ambientTemp with latitude
-        /// </summary>
-        public FloatCurve latitudeCurve;
-
-        /// <summary>
-        /// Multiplier curve to change ambientTemp with longitude
-        /// </summary>
-        public FloatCurve longitudeCurve;
-
-        /// <summary>
-        /// Multiplier curve to change ambientTemp with altitude
-        /// </summary>
-        public FloatCurve altitudeCurve;
-
-        /// <summary>
-        /// Multiplier curve to change ambientTemp with distance
+        /// Multiplier curve to change temperature with distance from scatter
         /// </summary>
         public FloatCurve distanceCurve;
-
-        /// <summary>
-        /// Multiplier map for ambientTemp
-        /// </summary>
-        public MapSO heatMap;
 
         public HeatEmitterComponent()
         {
             distanceCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
         }
 
-        void IComponent<ModularScatter>.Update(ModularScatter system)
+        public void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator, PQSMod_KopernicusLandClassScatterQuad quadController)
         {
-            // We don't use this
-        }
-
-        void IComponent<ModularScatter>.Apply(ModularScatter system)
-        {
-            // We don't use this
-        }
-
-        void IComponent<ModularScatter>.PostApply(ModularScatter system)
-        {
-            Events.OnCalculateBackgroundRadiationTemperature.Add((mfi) => OnCalculateBackgroundRadiationTemperature(mfi, system));
-        }
-
-        void OnCalculateBackgroundRadiationTemperature(ModularFlightIntegrator flightIntegrator, ModularScatter system)
-        {
-            List<GameObject> scatters = system.scatterObjects;
             Vessel vessel = flightIntegrator.Vessel;
-            CelestialBody _body = system.body;
+            CelestialBody body = quadController.modularScatter.body;
 
-            if (_body != vessel.mainBody)
+            if (body.RefEquals(vessel.mainBody))
                 return;
 
-            for (Int32 i = 0; i < scatters.Count; i++)
+            for (int i = 0; i < quadController.scatterPositions.Count; i++)
             {
-                GameObject scatter = scatters[i];
-
-                if (scatter != null ? scatter.activeSelf : true)
-                    continue;
-
-                if (!string.IsNullOrEmpty(biomeName))
-                {
-                    String biome = ScienceUtil.GetExperimentBiome(_body, vessel.latitude, vessel.longitude);
-
-                    if (biomeName != biome)
-                        continue;
-                }
-
-                Single distance = distanceCurve.Evaluate(Vector3.Distance(vessel.transform.position, scatter.transform.position));
-
-                Double altitude = altitudeCurve.Evaluate((Single)Vector3d.Distance(vessel.transform.position, _body.transform.position));
-                Double latitude = latitudeCurve.Evaluate((Single)vessel.latitude);
-                Double longitude = longitudeCurve.Evaluate((Single)vessel.longitude);
-
-                Double newTemp = altitude * latitude * longitude * ambientTemp;
-
-                if (heatMap)
-                {
-                    Double x = ((450 - vessel.longitude) % 360) / 360.0;
-                    Double y = (vessel.latitude + 90) / 180.0;
-                    Double m = heatMap.GetPixelFloat(x, y);
-                    newTemp *= m;
-                }
-
-                KopernicusHeatManager.NewTemp(newTemp, sumTemp);
+                float distance = distanceCurve.Evaluate(Vector3.Distance(vessel.transform.position, quadController.scatterPositions[i]));
+                KopernicusHeatManager.NewTemp(distance * temperature, false);
             }
         }
+
+        public void Apply(ModularScatter system) => throw new NotImplementedException();
+
+        public void PostApply(ModularScatter system) => throw new NotImplementedException();
+
+        public void Update(ModularScatter system) => throw new NotImplementedException();
     }
 }

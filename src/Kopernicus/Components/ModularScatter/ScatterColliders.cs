@@ -23,11 +23,9 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Kopernicus.Components.ModularComponentSystem;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Kopernicus.Components.ModularScatter
@@ -39,51 +37,14 @@ namespace Kopernicus.Components.ModularScatter
     public class ScatterCollidersComponent : IComponent<ModularScatter>
     {
         /// <summary>
-        /// How many scatters were active the last time we added colliders.
-        /// This is used to avoid checking for the colliders every frame.
-        /// </summary>
-        private Int32 scatterCount = 0;
-
-        /// <summary>
         /// The mesh that is used for the collider
         /// </summary>
         public Mesh CollisionMesh;
 
-        /// <summary>
-        /// Gets executed every frame and checks if a Kerbal is within the range of the scatter object
-        /// </summary>
-        void IComponent<ModularScatter>.Update(ModularScatter system)
-        {
-            if (system.scatterObjects.Count == scatterCount)
-            {
-                return;
-            }
+        public void Apply(ModularScatter system) => throw new NotImplementedException();
 
-            scatterCount = system.scatterObjects.Count;
-            for (Int32 i = 0; i < system.scatterObjects.Count; i++)
-            {
-                GameObject scatter = system.scatterObjects[i];
-                MeshCollider collider = scatter.GetComponent<MeshCollider>();
-                if (collider)
-                {
-                    continue;
-                }
+        public void PostApply(ModularScatter system) => throw new NotImplementedException();
 
-                MeshFilter filter = scatter.GetComponent<MeshFilter>();
-                collider = scatter.AddComponent<MeshCollider>();
-                collider.sharedMesh = CollisionMesh ? CollisionMesh : filter.sharedMesh;
-                collider.enabled = true;
-            }
-        }
-
-        void IComponent<ModularScatter>.Apply(ModularScatter system)
-        {
-            // We don't use this
-        }
-
-        void IComponent<ModularScatter>.PostApply(ModularScatter system)
-        {
-            // We don't use this
-        }
+        public void Update(ModularScatter system) => throw new NotImplementedException();
     }
 }

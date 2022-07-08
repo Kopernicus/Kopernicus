@@ -23,33 +23,36 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
 using Kopernicus.Components.ModularComponentSystem;
 using Kopernicus.Components.Serialization;
-using Kopernicus.Constants;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
-using Random = UnityEngine.Random;
 
 namespace Kopernicus.Components.ModularScatter
 {
     /// <summary>
-    /// Component to add other Components to Scatter objects easily
+    /// Top level component that hold data for a single scatter type. It is referenced and used
+    /// by the per-quad PQSMod_KopernicusLandClassScatterQuad component that actually implements
+    /// our custom behaviours.
     /// </summary>
     public class ModularScatter : SerializableMonoBehaviour, IComponentSystem<ModularScatter>
     {
         /// <summary>
-        /// Components that can be added to the Ring
+        /// Components that can be added to the scatter
         /// </summary>
         public List<IComponent<ModularScatter>> Components
         {
             get { return components; }
             set { components = value; }
         }
+
+        [SerializeField]
+        private List<IComponent<ModularScatter>> components;
+
+        public string scatterName;
+
         /// <summary>
         /// The celestial body we are attached to
         /// </summary>
@@ -63,12 +66,7 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// The scatter instance we are attached to
         /// </summary>
-        public PQSLandControl.LandClassScatter scatter;
-
-        /// <summary>
-        /// The actual models that are scattered over the surface
-        /// </summary>
-        public List<GameObject> scatterObjects;
+        public PQSLandControl.LandClassScatter landClassScatter;
 
         /// <summary>
         /// Whether to treat the density calculation as an actual floating point value
@@ -76,29 +74,24 @@ namespace Kopernicus.Components.ModularScatter
         public Boolean useBetterDensity;
 
         /// <summary>
+        /// useBetterDensity : how large is the chance that a scatter object spawns on a quad?
+        /// </summary>
+        public Single spawnChance = 1f;
+
+        /// <summary>
+        /// makes the density calculation ignore the game setting for scatter density
+        /// </summary>
+        public Boolean ignoreDensityGameSetting;
+
+        /// <summary>
         /// What biomes this scatter may spawn in.  Empty means all.
         /// </summary>
         public List<String> allowedBiomes = new List<String>();
 
         /// <summary>
-        /// Makes the density calculation ignore the game setting for scatter density
-        /// </summary>
-        public Boolean ignoreDensityGameSetting;
-
-        /// <summary>
-        /// How much variation should the scatter density have?
-        /// </summary>
-        public List<Single> densityVariance = new List<Single> { -0.5f, 0.5f };
-
-        /// <summary>
         /// How much should the scatter be able to rotate
         /// </summary>
         public List<Single> rotation = new List<Single> { 0, 360f };
-
-        /// <summary>
-        /// How large is the chance that a scatter object spawns on a quad?
-        /// </summary>
-        public Single spawnChance = 1f;
 
         /// <summary>
         /// A list of all meshes that can be used for the
@@ -111,279 +104,150 @@ namespace Kopernicus.Components.ModularScatter
         public Mesh baseMesh;
 
         /// <summary>
-        /// A shared instance for a cube mesh, that is used to replace any mesh that KSP would want to spawn itself
+        /// true if each scatter requires an individual GameObject, which
+        /// is required if the ScatterColliders or LightEmitter components
+        /// are used.
         /// </summary>
-        private static Mesh _cubeMesh;
-
-        [SerializeField]
-        private List<IComponent<ModularScatter>> components;
+        public bool needsPerScatterGameObject;
 
         /// <summary>
-        /// Create a new ScatterExtension
+        /// shorthand bool to avoid having to check meshes.Count
         /// </summary>
+        public bool hasMultipleMeshes;
+
+        /// <summary>
+        /// shorthand bool to avoid having to check meshes.Count
+        /// </summary>
+        public bool hasMultipleColliderMeshes;
+
+        // Ideally this thing should be refactored to not use the component
+        // classes, they should just be extra data in ModularScatter.
+        // But good enough for now, I don't want to fight the Kopernicus parser.
+        public LightEmitterComponent lightEmitter;
+        public SeaLevelScatterComponent seaLevelScatter;
+        public HeatEmitterComponent heatEmitter;
+        public ScatterCollidersComponent scatterColliders;
+
         public ModularScatter()
         {
             Components = new List<IComponent<ModularScatter>>();
         }
 
-        /// <summary>
-        /// Create colliders for the scatter
-        /// </summary>
-        [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         private void Start()
         {
-            // Apply the modules
-            for (int i = 0; i < Components.Count; i++)
-            {
-                Components[i].Apply(this);
-            }
-
-            // Register us as the parental object for the scatter
             landControl = transform.parent.GetComponent<PQSLandControl>();
+            body = landControl.GetComponentInParent<CelestialBody>();
+
+            // Get the actual live LandClassScatter instance. The one we currently have 
+            // is a dummy instance created by the Kopernicus deserialization process
+            scatterName = landClassScatter.scatterName;
+            landClassScatter = landControl.scatters.First(s => s.scatterName == scatterName);
+
+            // force the scatter quads to be parented to us
+            landClassScatter.scatterParent = gameObject;
+
+            gameObject.name = "Scatter " + landClassScatter.scatterName;
             transform.parent = landControl.sphere.transform;
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
             transform.localScale = Vector3.one;
-            scatter = landControl.scatters.First(s => s.scatterName == scatter.scatterName); // I hate Unity
-            typeof(PQSLandControl.LandClassScatter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                .FirstOrDefault(f => f.FieldType == typeof(GameObject))?.SetValue(scatter, gameObject);
-            scatterObjects = new List<GameObject>();
-            body = Part.GetComponentUpwards<CelestialBody>(landControl.gameObject);
-            GameEvents.onGameSceneLoadRequested.Add(OnGameSceneLoadRequested);
-            if (!baseMesh && meshes.Count > 0)
-            {
-                baseMesh = meshes[0];
-            }
 
-            // Generate a dummy mesh that is used to replace the mesh KSP want's to render itself.
-            if (!_cubeMesh)
+            if (meshes.Count > 1)
             {
-                Vector3[] vertices =
+                hasMultipleMeshes = true;
+            }
+            else
+            {
+                hasMultipleMeshes = false;
+                if (baseMesh.IsNullOrDestroyed())
                 {
-                    new Vector3 (0, 0, 0),
-                    new Vector3 (1, 0, 0),
-                    new Vector3 (1, 1, 0),
-                    new Vector3 (0, 1, 0),
-                    new Vector3 (0, 1, 1),
-                    new Vector3 (1, 1, 1),
-                    new Vector3 (1, 0, 1),
-                    new Vector3 (0, 0, 1),
-                };
-
-                Int32[] triangles =
-                {
-                    0, 2, 1, //face front
-                    0, 3, 2,
-                    2, 3, 4, //face top
-                    2, 4, 5,
-                    1, 2, 5, //face right
-                    1, 5, 6,
-                    0, 7, 4, //face left
-                    0, 4, 3,
-                    5, 4, 7, //face back
-                    5, 7, 6,
-                    0, 6, 7, //face bottom
-                    0, 1, 6
-                };
-
-                _cubeMesh = new Mesh { vertices = vertices, triangles = triangles, name = "Kopernicus-CubeDummy" };
+                    if (meshes.Count == 1)
+                        baseMesh = meshes[0];
+                    else
+                        baseMesh = GetDefaultScatterMesh();
+                }
             }
 
-            scatter.baseMesh = _cubeMesh;
-
-            // PostApply for the Modules
-            for (int i = 0; i < Components.Count; i++)
+            foreach (IComponent<ModularScatter> component in components)
             {
-                Components[i].PostApply(this);
+                if (component is LightEmitterComponent)
+                {
+                    lightEmitter = (LightEmitterComponent)component;
+                }
+                else if (component is SeaLevelScatterComponent)
+                {
+                    seaLevelScatter = (SeaLevelScatterComponent)component;
+                }
+                else if (component is HeatEmitterComponent)
+                {
+                    heatEmitter = (HeatEmitterComponent)component;
+                }
+                else if (component is ScatterCollidersComponent)
+                {
+                    scatterColliders = (ScatterCollidersComponent)component;
+                    hasMultipleColliderMeshes = hasMultipleMeshes && scatterColliders.CollisionMesh.IsNullRef();
+                }
+                else
+                {
+                    // defining a custom scatter component type in another plugin isn't supported anymore
+                    Debug.LogWarning($"[KOPERNICUS] Scatter component of type {component.GetType()} is unsupported");
+                }
             }
+
+            needsPerScatterGameObject = lightEmitter != null || scatterColliders != null;
         }
+
+        private static Mesh defaultMesh;
 
         /// <summary>
-        /// Destroy the generated objects on a scene change so they don't appear in random positions
+        /// Get the default 2D billboard mesh
         /// </summary>
-        private void OnGameSceneLoadRequested(GameScenes data)
+        private static Mesh GetDefaultScatterMesh()
         {
-            foreach (GameObject scatterObj in scatterObjects)
+            if (defaultMesh.IsNullRef())
             {
-                Destroy(scatterObj);
+                defaultMesh = new Mesh();
+                defaultMesh.vertices = new Vector3[8]
+                {
+                    Vector3.zero,
+                    Vector3.right,
+                    Vector3.up,
+                    new Vector3(1f, 1f, 0f),
+                    Vector3.zero,
+                    Vector3.right,
+                    Vector3.up,
+                    new Vector3(1f, 1f, 0f)
+                };
+
+                defaultMesh.triangles = new int[12] { 0, 1, 2, 2, 1, 3, 4, 6, 5, 6, 7, 5 };
+
+                defaultMesh.normals = new Vector3[8]
+                {
+                    Vector3.forward,
+                    Vector3.forward,
+                    Vector3.forward,
+                    Vector3.forward,
+                    Vector3.back,
+                    Vector3.back,
+                    Vector3.back,
+                    Vector3.back
+                };
+                defaultMesh.uv = new Vector2[8]
+                {
+                    Vector2.zero,
+                    Vector2.right,
+                    Vector2.up,
+                    Vector2.one,
+                    Vector2.zero,
+                    Vector2.right,
+                    Vector2.up,
+                    Vector2.one
+                };
+
+                defaultMesh.RecalculateBounds();
             }
 
-            scatterObjects.Clear();
-        }
-
-        private void Update()
-        {
-            // Reprocess the stock scatter models, since they are merged into
-            // one gigantic mesh per quad, but we want unique objects
-            PQSMod_LandClassScatterQuad[] quads = gameObject.GetComponentsInChildren<PQSMod_LandClassScatterQuad>(true);
-            for (Int32 i = 0; i < quads.Length; i++)
-            {
-                if (quads[i].mr && quads[i].mr.enabled)
-                {
-                    quads[i].mr.enabled = false;
-                }
-
-                if (quads[i].obj.name.StartsWith("Kopernicus"))
-                {
-                    continue;
-                }
-
-                if (!quads[i].obj.activeSelf)
-                {
-                    continue;
-                }
-
-                if (quads[i].obj.name == "Unass")
-                {
-                    continue;
-                }
-                CreateScatterMeshes(quads[i]);
-                quads[i].mesh.Clear();
-            }
-
-
-            for (Int32 i = 0; i < scatterObjects.Count; i++)
-            {
-                if (scatterObjects[i])
-                {
-                    if (scatterObjects[i].transform.parent.name == "Unass")
-                    {
-                        Destroy(scatterObjects[i]);
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-
-                scatterObjects.RemoveAt(i);
-                i--;
-            }
-            // Update components
-            for (int i = 0; i < Components.Count; i++)
-            {
-                Components[i].Update(this);
-            }
-        }
-
-        /// <summary>
-        /// By default, KSP merges all scatters that are on one quad into one gigantic mesh that is then rendered.
-        /// Because Kopernicus wants to know where each scatter actually is, we have to create our own scatter objects
-        /// </summary>
-        private void CreateScatterMeshes(PQSMod_LandClassScatterQuad quad)
-        {
-            double cameraDistance = double.MaxValue;
-            try
-            {
-                cameraDistance = Vector3.Distance(quad.transform.position, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position);
-            }
-            catch
-            {
-                return;
-            }
-            if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (quad.isVisible) && (cameraDistance <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit * 1.25))
-            {
-                Random.InitState(quad.seed);
-
-                // Redo the density calculation
-                if (useBetterDensity)
-                {
-                    Dictionary<String, Double> densities = quad.quad.GetComponent<DensityContainer>().densities;
-                    if (densities.ContainsKey(quad.scatter.scatterName))
-                    {
-                        Double density = densities[quad.scatter.scatterName];
-                        if (ignoreDensityGameSetting && PQS.Global_ScatterFactor > 0)
-                        {
-                            density /= PQS.Global_ScatterFactor;
-                        }
-                        Double scatterN = density * quad.scatter.densityFactor *
-                                       (quad.quad.quadArea / quad.quad.sphereRoot.radius / 1000.0) *
-                                       quad.scatter.maxScatter;
-                        scatterN += Random.Range(-0.5f, 0.5f);
-                        quad.count = Math.Min((Int32)Math.Round(scatterN), quad.scatter.maxScatter);
-                    }
-                }
-                for (Int32 i = 0; i < quad.count; i++)
-                {
-                    if ((scatterObjects.Count <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterCountLimit) && (quad.isVisible) && (cameraDistance <= Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit * 1.25))
-                    {
-                        if (useBetterDensity)
-                        {
-                            // Generate a random number between 0 and 1. If it is above the spawn chance, abort
-                            if (Random.value > spawnChance)
-                            {
-                                if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
-                                    return;
-                                }
-                            }
-                        }
-
-                        Int32 num2 = -1;
-                        Int32 num3 = -1;
-                        while (num3 == num2)
-                        {
-                            Int32 num4 = Random.Range(1, PQS.cacheRes + 1);
-                            Int32 num5 = Random.Range(1, PQS.cacheRes + 1);
-                            Int32 x = num4 + Random.Range(-1, 1);
-                            Int32 z = num5 + Random.Range(-1, 1);
-                            num3 = PQS.vi(num4, num5);
-                            num2 = PQS.vi(x, z);
-                        }
-
-                        Vector3 scatterPos = Vector3.Lerp(quad.quad.verts[num3], quad.quad.verts[num2], Random.value);
-                        Vector3 scatterUp = quad.quad.sphereRoot.surfaceRelativeQuads
-                    ? (Vector3)(scatterPos + quad.quad.positionPlanet).normalized
-                    : scatterPos.normalized;
-
-                        scatterPos += scatterUp * quad.scatter.verticalOffset;
-                        Single scatterAngle = Random.Range(rotation[0], rotation[1]);
-                        Quaternion scatterRot = QuaternionD.AngleAxis(scatterAngle, scatterUp) * quad.quad.quadRotation;
-                        Single scatterScale = Random.Range(quad.scatter.minScale, quad.scatter.maxScale);
-                        double scatterDist = double.MaxValue;
-                        scatterDist = Vector3.Distance(scatterPos, Camera.allCameras.FirstOrDefault(_cam => _cam.name == "Camera 00").gameObject.transform.position);
-                        if (scatterDist > Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterDistanceLimit)
-                        {
-                            continue;
-                        }
-                        if (allowedBiomes.Count > 0)
-                        {
-                            UnityEngine.Vector2d latLon = latLon = FlightGlobals.currentMainBody.GetLatitudeAndLongitude(scatterPos);
-                            string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, FlightGlobals.GetBodyByName(quad.quad.sphereRoot.name));
-                            if (!allowedBiomes.Contains(scatterBiome))
-                            {
-                                continue;
-                            }
-                        }
-                        // Create a new object for the scatter
-                        GameObject scatterObject = new GameObject("Scatter");
-                        scatterObject.transform.parent = quad.obj.transform;
-                        scatterObject.transform.localPosition = scatterPos;
-                        scatterObject.transform.localRotation = scatterRot;
-                        scatterObject.transform.localScale = Vector3.one * scatterScale;
-                        scatterObject.AddComponent<KopernicusSurfaceObject>().objectName = quad.scatter.scatterName;
-                        MeshFilter filter = scatterObject.AddComponent<MeshFilter>();
-                        filter.sharedMesh = meshes.Count > 0 ? meshes[Random.Range(0, meshes.Count)] : baseMesh;
-                        MeshRenderer renderer = scatterObject.AddComponent<MeshRenderer>();
-                        renderer.sharedMaterial = quad.scatter.material;
-                        renderer.shadowCastingMode = quad.scatter.castShadows ? ShadowCastingMode.On : ShadowCastingMode.Off;
-                        renderer.receiveShadows = quad.scatter.recieveShadows;
-                        scatterObject.layer = GameLayers.LOCAL_SPACE;
-                        scatterObjects.Add(scatterObject);
-                    }
-                    else
-                    {
-                        quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
-                        return;
-                    }
-                }
-            }
-            quad.obj.name = "Kopernicus-" + quad.scatter.scatterName;
+            return defaultMesh;
         }
     }
 }

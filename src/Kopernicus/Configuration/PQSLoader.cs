@@ -659,11 +659,7 @@ namespace Kopernicus.Configuration
             {
                 Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
             }
-            // Add fixes for LandControl and TextureAtlas
-            if (!Utility.HasMod<PQSLandControlFixer>(Value))
-            {
-                Utility.AddMod<PQSLandControlFixer>(Value, 0);
-            }
+            // Add fixes for TextureAtlas
 #if (!KSP_VERSION_1_8)
             if (!(Versioning.version_minor < 9))
             {
@@ -797,11 +793,6 @@ namespace Kopernicus.Configuration
             if (!Utility.HasMod<PQSMod_OnDemandHandler>(Value))
             {
                 Utility.AddMod<PQSMod_OnDemandHandler>(Value, 0);
-            }
-            // Add fixes for LandControl and TextureAtlas
-            if (!Utility.HasMod<PQSLandControlFixer>(Value))
-            {
-                Utility.AddMod<PQSLandControlFixer>(Value, 0);
             }
 #if (!KSP_VERSION_1_8)
             if (!(Versioning.version_minor < 9))

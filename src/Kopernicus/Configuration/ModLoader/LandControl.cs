@@ -483,13 +483,6 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.ignoreDensityGameSetting = value; }
             }
 
-            [ParserTarget("densityVariance")]
-            public NumericCollectionParser<Single> DensityVariance
-            {
-                get { return Scatter.densityVariance; }
-                set { Scatter.densityVariance = value; }
-            }
-
             [ParserTargetCollection("Components", AllowMerge = true, NameSignificance = NameSignificance.Type)]
             public CallbackList<ComponentLoader<ModularScatter>> Components { get; set; }
 
@@ -511,7 +504,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                 // Add the scatter module
                 Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
-                Scatter.scatter = Value;
+                Scatter.landClassScatter = Value;
 
                 // Create the Component callback
                 Components = new CallbackList<ComponentLoader<ModularScatter>>(e =>
@@ -539,7 +532,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                 // Add the scatter module
                 Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
-                Scatter.scatter = Value;
+                Scatter.landClassScatter = Value;
                 if (Value.baseMesh && Value.baseMesh.name != "Kopernicus-CubeDummy")
                 {
                     Scatter.baseMesh = Value.baseMesh;
