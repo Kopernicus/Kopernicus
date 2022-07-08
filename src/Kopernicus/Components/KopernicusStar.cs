@@ -102,7 +102,7 @@ namespace Kopernicus.Components
             {
                 KopernicusStar star = KopernicusStar.Stars[i];
                 double distance = Vector3d.Distance(body.position, star.sun.position);
-                if (star.shifter.givesOffLight && distance > greatestDistance)
+                if (((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0)) && distance > greatestDistance)
                 {
                     greatestDistance = distance;
                     nearestStar = star;
@@ -123,7 +123,7 @@ namespace Kopernicus.Components
                 KopernicusStar star = KopernicusStar.Stars[i];
                 double distance = Vector3d.Distance(body.position, star.sun.position);
                 double aparentLuminosity = 0;
-                if (star.shifter.givesOffLight)
+                if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
                 {
                     aparentLuminosity = star.shifter.solarLuminosity * (1 / (distance * distance));
                 }
@@ -355,8 +355,7 @@ namespace Kopernicus.Components
 
             if (directSunlight)
             {
-                Double output = PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
-                return output;
+                return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
             }
 
             return 0;
@@ -373,14 +372,7 @@ namespace Kopernicus.Components
             CalculatePhysics();
 
             // Get "Correct" values
-            try
-            {
-                flightIntegrator.BaseFICalculateSunBodyFlux();
-            }
-            catch
-            {
-                //Why is this happening?
-            }
+            flightIntegrator.BaseFICalculateSunBodyFlux();
 
             // FI Values
             Boolean directSunlight = flightIntegrator.Vessel.directSunlight;
@@ -409,6 +401,10 @@ namespace Kopernicus.Components
                 if (flux > 0)
                 {
                     directSunlight = true;
+                }
+                else
+                {
+                    directSunlight = false;
                 }
 
                 solarFlux += flux;

@@ -96,7 +96,23 @@ namespace Kopernicus.Components
                             CalculateTracking();
 
                             //Calculate flux
-                            double starFlux = star.CalculateFluxAt(vessel) * 1360 / PhysicsGlobals.SolarLuminosityAtHome;
+                            double starFluxAtHome = 0;
+                            try
+                            {
+                                starFluxAtHome = 1360 / PhysicsGlobals.SolarLuminosityAtHome;
+                            }
+                            catch
+                            {
+                            }
+                            double starFlux = 0;
+                            try
+                            {
+                                starFlux = star.CalculateFluxAt(vessel) * starFluxAtHome;
+                            }
+                            catch
+                            {
+                                starFlux = 0;
+                            }
 
                             //Check if star has better flux
                             if (bestFlux < starFlux)
@@ -126,9 +142,17 @@ namespace Kopernicus.Components
                                 atmoDensityMult = AtmosphericAttenutationAirMassMultiplier.Evaluate(massOfAirColumn);
                                 atmoAngleMult = AtmosphericAttenutationSolarAngleMultiplier.Evaluate(sunZenithAngleDeg);
                             }
-
-                            panelEffectivness = (chargeRate / 24.4f) / 56.37091313591871f * sunAOA * tempMult * atmoAngleMult * atmoDensityMult;  //56.blabla is a weird constant we use to turn flux into EC
-                            totalFlow += (starFlux * panelEffectivness) / (1360 / PhysicsGlobals.SolarLuminosityAtHome);
+                            try
+                            {
+                                panelEffectivness = (chargeRate / 24.4f) / 56.37091313591871f * sunAOA * tempMult * atmoAngleMult * atmoDensityMult;  //56.blabla is a weird constant we use to turn flux into EC
+                            }
+                            catch
+                            {
+                            }
+                            if (starFluxAtHome > 0)
+                            {
+                                totalFlow += (starFlux * panelEffectivness) / (1360 / PhysicsGlobals.SolarLuminosityAtHome);
+                            }
                             // Restore Tracking Speed
                             trackingSpeed = oldTrackingSpeed;
                         }

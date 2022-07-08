@@ -144,7 +144,14 @@ namespace Kopernicus.Components
                 SolarIntensityAtHomeMultiplier = Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979;
             }
 
-            PhysicsGlobals.SolarLuminosityAtHome = solarLuminosity;
+            if (solarLuminosity > 0)
+            {
+                PhysicsGlobals.SolarLuminosityAtHome = solarLuminosity;
+            }
+            else
+            {
+                PhysicsGlobals.SolarLuminosityAtHome = 0.0000000000001; //near zero value to not freak out MFI.
+            }
             PhysicsGlobals.SolarInsolationAtHome = solarInsolation;
             PhysicsGlobals.RadiationFactor = radiationFactor;
 

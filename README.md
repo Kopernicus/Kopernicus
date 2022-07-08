@@ -7,9 +7,9 @@ July 8th, 2022
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-134:
+New in this latest version release-135:
 
-1.) Minor hotfix for some logspam regressions in the optional collider bugfix.
+1.) Work around a bug in MFI in which feeding it a zero luminosity value (such as is common in black holes in planet packs) would cause it's flux calculation to crash due to a divide by zero exception.  We work around this now by feeding it a very small luminosity value in place of zero.  This would manifest itself as a bug where multistar charging failed in packs with zero luminosity bodies.  Thank you Discord user @VELIKAN for the report!
 
 Known Bugs:
 
