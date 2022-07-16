@@ -71,6 +71,11 @@ namespace Kopernicus.Components
         public static KopernicusStar Current;
 
         /// <summary>
+        /// The SMA of the home body for purposes of SolarLuminosityAtHome calculations
+        /// </summary>
+        public static double HomeBodySMA;
+
+        /// <summary>
         /// The sunlight
         /// </summary>
         public Light light;
@@ -90,6 +95,10 @@ namespace Kopernicus.Components
         /// </summary>
         public KopernicusSunFlare lensFlare;
 
+        /// <summary>
+        /// A cache of base.name to avoid string allocations
+        /// </summary>
+        public string StarName;
 
         /// <summary>
         /// Returns the star the given body orbits
@@ -174,6 +183,8 @@ namespace Kopernicus.Components
                     transform.forward = sunRotation;
                 }
             };
+
+            StarName = name;
         }
 
         /// <summary>
@@ -377,13 +388,13 @@ namespace Kopernicus.Components
             // FI Values
             Boolean directSunlight = flightIntegrator.Vessel.directSunlight;
             Double solarFlux = flightIntegrator.solarFlux;
-            if (!SolarFlux.ContainsKey(Current.name))
+            if (!SolarFlux.ContainsKey(Current.StarName))
             {
-                SolarFlux.Add(Current.name, solarFlux);
+                SolarFlux.Add(Current.StarName, solarFlux);
             }
             else
             {
-                SolarFlux[Current.name] = solarFlux;
+                SolarFlux[Current.StarName] = solarFlux;
             }
 
             // Calculate the values for all bodies
@@ -408,13 +419,13 @@ namespace Kopernicus.Components
                 }
 
                 solarFlux += flux;
-                if (!SolarFlux.ContainsKey(star.name))
+                if (!SolarFlux.ContainsKey(star.StarName))
                 {
-                    SolarFlux.Add(star.name, flux);
+                    SolarFlux.Add(star.StarName, flux);
                 }
                 else
                 {
-                    SolarFlux[star.name] = flux;
+                    SolarFlux[star.StarName] = flux;
                 }
             }
 
@@ -497,21 +508,9 @@ namespace Kopernicus.Components
                 return;
             }
 
-            CelestialBody homeBody = FlightGlobals.GetHomeBody();
-            if (homeBody == null)
-            {
-                return;
-            }
-
-            while (Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
-            {
-                homeBody = homeBody.referenceBody;
-            }
-
-            typeof(PhysicsGlobals).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(f => f.FieldType == typeof(Double)).Skip(2).First().SetValue(PhysicsGlobals.Instance,
-                    Math.Pow(homeBody.orbit.semiMajorAxis, 2) * 4 * 3.14159265358979 *
-                    PhysicsGlobals.SolarLuminosityAtHome);
+            PhysicsGlobals.Instance.solarLuminosity =
+                Math.Pow(HomeBodySMA, 2) * 4 * 3.14159265358979 *
+                    PhysicsGlobals.SolarLuminosityAtHome;
         }
 
 
