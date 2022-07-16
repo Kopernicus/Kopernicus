@@ -147,15 +147,15 @@ namespace Kopernicus.RuntimeUtility
 
         // Execute MainMenu functions
         private void Start()
-		{
-			WriteConfigIfNoneExists();
-			RemoveUnselectableObjects();
-			ApplyLaunchSitePatches();
-			ApplyMusicAltitude();
-			ApplyInitialTarget();
-			ApplyOrbitPatches();
-			ApplyStarPatchSun();
-			ApplyFlagFixes();
+        {
+            WriteConfigIfNoneExists();
+            RemoveUnselectableObjects();
+            ApplyLaunchSitePatches();
+            ApplyMusicAltitude();
+            ApplyInitialTarget();
+            ApplyOrbitPatches();
+            ApplyStarPatchSun();
+            ApplyFlagFixes();
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -165,8 +165,8 @@ namespace Kopernicus.RuntimeUtility
             CalculateHomeBodySMA();
         }
 
-		// Stuff
-		private void LateUpdate()
+        // Stuff
+        private void LateUpdate()
         {
             FixZooming();
             ApplyRnDPatches();
