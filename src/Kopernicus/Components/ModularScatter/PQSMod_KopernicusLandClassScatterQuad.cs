@@ -40,7 +40,7 @@ namespace Kopernicus.Components.ModularScatter
             if (modularScatter.allowedBiomes.Count > 0)
             {
                 // TODO : perf refactor, use biome index/reference instead of name
-                UnityEngine.Vector2d latLon = FlightGlobals.currentMainBody.GetLatitudeAndLongitude(quad.transform.position);
+                UnityEngine.Vector2d latLon = modularScatter.body.GetLatitudeAndLongitude(quad.transform.position);
                 string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, modularScatter.body);
                 if (!modularScatter.allowedBiomes.Contains(scatterBiome))
                 {
@@ -72,8 +72,9 @@ namespace Kopernicus.Components.ModularScatter
                     if (Random.value > modularScatter.spawnChance)
                     {
                         if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic)
+                        {
                             break;
-
+                        }
                         continue;
                     }
                 }
