@@ -114,6 +114,7 @@
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.qc" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.minLevel" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheCreated" />
+    <Publicize Include="Assembly-CSharp:PhysicsGlobals.solarLuminosity" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>

@@ -161,6 +161,8 @@ namespace Kopernicus.RuntimeUtility
             {
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
+
+            CalculateHomeBodySMA();
         }
 
         // Stuff
@@ -290,6 +292,22 @@ namespace Kopernicus.RuntimeUtility
             flareObj.transform.localRotation = Quaternion.identity;
             flareObj.transform.localScale = Vector3.one;
             flareObj.transform.SetPositionAndRotation(body.position, body.rotation);
+        }
+
+        private static void CalculateHomeBodySMA()
+        {
+            CelestialBody homeBody = FlightGlobals.GetHomeBody();
+            if (homeBody == null)
+            {
+                return;
+            }
+
+            while (KopernicusStar.Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+            {
+                homeBody = homeBody.referenceBody;
+            }
+
+            KopernicusStar.HomeBodySMA = homeBody.orbit.semiMajorAxis;
         }
 
         private static void ApplyLaunchSitePatches()
