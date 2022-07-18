@@ -1,17 +1,17 @@
 ﻿Kopernicus
 ==============================
-July 16th, 2022
+July 17th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-136:
+New in this latest version release-137:
 
-1.) Fixed a bug in Kopernicus's allowedBiomes LandClass parameter that prevented the game from loading when it was used in conjunction with a reparented homeworld.
+1.) Fixed a bug in Kopernicus's star atmorim logic that would sometimes point it to the wrong star.
 
-2.) Optimized several things related to the multistar solar logic (Thank you @JonnyOThan).
+2.) Optimized several MORE things related to the multistar solar logic, as well as other parts like flare logic, and removal of a lot of slow reflection code.  (Thank you @JonnyOThan).
 
 Known Bugs:
 
