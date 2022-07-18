@@ -101,40 +101,21 @@ namespace Kopernicus.Components
         public string StarName;
 
         /// <summary>
-        /// Returns the star the given body orbits
-        /// </summary>
-        public static KopernicusStar GetNearest(CelestialBody body)
-        {
-            KopernicusStar nearestStar = Stars.OrderBy(s => Vector3.Distance(body.position, s.sun.position)).First();
-            double greatestDistance = 0;
-            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
-            {
-                KopernicusStar star = KopernicusStar.Stars[i];
-                double distance = Vector3d.Distance(body.position, star.sun.position);
-                if (((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0)) && distance > greatestDistance)
-                {
-                    greatestDistance = distance;
-                    nearestStar = star;
-                }
-            }
-            return nearestStar;
-        }
-
-        /// <summary>
         /// Returns the brightest star near the given body.
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
             double greatestLuminosity = 0;
-            KopernicusStar BrightestStar = GetNearest(body);
+            KopernicusStar BrightestStar = null;
             for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
             {
                 KopernicusStar star = KopernicusStar.Stars[i];
-                double distance = Vector3d.Distance(body.position, star.sun.position);
                 double aparentLuminosity = 0;
                 if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
                 {
-                    aparentLuminosity = star.shifter.solarLuminosity * (1 / (distance * distance));
+                    Vector3d toStar = body.position - star.sun.position;
+                    double distanceSq = Vector3d.SqrMagnitude(toStar);
+                    aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
                 }
                 if (aparentLuminosity > greatestLuminosity)
                 {
