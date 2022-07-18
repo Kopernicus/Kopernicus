@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -69,65 +69,11 @@ namespace Kopernicus.Components
                                                            ScaledSpace.LocalToScaledSpace(sun.position)) /
                                                        (AU * ScaledSpace.InverseScaleFactor))));
 
-            if (PlanetariumCamera.fetch.target == null ||
-                HighLogic.LoadedScene != GameScenes.TRACKSTATION && HighLogic.LoadedScene != GameScenes.FLIGHT)
-            {
-                return;
-            }
-
-            Boolean state = true;
-            for (Int32 index = 0; index < PlanetariumCamera.fetch.targets.Count; index++)
-            {
-                MapObject mapTarget = PlanetariumCamera.fetch.targets[index];
-                if (mapTarget == null)
-                {
-                    continue;
-                }
-
-                if (mapTarget.type != MapObject.ObjectType.CelestialBody)
-                {
-                    continue;
-                }
-
-                if (mapTarget.GetComponent<SphereCollider>() == null)
-                {
-                    continue;
-                }
-
-                if (!mapTarget.GetComponent<MeshRenderer>().enabled)
-                {
-                    continue;
-                }
-
-                if (mapTarget.celestialBody == sun)
-                {
-                    continue;
-                }
-
-                if (mapTarget.transform.localScale.x < 1.0 || mapTarget.transform.localScale.x >= 3.0)
-                {
-                    continue;
-                }
-
-                Vector3d targetDistance = PlanetariumCamera.fetch.transform.position - mapTarget.transform.position;
-                Single radius = mapTarget.GetComponent<SphereCollider>().radius;
-                Double num1 = 2.0 * Vector3d.Dot(-sunDirection, targetDistance);
-                Double num2 = Vector3d.Dot(targetDistance, targetDistance) - radius * (Double) radius;
-                Double d = num1 * num1 - 4.0 * num2;
-                if (d < 0)
-                {
-                    continue;
-                }
-
-                Double num3 = (-num1 + Math.Sqrt(d)) * 0.5;
-                Double num4 = (-num1 - Math.Sqrt(d)) * 0.5;
-                if (num3 >= 0.0 && num4 >= 0.0)
-                {
-                    state = false;
-                }
-            }
-
-            SunlightEnabled(state);
+            // The stock code does a lot of work here to calculate obstruction
+            // however it excludes bodies that have localscale <1 or >3, which is pretty much everything but jool
+            // (scaled space bodies seem to be 1000 scaled-space units in radius and then scaled with localscale (jool is scale 1))
+            // There must be some other system (maybe stock unity behaviors?) that is handling occlusion, because it still works correctly for the skipped bodies - it just fades out instead of going out immediately
+            // The stock code is extremely slow for systems with lots of stars and map targets (it iterates over vessels too!) so we get a massive speed boost by just skipping it and letting the unity system handle it
         }
     }
 }
