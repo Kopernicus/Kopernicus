@@ -115,6 +115,7 @@
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.minLevel" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheCreated" />
     <Publicize Include="Assembly-CSharp:PhysicsGlobals.solarLuminosity" />
+    <Publicize Include="Assembly-CSharp:OrbitRendererData.nodeColor" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>

@@ -33,17 +33,6 @@ namespace Kopernicus.Components
     // Wrapper for the OrbitRendererData class to make it a bit easier to use
     public class KopernicusOrbitRendererData : OrbitRendererData
     {
-        // Accessor for the nodeColor field
-        private static readonly FieldInfo NodeColor = typeof(OrbitRendererData)
-            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault();
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public Color nodeColor
-        {
-            get { return (Color)NodeColor.GetValue(this); }
-            set { NodeColor.SetValue(this, value); }
-        }
-
         public KopernicusOrbitRendererData(CelestialBody body, OrbitRendererBase renderer) : base(body)
         {
             orbitColor = renderer.orbitColor;
@@ -55,7 +44,7 @@ namespace Kopernicus.Components
         public KopernicusOrbitRendererData(CelestialBody body, OrbitRendererData data) : base(body)
         {
             orbitColor = data.orbitColor;
-            nodeColor = (Color)NodeColor.GetValue(data);
+            nodeColor = data.nodeColor;
             lowerCamVsSmaRatio = data.lowerCamVsSmaRatio;
             upperCamVsSmaRatio = data.upperCamVsSmaRatio;
         }
