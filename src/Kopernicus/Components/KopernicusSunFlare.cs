@@ -68,6 +68,7 @@ namespace Kopernicus.Components
                                       (Single)(1.0 / (Vector3d.Distance(position,
                                                            ScaledSpace.LocalToScaledSpace(sun.position)) /
                                                        (AU * ScaledSpace.InverseScaleFactor))));
+            sunFlare.enabled = true;
 
             // The stock code does a lot of work here to calculate obstruction
             // however it excludes bodies that have localscale <1 or >3, which is pretty much everything but jool
