@@ -343,9 +343,14 @@ namespace Kopernicus.Components
             }
         }
 
-        public new void OnDestroy()
+        //public new void OnDestroy()
+        //{
+        //    base.OnDestroy();
+        //    TimingManager.LateUpdateRemove(TimingManager.TimingStage.Early, EarlyLateUpdate);
+        //}
+
+        public void OnDestroy()
         {
-            base.OnDestroy();
             TimingManager.LateUpdateRemove(TimingManager.TimingStage.Early, EarlyLateUpdate);
         }
 

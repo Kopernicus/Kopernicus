@@ -46,6 +46,45 @@ using UnityEngine.UI;
 using KSP.Localization;
 using Object = UnityEngine.Object;
 
+namespace Kopernicus
+{
+    public class Node<T>
+    {
+        public T data;
+        public Node<T> parent;
+        public List<Node<T>> children;
+
+        public void AddChildren(Node<T> obj)
+        {
+            if (obj == this)
+                return;
+            obj.parent = this;
+            if (children == null)
+                children = new List<Node<T>>();
+            children.Add(obj);
+        }
+        public void RemoveChildren(Node<T> obj)
+        {
+            obj.parent = null;
+            if (children == null || children.Count == 0)
+            {
+                children = new List<Node<T>>();
+                return;
+            }
+            children.Remove(obj);
+        }
+        public void AddToParent(Node<T> parent)
+        {
+            if (parent == this)
+                return;
+            if (parent.children == null)
+                parent.children = new List<Node<T>>();
+            this.parent = parent;
+            parent.children.Add(this);
+        }
+    }
+}
+
 namespace Kopernicus.RuntimeUtility
 {
     // Mod runtime utilities
@@ -1087,6 +1126,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	SettingsWindowXcoord = 0");
                     configFile.WriteLine("	SettingsWindowYcoord = 0");
+                    configFile.WriteLine("	EnableAtmosphericExtinction = False");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
@@ -1128,6 +1168,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());
+                    configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString());
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();

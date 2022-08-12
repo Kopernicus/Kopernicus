@@ -62,6 +62,8 @@ namespace Kopernicus.Configuration
         public float SettingsWindowXcoord = 0;
         [Persistent]
         public float SettingsWindowYcoord = 0;
+        [Persistent]
+        public bool EnableAtmosphericExtinction = false;
 
         public UrlDir.UrlConfig[] baseConfigs;
         public void loadMainSettings()
@@ -80,6 +82,21 @@ namespace Kopernicus.Configuration
             try
             {
                 ConfigNode.LoadObjectFromConfig(this, baseConfigs[0].config);
+                Debug.Log("[Kopernicus Configurations] Using: ");
+                Debug.Log("EnforceShaders: " + EnforceShaders);
+                Debug.Log("WarnShaders: " + WarnShaders);
+                Debug.Log("EnforcedShaderLevel: " + EnforcedShaderLevel);
+                Debug.Log("UseKopernicusAsteroidSystem: " + UseKopernicusAsteroidSystem);
+                Debug.Log("SolarRefreshRate: " + SolarRefreshRate);
+                Debug.Log("EnableKopernicusShadowManager: " + EnableKopernicusShadowManager);
+                Debug.Log("ShadowDistanceLimit: " + ShadowDistanceLimit);
+                Debug.Log("DisableMainMenuMunScene: " + DisableMainMenuMunScene);
+                Debug.Log("HandleHomeworldAtmosphericUnitDisplay: " + HandleHomeworldAtmosphericUnitDisplay);
+                Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);
+                Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);
+                Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);
+                Debug.Log("SettingsWindowYcoord: " + SettingsWindowYcoord);
+                Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
             }
             catch
             {

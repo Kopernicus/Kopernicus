@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
@@ -57,9 +58,63 @@ namespace Kopernicus.Components
             base.OnDestroy();
         }
 
+        private double CheckRaySphereIntersection(Vector3d rayDir, Vector3d offset, double radius)
+        {
+            double dir = Vector3d.Dot(rayDir, offset);
+            Vector3d ClosestPoint = offset - Math.Max(dir, 0d) * rayDir;
+            return ClosestPoint.magnitude - radius;
+        }
+
+        private float CheckAtmoDensity(CelestialBody b, float density, Vector3d cameraPosition)
+        {
+            MapObject mapTarget = b.MapObject;
+            if (mapTarget == null)
+                return density;
+
+            if (!mapTarget.GetComponent<MeshRenderer>().enabled)
+                return density;
+
+            if (mapTarget.celestialBody == sun)
+            {
+                foreach (CelestialBody n in b.orbitingBodies)
+                    density += CheckAtmoDensity(n, 0f, cameraPosition);
+                return density;
+            }
+
+            Vector3d targetDistance = PlanetariumCamera.fetch.transform.position - mapTarget.transform.position;
+            if (b.atmosphere)
+            {
+                float altitude = (float)CheckRaySphereIntersection(cameraPosition, targetDistance * ScaledSpace.ScaleFactor, b.Radius);
+                FloatCurve curve = b.atmospherePressureCurve;
+                density += curve.Evaluate(Mathf.Clamp(altitude, curve.minTime, curve.maxTime));
+            }
+            
+            if (b.orbitingBodies.Count != 0)
+            {
+                if (CheckRaySphereIntersection(cameraPosition, targetDistance * ScaledSpace.ScaleFactor, b.sphereOfInfluence) > 0)
+                    return density;
+
+                foreach (CelestialBody n in b.orbitingBodies)
+                    density += CheckAtmoDensity(n, 0f, cameraPosition);
+            }
+            return density;
+        }
+
+        private void AtmosphericScattering()
+        {
+            Vector3d cameraPosition = (PlanetariumCamera.fetch.transform.position - sun.transform.position).normalized;
+            float density = CheckAtmoDensity(FlightGlobals.Bodies[0], 0f, cameraPosition);
+            density = Mathf.Sqrt(density / 150f);
+            float r = Mathf.Exp(.1f - density * .3f);
+            float g = Mathf.Exp(.1f - density * 1.1f);
+            float b = Mathf.Exp(.1f - density * 2.6f);
+            sunFlare.color = new Color(r, g, b);
+        }
+
         // Overload the stock LateUpdate function
         private void LateUpdate()
         {
+            sunFlare.fadeSpeed = 10000f;
             Vector3d position = target.position;
             sunDirection = (position - ScaledSpace.LocalToScaledSpace(sun.position)).normalized;
             transform.forward = sunDirection;
@@ -69,12 +124,15 @@ namespace Kopernicus.Components
                                                            ScaledSpace.LocalToScaledSpace(sun.position)) /
                                                        (AU * ScaledSpace.InverseScaleFactor))));
             sunFlare.enabled = true;
+            
+            if (PlanetariumCamera.fetch.target == null ||
+                HighLogic.LoadedScene != GameScenes.TRACKSTATION && HighLogic.LoadedScene != GameScenes.FLIGHT)
+            {
+                return;
+            }
 
-            // The stock code does a lot of work here to calculate obstruction
-            // however it excludes bodies that have localscale <1 or >3, which is pretty much everything but jool
-            // (scaled space bodies seem to be 1000 scaled-space units in radius and then scaled with localscale (jool is scale 1))
-            // There must be some other system (maybe stock unity behaviors?) that is handling occlusion, because it still works correctly for the skipped bodies - it just fades out instead of going out immediately
-            // The stock code is extremely slow for systems with lots of stars and map targets (it iterates over vessels too!) so we get a massive speed boost by just skipping it and letting the unity system handle it
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction)
+                AtmosphericScattering();
         }
     }
 }
