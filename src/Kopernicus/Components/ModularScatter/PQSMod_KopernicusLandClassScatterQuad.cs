@@ -288,6 +288,7 @@ namespace Kopernicus.Components.ModularScatter
                 pQSMod_LandClassScatterQuad.obj = gameObject;
                 pQSMod_LandClassScatterQuad.modularScatter = __instance.scatterParent.GetComponent<ModularScatter>();
                 pQSMod_LandClassScatterQuad.mesh = new Mesh();
+                pQSMod_LandClassScatterQuad.mesh.indexFormat = IndexFormat.UInt32;
                 pQSMod_LandClassScatterQuad.mf = gameObject.AddComponent<MeshFilter>();
                 pQSMod_LandClassScatterQuad.mf.sharedMesh = pQSMod_LandClassScatterQuad.mesh;
                 pQSMod_LandClassScatterQuad.mr = gameObject.AddComponent<MeshRenderer>();

@@ -1124,9 +1124,9 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = True //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = False //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
                     configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
+                    configFile.WriteLine("	EnableAtmosphericExtinction = False //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	SettingsWindowXcoord = 0");
                     configFile.WriteLine("	SettingsWindowYcoord = 0");
-                    configFile.WriteLine("	EnableAtmosphericExtinction = False");
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
@@ -1166,9 +1166,9 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = " + KopernicusConfig.UseIncorrectScatterDensityLogic.ToString() + " //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
                     configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
+                    configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());
-                    configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString());
                     configFile.WriteLine("}");
                     configFile.Flush();
                     configFile.Close();
