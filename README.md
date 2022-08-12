@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-July 19th, 2022
+August 12th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-138:
+New in this latest version release-139:
 
-1.) Fixed a bug that prevented non-Kerbolar stock sunflares from appearing.
+1.) Fixed a hard limit on vertices on scatters that would result in visual corruption on some mods (GU, etc).
+
+2.) Readded atmospheric extinction as an option, using optimized code.  See Kopernicus_Config.cfg GUI option EnableAtmosphericExtinction for details.  Basically fine to turn on for planet packs without large numbers of worlds.  False by default.
 
 Known Bugs:
 
