@@ -43,6 +43,8 @@ namespace Kopernicus.Components
         /// </summary>
         public static List<KopernicusStar> Stars;
 
+        public static Dictionary<string,KopernicusStar> OverriddenParentStars = new Dictionary<string,KopernicusStar>();
+
         /// <summary>
         /// The results of the latest flux calculation for each star
         /// </summary>
@@ -105,25 +107,32 @@ namespace Kopernicus.Components
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
-            double greatestLuminosity = 0;
-            KopernicusStar BrightestStar = null;
-            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+            if (OverriddenParentStars.ContainsKey(body.name))
             {
-                KopernicusStar star = KopernicusStar.Stars[i];
-                double aparentLuminosity = 0;
-                if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
-                {
-                    Vector3d toStar = body.position - star.sun.position;
-                    double distanceSq = Vector3d.SqrMagnitude(toStar);
-                    aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
-                }
-                if (aparentLuminosity > greatestLuminosity)
-                {
-                    greatestLuminosity = aparentLuminosity;
-                    BrightestStar = star;
-                }
+                return OverriddenParentStars.GetValueOrDefault(body.name);
             }
-            return BrightestStar;
+            else
+            {
+                double greatestLuminosity = 0;
+                KopernicusStar BrightestStar = null;
+                for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+                {
+                    KopernicusStar star = KopernicusStar.Stars[i];
+                    double aparentLuminosity = 0;
+                    if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                    {
+                        Vector3d toStar = body.position - star.sun.position;
+                        double distanceSq = Vector3d.SqrMagnitude(toStar);
+                        aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                    }
+                    if (aparentLuminosity > greatestLuminosity)
+                    {
+                        greatestLuminosity = aparentLuminosity;
+                        BrightestStar = star;
+                    }
+                }
+                return BrightestStar;
+            }
         }
 
 
