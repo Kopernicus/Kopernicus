@@ -93,6 +93,8 @@ namespace Kopernicus.RuntimeUtility
     {
         //old mockbody for compat
         public static CelestialBody mockBody = null;
+        //timer for lateupdate
+        private static int lateUpdateTimer = 0;
         //Plugin Path finding logic
         private static string pluginPath;
         public static string PluginPath
@@ -215,16 +217,20 @@ namespace Kopernicus.RuntimeUtility
             FixFlickeringOrbitLines();
             ApplyOrbitIconCustomization();
             PatchTimeOfDayAnimation();
-            // Apply changes for all bodies
-            for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+            lateUpdateTimer++;
+            if (lateUpdateTimer > 120)
             {
-                ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
-                AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
-                PatchStarReferences(PSystemManager.Instance.localBodies[i]);
-                PatchContractWeight(PSystemManager.Instance.localBodies[i]);
+                // Apply changes for all bodies
+                for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+                {
+                    ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
+                    AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
+                    PatchStarReferences(PSystemManager.Instance.localBodies[i]);
+                    PatchContractWeight(PSystemManager.Instance.localBodies[i]);
+                }
+                CalculateHomeBodySMA();
+                lateUpdateTimer = 0;
             }
-            CalculateHomeBodySMA();
-            PatchFlightIntegrator();
         }
         // Run patches every time a new scene was loaded
         private void OnLevelLoaded(GameScenes scene)
