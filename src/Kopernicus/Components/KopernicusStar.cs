@@ -43,7 +43,7 @@ namespace Kopernicus.Components
         /// </summary>
         public static List<KopernicusStar> Stars;
 
-        public static Dictionary<string,KopernicusStar> OverriddenParentStars = new Dictionary<string,KopernicusStar>();
+        public static Dictionary<string,string> OverriddenParentStars = new Dictionary<string,string>();
 
         /// <summary>
         /// The results of the latest flux calculation for each star
@@ -109,30 +109,35 @@ namespace Kopernicus.Components
         {
             if (OverriddenParentStars.ContainsKey(body.name))
             {
-                return OverriddenParentStars.GetValueOrDefault(body.name);
-            }
-            else
-            {
-                double greatestLuminosity = 0;
-                KopernicusStar BrightestStar = null;
+                string starName = OverriddenParentStars.GetValueOrDefault(body.name);
                 for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
                 {
                     KopernicusStar star = KopernicusStar.Stars[i];
-                    double aparentLuminosity = 0;
-                    if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                    if (star.sun.name.Equals(starName))
                     {
-                        Vector3d toStar = body.position - star.sun.position;
-                        double distanceSq = Vector3d.SqrMagnitude(toStar);
-                        aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
-                    }
-                    if (aparentLuminosity > greatestLuminosity)
-                    {
-                        greatestLuminosity = aparentLuminosity;
-                        BrightestStar = star;
+                        return star;
                     }
                 }
-                return BrightestStar;
             }
+            double greatestLuminosity = 0;
+            KopernicusStar BrightestStar = null;
+            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+            {
+                KopernicusStar star = KopernicusStar.Stars[i];
+                double aparentLuminosity = 0;
+                if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                {
+                    Vector3d toStar = body.position - star.sun.position;
+                    double distanceSq = Vector3d.SqrMagnitude(toStar);
+                    aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                }
+                if (aparentLuminosity > greatestLuminosity)
+                {
+                    greatestLuminosity = aparentLuminosity;
+                    BrightestStar = star;
+                }
+            }
+            return BrightestStar;
         }
 
 
@@ -334,7 +339,7 @@ namespace Kopernicus.Components
             // Get Thermal Stats
             if (vessel.mainBody.atmosphere)
             {
-                if (sun == GetLocalStar(vessel.mainBody))
+                if (sun == GetBrightest(vessel.mainBody))
                 {
                     FlightIntegrator FI = vessel.GetComponent<FlightIntegrator>();
                     vessel.mainBody.GetAtmoThermalStats(true, sun, sunVector, Vector3d.Dot(sunVector, vessel.upAxis), vessel.upAxis, vessel.altitude, out FI.atmosphereTemperatureOffset, out FI.bodyEmissiveFlux, out FI.bodyAlbedoFlux);
