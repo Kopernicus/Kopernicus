@@ -217,19 +217,17 @@ namespace Kopernicus.RuntimeUtility
             FixFlickeringOrbitLines();
             ApplyOrbitIconCustomization();
             PatchTimeOfDayAnimation();
-            lateUpdateTimer++;
-            if (lateUpdateTimer > 120)
+            lateUpdateTimer--;
+            if (lateUpdateTimer < 1)
             {
+                ApplyOrbitPatches();
                 // Apply changes for all bodies
                 for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
                 {
-                    ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
                     AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
-                    PatchStarReferences(PSystemManager.Instance.localBodies[i]);
-                    PatchContractWeight(PSystemManager.Instance.localBodies[i]);
                 }
                 CalculateHomeBodySMA();
-                lateUpdateTimer = 0;
+                lateUpdateTimer = 120; //about 2 seconds on 60FPS
             }
         }
         // Run patches every time a new scene was loaded
@@ -800,7 +798,7 @@ namespace Kopernicus.RuntimeUtility
         // Shader accessor for AtmosphereFromGround
         private readonly Int32 _lightDot = Shader.PropertyToID("_lightDot");
 
-        // Use the nearest star as the AFG star
+        // Use the correct star as the AFG star
         private void AtmosphereLightPatch(CelestialBody body)
         {
             if (!body.afg)
@@ -860,6 +858,12 @@ namespace Kopernicus.RuntimeUtility
                 catch
                 {
                     contractTypeToRemove = null;
+                }
+                //Patch weights of contracts
+                for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+                {
+                    PatchStarReferences(PSystemManager.Instance.localBodies[i]);
+                    PatchContractWeight(PSystemManager.Instance.localBodies[i]);
                 }
             }
         }
@@ -1016,7 +1020,7 @@ namespace Kopernicus.RuntimeUtility
             }
         }
 
-        // Patch various references to point to the nearest star
+        // Patch various references to point to the correct star
         private static void PatchStarReferences(CelestialBody body)
         {
             GameObject star = KopernicusStar.GetBrightest(body).gameObject;
