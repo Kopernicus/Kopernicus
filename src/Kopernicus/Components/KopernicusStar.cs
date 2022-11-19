@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Kopernicus.Configuration;
 using ModularFI;
 using UnityEngine;
 
@@ -460,7 +461,17 @@ namespace Kopernicus.Components
                 Boolean directSunlight = false;
                 Vector3 integratorPosition = fi.transform.position;
                 Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-                Vector3 position = star.sun.scaledBody.transform.position;
+                Vector3 position = new Vector3();
+                KopernicusStar newStar = null;
+                if (OverriddenParentStars.ContainsKey(fi.CurrentMainBody.name))
+                {
+                    newStar = GetBrightest(fi.CurrentMainBody);
+                }
+                else
+                {
+                    newStar = star;
+                }
+                position = newStar.sun.scaledBody.transform.position;
                 Double scale = Math.Max((position - scaledSpace).magnitude, 1);
                 Vector3 sunVector = (position - scaledSpace) / scale;
                 Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
@@ -470,9 +481,9 @@ namespace Kopernicus.Components
                 if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
                 {
                     directSunlight = true;
-                    realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
+                    realDistanceToSun = scale * ScaledSpace.ScaleFactor - newStar.sun.Radius;
                 }
-                else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
+                else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == newStar.sun)
                 {
                     realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
                     directSunlight = true;
