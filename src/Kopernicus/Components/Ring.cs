@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -78,6 +78,12 @@ namespace Kopernicus.Components
 
         public Boolean unlit;
         public Boolean useNewShader;
+
+        public Single albedoStrength = 1.0F;
+        public Single scatteringStrength = 1.92466F;
+        public Single anisotropy = 0.95F;
+        public Texture2D backlitTexture;
+
         public Int32 steps = 128;
 
         /// <summary>
@@ -133,6 +139,11 @@ namespace Kopernicus.Components
         private static readonly Int32 OuterRadius = Shader.PropertyToID("outerRadius");
         private static readonly Int32 InnerRadius = Shader.PropertyToID("innerRadius");
         private static readonly Int32 MainTex = Shader.PropertyToID("_MainTex");
+
+        private static readonly Int32 AlbedoStrength = Shader.PropertyToID("albedoStrength");
+        private static readonly Int32 ScatteringStrength = Shader.PropertyToID("scatteringStrength");
+        private static readonly Int32 Anisotropy = Shader.PropertyToID("anisotropy");
+        private static readonly Int32 BacklitTexture = Shader.PropertyToID("_BacklitTexture");
 
         /// <summary>
         /// Create the module list
@@ -230,6 +241,23 @@ namespace Kopernicus.Components
                 {
                     ringMr.sharedMaterial.SetTexture(InnerShadeTexture, innerShadeTexture);
                 }
+
+
+                // start new stuff
+
+                ringMr.sharedMaterial.SetFloat(AlbedoStrength, albedoStrength);
+                ringMr.sharedMaterial.SetFloat(ScatteringStrength, scatteringStrength);
+                ringMr.sharedMaterial.SetFloat(Anisotropy, anisotropy);
+                if (backlitTexture != null)
+                {
+                    ringMr.sharedMaterial.SetTexture(BacklitTexture, backlitTexture);
+                }
+                if (backlitTexture == null)
+                {
+                    ringMr.sharedMaterial.SetTexture(BacklitTexture, texture);
+                }
+
+                //end new stuff
 
                 if (innerShadeTiles > 0)
                 {
