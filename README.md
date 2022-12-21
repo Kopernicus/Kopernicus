@@ -1,17 +1,19 @@
 ﻿Kopernicus
 ==============================
-August 12th, 2022
+December 20th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-139:
+New in this latest version release-140:
 
-1.) Fixed a hard limit on vertices on scatters that would result in visual corruption on some mods (GU, etc).
+1.) Fixed several bugs in the ringshader on non-windows platforms, as well as added some additional features (dual texture support, wiki will be updated soon, thanks WarriorSabe).  This is considered experimental code on Linux and Mac, but still should be better than what you had.  Please report any bugs, all the same.
 
-2.) Readded atmospheric extinction as an option, using optimized code.  See Kopernicus_Config.cfg GUI option EnableAtmosphericExtinction for details.  Basically fine to turn on for planet packs without large numbers of worlds.  False by default.
+2.) Fixed a Kopernicus SolarPanel localization "Direct Sunlight" bugfix (sometimes would be stuck on english).
+
+3.) This release deprecates 1.8.x support.  Past releases will still work, but the extra ringshader features there were too maintainence intensive to port and you won't get future releases going forward.  Given the limited user base of 1.8.x, and our limited manpower, we had to drop support for it to keep the project going.
 
 Known Bugs:
 
@@ -25,7 +27,7 @@ Known Bugs:
 
 Known Caveats:
 
-1.) The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x. The 1.8 release is for 1.8.x.
+1.) The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x. The 1.8 release is deprecated
 
 2.) Multistar Solar panel support requires an additional config file, attached to release.
 
