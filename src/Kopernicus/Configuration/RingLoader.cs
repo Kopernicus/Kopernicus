@@ -176,6 +176,40 @@ namespace Kopernicus.Configuration
             set { Value.useNewShader = value; }
         }
 
+
+        // Use front-lit half of shader?
+        [ParserTarget("albedoStrength")]
+        [KittopiaDescription("Intensity of the main ring texture as seen when looking at the lit side of the planet.")]
+        public NumericParser<Single> AlbedoStrength
+        {
+            get { return Value.albedoStrength; }
+            set { Value.albedoStrength = value; }
+        }
+        // Use backlit half of shader?
+        [ParserTarget("scatteringStrength")]
+        [KittopiaDescription("Intensity of the scattered light seen through the ring when looking towards the sun.")]
+        public NumericParser<Single> ScatteringStrength
+        {
+            get { return Value.scatteringStrength; }
+            set { Value.scatteringStrength = value; }
+        }
+        // MieG for backlighting
+        [ParserTarget("anisotropy")]
+        [KittopiaDescription("Mie phase function asymmetry for scattering effect; higher values result in a smaller spot.")]
+        public NumericParser<Single> Anisotropy
+        {
+            get { return Value.anisotropy; }
+            set { Value.anisotropy = value; }
+        }
+        // Texture of our ring
+        [ParserTarget("backlitTexture")]
+        [KittopiaDescription("Texture used for the backlit scattering effect")]
+        public Texture2DParser BacklitTexture
+        {
+            get { return Value.backlitTexture; }
+            set { Value.backlitTexture = value; }
+        }
+
         // Penumbra multiplier for new shader
         [ParserTarget("penumbraMultiplier")]
         public NumericParser<Single> PenumbraMultiplier

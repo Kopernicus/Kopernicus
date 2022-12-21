@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Kopernicus.Configuration;
 using ModularFI;
 using UnityEngine;
 
@@ -42,6 +43,8 @@ namespace Kopernicus.Components
         /// A list of all stars
         /// </summary>
         public static List<KopernicusStar> Stars;
+
+        public static Dictionary<string,string> OverriddenParentStars = new Dictionary<string,string>();
 
         /// <summary>
         /// The results of the latest flux calculation for each star
@@ -105,6 +108,18 @@ namespace Kopernicus.Components
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
+            if (OverriddenParentStars.ContainsKey(body.name))
+            {
+                string starName = OverriddenParentStars.GetValueOrDefault(body.name);
+                for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+                {
+                    KopernicusStar star = KopernicusStar.Stars[i];
+                    if (star.sun.name.Equals(starName))
+                    {
+                        return star;
+                    }
+                }
+            }
             double greatestLuminosity = 0;
             KopernicusStar BrightestStar = null;
             for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
@@ -325,7 +340,7 @@ namespace Kopernicus.Components
             // Get Thermal Stats
             if (vessel.mainBody.atmosphere)
             {
-                if (sun == GetLocalStar(vessel.mainBody))
+                if (sun.name.Equals(GetBrightest(vessel.mainBody).name))
                 {
                     FlightIntegrator FI = vessel.GetComponent<FlightIntegrator>();
                     vessel.mainBody.GetAtmoThermalStats(true, sun, sunVector, Vector3d.Dot(sunVector, vessel.upAxis), vessel.upAxis, vessel.altitude, out FI.atmosphereTemperatureOffset, out FI.bodyEmissiveFlux, out FI.bodyAlbedoFlux);
@@ -446,7 +461,17 @@ namespace Kopernicus.Components
                 Boolean directSunlight = false;
                 Vector3 integratorPosition = fi.transform.position;
                 Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-                Vector3 position = star.sun.scaledBody.transform.position;
+                Vector3 position = new Vector3();
+                KopernicusStar newStar = null;
+                if (OverriddenParentStars.ContainsKey(fi.CurrentMainBody.name))
+                {
+                    newStar = GetBrightest(fi.CurrentMainBody);
+                }
+                else
+                {
+                    newStar = star;
+                }
+                position = newStar.sun.scaledBody.transform.position;
                 Double scale = Math.Max((position - scaledSpace).magnitude, 1);
                 Vector3 sunVector = (position - scaledSpace) / scale;
                 Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
@@ -456,9 +481,9 @@ namespace Kopernicus.Components
                 if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
                 {
                     directSunlight = true;
-                    realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
+                    realDistanceToSun = scale * ScaledSpace.ScaleFactor - newStar.sun.Radius;
                 }
-                else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
+                else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == newStar.sun)
                 {
                     realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
                     directSunlight = true;

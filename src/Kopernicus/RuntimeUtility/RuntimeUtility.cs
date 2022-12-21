@@ -199,8 +199,8 @@ namespace Kopernicus.RuntimeUtility
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
+                FixHomeBody(PSystemManager.Instance.localBodies[i]);
             }
-
             CalculateHomeBodySMA();
         }
 
@@ -214,7 +214,6 @@ namespace Kopernicus.RuntimeUtility
             ApplyMapTargetPatches();
             FixFlickeringOrbitLines();
             ApplyOrbitIconCustomization();
-
             // Apply changes for all bodies
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -303,7 +302,13 @@ namespace Kopernicus.RuntimeUtility
             DestroyImmediate(SunFlare.Instance);
             SunFlare.Instance = star.lensFlare = flare;
         }
-
+        private static void FixHomeBody(CelestialBody body)
+        {
+            if (body.isHomeWorld)
+            {
+                Planetarium.fetch.Home = body;
+            }
+        }
         [SuppressMessage("ReSharper", "RedundantCast")]
         private static void ApplyStarPatches(CelestialBody body)
         {
@@ -335,16 +340,12 @@ namespace Kopernicus.RuntimeUtility
 
         private static void CalculateHomeBodySMA()
         {
-            CelestialBody homeBody = FlightGlobals.GetHomeBody();
+            CelestialBody homeBody = Planetarium.fetch.Home;
             if (homeBody == null)
             {
                 return;
             }
-
-            while (KopernicusStar.Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
-            {
-                homeBody = homeBody.referenceBody;
-            }
+            homeBody = KopernicusStar.GetLocalPlanet(homeBody);
 
             KopernicusStar.HomeBodySMA = homeBody.orbit.semiMajorAxis;
         }
@@ -494,9 +495,12 @@ namespace Kopernicus.RuntimeUtility
                     continue;
                 }
 
-                Double rotationPeriod = body.rotationPeriod;
-                Double orbitalPeriod = body.orbit.period;
-                body.rotationPeriod = rotationPeriod * orbitalPeriod / (orbitalPeriod + rotationPeriod);
+                Double rotPeriod = Utility
+                    .FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody
+                    .rotationPeriod;
+                Double num1 = Math.PI * 2 * Math.Sqrt(Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3) /
+                                                      body.orbit.referenceBody.gravParameter);
+                body.rotationPeriod = rotPeriod * num1 / (num1 + rotPeriod);
             }
 
             // Update the order in the tracking station
@@ -791,7 +795,7 @@ namespace Kopernicus.RuntimeUtility
         // Shader accessor for AtmosphereFromGround
         private readonly Int32 _lightDot = Shader.PropertyToID("_lightDot");
 
-        // Use the nearest star as the AFG star
+        // Use the correct star as the AFG star
         private void AtmosphereLightPatch(CelestialBody body)
         {
             if (!body.afg)
@@ -852,12 +856,12 @@ namespace Kopernicus.RuntimeUtility
                 {
                     contractTypeToRemove = null;
                 }
-            }
-            //Patch weights of contracts
-            for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
-            {
-                PatchStarReferences(PSystemManager.Instance.localBodies[i]);
-                PatchContractWeight(PSystemManager.Instance.localBodies[i]);
+                //Patch weights of contracts
+                for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+                {
+                    PatchStarReferences(PSystemManager.Instance.localBodies[i]);
+                    PatchContractWeight(PSystemManager.Instance.localBodies[i]);
+                }
             }
         }
 
@@ -868,7 +872,7 @@ namespace Kopernicus.RuntimeUtility
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor)
             {
                 // Get the parental body
-                CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
+                CelestialBody body = Planetarium.fetch.Home;
 
                 // If there's no body, exit.
                 if (body == null)
@@ -1009,11 +1013,11 @@ namespace Kopernicus.RuntimeUtility
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
             for (Int32 i = 0; i < animations.Length; i++)
             {
-                animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
+                animations[i].target = KopernicusStar.GetBrightest(Planetarium.fetch.Home).gameObject.transform;
             }
         }
 
-        // Patch various references to point to the nearest star
+        // Patch various references to point to the correct star
         private static void PatchStarReferences(CelestialBody body)
         {
             GameObject star = KopernicusStar.GetBrightest(body).gameObject;
@@ -1078,7 +1082,7 @@ namespace Kopernicus.RuntimeUtility
 
         private void FixFlags()
         {
-            if (FlightGlobals.GetHomeBody() != null && FlightGlobals.GetHomeBody().pqsController != null)
+            if (Planetarium.fetch.Home != null && Planetarium.fetch.Home.pqsController != null)
             {
                 PQSCity KSC = FlightGlobals
                 .GetHomeBody()

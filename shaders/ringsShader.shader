@@ -44,6 +44,13 @@ Shader "Kopernicus/Rings"
 
       uniform float penumbraMultiplier;
 
+      //Added values
+      uniform sampler2D _BacklitTexture;
+
+      uniform float anisotropy;
+      uniform float albedoStrength;
+      uniform float scatteringStrength;
+
       // Unity will set this to the material color automatically
       uniform float4 _Color;
 
@@ -154,9 +161,10 @@ Shader "Kopernicus/Rings"
 
         // Mie scattering through rings when observed from the back
         // Needs to be negative?
-        float mieG = -0.95;
+        float mieG = -1 * anisotropy;   // was -0.95
         // Result too bright for some reason, the 0.03 fixes it
-        float mieScattering = 0.03 * PhaseFunctionM(mu, mieG);
+        // A value of 1.92466 keeps old brightness with new normalization value; this is set as the default scatteringStrength
+        float mieScattering = PhaseFunctionM(mu, mieG) / PhaseFunctionM(-1, mieG);
 
         // Planet shadow on ring, or inner shade shadow on inner face
         float shadow = getShadow(i);
@@ -164,10 +172,12 @@ Shader "Kopernicus/Rings"
         //TODO: Fade in some noise here when getting close to the rings
         //      Make it procedural noise?
 
-        // Look up the texture color
+        // Look up the texture colors
         float4 color = tex2D(_MainTex, i.texCoord);
+        float4 backColor = tex2D(_BacklitTexture, i.texCoord);
         // Combine material color with texture color and shadow
-        color.xyz = _Color * shadow * (color.xyz * dotLight + color.xyz * mieScattering);
+        color.xyz = _Color * shadow * (albedoStrength * color.xyz * dotLight + scatteringStrength * backColor.xyz * mieScattering);
+        color.w = max(color.w, backColor.w * mieScattering);
 
         // I'm kinda proud of this shader so far, it's short and clean
         return color;
