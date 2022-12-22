@@ -355,7 +355,14 @@ namespace Kopernicus.Configuration
             {
                 if (ForcedParentStar.Length >= 1)
                 {
-                    KopernicusStar.OverriddenParentStars.Add(GeneratedBody.celestialBody.name, ForcedParentStar);
+                    for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+                    {
+                        KopernicusStar star = KopernicusStar.Stars[i];
+                        if (star.sun.bodyName.Equals(ForcedParentStar))
+                        {
+                            KopernicusStar.OverriddenParentStars.Add(GeneratedBody.celestialBody.name, star);
+                        }
+                    }
                 }
             }
             catch
