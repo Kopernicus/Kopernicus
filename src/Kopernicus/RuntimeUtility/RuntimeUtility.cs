@@ -214,23 +214,20 @@ namespace Kopernicus.RuntimeUtility
             ApplyMapTargetPatches();
             FixFlickeringOrbitLines();
             ApplyOrbitIconCustomization();
-            PatchTimeOfDayAnimation();
+
             // Apply changes for all bodies
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
                 AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
-                PatchStarReferences(PSystemManager.Instance.localBodies[i]);
-                PatchContractWeight(PSystemManager.Instance.localBodies[i]);
             }
-            CalculateHomeBodySMA();
-            PatchFlightIntegrator();
         }
         // Run patches every time a new scene was loaded
         private void OnLevelLoaded(GameScenes scene)
         {
             PatchFlightIntegrator();
             FixCameras();
+            PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
         }
@@ -855,6 +852,12 @@ namespace Kopernicus.RuntimeUtility
                 {
                     contractTypeToRemove = null;
                 }
+            }
+            //Patch weights of contracts
+            for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+            {
+                PatchStarReferences(PSystemManager.Instance.localBodies[i]);
+                PatchContractWeight(PSystemManager.Instance.localBodies[i]);
             }
         }
 

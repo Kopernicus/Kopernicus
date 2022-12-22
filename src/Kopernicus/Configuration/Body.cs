@@ -77,12 +77,6 @@ namespace Kopernicus.Configuration
         [KittopiaHideOption]
         public String Name { get; set; }
 
-        // Forced parent star for effects
-        [PreApply]
-        [ParserTarget("forcedParentStar", Optional = true)]
-        [KittopiaHideOption]
-        public String ForcedParentStar { get; set; }
-
         [ParserTarget("cacheFile")]
         public String CacheFile
         {
@@ -273,8 +267,8 @@ namespace Kopernicus.Configuration
                 // If we have a template, generatedBody *is* the template body
                 GeneratedBody = Template.Body;
                 // Patch the game object names in the template
-                GeneratedBody.celestialBody.bodyName = Name;
                 GeneratedBody.name = Name;
+                GeneratedBody.celestialBody.bodyName = Name;
                 GeneratedBody.celestialBody.transform.name = Name;
                 GeneratedBody.scaledVersion.name = Name;
                 if (GeneratedBody.pqsVersion != null)
@@ -350,24 +344,6 @@ namespace Kopernicus.Configuration
                 // Create accessors
                 Debug = new DebugLoader();
                 ScaledVersion = new ScaledVersionLoader();
-            }
-            try
-            {
-                if (ForcedParentStar.Length >= 1)
-                {
-                    for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
-                    {
-                        KopernicusStar star = KopernicusStar.Stars[i];
-                        if (star.sun.bodyName.Equals(ForcedParentStar))
-                        {
-                            KopernicusStar.OverriddenParentStars.Add(GeneratedBody.celestialBody.name, star);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                //This is just to stop it from crashng if the parameter is unusued.
             }
             // Event
             Events.OnBodyApply.Fire(this, node);
