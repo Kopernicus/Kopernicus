@@ -1,19 +1,15 @@
 ﻿Kopernicus
 ==============================
-December 20th, 2022
+December 21st, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-140:
+New in this latest version release-141:
 
-1.) Fixed several bugs in the ringshader on non-windows platforms, as well as added some additional features (dual texture support, wiki will be updated soon, thanks WarriorSabe).  This is considered experimental code on Linux and Mac, but still should be better than what you had.  Please report any bugs, all the same.
-
-2.) Fixed a Kopernicus SolarPanel localization "Direct Sunlight" bugfix (sometimes would be stuck on english).
-
-3.) This release deprecates 1.8.x support.  Past releases will still work, but the extra ringshader features there were too maintainence intensive to port and you won't get future releases going forward.  Given the limited user base of 1.8.x, and our limited manpower, we had to drop support for it to keep the project going.
+1.) Deactivated some buggy thermal flux code that should not have shipped yet.
 
 Known Bugs:
 
