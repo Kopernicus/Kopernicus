@@ -93,6 +93,8 @@ namespace Kopernicus.RuntimeUtility
     {
         //old mockbody for compat
         public static CelestialBody mockBody = null;
+        //timer for lateupdate
+        private static int lateUpdateTimer = 0;
         //Plugin Path finding logic
         private static string pluginPath;
         public static string PluginPath
@@ -214,12 +216,18 @@ namespace Kopernicus.RuntimeUtility
             ApplyMapTargetPatches();
             FixFlickeringOrbitLines();
             ApplyOrbitIconCustomization();
-            ApplyOrbitPatches();
-            // Apply changes for all bodies
-            for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+            PatchTimeOfDayAnimation();
+            lateUpdateTimer--;
+            if (lateUpdateTimer < 1)
             {
-                ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
-                AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
+                ApplyOrbitPatches();
+                // Apply changes for all bodies
+                for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+                {
+                    AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
+                }
+                CalculateHomeBodySMA();
+                lateUpdateTimer = 120; //about 2 seconds on 60FPS
             }
         }
         // Run patches every time a new scene was loaded
@@ -227,7 +235,6 @@ namespace Kopernicus.RuntimeUtility
         {
             PatchFlightIntegrator();
             FixCameras();
-            PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
         }
