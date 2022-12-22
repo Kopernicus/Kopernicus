@@ -199,8 +199,8 @@ namespace Kopernicus.RuntimeUtility
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
-                FixHomeBody(PSystemManager.Instance.localBodies[i]);
             }
+
             CalculateHomeBodySMA();
         }
 
@@ -214,6 +214,7 @@ namespace Kopernicus.RuntimeUtility
             ApplyMapTargetPatches();
             FixFlickeringOrbitLines();
             ApplyOrbitIconCustomization();
+            ApplyOrbitPatches();
             // Apply changes for all bodies
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
@@ -302,13 +303,7 @@ namespace Kopernicus.RuntimeUtility
             DestroyImmediate(SunFlare.Instance);
             SunFlare.Instance = star.lensFlare = flare;
         }
-        private static void FixHomeBody(CelestialBody body)
-        {
-            if (body.isHomeWorld)
-            {
-                Planetarium.fetch.Home = body;
-            }
-        }
+
         [SuppressMessage("ReSharper", "RedundantCast")]
         private static void ApplyStarPatches(CelestialBody body)
         {
@@ -340,12 +335,16 @@ namespace Kopernicus.RuntimeUtility
 
         private static void CalculateHomeBodySMA()
         {
-            CelestialBody homeBody = Planetarium.fetch.Home;
+            CelestialBody homeBody = FlightGlobals.GetHomeBody();
             if (homeBody == null)
             {
                 return;
             }
-            homeBody = KopernicusStar.GetLocalPlanet(homeBody);
+
+            while (KopernicusStar.Stars.All(s => s.sun != homeBody.referenceBody) && homeBody.referenceBody != null)
+            {
+                homeBody = homeBody.referenceBody;
+            }
 
             KopernicusStar.HomeBodySMA = homeBody.orbit.semiMajorAxis;
         }
@@ -495,12 +494,9 @@ namespace Kopernicus.RuntimeUtility
                     continue;
                 }
 
-                Double rotPeriod = Utility
-                    .FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name).celestialBody
-                    .rotationPeriod;
-                Double num1 = Math.PI * 2 * Math.Sqrt(Math.Pow(Math.Abs(body.orbit.semiMajorAxis), 3) /
-                                                      body.orbit.referenceBody.gravParameter);
-                body.rotationPeriod = rotPeriod * num1 / (num1 + rotPeriod);
+                Double rotationPeriod = body.rotationPeriod;
+                Double orbitalPeriod = body.orbit.period;
+                body.rotationPeriod = rotationPeriod * orbitalPeriod / (orbitalPeriod + rotationPeriod);
             }
 
             // Update the order in the tracking station
@@ -872,7 +868,7 @@ namespace Kopernicus.RuntimeUtility
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor)
             {
                 // Get the parental body
-                CelestialBody body = Planetarium.fetch.Home;
+                CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
 
                 // If there's no body, exit.
                 if (body == null)
@@ -1013,7 +1009,7 @@ namespace Kopernicus.RuntimeUtility
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
             for (Int32 i = 0; i < animations.Length; i++)
             {
-                animations[i].target = KopernicusStar.GetBrightest(Planetarium.fetch.Home).gameObject.transform;
+                animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
             }
         }
 
@@ -1082,7 +1078,7 @@ namespace Kopernicus.RuntimeUtility
 
         private void FixFlags()
         {
-            if (Planetarium.fetch.Home != null && Planetarium.fetch.Home.pqsController != null)
+            if (FlightGlobals.GetHomeBody() != null && FlightGlobals.GetHomeBody().pqsController != null)
             {
                 PQSCity KSC = FlightGlobals
                 .GetHomeBody()
