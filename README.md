@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-December 21st, 2022
+December 29th, 2022
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-141:
+New in this latest version release-142:
 
-1.) Deactivated some buggy thermal flux code that should not have shipped yet.
+1.) Removed a warning that was incorrectly displaying on build 1.12.4 about the build being beta.
 
 Known Bugs:
 
@@ -23,7 +23,7 @@ Known Bugs:
 
 Known Caveats:
 
-1.) The 1.12.x release series works on 1.12.x,1.11.x,1.10.x, and 1.9.x. The 1.8 release is deprecated
+1.) The 1.12.x release series works on 1.12.x. The 1.11.x,1.10.x,1.9.x and 1.8.x releases are deprecated
 
 2.) Multistar Solar panel support requires an additional config file, attached to release.
 
