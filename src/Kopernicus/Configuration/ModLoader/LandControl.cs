@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -304,38 +304,15 @@ namespace Kopernicus.Configuration.ModLoader
                 get { return Material; }
                 set { Material = value; }
             }
+
             // The biome list of the landclass
             [ParserTarget("allowedBiomes")]
-            public String allowedBiomes
+            public StringCollectionParser AllowedBiomes
             {
-                get
-                {
-                    if (Scatter.allowedBiomes.Count > 1)
-                    {
-                        return String.Join(",", Scatter.allowedBiomes);
-                    }
-                    else if (Scatter.allowedBiomes.Count == 1)
-                    {
-                        return Scatter.allowedBiomes.First<String>();
-                    }
-                    else
-                    {
-                        return "";
-                    }
-
-                }
-                set
-                {
-                    if (value.Contains(","))
-                    {
-                        Scatter.allowedBiomes = value.Split(',').ToList();
-                    }
-                    else
-                    {
-                        Scatter.allowedBiomes.Add(value);
-                    }
-                }
+                get { return Scatter.allowedBiomes; }
+                set { Scatter.allowedBiomes = value; }
             }
+
             // The mesh
             [ParserTarget("mesh")]
             public MeshParser BaseMesh
