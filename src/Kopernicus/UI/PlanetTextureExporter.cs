@@ -274,6 +274,7 @@ namespace Kopernicus.UI
                     }
 
                     // Adjust the height
+                    height -= minHeight;
                     height /= deltaRadius;
                     if (height < 0)
                     {
