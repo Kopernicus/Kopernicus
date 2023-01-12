@@ -1,15 +1,19 @@
 ﻿Kopernicus
 ==============================
-December 29th, 2022
+January 11th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-142:
+New in this latest version release-143:
 
-1.) Removed a warning that was incorrectly displaying on build 1.12.4 about the build being beta.
+1.) Removed a warning that was incorrectly displaying on build 1.12.5 about the build being beta (seems fine).
+
+2.) a minor fix for exported height maps from Kittopia.
+
+3.) allowedBiomes may now contain spaces.
 
 Known Bugs:
 
