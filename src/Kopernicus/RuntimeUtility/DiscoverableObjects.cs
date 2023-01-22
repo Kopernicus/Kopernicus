@@ -31,6 +31,7 @@ using Kopernicus.Configuration.Asteroids;
 using Kopernicus.Constants;
 using KSPAchievements;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -44,7 +45,7 @@ namespace Kopernicus.RuntimeUtility
         public static List<Asteroid> Asteroids { get; }
 
         // Spawn interval
-        public Single spawnInterval = 0.1f;
+        public Single spawnInterval = 3f;
 
         // Construct
         static DiscoverableObjects()
@@ -85,9 +86,10 @@ namespace Kopernicus.RuntimeUtility
                 if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
                 {
                     Debug.Log("[Kopernicus] Using Kopernicus Asteroid Spawner.");
-                    foreach (Asteroid asteroid in Asteroids)
+                    AsteroidSetup();
+                    foreach (var asteroidGroup in Asteroids)
                     {
-                        StartCoroutine(AsteroidDaemon(asteroid));
+                        StartCoroutine(AsteroidDaemon(asteroidGroup));
                     }
                 }
                 else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("false"))
@@ -108,34 +110,23 @@ namespace Kopernicus.RuntimeUtility
         }
 
         // Update the Asteroids
-        public void UpdateAsteroid(Asteroid asteroid, Double time)
+        public void UpdateAsteroid(Asteroid asteroidGroup)
         {
-            // Get a list of only space objects.
-            List<Vessel> spaceObjects = FlightGlobals.Vessels.Where(v => !v.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)).ToList();
-            int asteroidGroupCount = 0;
-            string launchedFromMatch = $"AST-{asteroid.Name}";
-            foreach (Vessel vessel in spaceObjects)
+            string launchedFromMatch = LaunchedFromName(asteroidGroup);
+            int asteroidCount = 0;
+            for (int i = 0; i < FlightGlobals.Vessels.Count; i++)
             {
-                // If any vessel has been untracked for too long, delete it and exit.
+                Vessel vessel = FlightGlobals.Vessels[i];
+                // If we know the vectors of the object, it's one of ours or tracked. Ignore.
+                if (vessel.DiscoveryInfo.HaveKnowledgeAbout(DiscoveryLevels.StateVectors)) continue;
+                // Kill any unknowns past their lifetime, and return doing nothing else if any are found. (Not sure why we return, but that's how the code was.)
                 if (Math.Abs(vessel.DiscoveryInfo.GetSignalLife(Planetarium.GetUniversalTime())) < 0.01)
                 {
-                    //Debug.Log($"[Kopernicus] {vessel.vesselName} has been untracked for too long and is now lost.");
                     vessel.Die();
                     return;
                 }
-
-                // If the vessel was created by this asteroid group, increment group count.
-                if (vessel.launchedFrom == launchedFromMatch)
-                {
-                    asteroidGroupCount++;
-                }
-            }
-
-            // Get random limit count, and exit if our current group count is higher than the limit.
-            int limit = Random.Range(asteroid.SpawnGroupMinLimit, asteroid.SpawnGroupMaxLimit);
-            if (asteroidGroupCount > limit)
-            {
-                return;
+                // Increment count if it's an asteroid from this spawn region.
+                if (string.Equals(launchedFromMatch, vessel.launchedFrom)) asteroidCount++;
             }
 
             // If we don't have access to space object discovery, exit.
@@ -143,19 +134,32 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-
-            // See if the asteroid will pass the probability chance to spawn, otherwise exit with a debug log.
-            float randomRange = Random.Range(0f, 100f);
-            if (randomRange < asteroid.Probability)
-            {
-                //Debug.Log($"[Kopernicus] No new objects for {asteroid.Name} at this time. (Probability is {asteroid.Probability.Value}%)");
-                return;
-            }
-
-            // Spawn the asteroid.
+            
+            // If we're over the limit for the asteroid group, don't spawn anything.
+            if (asteroidCount > Random.Range(asteroidGroup.SpawnGroupMinLimit, asteroidGroup.SpawnGroupMaxLimit)) return;
+                
+            // An asteroid only gets spawned if it gets lucky.
+            if (Random.Range(0f, 100f) < asteroidGroup.Probability) return;
+                
+            // There was both room for the asteroid and it was lucky; spawn the asteroid.
             int seed = Random.Range(0, int.MaxValue);
             Random.InitState(seed);
-            SpawnAsteroid(asteroid, (uint)seed);
+            SpawnAsteroid(asteroidGroup, (uint)seed);
+        }
+        
+        private readonly Dictionary<string, CelestialBody> _bodyDictionary = new Dictionary<string, CelestialBody>();
+
+        private CelestialBody GetCachedBody(string bodyName)
+        {
+            if (_bodyDictionary.TryGetValue(bodyName, out CelestialBody cachedBody))
+            {
+                return cachedBody;
+            }
+
+            CelestialBody fetchedBody = UBI.GetBody(bodyName);
+            if (fetchedBody is null || fetchedBody == default) return null;
+            _bodyDictionary[bodyName] = fetchedBody;
+            return fetchedBody;
         }
 
         // Spawn the actual asteroid
@@ -163,19 +167,23 @@ namespace Kopernicus.RuntimeUtility
         public void SpawnAsteroid(Asteroid asteroid, UInt32 seed)
         {
             // Create Default Orbit
-            Orbit orbit = null;
-            CelestialBody body = null;
+            Orbit orbit;
+            CelestialBody body;
+            if (asteroid.Size is null)
+            {
+                Debug.Log($"[Kopernicus] No Size FloatCurve exists for {asteroid.Name}!");
+                return;
+            }
 
             // Select Orbit Type
             Int32 type = Random.Range(0, 3);
             if (type == 0 && asteroid.Location.Around.Count != 0)
             {
                 // Around
-                Location.AroundLoader[] around = GetProbabilityList(asteroid.Location.Around,
-                    asteroid.Location.Around.Select(a => a.Probability.Value).ToList()).ToArray();
+                Location.AroundLoader[] around = _aroundLoaders[asteroid.InternalOrderID];
                 Location.AroundLoader loader = around[Random.Range(0, around.Length)];
-                body = UBI.GetBody(loader.Body);
-                if (!body)
+                body = GetCachedBody(loader.Body);
+                if (body is null || !body)
                 {
                     return;
                 }
@@ -201,11 +209,10 @@ namespace Kopernicus.RuntimeUtility
             else if (type == 1 && asteroid.Location.Nearby.Count != 0)
             {
                 // Nearby
-                Location.NearbyLoader[] nearby = GetProbabilityList(asteroid.Location.Nearby,
-                    asteroid.Location.Nearby.Select(a => a.Probability.Value).ToList()).ToArray();
+                Location.NearbyLoader[] nearby = _nearbyLoaders[asteroid.InternalOrderID];
                 Location.NearbyLoader loader = nearby[Random.Range(0, nearby.Length)];
-                body = UBI.GetBody(loader.Body);
-                if (!body)
+                body = GetCachedBody(loader.Body);
+                if (body is null || !body)
                 {
                     return;
                 }
@@ -231,11 +238,10 @@ namespace Kopernicus.RuntimeUtility
             else if (type == 2 && asteroid.Location.Flyby.Count != 0)
             {
                 // Flyby
-                Location.FlybyLoader[] flyby = GetProbabilityList(asteroid.Location.Flyby,
-                    asteroid.Location.Flyby.Select(a => a.Probability.Value).ToList()).ToArray();
+                Location.FlybyLoader[] flyby = _flybyLoaders[asteroid.InternalOrderID];
                 Location.FlybyLoader loader = flyby[Random.Range(0, flyby.Length)];
-                body = UBI.GetBody(loader.Body);
-                if (!body)
+                body = GetCachedBody(loader.Body);
+                if (body is null || !body)
                 {
                     return;
                 }
@@ -247,54 +253,52 @@ namespace Kopernicus.RuntimeUtility
 
                 orbit = Orbit.CreateRandomOrbitFlyBy(body, Random.Range(loader.MinDuration, loader.MaxDuration));
             }
+            else
+            {
+                Debug.Log("[Kopernicus] No new objects this time. (Probability is " + asteroid.Probability.Value + "%)");
+                return;
+            }
 
-            // Check 
-            if (orbit == null)
+            if (orbit is null)
             {
                 Debug.Log("[Kopernicus] No new objects this time. (Probability is " + asteroid.Probability.Value + "%)");
                 return;
             }
 
             // Name
-            String asteroidName = DiscoverableObjectsUtil.GenerateAsteroidName();
-
-            // Lifetime
-            Double lifetime = Random.Range(asteroid.MinUntrackedLifetime, asteroid.MaxUntrackedLifetime) * 24d * 60d * 60d;
-            Double maxLifetime = asteroid.MaxUntrackedLifetime * 24d * 60d * 60d;
-
-            // Size
-            UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
-
-            // Spawn
-            ConfigNode vessel = null;
-            vessel = ProtoVessel.CreateVesselNode(
-                    asteroidName,
-                    VesselType.SpaceObject,
-                    orbit,
-                    0,
-                    new[]
-                    {
-                    ProtoVessel.CreatePartNode(
-                        "PotatoRoid",
-                        seed
-                    )
-                    },
-                    new ConfigNode("ACTIONGROUPS"),
-                    ProtoVessel.CreateDiscoveryNode(
-                        DiscoveryLevels.Presence,
-                        size,
-                        lifetime,
-                        maxLifetime
-                    )
-                );
-            OverrideNode(ref vessel, asteroid.Vessel);
-            ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame);
-            if (asteroid.UniqueName && FlightGlobals.Vessels.Count(v => v.vesselName == protoVessel.vesselName) != 0)
+            string asteroidName = DiscoverableObjectsUtil.GenerateAsteroidName();
+            if (string.IsNullOrEmpty(asteroidName) || (asteroid.UniqueName && FlightGlobals.Vessels.Any(v => string.Equals(v.vesselName, asteroidName))))
             {
                 return;
             }
 
-            protoVessel.launchedFrom = $"AST-{asteroid.Name}";
+            double lifetime = Random.Range(asteroid.MinUntrackedLifetime, asteroid.MaxUntrackedLifetime) * 24d * 60d * 60d;;
+            double maxLifetime = asteroid.MaxUntrackedLifetime * 24d * 60d * 60d;
+            UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
+
+            // Spawn
+            ConfigNode vessel = ProtoVessel.CreateVesselNode(
+                asteroidName,
+                VesselType.SpaceObject,
+                orbit,
+                0,
+                new[]
+                {
+                    ProtoVessel.CreatePartNode(
+                        "PotatoRoid",
+                        seed
+                    )
+                },
+                new ConfigNode("ACTIONGROUPS"),
+                ProtoVessel.CreateDiscoveryNode(
+                    DiscoveryLevels.Presence,
+                    size,
+                    lifetime,
+                    maxLifetime
+                )
+            );
+            OverrideNode(ref vessel, asteroid.Vessel);
+            ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame) { launchedFrom = LaunchedFromName(asteroid) };
             Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
             protoVessel.Load(HighLogic.CurrentGame.flightState);
             GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
@@ -304,18 +308,51 @@ namespace Kopernicus.RuntimeUtility
 
         // Asteroid Spawner
         [SuppressMessage("ReSharper", "IteratorNeverReturns")]
-        private IEnumerator<WaitForSeconds> AsteroidDaemon(Asteroid asteroid)
+        private IEnumerator<WaitForSecondsRealtime> AsteroidDaemon(Asteroid asteroidGroup)
         {
             while (true)
             {
                 if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
                 {
                     // Update Asteroids
-                    UpdateAsteroid(asteroid, Planetarium.GetUniversalTime());
+                    UpdateAsteroid(asteroidGroup);
+                    // Don't adjust waiting time if we're in physical timewarp, and don't reduce interval by more than /50 when in on-rails timewarp.
+                    float waitSeconds = TimeWarp.WarpMode == TimeWarp.Modes.LOW
+                        ? Mathf.Max(asteroidGroup.Interval, spawnInterval)
+                        : Mathf.Max(asteroidGroup.Interval / Mathf.Min(TimeWarp.CurrentRate, 50), spawnInterval);
+
+                    // Add some random jitter to the wait time.
+                    float minMaxJitter = waitSeconds / 4;
+                    waitSeconds = Random.Range(waitSeconds - minMaxJitter, waitSeconds + minMaxJitter);
 
                     // Wait
-                    yield return new WaitForSeconds(Mathf.Max(asteroid.Interval / TimeWarp.CurrentRate, spawnInterval));
+                    yield return new WaitForSecondsRealtime(waitSeconds);
                 }
+            }
+        }
+
+        public static string LaunchedFromName(Asteroid asteroid) => $"AST-{asteroid.Name}";
+
+        private Location.AroundLoader[][] _aroundLoaders;
+        private Location.NearbyLoader[][] _nearbyLoaders;
+        private Location.FlybyLoader[][] _flybyLoaders;
+
+        private void AsteroidSetup()
+        {
+            int asteroidCount = Asteroids.Count;
+            _aroundLoaders = new Location.AroundLoader[asteroidCount][];
+            _nearbyLoaders = new Location.NearbyLoader[asteroidCount][];
+            _flybyLoaders = new Location.FlybyLoader[asteroidCount][];
+            for (int i = 0; i < asteroidCount; i++)
+            {
+                Asteroid asteroid = Asteroids[i];
+                asteroid.InternalOrderID = i;
+                _aroundLoaders[i] = GetProbabilityList(asteroid.Location.Around,
+                    asteroid.Location.Around.Select(a => a.Probability.Value).ToList()).ToArray();
+                _nearbyLoaders[i] = GetProbabilityList(asteroid.Location.Nearby,
+                    asteroid.Location.Nearby.Select(a => a.Probability.Value).ToList()).ToArray();
+                _flybyLoaders[i] = GetProbabilityList(asteroid.Location.Flyby,
+                    asteroid.Location.Flyby.Select(a => a.Probability.Value).ToList()).ToArray();
             }
         }
 

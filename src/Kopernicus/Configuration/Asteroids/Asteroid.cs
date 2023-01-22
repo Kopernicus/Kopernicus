@@ -89,5 +89,7 @@ namespace Kopernicus.Configuration.Asteroids
         }
 
         public FloatCurve Size { get; set; }
+
+        public int InternalOrderID { get; set; }
     }
 }
