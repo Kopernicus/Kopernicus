@@ -1,21 +1,15 @@
 ﻿Kopernicus
 ==============================
-January 23rd, 2023
+January 24th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-144:
+New in this latest version release-145:
 
-1.) Kopernicus Asteroid Generator performance improvements via github user TuckMeIntoBread, should reduce in game stutter on asteroid spawning.
-
-2.) The old "ColorFix.cfg" file is now baked into Kopernicus, and can be turned off with an ingame/config file option called "EnableColorFix."  Setting it to false disables it, but it defaults to true for obvious reasons (few packs need it off, many need it on).
-
-3.) Changed default for "DisableFarAwayColliders" is now true instead of false.  The feature has yet to cause a major issue, and several larger planet packs rely on it, so...
-
-4.) Fixed some insignificant but still relevant memory leaks, and changed Kopernicus_Config.cfg loader to load earlier to prevent race conditions with some configurations.
+1.) Hotfix for broken heightmap exporting, introduced in release-143 accidentally.
 
 Known Bugs:
 
