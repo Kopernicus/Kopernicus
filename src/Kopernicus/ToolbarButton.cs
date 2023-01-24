@@ -91,6 +91,7 @@ namespace Kopernicus
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic, "UseIncorrectScatterDensityLogic: This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.");
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders, "DisableFarAwayColliders: Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but has a slight performance penalty. Advised to use only in larger than stock systems.");
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction, "EnableAtmosphericExtinction: Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix, "EnableColorFix: Disable this only if instructed to do so by a planet pack.");
             GUILayout.Label("EnforcedShaderLevel: A number defining the enforced shader level for the above parameters. 0 = Low, 1 = Medium, 2 = High, 3 = Ultra.");
             try
             {

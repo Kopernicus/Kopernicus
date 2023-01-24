@@ -123,8 +123,6 @@ namespace Kopernicus.RuntimeUtility
 
             // Make sure the runtime utility isn't killed
             DontDestroyOnLoad(this);
-            //Load our settings
-            KopernicusConfig.loadMainSettings();
             // Init the runtime logging
             new Logger("Kopernicus.Runtime", true).SetAsActive();
             // Add handlers
@@ -1125,6 +1123,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = False //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
                     configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	EnableAtmosphericExtinction = False //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
+                    configFile.WriteLine("	EnableColorFix = True //Disable this only if instructed to do so by a planet pack.");
                     configFile.WriteLine("	SettingsWindowXcoord = 0");
                     configFile.WriteLine("	SettingsWindowYcoord = 0");
                     configFile.WriteLine("}");
@@ -1167,6 +1166,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = " + KopernicusConfig.UseIncorrectScatterDensityLogic.ToString() + " //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
                     configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
+                    configFile.WriteLine("	EnableColorFix = " + KopernicusConfig.EnableColorFix.ToString() +  " //Disable this only if instructed to do so by a planet pack.");
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());
                     configFile.WriteLine("}");

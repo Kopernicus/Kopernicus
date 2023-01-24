@@ -821,6 +821,11 @@ namespace Kopernicus.Configuration
             {
                 Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
             }
+            //Add createColorsFixes
+            if (!Utility.HasMod<PQSLandControlFixer>(Value))
+            {
+                Utility.AddMod<PQSLandControlFixer>(Value, 0);
+            }
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
             for (Int32 i = 0; i < mods.Length; i++)

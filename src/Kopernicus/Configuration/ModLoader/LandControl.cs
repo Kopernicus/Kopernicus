@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -731,8 +731,28 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTarget("color")]
             public ColorParser Color
             {
-                get { return Value.color; }
-                set { Value.color = value; }
+                get
+                {
+                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
+                    {
+                        return new Color(0, 0, 0, 0);
+                    }
+                    else
+                    {
+                        return Value.color;
+                    }
+                }
+                set
+                {
+                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
+                    {
+                        Value.color = new Color(0, 0, 0, 0);
+                    }
+                    else
+                    {
+                        Value.color = value;
+                    }
+                }
             }
 
             // coverageBlend
@@ -870,8 +890,28 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTarget("noiseColor")]
             public ColorParser NoiseColor
             {
-                get { return Value.noiseColor; }
-                set { Value.noiseColor = value; }
+                get 
+                {
+                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
+                    {
+                        return new Color(0, 0, 0, 0);
+                    }
+                    else
+                    {
+                        return Value.noiseColor;
+                    }
+                }
+                set
+                {
+                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
+                    {
+                        Value.noiseColor = new Color(0, 0, 0, 0);
+                    }
+                    else
+                    {
+                        Value.noiseColor = value;
+                    }
+                }
             }
 
             // noiseFrequency

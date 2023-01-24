@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -57,6 +57,10 @@ namespace Kopernicus.ShadowMan
                 mat.SetOverrideTag("RenderType", "Transparent");
                 mat.SetOverrideTag("IgnoreProjector", "True");
             }
+        }
+        private void OnDestroy()
+        {
+            GameEvents.onGameSceneLoadRequested.Remove(GameSceneLoaded);
         }
     }
 }

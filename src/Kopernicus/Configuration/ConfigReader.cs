@@ -57,13 +57,15 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool UseIncorrectScatterDensityLogic = false;
         [Persistent]
-        public bool DisableFarAwayColliders = false;
+        public bool DisableFarAwayColliders = true;
+        [Persistent]
+        public bool EnableAtmosphericExtinction = false;
+        [Persistent]
+        public bool EnableColorFix = true;
         [Persistent]
         public float SettingsWindowXcoord = 0;
         [Persistent]
         public float SettingsWindowYcoord = 0;
-        [Persistent]
-        public bool EnableAtmosphericExtinction = false;
 
         public UrlDir.UrlConfig[] baseConfigs;
         public void loadMainSettings()
@@ -94,9 +96,10 @@ namespace Kopernicus.Configuration
                 Debug.Log("HandleHomeworldAtmosphericUnitDisplay: " + HandleHomeworldAtmosphericUnitDisplay);
                 Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);
                 Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);
+                Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
+                Debug.Log("EnableColorFix: " + EnableColorFix);
                 Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);
                 Debug.Log("SettingsWindowYcoord: " + SettingsWindowYcoord);
-                Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
             }
             catch
             {

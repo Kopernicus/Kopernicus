@@ -1,19 +1,21 @@
 ﻿Kopernicus
 ==============================
-January 11th, 2023
+January 23rd, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-143:
+New in this latest version release-144:
 
-1.) Removed a warning that was incorrectly displaying on build 1.12.5 about the build being beta (seems fine).
+1.) Kopernicus Asteroid Generator performance improvements via github user TuckMeIntoBread, should reduce in game stutter on asteroid spawning.
 
-2.) a minor fix for exported height maps from Kittopia.
+2.) The old "ColorFix.cfg" file is now baked into Kopernicus, and can be turned off with an ingame/config file option called "EnableColorFix."  Setting it to false disables it, but it defaults to true for obvious reasons (few packs need it off, many need it on).
 
-3.) allowedBiomes may now contain spaces.
+3.) Changed default for "DisableFarAwayColliders" is now true instead of false.  The feature has yet to cause a major issue, and several larger planet packs rely on it, so...
+
+4.) Fixed some insignificant but still relevant memory leaks, and changed Kopernicus_Config.cfg loader to load earlier to prevent race conditions with some configurations.
 
 Known Bugs:
 
@@ -33,9 +35,9 @@ Known Caveats:
 
 3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
-4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but a few do (JNSQ for example).  You can work around this if affected by setting your LandControl color to be all zeroes. See attatched cfg for a mod that does this.
+4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but a few do (JNSQ for example).  We work around this in game now, but if you need createColor colors, turn option "EnableColorFix" to false.
 
-5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is off by default.  If you have a system larger than stock, please see Kopernicus_Config.cfg option DisableFarAwayColliders, read about the fix/workaround, and set it as you feel appropriate.
+5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default.  If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
 
 About
 -----
