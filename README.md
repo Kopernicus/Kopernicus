@@ -9,7 +9,7 @@ February 3rd, 2023
 
 New in this latest version release-148:
 
-1.) Bugfix for some (almost completely unusued) KSC customization fucntions that were broken.
+1.) Bugfix for some (almost completely unusued) KSC customization fundtions that were broken.
 
 Known Bugs:
 
