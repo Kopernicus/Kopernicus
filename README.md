@@ -1,19 +1,15 @@
 ﻿Kopernicus
 ==============================
-February 2nd, 2023
+February 3rd, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-146:
+New in this latest version release-147:
 
-1.) Fix for multipart PQSCity units like the Inland KSC.  Closes Github Issue #521.
-
-2.) Some space center parts that weren't customizable are now fixed/working again.
-
-3.) The particle system which hasn't worked since at least 1.10.x has been removed to keep the code lean and mean.  No mods used it to my knowledge, anyhow.
+1.) Bugfix for game crashing due to structures not being tracked right by the spawning mechanisms if they are not placed properly by the authors, brought about by multipart structures suddenly spawning correctly.
 
 Known Bugs:
 
@@ -38,6 +34,8 @@ Known Caveats:
 5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default.  If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
 
 6.) The particle system was hopelessly broken and has been since sometime past 1.10.x.  Few mods used it, so it has been removed completely as of Release-146.
+
+7.) Because we now unpack multipart PQSCity's correctly, you may find some PQSCity structures are in the earth or floating.  Report such bugs to your planet pack author as this is an intended change (only cosmetic).
 
 About
 -----

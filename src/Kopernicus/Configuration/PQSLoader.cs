@@ -702,10 +702,11 @@ namespace Kopernicus.Configuration
             }
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            List<PQSCity> pqsCitys = new List<PQSCity>();
             for (Int32 i = 0; i < mods.Length; i++)
             {
                 Type modType = mods[i].GetType();
-                if (!mods[i].GetType().Name.Equals("PQSCity"))
+                if (!modType.Name.Equals("PQSCity"))
                 {
                     Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
 
@@ -721,9 +722,13 @@ namespace Kopernicus.Configuration
                         Mods.Add(loader);
                     }
                 }
+                else
+                {
+                    pqsCitys.Add((PQSCity)mods[i]);
+                }
             }
             // Repair all stock PQSCity's except the KSC
-            foreach (PQSCity PQSC in Value.GetComponentsInChildren<PQSCity>(true))
+            foreach (PQSCity PQSC in pqsCitys)
             {
                 try //this try protects against nullref checks here with PQSCity's lacking names, which aparently exist.
                 {
@@ -759,7 +764,21 @@ namespace Kopernicus.Configuration
                 PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
                 Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
                 newScTree.name = PQSC.name;
-                PQSC.gameObject.DestroyGameObjectImmediate();
+                Type modType = PQSC.GetType();
+                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                {
+                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                    {
+                        continue;
+                    }
+
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                    loader.Create(PQSC, Value);
+                    loader.Mod.enabled = false; //we don't want you visible, you old broken thing...
+                    loader.Mod.modEnabled = false;
+                    Mods.Add(loader);
+                }
             }
         }
 
