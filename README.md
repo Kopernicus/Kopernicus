@@ -7,9 +7,9 @@ February 3rd, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-148:
+New in this latest version release-149:
 
-1.) Bugfix for some (almost completely unusued) KSC customization fundtions that were broken.
+1.) More KSC customization fixes that almost certainly no one uses.  Just trying to make it perform as per the wiki. :)
 
 Known Bugs:
 
