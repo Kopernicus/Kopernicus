@@ -7,9 +7,9 @@ February 3rd, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-147:
+New in this latest version release-148:
 
-1.) Bugfix for game crashing due to structures not being tracked right by the spawning mechanisms if they are not placed properly by the authors, brought about by multipart structures suddenly spawning correctly.
+1.) Bugfix for some (almost completely unusued) KSC customization fucntions that were broken.
 
 Known Bugs:
 

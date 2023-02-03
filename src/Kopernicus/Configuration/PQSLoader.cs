@@ -739,6 +739,19 @@ namespace Kopernicus.Configuration
                 }
                 catch
                 {
+                    Type kscModType = PQSC.GetType();
+                    Type kscModLoaderType = typeof(ModLoader<>).MakeGenericType(kscModType);
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    {
+                        if (!kscModLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                        {
+                            continue;
+                        }
+
+                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(PQSC, Value);
+                        Mods.Add(loader);
+                    }
                     continue;
                 }
                 PSystemBody worldTemplate;

@@ -483,7 +483,10 @@ namespace Kopernicus.Configuration
             {
                 HazardousBody.Add(new HazardousBodyLoader(body));
             }
-
+            if (celestialBody.isHomeWorld)
+            {
+                SpaceCenter = new SpaceCenterLoader(celestialBody);
+            }
             Debug = new DebugLoader(celestialBody);
         }
     }
