@@ -147,16 +147,6 @@ namespace Kopernicus
         [Description("OrbitLoader.PostApply.NR")]
         private static EventData<ConfigNode> OnOrbitLoaderPostApplyNR { get; set; }
 
-        [Description("ParticleLoader.Apply")]
-        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderApply { get; private set; }
-        [Description("ParticleLoader.PostApply")]
-        public static EventData<ParticleLoader, ConfigNode> OnParticleLoaderPostApply { get; private set; }
-
-        [Description("ParticleLoader.Apply.NR")]
-        private static EventData<ConfigNode> OnParticleLoaderApplyNR { get; set; }
-        [Description("ParticleLoader.PostApply.NR")]
-        private static EventData<ConfigNode> OnParticleLoaderPostApplyNR { get; set; }
-
         [Description("PQSLoader.Apply")]
         public static EventData<PQSLoader, ConfigNode> OnPQSLoaderApply { get; private set; }
         [Description("PQSLoader.PostApply")]
@@ -358,8 +348,6 @@ namespace Kopernicus
             OnOceanLoaderPostApply.Add((a, c) => OnOceanLoaderPostApplyNR.Fire(c));
             OnOrbitLoaderApply.Add((a, c) => OnOrbitLoaderApplyNR.Fire(c));
             OnOrbitLoaderPostApply.Add((a, c) => OnOrbitLoaderPostApplyNR.Fire(c));
-            OnParticleLoaderApply.Add((a, c) => OnParticleLoaderApplyNR.Fire(c));
-            OnParticleLoaderPostApply.Add((a, c) => OnParticleLoaderPostApplyNR.Fire(c));
             OnPQSLoaderApply.Add((a, c) => OnPQSLoaderApplyNR.Fire(c));
             OnPQSLoaderPostApply.Add((a, c) => OnPQSLoaderPostApplyNR.Fire(c));
             OnPropertiesLoaderApply.Add((a, c) => OnPropertiesLoaderApplyNR.Fire(c));

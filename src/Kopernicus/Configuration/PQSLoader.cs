@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Kopernicus.Components;
 using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser;
@@ -669,7 +670,6 @@ namespace Kopernicus.Configuration
                 }
             }
 #endif
-
             // hacky hack
             if (generatedBody.celestialBody.isHomeWorld && Value.gameObject.GetChild("KSC") == null)
             {
@@ -705,19 +705,61 @@ namespace Kopernicus.Configuration
             for (Int32 i = 0; i < mods.Length; i++)
             {
                 Type modType = mods[i].GetType();
-                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-
-                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                if (!mods[i].GetType().Name.Equals("PQSCity"))
                 {
-                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                    Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    {
+                        if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                        {
+                            continue;
+                        }
+
+                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(mods[i], Value);
+                        Mods.Add(loader);
+                    }
+                }
+            }
+            // Repair all stock PQSCity's except the KSC
+            foreach (PQSCity PQSC in Value.GetComponentsInChildren<PQSCity>(true))
+            {
+                try //this try protects against nullref checks here with PQSCity's lacking names, which aparently exist.
+                {
+                    if (PQSC.name.Equals("KSC"))
                     {
                         continue;
                     }
-
-                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                    loader.Create(mods[i], Value);
-                    Mods.Add(loader);
                 }
+                catch
+                {
+                    continue;
+                }
+                PSystemBody worldTemplate;
+                PQSCity scTree;
+                try //this try ensure stock bodies are selected
+                {
+                    worldTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, Value.name);
+                }
+                catch
+                {
+                    worldTemplate = null;
+                    continue;
+                }
+                try //this try ensures only stock PQSCity's are selected
+                {
+                    scTree = worldTemplate.pqsVersion.GetComponentsInChildren<PQSCity>(true).First(m => m.name == PQSC.name);
+                }
+                catch
+                {
+                    scTree = null;
+                    continue;
+                }
+                PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
+                Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
+                newScTree.name = PQSC.name;
+                PQSC.gameObject.DestroyGameObjectImmediate();
             }
         }
 

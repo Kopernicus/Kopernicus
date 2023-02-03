@@ -217,7 +217,6 @@ namespace Kopernicus.Configuration
 
         // Wrapper around Particle class for editing/loading
         [ParserTargetCollection("Particles", AllowMerge = true)]
-        public List<ParticleLoader> Particles { get; set; }
 
         [ParserTargetCollection("HazardousBody", AllowMerge = true)]
         public List<HazardousBodyLoader> HazardousBody { get; set; }
@@ -345,6 +344,10 @@ namespace Kopernicus.Configuration
                 Debug = new DebugLoader();
                 ScaledVersion = new ScaledVersionLoader();
             }
+            if (GeneratedBody.celestialBody.isHomeWorld)
+            {
+                SpaceCenter = new SpaceCenterLoader();
+            }
             // Event
             Events.OnBodyApply.Fire(this, node);
         }
@@ -436,7 +439,6 @@ namespace Kopernicus.Configuration
         public Body()
         {
             Rings = new List<RingLoader>();
-            Particles = new List<ParticleLoader>();
         }
 
         /// <summary>
@@ -476,22 +478,10 @@ namespace Kopernicus.Configuration
                 Rings.Add(new RingLoader(ring));
             }
 
-            Particles = new List<ParticleLoader>();
-            foreach (PlanetParticleEmitter particle in celestialBody.scaledBody
-                .GetComponentsInChildren<PlanetParticleEmitter>(true))
-            {
-                Particles.Add(new ParticleLoader(particle));
-            }
-
             HazardousBody = new List<HazardousBodyLoader>();
             foreach (HazardousBody body in celestialBody.GetComponents<HazardousBody>())
             {
                 HazardousBody.Add(new HazardousBodyLoader(body));
-            }
-
-            if (celestialBody.isHomeWorld)
-            {
-                SpaceCenter = new SpaceCenterLoader(celestialBody);
             }
 
             Debug = new DebugLoader(celestialBody);

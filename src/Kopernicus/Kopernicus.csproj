@@ -116,6 +116,8 @@
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheCreated" />
     <Publicize Include="Assembly-CSharp:PhysicsGlobals.solarLuminosity" />
     <Publicize Include="Assembly-CSharp:OrbitRendererData.nodeColor" />
+    <Publicize Include="Assembly-CSharp:PQSCity.Reset" />
+    <Publicize Include="Assembly-CSharp:PQSCity.Start" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>
@@ -297,7 +299,6 @@
     <Compile Include="Configuration\Parsing\BaseLoader.cs" />
     <Compile Include="Configuration\Parsing\ObjImporter.cs" />
     <Compile Include="Configuration\FogLoader.cs" />
-    <Compile Include="Configuration\ParticleLoader.cs" />
     <Compile Include="Configuration\RingLoader.cs" />
     <Compile Include="Configuration\SpaceCenterLoader.cs" />
     <Compile Include="Configuration\LightShifterLoader.cs" />
