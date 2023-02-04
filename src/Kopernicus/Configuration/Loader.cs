@@ -402,11 +402,22 @@ namespace Kopernicus.Configuration
                     if (!body.GeneratedBody.celestialBody.isHomeWorld && body.GeneratedBody.pqsVersion != null)
                     {
                         SpaceCenter[] centers = body.GeneratedBody.pqsVersion.GetComponentsInChildren<SpaceCenter>(true);
+                        PQSCity[] pqsCitys = body.GeneratedBody.pqsVersion.GetComponentsInChildren<PQSCity>(true);
                         if (centers != null)
                         {
                             foreach (SpaceCenter c in centers)
                             {
-                                Object.Destroy(c);
+                                c.gameObject.DestroyGameObjectImmediate();
+                            }
+                        }
+                        if (pqsCitys != null)
+                        {
+                            foreach (PQSCity pqsCity in pqsCitys)
+                            {
+                                if (pqsCity.name.Equals("KSC"))
+                                {
+                                    pqsCity.gameObject.DestroyGameObjectImmediate();
+                                }
                             }
                         }
                     }
@@ -420,6 +431,7 @@ namespace Kopernicus.Configuration
 
                 // Try to find a home world
                 Body home = bodies.FirstOrDefault(p => p.GeneratedBody.celestialBody.isHomeWorld);
+
                 if (home == null)
                 {
                     throw new Exception("Homeworld body could not be found.");
@@ -440,9 +452,9 @@ namespace Kopernicus.Configuration
                         body.flightGlobalsIndex = index++;
                     }
 
-                    if (body.celestialBody.isHomeWorld)
+                    if (body.name.Equals("Kerbin"))
                     {
-                        body.flightGlobalsIndex = 1; // Kerbin
+                        body.flightGlobalsIndex = 1; // Homeworld
                     }
 
                     if (body == SystemPrefab.rootBody)

@@ -122,21 +122,28 @@ namespace Kopernicus.RuntimeUtility
 
         private void ReenableAll()
         {
-            for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+            try
             {
-                CelestialBody cb = FlightGlobals.Bodies[i];
-                if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
                 {
-                    continue;
+                    CelestialBody cb = FlightGlobals.Bodies[i];
+                    if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        RestoreColliderState(cb, i);
+                    }
+                    catch
+                    {
+                        //Guess we couldn't do that?  Keep trying anyways...
+                    }
                 }
-                try
-                {
-                    RestoreColliderState(cb, i);
-                }
-                catch
-                {
-                    //Guess we couldn't do that?  Keep trying anyways...
-                }
+            }
+            catch
+            {
+                //must be time to stop...
             }
         }
     }

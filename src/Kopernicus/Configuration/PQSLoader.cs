@@ -800,9 +800,15 @@ namespace Kopernicus.Configuration
                     }
                     continue;
                 }
-                PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
-                Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
-                newScTree.name = PQSC.name;
+                Vector3 oldLocalPosition = PQSC.transform.localPosition;
+                Vector3 oldLocalScale = PQSC.transform.localScale;
+                Quaternion oldLocalRotation = PQSC.transform.rotation;
+                string oldName = PQSC.name;
+                Utility.CopyObjectFields<PQSCity>(scTree, PQSC);
+                PQSC.name = oldName;
+                PQSC.transform.localPosition = oldLocalPosition;
+                PQSC.transform.localScale = oldLocalScale;
+                PQSC.transform.localRotation = oldLocalRotation;
                 Type modType = PQSC.GetType();
                 Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
                 for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
@@ -811,11 +817,8 @@ namespace Kopernicus.Configuration
                     {
                         continue;
                     }
-
                     IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                    loader.Create(PQSC, Value);
-                    loader.Mod.enabled = false; //we don't want you visible, you old broken thing...
-                    loader.Mod.modEnabled = false;
+                    loader.Mod = PQSC;
                     Mods.Add(loader);
                 }
             }
@@ -928,20 +931,123 @@ namespace Kopernicus.Configuration
             }
             // Load existing mods
             PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            List<PQSCity> pqsCitys = new List<PQSCity>();
             for (Int32 i = 0; i < mods.Length; i++)
             {
                 Type modType = mods[i].GetType();
-                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+                if (!modType.Name.Equals("PQSCity"))
+                {
+                    Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
 
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    {
+                        if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                        {
+                            continue;
+                        }
+
+                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(mods[i], Value);
+                        Mods.Add(loader);
+                    }
+                }
+                else
+                {
+                    pqsCitys.Add((PQSCity)mods[i]);
+                }
+            }
+            // Repair all stock PQSCity's except the KSC
+            foreach (PQSCity PQSC in pqsCitys)
+            {
+                try //this try protects against nullref checks here with PQSCity's lacking names, which aparently exist.
+                {
+                    if (PQSC.name.Equals("KSC"))
+                    {
+                        Type kscModType = PQSC.GetType();
+                        Type kscModLoaderType = typeof(ModLoader<>).MakeGenericType(kscModType);
+                        for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                        {
+                            if (!kscModLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                            {
+                                continue;
+                            }
+
+                            IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                            loader.Create(PQSC, Value);
+                            Mods.Add(loader);
+                        }
+                        continue;
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+                PSystemBody worldTemplate;
+                PQSCity scTree;
+                try //this try ensure stock bodies are selected
+                {
+                    worldTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, Value.name);
+                }
+                catch
+                {
+                    worldTemplate = null;
+                    Type kscModType = PQSC.GetType();
+                    Type kscModLoaderType = typeof(ModLoader<>).MakeGenericType(kscModType);
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    {
+                        if (!kscModLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                        {
+                            continue;
+                        }
+
+                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(PQSC, Value);
+                        Mods.Add(loader);
+                    }
+                    continue;
+                }
+                try //this try ensures only stock PQSCity's are selected
+                {
+                    scTree = worldTemplate.pqsVersion.GetComponentsInChildren<PQSCity>(true).First(m => m.name == PQSC.name);
+                }
+                catch
+                {
+                    scTree = null;
+                    Type kscModType = PQSC.GetType();
+                    Type kscModLoaderType = typeof(ModLoader<>).MakeGenericType(kscModType);
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    {
+                        if (!kscModLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                        {
+                            continue;
+                        }
+
+                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(PQSC, Value);
+                        Mods.Add(loader);
+                    }
+                    continue;
+                }
+                Vector3 oldLocalPosition = PQSC.transform.localPosition;
+                Vector3 oldLocalScale = PQSC.transform.localScale;
+                Quaternion oldLocalRotation = PQSC.transform.rotation;
+                string oldName = PQSC.name;
+                Utility.CopyObjectFields<PQSCity>(scTree, PQSC);
+                PQSC.name = oldName;
+                PQSC.transform.localPosition = oldLocalPosition;
+                PQSC.transform.localScale = oldLocalScale;
+                PQSC.transform.localRotation = oldLocalRotation;
+                Type modType = PQSC.GetType();
+                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
                 for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                 {
                     if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
                     {
                         continue;
                     }
-
                     IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                    loader.Create(mods[i], Value);
+                    loader.Mod = PQSC;
                     Mods.Add(loader);
                 }
             }

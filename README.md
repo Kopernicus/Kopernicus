@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-February 3rd, 2023
+February 4th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-149:
+New in this latest version release-150:
 
-1.) More KSC customization fixes that almost certainly no one uses.  Just trying to make it perform as per the wiki. :)
+1.) Multipart PQSCity loader bugfixes for edge cases.
 
 Known Bugs:
 
