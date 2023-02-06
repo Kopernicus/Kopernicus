@@ -55,6 +55,9 @@ namespace Kopernicus
         // Whether the injector is currently patching the prefab
         public static Boolean IsInPrefab { get; private set; }
 
+        public static MapSO moho_biomes;
+        public static MapSO moho_height;
+
         // Awake() is the first function called in the lifecycle of a Unity3D MonoBehaviour.  In the case of KSP,
         // it happens to be called right before the game's PSystem is instantiated from PSystemManager.Instance.systemPrefab
         public void Awake()
@@ -82,7 +85,31 @@ namespace Kopernicus
             String kspVersion = Versioning.version_major + "." + Versioning.version_minor + "." +
                                 Versioning.Revision;
             Debug.Log("[Kopernicus] Running Kopernicus " + kopernicusVersion + " on KSP " + kspVersion);
+            //Harmony stuff
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate)
+            {
+                MapSO[] so = Resources.FindObjectsOfTypeAll<MapSO>();
 
+                foreach (MapSO mapSo in so)
+                {
+                    if (mapSo.MapName == "moho_biomes"
+                        && mapSo.Size == 6291456
+                        && mapSo._data[0] == 216
+                        && mapSo._data[1] == 178
+                        && mapSo._data[2] == 144)
+                    {
+                        moho_biomes = mapSo;
+                    }
+                    else if (mapSo.MapName == "moho_height"
+                             && mapSo.Size == 2097152
+                             && mapSo._data[1509101] == 146
+                             && mapSo._data[1709108] == 162
+                             && mapSo._data[1909008] == 216)
+                    {
+                        moho_height = mapSo;
+                    }
+                }
+            }
             Harmony harmony = new Harmony("Kopernicus");
             harmony.PatchAll();
 
@@ -380,24 +407,12 @@ namespace Kopernicus
             Logger.Default.Flush();
         }
     }
-    [HarmonyPatch(typeof(MapSO), nameof(MapSO.ConstructBilinearCoords))]
-    class MapSO_ConstructBilinearCoords
+    [HarmonyPatch(typeof(MapSO), "ConstructBilinearCoords", new Type[]{typeof(float), typeof(float)})]
+    public static class MapSOPPatch_Float
     {
-        static int useStockMohoTemplate = -1;
-        static bool MapSO_ConstructBilinearCoords_Float(MapSO __instance, float x, float y)
+        private static bool Prefix(MapSO __instance, float x, float y)
         {
-            if (useStockMohoTemplate == -1)
-            {
-                if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate)
-                {
-                    useStockMohoTemplate = 1;
-                }
-                else
-                {
-                    useStockMohoTemplate = 0;
-                }
-            }
-            if (__instance.name.ToLower().Contains("moho_") && (!(useStockMohoTemplate == 0)))
+            if (ReferenceEquals(__instance, Injector.moho_biomes) || ReferenceEquals(__instance, Injector.moho_height))
             {
                 return true;
             }
@@ -421,21 +436,13 @@ namespace Kopernicus
 
             return false;
         }
-
-        static bool MapSO_ConstructBilinearCoords_Double(MapSO __instance, double x, double y)
+    }
+    [HarmonyPatch(typeof(MapSO), "ConstructBilinearCoords", new Type[] { typeof(double), typeof(double) })]
+    public static class MapSOPatch_Double
+    {
+        private static bool Prefix(MapSO __instance, double x, double y)
         {
-            if (useStockMohoTemplate == -1)
-            {
-                if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate)
-                {
-                    useStockMohoTemplate = 1;
-                }
-                else
-                {
-                    useStockMohoTemplate = 0;
-                }
-            }
-            if (__instance.name.ToLower().Contains("moho_") && (!(useStockMohoTemplate == 0)))
+            if (ReferenceEquals(__instance, Injector.moho_biomes) || ReferenceEquals(__instance, Injector.moho_height))
             {
                 return true;
             }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.props" Condition="Exists('..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.props')" />
+  <Import Project="..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.props" Condition="Exists('..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -76,9 +76,8 @@
       <Name>Kopernicus.Parser</Name>
       <Private>True</Private>
     </Reference>
-    <Reference Include="0Harmony, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Lib.Harmony.2.2.1\lib\net472\0Harmony.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Lib.Harmony.2.2.2\lib\net472\0Harmony.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -116,19 +115,21 @@
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheCreated" />
     <Publicize Include="Assembly-CSharp:PhysicsGlobals.solarLuminosity" />
     <Publicize Include="Assembly-CSharp:OrbitRendererData.nodeColor" />
-	<Publicize Include="Assembly-CSharp:MapSO.ConstructBilinearCoords" />
+    <Publicize Include="Assembly-CSharp:MapSO.ConstructBilinearCoords" />
     <Publicize Include="Assembly-CSharp:MapSO.centerX" />
-	<Publicize Include="Assembly-CSharp:MapSO.centerY" />
-	<Publicize Include="Assembly-CSharp:MapSO.centerXD" />
-	<Publicize Include="Assembly-CSharp:MapSO.centerYD" />
-	<Publicize Include="Assembly-CSharp:MapSO._width" />
-	<Publicize Include="Assembly-CSharp:MapSO._height" />
-	<Publicize Include="Assembly-CSharp:MapSO.minX" />
-	<Publicize Include="Assembly-CSharp:MapSO.maxX" />
-	<Publicize Include="Assembly-CSharp:MapSO.midX" />
-	<Publicize Include="Assembly-CSharp:MapSO.minY" />
-	<Publicize Include="Assembly-CSharp:MapSO.maxY" />
-	<Publicize Include="Assembly-CSharp:MapSO.midY" />
+    <Publicize Include="Assembly-CSharp:MapSO.centerY" />
+    <Publicize Include="Assembly-CSharp:MapSO.centerXD" />
+    <Publicize Include="Assembly-CSharp:MapSO.centerYD" />
+    <Publicize Include="Assembly-CSharp:MapSO._width" />
+    <Publicize Include="Assembly-CSharp:MapSO._height" />
+    <Publicize Include="Assembly-CSharp:MapSO.minX" />
+    <Publicize Include="Assembly-CSharp:MapSO.maxX" />
+    <Publicize Include="Assembly-CSharp:MapSO.midX" />
+    <Publicize Include="Assembly-CSharp:MapSO.minY" />
+    <Publicize Include="Assembly-CSharp:MapSO.maxY" />
+    <Publicize Include="Assembly-CSharp:MapSO.midY" />
+    <Publicize Include="Assembly-CSharp:MapSO._data" />
+    <Publicize Include="Assembly-CSharp:PSystemSetup.Awake" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>
@@ -447,8 +448,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.props'))" />
-    <Error Condition="!Exists('..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.props'))" />
+    <Error Condition="!Exists('..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.targets'))" />
   </Target>
-  <Import Project="..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.targets" Condition="Exists('..\..\packages\Krafs.Publicizer.1.0.2\build\Krafs.Publicizer.targets')" />
+  <Import Project="..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.targets" Condition="Exists('..\..\packages\Krafs.Publicizer.2.2.1\build\Krafs.Publicizer.targets')" />
 </Project>

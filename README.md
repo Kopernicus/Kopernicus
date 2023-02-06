@@ -1,21 +1,15 @@
 ﻿Kopernicus
 ==============================
-February 5th, 2023
+February 6th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-151:
+New in this latest version release-152:
 
-1.) A bugfix for how MapSO wraps terrain to a body, resulting in the polar regions behaving more normally.  Do note that this does not apply to Moho, unless new boolean option "UseStockMohoTemplate" is disabled.  This is because it would remove the Mohole.
-
-2.) The above may slightly alter polar terrain.  Though it will be safer overall for new missions, be careful loading existing craft there.  I'm bolding this for a reason.  This is probably not lethal but I don't want you to be unaware.  Maybe make a save just in case? ;)
-
-3.) We now ship a MM patch to disable the KSPCF patch that did the same thing, as we were in agreement that this should be handled by Kopernicus.
-
-4.) Implement UI Scaling support to the Kopernicus UI.
+1.) Performance improvements to the MapSO polar fixes courtesy @Gotmachines advice.
 
 Known Bugs:
 
