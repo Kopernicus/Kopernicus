@@ -63,6 +63,8 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool EnableColorFix = true;
         [Persistent]
+        public bool UseStockMohoTemplate = true;
+        [Persistent]
         public float SettingsWindowXcoord = 0;
         [Persistent]
         public float SettingsWindowYcoord = 0;

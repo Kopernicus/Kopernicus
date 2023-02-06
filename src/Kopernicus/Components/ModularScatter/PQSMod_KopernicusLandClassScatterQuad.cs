@@ -16,7 +16,6 @@ namespace Kopernicus.Components.ModularScatter
     /// </summary>
     public class PQSMod_KopernicusLandClassScatterQuad : PQSMod_LandClassScatterQuad
     {
-        private static ProfilerMarker pmCreateQuadScatter = new ProfilerMarker("Kopernicus.CreateQuadScatter");
 
         private static List<CombineInstance> combineInstances = new List<CombineInstance>(200);
 
@@ -35,7 +34,6 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         public void CreateScatters()
         {
-            pmCreateQuadScatter.Begin();
 
             if (modularScatter.allowedBiomes.Count > 0)
             {
@@ -44,7 +42,6 @@ namespace Kopernicus.Components.ModularScatter
                 string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, modularScatter.body);
                 if (!modularScatter.allowedBiomes.Contains(scatterBiome))
                 {
-                    pmCreateQuadScatter.End();
                     return;
                 }
             }
@@ -196,8 +193,6 @@ namespace Kopernicus.Components.ModularScatter
             combineInstances.Clear();
             obj.SetActive(true);
             isBuilt = true;
-
-            pmCreateQuadScatter.End();
         }
 
         /// <summary>

@@ -1,15 +1,21 @@
 ﻿Kopernicus
 ==============================
-February 4th, 2023
+February 5th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-150:
+New in this latest version release-151:
 
-1.) Multipart PQSCity loader bugfixes for edge cases.
+1.) A bugfix for how MapSO wraps terrain to a body, resulting in the polar regions behaving more normally.  Do note that this does not apply to Moho, unless new boolean option "UseStockMohoTemplate" is disabled.  This is because it would remove the Mohole.
+
+2.) The above may slightly alter polar terrain.  Though it will be safer overall for new missions, be careful loading existing craft there.  I'm bolding this for a reason.  This is probably not lethal but I don't want you to be unaware.  Maybe make a save just in case? ;)
+
+3.) We now ship a MM patch to disable the KSPCF patch that did the same thing, as we were in agreement that this should be handled by Kopernicus.
+
+4.) Implement UI Scaling support to the Kopernicus UI.
 
 Known Bugs:
 
@@ -31,11 +37,13 @@ Known Caveats:
 
 4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but a few do (JNSQ for example).  We work around this in game now, but if you need createColor colors, turn option "EnableColorFix" to false.
 
-5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default.  If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
+5.) As of release-151, polar generation behavior has changed slightly.  Though it will be safer overall for new missions, be careful loading existing craft there. This is probably not lethal but I don't want you to be unaware.  Maybe make a save just in case? ;)
 
-6.) The particle system was hopelessly broken and has been since sometime past 1.10.x.  Few mods used it, so it has been removed completely as of Release-146.
+6.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default.  If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
 
-7.) Because we now unpack multipart PQSCity's correctly, you may find some PQSCity structures are in the earth or floating.  Report such bugs to your planet pack author as this is an intended change (only cosmetic).
+7.) The particle system was hopelessly broken and has been since sometime past 1.10.x.  Few mods used it, so it has been removed completely as of Release-146.
+
+8.) Because we now unpack multipart PQSCity's correctly, you may find some PQSCity structures are in the earth or floating.  Report such bugs to your planet pack author as this is an intended change (only cosmetic).
 
 About
 -----

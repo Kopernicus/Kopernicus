@@ -4,6 +4,10 @@ using UnityEngine;
 using KSP.UI.Screens;
 using KSP;
 using Kopernicus.RuntimeUtility;
+using Expansions.Missions;
+using static Targeting;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
+using System.Security.AccessControl;
 
 namespace Kopernicus
 {
@@ -13,10 +17,14 @@ namespace Kopernicus
         private static ToolbarButton instance;
         bool addedButton = false;
         bool draw = false;
-        public ApplicationLauncherButton button;
-        public static Rect windowRect;
-        public int windowId;
-        public bool loaded = false;
+        private ApplicationLauncherButton button;
+        private static Rect windowRect;
+        private int windowId;
+        private bool loaded = false;
+        private GUIStyle labelStyle;
+        private GUIStyle toggleStyle;
+        private GUIStyle boxStyle;
+        private int fontSize = 12;
         private void Awake()
         {
             windowId = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
@@ -40,7 +48,7 @@ namespace Kopernicus
         {
             if (!loaded)
             {
-                windowRect = new Rect(RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord, RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord, 400, 50);
+                windowRect = new Rect(RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord, RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowYcoord, 400 * GameSettings.UI_SCALE, 50 * GameSettings.UI_SCALE);
                 loaded = true;
             }
             try
@@ -82,6 +90,27 @@ namespace Kopernicus
         }
         public void DrawKopernicusWindow(int windowId)
         {
+            labelStyle = new GUIStyle(GUI.skin.label);
+            labelStyle.alignment = TextAnchor.UpperLeft;
+            labelStyle.wordWrap = false;
+            labelStyle.fontSize = (int)Math.Round((double)((float)fontSize * GameSettings.UI_SCALE));
+            GUI.skin.label.alignment = labelStyle.alignment;
+            GUI.skin.label.wordWrap = labelStyle.wordWrap;
+            GUI.skin.label.fontSize = labelStyle.fontSize;
+            toggleStyle = new GUIStyle(GUI.skin.toggle);
+            toggleStyle.alignment = TextAnchor.UpperLeft;
+            toggleStyle.wordWrap = false;
+            toggleStyle.fontSize = (int)Math.Round((double)((float)fontSize * GameSettings.UI_SCALE));
+            GUI.skin.toggle.alignment = toggleStyle.alignment;
+            GUI.skin.toggle.wordWrap = toggleStyle.wordWrap;
+            GUI.skin.toggle.fontSize = toggleStyle.fontSize;
+            boxStyle = new GUIStyle(GUI.skin.textField);
+            boxStyle.alignment = TextAnchor.UpperLeft;
+            boxStyle.wordWrap = false;
+            boxStyle.fontSize = (int)Math.Round((double)((float)fontSize * GameSettings.UI_SCALE));
+            GUI.skin.textField.alignment = boxStyle.alignment;
+            GUI.skin.textField.wordWrap = boxStyle.wordWrap;
+            GUI.skin.textField.fontSize = boxStyle.fontSize;
             GUILayout.Label("Kopernicus_Config.cfg Editor");
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforceShaders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforceShaders, "EnforceShaders: Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
             RuntimeUtility.RuntimeUtility.KopernicusConfig.WarnShaders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.WarnShaders, "WarnShaders: Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
@@ -92,6 +121,7 @@ namespace Kopernicus
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders, "DisableFarAwayColliders: Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but has a slight performance penalty. Advised to use only in larger than stock systems.");
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction, "EnableAtmosphericExtinction: Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix, "EnableColorFix: Disable this only if instructed to do so by a planet pack.");
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate, "UseStockMohoTemplate: This uses the stock Moho template with the Mohole bug / feature.Planet packs may customize this as desired.Be aware disabling this disables the Mohole.");
             GUILayout.Label("EnforcedShaderLevel: A number defining the enforced shader level for the above parameters. 0 = Low, 1 = Medium, 2 = High, 3 = Ultra.");
             try
             {
