@@ -744,7 +744,7 @@ namespace Kopernicus.Configuration
                             }
 
                             IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                            loader.Create(PQSC, Value);
+                            loader.Mod = PQSC;
                             Mods.Add(loader);
                         }
                         continue;
@@ -773,7 +773,7 @@ namespace Kopernicus.Configuration
                         }
 
                         IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                        loader.Create(PQSC, Value);
+                        loader.Mod = PQSC;
                         Mods.Add(loader);
                     }
                     continue;
@@ -795,7 +795,7 @@ namespace Kopernicus.Configuration
                         }
 
                         IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                        loader.Create(PQSC, Value);
+                        loader.Mod = PQSC;
                         Mods.Add(loader);
                     }
                     continue;

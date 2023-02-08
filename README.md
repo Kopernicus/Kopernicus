@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-February 6th, 2023
+February 7th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-152:
+New in this latest version release-153:
 
-1.) Performance improvements to the MapSO polar fixes courtesy @Gotmachines advice.
+1.) Fixed a small incompatability with PQSCity repositioning in SigmaDimensions.
 
 Known Bugs:
 
