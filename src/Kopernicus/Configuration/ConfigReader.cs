@@ -61,8 +61,6 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool EnableAtmosphericExtinction = false;
         [Persistent]
-        public bool EnableColorFix = true;
-        [Persistent]
         public bool UseStockMohoTemplate = true;
         [Persistent]
         public float SettingsWindowXcoord = 0;
@@ -99,7 +97,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);
                 Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);
                 Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
-                Debug.Log("EnableColorFix: " + EnableColorFix);
+                Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
                 Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);
                 Debug.Log("SettingsWindowYcoord: " + SettingsWindowYcoord);
             }

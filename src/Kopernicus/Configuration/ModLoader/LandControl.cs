@@ -733,25 +733,11 @@ namespace Kopernicus.Configuration.ModLoader
             {
                 get
                 {
-                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
-                    {
-                        return new Color(0, 0, 0, 0);
-                    }
-                    else
-                    {
-                        return Value.color;
-                    }
+                    return Value.color;
                 }
                 set
                 {
-                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
-                    {
-                        Value.color = new Color(0, 0, 0, 0);
-                    }
-                    else
-                    {
-                        Value.color = value;
-                    }
+                    Value.color = value;
                 }
             }
 
@@ -892,25 +878,11 @@ namespace Kopernicus.Configuration.ModLoader
             {
                 get 
                 {
-                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
-                    {
-                        return new Color(0, 0, 0, 0);
-                    }
-                    else
-                    {
-                        return Value.noiseColor;
-                    }
+                    return Value.noiseColor;
                 }
                 set
                 {
-                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableColorFix)
-                    {
-                        Value.noiseColor = new Color(0, 0, 0, 0);
-                    }
-                    else
-                    {
-                        Value.noiseColor = value;
-                    }
+                    Value.noiseColor = value;
                 }
             }
 
