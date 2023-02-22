@@ -134,6 +134,7 @@
   <!--Source-->
   <ItemGroup>
     <Compile Include="Components\ModularScatter\PQSMod_KopernicusLandClassScatterQuad.cs" />
+    <Compile Include="Components\PQSLandControlFixer.cs" />
     <Compile Include="ToolbarButton.cs" />
     <Compile Include="Components\DrawTools.cs" />
     <Compile Include="Components\HazardousBody.cs" />

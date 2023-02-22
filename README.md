@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-February 21st, 2023
+February 22nd, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-154:
+New in this latest version release-155:
 
-1.) Finally fixed CreateColors, making the colorsfix setting obsolete.
+1.) Fixed a scenario in which some mods would get createcolors stuck on (looking at you, leprechaun valley JNSQ).
 
 Known Bugs:
 
