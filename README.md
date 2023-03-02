@@ -29,15 +29,13 @@ Known Caveats:
 
 3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
-4.) As of Release-119, LandControl createColors is no longer obeyed, it is forced on to avoid another bug.  Very few mods to my knowledge use this parameter, but a few do (JNSQ for example).  We work around this in game now, but if you need createColor colors, turn option "EnableColorFix" to false.
+4.) As of release-151, polar generation behavior has changed slightly.  Though it will be safer overall for new missions, be careful loading existing craft there. This is probably not lethal but I don't want you to be unaware.  Maybe make a save just in case? ;)
 
-5.) As of release-151, polar generation behavior has changed slightly.  Though it will be safer overall for new missions, be careful loading existing craft there. This is probably not lethal but I don't want you to be unaware.  Maybe make a save just in case? ;)
+5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default.  If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
 
-6.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default.  If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
+6.) The particle system was hopelessly broken and has been since sometime past 1.10.x.  Few mods used it, so it has been removed completely as of Release-146.
 
-7.) The particle system was hopelessly broken and has been since sometime past 1.10.x.  Few mods used it, so it has been removed completely as of Release-146.
-
-8.) Because we now unpack multipart PQSCity's correctly, you may find some PQSCity structures are in the earth or floating.  Report such bugs to your planet pack author as this is an intended change (only cosmetic).
+7.) Because we now unpack multipart PQSCity's correctly, you may find some PQSCity structures are in the earth or floating.  Report such bugs to your planet pack author as this is an intended change (only cosmetic).
 
 About
 -----
