@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-March 1st, 2023
+March 7th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-157:
+New in this latest version release-158:
 
-1.) Fixed UI_SCALE aware code sometimes affecting windows outside Kopernicus in undesirable ways.
+1.) Port additional bugfixes from KSPCF that are relevant to Kopernicus, to allow that not to be a required dependency for planet packs (specifically, ROCValidationOOR and ScatterDistribution, fixing both ROCs in certain instances and LandScatter longitude landcontrol ranges).
+
+2.) Added MM configs to enable still using KSPCF if you want to without the two fighting for control of patches (we just disable patches Kopernicus natively implements).
 
 Known Bugs:
 
