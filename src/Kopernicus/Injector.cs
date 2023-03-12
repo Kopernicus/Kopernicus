@@ -478,7 +478,8 @@ namespace Kopernicus
         static bool Prefix(ROCManager __instance)
         {
             List<ROCDefinition> rocDefinitions = __instance.rocDefinitions;
-
+            ValidCelestialBody = AccessTools.MethodDelegate<Func<ROCManager, string, CelestialBody>>(AccessTools.Method(typeof(ROCManager), "ValidCelestialBody"));
+            ValidCBBiome = AccessTools.MethodDelegate<Func<ROCManager, CelestialBody, string, bool>>(AccessTools.Method(typeof(ROCManager), "ValidCBBiome"));
             for (int num = rocDefinitions.Count - 1; num >= 0; num--)
             {
                 for (int num2 = rocDefinitions[num].myCelestialBodies.Count - 1; num2 >= 0; num2--)
@@ -513,7 +514,6 @@ namespace Kopernicus
                     rocDefinitions.RemoveAt(num);
                 }
             }
-
             return false;
         }
     }
