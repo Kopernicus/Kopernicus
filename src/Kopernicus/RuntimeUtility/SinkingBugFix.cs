@@ -33,9 +33,19 @@ namespace Kopernicus.RuntimeUtility
     {
         internal static Dictionary<int, bool>[] colliderStatus;
         internal uint counter = 0;
+        private static SinkingBugFix instance = null;
 
         private void Start()
         {
+            if (instance != null)
+            {
+                this.gameObject.DestroyGameObjectImmediate();
+                return;
+            }
+            else
+            {
+                instance = this;
+            }
             if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
             {
                 try

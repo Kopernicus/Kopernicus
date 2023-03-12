@@ -1,27 +1,29 @@
 ﻿Kopernicus
 ==============================
-March 7th, 2023
+March 12th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-158:
+New in this latest version release-159:
 
-1.) Port additional bugfixes from KSPCF that are relevant to Kopernicus, to allow that not to be a required dependency for planet packs (specifically, ROCValidationOOR and ScatterDistribution, fixing both ROCs in certain instances and LandScatter longitude landcontrol ranges).
+1.) Additional code was added to the collider fix (the one that fixes bugs with "distant bodies") to fix KSC terrain corruption on return to spacecenter, and fix main menu on game exit with extremely distant bodies.  We can now support bodies up to at least 10 real scale LYs away, potentially further.
 
-2.) Added MM configs to enable still using KSPCF if you want to without the two fighting for control of patches (we just disable patches Kopernicus natively implements).
+2.) The ROC bugfix that prevented errors in the logfile when using ROCs on nonstock bodies was not functioning properly (harmless errors were spawning in the logfile).  This has been fixed.
 
 Known Bugs:
 
 1.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
 
-2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away.
+2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away. (I am not sure if this is still releavent as of Release-159, feedback welcome).
 
-3.) When zooming out all the way out in map view at interstellar ranges, the navball furthermore sometimes behaves oddly. We are working on this and monitoring all the interstellar bugs actively.
+3.) When zooming out all the way out in map view at interstellar ranges, the navball furthermore sometimes behaves oddly. We are working on this and monitoring all the interstellar bugs actively. (I am not sure if this is still releavent as of Release-159, feedback welcome).
 
 4.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
+
+5.) Sometimes when reloading a quicksave to KSC, you will get the KSC sunken into the ground.  This is cosmetic only, another reload of the same save will fix it. (This error has been around forever, just now listing it).
 
 Known Caveats:
 
