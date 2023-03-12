@@ -860,11 +860,12 @@ namespace Kopernicus.RuntimeUtility
         }
 
         // Fix the Space Center Cameras
-        private static void FixCameras()
+        public static void FixCameras()
         {
             // Only run in the space center or the editor
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedSceneIsEditor)
             {
+                FloatingOrigin.fetch.ResetOffset();
                 // Get the parental body
                 CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
 

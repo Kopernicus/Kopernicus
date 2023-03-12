@@ -28,46 +28,75 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Kopernicus.RuntimeUtility
 {
-    [KSPAddon(KSPAddon.Startup.Flight, false)]
+    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class SinkingBugFix : MonoBehaviour
     {
-        internal static Dictionary<int, bool>[] colliderStatus = new Dictionary<int, bool>[FlightGlobals.Bodies.Count];
+        internal static Dictionary<int, bool>[] colliderStatus;
         internal uint counter = 0;
 
         private void Start()
         {
             if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
             {
-                for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+                try
                 {
-                    colliderStatus[i] = new Dictionary<int, bool>();
+                    colliderStatus = new Dictionary<int, bool>[FlightGlobals.Bodies.Count];
+                    for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+                    {
+                        colliderStatus[i] = new Dictionary<int, bool>();
+                    }
+                }
+                catch
+                {
+                    return;
                 }
             }
         }
         private void FixedUpdate()
         {
-            if ((RuntimeUtility.KopernicusConfig.DisableFarAwayColliders) && (HighLogic.LoadedSceneIsFlight) && (!HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER)))
+            if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
             {
+                CelestialBody mainBody = null;
                 counter++;
                 if (counter > 25)
                 {
                     counter = 0;
-                    CelestialBody mainBody = FlightGlobals.currentMainBody;
-                    for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+                    Vector3 sceneCenter = Vector3.zero;
+                    try
                     {
-                        CelestialBody cb = FlightGlobals.Bodies[i];
-                        if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                        if (FlightGlobals.Bodies.Count > 1)
                         {
-                            continue;
+                            mainBody = FlightGlobals.currentMainBody;
+                            sceneCenter = mainBody.transform.position;
                         }
-                        else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) < 100000000000)
+                    }
+                    catch
+                    {
+                        sceneCenter = Vector3.zero;
+                    }
+                    try
+                    {
+                        for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
                         {
-                            RestoreColliderState(cb, i);
+                            CelestialBody cb = FlightGlobals.Bodies[i];
+                            if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+                            {
+                                continue;
+                            }
+                            else if (Vector3.Distance(sceneCenter, cb.transform.position) < 100000000000)
+                            {
+                                RestoreColliderState(cb, i);
+                            }
+                            else if (Vector3.Distance(sceneCenter, cb.transform.position) >= 100000000000)
+                            {
+                                HibernateColliderState(cb, i);
+                            }
                         }
-                        else if (Vector3.Distance(FlightGlobals.currentMainBody.transform.position, cb.transform.position) >= 100000000000)
-                        {
-                            HibernateColliderState(cb, i);
-                        }
+                    }
+                    catch
+                    {
+                        //doesn't work in this scene, return
+                        return;
                     }
                 }
             }
