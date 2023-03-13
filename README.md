@@ -15,7 +15,7 @@ New in this latest version release-159:
 
 3.) A warning was added when changing Terrain Detail presets, as it can in some instances change terrain altitude.  You should be careful altering this setting in loaded games with lots of landed craft.
 
-4.) The ROC bugfix that prevented errors in the logfile when using ROCs on nonstock bodies was not functioning properly (harmless errors were spawning in the logfile).  This has been fixed.
+4.) The ROC bugfix that prevented errors in the logfile when using ROCs on nonstock bodies was not functioning properly (errors were actually spawning in the logfile in a way preventing spawn of ROCs).  This has been fixed.
 
 Known Bugs:
 
@@ -30,6 +30,8 @@ Known Bugs:
 5.) Sometimes when reloading a quicksave to KSC, you will get the KSC sunken into the ground.  This is cosmetic only, another reload of the same save will fix it. (This error has been around forever, just now listing it).
 
 6.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text."  This is by design.  If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
+
+7.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release.  This is rare, but can happen.  See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details
 
 Known Caveats:
 
