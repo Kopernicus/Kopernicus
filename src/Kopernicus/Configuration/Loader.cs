@@ -37,6 +37,7 @@ using Kopernicus.Configuration.Asteroids;
 using Kopernicus.OnDemand;
 using Kopernicus.RuntimeUtility;
 using UnityEngine;
+using static PQSCache;
 using Object = UnityEngine.Object;
 
 namespace Kopernicus.Configuration
@@ -313,32 +314,73 @@ namespace Kopernicus.Configuration
 
                 seen.Clear();
                 logger.Close();
-
+                //first cache stock preset values
                 // Load all of the PQS Presets                
                 foreach (ConfigNode presetNode in node.GetNodes(PRESET_NODE_NAME))
                 {
-                    // Attempt to create the Preset
+                    // Attempt to create or edit the Preset
                     try
                     {
                         PQSCache.PQSPreset preset = new PQSCache.PQSPreset();
                         preset.Load(presetNode);
-                        if (PQSCache.PresetList.presets.Any(p => p.name == preset.name))
+                        if (presetNode.GetValue("name").Equals("High", StringComparison.OrdinalIgnoreCase) || presetNode.GetValue("name").Equals("Default", StringComparison.OrdinalIgnoreCase) || presetNode.GetValue("name").Equals("Low", StringComparison.OrdinalIgnoreCase))
                         {
-                            Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Preset: " + preset.name);
-                            continue;
+                            foreach (PQSCache.PQSPreset pqsPreset in PQSCache.PresetList.presets)
+                            {
+                                if (presetNode.GetValue("name").Equals("Low", StringComparison.OrdinalIgnoreCase) && (PQSCache.PresetList.presets.IndexOf(pqsPreset) != 0))
+                                {
+                                    continue;
+                                }
+                                else if (presetNode.GetValue("name").Equals("Default", StringComparison.OrdinalIgnoreCase) && (PQSCache.PresetList.presets.IndexOf(pqsPreset) != 1))
+                                {
+                                    continue;
+                                }
+                                else if (presetNode.GetValue("name").Equals("High", StringComparison.OrdinalIgnoreCase) && (PQSCache.PresetList.presets.IndexOf(pqsPreset) != 2))
+                                {
+                                    continue;
+                                }
+                                if (presetNode.GetValue("name").Equals(pqsPreset.name, StringComparison.OrdinalIgnoreCase))
+                                {
+
+                                    foreach (PQSCache.PQSSpherePreset pqsSP in preset.spherePresets)
+                                    {
+                                        foreach (PQSCache.PQSSpherePreset editPqsSP in pqsPreset.spherePresets)
+                                        {
+                                            if (editPqsSP.name.Equals(pqsSP.name))
+                                            {
+                                                pqsPreset.spherePresets.Remove(editPqsSP);
+                                            }
+                                        }
+                                        pqsPreset.spherePresets.Add(pqsSP);
+                                    }
+                                    Logger.Default.Log("[Kopernicus]: Configuration.Loader: Edited Preset: " + pqsPreset.name);
+                                }
+                            }
                         }
-
-                        PQSCache.PresetList.presets.Add(preset);
-
-                        // Display name
-                        String displayName = preset.name;
-                        if (presetNode.HasValue("displayName"))
+                        else
                         {
-                            displayName = presetNode.GetValue("displayName");
-                        }
+                            bool alreadyPresent = false;
+                            foreach (PQSCache.PQSPreset pqsPreset in PQSCache.PresetList.presets)
+                            {
+                                if (preset.name.Equals(pqsPreset.name))
+                                {
+                                    alreadyPresent = true;
+                                }
+                            }
+                            if (!alreadyPresent)
+                            {
+                                PQSCache.PresetList.presets.Add(preset);
+                            }
+                            // Display name
+                            String displayName = preset.name;
+                            if (presetNode.HasValue("displayName"))
+                            {
+                                displayName = presetNode.GetValue("displayName");
+                            }
 
-                        Templates.PresetDisplayNames.Add(displayName);
-                        Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Preset: " + preset.name);
+                            Templates.PresetDisplayNames.Add(displayName);
+                            Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Preset: " + preset.name);
+                        }
                     }
                     catch
                     {
@@ -347,7 +389,6 @@ namespace Kopernicus.Configuration
                         throw new Exception("Failed to load Asteroid: " + presetNode.GetValue("name"));
                     }
                 }
-
                 // Register UBIs for all bodies
                 CelestialBody[] localBodies = bodies.Select(b => b.GeneratedBody.celestialBody).ToArray();
                 foreach (Body body in bodies)

@@ -230,6 +230,18 @@ namespace Kopernicus.RuntimeUtility
             PatchContracts();
         }
 
+        private void Update()
+        {
+            if (HighLogic.LoadedScene.Equals(GameScenes.SETTINGS))
+            {
+                if (!PQSCache.PresetList.preset.Equals(Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality))
+                {
+                    Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality = PQSCache.PresetList.preset;
+                    PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "You have changed the Terrain Detail setting.  Do note that can slightly change terrain altitudes, potentially affecting landed vessels!  Revert this setting back if unsure.", "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
+                }
+            }
+        }
+
         // Transforms body references in the save games
         private static void TransformBodyReferencesOnLoad(GameEvents.FromToAction<ProtoVessel, ConfigNode> data)
         {
@@ -1125,6 +1137,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	EnableAtmosphericExtinction = False //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = True //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
+                    configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = 0");
                     configFile.WriteLine("	SettingsWindowYcoord = 0");
                     configFile.WriteLine("}");
@@ -1168,6 +1181,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to use only in larger than stock systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
+                    configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());
                     configFile.WriteLine("}");

@@ -130,6 +130,8 @@
     <Publicize Include="Assembly-CSharp:MapSO.midY" />
     <Publicize Include="Assembly-CSharp:MapSO._data" />
     <Publicize Include="Assembly-CSharp:PSystemSetup.Awake" />
+	<Publicize Include="Assembly-CSharp:GameSettings.fetch" />
+	<Publicize Include="Assembly-CSharp:GameSettings.WriteCfg" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>

@@ -11,7 +11,11 @@ New in this latest version release-159:
 
 1.) Additional code was added to the collider fix (the one that fixes bugs with "distant bodies") to fix KSC terrain corruption on return to spacecenter, and fix main menu on game exit with extremely distant bodies.  We can now support bodies up to at least 10 real scale LYs away, potentially further.
 
-2.) The ROC bugfix that prevented errors in the logfile when using ROCs on nonstock bodies was not functioning properly (harmless errors were spawning in the logfile).  This has been fixed.
+2.) The "New Text" bug/string that appeared when adding new Terrain Detail settings has been squashed.  Furthermore, you can now edit the default "High/Default/Low" presets by simply using their name.  Anything stock you edit will not be retained should your mod be removed (it will go back to stock).
+
+3.) A warning was added when changing Terrain Detail presets, as it can in some instances change terrain altitude.  You should be careful altering this setting in loaded games with lots of landed craft.
+
+4.) The ROC bugfix that prevented errors in the logfile when using ROCs on nonstock bodies was not functioning properly (harmless errors were spawning in the logfile).  This has been fixed.
 
 Known Bugs:
 
@@ -24,6 +28,8 @@ Known Bugs:
 4.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
 
 5.) Sometimes when reloading a quicksave to KSC, you will get the KSC sunken into the ground.  This is cosmetic only, another reload of the same save will fix it. (This error has been around forever, just now listing it).
+
+6.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text."  This is by design.  If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
 
 Known Caveats:
 
