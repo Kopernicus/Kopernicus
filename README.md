@@ -7,11 +7,9 @@ March 13th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-160:
+New in this latest version release-161:
 
-1.) Fixed some bugs in the last releases Terrain Detail preset code that were causing some modded users to have to amongst other things, delete their settings.cfg to get their game to load properly. (oops).
-
-2.)  Added an option for Kerbal Constructs users in the GUI to fix a bug with their mod.  The settings is "ResetFloatingOriginOnKSCReturn", default true.  Setting it false may slightly corrupt interstellar scene switches to the KSC, but will fix Kerbal Constructs entirely.
+1.) Hotfix: The "Kerbal Constructs" config option documented above has been added to the in game settings GUI.  You need not break out a text editor, now.
 
 Known Bugs:
 
