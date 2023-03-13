@@ -607,10 +607,19 @@ namespace Kopernicus
             pqspreset3.spherePresets.Add(new PQSCache.PQSSpherePreset("Dres", 8.0, 1, 9));
             pqspreset3.spherePresets.Add(new PQSCache.PQSSpherePreset("Pol", 8.0, 1, 9));
             pqspreset3.spherePresets.Add(new PQSCache.PQSSpherePreset("Eeloo", 8.0, 1, 9));
+            RuntimeUtility.RuntimeUtility.pqsLow = PQSCache.PresetList.presets[0];
+            RuntimeUtility.RuntimeUtility.pqsDefault = PQSCache.PresetList.presets[1];
+            RuntimeUtility.RuntimeUtility.pqsHigh = PQSCache.PresetList.presets[2];
             PQSCache.PresetList.presets[0] = pqspreset;
             PQSCache.PresetList.presets[1] = pqspreset2;
             PQSCache.PresetList.presets[2] = pqspreset3;
             return true;
+        }
+        static void Postfix(GameSettings __instance)
+        {
+            PQSCache.PresetList.presets[0] = RuntimeUtility.RuntimeUtility.pqsLow;
+            PQSCache.PresetList.presets[1] = RuntimeUtility.RuntimeUtility.pqsDefault;
+            PQSCache.PresetList.presets[2] = RuntimeUtility.RuntimeUtility.pqsHigh;
         }
     }
 

@@ -92,6 +92,10 @@ namespace Kopernicus.RuntimeUtility
     public class RuntimeUtility : MonoBehaviour
     {
         private static int internalTimer = 0;
+        public static PQSCache.PQSPreset pqsLow;
+        public static PQSCache.PQSPreset pqsDefault;
+        public static PQSCache.PQSPreset pqsHigh;
+
         //old mockbody for compat
         public static CelestialBody mockBody = null;
         //Plugin Path finding logic
