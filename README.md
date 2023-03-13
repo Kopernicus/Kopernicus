@@ -11,6 +11,8 @@ New in this latest version release-160:
 
 1.) Fixed some bugs in the last releases Terrain Detail preset code that were causing some modded users to have to amongst other things, delete their settings.cfg to get their game to load properly. (oops).
 
+2.)  Added an option for Kerbal Constructs users in the GUI to fix a bug with their mod.  The settings is "ResetFloatingOriginOnKSCReturn", default true.  Setting it false may slightly corrupt interstellar scene switches to the KSC, but will fix Kerbal Constructs entirely.
+
 Known Bugs:
 
 1.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.

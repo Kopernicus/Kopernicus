@@ -63,6 +63,8 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool UseStockMohoTemplate = true;
         [Persistent]
+        public bool ResetFloatingOriginOnKSCReturn = true;
+        [Persistent]
         public string SelectedPQSQuality = PQSCache.PresetList.preset;
         [Persistent]
         public float SettingsWindowXcoord = 0;
@@ -100,6 +102,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);
                 Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
                 Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
+                Debug.Log("ResetFloatingOriginOnKSCReturn: " + ResetFloatingOriginOnKSCReturn);
                 Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);
                 Debug.Log("SettingsWindowYcoord: " + SettingsWindowYcoord);
             }
