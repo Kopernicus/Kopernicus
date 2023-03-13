@@ -1,21 +1,15 @@
 ﻿Kopernicus
 ==============================
-March 12th, 2023
+March 13th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-159:
+New in this latest version release-160:
 
-1.) Additional code was added to the collider fix (the one that fixes bugs with "distant bodies") to fix KSC terrain corruption on return to spacecenter, and fix main menu on game exit with extremely distant bodies.  We can now support bodies up to at least 10 real scale LYs away, potentially further.
-
-2.) The "New Text" bug/string that appeared when adding new Terrain Detail settings has been squashed.  Furthermore, you can now edit the default "High/Default/Low" presets by simply using their name.  Anything stock you edit will not be retained should your mod be removed (it will go back to stock).
-
-3.) A warning was added when changing Terrain Detail presets, as it can in some instances change terrain altitude.  You should be careful altering this setting in loaded games with lots of landed craft.
-
-4.) The ROC bugfix that prevented errors in the logfile when using ROCs on nonstock bodies was not functioning properly (errors were actually spawning in the logfile in a way preventing spawn of ROCs).  This has been fixed.
+1.) Fixed some bugs in the last releases Terrain Detail preset code that were causing some modded users to have to amongst other things, delete their settings.cfg to get their game to load properly. (oops).
 
 Known Bugs:
 

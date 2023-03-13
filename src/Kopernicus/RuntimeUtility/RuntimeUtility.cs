@@ -91,6 +91,7 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
+        private static int internalTimer = 0;
         //old mockbody for compat
         public static CelestialBody mockBody = null;
         //Plugin Path finding logic
@@ -232,12 +233,17 @@ namespace Kopernicus.RuntimeUtility
 
         private void Update()
         {
-            if (HighLogic.LoadedScene.Equals(GameScenes.SETTINGS))
+            internalTimer++;
+            if (internalTimer > 30)
             {
-                if (!PQSCache.PresetList.preset.Equals(Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality))
+                internalTimer = 0;
+                if (HighLogic.LoadedScene.Equals(GameScenes.SETTINGS) || HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
                 {
-                    Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality = PQSCache.PresetList.preset;
-                    PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "You have changed the Terrain Detail setting.  Do note that can slightly change terrain altitudes, potentially affecting landed vessels!  Revert this setting back if unsure.", "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
+                    if (!PQSCache.PresetList.preset.Equals(Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality))
+                    {
+                        Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality = PQSCache.PresetList.preset;
+                        PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "You have changed the Terrain Detail setting.  Do note that can slightly change terrain altitudes, potentially affecting landed vessels!  Revert this setting back if unsure.", "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
+                    }
                 }
             }
         }
