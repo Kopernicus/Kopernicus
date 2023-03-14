@@ -143,14 +143,14 @@ namespace Kopernicus
             try
             {
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit.ToString()));
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit.ToString()));
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING", labelStyle);
                 GUILayout.EndHorizontal();
             }
             catch
             {
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit = 25000;
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit = 10000;
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING", labelStyle);
                 GUILayout.EndHorizontal();
             }

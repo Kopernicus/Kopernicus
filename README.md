@@ -1,15 +1,17 @@
 ﻿Kopernicus
 ==============================
-March 13th, 2023
+March 14th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-162:
+New in this latest version release-163:
 
-1.) Changed config option "ResetFloatingOriginOnKSCReturn" to default false.  It is only needed for interstellar, and some mods have issues with it.  If you already have this setting enabled without issues, you can ignore this release/change, or IF you are having issues, toggle it off manually.  This release is for new users going forward to have the right "default" config.
+1.) This release features a major rewrite of the Kopernicus Shadow manager (in an attempt to make it much more stock like, and perform better also).  The new system performs better, but is shorter range in its casting before it degrades in quality.  In line with this, your Shadow Casting distance will be reset to a still healthy 10000m.  As a bonus, your shadows will be much crisper AND faster now.  Enjoy.
+
+2.) Since stock shadows were hopelessly bugged with Kopernicus, I have disabled them entirely while Kopernicus is installed.  This means if you have Kopernicus, don't use Kopernicus Shadow Manager and DO NOT have a mod like scatterer, etc, you will find yourself with no shadows whatsoever.  This may be visually jarring.
 
 Known Bugs:
 

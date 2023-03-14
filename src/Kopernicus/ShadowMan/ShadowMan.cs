@@ -197,7 +197,7 @@ namespace Kopernicus.ShadowMan
                     originalShadowDistance = QualitySettings.shadowDistance;
                 }
 
-                QualitySettings.shadowDistance = RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowDistanceLimit;
+                QualitySettings.shadowDistance = RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit;
 
                 SetShadowsForLight(sunLight);
 
