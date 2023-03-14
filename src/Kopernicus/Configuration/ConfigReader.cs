@@ -63,7 +63,7 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool UseStockMohoTemplate = true;
         [Persistent]
-        public bool ResetFloatingOriginOnKSCReturn = true;
+        public bool ResetFloatingOriginOnKSCReturn = false;
         [Persistent]
         public string SelectedPQSQuality = PQSCache.PresetList.preset;
         [Persistent]

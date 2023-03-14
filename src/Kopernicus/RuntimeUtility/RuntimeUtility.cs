@@ -135,7 +135,6 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
-
             // Add Callback only if necessary
             if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay)
             {
@@ -1150,7 +1149,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to disable in smaller than or equal to stock sized systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	EnableAtmosphericExtinction = False //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = True //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
-                    configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = True //Boolean. Disable this if using Kerbal Constructs and experiencing issues.  You may experience some interstellar bugs on return to KSC.");
+                    configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = False //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = 0");
                     configFile.WriteLine("	SettingsWindowYcoord = 0");
@@ -1195,7 +1194,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to disable in smaller than or equal to stock sized systems. Be advised this breaks raycasts beyond stock eeloo range.");
                     configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
-                    configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = " + KopernicusConfig.ResetFloatingOriginOnKSCReturn.ToString() + " //Boolean. Disable this if using Kerbal Constructs and experiencing issues.  You may experience some interstellar bugs on return to KSC.");
+                    configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = " + KopernicusConfig.ResetFloatingOriginOnKSCReturn.ToString() + " //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());

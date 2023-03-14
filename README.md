@@ -7,9 +7,9 @@ March 13th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-161:
+New in this latest version release-162:
 
-1.) Hotfix: The "Kerbal Constructs" config option documented above has been added to the in game settings GUI.  You need not break out a text editor, now.
+1.) Changed config option "ResetFloatingOriginOnKSCReturn" to default false.  It is only needed for interstellar, and some mods have issues with it.  If you already have this setting enabled without issues, you can ignore this release/change, or IF you are having issues, toggle it off manually.  This release is for new users going forward to have the right "default" config.
 
 Known Bugs:
 
