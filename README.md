@@ -1,17 +1,15 @@
 ﻿Kopernicus
 ==============================
-March 14th, 2023
+March 15th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-164:
+New in this latest version release-165:
 
-1.) Further shadow improvements.  Now we can support 50000m shadows like Scatterer while keeping them sharp, and we have better transitions between "levels" or shadow cascades.  tl;dr, they look better!
-
-2.) Fixed a conflict with EVE city lights that left some users unable to load.
+1.) Fixed a bug with the new shadow manager that could cause a infinite loop on loading if used with mainline scatterer and multiple stars.
 
 Known Bugs:
 

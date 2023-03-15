@@ -239,16 +239,13 @@ namespace Kopernicus.RuntimeUtility
         }
         private static void FixShadows()
         {
-            if (!KopernicusConfig.EnableKopernicusShadowManager)
+            try
             {
-                try
-                {
-                    GameObject.DestroyImmediate(DynamicShadowSettings.Instance);
-                }
-                catch
-                {
-                    //dont need to do this then
-                }
+                GameObject.DestroyImmediate(DynamicShadowSettings.Instance);
+            }
+            catch
+            {
+                //dont need to do this then
             }
             shadowsFixed = true;
         }
@@ -329,7 +326,7 @@ namespace Kopernicus.RuntimeUtility
             KopernicusStar star = gob.AddComponent<KopernicusStar>();
             FixShadows();
             Utility.CopyObjectFields(Sun.Instance, star, false);
-            Sun.Instance.enabled = false;
+            DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
 
             KopernicusStar.CelestialBodies =

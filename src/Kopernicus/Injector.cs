@@ -648,38 +648,11 @@ namespace Kopernicus
                 __instance.mainBody = FlightGlobals.currentMainBody;
                 if (__instance.mainBody != null)
                 {
-                    for (; ; )
-                    {
-                        switch (1)
-                        {
-                            case 0:
-                                continue;
-                        }
-                        break;
-                    }
                     if (__instance.mainBody != __instance.sun)
                     {
-                        for (; ; )
-                        {
-                            switch (3)
-                            {
-                                case 0:
-                                    continue;
-                            }
-                            break;
-                        }
                         __instance.targetAltitude = FlightGlobals.getAltitudeAtPos(position, __instance.mainBody);
                         if (__instance.targetAltitude < 0.0)
                         {
-                            for (; ; )
-                            {
-                                switch (3)
-                                {
-                                    case 0:
-                                        continue;
-                                }
-                                break;
-                            }
                             __instance.targetAltitude = 0.0;
                         }
                         __instance.horizonAngle = Math.Acos(__instance.mainBody.Radius / (__instance.mainBody.Radius + __instance.targetAltitude));
