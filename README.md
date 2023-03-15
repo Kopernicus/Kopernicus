@@ -7,11 +7,11 @@ March 14th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-163:
+New in this latest version release-164:
 
-1.) This release features a major rewrite of the Kopernicus Shadow manager (in an attempt to make it much more stock like, and perform better also).  The new system performs better, but is shorter range in its casting before it degrades in quality.  In line with this, your Shadow Casting distance will be reset to a still healthy 10000m.  As a bonus, your shadows will be much crisper AND faster now.  Enjoy.
+1.) Further shadow improvements.  Now we can support 50000m shadows like Scatterer while keeping them sharp, and we have better transitions between "levels" or shadow cascades.  tl;dr, they look better!
 
-2.) Since stock shadows were hopelessly bugged with Kopernicus, I have disabled them entirely while Kopernicus is installed.  This means if you have Kopernicus, don't use Kopernicus Shadow Manager and DO NOT have a mod like scatterer, etc, you will find yourself with no shadows whatsoever.  This may be visually jarring.
+2.) Fixed a conflict with EVE city lights that left some users unable to load.
 
 Known Bugs:
 

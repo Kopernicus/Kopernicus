@@ -45,6 +45,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
 using Object = UnityEngine.Object;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Kopernicus
 {
@@ -236,16 +237,18 @@ namespace Kopernicus.RuntimeUtility
             PatchContracts();
             shadowsFixed = false;
         }
-        private void FixShadows()
+        private static void FixShadows()
         {
-            try
+            if (!KopernicusConfig.EnableKopernicusShadowManager)
             {
-                DynamicShadowSettings.Instance.enabled = false;
-                GameObject.DestroyImmediate(DynamicShadowSettings.Instance);
-            }
-            catch
-            {
-                //dont need to do this then
+                try
+                {
+                    GameObject.DestroyImmediate(DynamicShadowSettings.Instance);
+                }
+                catch
+                {
+                    //dont need to do this then
+                }
             }
             shadowsFixed = true;
         }
@@ -324,15 +327,7 @@ namespace Kopernicus.RuntimeUtility
             // Sun
             GameObject gob = Sun.Instance.gameObject;
             KopernicusStar star = gob.AddComponent<KopernicusStar>();
-            try
-            {
-                DynamicShadowSettings.Instance.enabled = false;
-                GameObject.DestroyImmediate(DynamicShadowSettings.Instance);
-            }
-            catch
-            {
-                //dont need to do this then
-            }
+            FixShadows();
             Utility.CopyObjectFields(Sun.Instance, star, false);
             Sun.Instance.enabled = false;
             Sun.Instance = star;
@@ -1171,7 +1166,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	UseKopernicusAsteroidSystem = True //String with three valid values, True,False, and Stock.  True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default).  False means don't generate anything, or wait for an external generator.  Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
                     configFile.WriteLine("	SolarRefreshRate = 1 //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetune performance (higher runs faster).  Otherwise irrelevant.");
                     configFile.WriteLine("	EnableKopernicusShadowManager = True //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
-                    configFile.WriteLine("	ShadowRangeLimit = 10000 //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers tend to yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 10000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
+                    configFile.WriteLine("	ShadowRangeCap = 50000 //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers tend to yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
                     configFile.WriteLine("	DisableMainMenuMunScene = True //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = True //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = False //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
@@ -1216,7 +1211,7 @@ namespace Kopernicus.RuntimeUtility
                     }
                     configFile.WriteLine("	SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate.ToString() + " //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetune performance (higher runs faster).  Otherwise irrelevant.");
                     configFile.WriteLine("	EnableKopernicusShadowManager = " + KopernicusConfig.EnableKopernicusShadowManager.ToString() + " //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
-                    configFile.WriteLine("	ShadowRangeLimit = " + KopernicusConfig.ShadowRangeLimit + " //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 10000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
+                    configFile.WriteLine("	ShadowRangeCap = " + KopernicusConfig.ShadowRangeCap + " //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
                     configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = " + KopernicusConfig.UseIncorrectScatterDensityLogic.ToString() + " //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");

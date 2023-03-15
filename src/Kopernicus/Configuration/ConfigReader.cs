@@ -49,7 +49,7 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool EnableKopernicusShadowManager = true;
         [Persistent]
-        public int ShadowRangeLimit = 10000;
+        public int ShadowRangeCap = 50000;
         [Persistent]
         public bool DisableMainMenuMunScene = true;
         [Persistent]
@@ -95,7 +95,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("UseKopernicusAsteroidSystem: " + UseKopernicusAsteroidSystem);
                 Debug.Log("SolarRefreshRate: " + SolarRefreshRate);
                 Debug.Log("EnableKopernicusShadowManager: " + EnableKopernicusShadowManager);
-                Debug.Log("ShadowRangeLimit: " + ShadowRangeLimit);
+                Debug.Log("ShadowRangeCap: " + ShadowRangeCap);
                 Debug.Log("DisableMainMenuMunScene: " + DisableMainMenuMunScene);
                 Debug.Log("HandleHomeworldAtmosphericUnitDisplay: " + HandleHomeworldAtmosphericUnitDisplay);
                 Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);

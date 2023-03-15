@@ -151,16 +151,8 @@ namespace Kopernicus.ShadowMan
 
             if (scaledSpaceCamera && nearCamera)
             {
-                if (!unifiedCameraMode)
-                {
-                    shadowCascadeTweaker = (TweakShadowCascades)Utils.getEarliestLocalCamera().gameObject.AddComponent(typeof(TweakShadowCascades));
-                    shadowCascadeTweaker.Init(new Vector3(0.005f, 0.025f, 0.125f));
-                }
-                else
-                {
-                    shadowCascadeTweaker = (TweakShadowCascades)Utils.getEarliestLocalCamera().gameObject.AddComponent(typeof(TweakShadowCascades));
-                    shadowCascadeTweaker.Init(new Vector3(0.0015f, 0.015f, 0.15f));
-                }
+                shadowCascadeTweaker = (TweakShadowCascades)Utils.getEarliestLocalCamera().gameObject.AddComponent(typeof(TweakShadowCascades));
+                shadowCascadeTweaker.Init(new Vector3(0.0020f, 0.015f, 0.03500f));
             }
             else if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
@@ -197,7 +189,7 @@ namespace Kopernicus.ShadowMan
                     originalShadowDistance = QualitySettings.shadowDistance;
                 }
 
-                QualitySettings.shadowDistance = RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit;
+                QualitySettings.shadowDistance = RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap;
 
                 SetShadowsForLight(sunLight);
 
@@ -218,12 +210,8 @@ namespace Kopernicus.ShadowMan
             if (light && (HighLogic.LoadedScene != GameScenes.MAINMENU))
             {
                 //fixes checkerboard artifacts aka shadow acne
-                float bias = unifiedCameraMode ? 0f : 0.72f;
-                float normalBias = unifiedCameraMode ? 0f : 0.5f;
-                if (bias != 0f)
-                    light.shadowBias = bias;
-                if (normalBias != 0f)
-                    light.shadowNormalBias = normalBias;
+                light.shadowBias = 0.52f;
+                light.shadowNormalBias = 0.3f;
                 int customRes = unifiedCameraMode ? 8192 : 0;
                 if (customRes != 0)
                 {

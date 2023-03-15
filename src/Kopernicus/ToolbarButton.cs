@@ -139,18 +139,18 @@ namespace Kopernicus
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate = 1;
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate.ToString()));
             }
-            GUILayout.Label("A number defining the maximum distance at which shadows may be cast. Lower numbers yield less shadow cascading artifacts.", labelStyle);
+            GUILayout.Label("ShadowRangeCap: A number defining the maximum distance at which shadows may be cast. Lower numbers yield less shadow cascading artifacts.", labelStyle);
             try
             {
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit.ToString()));
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap.ToString()));
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING", labelStyle);
                 GUILayout.EndHorizontal();
             }
             catch
             {
                 GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeLimit = 10000;
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap = 50000;
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING", labelStyle);
                 GUILayout.EndHorizontal();
             }
