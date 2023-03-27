@@ -107,15 +107,22 @@ namespace Kopernicus.Components
         {
             double greatestLuminosity = 0;
             KopernicusStar BrightestStar = null;
+            try
+            {
+                BrightestStar = KopernicusStar.Stars[0];
+            }
+            catch
+            {
+                return null;
+            }
             for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
             {
                 KopernicusStar star = KopernicusStar.Stars[i];
+                double distance = Vector3d.Distance(body.position, star.sun.position);
                 double aparentLuminosity = 0;
                 if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
                 {
-                    Vector3d toStar = body.position - star.sun.position;
-                    double distanceSq = Vector3d.SqrMagnitude(toStar);
-                    aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                    aparentLuminosity = star.shifter.solarLuminosity * (1 / (distance * distance));
                 }
                 if (aparentLuminosity > greatestLuminosity)
                 {

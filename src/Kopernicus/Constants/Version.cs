@@ -39,9 +39,9 @@ namespace Kopernicus.Constants
             get
             {
 #if (!KSP_VERSION_1_8)
-                return "Release-165";
+                return "Release-166";
 #else
-                return "LEGACY18_Release-165";
+                return "LEGACY18_Release-166";
 #endif
             }
         }

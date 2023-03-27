@@ -831,7 +831,7 @@ namespace Kopernicus.RuntimeUtility
         // Shader accessor for AtmosphereFromGround
         private readonly Int32 _lightDot = Shader.PropertyToID("_lightDot");
 
-        // Use the nearest star as the AFG star
+        // Use the brightest star as the AFG star
         private void AtmosphereLightPatch(CelestialBody body)
         {
             if (!body.afg)
@@ -1057,7 +1057,7 @@ namespace Kopernicus.RuntimeUtility
             }
         }
 
-        // Patch various references to point to the nearest star
+        // Patch various references to point to the brightest star
         private static void PatchStarReferences(CelestialBody body)
         {
             GameObject star = KopernicusStar.GetBrightest(body).gameObject;
