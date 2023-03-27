@@ -7,11 +7,9 @@ March 27th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-166 RC1:
+New in this latest version release-166 RC2:
 
-1.) Attempt to fix a bug with the KSC time of day animation (it sometimes would inappropriately go dark).  Also clarified some GUI settings text (double negatives).
-
-2.) The reason for the Bleeding Edge version jump is because bleeding edge and stable branches have been unified, you are just opting into prereleases by using the bleeding edge.
+1.) Attempt (yet again) to fix a bug with the KSC time of day animation (it sometimes would inappropriately go dark).  Also clarified some GUI settings text (double negatives).
 
 Known Bugs:
 

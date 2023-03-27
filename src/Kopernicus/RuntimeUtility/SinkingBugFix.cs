@@ -66,6 +66,10 @@ namespace Kopernicus.RuntimeUtility
         {
             if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
             {
+                if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
+                {
+                    this.gameObject.DestroyGameObjectImmediate();
+                }
                 CelestialBody mainBody = null;
                 counter++;
                 if (counter > 25)
