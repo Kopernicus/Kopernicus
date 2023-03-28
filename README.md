@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-March 27th, 2023
+March 28th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-166 RC2:
+New in this latest version release-166:
 
-1.) Attempt (yet again) to fix a bug with the KSC time of day animation (it sometimes would inappropriately go dark).  Also clarified some GUI settings text (double negatives).
+1.) This is a mostly minor release, previously vetted yesterday on the bleeding edge, so consider it "update safe."  It fixes some (mostly theoretical) bugs with the time of day animation at the KSC and some misc main menu collider bugs in interstellar planet packs.
 
 Known Bugs:
 

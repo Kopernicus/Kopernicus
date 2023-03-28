@@ -32,7 +32,7 @@ namespace Kopernicus.RuntimeUtility
     public class SinkingBugFix : MonoBehaviour
     {
         internal static Dictionary<int, bool>[] colliderStatus;
-        internal uint counter = 0;
+        internal uint counter = 25;
         private static SinkingBugFix instance = null;
 
         private void Start()
@@ -69,6 +69,19 @@ namespace Kopernicus.RuntimeUtility
                 if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
                 {
                     this.gameObject.DestroyGameObjectImmediate();
+                    return;
+                }
+                else if (HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
+                {
+                    try
+                    {
+                        FloatingOrigin.fetch.ResetOffset();
+                    }
+                    catch
+                    { 
+                    }
+                    this.gameObject.DestroyGameObjectImmediate();
+                    return;
                 }
                 CelestialBody mainBody = null;
                 counter++;
