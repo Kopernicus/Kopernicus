@@ -406,6 +406,7 @@ namespace Kopernicus
         // Log the destruction of the injector
         public void OnDestroy()
         {
+            PSystemManager.Instance.OnPSystemReady.Remove(PostSpawnFixups);
             Logger.Default.Log("Injector.OnDestroy(): Complete");
             Logger.Default.Flush();
         }
