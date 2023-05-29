@@ -45,8 +45,8 @@ namespace Kopernicus.Components
             base.OnVertexBuildHeight(data);
             try
             {
-                float latitude = (float)Math.Round(clampLat(((ClampRadians(data.latitude) / 0.01745329238474369))),2);
-                float longitude = (float)Math.Round(clampLon((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),2);
+                float latitude = (float)Math.Round(clampLat(((ClampRadians(data.latitude) / 0.01745329238474369))),5);
+                float longitude = (float)Math.Round(clampLon((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),5);
                 Vector2 coordVector = new Vector2(latitude,longitude);
                 if (biomeCoordCacheDictionary.ContainsKey(coordVector))
                 {
@@ -67,7 +67,7 @@ namespace Kopernicus.Components
             string result;
             lat = clampLat(lat);
             lon = clampLon(lon);
-            Vector2 coordVector = new Vector2((float)Math.Round(lat,2),(float)Math.Round(lon,2));
+            Vector2 coordVector = new Vector2((float)Math.Round(lat,5),(float)Math.Round(lon,5));
             lat = ResourceUtilities.Deg2Rad(clampLat(coordVector.x));
             lon = ResourceUtilities.Deg2Rad(clampLon(coordVector.y));
             if (biomeCoordCacheDictionary.ContainsKey(coordVector))
@@ -93,7 +93,7 @@ namespace Kopernicus.Components
         {
             lat = clampLat(lat);
             lon = clampLon(lon);
-            return new Vector2((float)Math.Round(lat, 2), (float)Math.Round(lon, 2));
+            return new Vector2((float)Math.Round(lat,5), (float)Math.Round(lon,5));
         }
         private static double ClampDegrees360(double angle)
         {

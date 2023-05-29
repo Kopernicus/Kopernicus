@@ -37,25 +37,23 @@ namespace Kopernicus.Components
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class PQSLandControlFixer : PQSMod
     {
-        private bool createScatter = true;
-
         public override void OnSetup()
         {
             PQSLandControl pqsLC = null;
             try
             {
                 pqsLC = ((PQSLandControl)typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).GetValue(sphere));
-                createScatter = pqsLC.createScatter;
+                bool createScatter = pqsLC.createScatter;
             }
             catch
             {
-                createScatter = true;
+                return;
             }
             try
             {
                 if (pqsLC)
                 {
-                    if (pqsLC.createColors)
+                    if (pqsLC.createColors == true)
                     {
                         return;
                     }

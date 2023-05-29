@@ -1171,6 +1171,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	EnableAtmosphericExtinction = False //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = True //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
                     configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = False //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
+                    configFile.WriteLine("	ScatterlatLongDecimalPrecision = 5 //Integer. Default 5.  Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = 0");
                     configFile.WriteLine("	SettingsWindowYcoord = 0");
@@ -1216,6 +1217,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
                     configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = " + KopernicusConfig.ResetFloatingOriginOnKSCReturn.ToString() + " //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
+                    configFile.WriteLine("	ScatterlatLongDecimalPrecision = " + KopernicusConfig.ScatterlatLongDecimalPrecision + " //Integer. Default 5.  Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());

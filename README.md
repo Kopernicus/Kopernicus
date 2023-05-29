@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-May 26th, 2023
+May 29th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-167:
+New in this latest version release-168:
 
-1.) This is a mostly minor release, previously vetted in my personal save, so consider it "update safe."  All it does is patch a small memleak on game reloading.  Further fixes are forthcoming someday, but this felt important enough to get out early. :)
+1.) In past release, Kopernicus has downsampled biome and scatter lat/long coordinates to improve performance.  This is sensible.  What is not sensible is it was doing it to two decimal places, leaving it very rough as far as precision.  This default has been changed to 5, and made configurable via config option "ScatterlatLongDecimalPrecision."  As this is a simple change with little odds of causing harm, it is being pushed out immediately to stable.
 
 Known Bugs:
 
