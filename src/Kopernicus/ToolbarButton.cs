@@ -9,9 +9,8 @@ using static Targeting;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
 using System.Security.AccessControl;
 
-namespace Kopernicus.UI
+namespace Kopernicus
 {
-
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class ToolbarButton : MonoBehaviour
     {
@@ -114,6 +113,16 @@ namespace Kopernicus.UI
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction, "EnableAtmosphericExtinction: Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate, "UseStockMohoTemplate: This uses the stock Moho template with the Mohole bug / feature.Planet packs may customize this as desired.Be aware unchecking this disables the Mohole.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.ResetFloatingOriginOnKSCReturn = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.ResetFloatingOriginOnKSCReturn, "ResetFloatingOriginOnKSCReturn: Check this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.", toggleStyle);
+            GUILayout.Label("ScatterlatLongDecimalPrecision: Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.", labelStyle);
+            try
+            {
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision.ToString()));
+            }
+            catch
+            {
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision = 5;
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision.ToString()));
+            }
             GUILayout.Label("EnforcedShaderLevel: A number defining the enforced shader level for the above parameters. 0 = Low, 1 = Medium, 2 = High, 3 = Ultra.", labelStyle);
             try
             {
