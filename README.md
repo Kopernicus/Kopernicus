@@ -7,9 +7,13 @@ May 29th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-169:
+New in this latest version release-170 RC2:
 
-1.) Hotfix to fix a bug that prevented the previously newly added config variable from being read.
+1.) Reverted the refactor of the biome sampler.  Some mods that probably won't get updated (Parallax) are dependenet on it's methods, so cutting out large chunks of it is not an option.
+
+2.) Yes, this means the config option "ScatterlatLongDecimalPrecision" is now back. You still can't get more precision than a stock quad, so keep that in mind.  We wanted to keep some performance gain, afterall.  If this bothers you, you can always raise the subdivision level of your world.
+
+3.) As this is a bleeding edge prerelease, some or all of these changes may be rolled back, pending testing.
 
 Known Bugs:
 
@@ -21,11 +25,11 @@ Known Bugs:
 
 4.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
 
-5.) Sometimes when reloading a quicksave to KSC, you will get the KSC sunken into the ground.  This is cosmetic only, another reload of the same save will fix it. (This error has been around forever, just now listing it).
+5.) Sometimes when reloading a quicksave to KSC, you will get the KSC sunken into the ground. This is cosmetic only, another reload of the same save will fix it. (This error has been around forever, just now listing it).
 
-6.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text."  This is by design.  If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
+6.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text." This is by design. If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
 
-7.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release.  This is rare, but can happen.  See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details
+7.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See this post for details
 
 Known Caveats:
 
@@ -33,15 +37,15 @@ Known Caveats:
 
 2.) Multistar Solar panel support requires an additional config file, attached to release.
 
-3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs.  Some mods may need to adjust.  Normally we'd not change things like this, but this is technically the correct stock behavior of the node so...  if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
+3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs. Some mods may need to adjust. Normally we'd not change things like this, but this is technically the correct stock behavior of the node so... if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
-4.) As of release-151, polar generation behavior has changed slightly.  Though it will be safer overall for new missions, be careful loading existing craft there. This is probably not lethal but I don't want you to be unaware.  Maybe make a save just in case? ;)
+4.) As of release-151, polar generation behavior has changed slightly. Though it will be safer overall for new missions, be careful loading existing craft there. This is probably not lethal but I don't want you to be unaware. Maybe make a save just in case? ;)
 
-5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default.  If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
+5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default. If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
 
-6.) The particle system was hopelessly broken and has been since sometime past 1.10.x.  Few mods used it, so it has been removed completely as of Release-146.
+6.) The particle system was hopelessly broken and has been since sometime past 1.10.x. Few mods used it, so it has been removed completely as of Release-146.
 
-7.) Because we now unpack multipart PQSCity's correctly, you may find some PQSCity structures are in the earth or floating.  Report such bugs to your planet pack author as this is an intended change (only cosmetic).
+7.) Because we now unpack multipart PQSCity's correctly, you may find some PQSCity structures are in the earth or floating. Report such bugs to your planet pack author as this is an intended change (only cosmetic).
 
 About
 -----

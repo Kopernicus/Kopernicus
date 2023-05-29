@@ -33,11 +33,11 @@ namespace Kopernicus.Components
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class PQSMod_BiomeSampler : PQSMod
     {
-        internal static Dictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
-        internal CelestialBody cb = null;
+        internal static Dictionary <CelestialBody, Dictionary<Vector2, string>> celestialBodyDictionary = new Dictionary<CelestialBody, Dictionary<Vector2, string>>();
+        internal CelestialBody celestial = null;
         public override void OnSetup()
         {
-            cb = FlightGlobals.GetBodyByName(sphere.name);
+            celestial = FlightGlobals.GetBodyByName(sphere.name);
             base.OnSetup();
         }
         public override void OnVertexBuildHeight(PQS.VertexBuildData data)
@@ -48,13 +48,22 @@ namespace Kopernicus.Components
                 float latitude = (float)Math.Round(clampLat(((ClampRadians(data.latitude) / 0.01745329238474369))),RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision);
                 float longitude = (float)Math.Round(clampLon((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision);
                 Vector2 coordVector = new Vector2(latitude,longitude);
-                if (biomeCoordCacheDictionary.ContainsKey(coordVector))
+                if (celestialBodyDictionary.ContainsKey(celestial))
                 {
-                    return;
+                    if (celestialBodyDictionary[celestial].ContainsKey(coordVector))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        celestialBodyDictionary[celestial].Add(coordVector, ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, celestial).name);
+                    }
                 }
                 else
                 {
-                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, cb).name);
+                    Dictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
+                    biomeCoordCacheDictionary.Add(coordVector, ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, celestial).name);
+                    celestialBodyDictionary.Add(celestial, biomeCoordCacheDictionary);
                 }
             }
             catch
@@ -70,14 +79,25 @@ namespace Kopernicus.Components
             Vector2 coordVector = new Vector2((float)Math.Round(lat,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision),(float)Math.Round(lon,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision));
             lat = ResourceUtilities.Deg2Rad(clampLat(coordVector.x));
             lon = ResourceUtilities.Deg2Rad(clampLon(coordVector.y));
-            if (biomeCoordCacheDictionary.ContainsKey(coordVector))
+            if (celestialBodyDictionary.ContainsKey(cb))
             {
-                return biomeCoordCacheDictionary[coordVector];
+                if (celestialBodyDictionary[cb].ContainsKey(coordVector))
+                {
+                    return celestialBodyDictionary[cb][coordVector];
+                }
+                else
+                {
+                    result = ResourceUtilities.GetBiome(ClampRadians(lat), ClampRadians(lon), cb).name;
+                    celestialBodyDictionary[cb].Add(coordVector, result);
+                    return result;
+                }
             }
             else
             {
-                result = ResourceUtilities.GetBiome(ClampRadians(lat), ClampRadians(lon), cb).name;
+                Dictionary<Vector2, string> biomeCoordCacheDictionary = new Dictionary<Vector2, string>();
+                result = ResourceUtilities.GetBiome(coordVector.x * 0.01745329238474369, coordVector.y * 0.01745329238474369, cb).name;
                 biomeCoordCacheDictionary.Add(coordVector, result);
+                celestialBodyDictionary.Add(cb, biomeCoordCacheDictionary);
                 return result;
             }
         }
@@ -93,7 +113,7 @@ namespace Kopernicus.Components
         {
             lat = clampLat(lat);
             lon = clampLon(lon);
-            return new Vector2((float)Math.Round(lat,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision), (float)Math.Round(lon,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision));
+            return new Vector2((float)Math.Round(lat, RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision), (float)Math.Round(lon, RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision));
         }
         private static double ClampDegrees360(double angle)
         {
