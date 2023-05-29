@@ -7,9 +7,13 @@ May 29th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-169:
+New in this latest version release-170 RC1:
 
-1.) Hotfix to fix a bug that prevented the previously newly added config variable from being read.
+1.) Prerelease testing a moderate refactor to the biome sampler.  Performance FPS wise is about the same, but it appears to improve load times. Feedback welcome.
+
+2.) The new refactored biome sampler operates per quad, so the config option "ScatterlatLongDecimalPrecision" is now obsolete. This gives around slightly more than 1km precision on stock Kerbin. Increase subdivision level if needing more precision for scatters or biomes.
+
+3.) As this is a bleeding edge prerelease, some or all of these changes may be rolled back, pending testing.
 
 Known Bugs:
 

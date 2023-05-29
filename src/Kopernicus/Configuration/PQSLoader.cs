@@ -694,12 +694,6 @@ namespace Kopernicus.Configuration
                 PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
                 roc.currentCBName = Value.name;
             }
-
-            //Add the biome sampler
-            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
-            {
-                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
-            }
             //Add createColorsFixes
             if (!Utility.HasMod<PQSLandControlFixer>(Value))
             {
@@ -827,12 +821,6 @@ namespace Kopernicus.Configuration
             {
                 PQSROCControl roc = Utility.GetMod<PQSROCControl>(Value);
                 roc.currentCBName = Value.name;
-            }
-
-            //Add the biome sampler
-            if (!Utility.HasMod<PQSMod_BiomeSampler>(Value))
-            {
-                Utility.AddMod<PQSMod_BiomeSampler>(Value, 0);
             }
             //Add createColorsFixes
             if (!Utility.HasMod<PQSLandControlFixer>(Value))

@@ -65,8 +65,6 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool ResetFloatingOriginOnKSCReturn = false;
         [Persistent]
-        public int ScatterlatLongDecimalPrecision = 5;
-        [Persistent]
         public string SelectedPQSQuality = PQSCache.PresetList.preset;
         [Persistent]
         public float SettingsWindowXcoord = 0;
@@ -105,7 +103,6 @@ namespace Kopernicus.Configuration
                 Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
                 Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
                 Debug.Log("ResetFloatingOriginOnKSCReturn: " + ResetFloatingOriginOnKSCReturn);
-                Debug.Log("ScatterlatLongDecimalPrecision: " + ScatterlatLongDecimalPrecision);
                 Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);
                 Debug.Log("SettingsWindowYcoord: " + SettingsWindowYcoord);
             }
