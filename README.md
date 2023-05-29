@@ -7,9 +7,9 @@ May 29th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-168:
+New in this latest version release-169:
 
-1.) In past release, Kopernicus has downsampled biome and scatter lat/long coordinates to improve performance.  This is sensible.  What is not sensible is it was doing it to two decimal places, leaving it very rough as far as precision.  This default has been changed to 5, and made configurable via config option "ScatterlatLongDecimalPrecision."  As this is a simple change with little odds of causing harm, it is being pushed out immediately to stable.
+1.) Hotfix to fix a bug that prevented the previously newly added config variable from being read.
 
 Known Bugs:
 
