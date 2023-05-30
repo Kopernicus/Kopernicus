@@ -1,19 +1,19 @@
 ﻿Kopernicus
 ==============================
-May 29th, 2023
+May 30th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-170 RC2:
+New in this latest version release-170:
 
-1.) Reverted the refactor of the biome sampler.  Some mods that probably won't get updated (Parallax) are dependenet on it's methods, so cutting out large chunks of it is not an option.
+1.) We did some minor optimizations to the biome sampler.  We wanted to do more, but some mods that probably won't get updated (Parallax) are dependent on it's methods, so cutting out large chunks of it is not an option. Maybe after communicating with other authors.
 
-2.) Yes, this means the config option "ScatterlatLongDecimalPrecision" is now back. You still can't get more precision than a stock quad, so keep that in mind.  We wanted to keep some performance gain, afterall.  If this bothers you, you can always raise the subdivision level of your world.
+2.) The config variable "ScatterLatLongDecimalPrecision" was previous mislabeled "ScatterlatLongDecimalPrecision."  Note the improper lowercase L.  This has been fixed for consistency.  You may need to reset this setting if you had it customized (you probably didn't, it just got added not long ago).
 
-3.) As this is a bleeding edge prerelease, some or all of these changes may be rolled back, pending testing.
+3.) These changes have been previous vetted by my beta testers on the bleeding edge, and are considered stable.
 
 Known Bugs:
 

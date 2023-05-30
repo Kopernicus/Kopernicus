@@ -45,8 +45,8 @@ namespace Kopernicus.Components
             base.OnVertexBuildHeight(data);
             try
             {
-                float latitude = (float)Math.Round(clampLat(((ClampRadians(data.latitude) / 0.01745329238474369))),RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision);
-                float longitude = (float)Math.Round(clampLon((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision);
+                float latitude = (float)Math.Round(clampLat(((ClampRadians(data.latitude) / 0.01745329238474369))),RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision);
+                float longitude = (float)Math.Round(clampLon((((ClampRadians(data.longitude) / 0.01745329238474369) - 90) * -1)),RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision);
                 Vector2 coordVector = new Vector2(latitude,longitude);
                 if (celestialBodyDictionary.ContainsKey(celestial))
                 {
@@ -76,7 +76,7 @@ namespace Kopernicus.Components
             string result;
             lat = clampLat(lat);
             lon = clampLon(lon);
-            Vector2 coordVector = new Vector2((float)Math.Round(lat,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision),(float)Math.Round(lon,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision));
+            Vector2 coordVector = new Vector2((float)Math.Round(lat,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision),(float)Math.Round(lon,RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision));
             lat = ResourceUtilities.Deg2Rad(clampLat(coordVector.x));
             lon = ResourceUtilities.Deg2Rad(clampLon(coordVector.y));
             if (celestialBodyDictionary.ContainsKey(cb))
@@ -113,7 +113,7 @@ namespace Kopernicus.Components
         {
             lat = clampLat(lat);
             lon = clampLon(lon);
-            return new Vector2((float)Math.Round(lat, RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision), (float)Math.Round(lon, RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterlatLongDecimalPrecision));
+            return new Vector2((float)Math.Round(lat, RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision), (float)Math.Round(lon, RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision));
         }
         private static double ClampDegrees360(double angle)
         {
