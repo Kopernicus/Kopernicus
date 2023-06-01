@@ -49,13 +49,13 @@ namespace Kopernicus.OnDemand
         private static Int32 _arrayLengthOffset;
 
         // OnDemand flags
-        public static Boolean UseOnDemand = true;
+        public static Boolean UseOnDemand = RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader;
         public static Boolean UseOnDemandBiomes = false;
         public static Boolean OnDemandLoadOnMissing = true;
         public static Boolean OnDemandLogOnMissing = true;
         public static Int32 OnDemandUnloadDelay = 10;
 
-        public static Boolean UseManualMemoryManagement = true;
+        public static Boolean UseManualMemoryManagement = RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader;
 
         // Add a map to the map-list
         public static void AddMap(String body, ILoadOnDemand map)

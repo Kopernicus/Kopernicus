@@ -9,7 +9,7 @@ using static Targeting;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
 using System.Security.AccessControl;
 
-namespace Kopernicus
+namespace Kopernicus.UI
 {
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class ToolbarButton : MonoBehaviour
@@ -123,6 +123,7 @@ namespace Kopernicus
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision = 5;
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision.ToString()));
             }
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader, "UseOnDemandLoader: Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.", toggleStyle);
             GUILayout.Label("EnforcedShaderLevel: A number defining the enforced shader level for the above parameters. 0 = Low, 1 = Medium, 2 = High, 3 = Ultra.", labelStyle);
             try
             {

@@ -1,19 +1,17 @@
 ﻿Kopernicus
 ==============================
-May 30th, 2023
+June 1st, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-170:
+New in this latest version release-171:
 
-1.) We did some minor optimizations to the biome sampler.  We wanted to do more, but some mods that probably won't get updated (Parallax) are dependent on it's methods, so cutting out large chunks of it is not an option. Maybe after communicating with other authors.
+1.) A new bool configuration parameter has been added, "UseOnDemandLoader."  The default is false. This is the same OnDemand system Kopernicus has always had, but we are handing control over to the user more directly. Mods can still override this in the usual way.
 
-2.) The config variable "ScatterLatLongDecimalPrecision" was previous mislabeled "ScatterlatLongDecimalPrecision."  Note the improper lowercase L.  This has been fixed for consistency.  You may need to reset this setting if you had it customized (you probably didn't, it just got added not long ago).
-
-3.) These changes have been previous vetted by my beta testers on the bleeding edge, and are considered stable.
+2.) To elaborate on the above, the default has been changed to OnDemand OFF. This uses a bit more ram but is generally much faster and allows for things like DistantObjectEnhancement to work easily. If you are ram constrained you may want to change this, otherwise it is advised to leave this off as it has been known as a source of planetarium stutter.
 
 Known Bugs:
 

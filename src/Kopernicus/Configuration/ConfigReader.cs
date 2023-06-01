@@ -67,6 +67,8 @@ namespace Kopernicus.Configuration
         [Persistent]
         public int ScatterLatLongDecimalPrecision = 5;
         [Persistent]
+        public bool UseOnDemandLoader = false;
+        [Persistent]
         public string SelectedPQSQuality = PQSCache.PresetList.preset;
         [Persistent]
         public float SettingsWindowXcoord = 0;
@@ -106,6 +108,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
                 Debug.Log("ResetFloatingOriginOnKSCReturn: " + ResetFloatingOriginOnKSCReturn);
                 Debug.Log("ScatterLatLongDecimalPrecision: " + ScatterLatLongDecimalPrecision);
+                Debug.Log("UseOnDemandLoader: " + UseOnDemandLoader);
                 Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);
                 Debug.Log("SettingsWindowYcoord: " + SettingsWindowYcoord);
             }
