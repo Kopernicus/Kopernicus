@@ -7,11 +7,9 @@ June 1st, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-171:
+New in this latest version release-172:
 
-1.) A new bool configuration parameter has been added, "UseOnDemandLoader."  The default is false. This is the same OnDemand system Kopernicus has always had, but we are handing control over to the user more directly. Mods can still override this in the usual way.
-
-2.) To elaborate on the above, the default has been changed to OnDemand OFF. This uses a bit more ram but is generally much faster and allows for things like DistantObjectEnhancement to work easily. If you are ram constrained you may want to change this, otherwise it is advised to leave this off as it has been known as a source of planetarium stutter.
+1.) Fix a bug with the new setting that was causing RSS users grief.
 
 Known Bugs:
 
