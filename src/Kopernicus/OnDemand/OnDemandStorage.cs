@@ -55,7 +55,7 @@ namespace Kopernicus.OnDemand
         public static Boolean OnDemandLogOnMissing = true;
         public static Int32 OnDemandUnloadDelay = 10;
 
-        public static Boolean UseManualMemoryManagement = RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader;
+        public static Boolean UseManualMemoryManagement = true;
 
         // Add a map to the map-list
         public static void AddMap(String body, ILoadOnDemand map)

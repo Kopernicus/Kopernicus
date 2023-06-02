@@ -132,12 +132,12 @@ namespace Kopernicus.Configuration
             set { OnDemandStorage.OnDemandUnloadDelay = value; }
         }
 
-        // Whether the experimental memory management in OD should be used, this must be synce with UseOnDemand
+        // Whether the experimental memory management in OD should be used
         [ParserTarget("useManualMemoryManagement")]
         public NumericParser<Boolean> UseManualMemoryManagement
         {
-            get { return OnDemandStorage.UseOnDemand; }
-            set { OnDemandStorage.UseOnDemand = value; }
+            get { return OnDemandStorage.UseManualMemoryManagement; }
+            set { OnDemandStorage.UseManualMemoryManagement = value; }
         }
 
         // The body that is displayed at main menu

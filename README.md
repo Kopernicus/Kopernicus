@@ -7,9 +7,9 @@ June 1st, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-172:
+New in this latest version release-173:
 
-1.) Fix a bug with the new setting that was causing RSS users grief.
+1.) Fix yet another bug with the new setting that was causing RSS users grief.
 
 Known Bugs:
 
