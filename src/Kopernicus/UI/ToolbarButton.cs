@@ -57,7 +57,7 @@ namespace Kopernicus.UI
                 {
                     if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
                     {
-                        Texture buttonTexture = GameDatabase.Instance.GetTexture("Kopernicus/Graphics/KopernicusIcon", false);
+                        Texture buttonTexture = GameDatabase.Instance.GetTexture(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Graphics/KopernicusIcon", false);
                         button = ApplicationLauncher.Instance.AddModApplication(ShowToolbarGUI, HideToolbarGUI, DummyFunction, DummyFunction, DummyFunction, DummyFunction, ApplicationLauncher.AppScenes.ALWAYS, buttonTexture);
                         addedButton = true;
                     }

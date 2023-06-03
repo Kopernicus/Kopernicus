@@ -1,15 +1,15 @@
 ﻿Kopernicus
 ==============================
-June 1st, 2023
+June 3rd, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-173:
+New in this latest version release-174:
 
-1.) Fix yet another bug with the new setting that was causing RSS users grief.
+1.) Use KSPUtil.ApplicationRootPath to get application working path for the Kopernicus toolbar icon.  This helps it not bug out when users use launcher bypasses.
 
 Known Bugs:
 
