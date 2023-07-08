@@ -23,12 +23,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|Any CPU.ActiveCfg = ReleaseKSP18|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|Any CPU.Build.0 = ReleaseKSP18|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|x64.ActiveCfg = Release_8|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|x64.Build.0 = Release_8|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|Any CPU.ActiveCfg = ReleaseKSP19Plus|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|Any CPU.Build.0 = ReleaseKSP19Plus|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|x64.ActiveCfg = Release_9+|x64
-		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|x64.Build.0 = Release_9+|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|Any CPU.Build.0 = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|x64.ActiveCfg = Debug|x64

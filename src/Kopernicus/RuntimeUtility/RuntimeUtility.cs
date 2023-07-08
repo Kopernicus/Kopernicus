@@ -45,7 +45,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
 using Object = UnityEngine.Object;
-using System.Diagnostics.Eventing.Reader;
 
 namespace Kopernicus
 {
