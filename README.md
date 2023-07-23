@@ -1,6 +1,6 @@
-﻿Kopernicus
+Kopernicus
 ==============================
-June 3rd, 2023
+June 22nd, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
@@ -9,7 +9,11 @@ June 3rd, 2023
 
 New in this latest version release-174:
 
-1.) Use KSPUtil.ApplicationRootPath to get application working path for the Kopernicus toolbar icon.  This helps it not bug out when users use launcher bypasses.
+1.) New parameters added related to scaling Kerbal scale bodies automatically to real world densities (such as the stock system).  Please see the config file or GUI for a description of each parameter.  If you don't want to play with a real world density system (most don't) you can just ignore this.
+
+2.) Reorganize the GUI to be more sensibly arranged (boolean/checkbox options up top, always).
+
+3.) In short, most the things added in this release are for pack authors to easily make "real world scale" systems, and the end users don't need to touch them, really.
 
 Known Bugs:
 
