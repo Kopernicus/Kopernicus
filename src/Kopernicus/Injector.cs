@@ -304,16 +304,23 @@ namespace Kopernicus
                             }
                         }
                     }
-                    if ((!body.name.Equals("Sun") && Utility.IsStockBody(body)) && (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity))
+                    if ((!body.name.Equals("Sun") && (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity)))
                     {
-                        float realWorldSize = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
-                        float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
-                        float gpm = rescaleFactor / realWorldSize;
-                        float massFactor = 1 / ((realWorldSize - rescaleFactor) + 1);
-                        body.Mass *= massFactor;
-                        body.gravParameter *= gpm;
-                        body.GeeASL *= gpm;
-                        body.scienceValues.spaceAltitudeThreshold *= gpm;
+                        if ((!Utility.IsStockBody(body)) && (RuntimeUtility.RuntimeUtility.KopernicusConfig.LimitRWDensityToStockBodies))
+                        {
+                            //Do Nothing
+                        }
+                        else
+                        {
+                            float realWorldSize = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
+                            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
+                            float gpm = rescaleFactor / realWorldSize;
+                            float massFactor = 1 / ((realWorldSize - rescaleFactor) + 1);
+                            body.Mass *= massFactor;
+                            body.gravParameter *= gpm;
+                            body.GeeASL *= gpm;
+                            body.scienceValues.spaceAltitudeThreshold *= gpm;
+                        }
                     }
                     // Event
                     Events.OnPostBodyFixing.Fire(body);
