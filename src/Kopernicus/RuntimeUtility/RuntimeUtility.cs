@@ -224,6 +224,17 @@ namespace Kopernicus.RuntimeUtility
             {
                 ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
                 AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
+                //BEGIN RTB CODE
+                if (!PSystemManager.Instance.localBodies[i].Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody))
+                {
+                    try
+                    {
+                        PSystemManager.Instance.localBodies[i].sphereOfInfluence = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.4);
+                        PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.333333333333333);
+                    }
+                    catch { }
+                }
+                //END RTB CODE
             }
         }
         // Run patches every time a new scene was loaded

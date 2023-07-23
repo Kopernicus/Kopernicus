@@ -65,6 +65,75 @@ namespace Kopernicus
             }
         }
 
+        public static bool IsStockBody(CelestialBody body)
+        {
+            int rescaleFactor = 5;
+            if (body.name.Equals("Sun") && ((int)Math.Round(body.Radius)) == 261600000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Moho") && ((int)Math.Round(body.Radius)) == 250000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Eve") && ((int)Math.Round(body.Radius)) == 700000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Gilly") && ((int)Math.Round(body.Radius)) == 13000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Kerbin") && ((int)Math.Round(body.Radius)) == 600000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Mun") && ((int)Math.Round(body.Radius)) == 200000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Minmus") && ((int)Math.Round(body.Radius)) == 60000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Duna") && ((int)Math.Round(body.Radius)) == 320000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Ike") && ((int)Math.Round(body.Radius)) == 130000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Dres") && ((int)Math.Round(body.Radius)) == 138000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Jool") && ((int)Math.Round(body.Radius)) == 6000000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Laythe") && ((int)Math.Round(body.Radius)) == 500000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Vall") && ((int)Math.Round(body.Radius)) == 300000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Bop") && ((int)Math.Round(body.Radius)) == 65000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Pol") && ((int)Math.Round(body.Radius)) == 44000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Eeloo") && ((int)Math.Round(body.Radius)) == 210000 * rescaleFactor)
+            {
+                return true;
+            }
+            return false;
+        }
         /// <summary>
         /// Copy one objects fields to another object via reflection
         /// </summary>

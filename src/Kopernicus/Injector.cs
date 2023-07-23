@@ -304,7 +304,15 @@ namespace Kopernicus
                             }
                         }
                     }
-
+                    //BEGIN RTB CUSTOM CODE
+                    if (!body.name.Equals("Sun") && Utility.IsStockBody(body))
+                    {
+                        body.Mass *= 0.1;
+                        body.gravParameter *= 0.4;
+                        body.GeeASL *= 0.4;
+                        body.scienceValues.spaceAltitudeThreshold *= 0.4f;
+                    }
+                    //END RTB CUSTOM CODE
                     // Event
                     Events.OnPostBodyFixing.Fire(body);
 
