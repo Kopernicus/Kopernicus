@@ -67,7 +67,7 @@ namespace Kopernicus
 
         public static bool IsStockBody(CelestialBody body)
         {
-            int rescaleFactor = 5;
+            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
             if (body.name.Equals("Sun") && ((int)Math.Round(body.Radius)) == 261600000 * rescaleFactor)
             {
                 return true;

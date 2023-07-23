@@ -304,15 +304,17 @@ namespace Kopernicus
                             }
                         }
                     }
-                    //BEGIN RTB CUSTOM CODE
-                    if (!body.name.Equals("Sun") && Utility.IsStockBody(body))
+                    if ((!body.name.Equals("Sun") && Utility.IsStockBody(body)) && (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity))
                     {
-                        body.Mass *= 0.1;
-                        body.gravParameter *= 0.4;
-                        body.GeeASL *= 0.4;
-                        body.scienceValues.spaceAltitudeThreshold *= 0.4f;
+                        float realWorldSize = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
+                        float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
+                        float gpm = rescaleFactor / realWorldSize;
+                        float massFactor = 1 / ((realWorldSize - rescaleFactor) + 1);
+                        body.Mass *= massFactor;
+                        body.gravParameter *= gpm;
+                        body.GeeASL *= gpm;
+                        body.scienceValues.spaceAltitudeThreshold *= gpm;
                     }
-                    //END RTB CUSTOM CODE
                     // Event
                     Events.OnPostBodyFixing.Fire(body);
 
