@@ -9,7 +9,7 @@ June 22nd, 2023
 
 New in this latest version release-174:
 
-1.) New parameters added related to scaling Kerbal scale bodies automatically to real world densities (such as the stock system).  Please see the config file or GUI for a description of each parameter.  If you don't want to play with a real world density system (most don't) you can just ignore this.
+1.) New parameters added related to scaling Kerbal scale bodies automatically to real world densities (such as the stock system).  Please see the config file or GUI for a description of each parameter.  They are designed to be used alongside a rescale mod like Sigma Dimensions. If you don't want to play with a real world density system (most don't) you can just ignore this.
 
 2.) Reorganize the GUI to be more sensibly arranged (boolean/checkbox options up top, always).
 
