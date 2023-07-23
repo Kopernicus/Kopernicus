@@ -224,6 +224,15 @@ namespace Kopernicus.RuntimeUtility
             {
                 ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
                 AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
+                if (!PSystemManager.Instance.localBodies[i].Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody) && (KopernicusConfig.RecomputeSOIAndHillSpheres))
+                {
+                    try
+                    {
+                        PSystemManager.Instance.localBodies[i].sphereOfInfluence = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.4);
+                        PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.333333333333333);
+                    }
+                    catch { }
+                }
             }
         }
         // Run patches every time a new scene was loaded
@@ -1172,6 +1181,11 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = False //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
                     configFile.WriteLine("	ScatterLatLongDecimalPrecision = 5 //Integer. Default 5.  Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.");
                     configFile.WriteLine("	UseOnDemandLoader = False //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
+                    configFile.WriteLine("	UseRealWorldDensity = False //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
+                    configFile.WriteLine("	RecomputeSOIAndHillSpheres = False //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Affected by LimitRWDensityToStockBodies bool. Leave alone if you don't understand.");
+                    configFile.WriteLine("	LimitRWDensityToStockBodies = True //Boolean. Default True.  Turning this on will limit density/HS/SOI corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.");
+                    configFile.WriteLine("	RescaleFactor = 1.0 //Float. Default 1.0.  Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");
+                    configFile.WriteLine("	RealWorldSizeFactor = 10.625 //Float. Default 10.625.  This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = 0");
                     configFile.WriteLine("	SettingsWindowYcoord = 0");
@@ -1217,8 +1231,13 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
                     configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = " + KopernicusConfig.ResetFloatingOriginOnKSCReturn.ToString() + " //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
-                    configFile.WriteLine("	ScatterLatLongDecimalPrecision = " + KopernicusConfig.ScatterLatLongDecimalPrecision + " //Integer. Default 5.  Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.");
-                    configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader + " //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
+                    configFile.WriteLine("	ScatterLatLongDecimalPrecision = " + KopernicusConfig.ScatterLatLongDecimalPrecision.ToString() + " //Integer. Default 5.  Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.");
+                    configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader.ToString() + " //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
+                    configFile.WriteLine("	UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity.ToString() + " //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
+                    configFile.WriteLine("	RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres.ToString() + " //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Affected by LimitRWDensityToStockBodies bool. Leave alone if you don't understand.");
+                    configFile.WriteLine("	LimitRWDensityToStockBodies = " + KopernicusConfig.LimitRWDensityToStockBodies.ToString() + " //Boolean. Default True.  Turning this on will limit density/HS/SOI corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.");
+                    configFile.WriteLine("	RescaleFactor = " + KopernicusConfig.RescaleFactor.ToString() + " //Float. Default 1.0.  Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");
+                    configFile.WriteLine("	RealWorldSizeFactor = " + KopernicusConfig.RealWorldSizeFactor.ToString() + " //Float. Default 10.625.  This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());

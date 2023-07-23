@@ -69,6 +69,16 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool UseOnDemandLoader = false;
         [Persistent]
+        public bool UseRealWorldDensity = false;
+        [Persistent]
+        public bool RecomputeSOIAndHillSpheres = false;
+        [Persistent]
+        public bool LimitRWDensityToStockBodies = true;
+        [Persistent]
+        public float RescaleFactor = 1.0f;
+        [Persistent]
+        public float RealWorldSizeFactor = 10.625f;
+        [Persistent]
         public string SelectedPQSQuality = PQSCache.PresetList.preset;
         [Persistent]
         public float SettingsWindowXcoord = 0;
@@ -109,6 +119,11 @@ namespace Kopernicus.Configuration
                 Debug.Log("ResetFloatingOriginOnKSCReturn: " + ResetFloatingOriginOnKSCReturn);
                 Debug.Log("ScatterLatLongDecimalPrecision: " + ScatterLatLongDecimalPrecision);
                 Debug.Log("UseOnDemandLoader: " + UseOnDemandLoader);
+                Debug.Log("UseRealWorldDensity: " + UseRealWorldDensity);
+                Debug.Log("RecomputeSOIAndHillSpheres: " + RecomputeSOIAndHillSpheres);
+                Debug.Log("LimitRWDensityToStockBodies: " + LimitRWDensityToStockBodies);
+                Debug.Log("RescaleFactor: " + RescaleFactor);
+                Debug.Log("RealWorldSizeFactor: " + RealWorldSizeFactor);
                 Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);
                 Debug.Log("SettingsWindowYcoord: " + SettingsWindowYcoord);
             }
