@@ -51,7 +51,7 @@ namespace Kopernicus.Components
         //timer value
         private int frameTimer = 0;
 
-        [KSPField(guiActive = true, guiActiveEditor = false, guiName = "#Kopernicus_UI_TrackingBody", isPersistant = true)]
+        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_UI_TrackingBody", isPersistant = true)]
         [SuppressMessage("ReSharper", "NotAccessedField.Global")]
         public String trackingBodyName;
 
@@ -65,194 +65,229 @@ namespace Kopernicus.Components
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-            frameTimer++;
-            if (HighLogic.LoadedSceneIsFlight)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
             {
-                if ((deployState == ModuleDeployablePart.DeployState.EXTENDED))
+                frameTimer++;
+                if (HighLogic.LoadedSceneIsFlight)
                 {
-                    if (frameTimer > (50 * Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate))
+                    if ((deployState == ModuleDeployablePart.DeployState.EXTENDED))
                     {
-                        CelestialBody trackingStar = trackingBody;
-                        frameTimer = 0;
-                        KopernicusStar bestStar = KopernicusStar.CelestialBodies[trackingStar];
-                        Double totalFlux = 0;
-                        Double totalFlow = 0;
-                        flowRate = 0;
-                        _flowRate = 0;
-                        Double bestFlux = 0;
-                        for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
+                        if (frameTimer >
+                            (50 * Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate))
                         {
-                            KopernicusStar star = KopernicusStar.Stars[s];
-                            // Use this star
-                            star.shifter.ApplyPhysics();
+                            CelestialBody trackingStar = trackingBody;
+                            frameTimer = 0;
+                            KopernicusStar bestStar = KopernicusStar.CelestialBodies[trackingStar];
+                            Double totalFlux = 0;
+                            Double totalFlow = 0;
+                            flowRate = 0;
+                            _flowRate = 0;
+                            Double bestFlux = 0;
+                            for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
+                            {
+                                KopernicusStar star = KopernicusStar.Stars[s];
+                                // Use this star
+                                star.shifter.ApplyPhysics();
 
-                            // Set Tracking Speed to zero
-                            Single oldTrackingSpeed = trackingSpeed;
-                            trackingSpeed = 0;
+                                // Set Tracking Speed to zero
+                                Single oldTrackingSpeed = trackingSpeed;
+                                trackingSpeed = 0;
 
-                            // Change the tracking body
-                            trackingBody = star.sun;
+                                // Change the tracking body
+                                trackingBody = star.sun;
+                                GetTrackingBodyTransforms();
+                                CalculateTracking();
+
+                                //Calculate flux
+                                double starFluxAtHome = 0;
+                                try
+                                {
+                                    starFluxAtHome = 1360 / PhysicsGlobals.SolarLuminosityAtHome;
+                                }
+                                catch
+                                {
+                                }
+
+                                double starFlux = 0;
+                                try
+                                {
+                                    starFlux = star.CalculateFluxAt(vessel) * starFluxAtHome;
+                                }
+                                catch
+                                {
+                                    starFlux = 0;
+                                }
+
+                                //Check if star has better flux
+                                if (bestFlux < starFlux)
+                                {
+                                    bestFlux = starFlux;
+                                    bestStar = star;
+                                }
+
+                                // Add to TotalFlux and EC tally
+                                totalFlux += starFlux;
+                                float panelEffectivness = 0;
+                                //Now for some fancy atmospheric math
+                                float atmoDensityMult = 1;
+                                float atmoAngleMult = 1;
+                                float tempMult = 1;
+                                Vector3d localSpace = ScaledSpace.ScaledToLocalSpace(star.target.position);
+                                if (this.vessel.atmDensity > 0)
+                                {
+                                    float horizonAngle = (float)Math.Acos(FlightGlobals.currentMainBody.Radius /
+                                                                          (FlightGlobals.currentMainBody.Radius +
+                                                                           FlightGlobals.ship_altitude));
+                                    Vector3 horizonVector = new Vector3(0, Mathf.Sin(Mathf.Deg2Rad * horizonAngle),
+                                        Mathf.Cos(Mathf.Deg2Rad * horizonAngle));
+                                    float sunZenithAngleDeg = Vector3.Angle(FlightGlobals.upAxis, star.sun.position);
+
+                                    Double gravAccelParameter = (vessel.mainBody.gravParameter /
+                                                                 Math.Pow(
+                                                                     vessel.mainBody.Radius +
+                                                                     FlightGlobals.ship_altitude, 2));
+                                    float massOfAirColumn =
+                                        (float)(FlightGlobals.getStaticPressure() / gravAccelParameter);
+
+                                    tempMult = this.temperatureEfficCurve.Evaluate(
+                                        (float)this.vessel.atmosphericTemperature);
+                                    atmoDensityMult =
+                                        AtmosphericAttenutationAirMassMultiplier.Evaluate(massOfAirColumn);
+                                    atmoAngleMult =
+                                        AtmosphericAttenutationSolarAngleMultiplier.Evaluate(sunZenithAngleDeg);
+                                }
+
+                                try
+                                {
+                                    panelEffectivness = (chargeRate / 24.4f) / 56.37091313591871f * sunAOA * tempMult *
+                                                        atmoAngleMult *
+                                                        atmoDensityMult; //56.blabla is a weird constant we use to turn flux into EC
+                                }
+                                catch
+                                {
+                                }
+
+                                if (starFluxAtHome > 0)
+                                {
+                                    totalFlow += (starFlux * panelEffectivness) /
+                                                 (1360 / PhysicsGlobals.SolarLuminosityAtHome);
+                                }
+
+                                // Restore Tracking Speed
+                                trackingSpeed = oldTrackingSpeed;
+                            }
+
+                            // Restore the starting star
+                            trackingBody = trackingStar;
+                            KopernicusStar.CelestialBodies[trackingStar].shifter.ApplyPhysics();
                             GetTrackingBodyTransforms();
                             CalculateTracking();
-
-                            //Calculate flux
-                            double starFluxAtHome = 0;
-                            try
+                            vessel.solarFlux = totalFlux;
+                            //Add to new output
+                            flowRate = (float)totalFlow;
+                            _flowRate = totalFlow / chargeRate;
+                            resHandler.UpdateModuleResourceOutputs(_flowRate);
+                            //caching logic
+                            cachedFlowRate = flowRate;
+                            _cachedFlowRate = _flowRate;
+                            // Setup next tracking body
+                            if ((bestStar != null && bestStar != trackingBody) && (!_manualTracking))
                             {
-                                starFluxAtHome = 1360 / PhysicsGlobals.SolarLuminosityAtHome;
+                                trackingBody = bestStar.sun;
+                                GetTrackingBodyTransforms();
+                                CalculateTracking();
                             }
-                            catch
-                            {
-                            }
-                            double starFlux = 0;
-                            try
-                            {
-                                starFlux = star.CalculateFluxAt(vessel) * starFluxAtHome;
-                            }
-                            catch
-                            {
-                                starFlux = 0;
-                            }
-
-                            //Check if star has better flux
-                            if (bestFlux < starFlux)
-                            {
-                                bestFlux = starFlux;
-                                bestStar = star;
-                            }
-
-                            // Add to TotalFlux and EC tally
-                            totalFlux += starFlux;
-                            float panelEffectivness = 0;
-                            //Now for some fancy atmospheric math
-                            float atmoDensityMult = 1;
-                            float atmoAngleMult = 1;
-                            float tempMult = 1;
-                            Vector3d localSpace = ScaledSpace.ScaledToLocalSpace(star.target.position);
-                            if (this.vessel.atmDensity > 0)
-                            {
-                                float horizonAngle = (float)Math.Acos(FlightGlobals.currentMainBody.Radius / (FlightGlobals.currentMainBody.Radius + FlightGlobals.ship_altitude));
-                                Vector3 horizonVector = new Vector3(0, Mathf.Sin(Mathf.Deg2Rad * horizonAngle), Mathf.Cos(Mathf.Deg2Rad * horizonAngle));
-                                float sunZenithAngleDeg = Vector3.Angle(FlightGlobals.upAxis, star.sun.position);
-
-                                Double gravAccelParameter = (vessel.mainBody.gravParameter / Math.Pow(vessel.mainBody.Radius + FlightGlobals.ship_altitude, 2));
-                                float massOfAirColumn = (float)(FlightGlobals.getStaticPressure() / gravAccelParameter);
-
-                                tempMult = this.temperatureEfficCurve.Evaluate((float)this.vessel.atmosphericTemperature);
-                                atmoDensityMult = AtmosphericAttenutationAirMassMultiplier.Evaluate(massOfAirColumn);
-                                atmoAngleMult = AtmosphericAttenutationSolarAngleMultiplier.Evaluate(sunZenithAngleDeg);
-                            }
-                            try
-                            {
-                                panelEffectivness = (chargeRate / 24.4f) / 56.37091313591871f * sunAOA * tempMult * atmoAngleMult * atmoDensityMult;  //56.blabla is a weird constant we use to turn flux into EC
-                            }
-                            catch
-                            {
-                            }
-                            if (starFluxAtHome > 0)
-                            {
-                                totalFlow += (starFlux * panelEffectivness) / (1360 / PhysicsGlobals.SolarLuminosityAtHome);
-                            }
-                            // Restore Tracking Speed
-                            trackingSpeed = oldTrackingSpeed;
                         }
-                        // Restore the starting star
-                        trackingBody = trackingStar;
-                        KopernicusStar.CelestialBodies[trackingStar].shifter.ApplyPhysics();
-                        GetTrackingBodyTransforms();
-                        CalculateTracking();
-                        vessel.solarFlux = totalFlux;
-                        //Add to new output
-                        flowRate = (float)totalFlow;
-                        _flowRate = totalFlow / chargeRate;
-                        resHandler.UpdateModuleResourceOutputs(_flowRate);
-                        //caching logic
-                        cachedFlowRate = flowRate;
-                        _cachedFlowRate = _flowRate;
-                        // Setup next tracking body
-                        if ((bestStar != null && bestStar != trackingBody) && (!_manualTracking))
+                        else
                         {
-                            trackingBody = bestStar.sun;
-                            GetTrackingBodyTransforms();
-                            CalculateTracking();
+                            //inbetween timings logic
+                            flowRate = cachedFlowRate;
+                            _flowRate = _cachedFlowRate;
+                            resHandler.UpdateModuleResourceOutputs(_flowRate);
                         }
-                    }
-                    else
-                    {
-                        //inbetween timings logic
-                        flowRate = cachedFlowRate;
-                        _flowRate = _cachedFlowRate;
-                        resHandler.UpdateModuleResourceOutputs(_flowRate);
-                    }
 
-                    //see if tracked star is blocked or not
-                    if (sunAOA > 0)
-                    {
-                        //this ensures the "blocked" GUI option is set right, if we're exposed to you we're not blocked
-                        vessel.directSunlight = true;
+                        //see if tracked star is blocked or not
+                        if (sunAOA > 0)
+                        {
+                            //this ensures the "blocked" GUI option is set right, if we're exposed to you we're not blocked
+                            vessel.directSunlight = true;
+                        }
+
+                        // Restore The Current Star
+                        KopernicusStar.Current.shifter.ApplyPhysics();
                     }
-                    // Restore The Current Star
-                    KopernicusStar.Current.shifter.ApplyPhysics();
                 }
-            }
-            else
-            {
-                //Packed logic
-                flowRate = cachedFlowRate;
-                _flowRate = _cachedFlowRate;
-                resHandler.UpdateModuleResourceOutputs(_flowRate);
+                else
+                {
+                    //Packed logic
+                    flowRate = cachedFlowRate;
+                    _flowRate = _cachedFlowRate;
+                    resHandler.UpdateModuleResourceOutputs(_flowRate);
+                }
             }
         }
 
         public override void PostCalculateTracking(bool trackingLOS, Vector3 trackingDirection)
         {
-            // Calculate sun AOA
-            sunAOA = 0f;
-            Vector3 trackDir = (trackingBody.transform.position - panelRotationTransform.position).normalized;
-            if (!trackingLOS)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
             {
+                // Calculate sun AOA
                 sunAOA = 0f;
-                status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObject);
-                return;
-            }
-            status = SP_status_DirectSunlight;
-            if (panelType == PanelType.FLAT)
-            {
-                sunAOA = Mathf.Clamp(Vector3.Dot(trackingDotTransform.forward, trackDir), 0f, 1f);
-            }
-            else if (panelType != PanelType.CYLINDRICAL)
-            {
-                sunAOA = 0.25f;
-            }
-            else
-            {
-                Vector3 direction;
-                if (alignType == PanelAlignType.PIVOT)
+                Vector3 trackDir = (trackingBody.transform.position - panelRotationTransform.position).normalized;
+                if (!trackingLOS)
                 {
-                    direction = trackingDotTransform.forward;
+                    sunAOA = 0f;
+                    status = Localizer.Format("#Kopernicus_UI_PanelBlocked", blockingObject);
+                    return;
                 }
-                else if (alignType != PanelAlignType.X)
+
+                status = SP_status_DirectSunlight;
+                if (panelType == PanelType.FLAT)
                 {
-                    direction = alignType != PanelAlignType.Y ? part.partTransform.forward : part.partTransform.up;
+                    sunAOA = Mathf.Clamp(Vector3.Dot(trackingDotTransform.forward, trackDir), 0f, 1f);
+                }
+                else if (panelType != PanelType.CYLINDRICAL)
+                {
+                    sunAOA = 0.25f;
                 }
                 else
                 {
-                    direction = part.partTransform.right;
+                    Vector3 direction;
+                    if (alignType == PanelAlignType.PIVOT)
+                    {
+                        direction = trackingDotTransform.forward;
+                    }
+                    else if (alignType != PanelAlignType.X)
+                    {
+                        direction = alignType != PanelAlignType.Y ? part.partTransform.forward : part.partTransform.up;
+                    }
+                    else
+                    {
+                        direction = part.partTransform.right;
+                    }
+
+                    sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
                 }
-                sunAOA = (1f - Mathf.Abs(Vector3.Dot(direction, trackDir))) * 0.318309873f;
+            }
+            else
+            {
+                base.PostCalculateTracking(trackingLOS, trackingDirection);
             }
         }
 
         void EarlyLateUpdate()
         {
-            if (deployState == ModuleDeployablePart.DeployState.EXTENDED)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
             {
-                // Update the name
-                trackingBodyName = trackingBody.bodyDisplayName.Replace("^N", "");
-
-                if (!_manualTracking)
+                if (deployState == ModuleDeployablePart.DeployState.EXTENDED)
                 {
-                    trackingBodyName = Localizer.Format("#Kopernicus_UI_AutoTrackingBodyName", trackingBodyName);
+                    // Update the name
+                    trackingBodyName = trackingBody.bodyDisplayName.Replace("^N", "");
+
+                    if (!_manualTracking)
+                    {
+                        trackingBodyName = Localizer.Format("#Kopernicus_UI_AutoTrackingBodyName", trackingBodyName);
+                    }
                 }
             }
         }
@@ -260,28 +295,32 @@ namespace Kopernicus.Components
         [KSPEvent(active = true, guiActive = false, guiName = "#Kopernicus_UI_SelectBody")]
         public void ManualTracking()
         {
-            KopernicusStar[] orderedStars = KopernicusStar.Stars.OrderBy(s => Vector3.Distance(vessel.transform.position, s.sun.position)).ToArray();
-            Int32 stars = orderedStars.Count();
-            DialogGUIBase[] options = new DialogGUIBase[stars + 1];
-            // Assemble the buttons
-            options[0] = new DialogGUIButton(button_Auto, () => { _manualTracking = false; }, true);//Auto
-            for (Int32 i = 0; i < stars; i++)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
             {
-                CelestialBody body = orderedStars[i].sun;
-                options[i + 1] = new DialogGUIButton
-                (
-                    body.bodyDisplayName.Replace("^N", ""),
-                    () => SetTrackingBody(body),
-                    true
-                );
-            }
+                KopernicusStar[] orderedStars = KopernicusStar.Stars
+                    .OrderBy(s => Vector3.Distance(vessel.transform.position, s.sun.position)).ToArray();
+                Int32 stars = orderedStars.Count();
+                DialogGUIBase[] options = new DialogGUIBase[stars + 1];
+                // Assemble the buttons
+                options[0] = new DialogGUIButton(button_Auto, () => { _manualTracking = false; }, true); //Auto
+                for (Int32 i = 0; i < stars; i++)
+                {
+                    CelestialBody body = orderedStars[i].sun;
+                    options[i + 1] = new DialogGUIButton
+                    (
+                        body.bodyDisplayName.Replace("^N", ""),
+                        () => SetTrackingBody(body),
+                        true
+                    );
+                }
 
-            PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new MultiOptionDialog(
-                "SelectTrackingBody",
-                SelectBody_Msg,//Please select the Body you want to track with this Solar Panel.
-                SelectBody,//Select Tracking Body
-                UISkinManager.GetSkin("MainMenuSkin"),
-                options), false, UISkinManager.GetSkin("MainMenuSkin"));
+                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new MultiOptionDialog(
+                    "SelectTrackingBody",
+                    SelectBody_Msg, //Please select the Body you want to track with this Solar Panel.
+                    SelectBody, //Select Tracking Body
+                    UISkinManager.GetSkin("MainMenuSkin"),
+                    options), false, UISkinManager.GetSkin("MainMenuSkin"));
+            }
         }
 
         public void SetTrackingBody(CelestialBody sun)
@@ -293,51 +332,54 @@ namespace Kopernicus.Components
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
-            //Setup Floatcurves
-            AtmosphericAttenutationAirMassMultiplier.Add(0f, 1f, 0f, 0f);
-            AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.982f, -0.010f, -0.010f);
-            AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.891f, -0.032f, -0.032f);
-            AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.746f, -0.025f, -0.025f);
-            AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.657f, -0.014f, -0.014f);
-            AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.550f, -0.0081f, -0.0081f);
-            AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.484f, -0.0053f, -0.0053f);
-            AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.439f, -0.0039f, -0.0039f);
-            AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.405f, -0.0030f, -0.0030f);
-            AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.357f, -0.0020f, -0.0020f);
-            AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.324f, -0.0014f, -0.0014f);
-            AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.271f, -0.00079f, -0.00079f);
-            AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.239f, -0.00052f, -0.00052f);
-            AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.200f, -0.00029f, -0.00029f);
-            AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.159f, -0.00014f, -0.00014f);
-            AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.130f, -0.00007f, -0.00007f);
-            AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.108f, -0.00004f, 0f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(0f, 1f, 0f, 0f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(15f, 0.985f, -0.0020f, -0.0020f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(30f, 0.940f, -0.0041f, -0.0041f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(45f, 0.862f, -0.0064f, -0.0064f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(60f, 0.746f, -0.0092f, -0.0092f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(75f, 0.579f, -0.0134f, -0.0134f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(90f, 0.336f, -0.0185f, -0.0185f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(105f, 0.100f, -0.008f, -0.008f);
-            AtmosphericAttenutationSolarAngleMultiplier.Add(120f, 0.050f, 0f, 0f);
-            if (HighLogic.LoadedSceneIsFlight)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
             {
-                TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
-
-                Fields["trackingBodyName"].guiActive = true;
-                Events["ManualTracking"].guiActive = true;
-
-                if (_manualTracking)
+                //Setup Floatcurves
+                AtmosphericAttenutationAirMassMultiplier.Add(0f, 1f, 0f, 0f);
+                AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.982f, -0.010f, -0.010f);
+                AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.891f, -0.032f, -0.032f);
+                AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.746f, -0.025f, -0.025f);
+                AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.657f, -0.014f, -0.014f);
+                AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.550f, -0.0081f, -0.0081f);
+                AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.484f, -0.0053f, -0.0053f);
+                AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.439f, -0.0039f, -0.0039f);
+                AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.405f, -0.0030f, -0.0030f);
+                AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.357f, -0.0020f, -0.0020f);
+                AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.324f, -0.0014f, -0.0014f);
+                AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.271f, -0.00079f, -0.00079f);
+                AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.239f, -0.00052f, -0.00052f);
+                AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.200f, -0.00029f, -0.00029f);
+                AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.159f, -0.00014f, -0.00014f);
+                AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.130f, -0.00007f, -0.00007f);
+                AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.108f, -0.00004f, 0f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(0f, 1f, 0f, 0f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(15f, 0.985f, -0.0020f, -0.0020f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(30f, 0.940f, -0.0041f, -0.0041f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(45f, 0.862f, -0.0064f, -0.0064f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(60f, 0.746f, -0.0092f, -0.0092f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(75f, 0.579f, -0.0134f, -0.0134f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(90f, 0.336f, -0.0185f, -0.0185f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(105f, 0.100f, -0.008f, -0.008f);
+                AtmosphericAttenutationSolarAngleMultiplier.Add(120f, 0.050f, 0f, 0f);
+                if (HighLogic.LoadedSceneIsFlight)
                 {
-                    CelestialBody trackingBody = GetTrackingBodyFromName(trackingBodyName);
+                    TimingManager.LateUpdateAdd(TimingManager.TimingStage.Early, EarlyLateUpdate);
 
-                    if (trackingBody != null)
+                    Fields["trackingBodyName"].guiActive = true;
+                    Events["ManualTracking"].guiActive = true;
+
+                    if (_manualTracking)
                     {
-                        SetTrackingBody(trackingBody);
-                    }
-                    else
-                    {
-                        _manualTracking = false;
+                        CelestialBody trackingBody = GetTrackingBodyFromName(trackingBodyName);
+
+                        if (trackingBody != null)
+                        {
+                            SetTrackingBody(trackingBody);
+                        }
+                        else
+                        {
+                            _manualTracking = false;
+                        }
                     }
                 }
             }
@@ -351,7 +393,10 @@ namespace Kopernicus.Components
 
         public void OnDestroy()
         {
-            TimingManager.LateUpdateRemove(TimingManager.TimingStage.Early, EarlyLateUpdate);
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            {
+                TimingManager.LateUpdateRemove(TimingManager.TimingStage.Early, EarlyLateUpdate);
+            }
         }
 
         private CelestialBody GetTrackingBodyFromName(string name)
