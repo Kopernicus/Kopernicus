@@ -578,17 +578,18 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         private void Update()
         {
+            KopernicusStar nearestStar = KopernicusStar.GetBrightest(referenceBody);
             transform.localScale = transform.parent.localScale;
             SetRotation();
 
             if (useNewShader && ringMr.sharedMaterial != null
-                             && KopernicusStar.Current != null && KopernicusStar.Current.sun.transform != null)
+                             && nearestStar != null && nearestStar.sun.transform != null)
             {
                 ringMr.sharedMaterial.SetFloat(SunRadius,
-                    (Single)KopernicusStar.Current.sun.Radius);
+                    (Single)nearestStar.sun.Radius);
                 ringMr.sharedMaterial.SetVector(SunPosRelativeToPlanet,
-                    (Vector3)(KopernicusStar.Current.sun.transform.position -
-                               ScaledSpace.ScaledToLocalSpace(transform.position)));
+                    (Vector3)(nearestStar.sun.transform.position -
+                              ScaledSpace.ScaledToLocalSpace(transform.position)));
                 ringMr.sharedMaterial.SetFloat(InnerShadeOffset,
                     (Single)(Planetarium.GetUniversalTime() * _innerShadeOffsetRate));
             }

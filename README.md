@@ -1,19 +1,15 @@
 Kopernicus
 ==============================
-June 24th, 2023
+June 25th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-176 RC1:
+New in this latest version release-176 RC2:
 
-1.) New parameter added to Kopernicus_Config.cfg + GUI, called UseMultiStarLogic, boolean, default false.  This fills the old role of the "download for multistar support" cfg bringing it right into the GUI.  People who formerly had that cfg installed should check this box to ensure all is well.  The cfg itself is no longer required, and deprecated.
-
-2.) The stock "single star" mode of Kopernicus now is allowed to make more assumptions based on there being only one point of light.  Potential performance boost from this, but will remain in testing for a few days as an RC.
-
-3.) The autodensity-calculator for stock bodies has been made aware of Jools abnormal composition, and handles it better now (for those who don't know, stock Jool is pretty...  not dense.  Like less dense than Saturn.  THis doesn't align well with realism modes like the autodensity setting).
+1.) The ring shader used to just point to the nearest star, now it uses the GetBrighest function to consider the brightest star rather than just the closest one for casting ring shadows.
 
 Known Bugs:
 
