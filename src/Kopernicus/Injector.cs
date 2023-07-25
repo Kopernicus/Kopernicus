@@ -313,9 +313,19 @@ namespace Kopernicus
                         else
                         {
                             float realWorldSize = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
-                            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
-                            float gpm = rescaleFactor / realWorldSize;
-                            float massFactor = 1 / ((realWorldSize - rescaleFactor) + 1);
+                            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;;
+                            float gpm;
+                            float massFactor;
+                            if (body.Density < 5000) //This catches underdense Joolian-template gas giants and applies a better mass template to them.
+                            {
+                                gpm = (rescaleFactor / realWorldSize) * 2.5f;
+                                massFactor = 1 / ((realWorldSize - rescaleFactor) + 1) * 2;
+                            }
+                            else
+                            {
+                                gpm = rescaleFactor / realWorldSize;
+                                massFactor = 1 / ((realWorldSize - rescaleFactor) + 1);
+                            }
                             body.Mass *= massFactor;
                             body.gravParameter *= gpm;
                             body.GeeASL *= gpm;

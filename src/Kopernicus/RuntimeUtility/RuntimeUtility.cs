@@ -842,7 +842,7 @@ namespace Kopernicus.RuntimeUtility
         // Use the brightest star as the AFG star
         private void AtmosphereLightPatch(CelestialBody body)
         {
-            if (!body.afg)
+            if ((!body.afg) || (!KopernicusConfig.UseMultiStarLogic))
             {
                 return;
             }
@@ -1061,14 +1061,30 @@ namespace Kopernicus.RuntimeUtility
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
             for (Int32 i = 0; i < animations.Length; i++)
             {
-                animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
+                if (KopernicusConfig.UseMultiStarLogic)
+                {
+                    animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
+                }
+                else
+                {
+                    animations[i].target = Sun.Instance.sun.gameObject.transform;
+                }
             }
         }
 
         // Patch various references to point to the brightest star
         private static void PatchStarReferences(CelestialBody body)
         {
-            GameObject star = KopernicusStar.GetBrightest(body).gameObject;
+            GameObject star;
+            if (KopernicusConfig.UseMultiStarLogic)
+            {
+                star = KopernicusStar.GetBrightest(body).gameObject;
+            }
+            else
+            {
+                star = KopernicusStar.Stars.First().gameObject;
+            }
+
             if (body.afg != null)
             {
                 body.afg.sunLight = star;
@@ -1169,6 +1185,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	WarnShaders = False //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
                     configFile.WriteLine("	EnforcedShaderLevel = 2 //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
                     configFile.WriteLine("	UseKopernicusAsteroidSystem = True //String with three valid values, True,False, and Stock.  True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default).  False means don't generate anything, or wait for an external generator.  Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
+                    configFile.WriteLine("	UseMultiStarLogic = False //Boolean, False means use the old Stock code with support for one star, with better performance. True activates Kopernicus multistar ready code, with a performance hit.");
                     configFile.WriteLine("	SolarRefreshRate = 1 //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetune performance (higher runs faster).  Otherwise irrelevant.");
                     configFile.WriteLine("	EnableKopernicusShadowManager = True //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
                     configFile.WriteLine("	ShadowRangeCap = 50000 //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers tend to yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
@@ -1221,6 +1238,7 @@ namespace Kopernicus.RuntimeUtility
                     {
                         configFile.WriteLine("	UseKopernicusAsteroidSystem = " + KopernicusConfig.UseKopernicusAsteroidSystem + " //String with three valid values, True,False, and Stock.  True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default).  False means don't generate anything, or wait for an external generator.  Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
                     }
+                    configFile.WriteLine("	UseMultiStarLogic = " + KopernicusConfig.UseMultiStarLogic.ToString() + " //Boolean, False means use the old Stock code with support for one star, with better performance. True activates Kopernicus multistar ready code, with a performance hit.");
                     configFile.WriteLine("	SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate.ToString() + " //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetune performance (higher runs faster).  Otherwise irrelevant.");
                     configFile.WriteLine("	EnableKopernicusShadowManager = " + KopernicusConfig.EnableKopernicusShadowManager.ToString() + " //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
                     configFile.WriteLine("	ShadowRangeCap = " + KopernicusConfig.ShadowRangeCap + " //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");

@@ -105,25 +105,34 @@ namespace Kopernicus.Components
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
-            double greatestLuminosity = 0;
-            KopernicusStar BrightestStar = null;
-            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
             {
-                KopernicusStar star = KopernicusStar.Stars[i];
-                double aparentLuminosity = 0;
-                if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                double greatestLuminosity = 0;
+                KopernicusStar BrightestStar = null;
+                for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
                 {
-                    Vector3d toStar = body.position - star.sun.position;
-                    double distanceSq = Vector3d.SqrMagnitude(toStar);
-                    aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                    KopernicusStar star = KopernicusStar.Stars[i];
+                    double aparentLuminosity = 0;
+                    if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                    {
+                        Vector3d toStar = body.position - star.sun.position;
+                        double distanceSq = Vector3d.SqrMagnitude(toStar);
+                        aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                    }
+
+                    if (aparentLuminosity > greatestLuminosity)
+                    {
+                        greatestLuminosity = aparentLuminosity;
+                        BrightestStar = star;
+                    }
                 }
-                if (aparentLuminosity > greatestLuminosity)
-                {
-                    greatestLuminosity = aparentLuminosity;
-                    BrightestStar = star;
-                }
+
+                return BrightestStar;
             }
-            return BrightestStar;
+            else
+            {
+                return KopernicusStar.Stars.First();
+            }
         }
 
 
@@ -501,19 +510,28 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalStar(CelestialBody body)
         {
-            while (body?.orbit?.referenceBody != null)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
             {
-                if (body.isStar)
+                while (body?.orbit?.referenceBody != null)
                 {
-                    break;
+                    if (body.isStar)
+                    {
+                        break;
+                    }
+
+                    body = body.orbit.referenceBody;
                 }
-                body = body.orbit.referenceBody;
+
+                return body;
             }
-            return body;
+            else
+            {
+                return Sun.Instance.sun;
+            }
         }
 
         /// <summary>
-        /// Returns the host star cb directly from the given body.
+        /// Returns the host body cb directly over system root.
         /// </summary>
         public static CelestialBody GetNearestBodyOverSystenRoot(CelestialBody body)
         {
