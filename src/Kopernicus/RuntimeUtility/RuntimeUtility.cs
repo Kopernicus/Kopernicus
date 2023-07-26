@@ -1067,7 +1067,7 @@ namespace Kopernicus.RuntimeUtility
                 }
                 else
                 {
-                    animations[i].target = Sun.Instance.sun.gameObject.transform;
+                    animations[i].target = KopernicusStar.Current.gameObject.transform;
                 }
             }
         }

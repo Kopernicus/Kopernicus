@@ -1,15 +1,17 @@
 Kopernicus
 ==============================
-June 25th, 2023
+June 26th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-176 RC2:
+New in this latest version release-176:
 
-1.) The ring shader used to just point to the nearest star, now it uses the GetBrighest function to consider the brightest star rather than just the closest one for casting ring shadows.
+1.) A small bugfix for the single-star performance improvements (KSC lights weren't turning on at night).
+
+2.) With this one bugfix, and a few days testing, we now consider this experiment stable and are pushing it to CKAN.
 
 Known Bugs:
 
