@@ -101,11 +101,16 @@ namespace Kopernicus.Components
         public string StarName;
 
         /// <summary>
+        /// A cache of base.name to avoid string allocations
+        /// </summary>
+        public static bool UseMultiStarLogic = false;
+
+        /// <summary>
         /// Returns the brightest star near the given body.
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (Stars.Count > 1)
             {
                 double greatestLuminosity = 0;
                 KopernicusStar BrightestStar = null;
@@ -131,7 +136,7 @@ namespace Kopernicus.Components
             }
             else
             {
-                return KopernicusStar.Stars.First();
+                return KopernicusStar.Current;
             }
         }
 
@@ -152,6 +157,10 @@ namespace Kopernicus.Components
             }
 
             Stars.Add(this);
+            if ((Stars.Count > 1) && (!UseMultiStarLogic))
+            {
+                UseMultiStarLogic = true;
+            }
             DontDestroyOnLoad(this);
             light = gameObject.GetComponent<Light>();
 
@@ -510,7 +519,7 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalStar(CelestialBody body)
         {
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (UseMultiStarLogic)
             {
                 while (body?.orbit?.referenceBody != null)
                 {
@@ -526,7 +535,7 @@ namespace Kopernicus.Components
             }
             else
             {
-                return Sun.Instance.sun;
+                return KopernicusStar.Current.sun;
             }
         }
 

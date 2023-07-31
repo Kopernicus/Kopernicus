@@ -65,7 +65,7 @@ namespace Kopernicus.Components
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (KopernicusStar.UseMultiStarLogic)
             {
                 frameTimer++;
                 if (HighLogic.LoadedSceneIsFlight)
@@ -229,7 +229,7 @@ namespace Kopernicus.Components
 
         public override void PostCalculateTracking(bool trackingLOS, Vector3 trackingDirection)
         {
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (KopernicusStar.UseMultiStarLogic)
             {
                 // Calculate sun AOA
                 sunAOA = 0f;
@@ -277,7 +277,7 @@ namespace Kopernicus.Components
 
         void EarlyLateUpdate()
         {
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (KopernicusStar.UseMultiStarLogic)
             {
                 if (deployState == ModuleDeployablePart.DeployState.EXTENDED)
                 {
@@ -295,7 +295,7 @@ namespace Kopernicus.Components
         [KSPEvent(active = true, guiActive = false, guiName = "#Kopernicus_UI_SelectBody")]
         public void ManualTracking()
         {
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (KopernicusStar.UseMultiStarLogic)
             {
                 KopernicusStar[] orderedStars = KopernicusStar.Stars
                     .OrderBy(s => Vector3.Distance(vessel.transform.position, s.sun.position)).ToArray();
@@ -332,7 +332,7 @@ namespace Kopernicus.Components
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (KopernicusStar.UseMultiStarLogic)
             {
                 //Setup Floatcurves
                 AtmosphericAttenutationAirMassMultiplier.Add(0f, 1f, 0f, 0f);
@@ -393,7 +393,7 @@ namespace Kopernicus.Components
 
         public void OnDestroy()
         {
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseMultiStarLogic)
+            if (KopernicusStar.UseMultiStarLogic)
             {
                 TimingManager.LateUpdateRemove(TimingManager.TimingStage.Early, EarlyLateUpdate);
             }
