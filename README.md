@@ -1,17 +1,15 @@
 Kopernicus
 ==============================
-June 30th, 2023
+August 1st, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-177:
+New in this latest version release-178:
 
-1.) Multistar mode now activates automatically when more than one star is present, no user intervention needed or required.  The old option has been removed entirely.
-
-2.) The ringshader light direction was defaulting to singlestar mode regardless of the actual setting status, or amount of stars.  This has been fixed.
+1.) Fix an edge case where single-star mode could generate exception spam on Linux systems (yet to see on Windows for some odd reason).
 
 Known Bugs:
 

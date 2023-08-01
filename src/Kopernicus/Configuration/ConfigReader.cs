@@ -45,8 +45,6 @@ namespace Kopernicus.Configuration
         [Persistent]
         public string UseKopernicusAsteroidSystem = "True";
         [Persistent]
-        public bool UseMultiStarLogic = false;
-        [Persistent]
         public int SolarRefreshRate = 1;
         [Persistent]
         public bool EnableKopernicusShadowManager = true;

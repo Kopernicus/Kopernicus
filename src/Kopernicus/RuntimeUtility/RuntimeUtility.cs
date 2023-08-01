@@ -1068,7 +1068,7 @@ namespace Kopernicus.RuntimeUtility
                 }
                 else
                 {
-                    animations[i].target = KopernicusStar.Current.gameObject.transform;
+                    //Stick with stock star
                 }
             }
         }
