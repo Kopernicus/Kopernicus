@@ -103,14 +103,14 @@ namespace Kopernicus.Components
         /// <summary>
         /// A cache of base.name to avoid string allocations
         /// </summary>
-        public static bool UseMultiStarLogic = true;
+        public static bool UseMultiStarLogic = false;
 
         /// <summary>
         /// Returns the brightest star near the given body.
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
-            if (Stars.Count > 1)
+            if (UseMultiStarLogic)
             {
                 double greatestLuminosity = 0;
                 KopernicusStar BrightestStar = null;
@@ -136,7 +136,14 @@ namespace Kopernicus.Components
             }
             else
             {
-                return KopernicusStar.Stars.FirstOrDefault();
+                try
+                {
+                    return KopernicusStar.Current;
+                }
+                catch (Exception e)
+                {
+                    return KopernicusStar.Stars.FirstOrDefault();
+                }
             }
         }
 
