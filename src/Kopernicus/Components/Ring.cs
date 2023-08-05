@@ -123,7 +123,10 @@ namespace Kopernicus.Components
         /// The body around which this ring is located.
         /// Used to get rotation data to set the LAN.
         /// </summary>
-        public CelestialBody referenceBody;
+        public CelestialBody referenceBody = null;
+
+        public KopernicusStar brightestStar;
+        public Boolean referenceBodyIsReady = false; 
         public MeshRenderer ringMr;
 
         [SerializeField]
@@ -578,17 +581,33 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         private void Update()
         {
-            KopernicusStar nearestStar = KopernicusStar.GetBrightest(referenceBody);
+            if (!referenceBodyIsReady)
+            {
+                CheckSetReferenceBody();
+                if (!referenceBodyIsReady)
+                {
+                    brightestStar = KopernicusStar.Current;
+                }
+                else
+                {
+                    brightestStar = KopernicusStar.GetBrightest(referenceBody);
+                }
+            }
+            else
+            {
+                brightestStar = KopernicusStar.GetBrightest(referenceBody);
+            }
+
             transform.localScale = transform.parent.localScale;
             SetRotation();
 
             if (useNewShader && ringMr.sharedMaterial != null
-                             && nearestStar != null && nearestStar.sun.transform != null)
+                             && brightestStar != null && brightestStar.sun.transform != null)
             {
                 ringMr.sharedMaterial.SetFloat(SunRadius,
-                    (Single)nearestStar.sun.Radius);
+                    (Single)brightestStar.sun.Radius);
                 ringMr.sharedMaterial.SetVector(SunPosRelativeToPlanet,
-                    (Vector3)(nearestStar.sun.transform.position -
+                    (Vector3)(brightestStar.sun.transform.position -
                               ScaledSpace.ScaledToLocalSpace(transform.position)));
                 ringMr.sharedMaterial.SetFloat(InnerShadeOffset,
                     (Single)(Planetarium.GetUniversalTime() * _innerShadeOffsetRate));
@@ -600,7 +619,17 @@ namespace Kopernicus.Components
                 Components[i].Update(this);
             }
         }
-
+        private void CheckSetReferenceBody()
+        {
+            if (referenceBody != null)
+            {
+                referenceBodyIsReady = true;
+            }
+            else
+            {
+                referenceBodyIsReady = false;
+            }
+        }
         /// <summary>
         /// Update the scale and the lock
         /// </summary>

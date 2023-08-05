@@ -47,6 +47,11 @@ namespace Kopernicus.Components
         /// The results of the latest flux calculation for each star
         /// </summary>
         public static Dictionary<String, Double> SolarFlux;
+        
+        /// <summary>
+        /// The results of the latest flux calculation for each star
+        /// </summary>
+        private static Dictionary<CelestialBody, KopernicusStar> BrightestStarToCelestialDictionary = new Dictionary<CelestialBody, KopernicusStar>();
 
 
         /// <summary>
@@ -101,38 +106,47 @@ namespace Kopernicus.Components
         public string StarName;
 
         /// <summary>
-        /// A cache of base.name to avoid string allocations
+        /// Whether or not to use MultiStar Math
         /// </summary>
         public static bool UseMultiStarLogic = false;
 
         /// <summary>
-        /// Returns the brightest star near the given body.
+        /// Returns the brightest star near the given body, use a dictionary lookup if possible.
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
             if (UseMultiStarLogic)
             {
-                double greatestLuminosity = 0;
-                KopernicusStar BrightestStar = null;
-                for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+                if (BrightestStarToCelestialDictionary.ContainsKey(body))
                 {
-                    KopernicusStar star = KopernicusStar.Stars[i];
-                    double aparentLuminosity = 0;
-                    if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
-                    {
-                        Vector3d toStar = body.position - star.sun.position;
-                        double distanceSq = Vector3d.SqrMagnitude(toStar);
-                        aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
-                    }
-
-                    if (aparentLuminosity > greatestLuminosity)
-                    {
-                        greatestLuminosity = aparentLuminosity;
-                        BrightestStar = star;
-                    }
+                    return BrightestStarToCelestialDictionary[body];
                 }
+                else
+                {
 
-                return BrightestStar;
+                    double greatestLuminosity = 0;
+                    KopernicusStar BrightestStar = null;
+                    for (Int32 i = 0; i < Stars.Count; i++)
+                    {
+                        KopernicusStar star = Stars[i];
+                        double aparentLuminosity = 0;
+                        if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                        {
+                            Vector3d toStar = body.position - star.sun.position;
+                            double distanceSq = Vector3d.SqrMagnitude(toStar);
+                            aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                        }
+
+                        if (aparentLuminosity > greatestLuminosity)
+                        {
+                            greatestLuminosity = aparentLuminosity;
+                            BrightestStar = star;
+                        }
+                    }
+
+                    BrightestStarToCelestialDictionary.Add(body, BrightestStar);
+                    return BrightestStar;
+                }
             }
             else
             {

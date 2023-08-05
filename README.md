@@ -7,9 +7,11 @@ August 4th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-180:
+New in this latest version release-181:
 
-1.) A bugfix to prevent multistar mode from being inadvertantly forced, sometimes preventing the prior releases performance gains.
+1.)  Implemneted dictionary caching of GetBrightest.  This uses a tiny bit more ram, but improves performance of the function massively, and as it is one of the most called functions in Kopernicus, this helps close the performance gap with Single Star mode quite a bit.
+
+2.) Fixed a bug where sometimes GetBrightest would erronously return the center Sun even when it was not the Brightest body.
 
 Known Bugs:
 
