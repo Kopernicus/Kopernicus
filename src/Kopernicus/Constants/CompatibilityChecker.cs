@@ -48,16 +48,15 @@ namespace Kopernicus.Constants
     public class CompatibilityChecker : MonoBehaviour
     {
         // Compatible version
-        internal const Int32 VERSION_MAJOR = 1;
+        internal const string VERSION_MAJOR = "1";
 #if !KSP_VERSION_1_8
-        internal const Int32 VERSION_MINOR = 12;
+        internal const string VERSION_MINOR = "12";
 #else
-        internal const Int32 VERSION_MINOR = 8;
+        internal String Int32 VERSION_MINOR = "8";
 #endif
-        internal const Int32 VERSION_MINOR_LOWER_LIMIT = 8;
-        internal const Int32 REVISION = 1;
-        internal const Int32 KOPERNICUS = 181;
-
+        internal const string VERSION_MINOR_LOWER_LIMIT = "8";
+        internal const string REVISION = "1";
+        internal const string KOPERNICUS = "181";
         public static Boolean IsCompatible()
         {
             /*-----------------------------------------------*\
@@ -66,9 +65,9 @@ namespace Kopernicus.Constants
 
 #if !DEBUG
             return
-                Versioning.version_major <= VERSION_MAJOR &&
-                Versioning.version_minor <= VERSION_MINOR &&
-                Versioning.version_minor >= VERSION_MINOR_LOWER_LIMIT &&
+                Versioning.version_major <= Int32.Parse(VERSION_MAJOR) &&
+                Versioning.version_minor <= Int32.Parse(VERSION_MINOR) &&
+                Versioning.version_minor >= Int32.Parse(VERSION_MINOR_LOWER_LIMIT) &&
                 Versioning.Revision <= 99;
 #else
             return true;
