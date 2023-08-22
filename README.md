@@ -1,17 +1,17 @@
 Kopernicus
 ==============================
-August 4th, 2023
+August 21st, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-181:
+New in this latest version release-182:
 
-1.)  Implemneted dictionary caching of GetBrightest.  This uses a tiny bit more ram, but improves performance of the function massively, and as it is one of the most called functions in Kopernicus, this helps close the performance gap with Single Star mode quite a bit.
+1.)  The "collider fix" as it's called, was causing star occulusion issues on distant bodies in the tracking station.  Since this issue was limited to the tracking station only, it was fixed by simply disabling the option when the tracking station scene is loaded (it isn't needed there anyways).
 
-2.) Fixed a bug where sometimes GetBrightest would erronously return the center Sun even when it was not the Brightest body.
+2.)  The above does not apply to the inflight "mapview" mode, but that wasn't buggy anyways.
 
 Known Bugs:
 

@@ -37,7 +37,7 @@ namespace Kopernicus.RuntimeUtility
 
         private void Start()
         {
-            if (instance != null)
+            if ((instance != null) || (HighLogic.LoadedScene.Equals(GameScenes.TRACKSTATION)))
             {
                 this.gameObject.DestroyGameObjectImmediate();
                 return;
