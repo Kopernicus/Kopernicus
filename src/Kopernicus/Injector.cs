@@ -346,7 +346,7 @@ namespace Kopernicus
                                 }
                                 else
                                 {
-                                    body.GeeASL *= gpm;
+                                    body.gravParameter *= gpm;
                                 }
                             }
                         }

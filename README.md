@@ -7,9 +7,9 @@ August 22nd, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-184:
+New in this latest version release-185:
 
-1.) A hotfix for the last release that included some bugged autorescale logic (don't worry no mods use this yet anyways, but still worth fixing).
+1.) (Another) hotfix for the last release that included some bugged autorescale logic (don't worry no mods use this yet anyways, but still worth fixing).
 
 Known Bugs:
 
