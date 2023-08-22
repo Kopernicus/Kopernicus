@@ -313,23 +313,51 @@ namespace Kopernicus
                         else
                         {
                             float realWorldSize = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
-                            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;;
+                            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
                             float gpm;
                             float massFactor;
-                            if (body.Density < 5000) //This catches underdense Joolian-template gas giants and applies a better mass template to them.
+                            if (!body.hasSolidSurface && !body.isStar) //This catches Joolian-template gas giants and applies a better mass template to them.
                             {
-                                gpm = (rescaleFactor / realWorldSize) * 2.5f;
-                                massFactor = 1 / ((realWorldSize - rescaleFactor) + 1) * 2;
+                                if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOlderRWScalingLogic)
+                                {
+                                    gpm = (rescaleFactor / realWorldSize) * 2.5f;
+                                    massFactor = 1 / ((realWorldSize - rescaleFactor) + 1) * 2;
+                                }
+                                else
+                                {
+                                    
+                                    body.Mass = Utility.GasGiantMassFromRadius(body.Radius);
+                                    RuntimeUtility.RuntimeUtility.BodyMassDict.Add(body.name,Utility.GasGiantMassFromRadius(body.Radius));
+                                    massFactor = 1f;
+                                    gpm = (rescaleFactor / realWorldSize) * 1.5f;
+                                }
                             }
                             else
                             {
                                 gpm = rescaleFactor / realWorldSize;
                                 massFactor = 1 / ((realWorldSize - rescaleFactor) + 1);
                             }
-                            body.Mass *= massFactor;
-                            body.gravParameter *= gpm;
-                            body.GeeASL *= gpm;
-                            body.scienceValues.spaceAltitudeThreshold *= gpm;
+                            if (massFactor < 0.99f || massFactor > 1.01f)
+                            {
+                                body.Mass *= massFactor;
+                                if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOlderRWScalingLogic)
+                                {
+                                    RuntimeUtility.RuntimeUtility.BodyMassDict.Add(body.name, body.Mass);
+                                }
+                            }
+                            if (gpm < 0.99f || gpm > 1.01f)
+                            {
+                                body.GeeASL *= gpm;
+                                body.scienceValues.spaceAltitudeThreshold *= gpm;
+                                if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOlderRWScalingLogic)
+                                {
+                                    body.gravParameter = body.GeeASL * 9.81 * (body.Radius * body.Radius);
+                                }
+                                else
+                                {
+                                    body.GeeASL *= gpm;
+                                }
+                            }
                         }
                     }
                     // Event

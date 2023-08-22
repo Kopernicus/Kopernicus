@@ -1,17 +1,19 @@
 Kopernicus
 ==============================
-August 21st, 2023
+August 22nd, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-182:
+New in this latest version release-183:
 
-1.)  The "collider fix" as it's called, was causing star occulusion issues on distant bodies in the tracking station.  Since this issue was limited to the tracking station only, it was fixed by simply disabling the option when the tracking station scene is loaded (it isn't needed there anyways).
+1.) A Kopernicus GUI cleanup was performed.  Several options that only mod-makers would use were moved to be "config file only" and no longer show in the GUI, which was getting messy.  Those options are listed in entry 2, in no particular order.
 
-2.)  The above does not apply to the inflight "mapview" mode, but that wasn't buggy anyways.
+2.) UseRealWorldDensity,RecomputeSOIAndHillSpheres,RescaleFactor,RealWorldSizeFactor,LimitRWDensityToStockBodies,UseIncorrectScatterDensityLogic,EnforceShaders,WarnShaders,EnforcedShaderLevel
+
+3.) The logic in the "real world scale" system has been updated, particularly in regards to gas giants.  There is an option to use the old logic in the .cfg file (no it's not in the GUI). This is and remains a work in progress feature.  
 
 Known Bugs:
 

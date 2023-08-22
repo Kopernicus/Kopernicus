@@ -45,6 +45,9 @@ namespace Kopernicus
     {
         // Static object representing the deactivator
         private static Transform _deactivator;
+        
+        //internal floatcurves
+        private static FloatCurve gasGiantMassVsRadiusCurve = null;
 
         /// <summary>
         /// Get an object which is deactivated, essentially, and children are prefabs
@@ -63,6 +66,22 @@ namespace Kopernicus
                 UnityEngine.Object.DontDestroyOnLoad(deactivatorObject);
                 return _deactivator = deactivatorObject.transform;
             }
+        }
+
+        public static double GasGiantMassFromRadius(double radius)
+        {
+            //first setup floatcurve if not done
+            if (gasGiantMassVsRadiusCurve == null)
+            {
+                gasGiantMassVsRadiusCurve = new FloatCurve();
+                gasGiantMassVsRadiusCurve.Add(0f, 1.765050f, 0f, 3.380041f);
+                gasGiantMassVsRadiusCurve.Add(6.982271f, 25.365415f, 3.380041f, 1.124136f);
+                gasGiantMassVsRadiusCurve.Add(7.397801f, 25.975951f, 1.814452f, 1.814452f);
+                gasGiantMassVsRadiusCurve.Add(7.765162f, 26.754608f, 2.424746f, 2.424746f);
+                gasGiantMassVsRadiusCurve.Add(7.844546f, 27.278340f, 12.024317f, 12.024317f);
+                gasGiantMassVsRadiusCurve.Add(7.903090f, 28.278340f, 22.585327f, 0f);
+            }
+            return Math.Pow(10, gasGiantMassVsRadiusCurve.Evaluate((float)Math.Log10(radius)));
         }
 
         public static bool IsStockBody(CelestialBody body)

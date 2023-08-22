@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using Contracts;
 using Expansions;
 using Kopernicus.Components;
@@ -116,6 +117,8 @@ namespace Kopernicus.RuntimeUtility
             }
         }
         public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
+
+        public static Dictionary<string, double> BodyMassDict = new Dictionary<string, double>();
         // Awake() - flag this class as don't destroy on load and register delegates
         [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
         private void Awake()
@@ -201,6 +204,11 @@ namespace Kopernicus.RuntimeUtility
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
+                if (BodyMassDict.ContainsKey(PSystemManager.Instance.localBodies[i].name))
+                {
+                    PSystemManager.Instance.localBodies[i].Mass = BodyMassDict[PSystemManager.Instance.localBodies[i].name];
+                    PSystemManager.Instance.localBodies[i].gravParameter = PSystemManager.Instance.localBodies[i].GeeASL * 9.81 * (PSystemManager.Instance.localBodies[i].Radius * PSystemManager.Instance.localBodies[i].Radius);
+                }
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
 
@@ -1202,6 +1210,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	UseRealWorldDensity = False //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
                     configFile.WriteLine("	RecomputeSOIAndHillSpheres = False //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");
                     configFile.WriteLine("	LimitRWDensityToStockBodies = True //Boolean. Default True.  Turning this on will limit density corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.");
+                    configFile.WriteLine("	UseOlderRWScalingLogic = False //Boolean. Default False.  Turning this on will use the old gas giant rescale logic that was less scientifically correct.  Don't mess with this unless you understand what it does.");
                     configFile.WriteLine("	RescaleFactor = 1.0 //Float. Default 1.0.  Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");
                     configFile.WriteLine("	RealWorldSizeFactor = 10.625 //Float. Default 10.625.  This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
@@ -1254,6 +1263,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity.ToString() + " //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
                     configFile.WriteLine("	RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres.ToString() + " //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");
                     configFile.WriteLine("	LimitRWDensityToStockBodies = " + KopernicusConfig.LimitRWDensityToStockBodies.ToString() + " //Boolean. Default True.  Turning this on will limit density corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.");
+                    configFile.WriteLine("	UseOlderRWScalingLogic = " + KopernicusConfig.UseOlderRWScalingLogic.ToString() + " //Boolean. Default False.  Turning this on will use the old gas giant rescale logic that was less scientifically correct.  Don't mess with this unless you understand what it does.");
                     configFile.WriteLine("	RescaleFactor = " + KopernicusConfig.RescaleFactor.ToString() + " //Float. Default 1.0.  Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");
                     configFile.WriteLine("	RealWorldSizeFactor = " + KopernicusConfig.RealWorldSizeFactor.ToString() + " //Float. Default 10.625.  This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);

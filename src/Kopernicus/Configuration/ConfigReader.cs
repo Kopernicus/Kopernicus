@@ -74,6 +74,8 @@ namespace Kopernicus.Configuration
         public bool RecomputeSOIAndHillSpheres = false;
         [Persistent]
         public bool LimitRWDensityToStockBodies = true;
+        [Persistent] 
+        public bool UseOlderRWScalingLogic = false;
         [Persistent]
         public float RescaleFactor = 1.0f;
         [Persistent]
@@ -122,6 +124,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("UseRealWorldDensity: " + UseRealWorldDensity);
                 Debug.Log("RecomputeSOIAndHillSpheres: " + RecomputeSOIAndHillSpheres);
                 Debug.Log("LimitRWDensityToStockBodies: " + LimitRWDensityToStockBodies);
+                Debug.Log("UseOlderRWScalingLogic: " + UseOlderRWScalingLogic);
                 Debug.Log("RescaleFactor: " + RescaleFactor);
                 Debug.Log("RealWorldSizeFactor: " + RealWorldSizeFactor);
                 Debug.Log("SettingsWindowXcoord: " + SettingsWindowXcoord);

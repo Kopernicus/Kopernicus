@@ -103,20 +103,14 @@ namespace Kopernicus.UI
             boxStyle.wordWrap = false;
             boxStyle.fontSize = (int)Math.Round((double)((float)fontSize * GameSettings.UI_SCALE));
             GUILayout.Label("Kopernicus_Config.cfg Editor", labelStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforceShaders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforceShaders, "EnforceShaders: Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.", toggleStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.WarnShaders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.WarnShaders, "WarnShaders: Whether or not to warn the user with a message if not using EnforcedShaderLevel.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager, "EnableKopernicusShadowManager: Whether or not to run the Internal Kopernicus Shadow System. True by default.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene, " DisableMainMenuMunScene: Whether or not to disable the Mun main menu scene. Only uncheck this if you actually have a Mun, and want that scene back.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay, "HandleHomeworldAtmosphericUnitDisplay: This is for calculating 1atm unit at home world.  Normally should be checked, but mods like PlanetaryInfoPlus may want to change this.", toggleStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic, "UseIncorrectScatterDensityLogic: This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Check this if scatters seem too dense.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders, "DisableFarAwayColliders: Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but has a slight performance penalty. Advised to uncheck only in stock or smaller radius systems.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction, "EnableAtmosphericExtinction: Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate, "UseStockMohoTemplate: This uses the stock Moho template with the Mohole bug / feature.Planet packs may customize this as desired.Be aware unchecking this disables the Mohole.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.ResetFloatingOriginOnKSCReturn = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.ResetFloatingOriginOnKSCReturn, "ResetFloatingOriginOnKSCReturn: Check this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader, "UseOnDemandLoader: Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.", toggleStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity, "UseRealWorldDensity: Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.", toggleStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.RecomputeSOIAndHillSpheres = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.RecomputeSOIAndHillSpheres, "RecomputeSOIAndHillSpheres: Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.", toggleStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.LimitRWDensityToStockBodies = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.LimitRWDensityToStockBodies, "LimitRWDensityToStockBodies: Turning this on will limit density corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.", toggleStyle);
             GUILayout.Label("ScatterLatLongDecimalPrecision: Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.", labelStyle);
             try
             {
@@ -126,16 +120,6 @@ namespace Kopernicus.UI
             {
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision = 5;
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ScatterLatLongDecimalPrecision.ToString()));
-            }
-            GUILayout.Label("EnforcedShaderLevel: A number defining the enforced shader level for the above parameters. 0 = Low, 1 = Medium, 2 = High, 3 = Ultra.", labelStyle);
-            try
-            {
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel.ToString()));
-            }
-            catch
-            {
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel = 2;
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel.ToString()));
             }
             GUILayout.Label("UseKopernicusAsteroidSystem: Three valid values, True, False, and Stock. True means use the old customizable Kopernicus asteroid generator with no comet support,  False means don't do anything/wait for an external generator. Stock means use the internal games generator.", labelStyle);
             GUILayout.BeginHorizontal();
@@ -166,36 +150,6 @@ namespace Kopernicus.UI
                 GUILayout.BeginHorizontal();
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap = 50000;
                 GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING", labelStyle);
-                GUILayout.EndHorizontal();
-            }
-            GUILayout.Label("RescaleFactor: Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.", labelStyle);
-            try
-            {
-                GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor = (float)Convert.ToDecimal(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor.ToString()));
-                GUILayout.Label("YOU SHOULD PROBABLY HAVE NO CRAFT IN ORBIT WHEN CHANGING THIS SETTING", labelStyle);
-                GUILayout.EndHorizontal();
-            }
-            catch
-            {
-                GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
-                GUILayout.Label("YOU SHOULD PROBABLY HAVE NO CRAFT IN ORBIT WHEN CHANGING THIS SETTING", labelStyle);
-                GUILayout.EndHorizontal();
-            }
-            GUILayout.Label("RealWorldSizeFactor: This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.", labelStyle);
-            try
-            {
-                GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor = (float)Convert.ToDecimal(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor.ToString()));
-                GUILayout.Label("YOU SHOULD PROBABLY HAVE NO CRAFT IN ORBIT WHEN CHANGING THIS SETTING", labelStyle);
-                GUILayout.EndHorizontal();
-            }
-            catch
-            {
-                GUILayout.BeginHorizontal();
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
-                GUILayout.Label("YOU SHOULD PROBABLY HAVE NO CRAFT IN ORBIT WHEN CHANGING THIS SETTING", labelStyle);
                 GUILayout.EndHorizontal();
             }
             GUI.DragWindow();
