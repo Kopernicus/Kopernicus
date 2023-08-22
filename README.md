@@ -7,13 +7,9 @@ August 22nd, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-183:
+New in this latest version release-184:
 
-1.) A Kopernicus GUI cleanup was performed.  Several options that only mod-makers would use were moved to be "config file only" and no longer show in the GUI, which was getting messy.  Those options are listed in entry 2, in no particular order.
-
-2.) UseRealWorldDensity,RecomputeSOIAndHillSpheres,RescaleFactor,RealWorldSizeFactor,LimitRWDensityToStockBodies,UseIncorrectScatterDensityLogic,EnforceShaders,WarnShaders,EnforcedShaderLevel
-
-3.) The logic in the "real world scale" system has been updated, particularly in regards to gas giants.  There is an option to use the old logic in the .cfg file (no it's not in the GUI). This is and remains a work in progress feature.  
+1.) A hotfix for the last release that included some bugged autorescale logic (don't worry no mods use this yet anyways, but still worth fixing).
 
 Known Bugs:
 

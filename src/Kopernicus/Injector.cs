@@ -315,35 +315,26 @@ namespace Kopernicus
                             float realWorldSize = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
                             float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
                             float gpm;
-                            float massFactor;
                             if (!body.hasSolidSurface && !body.isStar) //This catches Joolian-template gas giants and applies a better mass template to them.
                             {
                                 if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOlderRWScalingLogic)
                                 {
                                     gpm = (rescaleFactor / realWorldSize) * 2.5f;
-                                    massFactor = 1 / ((realWorldSize - rescaleFactor) + 1) * 2;
                                 }
                                 else
                                 {
-                                    
                                     body.Mass = Utility.GasGiantMassFromRadius(body.Radius);
-                                    RuntimeUtility.RuntimeUtility.BodyMassDict.Add(body.name,Utility.GasGiantMassFromRadius(body.Radius));
-                                    massFactor = 1f;
-                                    gpm = (rescaleFactor / realWorldSize) * 1.5f;
+                                    Double rsq = body.Radius;
+                                    rsq *= rsq;
+                                    body.GeeASL = body.Mass * (6.67408E-11 / 9.80665) / rsq;
+                                    body.gMagnitudeAtCenter = body.GeeASL * 9.80665 * rsq;
+                                    body.gravParameter = body.gMagnitudeAtCenter;
+                                    gpm = 1f;
                                 }
                             }
                             else
                             {
                                 gpm = rescaleFactor / realWorldSize;
-                                massFactor = 1 / ((realWorldSize - rescaleFactor) + 1);
-                            }
-                            if (massFactor < 0.99f || massFactor > 1.01f)
-                            {
-                                body.Mass *= massFactor;
-                                if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOlderRWScalingLogic)
-                                {
-                                    RuntimeUtility.RuntimeUtility.BodyMassDict.Add(body.name, body.Mass);
-                                }
                             }
                             if (gpm < 0.99f || gpm > 1.01f)
                             {

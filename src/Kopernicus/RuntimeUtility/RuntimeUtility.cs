@@ -117,8 +117,6 @@ namespace Kopernicus.RuntimeUtility
             }
         }
         public static ConfigReader KopernicusConfig = new Kopernicus.Configuration.ConfigReader();
-
-        public static Dictionary<string, double> BodyMassDict = new Dictionary<string, double>();
         // Awake() - flag this class as don't destroy on load and register delegates
         [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
         private void Awake()
@@ -204,11 +202,6 @@ namespace Kopernicus.RuntimeUtility
 
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
-                if (BodyMassDict.ContainsKey(PSystemManager.Instance.localBodies[i].name))
-                {
-                    PSystemManager.Instance.localBodies[i].Mass = BodyMassDict[PSystemManager.Instance.localBodies[i].name];
-                    PSystemManager.Instance.localBodies[i].gravParameter = PSystemManager.Instance.localBodies[i].GeeASL * 9.81 * (PSystemManager.Instance.localBodies[i].Radius * PSystemManager.Instance.localBodies[i].Radius);
-                }
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
             }
 
