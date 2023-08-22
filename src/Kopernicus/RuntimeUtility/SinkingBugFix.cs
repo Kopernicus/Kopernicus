@@ -37,8 +37,9 @@ namespace Kopernicus.RuntimeUtility
 
         private void Start()
         {
-            if ((instance != null) || (HighLogic.LoadedScene.Equals(GameScenes.TRACKSTATION)))
+            if ((instance != null) || ((!HighLogic.LoadedSceneIsFlight) && (!HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))))
             {
+                instance = null;
                 this.gameObject.DestroyGameObjectImmediate();
                 return;
             }
