@@ -1,15 +1,17 @@
 Kopernicus
 ==============================
-August 22nd, 2023
+August 27th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-185:
+New in this latest version release-186:
 
-1.) (Another) hotfix for the last release that included some bugged autorescale logic (don't worry no mods use this yet anyways, but still worth fixing).
+1.) Hotfix for a default config issue that may affect fresh installs ("DisableFarAwayColliders" was mistakenly being set to false on fresh games, resulting in deep space bugs).
+
+2.) If you want to ensure you weren't affected by this, just check the GUI and ensure option "DisableFarAwayColliders" is checked.  It should be "on/checked" in nearly all cirucmstances.
 
 Known Bugs:
 
