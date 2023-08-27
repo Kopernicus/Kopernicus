@@ -1178,41 +1178,7 @@ namespace Kopernicus.RuntimeUtility
         {
             if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
             {
-                Debug.Log("[Kopernicus] Generating default Kopernicus_Config.cfg");
-                using (StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg"))
-                {
-                    configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock settings and warnings config.");
-                    configFile.WriteLine("Kopernicus_config");
-                    configFile.WriteLine("{");
-                    configFile.WriteLine("	EnforceShaders = False //Boolean.  Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
-                    configFile.WriteLine("	WarnShaders = False //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
-                    configFile.WriteLine("	EnforcedShaderLevel = 2 //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
-                    configFile.WriteLine("	UseKopernicusAsteroidSystem = True //String with three valid values, True,False, and Stock.  True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default).  False means don't generate anything, or wait for an external generator.  Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
-                    configFile.WriteLine("	SolarRefreshRate = 1 //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetune performance (higher runs faster).  Otherwise irrelevant.");
-                    configFile.WriteLine("	EnableKopernicusShadowManager = True //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
-                    configFile.WriteLine("	ShadowRangeCap = 50000 //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers tend to yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
-                    configFile.WriteLine("	DisableMainMenuMunScene = True //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
-                    configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = True //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
-                    configFile.WriteLine("	UseIncorrectScatterDensityLogic = False //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
-                    configFile.WriteLine("	DisableFarAwayColliders = True //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to disable in smaller than or equal to stock sized systems. Be advised this breaks raycasts beyond stock eeloo range.");
-                    configFile.WriteLine("	EnableAtmosphericExtinction = False //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
-                    configFile.WriteLine("	UseStockMohoTemplate = True //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
-                    configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = False //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
-                    configFile.WriteLine("	ScatterLatLongDecimalPrecision = 5 //Integer. Default 5.  Higher values allow for smoother scatter/biome precision, at the cost of performance.  Leave untouched if unsure.");
-                    configFile.WriteLine("	UseOnDemandLoader = False //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
-                    configFile.WriteLine("	UseRealWorldDensity = False //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
-                    configFile.WriteLine("	RecomputeSOIAndHillSpheres = False //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");
-                    configFile.WriteLine("	LimitRWDensityToStockBodies = True //Boolean. Default True.  Turning this on will limit density corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.");
-                    configFile.WriteLine("	UseOlderRWScalingLogic = False //Boolean. Default False.  Turning this on will use the old gas giant rescale logic that was less scientifically correct.  Don't mess with this unless you understand what it does.");
-                    configFile.WriteLine("	RescaleFactor = 1.0 //Float. Default 1.0.  Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");
-                    configFile.WriteLine("	RealWorldSizeFactor = 10.625 //Float. Default 10.625.  This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.");
-                    configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
-                    configFile.WriteLine("	SettingsWindowXcoord = 0");
-                    configFile.WriteLine("	SettingsWindowYcoord = 0");
-                    configFile.WriteLine("}");
-                    configFile.Flush();
-                    configFile.Close();
-                }
+                UpdateConfig();
             }
         }
 
