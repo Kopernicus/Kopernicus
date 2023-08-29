@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kopernicus", "src\Kopernicus\Kopernicus.csproj", "{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}"
 EndProject
@@ -23,8 +23,12 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|Any CPU.ActiveCfg = ReleaseKSP18|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|Any CPU.Build.0 = ReleaseKSP18|x64
+		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|x64.ActiveCfg = Debug|x64
+		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.8 Release|x64.Build.0 = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|Any CPU.ActiveCfg = ReleaseKSP19Plus|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|Any CPU.Build.0 = ReleaseKSP19Plus|x64
+		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|x64.ActiveCfg = Debug|x64
+		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.1.9+ Release|x64.Build.0 = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|Any CPU.Build.0 = Debug|x64
 		{AA91123F-E3D2-4BC0-8BDB-F8B6CFDC6C10}.Debug|x64.ActiveCfg = Debug|x64
