@@ -31,7 +31,7 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class SinkingBugFix : MonoBehaviour
     {
-        internal static Dictionary<int, bool>[] colliderStatus;
+        internal static Dictionary<Collider, bool>[] colliderStatus;
         internal uint counter = 1500;
         private static SinkingBugFix instance = null;
         private static bool safeToJustDisengage = false;
@@ -52,10 +52,10 @@ namespace Kopernicus.RuntimeUtility
             {
                 try
                 {
-                    colliderStatus = new Dictionary<int, bool>[FlightGlobals.Bodies.Count];
+                    colliderStatus = new Dictionary<Collider, bool>[FlightGlobals.Bodies.Count];
                     for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
                     {
-                        colliderStatus[i] = new Dictionary<int, bool>();
+                        colliderStatus[i] = new Dictionary<Collider, bool>();
                     }
                 }
                 catch
@@ -90,9 +90,9 @@ namespace Kopernicus.RuntimeUtility
                 if (counter > 1500)
                 {
                     counter = 0;
-                    try
+                    if (FlightGlobals.ActiveVessel != null)
                     {
-                        if ((FlightGlobals.ActiveVessel.radarAltitude > 1000) && (FlightGlobals.currentMainBody.hasSolidSurface))
+                        if ((FlightGlobals.ActiveVessel.radarAltitude > 2500) || (!FlightGlobals.currentMainBody.hasSolidSurface))
                         {
                             if (safeToJustDisengage == false)
                             {
@@ -105,10 +105,6 @@ namespace Kopernicus.RuntimeUtility
                                 return;
                             }
                         }
-                    }
-                    catch
-                    {
-                        //No Active Vessel, proceed.
                     }
                     safeToJustDisengage = false;
                     Vector3 sceneCenter = Vector3.zero;
@@ -155,18 +151,18 @@ namespace Kopernicus.RuntimeUtility
         {
             foreach (Collider collider in cb.GetComponentsInChildren<Collider>(true))
             {
-                if (colliderStatus[index].ContainsKey(collider.GetInstanceID()))
+                if (colliderStatus[index].ContainsKey(collider))
                 {
-                    collider.enabled = colliderStatus[index][collider.GetInstanceID()];
-                    colliderStatus[index].Remove(collider.GetInstanceID());
+                    collider.enabled = colliderStatus[index][collider];
+                    colliderStatus[index].Remove(collider);
                 }
             }
             foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
             {
-                if (colliderStatus[index].ContainsKey(collider.GetInstanceID()))
+                if (colliderStatus[index].ContainsKey(collider))
                 {
-                    collider.enabled = colliderStatus[index][collider.GetInstanceID()];
-                    colliderStatus[index].Remove(collider.GetInstanceID());
+                    collider.enabled = colliderStatus[index][collider];
+                    colliderStatus[index].Remove(collider);
                 }
             }
         }
@@ -174,17 +170,17 @@ namespace Kopernicus.RuntimeUtility
         {
             foreach (Collider collider in cb.GetComponentsInChildren<Collider>(true))
             {
-                if ((!colliderStatus[index].ContainsKey(collider.GetInstanceID())))
+                if ((!colliderStatus[index].ContainsKey(collider)))
                 {
-                    colliderStatus[index].Add(collider.GetInstanceID(), collider.enabled);
+                    colliderStatus[index].Add(collider, collider.enabled);
                 }
                 collider.enabled = false;
             }
             foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
             {
-                if (!colliderStatus[index].ContainsKey(collider.GetInstanceID()))
+                if (!colliderStatus[index].ContainsKey(collider))
                 {
-                    colliderStatus[index].Add(collider.GetInstanceID(), collider.enabled);
+                    colliderStatus[index].Add(collider, collider.enabled);
                 }
                 collider.enabled = false;
             }

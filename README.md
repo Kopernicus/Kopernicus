@@ -7,11 +7,11 @@ August 30th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-187:
+New in this latest version release-188:
 
-1.) A transparent optimization was applied to the SinkingBody bugfix, which was proving rather expensive in CPU usage.  Basically, it only runs if you are within 1000m of the ground of a celestial with a PQS, now.
+1.) More optimizations to the SinkingBody runtime method.
 
-2.) This optimization should be completely safe, but testing around grabbing and landing on far-from-system-center asteroids would be appreciated.
+2.) The "distance from ground" at which the SinkingBody fix toggles off was changed to 2500m to avoid other vessels being in physics range.  Also, never run the check code on gas giants.
 
 Known Bugs:
 
