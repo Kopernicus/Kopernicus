@@ -68,7 +68,7 @@ namespace Kopernicus.ShadowMan
             LoadedComputeShaders.Clear();
             LoadedTextures.Clear();
 
-            using (WWW www = new WWW("file://" + shaderspath))
+            using (WWW www = new WWW("file://" + shaderspath)) //this shader loader is ancient and should probably be updated
             {
                 AssetBundle bundle = www.assetBundle;
                 Shader[] shaders = bundle.LoadAllAssets<Shader>();

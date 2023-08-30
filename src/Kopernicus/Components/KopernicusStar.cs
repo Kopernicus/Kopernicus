@@ -154,7 +154,7 @@ namespace Kopernicus.Components
                 {
                     return KopernicusStar.Current;
                 }
-                catch (Exception e)
+                catch
                 {
                     return KopernicusStar.Stars.FirstOrDefault();
                 }
