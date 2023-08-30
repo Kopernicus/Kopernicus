@@ -264,7 +264,7 @@ namespace Kopernicus.RuntimeUtility
             if (HighLogic.LoadedScene.Equals(GameScenes.SETTINGS) || HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
             {
                 internalTimer++;
-                if (internalTimer > 60)
+                if (internalTimer > 120)
                 {
                     internalTimer = 0;
 

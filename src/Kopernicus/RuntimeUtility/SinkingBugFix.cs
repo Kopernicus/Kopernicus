@@ -56,6 +56,7 @@ namespace Kopernicus.RuntimeUtility
                     for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
                     {
                         colliderStatus[i] = new Dictionary<Collider, bool>();
+                        RecordColliderState(FlightGlobals.Bodies[i], i);
                     }
                 }
                 catch
@@ -131,11 +132,11 @@ namespace Kopernicus.RuntimeUtility
                             }
                             else if (Vector3.Distance(sceneCenter, cb.transform.position) < 100000000000)
                             {
-                                RestoreColliderState(cb, i);
+                                RestoreColliderState(i);
                             }
                             else if (Vector3.Distance(sceneCenter, cb.transform.position) >= 100000000000)
                             {
-                                HibernateColliderState(cb, i);
+                                HibernateColliderState(i);
                             }
                         }
                     }
@@ -147,7 +148,7 @@ namespace Kopernicus.RuntimeUtility
                 }
             }
         }
-        private void RestoreColliderState(CelestialBody cb, int index)
+        private void RestoreColliderState(int index)
         {
             foreach (Collider collider in colliderStatus[index].Keys)
             {
@@ -155,7 +156,15 @@ namespace Kopernicus.RuntimeUtility
                 colliderStatus[index].Remove(collider);
             }
         }
-        private void HibernateColliderState(CelestialBody cb, int index)
+        private void HibernateColliderState(int index)
+        {
+            foreach (Collider collider in colliderStatus[index].Keys)
+            {
+                colliderStatus[index][collider] = collider.enabled;
+                collider.enabled = false;
+            }
+        }
+        private void RecordColliderState(CelestialBody cb, int index)
         {
             foreach (Collider collider in cb.GetComponentsInChildren<Collider>(true))
             {
@@ -167,7 +176,6 @@ namespace Kopernicus.RuntimeUtility
                 {
                     colliderStatus[index][collider] = collider.enabled;
                 }
-                collider.enabled = false;
             }
             foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
             {
@@ -179,7 +187,6 @@ namespace Kopernicus.RuntimeUtility
                 {
                     colliderStatus[index][collider] = collider.enabled;
                 }
-                collider.enabled = false;
             }
         }
         private void OnDisable()
@@ -205,7 +212,7 @@ namespace Kopernicus.RuntimeUtility
                     }
                     try
                     {
-                        RestoreColliderState(cb, i);
+                        RestoreColliderState(i);
                     }
                     catch
                     {
