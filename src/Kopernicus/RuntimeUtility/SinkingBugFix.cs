@@ -149,21 +149,10 @@ namespace Kopernicus.RuntimeUtility
         }
         private void RestoreColliderState(CelestialBody cb, int index)
         {
-            foreach (Collider collider in cb.GetComponentsInChildren<Collider>(true))
+            foreach (Collider collider in colliderStatus[index].Keys)
             {
-                if (colliderStatus[index].ContainsKey(collider))
-                {
-                    collider.enabled = colliderStatus[index][collider];
-                    colliderStatus[index].Remove(collider);
-                }
-            }
-            foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
-            {
-                if (colliderStatus[index].ContainsKey(collider))
-                {
-                    collider.enabled = colliderStatus[index][collider];
-                    colliderStatus[index].Remove(collider);
-                }
+                collider.enabled = colliderStatus[index][collider];
+                colliderStatus[index].Remove(collider);
             }
         }
         private void HibernateColliderState(CelestialBody cb, int index)
@@ -174,6 +163,10 @@ namespace Kopernicus.RuntimeUtility
                 {
                     colliderStatus[index].Add(collider, collider.enabled);
                 }
+                else
+                {
+                    colliderStatus[index][collider] = collider.enabled;
+                }
                 collider.enabled = false;
             }
             foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
@@ -181,6 +174,10 @@ namespace Kopernicus.RuntimeUtility
                 if (!colliderStatus[index].ContainsKey(collider))
                 {
                     colliderStatus[index].Add(collider, collider.enabled);
+                }
+                else
+                {
+                    colliderStatus[index][collider] = collider.enabled;
                 }
                 collider.enabled = false;
             }

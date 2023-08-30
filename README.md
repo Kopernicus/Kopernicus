@@ -7,11 +7,9 @@ August 30th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-188:
+New in this latest version release-189:
 
-1.) More optimizations to the SinkingBody runtime method.
-
-2.) The "distance from ground" at which the SinkingBody fix toggles off was changed to 2500m to avoid other vessels being in physics range.  Also, never run the check code on gas giants.
+1.) Yet even more optimizations to the SinkingBody runtime method.
 
 Known Bugs:
 
