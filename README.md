@@ -1,17 +1,17 @@
 Kopernicus
 ==============================
-August 27th, 2023
+August 30th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-186:
+New in this latest version release-187:
 
-1.) Hotfix for a default config issue that may affect fresh installs ("DisableFarAwayColliders" was mistakenly being set to false on fresh games, resulting in deep space bugs).
+1.) A transparent optimization was applied to the SinkingBody bugfix, which was proving rather expensive in CPU usage.  Basically, it only runs if you are within 1000m of the ground of a celestial with a PQS, now.
 
-2.) If you want to ensure you weren't affected by this, just check the GUI and ensure option "DisableFarAwayColliders" is checked.  It should be "on/checked" in nearly all cirucmstances.
+2.) This optimization should be completely safe, but testing around grabbing and landing on far-from-system-center asteroids would be appreciated.
 
 Known Bugs:
 

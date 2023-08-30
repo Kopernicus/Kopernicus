@@ -32,8 +32,9 @@ namespace Kopernicus.RuntimeUtility
     public class SinkingBugFix : MonoBehaviour
     {
         internal static Dictionary<int, bool>[] colliderStatus;
-        internal uint counter = 25;
+        internal uint counter = 1500;
         private static SinkingBugFix instance = null;
+        private static bool safeToJustDisengage = false;
 
         private void Start()
         {
@@ -86,9 +87,30 @@ namespace Kopernicus.RuntimeUtility
                 }
                 CelestialBody mainBody = null;
                 counter++;
-                if (counter > 25)
+                if (counter > 1500)
                 {
                     counter = 0;
+                    try
+                    {
+                        if ((FlightGlobals.ActiveVessel.radarAltitude > 1000) && (FlightGlobals.currentMainBody.hasSolidSurface))
+                        {
+                            if (safeToJustDisengage == false)
+                            {
+                                ReenableAll();
+                                safeToJustDisengage = true;
+                                return;
+                            }
+                            else
+                            {
+                                return;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        //No Active Vessel, proceed.
+                    }
+                    safeToJustDisengage = false;
                     Vector3 sceneCenter = Vector3.zero;
                     try
                     {
