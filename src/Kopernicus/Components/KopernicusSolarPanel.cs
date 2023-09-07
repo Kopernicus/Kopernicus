@@ -100,23 +100,13 @@ namespace Kopernicus.Components
 
                                 //Calculate flux
                                 double starFluxAtHome = 0;
-                                try
+                                if (PhysicsGlobals.SolarLuminosityAtHome != 0)
                                 {
                                     starFluxAtHome = 1360 / PhysicsGlobals.SolarLuminosityAtHome;
                                 }
-                                catch
-                                {
-                                }
 
                                 double starFlux = 0;
-                                try
-                                {
-                                    starFlux = star.CalculateFluxAt(vessel) * starFluxAtHome;
-                                }
-                                catch
-                                {
-                                    starFlux = 0;
-                                }
+                                starFlux = star.CalculateFluxAt(vessel) * starFluxAtHome;
 
                                 //Check if star has better flux
                                 if (bestFlux < starFlux)
@@ -157,14 +147,11 @@ namespace Kopernicus.Components
                                         AtmosphericAttenutationSolarAngleMultiplier.Evaluate(sunZenithAngleDeg);
                                 }
 
-                                try
+                                if ((sunAOA != 0) && (tempMult != 0) && (atmoAngleMult != 0) && (atmoDensityMult != 0))
                                 {
                                     panelEffectivness = (chargeRate / 24.4f) / 56.37091313591871f * sunAOA * tempMult *
                                                         atmoAngleMult *
                                                         atmoDensityMult; //56.blabla is a weird constant we use to turn flux into EC
-                                }
-                                catch
-                                {
                                 }
 
                                 if (starFluxAtHome > 0)
