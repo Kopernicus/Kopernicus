@@ -10,7 +10,6 @@ namespace Kopernicus.ShadowMan
     {
         public RenderTexture depthTexture;          //full-scene depth texture, from merged built-in depth textures of the two local cameras
                                                     //public RenderTexture occlusionTexture;	//for SSAO and eclipses, for now will just contain a copy of the screenspace shadowmask, probably not necessary
-        Coroutine checkTexturesCoroutine;
 
         public bool depthTextureCleared = false;    //clear depth texture when away from PQS, for the sunflare shader
 
@@ -48,10 +47,6 @@ namespace Kopernicus.ShadowMan
             {
                 depthTexture.Release();
                 UnityEngine.Object.Destroy(depthTexture);
-            }
-            if (!ReferenceEquals(checkTexturesCoroutine, null))
-            {
-                StopCoroutine(checkTexturesCoroutine);
             }
         }
 
