@@ -150,7 +150,7 @@ namespace Kopernicus.Components
             }
             else
             {
-                return KopernicusStar.Stars.FirstOrDefault();
+                return KopernicusStar.Stars[0];
             }
         }
 
