@@ -1078,15 +1078,7 @@ namespace Kopernicus.RuntimeUtility
         // Patch various references to point to the brightest star
         private static void PatchStarReferences(CelestialBody body)
         {
-            GameObject star;
-            if (KopernicusStar.UseMultiStarLogic)
-            {
-                star = KopernicusStar.GetBrightest(body).gameObject;
-            }
-            else
-            {
-                star = KopernicusStar.Stars.First().gameObject;
-            }
+            GameObject star = KopernicusStar.GetBrightest(body).gameObject;
 
             if (body.afg != null)
             {
