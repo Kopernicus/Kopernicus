@@ -150,7 +150,14 @@ namespace Kopernicus.Components
             }
             else
             {
-                return KopernicusStar.Stars[0];
+                if (Stars == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return KopernicusStar.Stars[0];
+                }
             }
         }
 
