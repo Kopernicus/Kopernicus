@@ -1,15 +1,19 @@
 Kopernicus
 ==============================
-August 30th, 2023
+October 6th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-189:
+New in this latest version release-190:
 
-1.) Yet even more optimizations to the SinkingBody runtime method.
+1.) Merged all bleeding edge performance enchancing commits, this is going to result in a minor performance boost globally for most users.
+
+2.) Adopted new toolbar logo, courtesy @JadeOfMaar
+
+3.) Misc minor bugfixes along the way (see bleeding edge PR changelogs at github for details).
 
 See [Known Bugs & Caveats](https://github.com/Kopernicus/Kopernicus/blob/master/BandC.md) for known bugs.
 
