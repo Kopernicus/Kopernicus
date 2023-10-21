@@ -1,19 +1,17 @@
 Kopernicus
 ==============================
-October 6th, 2023
+October 21st, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-190:
+New in this latest version release-191:
 
-1.) Merged all bleeding edge performance enchancing commits, this is going to result in a minor performance boost globally for most users.
+1.) A bugfix to the sinking-distant-body-terrain-bug workaround system that had completely stopped working due to a COVID-induced fever-dream of an optimization I attempted that would never have worked.  Reverted that one optimization and kept the rest, to the benefit of all kerbal kind.
 
-2.) Adopted new toolbar logo, courtesy @JadeOfMaar
-
-3.) Misc minor bugfixes along the way (see bleeding edge PR changelogs at github for details).
+2.) Performance is still good overall, this one (now reverted) optimization was just a bad idea.
 
 See [Known Bugs & Caveats](https://github.com/Kopernicus/Kopernicus/blob/master/BandC.md) for known bugs.
 
