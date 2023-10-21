@@ -388,9 +388,6 @@ namespace Kopernicus.Configuration
                 CreateBarycenter();
             }
 
-            // Add an OnDemand CBMap trigger
-            CelestialBody.gameObject.AddComponent<CBMapTrigger>();
-
             // Loads external parser targets
             Parser.LoadParserTargetsExternal(node, "Kopernicus", "Kopernicus");
 

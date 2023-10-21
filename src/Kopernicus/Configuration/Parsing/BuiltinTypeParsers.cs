@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -215,7 +215,6 @@ namespace Kopernicus.Configuration.Parsing
         {
             // Should we use OnDemand?
             Boolean useOnDemand = OnDemandStorage.UseOnDemand;
-            Boolean useOnDemandBiomes = OnDemandStorage.UseOnDemandBiomes;
 
             if (s.StartsWith("BUILTIN/"))
             {
@@ -225,32 +224,19 @@ namespace Kopernicus.Configuration.Parsing
             else
             {
                 // are we on-demand? Don't load now.
-                if (useOnDemand && typeof(T) == typeof(MapSO) ||
-                    useOnDemandBiomes && typeof(T) == typeof(CBAttributeMapSO))
+                if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
                     if (!Utility.TextureExists(s))
                     {
                         return;
                     }
 
-                    if (typeof(T) == typeof(CBAttributeMapSO))
-                    {
-                        CBAttributeMapSODemand cbMap = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
-                        cbMap.Path = s;
-                        cbMap.Depth = MapSO.MapDepth.Greyscale;
-                        cbMap.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                        OnDemandStorage.AddMap(generatedBody.name, cbMap);
-                        Value = cbMap as T;
-                    }
-                    else
-                    {
-                        MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
-                        map.Path = s;
-                        map.Depth = MapSO.MapDepth.Greyscale;
-                        map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                        OnDemandStorage.AddMap(generatedBody.name, map);
-                        Value = map as T;
-                    }
+                    MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
+                    map.Path = s;
+                    map.Depth = MapSO.MapDepth.Greyscale;
+                    map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
+                    OnDemandStorage.AddMap(generatedBody.name, map);
+                    Value = map as T;
                 }
                 else // Load the texture
                 {
@@ -343,7 +329,6 @@ namespace Kopernicus.Configuration.Parsing
         {
             // Should we use OnDemand?
             Boolean useOnDemand = OnDemandStorage.UseOnDemand;
-            Boolean useOnDemandBiomes = OnDemandStorage.UseOnDemandBiomes;
 
             if (s.StartsWith("BUILTIN/"))
             {
@@ -353,31 +338,19 @@ namespace Kopernicus.Configuration.Parsing
             else
             {
                 // check if OnDemand.
-                if (useOnDemand && typeof(T) == typeof(MapSO) ||
-                    useOnDemandBiomes && typeof(T) == typeof(CBAttributeMapSO))
+                if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
                     if (!Utility.TextureExists(s))
                     {
                         return;
                     }
-                    if (typeof(T) == typeof(CBAttributeMapSO))
-                    {
-                        CBAttributeMapSODemand cbMap = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
-                        cbMap.Path = s;
-                        cbMap.Depth = MapSO.MapDepth.RGB;
-                        cbMap.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                        OnDemandStorage.AddMap(generatedBody.name, cbMap);
-                        Value = cbMap as T;
-                    }
-                    else
-                    {
-                        MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
-                        map.Path = s;
-                        map.Depth = MapSO.MapDepth.RGB;
-                        map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                        OnDemandStorage.AddMap(generatedBody.name, map);
-                        Value = map as T;
-                    }
+
+                    MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
+                    map.Path = s;
+                    map.Depth = MapSO.MapDepth.RGB;
+                    map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
+                    OnDemandStorage.AddMap(generatedBody.name, map);
+                    Value = map as T;
                 }
                 else
                 {
@@ -471,7 +444,6 @@ namespace Kopernicus.Configuration.Parsing
         {
             // Should we use OnDemand?
             Boolean useOnDemand = OnDemandStorage.UseOnDemand;
-            Boolean useOnDemandBiomes = OnDemandStorage.UseOnDemandBiomes;
 
             if (s.StartsWith("BUILTIN/"))
             {
@@ -481,31 +453,19 @@ namespace Kopernicus.Configuration.Parsing
             else
             {
                 // check if OnDemand.
-                if (useOnDemand && typeof(T) == typeof(MapSO) ||
-                    useOnDemandBiomes && typeof(T) == typeof(CBAttributeMapSO))
+                if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
                     if (!Utility.TextureExists(s))
                     {
                         return;
                     }
-                    if (typeof(T) == typeof(CBAttributeMapSO))
-                    {
-                        CBAttributeMapSODemand cbMap = ScriptableObject.CreateInstance<CBAttributeMapSODemand>();
-                        cbMap.Path = s;
-                        cbMap.Depth = MapSO.MapDepth.RGBA;
-                        cbMap.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                        OnDemandStorage.AddMap(generatedBody.name, cbMap);
-                        Value = cbMap as T;
-                    }
-                    else
-                    {
-                        MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
-                        map.Path = s;
-                        map.Depth = MapSO.MapDepth.RGBA;
-                        map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
-                        OnDemandStorage.AddMap(generatedBody.name, map);
-                        Value = map as T;
-                    }
+
+                    MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
+                    map.Path = s;
+                    map.Depth = MapSO.MapDepth.RGBA;
+                    map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
+                    OnDemandStorage.AddMap(generatedBody.name, map);
+                    Value = map as T;
                 }
                 else
                 {
@@ -581,6 +541,8 @@ namespace Kopernicus.Configuration.Parsing
             return new MapSOParserRGBA<T>(value);
         }
     }
+
+
 
     // Parser for Physics Material
     [RequireConfigType(ConfigType.Node)]

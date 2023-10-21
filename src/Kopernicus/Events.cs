@@ -290,11 +290,6 @@ namespace Kopernicus
         [Description("OnDemand.MapSO.Unload")]
         public static EventData<MapSODemand> OnMapSOUnload { get; private set; }
 
-        [Description("OnDemand.CBMapSO.Load")]
-        public static EventData<CBAttributeMapSODemand> OnCBMapSOLoad { get; private set; }
-        [Description("OnDemand.CBMapSO.Unload")]
-        public static EventData<CBAttributeMapSODemand> OnCBMapSOUnload { get; private set; }
-
         [Description("OnDemand.ScaledSpace.Load")]
         public static EventData<ScaledSpaceOnDemand> OnScaledSpaceLoad { get; private set; }
         [Description("OnDemand.ScaledSpace.Unload")]
@@ -377,8 +372,6 @@ namespace Kopernicus
             OnApplyNameChange.Add((a, c) => OnApplyNameChangeNR.Fire(c));
             OnMapSOLoad.Add(a => OnMapSOLoadNR.Fire());
             OnMapSOUnload.Add(a => OnMapSOUnloadNR.Fire());
-            OnCBMapSOLoad.Add(a => OnCBMapSOLoadNR.Fire());
-            OnCBMapSOUnload.Add(a => OnCBMapSOUnloadNR.Fire());
             OnScaledSpaceLoad.Add(a => OnScaledSpaceLoadNR.Fire());
             OnScaledSpaceUnload.Add(a => OnScaledSpaceUnloadNR.Fire());
         }

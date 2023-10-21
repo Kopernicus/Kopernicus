@@ -1224,6 +1224,37 @@ namespace Kopernicus
             gen.Emit(OpCodes.Ret);
             return (Action<S, T>)setterMethod.CreateDelegate(typeof(Action<S, T>));
         }
+
+        /// <summary>
+        /// Returns the largest value that compares less than a specified value.
+        /// </summary>
+        /// <param name="x">The value to decrement.</param>
+        /// <returns>The largest value that compares less than x, or NegativeInfinity if x equals NegativeInfinity, or NaN if x equals NaN.</returns>
+        /// // https://github.com/dotnet/runtime/blob/af4efb1936b407ca5f4576e81484cf5687b79a26/src/libraries/System.Private.CoreLib/src/System/Math.cs#L210
+        public static double BitDecrement(double x)
+        {
+            long bits = BitConverter.DoubleToInt64Bits(x);
+
+            if (((bits >> 32) & 0x7FF00000) >= 0x7FF00000)
+            {
+                // NaN returns NaN
+                // -Infinity returns -Infinity
+                // +Infinity returns double.MaxValue
+                return (bits == 0x7FF00000_00000000) ? double.MaxValue : x;
+            }
+
+            if (bits == 0x00000000_00000000)
+            {
+                // +0.0 returns -double.Epsilon
+                return -double.Epsilon;
+            }
+
+            // Negative values need to be incremented
+            // Positive values need to be decremented
+
+            bits += ((bits < 0) ? +1 : -1);
+            return BitConverter.Int64BitsToDouble(bits);
+        }
     }
 
 #pragma warning disable IDE0041 // Use 'is null' check
@@ -1351,4 +1382,25 @@ namespace Kopernicus
         }
     }
 #pragma warning restore IDE0041 // Use 'is null' check
+}
+
+namespace Kopernicus.Components
+{
+    /// <summary>
+    /// This used to be a performance oriented cache of biome positions. With the introduction of the performance optimized 
+    /// KopernicusCBAttributeMapSO, querying the biome directly by usual means has become faster than using the cache, so it
+    /// has been removed. As of writing (10/2023), the PQSMod_BiomeSampler.GetCachedBiome() method is called by Parallax, 
+    /// which is why it is kept around.
+    /// </summary>
+    public class PQSMod_BiomeSampler
+    {
+        [Obsolete("Just use CelestialBody.BiomeMap.GetAtt(), this formerly implemented a cache for performance but we now have a faster base implementation")]
+        public static string GetCachedBiome(double lat, double lon, CelestialBody cb)
+        {
+            if (cb.BiomeMap == null)
+                return null;
+
+            return cb.BiomeMap.GetAtt(lat, lon).name;
+        }
+    }
 }

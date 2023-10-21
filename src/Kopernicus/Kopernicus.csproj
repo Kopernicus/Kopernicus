@@ -145,6 +145,7 @@
   </ItemGroup>
   <!--Source-->
   <ItemGroup>
+    <Compile Include="Components\KopernicusCBAttributeMapSO.cs" />
     <Compile Include="Components\ModularScatter\PQSMod_KopernicusLandClassScatterQuad.cs" />
     <Compile Include="Components\PQSLandControlFixer.cs" />
     <Compile Include="ShadowMan\CelestialBodySortableByDistance.cs" />
@@ -228,7 +229,6 @@
     <Compile Include="Components\NativeByteArray.cs" />
     <Compile Include="Components\OrbitRendererUpdater.cs" />
     <Compile Include="Components\PlanetaryParticle.cs" />
-    <Compile Include="Components\PQSMod_BiomeSampler.cs" />
     <Compile Include="Components\PQSMod_TextureAtlasFixer.cs" />
     <Compile Include="Components\Ring.cs" />
     <Compile Include="Components\Serialization\SerializableMonoBehaviour.cs" />
@@ -374,8 +374,6 @@
     <Compile Include="Constants\Version.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="OnDemand\CBAttributeMapSODemand.cs" />
-    <Compile Include="OnDemand\CBMapTrigger.cs" />
     <Compile Include="OnDemand\ILoadOnDemand.cs" />
     <Compile Include="OnDemand\MapSODemand.cs" />
     <Compile Include="OnDemand\OnDemandStorage.cs" />
