@@ -33,14 +33,11 @@ namespace Kopernicus.ShadowMan
 
         void Awake()
         {
-            if (instance == null)
+            if (instance != null)
             {
-                instance = this;
+                UnityEngine.Object.DestroyImmediate(instance);
             }
-            else
-            {
-                UnityEngine.Object.DestroyImmediate(this);
-            }
+            instance = this;
 
             if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.MAINMENU)
             {

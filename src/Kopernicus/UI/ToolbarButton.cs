@@ -57,7 +57,7 @@ namespace Kopernicus.UI
                 {
                     if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
                     {
-                        Texture buttonTexture = GameDatabase.Instance.GetTexture(KSPUtil.ApplicationRootPath + "GameData/Kopernicus/Graphics/KopernicusIcon", false);
+                        Texture buttonTexture = GameDatabase.Instance.GetTexture("Kopernicus/Graphics/KopernicusIcon", false);
                         button = ApplicationLauncher.Instance.AddModApplication(ShowToolbarGUI, HideToolbarGUI, DummyFunction, DummyFunction, DummyFunction, DummyFunction, ApplicationLauncher.AppScenes.ALWAYS, buttonTexture);
                         addedButton = true;
                     }
@@ -103,17 +103,25 @@ namespace Kopernicus.UI
             boxStyle.wordWrap = false;
             boxStyle.fontSize = (int)Math.Round((double)((float)fontSize * GameSettings.UI_SCALE));
             GUILayout.Label("Kopernicus_Config.cfg Editor", labelStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforceShaders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforceShaders, "EnforceShaders: Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.", toggleStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.WarnShaders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.WarnShaders, "WarnShaders: Whether or not to warn the user with a message if not using EnforcedShaderLevel.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager, "EnableKopernicusShadowManager: Whether or not to run the Internal Kopernicus Shadow System. True by default.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene, " DisableMainMenuMunScene: Whether or not to disable the Mun main menu scene. Only uncheck this if you actually have a Mun, and want that scene back.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay, "HandleHomeworldAtmosphericUnitDisplay: This is for calculating 1atm unit at home world.  Normally should be checked, but mods like PlanetaryInfoPlus may want to change this.", toggleStyle);
-            RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseIncorrectScatterDensityLogic, "UseIncorrectScatterDensityLogic: This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Check this if scatters seem too dense.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableFarAwayColliders, "DisableFarAwayColliders: Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but has a slight performance penalty. Advised to uncheck only in stock or smaller radius systems.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableAtmosphericExtinction, "EnableAtmosphericExtinction: Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseStockMohoTemplate, "UseStockMohoTemplate: This uses the stock Moho template with the Mohole bug / feature.Planet packs may customize this as desired.Be aware unchecking this disables the Mohole.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.ResetFloatingOriginOnKSCReturn = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.ResetFloatingOriginOnKSCReturn, "ResetFloatingOriginOnKSCReturn: Check this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader, "UseOnDemandLoader: Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.", toggleStyle);
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOnDemandLoader, "UseOnDemandLoader: Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.", toggleStyle);
+            GUILayout.Label("EnforcedShaderLevel: A number defining the enforced shader level for the above parameters. 0 = Low, 1 = Medium, 2 = High, 3 = Ultra.", labelStyle);
+            try
+            {
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel.ToString()));
+            }
+            catch
+            {
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel = 2;
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnforcedShaderLevel.ToString()));
+            }
             GUILayout.Label("EnforcedShaderLevel: A number defining the enforced shader level for the above parameters. 0 = Low, 1 = Medium, 2 = High, 3 = Ultra.", labelStyle);
             try
             {

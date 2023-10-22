@@ -125,40 +125,47 @@ namespace Kopernicus.RuntimeUtility
 
         private void Update()
         {
-            StarComponent selectedStar = null;
+            if (KopernicusStar.UseMultiStarLogic)
+            {
+                StarComponent selectedStar = null;
 
-            // If we are in the tracking station, space center or game, 
-            if (HighLogic.LoadedScene != GameScenes.TRACKSTATION && HighLogic.LoadedScene != GameScenes.FLIGHT &&
-                HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                return;
-            }
+                // If we are in the tracking station, space center or game, 
+                if (HighLogic.LoadedScene != GameScenes.TRACKSTATION && HighLogic.LoadedScene != GameScenes.FLIGHT &&
+                    HighLogic.LoadedScene != GameScenes.SPACECENTER)
+                {
+                    return;
+                }
 
-            // Get the current position of the active vessel
-            if (PlanetariumCamera.fetch.enabled)
-            {
-                Vector3 position = ScaledSpace.ScaledToLocalSpace(PlanetariumCamera.fetch.GetCameraTransform().position);
-                selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody)).First();
-            }
-            else if (FlightGlobals.ActiveVessel)
-            {
-                Vector3 position = FlightGlobals.ActiveVessel.GetTransform().position;
-                selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody)).First();
-            }
-            else if (SpaceCenter.Instance && SpaceCenter.Instance.SpaceCenterTransform)
-            {
-                Vector3 position = SpaceCenter.Instance.SpaceCenterTransform.position;
-                selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody)).First();
-            }
+                // Get the current position of the active vessel
+                if (PlanetariumCamera.fetch.enabled)
+                {
+                    Vector3 position =
+                        ScaledSpace.ScaledToLocalSpace(PlanetariumCamera.fetch.GetCameraTransform().position);
+                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody))
+                        .First();
+                }
+                else if (FlightGlobals.ActiveVessel)
+                {
+                    Vector3 position = FlightGlobals.ActiveVessel.GetTransform().position;
+                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody))
+                        .First();
+                }
+                else if (SpaceCenter.Instance && SpaceCenter.Instance.SpaceCenterTransform)
+                {
+                    Vector3 position = SpaceCenter.Instance.SpaceCenterTransform.position;
+                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody))
+                        .First();
+                }
 
-            // If the star has been changed, update everything
-            if (selectedStar && !selectedStar.IsActiveStar())
-            {
-                selectedStar.SetAsActive();
-            }
-            else if (!selectedStar && !HomeStar().IsActiveStar())
-            {
-                HomeStar().SetAsActive();
+                // If the star has been changed, update everything
+                if (selectedStar && !selectedStar.IsActiveStar())
+                {
+                    selectedStar.SetAsActive();
+                }
+                else if (!selectedStar && !HomeStar().IsActiveStar())
+                {
+                    HomeStar().SetAsActive();
+                }
             }
         }
 

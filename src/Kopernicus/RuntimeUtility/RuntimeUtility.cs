@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using Contracts;
 using Expansions;
 using Kopernicus.Components;
@@ -45,7 +46,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
 using Object = UnityEngine.Object;
-using System.Diagnostics.Eventing.Reader;
 
 namespace Kopernicus
 {
@@ -98,7 +98,6 @@ namespace Kopernicus.RuntimeUtility
         public static PQSCache.PQSPreset pqsHigh;
 
         private static bool shadowsFixed = false;
-
         //old mockbody for compat
         public static CelestialBody mockBody = null;
         //Plugin Path finding logic
@@ -225,6 +224,15 @@ namespace Kopernicus.RuntimeUtility
             {
                 ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
                 AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
+                if (!PSystemManager.Instance.localBodies[i].Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody) && (KopernicusConfig.RecomputeSOIAndHillSpheres))
+                {
+                    try
+                    {
+                        PSystemManager.Instance.localBodies[i].sphereOfInfluence = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.4);
+                        PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.333333333333333);
+                    }
+                    catch { }
+                }
             }
         }
         // Run patches every time a new scene was loaded
@@ -237,6 +245,7 @@ namespace Kopernicus.RuntimeUtility
             PatchContracts();
             shadowsFixed = false;
         }
+
         private static void FixShadows()
         {
             try
@@ -252,22 +261,23 @@ namespace Kopernicus.RuntimeUtility
 
         private void Update()
         {
-            internalTimer++;
-            if (internalTimer > 30)
+            if (HighLogic.LoadedScene.Equals(GameScenes.SETTINGS) || HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
             {
-                internalTimer = 0;
-                if (HighLogic.LoadedScene.Equals(GameScenes.SETTINGS) || HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
+                internalTimer++;
+                if (internalTimer > 120)
                 {
+                    internalTimer = 0;
+
                     if (!PQSCache.PresetList.preset.Equals(Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality))
                     {
                         Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality = PQSCache.PresetList.preset;
                         PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "You have changed the Terrain Detail setting.  Do note that can slightly change terrain altitudes, potentially affecting landed vessels!  Revert this setting back if unsure.", "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
                     }
                 }
-                if (!shadowsFixed)
-                {
-                    FixShadows();
-                }
+            }
+            if (!shadowsFixed)
+            {
+                FixShadows();
             }
         }
 
@@ -834,7 +844,7 @@ namespace Kopernicus.RuntimeUtility
         // Use the brightest star as the AFG star
         private void AtmosphereLightPatch(CelestialBody body)
         {
-            if (!body.afg)
+            if ((!body.afg) || (!KopernicusStar.UseMultiStarLogic))
             {
                 return;
             }
@@ -911,6 +921,7 @@ namespace Kopernicus.RuntimeUtility
                 {
                     FloatingOrigin.fetch.ResetOffset();
                 }
+
                 // Get the parental body
                 CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
 
@@ -1053,7 +1064,14 @@ namespace Kopernicus.RuntimeUtility
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
             for (Int32 i = 0; i < animations.Length; i++)
             {
-                animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
+                if (KopernicusStar.UseMultiStarLogic)
+                {
+                    animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
+                }
+                else
+                {
+                    //Stick with stock star
+                }
             }
         }
 
@@ -1061,6 +1079,7 @@ namespace Kopernicus.RuntimeUtility
         private static void PatchStarReferences(CelestialBody body)
         {
             GameObject star = KopernicusStar.GetBrightest(body).gameObject;
+
             if (body.afg != null)
             {
                 body.afg.sunLight = star;
@@ -1151,34 +1170,7 @@ namespace Kopernicus.RuntimeUtility
         {
             if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
             {
-                Debug.Log("[Kopernicus] Generating default Kopernicus_Config.cfg");
-                using (StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg"))
-                {
-                    configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock settings and warnings config.");
-                    configFile.WriteLine("Kopernicus_config");
-                    configFile.WriteLine("{");
-                    configFile.WriteLine("	EnforceShaders = False //Boolean.  Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
-                    configFile.WriteLine("	WarnShaders = False //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
-                    configFile.WriteLine("	EnforcedShaderLevel = 2 //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
-                    configFile.WriteLine("	UseKopernicusAsteroidSystem = True //String with three valid values, True,False, and Stock.  True means use the old customizable Kopernicus asteroid generator with no comet support (many packs use this so it's the default).  False means don't generate anything, or wait for an external generator.  Stock means use the internal games generator, which supports comets, but usually only works well in stock based systems with Dres and Kerbin present.");
-                    configFile.WriteLine("	SolarRefreshRate = 1 //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetune performance (higher runs faster).  Otherwise irrelevant.");
-                    configFile.WriteLine("	EnableKopernicusShadowManager = True //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
-                    configFile.WriteLine("	ShadowRangeCap = 50000 //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers tend to yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
-                    configFile.WriteLine("	DisableMainMenuMunScene = True //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
-                    configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = True //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
-                    configFile.WriteLine("	UseIncorrectScatterDensityLogic = False //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
-                    configFile.WriteLine("	DisableFarAwayColliders = False //Boolean.  Disables distant colliders farther away than stock eeloo. This fixes the distant body sinking bug, but keeping track of the collider state has a slight performance penalty. Advised to disable in smaller than or equal to stock sized systems. Be advised this breaks raycasts beyond stock eeloo range.");
-                    configFile.WriteLine("	EnableAtmosphericExtinction = False //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
-                    configFile.WriteLine("	UseStockMohoTemplate = True //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
-                    configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = False //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
-                    configFile.WriteLine("	UseOnDemandLoader = False //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
-                    configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
-                    configFile.WriteLine("	SettingsWindowXcoord = 0");
-                    configFile.WriteLine("	SettingsWindowYcoord = 0");
-                    configFile.WriteLine("}");
-                    configFile.Flush();
-                    configFile.Close();
-                }
+                UpdateConfig();
             }
         }
 
@@ -1217,7 +1209,13 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
                     configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = " + KopernicusConfig.ResetFloatingOriginOnKSCReturn.ToString() + " //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
-                    configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader + " //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
+                    configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader.ToString() + " //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
+                    configFile.WriteLine("	UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity.ToString() + " //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
+                    configFile.WriteLine("	RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres.ToString() + " //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");
+                    configFile.WriteLine("	LimitRWDensityToStockBodies = " + KopernicusConfig.LimitRWDensityToStockBodies.ToString() + " //Boolean. Default True.  Turning this on will limit density corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.");
+                    configFile.WriteLine("	UseOlderRWScalingLogic = " + KopernicusConfig.UseOlderRWScalingLogic.ToString() + " //Boolean. Default False.  Turning this on will use the old gas giant rescale logic that was less scientifically correct.  Don't mess with this unless you understand what it does.");
+                    configFile.WriteLine("	RescaleFactor = " + KopernicusConfig.RescaleFactor.ToString() + " //Float. Default 1.0.  Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");
+                    configFile.WriteLine("	RealWorldSizeFactor = " + KopernicusConfig.RealWorldSizeFactor.ToString() + " //Float. Default 10.625.  This is the size the density multiplier considers a 'normal' real world system. Don't change unless you know what you are doing.");
                     configFile.WriteLine("	SelectedPQSQuality = " + PQSCache.PresetList.preset);
                     configFile.WriteLine("	SettingsWindowXcoord = " + KopernicusConfig.SettingsWindowXcoord.ToString());
                     configFile.WriteLine("	SettingsWindowYcoord = " + KopernicusConfig.SettingsWindowYcoord.ToString());

@@ -45,6 +45,9 @@ namespace Kopernicus
     {
         // Static object representing the deactivator
         private static Transform _deactivator;
+        
+        //internal floatcurves
+        private static FloatCurve gasGiantMassVsRadiusCurve = null;
 
         /// <summary>
         /// Get an object which is deactivated, essentially, and children are prefabs
@@ -65,6 +68,91 @@ namespace Kopernicus
             }
         }
 
+        public static double GasGiantMassFromRadius(double radius)
+        {
+            //first setup floatcurve if not done
+            if (gasGiantMassVsRadiusCurve == null)
+            {
+                gasGiantMassVsRadiusCurve = new FloatCurve();
+                gasGiantMassVsRadiusCurve.Add(0f, 1.765050f, 0f, 3.380041f);
+                gasGiantMassVsRadiusCurve.Add(6.982271f, 25.365415f, 3.380041f, 1.124136f);
+                gasGiantMassVsRadiusCurve.Add(7.397801f, 25.975951f, 1.814452f, 1.814452f);
+                gasGiantMassVsRadiusCurve.Add(7.765162f, 26.754608f, 2.424746f, 2.424746f);
+                gasGiantMassVsRadiusCurve.Add(7.844546f, 27.278340f, 12.024317f, 12.024317f);
+                gasGiantMassVsRadiusCurve.Add(7.903090f, 28.278340f, 22.585327f, 0f);
+            }
+            return Math.Pow(10, gasGiantMassVsRadiusCurve.Evaluate((float)Math.Log10(radius)));
+        }
+
+        public static bool IsStockBody(CelestialBody body)
+        {
+            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
+            if (body.name.Equals("Sun") && ((int)Math.Round(body.Radius)) == 261600000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Moho") && ((int)Math.Round(body.Radius)) == 250000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Eve") && ((int)Math.Round(body.Radius)) == 700000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Gilly") && ((int)Math.Round(body.Radius)) == 13000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Kerbin") && ((int)Math.Round(body.Radius)) == 600000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Mun") && ((int)Math.Round(body.Radius)) == 200000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Minmus") && ((int)Math.Round(body.Radius)) == 60000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Duna") && ((int)Math.Round(body.Radius)) == 320000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Ike") && ((int)Math.Round(body.Radius)) == 130000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Dres") && ((int)Math.Round(body.Radius)) == 138000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Jool") && ((int)Math.Round(body.Radius)) == 6000000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Laythe") && ((int)Math.Round(body.Radius)) == 500000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Vall") && ((int)Math.Round(body.Radius)) == 300000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Bop") && ((int)Math.Round(body.Radius)) == 65000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Pol") && ((int)Math.Round(body.Radius)) == 44000 * rescaleFactor)
+            {
+                return true;
+            }
+            else if (body.name.Equals("Eeloo") && ((int)Math.Round(body.Radius)) == 210000 * rescaleFactor)
+            {
+                return true;
+            }
+            return false;
+        }
         /// <summary>
         /// Copy one objects fields to another object via reflection
         /// </summary>

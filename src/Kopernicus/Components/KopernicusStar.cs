@@ -47,6 +47,11 @@ namespace Kopernicus.Components
         /// The results of the latest flux calculation for each star
         /// </summary>
         public static Dictionary<String, Double> SolarFlux;
+        
+        /// <summary>
+        /// The results of the latest flux calculation for each star
+        /// </summary>
+        private static Dictionary<CelestialBody, KopernicusStar> BrightestStarToCelestialDictionary = new Dictionary<CelestialBody, KopernicusStar>();
 
 
         /// <summary>
@@ -101,29 +106,59 @@ namespace Kopernicus.Components
         public string StarName;
 
         /// <summary>
-        /// Returns the brightest star near the given body.
+        /// Whether or not to use MultiStar Math
+        /// </summary>
+        public static bool UseMultiStarLogic = false;
+
+        /// <summary>
+        /// Returns the brightest star near the given body, use a dictionary lookup if possible.
         /// </summary>
         public static KopernicusStar GetBrightest(CelestialBody body)
         {
-            double greatestLuminosity = 0;
-            KopernicusStar BrightestStar = null;
-            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+            if (UseMultiStarLogic)
             {
-                KopernicusStar star = KopernicusStar.Stars[i];
-                double aparentLuminosity = 0;
-                if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                if (BrightestStarToCelestialDictionary.ContainsKey(body))
                 {
-                    Vector3d toStar = body.position - star.sun.position;
-                    double distanceSq = Vector3d.SqrMagnitude(toStar);
-                    aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                    return BrightestStarToCelestialDictionary[body];
                 }
-                if (aparentLuminosity > greatestLuminosity)
+                else
                 {
-                    greatestLuminosity = aparentLuminosity;
-                    BrightestStar = star;
+
+                    double greatestLuminosity = 0;
+                    KopernicusStar BrightestStar = null;
+                    for (Int32 i = 0; i < Stars.Count; i++)
+                    {
+                        KopernicusStar star = Stars[i];
+                        double aparentLuminosity = 0;
+                        if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                        {
+                            Vector3d toStar = body.position - star.sun.position;
+                            double distanceSq = Vector3d.SqrMagnitude(toStar);
+                            aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                        }
+
+                        if (aparentLuminosity > greatestLuminosity)
+                        {
+                            greatestLuminosity = aparentLuminosity;
+                            BrightestStar = star;
+                        }
+                    }
+
+                    BrightestStarToCelestialDictionary.Add(body, BrightestStar);
+                    return BrightestStar;
                 }
             }
-            return BrightestStar;
+            else
+            {
+                if (Stars == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return KopernicusStar.Stars[0];
+                }
+            }
         }
 
 
@@ -143,6 +178,10 @@ namespace Kopernicus.Components
             }
 
             Stars.Add(this);
+            if ((Stars.Count > 1) && (!UseMultiStarLogic))
+            {
+                UseMultiStarLogic = true;
+            }
             DontDestroyOnLoad(this);
             light = gameObject.GetComponent<Light>();
 
@@ -347,7 +386,14 @@ namespace Kopernicus.Components
 
             if (directSunlight)
             {
-                return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
+                if (realDistanceToSun != 0)
+                {
+                    return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
+                }
+                else
+                {
+                    return 0;
+                }    
             }
 
             return 0;
@@ -426,55 +472,47 @@ namespace Kopernicus.Components
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         private static Double Flux(ModularFlightIntegrator fi, KopernicusStar star)
         {
-            // Nullchecks
-            try
-            {
-                if (fi == null)
-                {
-                    return 0;
-                }
-                if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
-                {
-                    return 0;
-                }
-                if (star == null)
-                {
-                    return 0;
-                }
-
-                // Get sunVector
-                Boolean directSunlight = false;
-                Vector3 integratorPosition = fi.transform.position;
-                Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
-                Vector3 position = star.sun.scaledBody.transform.position;
-                Double scale = Math.Max((position - scaledSpace).magnitude, 1);
-                Vector3 sunVector = (position - scaledSpace) / scale;
-                Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
-
-                // Get Solar Flux
-                Double realDistanceToSun = 0;
-                if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
-                {
-                    directSunlight = true;
-                    realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
-                }
-                else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
-                {
-                    realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
-                    directSunlight = true;
-                }
-
-                if (directSunlight)
-                {
-                    return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
-                }
-
-                return 0;
-            }
-            catch
+            if (fi == null)
             {
                 return 0;
             }
+            if (fi.Vessel == null || fi.Vessel.state == Vessel.State.DEAD || fi.CurrentMainBody == null)
+            {
+                return 0;
+            }
+            if (star == null)
+            {
+                return 0;
+            }
+
+            // Get sunVector
+            Boolean directSunlight = false;
+            Vector3 integratorPosition = fi.transform.position;
+            Vector3d scaledSpace = ScaledSpace.LocalToScaledSpace(integratorPosition);
+            Vector3 position = star.sun.scaledBody.transform.position;
+            Double scale = Math.Max((position - scaledSpace).magnitude, 1);
+            Vector3 sunVector = (position - scaledSpace) / scale;
+            Ray ray = new Ray(ScaledSpace.LocalToScaledSpace(integratorPosition), sunVector);
+
+            // Get Solar Flux
+            Double realDistanceToSun = 0;
+            if (!Physics.Raycast(ray, out RaycastHit raycastHit, Single.MaxValue, ModularFlightIntegrator.SunLayerMask))
+            {
+                directSunlight = true;
+                realDistanceToSun = scale * ScaledSpace.ScaleFactor - star.sun.Radius;
+            }
+            else if (raycastHit.transform.GetComponent<ScaledMovement>().celestialBody == star.sun)
+            {
+                realDistanceToSun = ScaledSpace.ScaleFactor * raycastHit.distance;
+                directSunlight = true;
+            }
+
+            if (directSunlight)
+            {
+                return PhysicsGlobals.SolarLuminosity / (12.5663706143592 * realDistanceToSun * realDistanceToSun);
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -501,19 +539,28 @@ namespace Kopernicus.Components
         /// </summary>
         public static CelestialBody GetLocalStar(CelestialBody body)
         {
-            while (body?.orbit?.referenceBody != null)
+            if (UseMultiStarLogic)
             {
-                if (body.isStar)
+                while (body?.orbit?.referenceBody != null)
                 {
-                    break;
+                    if (body.isStar)
+                    {
+                        break;
+                    }
+
+                    body = body.orbit.referenceBody;
                 }
-                body = body.orbit.referenceBody;
+
+                return body;
             }
-            return body;
+            else
+            {
+                return KopernicusStar.Current.sun;
+            }
         }
 
         /// <summary>
-        /// Returns the host star cb directly from the given body.
+        /// Returns the host body cb directly over system root.
         /// </summary>
         public static CelestialBody GetNearestBodyOverSystenRoot(CelestialBody body)
         {

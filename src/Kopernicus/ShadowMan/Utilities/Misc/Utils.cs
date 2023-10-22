@@ -74,7 +74,7 @@ namespace Kopernicus.ShadowMan
 
         public static Transform GetScaledTransform(string body)
         {
-            return (ScaledSpace.Instance.transform.FindChild(body));
+            return (ScaledSpace.Instance.transform.Find(body));
         }
 
         public static void FixKopernicusRingsRenderQueue()

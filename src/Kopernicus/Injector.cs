@@ -284,7 +284,53 @@ namespace Kopernicus
                             }
                         }
                     }
-
+                    if ((!body.name.Equals("Sun") && (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity)))
+                    {
+                        if ((!Utility.IsStockBody(body)) && (RuntimeUtility.RuntimeUtility.KopernicusConfig.LimitRWDensityToStockBodies))
+                        {
+                            //Do Nothing
+                        }
+                        else
+                        {
+                            float realWorldSize = RuntimeUtility.RuntimeUtility.KopernicusConfig.RealWorldSizeFactor;
+                            float rescaleFactor = RuntimeUtility.RuntimeUtility.KopernicusConfig.RescaleFactor;
+                            float gpm;
+                            if (!body.hasSolidSurface && !body.isStar) //This catches Joolian-template gas giants and applies a better mass template to them.
+                            {
+                                if (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOlderRWScalingLogic)
+                                {
+                                    gpm = (rescaleFactor / realWorldSize) * 2.5f;
+                                }
+                                else
+                                {
+                                    body.Mass = Utility.GasGiantMassFromRadius(body.Radius);
+                                    Double rsq = body.Radius;
+                                    rsq *= rsq;
+                                    body.GeeASL = body.Mass * (6.67408E-11 / 9.80665) / rsq;
+                                    body.gMagnitudeAtCenter = body.GeeASL * 9.80665 * rsq;
+                                    body.gravParameter = body.gMagnitudeAtCenter;
+                                    gpm = 1f;
+                                }
+                            }
+                            else
+                            {
+                                gpm = rescaleFactor / realWorldSize;
+                            }
+                            if (gpm < 0.99f || gpm > 1.01f)
+                            {
+                                body.GeeASL *= gpm;
+                                body.scienceValues.spaceAltitudeThreshold *= gpm;
+                                if (!RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOlderRWScalingLogic)
+                                {
+                                    body.gravParameter = body.GeeASL * 9.81 * (body.Radius * body.Radius);
+                                }
+                                else
+                                {
+                                    body.gravParameter *= gpm;
+                                }
+                            }
+                        }
+                    }
                     // Event
                     Events.OnPostBodyFixing.Fire(body);
 
