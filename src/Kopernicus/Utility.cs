@@ -1343,6 +1343,48 @@ namespace Kopernicus
             bits += ((bits < 0) ? +1 : -1);
             return BitConverter.Int64BitsToDouble(bits);
         }
+
+        /// <summary>
+        /// Get the biome definition at a given latitude/longitude
+        /// </summary>
+        /// <param name="body">The CelestialBody to check biomes on</param>
+        /// <param name="lat">latitude in degrees (KSP usually exposes it as degrees)</param>
+        /// <param name="lon">longitude in degrees (KSP usually exposes it as degrees)</param>
+        /// <returns>null if the body doesn't have a biome map, the MapAttribute biome definition otherwise</returns>
+        public static CBAttributeMapSO.MapAttribute GetBiome(CelestialBody body, double lat, double lon)
+        {
+            if (body.BiomeMap.IsNullOrDestroyed())
+                return null;
+
+            lat = ((lat + 180.0 + 90.0) % 180.0 - 90.0) * UtilMath.Deg2Rad; // clamp and convert to radians
+            lon = ((lon + 360.0 + 180.0) % 360.0 - 180.0) * UtilMath.Deg2Rad; // clamp and convert to radians
+            return body.BiomeMap.GetAtt(lat, lon);
+        }
+
+        /// <summary>
+        /// Get the biome definition at a given world position
+        /// </summary>
+        /// <param name="body">The CelestialBody to check biomes on</param>
+        /// <param name="position">World position</param>
+        /// <returns>null if the body doesn't have a biome map, the MapAttribute biome definition otherwise</returns>
+        public static CBAttributeMapSO.MapAttribute GetBiome(CelestialBody body, Vector3d position)
+        {
+            if (body.BiomeMap.IsNullOrDestroyed())
+                return null;
+
+            Vector3d rPos = (position - body.position).normalized;
+            rPos = body.BodyFrame.WorldToLocal(rPos.xzy);
+            double lat = Math.Asin(rPos.z);
+
+            if (double.IsNaN(lat))
+                lat = 0.0;
+
+            double lon = Math.Atan2(rPos.y, rPos.x);
+            if (double.IsNaN(lon))
+                lon = 0.0;
+
+            return body.BiomeMap.GetAtt(lat, lon);
+        }
     }
 
 #pragma warning disable IDE0041 // Use 'is null' check
@@ -1482,13 +1524,10 @@ namespace Kopernicus.Components
     /// </summary>
     public class PQSMod_BiomeSampler
     {
-        [Obsolete("Just use CelestialBody.BiomeMap.GetAtt(), this formerly implemented a cache for performance but we now have a faster base implementation")]
+        [Obsolete("Just use Utility.GetBiome(), this formerly implemented a cache for performance but we now have a faster base implementation")]
         public static string GetCachedBiome(double lat, double lon, CelestialBody cb)
         {
-            if (cb.BiomeMap == null)
-                return null;
-
-            return cb.BiomeMap.GetAtt(lat, lon).name;
+            return Utility.GetBiome(cb, lat, lon)?.name;
         }
     }
 }
