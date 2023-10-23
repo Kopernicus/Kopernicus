@@ -34,6 +34,7 @@ using Kopernicus.UI;
 using KSPAchievements;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine;
@@ -245,7 +246,7 @@ namespace Kopernicus.Configuration
             get
             {
                 // runtime stuff for kittopia
-                if (_biomes == null)
+                if (!Injector.IsInPrefab && _biomes == null)
                 {
                     if (Value.BiomeMap == null)
                         return null;
@@ -272,7 +273,7 @@ namespace Kopernicus.Configuration
             get
             {
                 // runtime stuff for kittopia
-                if (_biomeMap == null)
+                if (!Injector.IsInPrefab && _biomeMap == null)
                 {
                     string runtimeName = Value.BiomeMap?.MapName;
                     if (runtimeName == null)
@@ -374,9 +375,12 @@ namespace Kopernicus.Configuration
         // PostApply Event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
+            Stopwatch watch = Stopwatch.StartNew();
             Value.BiomeMap = ParseBiomeMapAndBiomeDefinitions();
+            if (Value.BiomeMap != null)
+                Logger.Active.Log($"Processed '{Value.BiomeMap.MapName}' in {watch.Elapsed.TotalMilliseconds:F3}ms");
 
-            // Debug the fields (TODO - remove)
+                // Debug the fields (TODO - remove)
             Utility.DumpObjectFields(Value.scienceValues, " Science Values ");
 
             // TODO - tentative fix, needs to be able to be configured (if it can be?)
