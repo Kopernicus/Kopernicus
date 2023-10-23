@@ -517,8 +517,6 @@ namespace Kopernicus.Configuration
 
             // isHomeWorld Check
             Value.isHomeWorld = Value.transform.name == "Kerbin";
-
-            //Biomes = new List<BiomeLoader>();
         }
 
         // Mass converters
