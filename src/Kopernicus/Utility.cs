@@ -153,6 +153,12 @@ namespace Kopernicus
             }
             return false;
         }
+
+        /// <summary>
+        /// Get a reference to the CelestialBody instance from a PQS instance
+        /// </summary>
+        public static CelestialBody GetCelestialBody(this PQS sphere) => sphere.PQSModCBTransform?.body;
+
         /// <summary>
         /// Copy one objects fields to another object via reflection
         /// </summary>
