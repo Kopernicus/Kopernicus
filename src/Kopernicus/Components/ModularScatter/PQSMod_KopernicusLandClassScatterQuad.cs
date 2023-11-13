@@ -53,7 +53,7 @@ namespace Kopernicus.Components.ModularScatter
                 Events.OnCalculateBackgroundRadiationTemperature.Add(OnCalculateBackgroundRadiationTemperature);
                 if (scatterPositions == null)
                 {
-                    scatterPositions = new List<Vector3>(modularScatter.landClassScatter.maxScatter);
+                    scatterPositions = new List<Vector3>(modularScatter.scatter.maxScatter);
                 }
             }
 
@@ -92,12 +92,12 @@ namespace Kopernicus.Components.ModularScatter
                 }
                 Vector3 scatterPos = Vector3.Lerp(quad.verts[num3], quad.verts[num2], Random.value);
                 Vector3 scatterUp;
-                if (modularScatter.landClassScatter.sphere.surfaceRelativeQuads)
+                if (modularScatter.scatter.sphere.surfaceRelativeQuads)
                     scatterUp = (scatterPos + quad.positionPlanet).normalized;
                 else
                     scatterUp = scatterPos.normalized;
 
-                float verticalOffset = modularScatter.landClassScatter.verticalOffset;
+                float verticalOffset = modularScatter.scatter.verticalOffset;
 
                 // apply altitude variance defined by an eventual SeaLevelScatter component
                 if (modularScatter.seaLevelScatter != null)
@@ -110,7 +110,7 @@ namespace Kopernicus.Components.ModularScatter
 
                 float scatterAngle = Random.Range(modularScatter.rotation[0], modularScatter.rotation[1]);
                 Quaternion scatterRot = Quaternion.AngleAxis(scatterAngle, scatterUp) * (Quaternion)quad.quadRotation;
-                float scatterScale = Random.Range(modularScatter.landClassScatter.minScale, modularScatter.landClassScatter.maxScale);
+                float scatterScale = Random.Range(modularScatter.scatter.minScale, modularScatter.scatter.maxScale);
                 Vector3 scatterScaleVector = new Vector3(scatterScale, scatterScale, scatterScale);
 
                 // Stock does the mesh combining manually.

@@ -66,7 +66,7 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// The scatter instance we are attached to
         /// </summary>
-        public PQSLandControl.LandClassScatter landClassScatter;
+        public PQSLandControl.LandClassScatter scatter;
 
         /// <summary>
         /// Whether to treat the density calculation as an actual floating point value
@@ -140,13 +140,13 @@ namespace Kopernicus.Components.ModularScatter
 
             // Get the actual live LandClassScatter instance. The one we currently have 
             // is a dummy instance created by the Kopernicus deserialization process
-            scatterName = landClassScatter.scatterName;
-            landClassScatter = landControl.scatters.First(s => s.scatterName == scatterName);
+            scatterName = scatter.scatterName;
+            scatter = landControl.scatters.First(s => s.scatterName == scatterName);
 
             // force the scatter quads to be parented to us
-            landClassScatter.scatterParent = gameObject;
+            scatter.scatterParent = gameObject;
 
-            gameObject.name = "Scatter " + landClassScatter.scatterName;
+            gameObject.name = "Scatter " + scatter.scatterName;
             transform.parent = landControl.sphere.transform;
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;

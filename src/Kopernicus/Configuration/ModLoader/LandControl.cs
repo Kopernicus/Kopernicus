@@ -481,7 +481,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                 // Add the scatter module
                 Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
-                Scatter.landClassScatter = Value;
+                Scatter.scatter = Value;
 
                 // Create the Component callback
                 Components = new CallbackList<ComponentLoader<ModularScatter>>(e =>
@@ -509,7 +509,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                 // Add the scatter module
                 Scatter = scatterParent.AddOrGetComponent<ModularScatter>();
-                Scatter.landClassScatter = Value;
+                Scatter.scatter = Value;
                 if (Value.baseMesh && Value.baseMesh.name != "Kopernicus-CubeDummy")
                 {
                     Scatter.baseMesh = Value.baseMesh;

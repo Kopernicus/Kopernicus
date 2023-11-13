@@ -1,17 +1,19 @@
 Kopernicus
 ==============================
-October 21st, 2023
+November 12th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-191:
+New in this latest version release-192:
 
-1.) A bugfix to the sinking-distant-body-terrain-bug workaround system that had completely stopped working due to a COVID-induced fever-dream of an optimization I attempted that would never have worked.  Reverted that one optimization and kept the rest, to the benefit of all kerbal kind.
+1.) Replaced the biome caching/downsampling mechanism that mods such as Parallax relied on with a new, modern, fast biome storage solution enginered by the famous @gotmachine of Kerbalism and KSPCF fame.
 
-2.) Performance is still good overall, this one (now reverted) optimization was just a bad idea.
+2.) The new system does not use downsampling (it's much faster even without it) so the old config setting ScatterLatLongDecimalPrecision is gone.
+
+3.) We also fixed a compatability regression with a fairly old mod that was unlikely to be updated (Sigma Replacements), caused by a variable rename.
 
 See [Known Bugs & Caveats](https://github.com/Kopernicus/Kopernicus/blob/master/BandC.md) for known bugs.
 
