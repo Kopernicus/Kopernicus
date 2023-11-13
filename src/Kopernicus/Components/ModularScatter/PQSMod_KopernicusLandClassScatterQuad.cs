@@ -40,9 +40,8 @@ namespace Kopernicus.Components.ModularScatter
             if (modularScatter.allowedBiomes.Count > 0)
             {
                 // TODO : perf refactor, use biome index/reference instead of name
-                UnityEngine.Vector2d latLon = modularScatter.body.GetLatitudeAndLongitude(quad.transform.position);
-                string scatterBiome = PQSMod_BiomeSampler.GetCachedBiome(latLon.x, latLon.y, modularScatter.body);
-                if (!modularScatter.allowedBiomes.Contains(scatterBiome))
+                string scatterBiome = Utility.GetBiome(modularScatter.body, quad.quadTransform.position)?.name;
+                if (scatterBiome != null && !modularScatter.allowedBiomes.Contains(scatterBiome))
                 {
                     pmCreateQuadScatter.End();
                     return;

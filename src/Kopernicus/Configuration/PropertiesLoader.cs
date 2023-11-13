@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -23,17 +23,21 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using Kopernicus.Components;
 using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.Parsing;
+using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using KSPAchievements;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using UnityEngine;
 
 namespace Kopernicus.Configuration
 {
@@ -235,57 +239,60 @@ namespace Kopernicus.Configuration
         [KittopiaUntouchable]
         public ScienceValuesLoader ScienceValues { get; set; }
 
-        // Biome definition via MapSO parser
-        [ParserTarget("biomeMap")]
-        public MapSOParserRGB<CBAttributeMapSO> BiomeMap
-        {
-            get { return Value.BiomeMap; }
-            set
-            {
-                if ((CBAttributeMapSO)value == null)
-                {
-                    return;
-                }
-                Value.BiomeMap = value;
-                Value.BiomeMap.exactSearch = false;
-                Value.BiomeMap.nonExactThreshold = 0.05f;
-
-                if (Injector.IsInPrefab)
-                {
-                    return;
-                }
-                if (Value.BiomeMap.Attributes == null || !Value.BiomeMap.Attributes.Any())
-                {
-                    return;
-                }
-
-                Biomes.Clear(false);
-                foreach (CBAttributeMapSO.MapAttribute attribute in Value.BiomeMap.Attributes)
-                {
-                    Biomes.Add(new BiomeLoader(attribute), false);
-                }
-            }
-        }
-
-        // Threshold for Biomes
-        [ParserTarget("nonExactThreshold")]
-        public NumericParser<Single> NonExactThreshold
-        {
-            get { return Value.BiomeMap != null ? Value.BiomeMap.nonExactThreshold : 0.05f; }
-            set { Value.BiomeMap.nonExactThreshold = value; }
-        }
-
-        // If the biome threshold should get used
-        [ParserTarget("exactSearch")]
-        public NumericParser<Boolean> ExactSearch
-        {
-            get { return Value.BiomeMap != null && Value.BiomeMap.exactSearch; }
-            set { Value.BiomeMap.exactSearch = value; }
-        }
-
         // Biomes of this body
         [ParserTargetCollection("Biomes", NameSignificance = NameSignificance.None, AllowMerge = true)]
-        public CallbackList<BiomeLoader> Biomes { get; set; }
+        public List<BiomeLoader> Biomes
+        {
+            get
+            {
+                // runtime stuff for kittopia
+                if (!Injector.IsInPrefab && _biomes == null)
+                {
+                    if (Value.BiomeMap == null)
+                        return null;
+
+                    List<BiomeLoader> runtimeBiomes = new List<BiomeLoader>(Value.BiomeMap.Attributes.Length);
+                    for (int i = 0; i < Value.BiomeMap.Attributes.Length; i++)
+                        runtimeBiomes.Add(new BiomeLoader(Value.BiomeMap.Attributes[i]));
+                    return runtimeBiomes;
+                }
+
+                // real value from config
+                return _biomes;
+            }
+
+            set => _biomes = value;
+        }
+
+        private List<BiomeLoader> _biomes;
+
+        // Biome texture path, or "BUILTIN/stock_map" for stock bodies biome maps
+        [ParserTarget("biomeMap")]
+        public string BiomeMap
+        {
+            get
+            {
+                // runtime stuff for kittopia
+                if (!Injector.IsInPrefab && _biomeMap == null)
+                {
+                    string runtimeName = Value.BiomeMap?.MapName;
+                    if (runtimeName == null)
+                        return null;
+
+                    if (GameDatabase.Instance.ExistsTexture(runtimeName) || OnDemandStorage.TextureExists(runtimeName))
+                        return runtimeName;
+
+                    return "BUILTIN/" + runtimeName;
+                }
+
+                // real value from config
+                return _biomeMap;
+            }
+
+            set => _biomeMap = value;
+        }
+
+        private string _biomeMap;
 
         // If the body name should be prefixed with "the" in some situations
         [ParserTarget("useTheInName")]
@@ -361,13 +368,6 @@ namespace Kopernicus.Configuration
         // Apply Event
         void IParserEventSubscriber.Apply(ConfigNode node)
         {
-            // Replace biomes
-            if (Value.Get("removeBiomes", true) && node.HasNode("Biomes") && Value.BiomeMap != null)
-            {
-                Value.BiomeMap = UnityEngine.Object.Instantiate(Value.BiomeMap);
-                Value.BiomeMap.Attributes = new CBAttributeMapSO.MapAttribute[] { };
-            }
-
             // Event
             Events.OnPropertiesLoaderApply.Fire(this, node);
         }
@@ -375,15 +375,13 @@ namespace Kopernicus.Configuration
         // PostApply Event
         void IParserEventSubscriber.PostApply(ConfigNode node)
         {
-            // Debug the fields (TODO - remove)
-            Utility.DumpObjectFields(Value.scienceValues, " Science Values ");
+            Stopwatch watch = Stopwatch.StartNew();
+            Value.BiomeMap = ParseBiomeMapAndBiomeDefinitions();
             if (Value.BiomeMap != null)
-            {
-                foreach (CBAttributeMapSO.MapAttribute biome in Value.BiomeMap.Attributes)
-                {
-                    Logger.Active.Log("Found Biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
-                }
-            }
+                Logger.Active.Log($"Processed '{Value.BiomeMap.MapName}' in {watch.Elapsed.TotalMilliseconds:F3}ms");
+
+                // Debug the fields (TODO - remove)
+            Utility.DumpObjectFields(Value.scienceValues, " Science Values ");
 
             // TODO - tentative fix, needs to be able to be configured (if it can be?)
             if (Value.progressTree == null)
@@ -394,6 +392,85 @@ namespace Kopernicus.Configuration
 
             // Event
             Events.OnPropertiesLoaderPostApply.Fire(this, node);
+        }
+
+        /// <summary>
+        /// Create the fast lookup biome map for this body. Returns null if the body doesn't have
+        /// a biome map.
+        /// </summary>
+        /// <remarks>
+        /// This is done in post-apply because we need the list of biome definitions to be able
+        /// to parse the texture (which is converted to a lookup table of biome indices), and
+        /// I've no idea how to have the parser access another, plus we want to convert the stock
+        /// biome maps anyway.
+        /// </remarks>
+        private CBAttributeMapSO ParseBiomeMapAndBiomeDefinitions()
+        {
+            CBAttributeMapSO.MapAttribute[] mapAttributes;
+            if (_biomes != null && _biomes.Count > 0)
+            {
+                mapAttributes = new CBAttributeMapSO.MapAttribute[_biomes.Count];
+                for (int i = 0; i < _biomes.Count; i++)
+                {
+                    CBAttributeMapSO.MapAttribute biome = _biomes[i].Value;
+                    Logger.Active.Log("Configured biome: " + biome.name + " : " + biome.mapColor + " : " + biome.value);
+                    mapAttributes[i] = biome;
+                }
+            }
+            else
+            {
+                mapAttributes = null;
+            }
+
+            KopernicusCBAttributeMapSO kopernicusBiomeMap = ScriptableObject.CreateInstance<KopernicusCBAttributeMapSO>(); ;
+
+            if (string.IsNullOrEmpty(_biomeMap))
+            {
+                if (Value.BiomeMap == null)
+                    return null;
+
+                // convert stock biome maps to our fast lookup derivative
+                if (Value.BiomeMap.GetType() == typeof(CBAttributeMapSO) && !kopernicusBiomeMap.ConvertFromStockMap(Value.BiomeMap, mapAttributes))
+                {
+                    Logger.Active.Log($"Failed to optimize stock biome map '{_biomeMap}'");
+                    return Value.BiomeMap;
+                }
+            }
+            else if (_biomeMap.StartsWith("BUILTIN/"))
+            {
+                CBAttributeMapSO templateMap = Utility.FindMapSO<CBAttributeMapSO>(BiomeMap.Substring("BUILTIN/".Length));
+                if (templateMap == null)
+                {
+                    Logger.Active.Log($"The BUILTIN biome map '{_biomeMap}' doesn't exists");
+                    return null;
+                }
+
+                if (!kopernicusBiomeMap.ConvertFromStockMap(templateMap, mapAttributes))
+                {
+                    Logger.Active.Log($"Failed to convert BUILTIN biome map '{_biomeMap}'");
+                    return null;
+                }
+            }
+            else
+            {
+                if (mapAttributes == null)
+                {
+                    Logger.Active.Log($"Failed to create biomeMap '{_biomeMap}', no biomes defined");
+                    return null;
+                }
+
+                Texture2D texture = Utility.LoadTexture(_biomeMap, false, false, false);
+                if (texture == null)
+                {
+                    Logger.Active.Log($"Failed to load biomeMap '{_biomeMap}'");
+                    return null;
+                }
+
+                kopernicusBiomeMap.CreateMapWithAttributes(texture, mapAttributes);
+                UnityEngine.Object.DestroyImmediate(texture);
+            }
+
+            return kopernicusBiomeMap;
         }
 
         /// <summary>
@@ -419,19 +496,6 @@ namespace Kopernicus.Configuration
 
             // isHomeWorld Check
             Value.isHomeWorld = Value.transform.name == "Kerbin";
-
-            // Biomes
-            Biomes = new CallbackList<BiomeLoader>(e =>
-            {
-                // Check biome map
-                if (Value.BiomeMap == null)
-                {
-                    throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
-                }
-
-                // Replace the old biomes list with the new one
-                Value.BiomeMap.Attributes = Biomes.Select(b => b.Value).ToArray();
-            });
         }
 
         /// <summary>
@@ -457,28 +521,6 @@ namespace Kopernicus.Configuration
 
             // isHomeWorld Check
             Value.isHomeWorld = Value.transform.name == "Kerbin";
-
-            // Biomes
-            Biomes = new CallbackList<BiomeLoader>(e =>
-            {
-                // Check biome map
-                if (Value.BiomeMap == null)
-                {
-                    throw new InvalidOperationException("The Biome Map cannot be null if you want to add biomes.");
-                }
-
-                // Replace the old biomes list with the new one
-                Value.BiomeMap.Attributes = Biomes.Select(b => b.Value).ToArray();
-            });
-            if (body.BiomeMap == null || body.BiomeMap.Attributes == null)
-            {
-                return;
-            }
-
-            foreach (CBAttributeMapSO.MapAttribute attribute in body.BiomeMap.Attributes)
-            {
-                Biomes.Add(new BiomeLoader(attribute), false);
-            }
         }
 
         // Mass converters

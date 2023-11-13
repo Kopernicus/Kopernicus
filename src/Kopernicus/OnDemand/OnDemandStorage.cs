@@ -215,28 +215,6 @@ namespace Kopernicus.OnDemand
             return true;
         }
 
-        public static void EnableBodyBiomeMaps(String body)
-        {
-            if (!Maps.ContainsKey(body))
-            {
-                return;
-            }
-
-            Debug.Log("[OD] --> OnDemandStorage.EnableBodyCBMaps loading " + body);
-            EnableMapList(Maps[body].Where(m => m is CBAttributeMapSODemand).ToList());
-        }
-
-        public static void DisableBodyBiomeMaps(String body)
-        {
-            if (!Maps.ContainsKey(body))
-            {
-                return;
-            }
-
-            Debug.Log("[OD] <--- OnDemandStorage.DisableBodyCBMaps destroying " + body);
-            DisableMapList(Maps[body].Where(m => m is CBAttributeMapSODemand).ToList());
-        }
-
         public static Byte[] LoadWholeFile(String path)
         {
             // If we haven't worked out if we can patch array length then do it

@@ -100,14 +100,6 @@ namespace Kopernicus.Configuration
             set { OnDemandStorage.UseOnDemand = value; }
         }
 
-        // If the OnDemand Biome Systems are enabled
-        [ParserTarget("useOnDemandBiomes")]
-        public NumericParser<Boolean> UseOnDemandBiomes
-        {
-            get { return OnDemandStorage.UseOnDemandBiomes; }
-            set { OnDemandStorage.UseOnDemandBiomes = value; }
-        }
-
         // If the OnDemand System should load missing maps
         [ParserTarget("onDemandLoadOnMissing")]
         public NumericParser<Boolean> OnDemandLoadOnMissing

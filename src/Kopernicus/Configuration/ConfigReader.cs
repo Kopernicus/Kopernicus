@@ -65,8 +65,6 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool ResetFloatingOriginOnKSCReturn = false;
         [Persistent]
-        public int ScatterLatLongDecimalPrecision = 5;
-        [Persistent]
         public bool UseOnDemandLoader = false;
         [Persistent]
         public bool UseRealWorldDensity = false;
@@ -119,7 +117,6 @@ namespace Kopernicus.Configuration
                 Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
                 Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
                 Debug.Log("ResetFloatingOriginOnKSCReturn: " + ResetFloatingOriginOnKSCReturn);
-                Debug.Log("ScatterLatLongDecimalPrecision: " + ScatterLatLongDecimalPrecision);
                 Debug.Log("UseOnDemandLoader: " + UseOnDemandLoader);
                 Debug.Log("UseRealWorldDensity: " + UseRealWorldDensity);
                 Debug.Log("RecomputeSOIAndHillSpheres: " + RecomputeSOIAndHillSpheres);
