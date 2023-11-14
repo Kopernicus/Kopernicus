@@ -14,6 +14,8 @@ Known Bugs:
 
 7.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details
 
+8.) cbNameLater has some bugs in particular when combined with Parallax scatters, especially noticable as of release-192.  If you must use cbNameLater, consider turning off Parallax scatters if you don't use them.
+
 Known Caveats:
 
 1.) The 1.12.x release series works on 1.12.x. The 1.11.x,1.10.x,1.9.x and 1.8.x releases are deprecated
