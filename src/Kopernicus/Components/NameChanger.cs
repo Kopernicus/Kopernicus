@@ -47,6 +47,10 @@ namespace Kopernicus.Components
             {
                 OrbitRendererData data = PSystemManager.OrbitRendererDataCache[b];
                 PSystemManager.OrbitRendererDataCache.Remove(b);
+                // Before we make the change, we need to make sure FlightGlobals's bodyNames cache
+                // has the old name (for back-compat with older mods)
+                FlightGlobals.GetBodyByName(b.bodyName);
+                // Now we can change the name safely.
                 b.bodyName = newName;
                 PlanetariumCamera.fetch.targets.Find(t => t.name == oldName).name = newName;
                 data.cb = b;
