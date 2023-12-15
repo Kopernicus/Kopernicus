@@ -1,15 +1,17 @@
 Kopernicus
 ==============================
-November 15th, 2023
+December 15th, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-193:
+New in this latest version release-194:
 
-1.) Hotfix for some obscure cbNameLater bugs involving RealismOverhaul.  PS: This is a deprecated function, but we keep it about because it has no direct replacement and some big mods depend on it. Please strongly consider using anything else if you are able.
+1.) Add option TrulyMassiveSystem, which trades some optimizations and potential bugs for working better with well, Truly Massive Systems.  Helps stabilize manauever nodes in such environments. Small performance hit. Default false.
+
+2.) The above option was not added to Kopernicus GUI because it is really more for pack authors.  Find it in the Kopernicus_Config.cfg file after a run of the game.
 
 About
 -----
