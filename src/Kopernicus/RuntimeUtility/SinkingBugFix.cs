@@ -73,7 +73,7 @@ namespace Kopernicus.RuntimeUtility
         {
             if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
             {
-                if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER))
+                if (HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER) && (!RuntimeUtility.KopernicusConfig.TrulyMassiveSystem))
                 {
                     this.gameObject.DestroyGameObjectImmediate();
                     return;
@@ -97,7 +97,7 @@ namespace Kopernicus.RuntimeUtility
                     counter = 0;
                     if (FlightGlobals.ActiveVessel != null)
                     {
-                        if ((FlightGlobals.ActiveVessel.radarAltitude > 2500) || (!FlightGlobals.currentMainBody.hasSolidSurface))
+                        if (((FlightGlobals.ActiveVessel.radarAltitude > 2500) || (!FlightGlobals.currentMainBody.hasSolidSurface)) && (!RuntimeUtility.KopernicusConfig.TrulyMassiveSystem))
                         {
                             if (safeToJustDisengage == false)
                             {

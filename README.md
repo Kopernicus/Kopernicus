@@ -7,11 +7,9 @@ December 15th, 2023
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-194:
+New in this latest version release-195:
 
-1.) Add option TrulyMassiveSystem, which trades some optimizations and potential bugs for working better with well, Truly Massive Systems.  Helps stabilize manauever nodes in such environments. Small performance hit. Default false.
-
-2.) The above option was not added to Kopernicus GUI because it is really more for pack authors.  Find it in the Kopernicus_Config.cfg file after a run of the game.
+1.) Bugfix for previous release, previously the new option did not function or change anything (lol), now it does.
 
 About
 -----
