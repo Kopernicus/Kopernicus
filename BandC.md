@@ -1,6 +1,6 @@
 Known Bugs:
 
-1.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
+1.) The homeworld must be named "Kerbin" and must orbit the root star.  You can rename it via displayName property for most purposes.  We are working on a true fix for this that will allow you to have homeworlds properly on moons and on bodies not named Kerbin, but the fixes are not ready yet (there is a prerelease that supports renamed homeworlds).  Until they are, see options cbNameLater, and postSpawnOrbit, but be aware they are buggy, and overall deprecated.
 
 2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away. (I am not sure if this is still releavent as of Release-159, feedback welcome).
 
@@ -12,7 +12,9 @@ Known Bugs:
 
 6.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text." This is by design. If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
 
-7.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details
+7.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details.
+
+8.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
 
 Known Caveats:
 
