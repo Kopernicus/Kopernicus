@@ -80,7 +80,7 @@ namespace Kopernicus
             ReferenceGeosphere = jool.scaledVersion.GetComponent<MeshFilter>().sharedMesh;
 
             // Main Menu body
-            MenuBody = "Kerbin";
+            MenuBody = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
 
             // Random Main Menu bodies
             RandomMainMenuBodies = new List<String>();

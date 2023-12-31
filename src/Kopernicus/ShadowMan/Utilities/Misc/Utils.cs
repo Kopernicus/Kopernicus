@@ -60,7 +60,7 @@ namespace Kopernicus.ShadowMan
 
         public static GameObject GetMainMenuObject(CelestialBody celestialBody)
         {
-            string name = celestialBody.isHomeWorld ? "Kerbin" : celestialBody.name;
+            string name = celestialBody.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName) ? RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName : celestialBody.name;
 
             GameObject mainMenuObject = GameObject.FindObjectsOfType<GameObject>().FirstOrDefault(b => ( (b.name == name) && b.transform.parent.name.Contains("Scene")));
 

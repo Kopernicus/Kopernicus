@@ -493,9 +493,8 @@ namespace Kopernicus.Configuration
                 Value.scienceValues = new CelestialBodyScienceParams();
             }
             ScienceValues = new ScienceValuesLoader(Value.scienceValues);
-
             // isHomeWorld Check
-            Value.isHomeWorld = Value.transform.name == "Kerbin";
+            Value.isHomeWorld = Value.transform.name == RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
         }
 
         /// <summary>
@@ -520,7 +519,7 @@ namespace Kopernicus.Configuration
             ScienceValues = new ScienceValuesLoader(Value.scienceValues);
 
             // isHomeWorld Check
-            Value.isHomeWorld = Value.transform.name == "Kerbin";
+            Value.isHomeWorld = Value.transform.name == RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
         }
 
         // Mass converters

@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using UnityEngine;
+using static Targeting;
 
 namespace Kopernicus
 {
@@ -77,7 +78,6 @@ namespace Kopernicus
                 Destroy(this);
                 return;
             }
-
             // Log the current version to the log
             String kopernicusVersion = CompatibilityChecker.VERSION_MAJOR + "." +
                                        CompatibilityChecker.VERSION_MINOR + "." + CompatibilityChecker.REVISION +
@@ -160,6 +160,8 @@ namespace Kopernicus
 
                 // Clear space center instance so it will accept nouveau Kerbin
                 SpaceCenter.Instance = null;
+                //Homeworld setup
+                PSystemSetup.Instance.pqsToActivate = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
 
                 // Add a handler so that we can do post spawn fixups.
                 PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
@@ -191,19 +193,45 @@ namespace Kopernicus
             {
                 // Log
                 Debug.Log("[Kopernicus]: Post-Spawn");
-
                 // Fire Event
                 Events.OnPreFixing.Fire();
+                //Correct PQS naming for homeworld
+                foreach (PQS pqs in UnityEngine.Object.FindObjectsOfType(typeof(PQS)))
+                {
+                    if (pqs.gameObject.name.Equals("Kerbin"))
+                    {
+                        pqs.name = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                        pqs.gameObject.name = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                    }
+                }
+                CelestialBody hb = FlightGlobals.GetBodyByName(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName);
+                PSystemSetup.Instance.pqsToActivate = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                Planetarium.fetch.Home = hb;
+                foreach (PSystemSetup.SpaceCenterFacility sc in PSystemSetup.Instance.SpaceCenterFacilities)
+                {
+                    sc.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                    sc.hostBody = hb;
+                }
+                foreach (LaunchSite lc in PSystemSetup.Instance.LaunchSites)
+                {
+                    lc.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                }
 
+                foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
+                {
+                    if (cam.pqsName.Equals("Kerbin"))
+                    {
+                        cam.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                    }
+                }
                 // Fix the SpaceCenter
-                SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.isHomeWorld)
+                SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName))
                     .GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
-
+                //Fix space center camera assignments
                 if (SpaceCenter.Instance != null)
                 {
                     SpaceCenter.Instance.Start();
                 }
-
                 // Fix the flight globals index of each body and patch it's SOI
                 Int32 counter = 0;
                 CelestialBody mockBody = null;
@@ -580,6 +608,19 @@ namespace Kopernicus
             if (sphere.sx < 0.0)
                 return sphere.sx + 1.0;
             return sphere.sx;
+        }
+    }
+
+    [HarmonyPatch(typeof(SpaceCenterCamera2), "Start")]
+    public static class SpaceCenterCamera2_Start
+    {
+        static bool Prefix(SpaceCenterCamera2 __instance)
+        {
+            if (__instance.pqsName.Equals("Kerbin"))
+            {
+                __instance.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+            }
+            return true;
         }
     }
 

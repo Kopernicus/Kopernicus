@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -84,7 +84,7 @@ namespace Kopernicus.RuntimeUtility
             CelestialBody planetCb = UBI.GetBody(Templates.MenuBody);
             if (planetCb == null)
             {
-                planetCb = PSystemManager.Instance.localBodies.Find(b => b.isHomeWorld);
+                planetCb = PSystemManager.Instance.localBodies.Find(b => b.name.Equals(RuntimeUtility.KopernicusConfig.HomeWorldName));
             }
             if (planetCb == null)
             {

@@ -37,6 +37,8 @@ namespace Kopernicus.Configuration
     public class ConfigReader
     {
         [Persistent]
+        public string HomeWorldName = "Kerbin";
+        [Persistent]
         public bool EnforceShaders = false;
         [Persistent]
         public bool WarnShaders = false;
@@ -105,6 +107,7 @@ namespace Kopernicus.Configuration
             {
                 ConfigNode.LoadObjectFromConfig(this, baseConfigs[0].config);
                 Debug.Log("[Kopernicus Configurations] Using: ");
+                Debug.Log("HomeWorldName: " + HomeWorldName);
                 Debug.Log("EnforceShaders: " + EnforceShaders);
                 Debug.Log("WarnShaders: " + WarnShaders);
                 Debug.Log("EnforcedShaderLevel: " + EnforcedShaderLevel);

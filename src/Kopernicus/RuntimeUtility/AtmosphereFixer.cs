@@ -136,10 +136,10 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            if ((FlightGlobals.GetHomeBody() != null)
-                && (FlightGlobals.GetHomeBody().atmosphericAmbientColor != null))
+            if ((FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName) != null)
+                && (FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).atmosphericAmbientColor != null))
             {
-                RenderSettings.ambientLight = FlightGlobals.GetHomeBody().atmosphericAmbientColor;
+                RenderSettings.ambientLight = FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).atmosphericAmbientColor;
             }
         }
 

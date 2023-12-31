@@ -671,7 +671,7 @@ namespace Kopernicus.Configuration
             }
 #endif
             // hacky hack
-            if (generatedBody.celestialBody.isHomeWorld && Value.gameObject.GetChild("KSC") == null)
+            if (generatedBody.celestialBody.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName) && (Value.gameObject.GetChild("KSC") == null))
             {
                 PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
                 GameObject scTree = kerbinTemplate.pqsVersion.gameObject.GetChild("KSC");

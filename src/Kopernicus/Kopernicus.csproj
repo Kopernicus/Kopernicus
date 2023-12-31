@@ -142,6 +142,7 @@
     <Publicize Include="Assembly-CSharp:Sun.fadeEndAtAlt" />
     <Publicize Include="Assembly-CSharp:Sun.scaledSunLight" />
     <Publicize Include="Assembly-CSharp:Sun.lgt" />
+	<Publicize Include="Assembly-CSharp:SpaceCenterCamera2.pqs" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>

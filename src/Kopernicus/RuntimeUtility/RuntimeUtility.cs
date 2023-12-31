@@ -140,7 +140,7 @@ namespace Kopernicus.RuntimeUtility
             // Add Callback only if necessary
             if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay)
             {
-                if (FlightGlobals.GetHomeBody().atmospherePressureSeaLevel != 101.324996948242)
+                if (FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).atmospherePressureSeaLevel != 101.324996948242)
                     KbApp_PlanetParameters.CallbackAfterActivate += CallbackAfterActivate;
             }
 
@@ -385,7 +385,7 @@ namespace Kopernicus.RuntimeUtility
 
         private static void CalculateHomeBodySMA()
         {
-            CelestialBody homeBody = FlightGlobals.GetHomeBody();
+            CelestialBody homeBody = FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName);
             if (homeBody == null)
             {
                 return;
@@ -467,18 +467,18 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            if (FlightGlobals.GetHomeBody() == null)
+            if (FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName) == null)
             {
                 return;
             }
 
-            MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetHomeBody().atmosphereDepth;
+            MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).atmosphereDepth;
         }
 
         // Update the initialTarget of the tracking station
         private static void ApplyInitialTarget()
         {
-            CelestialBody home = PSystemManager.Instance.localBodies.Find(b => b.isHomeWorld);
+            CelestialBody home = PSystemManager.Instance.localBodies.Find(b => b.name.Equals(RuntimeUtility.KopernicusConfig.HomeWorldName));
             ScaledMovement movement = home.scaledBody.GetComponentInChildren<ScaledMovement>();
             PlanetariumCamera.fetch.initialTarget = movement;
         }
@@ -921,9 +921,9 @@ namespace Kopernicus.RuntimeUtility
                 {
                     FloatingOrigin.fetch.ResetOffset();
                 }
-
                 // Get the parental body
-                CelestialBody body = Planetarium.fetch != null ? Planetarium.fetch.Home : FlightGlobals.Bodies.Find(b => b.isHomeWorld);
+                CelestialBody body = FlightGlobals.GetBodyByName(KopernicusConfig.HomeWorldName);
+                Planetarium.fetch.Home = body;
 
                 // If there's no body, exit.
                 if (body == null)
@@ -1066,7 +1066,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 if (KopernicusStar.UseMultiStarLogic)
                 {
-                    animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetHomeBody()).gameObject.transform;
+                    animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)).gameObject.transform;
                 }
                 else
                 {
@@ -1141,10 +1141,10 @@ namespace Kopernicus.RuntimeUtility
 
         private void FixFlags()
         {
-            if (FlightGlobals.GetHomeBody() != null && FlightGlobals.GetHomeBody().pqsController != null)
+            if (FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName) != null && FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).pqsController != null)
             {
                 PQSCity KSC = FlightGlobals
-                .GetHomeBody()
+                .GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)
                 .pqsController
                 .GetComponentsInChildren<PQSCity>(true)?
                 .FirstOrDefault(p => p.name == "KSC");
@@ -1188,6 +1188,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("// Kopernicus base configuration.  Provides ability to flag things and set user options.  Generates at defaults for stock settings and warnings config.");
                     configFile.WriteLine("Kopernicus_config");
                     configFile.WriteLine("{");
+                    configFile.WriteLine("	HomeWorldName = " + KopernicusConfig.HomeWorldName + " //String with the home bodies name. Allows for directly changing the home body to a differently named body. Default is Kerbin.");
                     configFile.WriteLine("	EnforceShaders = " + KopernicusConfig.EnforceShaders.ToString() + " //Boolean.  Whether or not to force the user into EnforcedShaderLevel, not allowing them to change settings.");
                     configFile.WriteLine("	WarnShaders = " + KopernicusConfig.WarnShaders.ToString() + " //Boolean.  Whether or not to warn the user with a message if not using EnforcedShaderLevel.");
                     configFile.WriteLine("	EnforcedShaderLevel = " + KopernicusConfig.EnforcedShaderLevel.ToString() + " //Integer.  A number defining the enforced shader level for the above parameters.  0=Low,1=Medium,2=High,3=Ultra.");
