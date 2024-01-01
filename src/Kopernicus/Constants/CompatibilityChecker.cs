@@ -93,8 +93,6 @@ namespace Kopernicus.Constants
                     PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "Kopernicus is in beta on this version of KSP...  Bugs may be present!", "OK", false, UISkinManager.defaultSkin);
                 }
 #endif
-                //Load our settings
-                RuntimeUtility.RuntimeUtility.KopernicusConfig.loadMainSettings();
                 return;
             }
 

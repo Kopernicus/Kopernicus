@@ -195,15 +195,6 @@ namespace Kopernicus
                 Debug.Log("[Kopernicus]: Post-Spawn");
                 // Fire Event
                 Events.OnPreFixing.Fire();
-                //Correct PQS naming for homeworld
-                foreach (PQS pqs in UnityEngine.Object.FindObjectsOfType(typeof(PQS)))
-                {
-                    if (pqs.gameObject.name.Equals("Kerbin"))
-                    {
-                        pqs.name = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
-                        pqs.gameObject.name = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
-                    }
-                }
                 CelestialBody hb = FlightGlobals.GetBodyByName(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName);
                 PSystemSetup.Instance.pqsToActivate = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
                 Planetarium.fetch.Home = hb;

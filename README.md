@@ -1,19 +1,17 @@
 Kopernicus
 ==============================
-December 30th, 2023
+December 31st, 2023
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest bleeding edge prerelease version release-196 RC1:
+New in this latest version release-196:
 
-1.) Added Kopernicus_Config.cfg option HomeWorldName, a string, default set to "Kerbin."  This option enables you to for the first time ever, to have a homeworld and KSC at something other than "Kerbin" by changing this simple option, without mucking about with displayName, or worse, cbNameLater, a deprecated option.  cbNameLater will likely be removed in the near future if this works well.
+1.) At some point recently, a bug was introduced that made Kopernicus_Config parameters hard if not impossible to patch with ModuleManager.  This has been fixed.
 
-2.) Note you can't just randomly swap your homeworld, you need to edit in a KSC into your target site like always.  This feature is more for pack authors.
-
-3.) Because this change involved a lot of restructuring of Kopernicus (which for years, has assumed the homeworld will always be "Kerbin"), this is a bleeding edge testing release for at least a few days.
+2.) As the new planetary option code seems stable after a day of playing with it, we are marking this release as stable. Do keep in mind some mods need to be made aware of this new option for it to work with any value other than "Kerbin."  Scatterer is one such case.  PRs incoming.
 
 About
 -----

@@ -139,4 +139,12 @@ namespace Kopernicus.Configuration
             }
         }
     }
+    public class ConfigLoader : MonoBehaviour
+    {
+        public static void ModuleManagerPostLoad()
+        {
+            //Load our settings
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.loadMainSettings();
+        }
+    }
 }
