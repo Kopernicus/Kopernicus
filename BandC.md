@@ -29,5 +29,3 @@ Known Caveats:
 5.) The particle system was hopelessly broken and has been since sometime past 1.10.x. Few mods used it, so it has been removed completely as of Release-146.
 
 6.) Because we now unpack multipart PQSCity's correctly, you may rarely find some PQSCity structures in mods are in the earth or floating. Report such bugs to your planet pack author as this is an intended change (only cosmetic).
-
-7.) As of Release-196, if you use cbNameLater to change your homeworld name you must also change Kopernicus_Config option "HomeWorldName" to your new name.  You may find you don't even need cbNameLater at all, who knows?
