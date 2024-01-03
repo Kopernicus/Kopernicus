@@ -478,7 +478,15 @@ namespace Kopernicus.RuntimeUtility
         // Update the initialTarget of the tracking station
         private static void ApplyInitialTarget()
         {
-            CelestialBody home = PSystemManager.Instance.localBodies.Find(b => b.name.Equals(RuntimeUtility.KopernicusConfig.HomeWorldName));
+            CelestialBody home = null;
+            try
+            {
+                home = FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName);
+            }
+            catch
+            {
+                home = FlightGlobals.GetBodyByName("Kerbin");
+            }
             ScaledMovement movement = home.scaledBody.GetComponentInChildren<ScaledMovement>();
             PlanetariumCamera.fetch.initialTarget = movement;
         }

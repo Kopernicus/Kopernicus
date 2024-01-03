@@ -1,17 +1,15 @@
 Kopernicus
 ==============================
-December 31st, 2023
+January 2nd, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-196:
+New in this latest version release-197:
 
-1.) At some point recently, a bug was introduced that made Kopernicus_Config parameters hard if not impossible to patch with ModuleManager.  This has been fixed.
-
-2.) As the new planetary option code seems stable after a day of playing with it, we are marking this release as stable. Do keep in mind some mods need to be made aware of this new option for it to work with any value other than "Kerbin."  Scatterer is one such case.  PRs incoming.
+1.) We have added fallback behavior for proper loading if a planet pack doesn't like the new UseHomeWorld option, or is not updated for it, in particular cbNameLater users (Sorry about that RSS users).
 
 About
 -----

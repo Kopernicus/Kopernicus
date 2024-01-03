@@ -160,8 +160,6 @@ namespace Kopernicus
 
                 // Clear space center instance so it will accept nouveau Kerbin
                 SpaceCenter.Instance = null;
-                //Homeworld setup
-                PSystemSetup.Instance.pqsToActivate = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
 
                 // Add a handler so that we can do post spawn fixups.
                 PSystemManager.Instance.OnPSystemReady.Add(PostSpawnFixups);
@@ -195,29 +193,35 @@ namespace Kopernicus
                 Debug.Log("[Kopernicus]: Post-Spawn");
                 // Fire Event
                 Events.OnPreFixing.Fire();
-                CelestialBody hb = FlightGlobals.GetBodyByName(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName);
-                PSystemSetup.Instance.pqsToActivate = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
-                Planetarium.fetch.Home = hb;
-                foreach (PSystemSetup.SpaceCenterFacility sc in PSystemSetup.Instance.SpaceCenterFacilities)
+                // Fix the SpaceCenter
+                try
                 {
-                    sc.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
-                    sc.hostBody = hb;
-                }
-                foreach (LaunchSite lc in PSystemSetup.Instance.LaunchSites)
-                {
-                    lc.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
-                }
-
-                foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
-                {
-                    if (cam.pqsName.Equals("Kerbin"))
+                    SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName)).GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
+                    CelestialBody hb = FlightGlobals.GetBodyByName(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName);
+                    PSystemSetup.Instance.pqsToActivate = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                    Planetarium.fetch.Home = hb;
+                    foreach (PSystemSetup.SpaceCenterFacility sc in PSystemSetup.Instance.SpaceCenterFacilities)
                     {
-                        cam.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                        sc.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                        sc.hostBody = hb;
+                    }
+                    foreach (LaunchSite lc in PSystemSetup.Instance.LaunchSites)
+                    {
+                        lc.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                    }
+
+                    foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
+                    {
+                        if (cam.pqsName.Equals("Kerbin"))
+                        {
+                            cam.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
+                        }
                     }
                 }
-                // Fix the SpaceCenter
-                SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName))
-                    .GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
+                catch
+                {
+                    SpaceCenter.Instance = PSystemManager.Instance.localBodies.First(cb => cb.isHomeWorld).GetComponentsInChildren<SpaceCenter>(true).FirstOrDefault();
+                }
                 //Fix space center camera assignments
                 if (SpaceCenter.Instance != null)
                 {
