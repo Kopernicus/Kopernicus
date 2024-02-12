@@ -246,7 +246,7 @@ namespace Kopernicus.UI
                 for (Int32 x = 0; x < options.Resolution; x++)
                 {
                     // Build from the Mods
-                    Double height = heightValues[y * options.Resolution + x] - pqsVersion.radius;
+                    Double height = heightValues[y * options.Resolution + x] - minHeight;
                     if (options.ExportColor)
                     {
                         // Adjust the Color

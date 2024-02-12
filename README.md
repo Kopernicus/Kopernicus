@@ -1,15 +1,17 @@
 Kopernicus
 ==============================
-January 2nd, 2024
+February 12th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-197:
+New in this latest version release-198:
 
-1.) We have added fallback behavior for proper loading if a planet pack doesn't like the new UseHomeWorld option, or is not updated for it, in particular cbNameLater users (Sorry about that RSS users).
+1.) Bugfix for incorrectly dark exported Kittopia Heightmaps.  They are now set with an appropriate darkness floor.  Rejoice people who use Kittopia!
+
+2.) That's it, yes I know it's not much.  Yes I know I also have a feature request backlog.  I'll likely get to those next release.  Which may be a lil bit due to a lot of work in real life.  In the meantime, enjoy the patch.
 
 About
 -----
