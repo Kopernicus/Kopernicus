@@ -39,19 +39,14 @@ namespace Kopernicus.ShadowMan
                 instance = null;
             }
 
-            switch (HighLogic.LoadedScene)
+            if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
-                case GameScenes.FLIGHT:
-                case GameScenes.SPACECENTER:
-                case GameScenes.TRACKSTATION:
-                case GameScenes.MAINMENU:
-                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager)
-                    {
-                        instance = this;
-                        StartCoroutine(DelayedInit());
-                        return;
-                    }
-                    break;
+                if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager)
+                {
+                    instance = this;
+                    StartCoroutine(DelayedInit());
+                    return;
+                }
             }
 
             UnityEngine.Object.Destroy(this);
