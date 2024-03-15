@@ -25,7 +25,6 @@ namespace Kopernicus.ShadowMan
         public TweakShadowCascades shadowCascadeTweaker;
 
         public Light sunLight,scaledSpaceSunLight, mainMenuLight;
-        public Light[] lights;
         public Camera farCamera, scaledSpaceCamera, nearCamera;
         static float originalShadowDistance = 0f;
         public bool unifiedCameraMode = false;
@@ -219,7 +218,7 @@ namespace Kopernicus.ShadowMan
 
         void FindSunlights()
         {
-            lights = (Light[])Light.FindObjectsOfType(typeof(Light));
+            var lights = (Light[])Light.FindObjectsOfType(typeof(Light));
             foreach (Light _light in lights)
             {
                 if (_light.gameObject.name == "SunLight")
