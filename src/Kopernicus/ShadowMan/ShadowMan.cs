@@ -13,7 +13,7 @@ using UnityEngine.Rendering;
 
 namespace Kopernicus.ShadowMan
 {
-    [KSPAddon(KSPAddon.Startup.Flight | KSPAddon.Startup.SpaceCentre | KSPAddon.Startup.TrackingStation | KSPAddon.Startup.MainMenu, false)]
+    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class ShadowMan : MonoBehaviour
     {
         private static ShadowMan instance;
@@ -39,15 +39,22 @@ namespace Kopernicus.ShadowMan
                 instance = null;
             }
 
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager)
+            switch (HighLogic.LoadedScene)
             {
-                instance = this;
-                StartCoroutine(DelayedInit());
+                case GameScenes.FLIGHT:
+                case GameScenes.SPACECENTER:
+                case GameScenes.TRACKSTATION:
+                case GameScenes.MAINMENU:
+                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager)
+                    {
+                        instance = this;
+                        StartCoroutine(DelayedInit());
+                        return;
+                    }
+                    break;
             }
-            else
-            {
-                UnityEngine.Object.Destroy(this);
-            }
+
+            UnityEngine.Object.Destroy(this);
         }
 
         //wait for 4 frames (1 less than scatterer) for EVE and the game to finish setting up
