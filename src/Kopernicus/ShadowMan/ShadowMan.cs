@@ -13,7 +13,7 @@ using UnityEngine.Rendering;
 
 namespace Kopernicus.ShadowMan
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [KSPAddon(KSPAddon.Startup.Flight | KSPAddon.Startup.SpaceCentre | KSPAddon.Startup.TrackingStation | KSPAddon.Startup.MainMenu, false)]
     public class ShadowMan : MonoBehaviour
     {
         private static ShadowMan instance;
@@ -28,25 +28,25 @@ namespace Kopernicus.ShadowMan
         public Light[] lights;
         public Camera farCamera, scaledSpaceCamera, nearCamera;
         static float originalShadowDistance = 0f;
-        public bool isActive = false;
         public bool unifiedCameraMode = false;
 
         void Awake()
         {
             if (instance != null)
             {
-                UnityEngine.Object.DestroyImmediate(instance);
-            }
-            instance = this;
-
-            if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.MAINMENU)
-            {
-                isActive = true;
+                Utils.LogError("ShadowMan instance already existed?");
+                UnityEngine.Object.Destroy(instance);
+                instance = null;
             }
 
-            if (isActive)
+            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager)
             {
+                instance = this;
                 StartCoroutine(DelayedInit());
+            }
+            else
+            {
+                UnityEngine.Object.Destroy(this);
             }
         }
 
@@ -56,14 +56,8 @@ namespace Kopernicus.ShadowMan
             int delayFrames = (HighLogic.LoadedScene == GameScenes.MAINMENU) ? 4 : 1;
             for (int i = 0; i < delayFrames; i++)
                 yield return new WaitForFixedUpdate();
-            if (RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager)
-            {
-                Init();
-            }
-            else
-            {
-                UnityEngine.Object.DestroyImmediate(this);
-            }
+
+            Init();
         }
 
         void Init()
@@ -81,12 +75,12 @@ namespace Kopernicus.ShadowMan
             {
                 // Note: Stock KSP dragCubes make a copy of components and removes them rom far/near cameras when rendering
                 // This can cause issues with renderTextures and commandBuffers, to keep in mind for when implementing godrays
-                bufferManager = (BufferManager)scaledSpaceCamera.gameObject.AddComponent(typeof(BufferManager));    // This doesn't need to be added to any camera anymore
+                bufferManager = scaledSpaceCamera.gameObject.AddComponent<BufferManager>();    // This doesn't need to be added to any camera anymore
                                                                                                                     // TODO: move to appropriate gameObjec
             }
 
             if (!unifiedCameraMode)
-                shadowFadeRemover = (ShadowRemoveFadeCommandBuffer)nearCamera.gameObject.AddComponent(typeof(ShadowRemoveFadeCommandBuffer));
+                shadowFadeRemover = nearCamera.gameObject.AddComponent< ShadowRemoveFadeCommandBuffer>();
 
             //magically fix stupid issues when reverting to space center from map view
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
@@ -99,38 +93,32 @@ namespace Kopernicus.ShadowMan
 
         void OnDestroy()
         {
-            if (isActive)
+            if (nearCamera)
             {
-                if (nearCamera)
-                {
-                    if (nearCamera.gameObject.GetComponent(typeof(Wireframe)))
-                        Component.DestroyImmediate(nearCamera.gameObject.GetComponent(typeof(Wireframe)));
+                nearCamera.gameObject.DestroyComponent<Wireframe>();
+            }
 
+            if (farCamera) farCamera.gameObject.DestroyComponent<Wireframe>();
+            scaledSpaceCamera.gameObject.DestroyComponent<Wireframe>();
 
-                    if (farCamera && farCamera.gameObject.GetComponent(typeof(Wireframe)))
-                        Component.DestroyImmediate(farCamera.gameObject.GetComponent(typeof(Wireframe)));
+            if (shadowFadeRemover)
+            {
+                Component.Destroy(shadowFadeRemover);
+            }
 
+            if (shadowCascadeTweaker)
+            {
+                Component.Destroy(shadowCascadeTweaker);
+            }
 
-                    if (scaledSpaceCamera.gameObject.GetComponent(typeof(Wireframe)))
-                        Component.DestroyImmediate(scaledSpaceCamera.gameObject.GetComponent(typeof(Wireframe)));
-                }
+            if (bufferManager)
+            {
+                Component.Destroy(bufferManager);
+            }
 
-                if (shadowFadeRemover)
-                {
-                    shadowFadeRemover.OnDestroy();
-                    Component.DestroyImmediate(shadowFadeRemover);
-                }
-
-                if (shadowCascadeTweaker)
-                {
-                    Component.DestroyImmediate(shadowCascadeTweaker);
-                }
-
-                if (bufferManager)
-                {
-                    bufferManager.OnDestroy();
-                    Component.DestroyImmediate(bufferManager);
-                }
+            if (instance == this)
+            {
+                instance = null;
             }
         }
 
