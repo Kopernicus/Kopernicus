@@ -250,7 +250,8 @@ namespace Kopernicus.RuntimeUtility
         {
             try
             {
-                GameObject.DestroyImmediate(DynamicShadowSettings.Instance);
+                GameObject.Destroy(DynamicShadowSettings.Instance);
+                DynamicShadowSettings.Instance = null;
             }
             catch
             {
