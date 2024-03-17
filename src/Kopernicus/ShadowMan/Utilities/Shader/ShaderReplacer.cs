@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Kopernicus.ShadowMan
 {
-    public class ShaderReplacer : MonoBehaviour
+    public class ShaderReplacer
     {
         private static ShaderReplacer instance;
         public Dictionary<string, Shader> LoadedShaders = new Dictionary<string, Shader>();
