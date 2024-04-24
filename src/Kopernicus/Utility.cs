@@ -1510,6 +1510,14 @@ namespace Kopernicus
 
             return unityObject;
         }
+
+        public static void DestroyComponent<T>(this GameObject gameObject) where T : Component
+        {
+            if (gameObject.TryGetComponent<T>(out var component))
+            {
+                Component.Destroy(component);
+            }
+        }
     }
 #pragma warning restore IDE0041 // Use 'is null' check
 }
