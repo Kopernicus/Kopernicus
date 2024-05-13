@@ -98,9 +98,15 @@ namespace Kopernicus.ShadowMan
             {
                 nearCamera.gameObject.DestroyComponent<Wireframe>();
             }
-
-            if (farCamera) farCamera.gameObject.DestroyComponent<Wireframe>();
-            scaledSpaceCamera.gameObject.DestroyComponent<Wireframe>();
+            try
+            {
+                if (farCamera) farCamera.gameObject.DestroyComponent<Wireframe>();
+                scaledSpaceCamera.gameObject.DestroyComponent<Wireframe>();
+            }
+            catch
+            { 
+                //suppress errors
+            }
 
             if (shadowFadeRemover)
             {
