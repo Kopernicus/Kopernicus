@@ -82,13 +82,6 @@ namespace Kopernicus.RuntimeUtility
                 }
                 else if (HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
                 {
-                    try
-                    {
-                        FloatingOrigin.fetch.ResetOffset();
-                    }
-                    catch
-                    {
-                    }
                     this.gameObject.DestroyGameObjectImmediate();
                     return;
                 }
