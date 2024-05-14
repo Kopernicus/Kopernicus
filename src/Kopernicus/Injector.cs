@@ -209,14 +209,6 @@ namespace Kopernicus
                     {
                         lc.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
                     }
-
-                    foreach (SpaceCenterCamera2 cam in Resources.FindObjectsOfTypeAll<SpaceCenterCamera2>())
-                    {
-                        if (cam.pqsName.Equals("Kerbin"))
-                        {
-                            cam.pqsName = RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName;
-                        }
-                    }
                 }
                 catch
                 {
