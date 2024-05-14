@@ -23,191 +23,149 @@
  * https://kerbalspaceprogram.com
  */
 
-using KSP.UI.Screens;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+
 namespace Kopernicus.RuntimeUtility
 {
+    /// <summary>
+    /// Workaround for PhysX/Unity bug causing raycasts to start failing when any collider is enabled at a distance further than 1e7 from the origin.
+    /// This notably result in wheels and landing legs falling through the ground, but can have other side effects like solar panels not being occluded.
+    /// This happens more consistently the further away colliders are, with a near 100% reproduction rate at around 1e15.
+    /// The workaround is to check the distance of every body, and if that body is further than 1e7, query for all potential colliders parented to it,
+    /// and disable them. We only check for colliders when the distance threshold is reached, as this is a slow operation.
+    /// </summary>
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [DefaultExecutionOrder(-105)]
     public class SinkingBugFix : MonoBehaviour
     {
-        internal static Dictionary<Collider, bool>[] colliderStatus;
-        internal uint counter = 1000;
-        private static SinkingBugFix instance = null;
-        private static bool safeToJustDisengage = false;
+        private const double ENABLE_DIST = 1e7;
+        private const double DISABLE_DIST = ENABLE_DIST + 1e6;
 
-        private void Start()
+        private static List<Collider> colliderBuffer = new List<Collider>();
+
+        private BodyColliderTracker[] bodies;
+
+        void Start()
         {
-            if ((!HighLogic.LoadedSceneIsFlight) && (!HighLogic.LoadedScene.Equals(GameScenes.MAINMENU)) && (!HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER)) && (!HighLogic.LoadedScene.Equals(GameScenes.TRACKSTATION)))
+            switch (HighLogic.LoadedScene)
             {
-                instance = null;
-                this.gameObject.DestroyGameObjectImmediate();
+                case GameScenes.MAINMENU:
+                case GameScenes.SPACECENTER:
+                case GameScenes.EDITOR:
+                case GameScenes.TRACKSTATION:
+                case GameScenes.FLIGHT:
+                    break;
+                default:
+                    DestroyImmediate(gameObject);
+                    return;
+            }
+
+            if (!RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
+            {
+                DestroyImmediate(gameObject);
                 return;
             }
-            else
-            {
-                if ((instance != null) && (instance != this))
-                {
-                    instance.gameObject.DestroyGameObjectImmediate();
-                    instance = null;
-                }
-                instance = this;
-            }
-            if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
-            {
-                colliderStatus = new Dictionary<Collider, bool>[FlightGlobals.Bodies.Count];
-                for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
-                {
-                    colliderStatus[i] = new Dictionary<Collider, bool>();
-                }
-            }
-        }
-        private void FixedUpdate()
-        {
-            if (RuntimeUtility.KopernicusConfig.DisableFarAwayColliders)
-            {
-                int celestialBodyCount = FlightGlobals.Bodies.Count;
-                if ((HighLogic.LoadedScene.Equals(GameScenes.SPACECENTER) || HighLogic.LoadedScene.Equals(GameScenes.TRACKSTATION)) && (!RuntimeUtility.KopernicusConfig.TrulyMassiveSystem))
-                {
-                    this.gameObject.DestroyGameObjectImmediate();
-                    return;
-                }
-                else if (HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
-                {
-                    this.gameObject.DestroyGameObjectImmediate();
-                    return;
-                }
-                MapObject mainBody = null;
-                counter++;
-                if (counter > 50)
-                {
-                    counter = 0;
-                    if ((!RuntimeUtility.KopernicusConfig.TrulyMassiveSystem) && (FlightGlobals.ActiveVessel != null))
-                    {
-                        if ((FlightGlobals.ActiveVessel.radarAltitude > 2500) || (!FlightGlobals.currentMainBody.hasSolidSurface))
-                        {
-                            if (safeToJustDisengage == false)
-                            {
-                                ReenableAll();
-                                safeToJustDisengage = true;
-                                return;
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    safeToJustDisengage = false;
-                    Vector3 sceneCenter = Vector3.zero;
-                    try
-                    {
-                        if (HighLogic.LoadedScene.Equals(GameScenes.TRACKSTATION))
-                        {
-                            mainBody = Planetarium.fetch.Sun.MapObject;
-                        }
-                        else if (celestialBodyCount > 1)
-                        {
-                            mainBody = FlightGlobals.currentMainBody.MapObject;
-                        }
-                        sceneCenter = mainBody.transform.position;
-                    }
-                    catch
-                    {
-                        sceneCenter = Vector3.zero;
-                    }
-                    if (!HighLogic.LoadedSceneIsFlight)
-                    {
-                        ReenableAll();
-                    }
-                    else
-                    {
-                        for (Int32 i = 0; i < celestialBodyCount; i++)
-                        {
-                            CelestialBody cb = FlightGlobals.Bodies[i];
-                            if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
-                            {
-                                continue;
-                            }
-                            else if (Vector3.Distance(sceneCenter, cb.transform.position) < 100000000000)
-                            {
-                                RestoreColliderState(cb, i);
-                            }
-                            else if (Vector3.Distance(sceneCenter, cb.transform.position) >= 100000000000)
-                            {
-                                HibernateColliderState(cb, i);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        private void RestoreColliderState(CelestialBody cb, int index)
-        {
-            if (!(colliderStatus[index] is null))
-            {
-                foreach (Collider collider in colliderStatus[index].Keys)
-                {
-                    collider.enabled = colliderStatus[index][collider];
-                }
-                colliderStatus[index].Clear();
-            }
-        }
-        private void HibernateColliderState(CelestialBody cb, int index)
-        {
-            foreach (Collider collider in cb.GetComponentsInChildren<Collider>(true))
-            {
-                if ((!colliderStatus[index].ContainsKey(collider)))
-                {
-                    colliderStatus[index].Add(collider, collider.enabled);
-                }
-                else
-                {
-                    colliderStatus[index][collider] = collider.enabled;
-                }
-                collider.enabled = false;
-            }
-            foreach (Collider collider in cb.scaledBody.GetComponentsInChildren<Collider>(true))
-            {
-                if (!colliderStatus[index].ContainsKey(collider))
-                {
-                    colliderStatus[index].Add(collider, collider.enabled);
-                }
-                else
-                {
-                    colliderStatus[index][collider] = collider.enabled;
-                }
-                collider.enabled = false;
-            }
-        }
-        private void OnDisable()
-        {
-            ReenableAll();
+
+            bodies = new BodyColliderTracker[FlightGlobals.Bodies.Count];
+
+            for (int i = FlightGlobals.Bodies.Count; i-- > 0;)
+                bodies[i] = new BodyColliderTracker(FlightGlobals.Bodies[i]);
         }
 
-        private void OnDestroy()
+        void FixedUpdate()
         {
-            ReenableAll();
+            foreach (BodyColliderTracker bodyColliders in bodies)
+                bodyColliders.CheckDistancesAndSetCollidersState();
         }
 
-        private void ReenableAll()
+        void OnDestroy()
         {
-            if ((HighLogic.LoadedSceneIsFlight) || (HighLogic.LoadedScene.Equals(GameScenes.TRACKSTATION)))
+            if (bodies != null)
+                foreach (BodyColliderTracker bodyColliders in bodies) 
+                    bodyColliders.RestoreStateOnDestroy();
+        }
+
+        private class BodyColliderTracker
+        {
+            private CelestialBody body;
+            private Collider scaledSpaceCollider;
+            private List<Collider> disabledColliders;
+            private bool localEnabled = true;
+            private bool scaledEnabled = true;
+
+            public BodyColliderTracker(CelestialBody body)
             {
-                for (Int32 i = 0; i < FlightGlobals.Bodies.Count; i++)
+                this.body = body;
+                scaledSpaceCollider = body.scaledBody.GetComponentInChildren<Collider>();
+            }
+
+            public void CheckDistancesAndSetCollidersState()
+            {
+                double localSqrDistFromOrigin = body.position.magnitude;
+                if (localEnabled && localSqrDistFromOrigin > DISABLE_DIST)
                 {
-                    CelestialBody cb = FlightGlobals.Bodies[i];
-                    if ((FlightGlobals.Bodies[i] is null))
+                    localEnabled = false;
+                    body.GetComponentsInChildren(true, colliderBuffer);
+
+                    if (disabledColliders == null)
+                        disabledColliders = new List<Collider>(colliderBuffer.Count);
+
+                    for (int i = colliderBuffer.Count; i-- > 0;)
                     {
-                        continue;
+                        Collider collider = colliderBuffer[i];
+                        if (collider.enabled)
+                        {
+                            disabledColliders.Add(collider);
+                            collider.enabled = false;
+                        }
                     }
-                    if ((cb.Get("barycenter", false) || (cb.Get("invisibleScaledSpace", false))))
+
+                    colliderBuffer.Clear();
+                }
+                else if (!localEnabled && localSqrDistFromOrigin < ENABLE_DIST)
+                {
+                    localEnabled = true;
+                    for (int i = disabledColliders.Count; i-- > 0;)
                     {
-                        continue;
+                        Collider collider = disabledColliders[i];
+                        if (!collider.IsDestroyed())
+                            collider.enabled = true;
                     }
-                    RestoreColliderState(cb, i);
+
+                    disabledColliders.Clear();
+                }
+
+                double scaledSqrDistFromOrigin = body.scaledBody.transform.position.magnitude;
+                if (scaledEnabled && scaledSqrDistFromOrigin > DISABLE_DIST)
+                {
+                    scaledEnabled = false;
+                    scaledSpaceCollider.enabled = false;
+                }
+                else if (!scaledEnabled && scaledSqrDistFromOrigin <= ENABLE_DIST)
+                {
+                    scaledEnabled = true;
+                    scaledSpaceCollider.enabled = true;
+                }
+            }
+
+            public void RestoreStateOnDestroy()
+            {
+                if (!localEnabled)
+                {
+                    for (int i = disabledColliders.Count; i-- > 0;)
+                    {
+                        Collider collider = disabledColliders[i];
+                        if (collider.IsDestroyed())
+                            continue;
+
+                        collider.enabled = true;
+                    }
+                }
+
+                if (!scaledEnabled)
+                {
+                    scaledSpaceCollider.enabled = true;
                 }
             }
         }

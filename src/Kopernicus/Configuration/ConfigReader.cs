@@ -61,8 +61,6 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool DisableFarAwayColliders = true;
         [Persistent]
-        public bool TrulyMassiveSystem = false;
-        [Persistent]
         public bool EnableAtmosphericExtinction = false;
         [Persistent]
         public bool UseStockMohoTemplate = true;
@@ -119,7 +117,6 @@ namespace Kopernicus.Configuration
                 Debug.Log("HandleHomeworldAtmosphericUnitDisplay: " + HandleHomeworldAtmosphericUnitDisplay);
                 Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);
                 Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);
-                Debug.Log("TrulyMassiveSystem: " + TrulyMassiveSystem);
                 Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
                 Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
                 Debug.Log("ResetFloatingOriginOnKSCReturn: " + ResetFloatingOriginOnKSCReturn);
