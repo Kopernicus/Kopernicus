@@ -1,17 +1,19 @@
 Kopernicus
 ==============================
-February 12th, 2024
+May 14th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-198:
+New in this latest version release-199:
 
-1.) Bugfix for incorrectly dark exported Kittopia Heightmaps.  They are now set with an appropriate darkness floor.  Rejoice people who use Kittopia!
+1.) Hotfix an incorrectly functioning sinking-on-distant-worlds workaround.
 
-2.) That's it, yes I know it's not much.  Yes I know I also have a feature request backlog.  I'll likely get to those next release.  Which may be a lil bit due to a lot of work in real life.  In the meantime, enjoy the patch.
+2.) Fix a spamming OnDestroy in ShadowMan subsystem.
+
+3.) That's it for now.  This is not the big Feature release yet, we are planning that by end of May.  We just realized the sinking bugfix had a big bug and wanted to smash that sooner.
 
 About
 -----
