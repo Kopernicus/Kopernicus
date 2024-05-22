@@ -56,7 +56,7 @@ namespace Kopernicus.Constants
 #endif
         internal const string VERSION_MINOR_LOWER_LIMIT = "8";
         internal const string REVISION = "1";
-        internal const string KOPERNICUS = "199";
+        internal const string KOPERNICUS = "200";
         public static Boolean IsCompatible()
         {
             /*-----------------------------------------------*\
@@ -83,6 +83,7 @@ namespace Kopernicus.Constants
 
         private void Awake()
         {
+            RuntimeUtility.RuntimeUtility.WriteConfigIfNoneExists();
             // If Kopernicus isn't compatible, no longer activate the cats (RIP)
             if (IsCompatible())
             {

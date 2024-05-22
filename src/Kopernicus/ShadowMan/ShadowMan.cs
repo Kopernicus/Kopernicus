@@ -95,38 +95,25 @@ namespace Kopernicus.ShadowMan
         void OnDestroy()
         {
             if (nearCamera)
-            {
                 nearCamera.gameObject.DestroyComponent<Wireframe>();
-            }
-            try
-            {
-                if (farCamera) farCamera.gameObject.DestroyComponent<Wireframe>();
+
+            if (farCamera) 
+                farCamera.gameObject.DestroyComponent<Wireframe>();
+
+            if (scaledSpaceCamera)
                 scaledSpaceCamera.gameObject.DestroyComponent<Wireframe>();
-            }
-            catch
-            { 
-                //suppress errors
-            }
 
-            if (shadowFadeRemover)
-            {
-                Component.Destroy(shadowFadeRemover);
-            }
+            if (shadowFadeRemover) 
+                Destroy(shadowFadeRemover);
 
-            if (shadowCascadeTweaker)
-            {
-                Component.Destroy(shadowCascadeTweaker);
-            }
+            if (shadowCascadeTweaker) 
+                Destroy(shadowCascadeTweaker);
 
-            if (bufferManager)
-            {
-                Component.Destroy(bufferManager);
-            }
+            if (bufferManager) 
+                Destroy(bufferManager);
 
-            if (instance == this)
-            {
+            if (instance == this) 
                 instance = null;
-            }
         }
 
         void SetupMainCameras()

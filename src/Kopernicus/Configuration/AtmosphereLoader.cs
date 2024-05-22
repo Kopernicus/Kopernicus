@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -138,6 +138,16 @@ namespace Kopernicus.Configuration
         {
             get { return Value.atmospherePressureCurveIsNormalized; }
             set { Value.atmospherePressureCurveIsNormalized = value; }
+        }
+
+        // Shock Temp Mult
+        [ParserTarget("shockTemperatureMultiplier")]
+        [KittopiaDescription(
+            "Multiplies the External/Shock Temperature by this value. This is relevant for aerodynamic heating.")]
+        public NumericParser<Double> ShockTemperatureMultiplier
+        {
+            get { return Value.shockTemperatureMultiplier; }
+            set { Value.shockTemperatureMultiplier = value; }
         }
 
         // Static pressure at sea level (all worlds are set to 1.0f?)

@@ -142,13 +142,20 @@
     <Publicize Include="Assembly-CSharp:Sun.fadeEndAtAlt" />
     <Publicize Include="Assembly-CSharp:Sun.scaledSunLight" />
     <Publicize Include="Assembly-CSharp:Sun.lgt" />
-	<Publicize Include="Assembly-CSharp:SpaceCenterCamera2.pqs" />
+    <Publicize Include="Assembly-CSharp:SpaceCenterCamera2.OnSceneSwitch" />
+    <Publicize Include="Assembly-CSharp:SpaceCenterCamera2.t" />
+    <Publicize Include="Assembly-CSharp:SpaceCenterCamera2.pqs" />
+    <Publicize Include="Assembly-CSharp:SpaceCenterCamera2.initialPosition" />
+    <Publicize Include="Assembly-CSharp:SpaceCenterCamera2.cameraTransform" />
+    <Publicize Include="Assembly-CSharp:SpaceCenterCamera2.srfPivot" />
+    <Publicize Include="Assembly-CSharp:PQSCity.planetRelativePosition" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>
     <Compile Include="Components\KopernicusCBAttributeMapSO.cs" />
     <Compile Include="Components\ModularScatter\PQSMod_KopernicusLandClassScatterQuad.cs" />
     <Compile Include="Components\PQSLandControlFixer.cs" />
+    <Compile Include="RuntimeUtility\PreciseFloatingOrigin.cs" />
     <Compile Include="ShadowMan\CelestialBodySortableByDistance.cs" />
     <Compile Include="ShadowMan\ShadowMan.cs" />
     <Compile Include="ShadowMan\Utilities\BufferManager.cs" />

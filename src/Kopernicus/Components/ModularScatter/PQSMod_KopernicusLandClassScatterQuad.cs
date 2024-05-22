@@ -5,6 +5,7 @@ using Kopernicus.Constants;
 using ModularFI;
 using Unity.Profiling;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
@@ -25,11 +26,56 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         public ModularScatter modularScatter;
 
+        private int timer = 0;
+
         /// <summary>
         /// Used by the HeatEmitter component to know scatter positions without having to instantiate a gameobject
         /// </summary>
         public List<Vector3> scatterPositions;
-
+        //This Update method for GO locations is ugly, consult gotmachine someday.  It does however fix issues with heatemitter object tracking and support lethalScatter,
+        //even on scene switches and floating origin changes.
+        //It is only allowed to update every 240 frames (approx 4sec) to save some performance.
+        private void Update()
+        {
+            if (((modularScatter.heatEmitter != null) || (modularScatter.lethalRadius > 0)) && HighLogic.LoadedSceneIsFlight)
+            {
+                timer++;
+                if (timer > 240)
+                {
+                    timer = 0;
+                    int scatterCounter = 0;
+                    int ScatterCount = transform.childCount;
+                    try
+                    {
+                        scatterPositions.Clear();
+                    }
+                    catch
+                    {
+                        scatterPositions = new List<Vector3>(modularScatter.scatter.maxScatter);
+                    }
+                    while (scatterCounter < ScatterCount)
+                    {
+                        if (transform.GetChild(scatterCounter).gameObject.activeSelf)
+                        {
+                            scatterPositions.Add(transform.GetChild(scatterCounter).gameObject.transform.position);
+                        }
+                        scatterCounter++;
+                    }
+                }
+                for (int i = 0; i < scatterPositions.Count; i++)
+                {
+                    if (FlightGlobals.ActiveVessel.isEVA)
+                    {
+                        Part kerbal = FlightGlobals.ActiveVessel.rootPart;
+                        float distance = (Vector3.Distance(kerbal.transform.position, scatterPositions[i]));
+                        if ((distance) < (modularScatter.lethalRadius))
+                        {
+                            kerbal.explode();
+                        }
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Main method in charge of placing individual scatters on the quad
         /// </summary>
@@ -47,7 +93,6 @@ namespace Kopernicus.Components.ModularScatter
                     return;
                 }
             }
-
             if (modularScatter.heatEmitter != null)
             {
                 Events.OnCalculateBackgroundRadiationTemperature.Add(OnCalculateBackgroundRadiationTemperature);
@@ -56,6 +101,14 @@ namespace Kopernicus.Components.ModularScatter
                     scatterPositions = new List<Vector3>(modularScatter.scatter.maxScatter);
                 }
             }
+            else if (modularScatter.lethalRadius != 0)
+            {
+                if (scatterPositions == null)
+                {
+                    scatterPositions = new List<Vector3>(modularScatter.scatter.maxScatter);
+                }
+            }
+
 
             Random.InitState(seed);
 
@@ -96,7 +149,6 @@ namespace Kopernicus.Components.ModularScatter
                     scatterUp = (scatterPos + quad.positionPlanet).normalized;
                 else
                     scatterUp = scatterPos.normalized;
-
                 float verticalOffset = modularScatter.scatter.verticalOffset;
 
                 // apply altitude variance defined by an eventual SeaLevelScatter component
@@ -104,9 +156,6 @@ namespace Kopernicus.Components.ModularScatter
                     verticalOffset += Random.Range(modularScatter.seaLevelScatter.AltitudeVariance[0], modularScatter.seaLevelScatter.AltitudeVariance[1]);
 
                 scatterPos += scatterUp * verticalOffset;
-
-                //if (modularScatter.heatEmitter != null)
-                //    scatterPositions.Add(scatterPos);
 
                 float scatterAngle = Random.Range(modularScatter.rotation[0], modularScatter.rotation[1]);
                 Quaternion scatterRot = Quaternion.AngleAxis(scatterAngle, scatterUp) * (Quaternion)quad.quadRotation;
@@ -120,9 +169,8 @@ namespace Kopernicus.Components.ModularScatter
                     mesh = modularScatter.hasMultipleMeshes ? modularScatter.meshes[Random.Range(0, modularScatter.meshes.Count)] : modularScatter.baseMesh,
                     transform = Matrix4x4.TRS(scatterPos, scatterRot, scatterScaleVector)
                 });
-
-                // the ScatterColliders and LightEmitter components require having a per scatter sub-object
-                // We instantiate them on-demand and reuse them. They aren't destroyed, even of scene switches
+                // Some components require having a per scatter sub-object
+                // We instantiate them on-demand and reuse them. They aren't destroyed, even on scene switches
                 // so be extra careful not leaking references from them.
                 if (modularScatter.needsPerScatterGameObject)
                 {
@@ -140,7 +188,6 @@ namespace Kopernicus.Components.ModularScatter
                         scatterGO.layer = GameLayers.LOCAL_SPACE;
                         scatterTransform = scatterGO.transform;
                         scatterTransform.SetParent(transform, false);
-
                         if (modularScatter.scatterColliders != null)
                         {
                             MeshCollider mc = scatterGO.AddComponent<MeshCollider>();
@@ -166,7 +213,6 @@ namespace Kopernicus.Components.ModularScatter
                     scatterTransform.localPosition = scatterPos;
                     scatterTransform.localRotation = scatterRot;
                     scatterTransform.localScale = scatterScaleVector;
-
                     // if there are multiple collider meshes, assign the right one if necessary
                     if (modularScatter.scatterColliders != null && modularScatter.hasMultipleColliderMeshes)
                     {
@@ -176,7 +222,6 @@ namespace Kopernicus.Components.ModularScatter
                             mc.sharedMesh = mesh;
                     }
                 }
-
                 scatterGOIndex++;
             }
 
@@ -237,9 +282,13 @@ namespace Kopernicus.Components.ModularScatter
     {
         static void Prefix(PQSMod_KopernicusLandClassScatterQuad __instance)
         {
-            if (__instance.isBuilt && __instance.modularScatter.heatEmitter != null)
+            if (__instance.isBuilt && (__instance.modularScatter.heatEmitter != null))
             {
                 Events.OnCalculateBackgroundRadiationTemperature.Remove(__instance.OnCalculateBackgroundRadiationTemperature);
+                __instance.scatterPositions.Clear();
+            }
+            else if (__instance.isBuilt && (__instance.modularScatter.lethalRadius != 0))
+            {
                 __instance.scatterPositions.Clear();
             }
         }

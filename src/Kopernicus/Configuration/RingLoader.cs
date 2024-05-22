@@ -210,15 +210,6 @@ namespace Kopernicus.Configuration
             set { Value.backlitTexture = value; }
         }
 
-        // Radius multiplier for shadow casting
-        [ParserTarget("radiusMultiplier")]
-        [KittopiaDescription("Multiplier to planet radius for the shadow cast on the rings")]
-        public NumericParser<Single> radiusMultiplier
-        {
-            get { return Value.radiusMultiplier; }
-            set { Value.radiusMultiplier = value; }
-        }
-
         // Penumbra multiplier for new shader
         [ParserTarget("penumbraMultiplier")]
         public NumericParser<Single> PenumbraMultiplier

@@ -128,7 +128,7 @@ namespace Kopernicus.Components
         public CelestialBody referenceBody = null;
 
         public KopernicusStar brightestStar;
-        public Boolean referenceBodyIsReady = false; 
+        public Boolean referenceBodyIsReady = false;
         public MeshRenderer ringMr;
 
         [SerializeField]

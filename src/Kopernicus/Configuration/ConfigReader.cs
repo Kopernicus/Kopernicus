@@ -61,13 +61,9 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool DisableFarAwayColliders = true;
         [Persistent]
-        public bool TrulyMassiveSystem = false;
-        [Persistent]
         public bool EnableAtmosphericExtinction = false;
         [Persistent]
         public bool UseStockMohoTemplate = true;
-        [Persistent]
-        public bool ResetFloatingOriginOnKSCReturn = false;
         [Persistent]
         public bool UseOnDemandLoader = false;
         [Persistent]
@@ -119,10 +115,8 @@ namespace Kopernicus.Configuration
                 Debug.Log("HandleHomeworldAtmosphericUnitDisplay: " + HandleHomeworldAtmosphericUnitDisplay);
                 Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);
                 Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);
-                Debug.Log("TrulyMassiveSystem: " + TrulyMassiveSystem);
                 Debug.Log("EnableAtmosphericExtinction: " + EnableAtmosphericExtinction);
                 Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
-                Debug.Log("ResetFloatingOriginOnKSCReturn: " + ResetFloatingOriginOnKSCReturn);
                 Debug.Log("UseOnDemandLoader: " + UseOnDemandLoader);
                 Debug.Log("UseRealWorldDensity: " + UseRealWorldDensity);
                 Debug.Log("RecomputeSOIAndHillSpheres: " + RecomputeSOIAndHillSpheres);

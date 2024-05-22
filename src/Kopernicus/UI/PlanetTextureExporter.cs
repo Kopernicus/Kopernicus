@@ -51,6 +51,10 @@ namespace Kopernicus.UI
         [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
         public class TextureOptions
         {
+            [ParserTarget("zeroHeight")]
+            [KittopiaDescription("The zero height point of exported maps.")]
+            public NumericParser<Int32> ZeroHeight;
+
             [ParserTarget("exportColor")]
             [KittopiaDescription("Whether to generate a color map.")]
             public NumericParser<Boolean> ExportColor;
@@ -88,6 +92,7 @@ namespace Kopernicus.UI
 
             public TextureOptions()
             {
+                ZeroHeight = 0;
                 ExportColor = true;
                 ExportHeight = true;
                 ExportNormal = true;
@@ -246,7 +251,7 @@ namespace Kopernicus.UI
                 for (Int32 x = 0; x < options.Resolution; x++)
                 {
                     // Build from the Mods
-                    Double height = heightValues[y * options.Resolution + x] - minHeight;
+                    Double height = heightValues[y * options.Resolution + x] - (pqsVersion.radius + options.ZeroHeight);
                     if (options.ExportColor)
                     {
                         // Adjust the Color
