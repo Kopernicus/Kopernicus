@@ -1,19 +1,27 @@
 Kopernicus
 ==============================
-May 14th, 2024
+May 23rd, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-199:
+New in this latest version release-200:
 
-1.) Hotfix an incorrectly functioning sinking-on-distant-worlds workaround.
+1.) The distant body sinking bugfix has been rewriteen by @gotmachine to be nearly zero-overhead vs the previous, soemwhat CPU-heavy version. 
 
-2.) Fix a spamming OnDestroy in ShadowMan subsystem.
+2.) Added a new landscatter parameter for scatters, lethalRadius, default 0.  Values above 0 add a kill sphere to scatters that kills only kerbals, in meters.
 
-3.) That's it for now.  This is not the big Feature release yet, we are planning that by end of May.  We just realized the sinking bugfix had a big bug and wanted to smash that sooner.
+3.) Added a parameter to the RingShader, radiusMultiplier, that effects the multiplier to planet radius for the shadow cast on the rings.
+
+4.) Adds an offset to KittopiaTech's zeropoint for heightmap export.  Planet authors may find this useful.
+
+5.) Exposed Atmosphere value shockTemperatureMultiplier to KittopiaTech.
+
+6.) Many many fixes for distant bodies and bugs related to them, especially in terms of scene switching.  Again, credit to gotmachine for being invalueable here. Parameters ResetFloatingOriginOnKSCReturn and TrulyMassiveSystem are both deprecated, as they are no longer needed.
+
+7.) Config file generation when one does not exist was moved to earlier, to fix some bugs.
 
 About
 -----
