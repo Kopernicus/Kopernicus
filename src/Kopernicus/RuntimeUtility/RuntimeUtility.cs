@@ -46,6 +46,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
 using Object = UnityEngine.Object;
+using System.Collections.Concurrent;
 
 namespace Kopernicus
 {
@@ -191,7 +192,6 @@ namespace Kopernicus.RuntimeUtility
         // Execute MainMenu functions
         private void Start()
         {
-            WriteConfigIfNoneExists();
             RemoveUnselectableObjects();
             ApplyLaunchSitePatches();
             ApplyMusicAltitude();
@@ -1027,7 +1027,7 @@ namespace Kopernicus.RuntimeUtility
         }
         }
 
-        private void WriteConfigIfNoneExists()
+        public static void WriteConfigIfNoneExists()
         {
             if (!File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
             {
@@ -1035,7 +1035,7 @@ namespace Kopernicus.RuntimeUtility
             }
         }
 
-        private void UpdateConfig()
+        public static void UpdateConfig()
         {
             if (File.Exists(PluginPath + "/../Config/Kopernicus_Config.cfg"))
             {
@@ -1070,7 +1070,6 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean. Fix a raycast physics bug occuring in large systems, notably resulting in wheels and landing legs falling through the ground.");
                     configFile.WriteLine("	EnableAtmosphericExtinction = " + KopernicusConfig.EnableAtmosphericExtinction.ToString() + " //Whether to use built-in atmospheric extinction effect of lens flares. This is somewhat expensive - O(nlog(n)) on average.");
                     configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired.  Be aware disabling this disables the Mohole.");
-                    configFile.WriteLine("	ResetFloatingOriginOnKSCReturn = " + KopernicusConfig.ResetFloatingOriginOnKSCReturn.ToString() + " //Boolean. Enable this for interstaller (LY+) range planet packs to prevent corruption on return to KSC.");
                     configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader.ToString() + " //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
                     configFile.WriteLine("	UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity.ToString() + " //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
                     configFile.WriteLine("	RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres.ToString() + " //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");

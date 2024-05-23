@@ -84,6 +84,8 @@ namespace Kopernicus.Components
         public Single anisotropy = 0.95F;
         public Texture2D backlitTexture;
 
+        public Single radiusMultiplier = 1.0F;
+
         public Int32 steps = 128;
 
         /// <summary>
@@ -126,7 +128,7 @@ namespace Kopernicus.Components
         public CelestialBody referenceBody = null;
 
         public KopernicusStar brightestStar;
-        public Boolean referenceBodyIsReady = false; 
+        public Boolean referenceBodyIsReady = false;
         public MeshRenderer ringMr;
 
         [SerializeField]
@@ -237,7 +239,7 @@ namespace Kopernicus.Components
 
             if (useNewShader)
             {
-                ringMr.sharedMaterial.SetFloat(PlanetRadius, planetRadius);
+                ringMr.sharedMaterial.SetFloat(PlanetRadius, planetRadius * radiusMultiplier);
                 ringMr.sharedMaterial.SetFloat(PenumbraMultiplier, penumbraMultiplier);
 
                 if (innerShadeTexture != null)

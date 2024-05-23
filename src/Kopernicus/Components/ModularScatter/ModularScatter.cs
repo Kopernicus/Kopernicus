@@ -89,6 +89,11 @@ namespace Kopernicus.Components.ModularScatter
         public List<String> allowedBiomes = new List<String>();
 
         /// <summary>
+        /// Kerbal-exclusive kill Radius. Zero means none.
+        /// </summary>
+        public int lethalRadius = 0;
+
+        /// <summary>
         /// How much should the scatter be able to rotate
         /// </summary>
         public List<Single> rotation = new List<Single> { 0, 360f };
@@ -194,7 +199,7 @@ namespace Kopernicus.Components.ModularScatter
                 }
             }
 
-            needsPerScatterGameObject = lightEmitter != null || scatterColliders != null;
+            needsPerScatterGameObject = lightEmitter != null || scatterColliders != null || heatEmitter != null || lethalRadius != 0;
         }
 
         private static Mesh defaultMesh;

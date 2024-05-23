@@ -313,6 +313,14 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.allowedBiomes = value; }
             }
 
+            // lethalRadius, a per scatter lethal kill radius.  Zero means disable.
+            [ParserTarget("lethalRadius")]
+            public NumericParser<Int32> LethalRadius
+            {
+                get { return Scatter.lethalRadius; }
+                set { Scatter.lethalRadius = value; }
+            }
+
             // The mesh
             [ParserTarget("mesh")]
             public MeshParser BaseMesh
