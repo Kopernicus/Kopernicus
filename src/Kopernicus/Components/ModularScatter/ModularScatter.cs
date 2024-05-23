@@ -71,17 +71,17 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// Whether to treat the density calculation as an actual floating point value
         /// </summary>
-        public Boolean useBetterDensity;
+        public bool useBetterDensity;
 
         /// <summary>
         /// useBetterDensity : how large is the chance that a scatter object spawns on a quad?
         /// </summary>
-        public Single spawnChance = 1f;
+        public float spawnChance = 1f;
 
         /// <summary>
         /// makes the density calculation ignore the game setting for scatter density
         /// </summary>
-        public Boolean ignoreDensityGameSetting;
+        public bool ignoreDensityGameSetting;
 
         /// <summary>
         /// What biomes this scatter may spawn in.  Empty means all.
@@ -109,13 +109,6 @@ namespace Kopernicus.Components.ModularScatter
         public Mesh baseMesh;
 
         /// <summary>
-        /// true if each scatter requires an individual GameObject, which
-        /// is required if the ScatterColliders or LightEmitter components
-        /// are used.
-        /// </summary>
-        public bool needsPerScatterGameObject;
-
-        /// <summary>
         /// shorthand bool to avoid having to check meshes.Count
         /// </summary>
         public bool hasMultipleMeshes;
@@ -132,6 +125,30 @@ namespace Kopernicus.Components.ModularScatter
         public SeaLevelScatterComponent seaLevelScatter;
         public HeatEmitterComponent heatEmitter;
         public ScatterCollidersComponent scatterColliders;
+
+        /// <summary>
+        /// true if each scatter requires an individual GameObject, which
+        /// is required if the ScatterColliders or LightEmitter components
+        /// are used.
+        /// </summary>
+        public bool needsPerScatterGameObject;
+
+        /// <summary>
+        /// true if some functionality require keeping track of the scatter positions
+        /// Used by the HeatEmitter component and the lethalRadius option
+        /// </summary>
+        public bool needsScatterPositions;
+
+        /// <summary>
+        /// If scatter positions are needed, quads will register themselves in this collection
+        /// in order to be updated by this ModularScatter instance.
+        /// </summary>
+        public HashSet<PQSMod_KopernicusLandClassScatterQuad> updatingQuads = new HashSet<PQSMod_KopernicusLandClassScatterQuad>();
+
+        /// <summary>
+        /// lethalRadius squared for fast distance comparison
+        /// </summary>
+        private float lethalSquareRadius;
 
         public ModularScatter()
         {
@@ -199,7 +216,70 @@ namespace Kopernicus.Components.ModularScatter
                 }
             }
 
-            needsPerScatterGameObject = lightEmitter != null || scatterColliders != null || heatEmitter != null || lethalRadius != 0;
+            // remove empty entries in allowedBiomes due to the kopernicus parser being dumb
+            for (int i = allowedBiomes.Count; i-- > 0;)
+                if (string.IsNullOrWhiteSpace(allowedBiomes[i]))
+                    allowedBiomes.RemoveAt(i);
+
+            needsPerScatterGameObject = lightEmitter != null || scatterColliders != null;
+            needsScatterPositions = heatEmitter != null || lethalRadius != 0;
+            lethalSquareRadius = lethalRadius * lethalRadius;
+        }
+
+        /// <summary>
+        /// If necessary (heatEmitter or lethal scatters), on every quad that registered itself,
+        /// update scatters world position and check their distance against EVA kerbals. 
+        /// We do this here instead on in a per-quad fixedUpdate to save some pointless and
+        /// significant overhead when those features aren't used
+        /// </summary>
+        private void FixedUpdate()
+        {
+            if (!needsScatterPositions)
+                return;
+
+            // if no active vessel, we aren't in the flight scene, no need to update either
+            Vessel activeVessel = FlightGlobals.ActiveVessel;
+            if (activeVessel.IsNullOrDestroyed())
+                return;
+
+            // perf optimization : if scatters aren't heat emitters, we only need to update positions if there is a kerbal on EVA
+            // note : technically there could be other EVA kerbals than the active vessel and we should be checking every loaded vessel
+            // but the original implementation didn't care and that's probably good enough in most cases.
+            bool doLethalCheck = lethalRadius != 0 && activeVessel.isEVA;
+            if (heatEmitter == null && !doLethalCheck)
+                return;
+
+            Vector3 evaKerbalPos = activeVessel.transform.position;
+
+            foreach (PQSMod_KopernicusLandClassScatterQuad quad in updatingQuads)
+            {
+                if (!quad.isBuilt || !quad.hasScatters)
+                    return;
+
+                List<Vector3> scatterWorldPositions = quad.scatterWorldPositions;
+
+                // perf optimization : only update scatters world position if the quad has moved (typically due to floating origin shifts)
+                Matrix4x4 quadMatrix = quad.transform.localToWorldMatrix;
+                if (quad.cachedQuadPosition.x != quadMatrix.m03 || quad.cachedQuadPosition.y != quadMatrix.m13 || quad.cachedQuadPosition.z != quadMatrix.m23)
+                {
+                    quad.cachedQuadPosition = new Vector3(quadMatrix.m03, quadMatrix.m13, quadMatrix.m23);
+                    List<Vector3> scatterLocalPositions = quad.scatterLocalPositions;
+                    for (int i = scatterLocalPositions.Count; i-- > 0;)
+                        scatterWorldPositions[i] = quadMatrix.MultiplyPoint3x4(scatterLocalPositions[i]);
+                }
+
+                if (doLethalCheck)
+                {
+                    for (int i = scatterWorldPositions.Count; i-- > 0;)
+                    {
+                        if ((scatterWorldPositions[i] - evaKerbalPos).sqrMagnitude < lethalSquareRadius)
+                        {
+                            activeVessel.rootPart.explode();
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         private static Mesh defaultMesh;
