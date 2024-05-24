@@ -23,30 +23,29 @@
  * https://kerbalspaceprogram.com
  */
 
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Runtime;
 using Contracts;
 using Expansions;
 using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
+using KSP.Localization;
 using KSP.UI;
 using KSP.UI.Screens;
 using KSP.UI.Screens.Mapview;
 using KSP.UI.Screens.Mapview.MapContextMenuOptions;
 using KSP.UI.Screens.Settings.Controls;
 using ModularFI;
+using SentinelMission;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
-using KSP.Localization;
 using Object = UnityEngine.Object;
-using System.Collections.Concurrent;
 
 namespace Kopernicus
 {
@@ -879,36 +878,11 @@ namespace Kopernicus.RuntimeUtility
         private static void PatchContracts()
         {
             //Small Contract fixer to remove Sentinel Contracts
-            if (!RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
+            if (ContractSystem.ContractTypes != null && !KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
             {
-                Type contractTypeToRemove = null;
-                try
+                if (ContractSystem.ContractTypes.Remove(typeof(SentinelContract)))
                 {
-                    foreach (Type contract in Contracts.ContractSystem.ContractTypes)
-                    {
-                        try
-                        {
-
-                            if (contract.FullName.Contains("SentinelContract"))
-                            {
-                                contractTypeToRemove = contract;
-                            }
-                        }
-                        catch
-                        {
-                            continue;
-                        }
-                    }
-                    if (!(contractTypeToRemove == null))
-                    {
-                        ContractSystem.ContractTypes.Remove(contractTypeToRemove);
-                        contractTypeToRemove = null;
-                        Debug.Log("[Kopernicus] Due to selected asteroid spawner, SENTINEL Contracts are broken and have been scrubbed.");
-                    }
-                }
-                catch
-                {
-                    contractTypeToRemove = null;
+                    Debug.Log("[Kopernicus] Due to selected asteroid spawner, SENTINEL Contracts are broken and have been scrubbed.");
                 }
             }
             //Patch weights of contracts
