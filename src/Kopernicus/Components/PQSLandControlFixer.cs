@@ -23,50 +23,20 @@
 * https://kerbalspaceprogram.com
 */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using Kopernicus.Components.MaterialWrapper;
-using Kopernicus.Configuration;
+using HarmonyLib;
 using UnityEngine;
 
 namespace Kopernicus.Components
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class PQSLandControlFixer : PQSMod
+    [HarmonyPatch(typeof(PQSLandControl), nameof(PQSLandControl.OnSetup))]
+    static class PQSLandControlFixer
     {
-        public override void OnSetup()
+        [HarmonyPostfix]
+        static void OnSetupPostfix(PQSLandControl __instance)
         {
-            PQSLandControl pqsLC = null;
-            try
-            {
-                pqsLC = ((PQSLandControl)typeof(PQS).GetFields(BindingFlags.NonPublic | BindingFlags.Instance).First(f => f.FieldType == typeof(PQSLandControl)).GetValue(sphere));
-                bool createScatter = pqsLC.createScatter;
-            }
-            catch
-            {
-                return;
-            }
-            try
-            {
-                if (pqsLC)
-                {
-                    if (pqsLC.createColors == true)
-                    {
-                        return;
-                    }
-                    foreach (PQSLandControl.LandClass LC in pqsLC.landClasses)
-                    {
-                        LC.color = new Color(0, 0, 0, 0);
-                    }
-                }
-            }
-            catch
-            {
-                //woo, no LandControl at all.
-            }
+            if (!__instance.createColors)
+                foreach (PQSLandControl.LandClass lc in __instance.landClasses)
+                    lc.color = new Color(0, 0, 0, 0);
         }
     }
 }

@@ -93,17 +93,19 @@ namespace Kopernicus.RuntimeUtility
             private List<Collider> disabledColliders;
             private bool localEnabled = true;
             private bool scaledEnabled = true;
+            private bool hasScaled;
 
             public BodyColliderTracker(CelestialBody body)
             {
                 this.body = body;
                 scaledSpaceCollider = body.scaledBody.GetComponentInChildren<Collider>();
+                hasScaled = scaledSpaceCollider.IsNotNullRef();
             }
 
             public void CheckDistancesAndSetCollidersState()
             {
-                double localSqrDistFromOrigin = body.position.magnitude;
-                if (localEnabled && localSqrDistFromOrigin > DISABLE_DIST)
+                double localDistFromOrigin = body.position.magnitude;
+                if (localEnabled && localDistFromOrigin > DISABLE_DIST)
                 {
                     localEnabled = false;
                     body.GetComponentsInChildren(true, colliderBuffer);
@@ -123,7 +125,7 @@ namespace Kopernicus.RuntimeUtility
 
                     colliderBuffer.Clear();
                 }
-                else if (!localEnabled && localSqrDistFromOrigin < ENABLE_DIST)
+                else if (!localEnabled && localDistFromOrigin < ENABLE_DIST)
                 {
                     localEnabled = true;
                     for (int i = disabledColliders.Count; i-- > 0;)
@@ -136,16 +138,19 @@ namespace Kopernicus.RuntimeUtility
                     disabledColliders.Clear();
                 }
 
-                double scaledSqrDistFromOrigin = body.scaledBody.transform.position.magnitude;
-                if (scaledEnabled && scaledSqrDistFromOrigin > DISABLE_DIST)
+                if (hasScaled)
                 {
-                    scaledEnabled = false;
-                    scaledSpaceCollider.enabled = false;
-                }
-                else if (!scaledEnabled && scaledSqrDistFromOrigin <= ENABLE_DIST)
-                {
-                    scaledEnabled = true;
-                    scaledSpaceCollider.enabled = true;
+                    double scaledDistFromOrigin = scaledSpaceCollider.transform.position.magnitude;
+                    if (scaledEnabled && scaledDistFromOrigin > DISABLE_DIST)
+                    {
+                        scaledEnabled = false;
+                        scaledSpaceCollider.enabled = false;
+                    }
+                    else if (!scaledEnabled && scaledDistFromOrigin <= ENABLE_DIST)
+                    {
+                        scaledEnabled = true;
+                        scaledSpaceCollider.enabled = true;
+                    }
                 }
             }
 
@@ -163,7 +168,7 @@ namespace Kopernicus.RuntimeUtility
                     }
                 }
 
-                if (!scaledEnabled)
+                if (hasScaled && !scaledEnabled)
                 {
                     scaledSpaceCollider.enabled = true;
                 }

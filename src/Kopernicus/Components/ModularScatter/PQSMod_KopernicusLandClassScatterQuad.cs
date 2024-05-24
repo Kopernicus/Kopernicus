@@ -26,56 +26,26 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         public ModularScatter modularScatter;
 
-        private int timer = 0;
+        /// <summary>
+        /// true if this quad actually has scatters (can be false when the allowedBiome feature is used)
+        /// </summary>
+        public bool hasScatters;
 
         /// <summary>
-        /// Used by the HeatEmitter component to know scatter positions without having to instantiate a gameobject
+        /// Cached world position of the quad, checked against to avoid needless scatter position updates
         /// </summary>
-        public List<Vector3> scatterPositions;
-        //This Update method for GO locations is ugly, consult gotmachine someday.  It does however fix issues with heatemitter object tracking and support lethalScatter,
-        //even on scene switches and floating origin changes.
-        //It is only allowed to update every 240 frames (approx 4sec) to save some performance.
-        private void Update()
-        {
-            if (((modularScatter.heatEmitter != null) || (modularScatter.lethalRadius > 0)) && HighLogic.LoadedSceneIsFlight)
-            {
-                timer++;
-                if (timer > 240)
-                {
-                    timer = 0;
-                    int scatterCounter = 0;
-                    int ScatterCount = transform.childCount;
-                    try
-                    {
-                        scatterPositions.Clear();
-                    }
-                    catch
-                    {
-                        scatterPositions = new List<Vector3>(modularScatter.scatter.maxScatter);
-                    }
-                    while (scatterCounter < ScatterCount)
-                    {
-                        if (transform.GetChild(scatterCounter).gameObject.activeSelf)
-                        {
-                            scatterPositions.Add(transform.GetChild(scatterCounter).gameObject.transform.position);
-                        }
-                        scatterCounter++;
-                    }
-                }
-                for (int i = 0; i < scatterPositions.Count; i++)
-                {
-                    if (FlightGlobals.ActiveVessel.isEVA)
-                    {
-                        Part kerbal = FlightGlobals.ActiveVessel.rootPart;
-                        float distance = (Vector3.Distance(kerbal.transform.position, scatterPositions[i]));
-                        if ((distance) < (modularScatter.lethalRadius))
-                        {
-                            kerbal.explode();
-                        }
-                    }
-                }
-            }
-        }
+        public Vector3 cachedQuadPosition;
+
+        /// <summary>
+        /// quad-relative position of every scatter object, only populated if necessary
+        /// </summary>
+        public List<Vector3> scatterLocalPositions;
+
+        /// <summary>
+        /// world position of every scatter object, only updated if necessary
+        /// </summary>
+        public List<Vector3> scatterWorldPositions;
+
         /// <summary>
         /// Main method in charge of placing individual scatters on the quad
         /// </summary>
@@ -90,29 +60,35 @@ namespace Kopernicus.Components.ModularScatter
                 if (scatterBiome != null && !modularScatter.allowedBiomes.Contains(scatterBiome))
                 {
                     pmCreateQuadScatter.End();
+                    hasScatters = false;
                     return;
                 }
             }
+
+            if (modularScatter.needsScatterPositions)
+            {
+                modularScatter.updatingQuads.Add(this);
+
+                if (scatterLocalPositions == null)
+                {
+                    scatterLocalPositions = new List<Vector3>(count);
+                    scatterWorldPositions = new List<Vector3>(count);
+                }
+                else
+                {
+                    scatterLocalPositions.Clear();
+                    scatterWorldPositions.Clear();
+                }
+            }
+
             if (modularScatter.heatEmitter != null)
             {
                 Events.OnCalculateBackgroundRadiationTemperature.Add(OnCalculateBackgroundRadiationTemperature);
-                if (scatterPositions == null)
-                {
-                    scatterPositions = new List<Vector3>(modularScatter.scatter.maxScatter);
-                }
             }
-            else if (modularScatter.lethalRadius != 0)
-            {
-                if (scatterPositions == null)
-                {
-                    scatterPositions = new List<Vector3>(modularScatter.scatter.maxScatter);
-                }
-            }
-
 
             Random.InitState(seed);
 
-            int scatterGOIndex = 0;
+            int scatterCount = 0;
             int cachedScatterGOCount = transform.childCount;
             for (int scatterLoop = 0; scatterLoop < count; scatterLoop++)
             {
@@ -157,6 +133,9 @@ namespace Kopernicus.Components.ModularScatter
 
                 scatterPos += scatterUp * verticalOffset;
 
+                if (modularScatter.needsScatterPositions)
+                    scatterLocalPositions.Add(scatterPos);
+
                 float scatterAngle = Random.Range(modularScatter.rotation[0], modularScatter.rotation[1]);
                 Quaternion scatterRot = Quaternion.AngleAxis(scatterAngle, scatterUp) * (Quaternion)quad.quadRotation;
                 float scatterScale = Random.Range(modularScatter.scatter.minScale, modularScatter.scatter.maxScale);
@@ -176,9 +155,9 @@ namespace Kopernicus.Components.ModularScatter
                 {
                     GameObject scatterGO;
                     Transform scatterTransform;
-                    if (scatterGOIndex < cachedScatterGOCount)
+                    if (scatterCount < cachedScatterGOCount)
                     {
-                        scatterTransform = transform.GetChild(scatterGOIndex);
+                        scatterTransform = transform.GetChild(scatterCount);
                         scatterGO = scatterTransform.gameObject;
                         scatterGO.SetActive(true);
                     }
@@ -196,7 +175,7 @@ namespace Kopernicus.Components.ModularScatter
                             if (!modularScatter.hasMultipleColliderMeshes)
                             {
                                 if (modularScatter.scatterColliders.CollisionMesh.IsNullRef())
-                                    mc.sharedMesh = combineInstances[scatterGOIndex].mesh;
+                                    mc.sharedMesh = combineInstances[scatterCount].mesh;
                                 else
                                     mc.sharedMesh = modularScatter.scatterColliders.CollisionMesh;
                             }
@@ -217,28 +196,35 @@ namespace Kopernicus.Components.ModularScatter
                     if (modularScatter.scatterColliders != null && modularScatter.hasMultipleColliderMeshes)
                     {
                         MeshCollider mc = scatterGO.GetComponent<MeshCollider>();
-                        Mesh mesh = combineInstances[scatterGOIndex].mesh;
+                        Mesh mesh = combineInstances[scatterCount].mesh;
                         if (mc.sharedMesh.RefNotEquals(mesh))
                             mc.sharedMesh = mesh;
                     }
                 }
-                scatterGOIndex++;
+                scatterCount++;
             }
 
             // disable unused scatter gameobjects if needed
             if (modularScatter.needsPerScatterGameObject)
             {
-                while (scatterGOIndex < cachedScatterGOCount)
+                int scatterGoIndex = scatterCount;
+                while (scatterGoIndex < cachedScatterGOCount)
                 {
-                    transform.GetChild(scatterGOIndex).gameObject.SetActive(false);
-                    scatterGOIndex++;
+                    transform.GetChild(scatterGoIndex).gameObject.SetActive(false);
+                    scatterGoIndex++;
                 }
             }
+
+            // populate the world position list if needed
+            if (modularScatter.needsScatterPositions)
+                scatterWorldPositions.AddRange(scatterLocalPositions);
 
             // build the rendered mesh and activate the quad object
             mesh.CombineMeshes(combineInstances.ToArray());
             combineInstances.Clear();
             obj.SetActive(true);
+            cachedQuadPosition = Vector3.zero;
+            hasScatters = scatterCount > 0;
             isBuilt = true;
 
             pmCreateQuadScatter.End();
@@ -282,14 +268,18 @@ namespace Kopernicus.Components.ModularScatter
     {
         static void Prefix(PQSMod_KopernicusLandClassScatterQuad __instance)
         {
-            if (__instance.isBuilt && (__instance.modularScatter.heatEmitter != null))
+            if (__instance.isBuilt && __instance.modularScatter.needsScatterPositions)
             {
-                Events.OnCalculateBackgroundRadiationTemperature.Remove(__instance.OnCalculateBackgroundRadiationTemperature);
-                __instance.scatterPositions.Clear();
-            }
-            else if (__instance.isBuilt && (__instance.modularScatter.lethalRadius != 0))
-            {
-                __instance.scatterPositions.Clear();
+                __instance.modularScatter.updatingQuads.Remove(__instance);
+
+                if (__instance.scatterLocalPositions != null)
+                {
+                    __instance.scatterLocalPositions.Clear();
+                    __instance.scatterWorldPositions.Clear();
+                }
+
+                if (__instance.modularScatter.heatEmitter != null)
+                    Events.OnCalculateBackgroundRadiationTemperature.Remove(__instance.OnCalculateBackgroundRadiationTemperature);
             }
         }
     }

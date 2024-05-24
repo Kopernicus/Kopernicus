@@ -32,7 +32,8 @@ using UnityEngine;
 namespace Kopernicus.Components.ModularScatter
 {
     /// <summary>
-    /// A Scatter Component that emits heat onto the active vessel
+    /// A Scatter Component that emits heat onto the active vessel.
+    /// This feature probably doesn't work correctly and is absolutely terrible for performance.
     /// </summary>
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class HeatEmitterComponent : IComponent<ModularScatter>
@@ -57,12 +58,13 @@ namespace Kopernicus.Components.ModularScatter
             Vessel vessel = flightIntegrator.Vessel;
             CelestialBody body = quadController.modularScatter.body;
 
-            if (body.RefEquals(vessel.mainBody))
+            if (body.RefNotEquals(vessel.mainBody))
                 return;
 
-            for (int i = 0; i < quadController.scatterPositions.Count; i++)
+            Vector3 vesselPos = vessel.transform.position;
+            for (int i = quadController.scatterWorldPositions.Count; i-- > 0;)
             {
-                float distance = distanceCurve.Evaluate(Vector3.Distance(vessel.transform.position, quadController.scatterPositions[i]));
+                float distance = distanceCurve.Evaluate(Vector3.Distance(vesselPos, quadController.scatterWorldPositions[i]));
                 KopernicusHeatManager.NewTemp(distance * temperature, false);
             }
         }
