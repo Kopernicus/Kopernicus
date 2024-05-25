@@ -155,7 +155,6 @@
   <ItemGroup>
     <Compile Include="Components\KopernicusCBAttributeMapSO.cs" />
     <Compile Include="Components\ModularScatter\PQSMod_KopernicusLandClassScatterQuad.cs" />
-    <Compile Include="Components\PQSLandControlFixer.cs" />
     <Compile Include="RuntimeUtility\PreciseFloatingOrigin.cs" />
     <Compile Include="ShadowMan\CelestialBodySortableByDistance.cs" />
     <Compile Include="ShadowMan\ShadowMan.cs" />

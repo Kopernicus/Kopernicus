@@ -129,43 +129,61 @@ namespace Kopernicus.RuntimeUtility
             {
                 StarComponent selectedStar = null;
 
-                // If we are in the tracking station, space center or game, 
-                if (HighLogic.LoadedScene != GameScenes.TRACKSTATION && HighLogic.LoadedScene != GameScenes.FLIGHT &&
-                    HighLogic.LoadedScene != GameScenes.SPACECENTER)
+                Vector3d position = Vector3d.zero;
+                bool positionIsKnown = false;
+
+                // If we are in the tracking station, space center or flight, get position of the focused object
+                switch (HighLogic.LoadedScene)
                 {
+                    case GameScenes.TRACKSTATION:
+                        if (PlanetariumCamera.fetch.enabled)
+                        {
+                            position = ScaledSpace.ScaledToLocalSpace(PlanetariumCamera.fetch.GetCameraTransform().position);
+                            positionIsKnown = true;
+                        }
+                        break;
+                    case GameScenes.SPACECENTER:
+                        if (SpaceCenter.Instance.IsNotNullOrDestroyed() && SpaceCenter.Instance.SpaceCenterTransform.IsNotNullOrDestroyed())
+                        {
+                            position = SpaceCenter.Instance.SpaceCenterTransform.position;
+                            positionIsKnown = true;
+                        }
+                        break;
+                    case GameScenes.FLIGHT:
+                        if (FlightGlobals.ActiveVessel.IsNotNullOrDestroyed())
+                        {
+                            position = FlightGlobals.ActiveVessel.GetTransform().position;
+                            positionIsKnown = true;
+                        }
+                        break;
+                    default:
+                        return;
+                }
+
+                // if position couldn't be found, abort
+                if (!positionIsKnown)
+                {
+                    if (!HomeStar().IsActiveStar())
+                        HomeStar().SetAsActive();
+
                     return;
                 }
 
-                // Get the current position of the active vessel
-                if (PlanetariumCamera.fetch.enabled)
+                // find which star is the closest from the focused object
+                StarComponent closestStar = null;
+                double closestDistance = double.MaxValue;
+                for (int i = stars.Count; i-- > 0;)
                 {
-                    Vector3 position =
-                        ScaledSpace.ScaledToLocalSpace(PlanetariumCamera.fetch.GetCameraTransform().position);
-                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody))
-                        .First();
-                }
-                else if (FlightGlobals.ActiveVessel)
-                {
-                    Vector3 position = FlightGlobals.ActiveVessel.GetTransform().position;
-                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody))
-                        .First();
-                }
-                else if (SpaceCenter.Instance && SpaceCenter.Instance.SpaceCenterTransform)
-                {
-                    Vector3 position = SpaceCenter.Instance.SpaceCenterTransform.position;
-                    selectedStar = stars.OrderBy(star => FlightGlobals.getAltitudeAtPos(position, star.CelestialBody))
-                        .First();
+                    double distance = (position - stars[i].CelestialBody.position).magnitude;
+                    if (distance < closestDistance)
+                    {
+                        closestStar = stars[i];
+                        closestDistance = distance;
+                    }
                 }
 
-                // If the star has been changed, update everything
-                if (selectedStar && !selectedStar.IsActiveStar())
-                {
-                    selectedStar.SetAsActive();
-                }
-                else if (!selectedStar && !HomeStar().IsActiveStar())
-                {
-                    HomeStar().SetAsActive();
-                }
+                if (!closestStar.IsActiveStar())
+                    closestStar.SetAsActive();
             }
         }
 
