@@ -127,7 +127,7 @@ namespace Kopernicus.RuntimeUtility
         {
             if (KopernicusStar.UseMultiStarLogic)
             {
-                StarComponent selectedStar = null;
+                //StarComponent selectedStar = null; Do we need this at all?
 
                 Vector3d position = Vector3d.zero;
                 bool positionIsKnown = false;

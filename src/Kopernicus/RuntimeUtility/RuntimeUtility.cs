@@ -789,24 +789,31 @@ namespace Kopernicus.RuntimeUtility
 
             IEnumerable<CelestialBody> customOrbitalIcons = FlightGlobals.Bodies.Where(b =>
                 b.MapObject != null && b.MapObject.uiNode != null && b.Has("iconTexture"));
-            foreach (CelestialBody body in customOrbitalIcons)
+            try
             {
-                _spriteCache.TryGetValue(body, out Sprite sprite);
-                if (!sprite)
+                foreach (CelestialBody body in customOrbitalIcons)
                 {
-                    Texture2D texture = body.Get<Texture2D>("iconTexture");
-                    sprite = Sprite.Create(
-                        texture,
-                        new Rect(0, 0, texture.width, texture.height),
-                        new Vector2(0.5f, 0.5f),
-                        100,
-                        1,
-                        SpriteMeshType.Tight,
-                        Vector4.zero
-                    );
-                    _spriteCache[body] = sprite;
+                    _spriteCache.TryGetValue(body, out Sprite sprite);
+                    if (!sprite)
+                    {
+                        Texture2D texture = body.Get<Texture2D>("iconTexture");
+                        sprite = Sprite.Create(
+                            texture,
+                            new Rect(0, 0, texture.width, texture.height),
+                            new Vector2(0.5f, 0.5f),
+                            100,
+                            1,
+                            SpriteMeshType.Tight,
+                            Vector4.zero
+                        );
+                        _spriteCache[body] = sprite;
+                    }
+                    body.MapObject.uiNode.SetIcon(sprite);
                 }
-                body.MapObject.uiNode.SetIcon(sprite);
+            }
+            catch
+            {
+                Debug.LogWarning("[KOPERNICUS]Unable to apply Orbit Icon customization, does path exist?");
             }
             _orbitIconsReady = false;
         }

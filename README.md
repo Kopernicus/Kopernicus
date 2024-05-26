@@ -7,11 +7,11 @@ May 25th, 2024
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-201:
+New in this latest version release-202:
 
-1.) Fix a nullref spam that could occur if a body lacked a scaledspace version.
+1.) Fix a regression that caused leprochan valley JNSQ and bright colors in other planet packs (caused by createColors = false not being applied).
 
-2.) A few more performance related optimizations from @gotmachine.
+2.) Better error message if an orbit icon fails to be applied.
 
 About
 -----
