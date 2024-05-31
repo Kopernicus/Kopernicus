@@ -1,17 +1,17 @@
 Kopernicus
 ==============================
-May 25th, 2024
+May 31st, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-202:
+New in this latest version release-203:
 
-1.) Fix a regression that caused leprochan valley JNSQ and bright colors in other planet packs (caused by createColors = false not being applied).
+1.) Added new lethalRadius option strings lethalRadiusMsg and lethalRadiusWarnMsg.  The first string displays as a dismissable dialogbox if the kerbal is killed by the scatter killbox, the second allows a string to warn of impending danger using a similar system at approx 2x the killbox range.
 
-2.) Better error message if an orbit icon fails to be applied.
+2.) More landcontrol optimizations from @gotmachine
 
 About
 -----

@@ -321,6 +321,22 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.lethalRadius = value; }
             }
 
+            // lethalRadiusMsg, a message for when a kerbal dies from lethalRadius.  Empty string means disabled.
+            [ParserTarget("lethalRadiusMsg")]
+            public String LethalRadiusMsg
+            {
+                get { return Scatter.lethalRadiusMsg; }
+                set { Scatter.lethalRadiusMsg = value; }
+            }
+
+            // lethalRadiusWarnMsg, a message for when a kerbal comes close to a lethal radius (within 200% of the killzone). Empty string means disabled.
+            [ParserTarget("lethalRadiusWarnMsg")]
+            public String LethalRadiusWarnMsg
+            {
+                get { return Scatter.lethalRadiusWarnMsg; }
+                set { Scatter.lethalRadiusWarnMsg = value; }
+            }
+
             // The mesh
             [ParserTarget("mesh")]
             public MeshParser BaseMesh

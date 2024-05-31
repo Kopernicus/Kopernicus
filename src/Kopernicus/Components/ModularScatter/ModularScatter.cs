@@ -25,10 +25,13 @@
 
 using Kopernicus.Components.ModularComponentSystem;
 using Kopernicus.Components.Serialization;
+using KSP.UI;
+using KSP.UI.Screens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Kopernicus.Components.ModularScatter
 {
@@ -94,6 +97,16 @@ namespace Kopernicus.Components.ModularScatter
         public int lethalRadius = 0;
 
         /// <summary>
+        /// Kerbal-exclusive kill Radius message on death.  Empty string means off.
+        /// </summary>
+        public string lethalRadiusMsg = "";
+
+        /// <summary>
+        /// Kerbal-exclusive kill Radius 200% zone warning message.  Empty string means off.
+        /// </summary>
+        public string lethalRadiusWarnMsg = "";
+
+        /// <summary>
         /// How much should the scatter be able to rotate
         /// </summary>
         public List<Single> rotation = new List<Single> { 0, 360f };
@@ -149,6 +162,17 @@ namespace Kopernicus.Components.ModularScatter
         /// lethalRadius squared for fast distance comparison
         /// </summary>
         private float lethalSquareRadius;
+
+        /// <summary>
+        /// lethalRadius warning range squared for fast distance comparison
+        /// </summary>
+        private float lethalWarnSquareRadius;
+
+        /// <summary>
+        /// whether or not we have msg'd this kerbal already, to avoid spamming. Sets false again when out of danger.
+        /// </summary>
+        private static bool lethalMsgSent = false;
+        private static bool lethalWarnMsgSent = false;
 
         public ModularScatter()
         {
@@ -224,6 +248,7 @@ namespace Kopernicus.Components.ModularScatter
             needsPerScatterGameObject = lightEmitter != null || scatterColliders != null;
             needsScatterPositions = heatEmitter != null || lethalRadius != 0;
             lethalSquareRadius = lethalRadius * lethalRadius;
+            lethalWarnSquareRadius = (lethalRadius * 2) * (lethalRadius * 2);
         }
 
         /// <summary>
@@ -234,6 +259,7 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         private void FixedUpdate()
         {
+            bool danger = false;
             if (!needsScatterPositions)
                 return;
 
@@ -274,11 +300,31 @@ namespace Kopernicus.Components.ModularScatter
                     {
                         if ((scatterWorldPositions[i] - evaKerbalPos).sqrMagnitude < lethalSquareRadius)
                         {
+                            danger = true;
+                            if ((lethalRadiusMsg.Length != 0) && (lethalMsgSent == false))
+                            {
+                                lethalMsgSent = true;
+                                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Poof!", "Poof!", lethalRadiusMsg, "Poof!", true, UISkinManager.defaultSkin);
+                            }
                             activeVessel.rootPart.explode();
                             break;
                         }
+                        else if ((scatterWorldPositions[i] - evaKerbalPos).sqrMagnitude < lethalWarnSquareRadius)
+                        {
+                            danger = true;
+                            if ((lethalRadiusWarnMsg.Length != 0) && (lethalWarnMsgSent == false))
+                            {
+                                lethalWarnMsgSent = true;
+                                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "DANGER", "DANGER", lethalRadiusWarnMsg, "UhOh!", true, UISkinManager.defaultSkin);
+                            }
+                        }
                     }
                 }
+            }
+            if (danger == false)
+            {
+                lethalMsgSent = false;
+                lethalWarnMsgSent = false;
             }
         }
 
