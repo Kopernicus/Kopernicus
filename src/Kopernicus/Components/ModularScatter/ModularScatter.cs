@@ -173,6 +173,7 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         private static bool lethalMsgSent = false;
         private static bool lethalWarnMsgSent = false;
+        private static int antiSpamCounter = 1600;
 
         public ModularScatter()
         {
@@ -259,7 +260,6 @@ namespace Kopernicus.Components.ModularScatter
         /// </summary>
         private void FixedUpdate()
         {
-            bool danger = false;
             if (!needsScatterPositions)
                 return;
 
@@ -300,7 +300,6 @@ namespace Kopernicus.Components.ModularScatter
                     {
                         if ((scatterWorldPositions[i] - evaKerbalPos).sqrMagnitude < lethalSquareRadius)
                         {
-                            danger = true;
                             if ((lethalRadiusMsg.Length != 0) && (lethalMsgSent == false))
                             {
                                 lethalMsgSent = true;
@@ -311,7 +310,6 @@ namespace Kopernicus.Components.ModularScatter
                         }
                         else if ((scatterWorldPositions[i] - evaKerbalPos).sqrMagnitude < lethalWarnSquareRadius)
                         {
-                            danger = true;
                             if ((lethalRadiusWarnMsg.Length != 0) && (lethalWarnMsgSent == false))
                             {
                                 lethalWarnMsgSent = true;
@@ -321,10 +319,15 @@ namespace Kopernicus.Components.ModularScatter
                     }
                 }
             }
-            if (danger == false)
+            if (antiSpamCounter < 1)
             {
+                antiSpamCounter = 1600;
                 lethalMsgSent = false;
                 lethalWarnMsgSent = false;
+            }
+            else 
+            {
+                antiSpamCounter--;
             }
         }
 
