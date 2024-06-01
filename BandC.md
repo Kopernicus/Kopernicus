@@ -1,20 +1,22 @@
 Known Bugs:
 
-1.) For most use cases, the homeworld must be named "Kerbin" and must orbit the root star.  You can rename it via displayName property for most purposes.  We are working on a true fix for this that will allow you to have homeworlds properly on moons and on bodies not named Kerbin, but the fixes are not ready yet (there is a prerelease that supports renamed homeworlds).  Until they are, see options cbNameLater, and postSpawnOrbit, but be aware they are buggy, and overall deprecated.
+1.) BetterDensity is deprecated as of release-203, due to a incompatability with heatEmitter, lethalRadius, and possibly other scatter based features.  Avoid using it when possible, use the other density facilisties.
 
-2.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away. (I am not sure if this is still releavent as of Release-159, feedback welcome).
+2.) For most use cases, the homeworld must be named "Kerbin" and must orbit the root star.  You can rename it via displayName property for most purposes.  We are working on a true fix for this that will allow you to have homeworlds properly on moons and on bodies not named Kerbin, but the fixes are not ready yet (there is a prerelease that supports renamed homeworlds).  Until they are, see options cbNameLater, and postSpawnOrbit, but be aware they are buggy, and overall deprecated.
 
-3.) When zooming out all the way out in map view at interstellar ranges, the navball furthermore sometimes behaves oddly. We are working on this and monitoring all the interstellar bugs actively. (I am not sure if this is still releavent as of Release-159, feedback welcome).
+3.) At interstellar ranges, heat can sometimes behave strangely, sometimes related to map zoom (be careful zooming out). It is best to turn off part heating when traveling far far away. (I am not sure if this is still releavent as of Release-159, feedback welcome).
 
-4.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
+4.) When zooming out all the way out in map view at interstellar ranges, the navball furthermore sometimes behaves oddly. We are working on this and monitoring all the interstellar bugs actively. (I am not sure if this is still releavent as of Release-159, feedback welcome).
 
-5.) Sometimes when reloading a quicksave to KSC, you will get the KSC sunken into the ground. This is cosmetic only, another reload of the same save will fix it. (This error has been around forever, just now listing it).
+5.) Very Old craft files may complain about a missing module. This is a cosmetic error and can be ignored. Reload and re-save the craft to remove the error.
 
-6.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text." This is by design. If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
+6.) Sometimes when reloading a quicksave to KSC, you will get the KSC sunken into the ground. This is cosmetic only, another reload of the same save will fix it. (This error has been around forever, just now listing it).
 
-7.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details.
+7.) When you uninstall a mod that had installed a Terrain Detail preset you were using, it may be listed still in the Graphics settings as "New Text." This is by design. If it bothers you, please reinstall the mod that setup that preset, or delete settings.cfg and let it regenerate.
 
-8.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten/created when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
+8.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details.
+
+9.) Not exactly a bug, but worth mentioning: The Kopernicus_Config.cfg file is rewritten/created when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
 
 Known Caveats:
 

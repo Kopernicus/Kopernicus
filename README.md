@@ -1,17 +1,17 @@
 Kopernicus
 ==============================
-May 31st, 2024
+June 1st, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-203:
+New in this latest version release-204:
 
-1.) Added new lethalRadius option strings lethalRadiusMsg and lethalRadiusWarnMsg.  The first string displays as a dismissable dialogbox if the kerbal is killed by the scatter killbox, the second allows a string to warn of impending danger using a similar system at approx 2x the killbox range.
+1.) Fixed the antispam logic in the messaging system for kerbals near lethal scatters. No more spam!
 
-2.) More landcontrol optimizations from @gotmachine
+2.) Added eratta note about BetterDensity and lethalScatters/heatemitters. These don't work well toghether, and possibly more things with BD, as that facility is pretty broken. Really, avoid BetterDensity and use in game density facilities when possible. Consider it deprecated.
 
 About
 -----
