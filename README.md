@@ -1,17 +1,17 @@
 Kopernicus
 ==============================
-June 1st, 2024
+June 17th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-204:
+New in this latest version release-205:
 
-1.) Fixed the antispam logic in the messaging system for kerbals near lethal scatters. No more spam!
+1.) Fixed Kittopia heightmap exporting to use the proper range, stopping some heightmaps from clipping and other oddities.
 
-2.) Added eratta note about BetterDensity and lethalScatters/heatemitters. These don't work well toghether, and possibly more things with BD, as that facility is pretty broken. Really, avoid BetterDensity and use in game density facilities when possible. Consider it deprecated.
+2.) Added/edited a lot of the Kittopia export descriptions in Orbit and Atmoshpere nodes with the help of our resident scienfic genius, OhioBob.
 
 About
 -----

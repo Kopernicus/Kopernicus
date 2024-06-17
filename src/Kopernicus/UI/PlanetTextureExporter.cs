@@ -220,7 +220,7 @@ namespace Kopernicus.UI
                 }
             }
 
-            Double deltaRadius = maxHeight - minHeight;
+            Double deltaRadius = maxHeight - (pqsVersion.radius + options.ZeroHeight);
             if (options.TextureDelta > 0)
             {
                 deltaRadius = options.TextureDelta;

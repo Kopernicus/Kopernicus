@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -74,6 +74,7 @@ namespace Kopernicus.Configuration
 
         // How inclined is the orbit
         [ParserTarget("inclination")]
+        [KittopiaDescription("The angle between the orbital plane and the ecliptic")]
         public NumericParser<Double> Inclination
         {
             get { return Value.orbit.inclination; }
@@ -82,6 +83,7 @@ namespace Kopernicus.Configuration
 
         // How eccentric is the orbit
         [ParserTarget("eccentricity")]
+        [KittopiaDescription("The deviation of the orbit from circularity")]
         public NumericParser<Double> Eccentricity
         {
             get { return Value.orbit.eccentricity; }
@@ -90,7 +92,7 @@ namespace Kopernicus.Configuration
 
         // Highest point of the orbit
         [ParserTarget("semiMajorAxis")]
-        [KittopiaDescription("The altitude of the highest point in the orbit")]
+        [KittopiaDescription("One-half the length of a line segment drawn from periapsis to apoapsis")]
         public NumericParser<Double> SemiMajorAxis
         {
             get { return Value.orbit.semiMajorAxis; }
@@ -99,7 +101,7 @@ namespace Kopernicus.Configuration
 
         // Position of the highest point on the orbit circle
         [ParserTarget("longitudeOfAscendingNode")]
-        [KittopiaDescription("The position of the highest point on the orbit circle")]
+        [KittopiaDescription("Where the orbit crosses the ecliptic moving south to north")]
         public NumericParser<Double> LongitudeOfAscendingNode
         {
             get { return Value.orbit.LAN; }
@@ -108,6 +110,7 @@ namespace Kopernicus.Configuration
 
         // argumentOfPeriapsis
         [ParserTarget("argumentOfPeriapsis")]
+        [KittopiaDescription("The angular distance between longitudeOfAscendingNode and periapsis")]
         public NumericParser<Double> ArgumentOfPeriapsis
         {
             get { return Value.orbit.argumentOfPeriapsis; }
@@ -116,6 +119,7 @@ namespace Kopernicus.Configuration
 
         // meanAnomalyAtEpoch
         [ParserTarget("meanAnomalyAtEpoch")]
+        [KittopiaDescription("The body's mean anomaly at the specified epoch, in radians")]
         public NumericParser<Double> MeanAnomalyAtEpoch
         {
             get { return Value.orbit.meanAnomalyAtEpoch; }
@@ -124,6 +128,7 @@ namespace Kopernicus.Configuration
 
         // meanAnomalyAtEpochD
         [ParserTarget("meanAnomalyAtEpochD")]
+        [KittopiaDescription("The body's mean anomaly at the specified epoch, in degrees")]
         public NumericParser<Double> MeanAnomalyAtEpochD
         {
             get { return Value.orbit.meanAnomalyAtEpoch / Math.PI * 180d; }
@@ -132,6 +137,7 @@ namespace Kopernicus.Configuration
 
         // epoch
         [ParserTarget("epoch")]
+        [KittopiaDescription("The number of elapsed seconds from UT = 00:00:00")]
         public NumericParser<Double> Epoch
         {
             get { return Value.orbit.epoch; }
@@ -259,6 +265,7 @@ namespace Kopernicus.Configuration
 
         // OrbitalPeriod
         [ParserTarget("period")]
+        [KittopiaDescription("Orbital period in seconds")]
         public NumericParser<Double> Period
         {
             get { return Value.orbit.period; }

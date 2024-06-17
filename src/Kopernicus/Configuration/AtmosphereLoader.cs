@@ -32,6 +32,7 @@ using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.Configuration.Parsing;
 using Kopernicus.UI;
+using UnityEngine;
 
 namespace Kopernicus.Configuration
 {
@@ -48,7 +49,7 @@ namespace Kopernicus.Configuration
         // Do we have an atmosphere?
         [PreApply]
         [ParserTarget("enabled")]
-        [KittopiaDescription("Whether the body has an atmosphere.")]
+        [KittopiaDescription("Whether the body has an atmosphere")]
         [KittopiaHideOption]
         public NumericParser<Boolean> Enabled
         {
@@ -65,7 +66,7 @@ namespace Kopernicus.Configuration
 
         // Does this atmosphere contain oxygen
         [ParserTarget("oxygen")]
-        [KittopiaDescription("Whether the atmosphere contains oxygen.")]
+        [KittopiaDescription("Whether the atmosphere contains oxygen")]
         public NumericParser<Boolean> Oxygen
         {
             get { return Value.atmosphereContainsOxygen; }
@@ -74,8 +75,7 @@ namespace Kopernicus.Configuration
 
         // Density at sea level
         [ParserTarget("staticDensityASL")]
-        [KittopiaDescription(
-            "Atmospheric density at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
+        [KittopiaDescription("Atmospheric density at sea level. Used to calculate the parameters of the atmosphere if no curves are used")]
         public NumericParser<Double> AtmDensityAsl
         {
             get { return Value.atmDensityASL; }
@@ -84,6 +84,7 @@ namespace Kopernicus.Configuration
 
         // atmosphereAdiabaticIndex
         [ParserTarget("adiabaticIndex")]
+        [KittopiaDescription("A thermodynamic property of the gas, also known as heat capacity ratio")]
         public NumericParser<Double> AtmosphereAdiabaticIndex
         {
             get { return Value.atmosphereAdiabaticIndex; }
@@ -94,7 +95,7 @@ namespace Kopernicus.Configuration
         [ParserTarget("atmosphereDepth")]
         [ParserTarget("altitude")]
         [ParserTarget("maxAltitude")]
-        [KittopiaDescription("The height of the atmosphere.")]
+        [KittopiaDescription("The height of the atmosphere")]
         public NumericParser<Double> AtmosphereDepth
         {
             get { return Value.atmosphereDepth; }
@@ -111,6 +112,7 @@ namespace Kopernicus.Configuration
 
         // atmosphereMolarMass
         [ParserTarget("atmosphereMolarMass")]
+        [KittopiaDescription("The mass in kilograms of one mole of gas")]
         public NumericParser<Double> AtmosphereMolarMass
         {
             get { return Value.atmosphereMolarMass; }
@@ -119,7 +121,7 @@ namespace Kopernicus.Configuration
 
         // Pressure curve
         [ParserTargetCollection("pressureCurve", Key = "key", NameSignificance = NameSignificance.Key)]
-        [KittopiaDescription("Assigns a pressure value to a height value inside of the atmosphere.")]
+        [KittopiaDescription("Assigns a pressure value to a height value inside of the atmosphere")]
         public List<NumericCollectionParser<Single>> PressureCurve
         {
             get { return Utility.FloatCurveToList(Value.atmosphereUsePressureCurve ? Value.atmospherePressureCurve : null); }
@@ -133,7 +135,7 @@ namespace Kopernicus.Configuration
         // atmospherePressureCurveIsNormalized
         [ParserTarget("pressureCurveIsNormalized")]
         [KittopiaDescription(
-            "Whether the pressure curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
+            "Whether the pressure curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values")]
         public NumericParser<Boolean> AtmospherePressureCurveIsNormalized
         {
             get { return Value.atmospherePressureCurveIsNormalized; }
@@ -143,7 +145,7 @@ namespace Kopernicus.Configuration
         // Shock Temp Mult
         [ParserTarget("shockTemperatureMultiplier")]
         [KittopiaDescription(
-            "Multiplies the External/Shock Temperature by this value. This is relevant for aerodynamic heating.")]
+            "Multiplies the External/Shock Temperature by this value. This is relevant for aerodynamic heating")]
         public NumericParser<Double> ShockTemperatureMultiplier
         {
             get { return Value.shockTemperatureMultiplier; }
@@ -153,7 +155,7 @@ namespace Kopernicus.Configuration
         // Static pressure at sea level (all worlds are set to 1.0f?)
         [ParserTarget("staticPressureASL")]
         [KittopiaDescription(
-            "The static pressure at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
+            "The static pressure at sea level. Used to calculate the parameters of the atmosphere if no curves are used")]
         public NumericParser<Double> StaticPressureAsl
         {
             get { return Value.atmospherePressureSeaLevel; }
@@ -162,7 +164,7 @@ namespace Kopernicus.Configuration
 
         // Temperature curve (see below)
         [ParserTargetCollection("temperatureCurve", Key = "key", NameSignificance = NameSignificance.Key)]
-        [KittopiaDescription("Assigns a temperature value to a height value inside of the atmosphere.")]
+        [KittopiaDescription("Assigns a base temperature value to a height value inside of the atmosphere")]
         public List<NumericCollectionParser<Single>> TemperatureCurve
         {
             get { return Utility.FloatCurveToList(Value.atmosphereUseTemperatureCurve ? Value.atmosphereTemperatureCurve : null); }
@@ -176,7 +178,7 @@ namespace Kopernicus.Configuration
         // atmosphereTemperatureCurveIsNormalized
         [ParserTarget("temperatureCurveIsNormalized")]
         [KittopiaDescription(
-            "Whether the temperature curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values.")]
+            "Whether the temperature curve should use absolute (0 - atmosphereDepth) or relative (0 - 1) values")]
         public NumericParser<Boolean> AtmosphereTemperatureCurveIsNormalized
         {
             get { return Value.atmosphereTemperatureCurveIsNormalized; }
@@ -194,7 +196,7 @@ namespace Kopernicus.Configuration
         // TemperatureSeaLevel
         [ParserTarget("temperatureSeaLevel")]
         [KittopiaDescription(
-            "The static temperature at sea level. Used to calculate the parameters of the atmosphere if no curves are used.")]
+            "The static temperature at sea level. Used to calculate the parameters of the atmosphere if no curves are used")]
         public NumericParser<Double> AtmosphereTemperatureSeaLevel
         {
             get { return Value.atmosphereTemperatureSeaLevel; }
@@ -203,6 +205,7 @@ namespace Kopernicus.Configuration
 
         // atmosphereTemperatureSunMultCurve
         [ParserTargetCollection("temperatureSunMultCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        [KittopiaDescription("How the temperature modifiers vary by altitude, in the form of a multiplier")]
         public List<NumericCollectionParser<Single>> AtmosphereTemperatureSunMultCurve
         {
             get { return Utility.FloatCurveToList(Value.atmosphereTemperatureSunMultCurve); }
@@ -211,6 +214,7 @@ namespace Kopernicus.Configuration
 
         // Temperature latitude bias
         [ParserTargetCollection("temperatureLatitudeBiasCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        [KittopiaDescription("Latitudinal temperature modifier")]
         public List<NumericCollectionParser<Single>> LatitudeTemperatureBiasCurve
         {
             get { return Utility.FloatCurveToList(Value.latitudeTemperatureBiasCurve); }
@@ -219,6 +223,7 @@ namespace Kopernicus.Configuration
 
         // latitudeTemperatureSunMultCurve
         [ParserTargetCollection("temperatureLatitudeSunMultCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        [KittopiaDescription("Day - night temperature modifier by latitude")]
         public List<NumericCollectionParser<Single>> LatitudeTemperatureSunMultCurve
         {
             get { return Utility.FloatCurveToList(Value.latitudeTemperatureSunMultCurve); }
@@ -227,6 +232,7 @@ namespace Kopernicus.Configuration
 
         // axialTemperatureSunMultCurve
         [ParserTargetCollection("temperatureAxialSunBiasCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        [KittopiaDescription("Seasonal temperature modifier by true anomaly")]
         public List<NumericCollectionParser<Single>> AxialTemperatureSunBiasCurve
         {
             get { return Utility.FloatCurveToList(Value.axialTemperatureSunBiasCurve); }
@@ -235,6 +241,7 @@ namespace Kopernicus.Configuration
 
         // axialTemperatureSunMultCurve
         [ParserTargetCollection("temperatureAxialSunMultCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        [KittopiaDescription("How the seasonal temperature modifier varies by latitude")]
         public List<NumericCollectionParser<Single>> AxialTemperatureSunMultCurve
         {
             get { return Utility.FloatCurveToList(Value.axialTemperatureSunMultCurve); }
@@ -243,6 +250,7 @@ namespace Kopernicus.Configuration
 
         // eccentricityTemperatureBiasCurve
         [ParserTargetCollection("temperatureEccentricityBiasCurve", Key = "key", NameSignificance = NameSignificance.Key)]
+        [KittopiaDescription("Orbital eccentricity temperature modifier")]
         public List<NumericCollectionParser<Single>> EccentricityTemperatureBiasCurve
         {
             get { return Utility.FloatCurveToList(Value.eccentricityTemperatureBiasCurve); }
@@ -251,7 +259,7 @@ namespace Kopernicus.Configuration
 
         // ambient atmosphere color
         [ParserTarget("ambientColor")]
-        [KittopiaDescription("All objects inside of the atmosphere will slightly shine in this color.")]
+        [KittopiaDescription("All objects inside of the atmosphere will slightly shine in this color")]
         public ColorParser AmbientColor
         {
             get { return Value.atmosphericAmbientColor; }
@@ -260,11 +268,12 @@ namespace Kopernicus.Configuration
 
         // AFG
         [ParserTarget("AtmosphereFromGround", AllowMerge = true)]
-        [KittopiaDescription("The atmosphere effect that is seen on the horizon.")]
+        [KittopiaDescription("The atmosphere effect that is seen on the horizon")]
         public AtmosphereFromGroundLoader AtmosphereFromGround { get; set; }
 
         // light color
         [ParserTarget("lightColor")]
+        [KittopiaDescription("Same as waveLength in AtmosphereFromGround")]
         [KittopiaHideOption]
         public ColorParser LightColor
         {
@@ -324,7 +333,7 @@ namespace Kopernicus.Configuration
             // Is this the parser context?
             if (!Injector.IsInPrefab)
             {
-                throw new InvalidOperationException("Must be executed in Injector context.");
+                throw new InvalidOperationException("Must be executed in Injector context");
             }
 
             // Store values
@@ -341,7 +350,7 @@ namespace Kopernicus.Configuration
             // Is this a spawned body?
             if (body.scaledBody == null || Injector.IsInPrefab)
             {
-                throw new InvalidOperationException("The body must be already spawned by the PSystemManager.");
+                throw new InvalidOperationException("The body must be already spawned by the PSystemManager");
             }
 
             // Store values
