@@ -185,7 +185,7 @@ Shader "Kopernicus/Rings"
         // Looks more interesting than I expected
         float3 viewdir  = i.worldPos.xyz / i.worldPos.w - _WorldSpaceCameraPos;
         float camDist   = length(viewdir);
-        float3 viewdir /= viewLength;
+        viewdir /= camDist;
         float  mu       = dot(lightDir, -viewdir);
         float  dotLight = 0.5 * (mu + 1);
 
