@@ -96,7 +96,7 @@ Shader "Kopernicus/Rings"
         float4 worldPos:     TEXCOORD0;
         // Moved from fragment shader
         float4 planetOrigin: TEXCOORD1;
-        float2 texCoord:     TEXCOORD2;
+        float3 texCoord:     TEXCOORD2;
       };
 
       // Set up the inputs for the fragment shader
@@ -106,7 +106,8 @@ Shader "Kopernicus/Rings"
         o.pos          = UnityObjectToClipPos(v.vertex);
         o.worldPos     = mul(unity_ObjectToWorld, v.vertex);
         o.planetOrigin = mul(unity_ObjectToWorld, float4(0, 0, 0, 1));
-        o.texCoord     = v.texcoord;
+        o.texCoord.xy  = v.texcoord.xy;
+        o.texCoord.z = atan2(v.vertex.z, v.vertex.x) * 0.15915494309;
         return o;
       }
 
@@ -200,13 +201,15 @@ Shader "Kopernicus/Rings"
         float shadow = getShadow(i);
 
         // Fade in some noise here when getting close to the rings
-        float4 detailMask = tex2D(_DetailRegionsTex, i.texCoord) * detailRegionsMask;
+        // Detail UVs do not seem to be set up correctly for the ring.
+        float2 detailUV = i.texCoord.xz;
+        float4 detailMask = tex2D(_DetailRegionsTex, i.texCoord.xy) * detailRegionsMask;
         float detailCoarse = dot(
             detailMask,
             lerp(
                 coarseDetailAlphaMin,
                 coarseDetailAlphaMax,
-                tex2D(_CoarseDetailNoiseTex, detailTiling.xy * i.texCoord)
+                tex2D(_CoarseDetailNoiseTex, detailTiling.xy * detailUV)
             )
         );
         float detailFine = dot(
@@ -214,7 +217,7 @@ Shader "Kopernicus/Rings"
             lerp(
                 fineDetailAlphaMin,
                 fineDetailAlphaMax,
-                tex2D(_FineDetailNoiseTex, detailTiling.zw * i.texCoord)
+                tex2D(_FineDetailNoiseTex, detailTiling.zw * detailUV)
             )
         );
         // xy, zw are (coarse, fine)
@@ -229,8 +232,8 @@ Shader "Kopernicus/Rings"
         proximityAlpha = lerp(fadeoutMinAlpha, 1.0, proximityAlpha);
 
         // Look up the texture colors
-        float4 color = tex2D(_MainTex, i.texCoord);
-        float4 backColor = tex2D(_BacklitTexture, i.texCoord);
+        float4 color = tex2D(_MainTex, i.texCoord.xy);
+        float4 backColor = tex2D(_BacklitTexture, i.texCoord.xy);
         // Combine material color with texture color and shadow
         color.xyz = _Color * shadow * (albedoStrength * color.xyz * dotLight + scatteringStrength * backColor.xyz * mieScattering);
         color.w = max(color.w, backColor.w * mieScattering);
