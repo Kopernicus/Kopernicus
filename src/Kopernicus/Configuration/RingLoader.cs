@@ -307,9 +307,14 @@ namespace Kopernicus.Configuration
         }
 
         [RequireConfigType(ConfigType.Node)]
-        public class DetailPassLoader : ITypeParser<Ring.DetailPass>
+        public class DetailPassLoader : BaseLoader, ITypeParser<Ring.DetailPass>
         {
             public Ring.DetailPass Value { get; set; }
+
+            public DetailPassLoader()
+            {
+                Value = new Ring.DetailPass();
+            }
 
             public DetailPassLoader(Ring.DetailPass pass)
             {
@@ -390,9 +395,14 @@ namespace Kopernicus.Configuration
         }
 
         [RequireConfigType(ConfigType.Node)]
-        public class DetailLoader : ITypeParser<Ring.DetailSettings>
+        public class DetailLoader : BaseLoader, ITypeParser<Ring.DetailSettings>
         {
             public Ring.DetailSettings Value { get; set; }
+
+            public DetailLoader()
+            {
+                Value = new Ring.DetailSettings();
+            }
 
             public DetailLoader(Ring.DetailSettings settings)
             {
@@ -415,14 +425,14 @@ namespace Kopernicus.Configuration
                 set { Value.detailRegionsTexture = value; }
             }
 
-            [ParserTarget("DetailCoarse")]
+            [ParserTarget("Coarse")]
             public DetailPassLoader DetailCoarse
             {
                 get { return new DetailPassLoader(Value.coarse); }
                 set { Value.coarse = value.Value; }
             }
 
-            [ParserTarget("DetailFine")]
+            [ParserTarget("Fine")]
             public DetailPassLoader DetailFine
             {
                 get { return new DetailPassLoader(Value.fine); }
