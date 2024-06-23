@@ -122,9 +122,9 @@ namespace Kopernicus.Components
         private Single _innerShadeOffsetRate;
 
         // Proximity fade settings
-        public Single fadeoutStartDistance;
-        public Single fadeoutStopDistance;
-        public Single fadeoutMinAlpha = 1f;
+        public Single fadeoutStartDistance = 100f;
+        public Single fadeoutStopDistance = 20f;
+        public Single fadeoutMinAlpha = 0f;
 
         // Detail settings
         public sealed class DetailPass
@@ -133,7 +133,7 @@ namespace Kopernicus.Components
             public Vector4 alphaMin;
             public Vector4 alphaMax = Vector4.one;
             public Vector2 tiling = Vector2.one;
-            public float strength = 1f;
+            public float strength = 0f;
             // These settings are nonsensical for distances since they cannot be negative.
             // The intended purpose is to make a detail level invisible by default.
             // This is both to ensure that users set detail bounds properly,
