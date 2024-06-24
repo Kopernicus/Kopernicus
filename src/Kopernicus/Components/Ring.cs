@@ -142,6 +142,7 @@ namespace Kopernicus.Components
             // and to make sure that this is not a breaking change because it will keep rings
             // looking identical unless their configs are modified specifically for this change.
             public Vector4 fadeParams = new Vector4(-10f, -8f, -6f, -3f);
+            public Vector4 detailMask = Vector4.one;
         }
         public sealed class DetailSettings
         {
@@ -153,11 +154,13 @@ namespace Kopernicus.Components
             private static readonly Int32 DetailCoarseAMin = Shader.PropertyToID("coarseDetailAlphaMin");
             private static readonly Int32 DetailCoarseAMax = Shader.PropertyToID("coarseDetailAlphaMax");
             private static readonly Int32 DetailCoarseStrength = Shader.PropertyToID("coarseDetailStrength");
+            private static readonly Int32 DetailCoarseMask = Shader.PropertyToID("coarseDetailMask");
 
             private static readonly Int32 DetailFineTex = Shader.PropertyToID("_FineDetailNoiseTex");
             private static readonly Int32 DetailFineAMin = Shader.PropertyToID("fineDetailAlphaMin");
             private static readonly Int32 DetailFineAMax = Shader.PropertyToID("fineDetailAlphaMax");
             private static readonly Int32 DetailFineStrength = Shader.PropertyToID("fineDetailStrength");
+            private static readonly Int32 DetailFineMask = Shader.PropertyToID("fineDetailMask");
 
             private static readonly Int32 DetailTiling = Shader.PropertyToID("detailTiling");
             private static readonly Int32 DetailFade0 = Shader.PropertyToID("detailFade0");
@@ -178,11 +181,13 @@ namespace Kopernicus.Components
                 material.SetVector(DetailCoarseAMin, coarse.alphaMin);
                 material.SetVector(DetailCoarseAMax, coarse.alphaMax);
                 material.SetFloat(DetailCoarseStrength, coarse.strength);
+                material.SetVector(DetailCoarseMask, coarse.detailMask);
 
                 material.SetTexture(DetailFineTex, fine.texture);
                 material.SetVector(DetailFineAMin, fine.alphaMin);
                 material.SetVector(DetailFineAMax, fine.alphaMax);
                 material.SetFloat(DetailFineStrength, fine.strength);
+                material.SetVector(DetailFineMask, fine.detailMask);
 
                 material.SetVector(
                     DetailTiling,

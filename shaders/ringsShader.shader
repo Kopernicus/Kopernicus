@@ -72,11 +72,13 @@ Shader "Kopernicus/Rings"
       uniform float4 coarseDetailAlphaMin;
       uniform float4 coarseDetailAlphaMax;
       uniform float coarseDetailStrength;
+      uniform float4 coarseDetailMask;
       // Fine detail, for smaller scale noise.
       uniform sampler2D _FineDetailNoiseTex;
       uniform float4 fineDetailAlphaMin;
       uniform float4 fineDetailAlphaMax;
       uniform float fineDetailStrength;
+      uniform float4 fineDetailMask;
       uniform float4 detailTiling;
       // These are presented differently on the CPU side.
       // The reason is to do SIMD smoothstep in the shader.
@@ -205,7 +207,7 @@ Shader "Kopernicus/Rings"
         float2 detailUV = i.texCoord.xz;
         float4 detailMask = tex2D(_DetailRegionsTex, i.texCoord.xy) * detailRegionsMask;
         float detailCoarse = dot(
-            detailMask,
+            detailMask * coarseDetailMask,
             lerp(
                 coarseDetailAlphaMin,
                 coarseDetailAlphaMax,
@@ -213,7 +215,7 @@ Shader "Kopernicus/Rings"
             )
         );
         float detailFine = dot(
-            detailMask,
+            detailMask * fineDetailMask,
             lerp(
                 fineDetailAlphaMin,
                 fineDetailAlphaMax,

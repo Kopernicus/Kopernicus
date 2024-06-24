@@ -392,6 +392,14 @@ namespace Kopernicus.Configuration
                 get { return Value.fadeParams.w; }
                 set { Value.fadeParams.w = value; }
             }
+
+            [ParserTarget("detailMask")]
+            [KittopiaDescription("A per-detail-pass per-texture-channel multiplier.")]
+            public Vector4Parser DetailMask
+            {
+                get { return Value.detailMask; }
+                set { Value.detailMask = value; }
+            }
         }
 
         [RequireConfigType(ConfigType.Node)]
