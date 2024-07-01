@@ -23,6 +23,8 @@
  * https://kerbalspaceprogram.com
  */
 
+#define FIX_ROTATION_JITTER
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -121,6 +123,106 @@ namespace Kopernicus.Components
         /// </summary>
         private Single _innerShadeOffsetRate;
 
+        // Proximity fade settings
+        public Single fadeoutStartDistance = 100f;
+        public Single fadeoutStopDistance = 20f;
+        public Single fadeoutMinAlpha = 0f;
+
+        // Detail settings
+        public sealed class DetailPass
+        {
+            public Texture2D texture;
+            public Vector4 alphaMin;
+            public Vector4 alphaMax = Vector4.one;
+            public Vector2 tiling = Vector2.one;
+            public float strength = 0f;
+            // These settings are nonsensical for distances since they cannot be negative.
+            // The intended purpose is to make a detail level invisible by default.
+            // This is both to ensure that users set detail bounds properly,
+            // and to make sure that this is not a breaking change because it will keep rings
+            // looking identical unless their configs are modified specifically for this change.
+            public Vector4 fadeParams = new Vector4(-10f, -8f, -6f, -3f);
+            public Vector4 detailMask = Vector4.one;
+        }
+        public sealed class DetailSettings
+        {
+            // Detail passes parameters
+            private static readonly Int32 DetailRegionsMask = Shader.PropertyToID("detailRegionsMask");
+            private static readonly Int32 DetailRegionsTex = Shader.PropertyToID("_DetailRegionsTex");
+
+            private static readonly Int32 DetailCoarseTex = Shader.PropertyToID("_CoarseDetailNoiseTex");
+            private static readonly Int32 DetailCoarseAMin = Shader.PropertyToID("coarseDetailAlphaMin");
+            private static readonly Int32 DetailCoarseAMax = Shader.PropertyToID("coarseDetailAlphaMax");
+            private static readonly Int32 DetailCoarseStrength = Shader.PropertyToID("coarseDetailStrength");
+            private static readonly Int32 DetailCoarseMask = Shader.PropertyToID("coarseDetailMask");
+
+            private static readonly Int32 DetailFineTex = Shader.PropertyToID("_FineDetailNoiseTex");
+            private static readonly Int32 DetailFineAMin = Shader.PropertyToID("fineDetailAlphaMin");
+            private static readonly Int32 DetailFineAMax = Shader.PropertyToID("fineDetailAlphaMax");
+            private static readonly Int32 DetailFineStrength = Shader.PropertyToID("fineDetailStrength");
+            private static readonly Int32 DetailFineMask = Shader.PropertyToID("fineDetailMask");
+
+            private static readonly Int32 DetailTiling = Shader.PropertyToID("detailTiling");
+            private static readonly Int32 DetailFade0 = Shader.PropertyToID("detailFade0");
+            private static readonly Int32 DetailFade1 = Shader.PropertyToID("detailFade1");
+
+            public Vector4 detailRegionsMask;
+            public Texture2D detailRegionsTexture;
+
+            public DetailPass coarse = new DetailPass();
+            public DetailPass fine = new DetailPass();
+
+            public void PatchMaterial(Material material)
+            {
+                material.SetVector(DetailRegionsMask, detailRegionsMask);
+                material.SetTexture(DetailRegionsTex, detailRegionsTexture);
+
+                material.SetTexture(DetailCoarseTex, coarse.texture);
+                material.SetVector(DetailCoarseAMin, coarse.alphaMin);
+                material.SetVector(DetailCoarseAMax, coarse.alphaMax);
+                material.SetFloat(DetailCoarseStrength, coarse.strength);
+                material.SetVector(DetailCoarseMask, coarse.detailMask);
+
+                material.SetTexture(DetailFineTex, fine.texture);
+                material.SetVector(DetailFineAMin, fine.alphaMin);
+                material.SetVector(DetailFineAMax, fine.alphaMax);
+                material.SetFloat(DetailFineStrength, fine.strength);
+                material.SetVector(DetailFineMask, fine.detailMask);
+
+                material.SetVector(
+                    DetailTiling,
+                    new Vector4(
+                        coarse.tiling.x, coarse.tiling.y,
+                        fine.tiling.x, fine.tiling.y
+                    )
+                );
+
+                // Repack all of this so that on the GPU side we can do a SIMD remap and smoothstep.
+                // It is only a minor hassle here but guarantees a 400% throughput PER PIXEL in the shader.
+                material.SetVector(
+                    DetailFade0,
+                    new Vector4(
+                        coarse.fadeParams.x,
+                        fine.fadeParams.x,
+                        coarse.fadeParams.w,
+                        fine.fadeParams.w
+                    )
+                );
+
+                material.SetVector(
+                    DetailFade1,
+                    new Vector4(
+                        coarse.fadeParams.y,
+                        fine.fadeParams.y,
+                        coarse.fadeParams.z,
+                        fine.fadeParams.z
+                    )
+                );
+            }
+        }
+        public DetailSettings detailSettings = new DetailSettings();
+
+
         /// <summary>
         /// The body around which this ring is located.
         /// Used to get rotation data to set the LAN.
@@ -149,6 +251,11 @@ namespace Kopernicus.Components
         private static readonly Int32 ScatteringStrength = Shader.PropertyToID("scatteringStrength");
         private static readonly Int32 Anisotropy = Shader.PropertyToID("anisotropy");
         private static readonly Int32 BacklitTexture = Shader.PropertyToID("_BacklitTexture");
+
+        // Proximity fadeout parameters
+        private static readonly Int32 FadeoutStartDistance = Shader.PropertyToID("fadeoutStartDistance");
+        private static readonly Int32 FadeoutStopDistance = Shader.PropertyToID("fadeoutStopDistance");
+        private static readonly Int32 FadeoutMinAlpha = Shader.PropertyToID("fadeoutMinAlpha");
 
         /// <summary>
         /// Create the module list
@@ -247,6 +354,12 @@ namespace Kopernicus.Components
                     ringMr.sharedMaterial.SetTexture(InnerShadeTexture, innerShadeTexture);
                 }
 
+                // proximity fadeout
+                ringMr.sharedMaterial.SetFloat(FadeoutStartDistance, fadeoutStartDistance);
+                ringMr.sharedMaterial.SetFloat(FadeoutStopDistance, fadeoutStopDistance);
+                ringMr.sharedMaterial.SetFloat(FadeoutMinAlpha, fadeoutMinAlpha);
+
+                detailSettings.PatchMaterial(ringMr.sharedMaterial);
 
                 // start new stuff
 
@@ -343,7 +456,7 @@ namespace Kopernicus.Components
 
                 // Outer Radius
                 vertices.Add(outerScale * outerMultCurve.Evaluate(i) * eVert);
-                uvs.Add(Vector2.zero);
+                uvs.Add(Vector2.zero); 
             }
 
             for (Single i = 0f; i < 360f; i += degreeStep)
@@ -601,7 +714,9 @@ namespace Kopernicus.Components
             }
 
             transform.localScale = transform.parent.localScale;
+#if !FIX_ROTATION_JITTER
             SetRotation();
+#endif
 
             if (useNewShader && ringMr.sharedMaterial != null
                              && brightestStar != null && brightestStar.sun.transform != null)
@@ -639,7 +754,9 @@ namespace Kopernicus.Components
         private void FixedUpdate()
         {
             transform.localScale = transform.parent.localScale;
+#if !FIX_ROTATION_JITTER
             SetRotation();
+#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -655,7 +772,9 @@ namespace Kopernicus.Components
         private void LateUpdate()
         {
             transform.localScale = transform.parent.localScale;
+#if !FIX_ROTATION_JITTER
             SetRotation();
+#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -664,6 +783,38 @@ namespace Kopernicus.Components
             }
         }
 
+#if FIX_ROTATION_JITTER
+        private void OnPreCull()
+        {
+            if (referenceBody == null)
+            {
+                return;
+            }
+
+            Double parentRotation = referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod;
+            // Setting transform.rotation does NOT give us a consistent
+            // absolute orientation as you would expect from the documentation.
+            // "World" coordinates seem to be set differently each time the
+            // game is loaded. Instead, we use localRotation to orient the ring
+            // relative to its parent body, subtract off the parent body's
+            // rotation at the current moment in time, then add the LAN.
+            // Note that eastward (prograde) rotation is negative in trigonometry.
+            if (lockRotation || Math.Abs(rotationPeriod) < 0.001)
+            {
+                Double angle = parentRotation - longitudeOfAscendingNode;
+                QuaternionD rotation = QuaternionD.Euler(0.0, angle, 0.0);
+                transform.localRotation = rotation * (QuaternionD)this.rotation;
+            }
+            else
+            {
+                Single degreesPerSecond = -360f / rotationPeriod;
+                transform.localRotation =
+                    QuaternionD.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
+                    * (QuaternionD)rotation
+                    * QuaternionD.Euler(0, Planetarium.GetUniversalTime() * degreesPerSecond, 0);
+            }
+        }
+#else
         /// <summary>
         /// Populate our transform's rotation quaternion
         /// </summary>
@@ -702,5 +853,6 @@ namespace Kopernicus.Components
                     * rotation;
             }
         }
+#endif
     }
 }

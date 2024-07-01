@@ -59,6 +59,36 @@ Shader "Kopernicus/Rings"
       uniform int       innerShadeTiles;
       uniform float     innerShadeOffset;
 
+      // For fading out the ring on close proximity.
+      uniform float fadeoutStartDistance;
+      uniform float fadeoutStopDistance;
+      uniform float fadeoutMinAlpha;
+
+      // For adding extra detail to rings.
+      uniform float4 detailRegionsMask;
+      uniform sampler2D _DetailRegionsTex;
+      // Coarse detail, for larger scale noise.
+      uniform sampler2D _CoarseDetailNoiseTex;
+      uniform float4 coarseDetailAlphaMin;
+      uniform float4 coarseDetailAlphaMax;
+      uniform float coarseDetailStrength;
+      uniform float4 coarseDetailMask;
+      // Fine detail, for smaller scale noise.
+      uniform sampler2D _FineDetailNoiseTex;
+      uniform float4 fineDetailAlphaMin;
+      uniform float4 fineDetailAlphaMax;
+      uniform float fineDetailStrength;
+      uniform float4 fineDetailMask;
+      uniform float4 detailTiling;
+      // These are presented differently on the CPU side.
+      // The reason is to do SIMD smoothstep in the shader.
+      uniform float4 detailFade0; // distances at which detail strength is 0
+      uniform float4 detailFade1; // distances at which detail strength is 1
+      // fade0, xy: fade-in start for coarse, fine
+      // fade0, zw: fade-out stop for coarse, fine
+      // fade1, xy: fade-in stop for coarse, fine
+      // fade1, zw: fade-out start for coarse, fine
+
       #define M_PI 3.1415926535897932384626
 
       // This structure defines the inputs for each pixel
@@ -68,7 +98,7 @@ Shader "Kopernicus/Rings"
         float4 worldPos:     TEXCOORD0;
         // Moved from fragment shader
         float4 planetOrigin: TEXCOORD1;
-        float2 texCoord:     TEXCOORD2;
+        float3 texCoord:     TEXCOORD2;
       };
 
       // Set up the inputs for the fragment shader
@@ -78,7 +108,8 @@ Shader "Kopernicus/Rings"
         o.pos          = UnityObjectToClipPos(v.vertex);
         o.worldPos     = mul(unity_ObjectToWorld, v.vertex);
         o.planetOrigin = mul(unity_ObjectToWorld, float4(0, 0, 0, 1));
-        o.texCoord     = v.texcoord;
+        o.texCoord.xy  = v.texcoord.xy;
+        o.texCoord.z = atan2(v.vertex.z, v.vertex.x) * 0.15915494309;
         return o;
       }
 
@@ -155,7 +186,9 @@ Shader "Kopernicus/Rings"
 
         // Instead use the viewing direction (inspired from observing space engine rings)
         // Looks more interesting than I expected
-        float3 viewdir  = normalize(i.worldPos.xyz/i.worldPos.w - _WorldSpaceCameraPos);
+        float3 viewdir  = i.worldPos.xyz / i.worldPos.w - _WorldSpaceCameraPos;
+        float camDist   = length(viewdir);
+        viewdir /= camDist;
         float  mu       = dot(lightDir, -viewdir);
         float  dotLight = 0.5 * (mu + 1);
 
@@ -169,15 +202,50 @@ Shader "Kopernicus/Rings"
         // Planet shadow on ring, or inner shade shadow on inner face
         float shadow = getShadow(i);
 
-        //TODO: Fade in some noise here when getting close to the rings
-        //      Make it procedural noise?
+        // Fade in some noise here when getting close to the rings
+        // Detail UVs do not seem to be set up correctly for the ring.
+        float2 detailUV = i.texCoord.xz;
+        float4 detailMask = tex2D(_DetailRegionsTex, i.texCoord.xy) * detailRegionsMask;
+        float detailCoarse = dot(
+            detailMask * coarseDetailMask,
+            lerp(
+                coarseDetailAlphaMin,
+                coarseDetailAlphaMax,
+                tex2D(_CoarseDetailNoiseTex, detailTiling.xy * detailUV)
+            )
+        );
+        float detailFine = dot(
+            detailMask * fineDetailMask,
+            lerp(
+                fineDetailAlphaMin,
+                fineDetailAlphaMax,
+                tex2D(_FineDetailNoiseTex, detailTiling.zw * detailUV)
+            )
+        );
+        // xy, zw are (coarse, fine)
+        float4 detailFade = smoothstep(detailFade0, detailFade1, camDist);
+        // xy is fade-in, zw is fade-out. Multiply them to get a band pass function.
+        // Scale the max height of the band-pass function with the per-channel strength multiplier.
+        float2 detailBands = detailFade.xy * detailFade.zw * float2(coarseDetailStrength, fineDetailStrength);
+        // Detail is ready.
+
+        // Fade-out when close to the rings.
+        float proximityAlpha = smoothstep(fadeoutStopDistance, fadeoutStartDistance, camDist);
+        proximityAlpha = lerp(fadeoutMinAlpha, 1.0, proximityAlpha);
 
         // Look up the texture colors
-        float4 color = tex2D(_MainTex, i.texCoord);
-        float4 backColor = tex2D(_BacklitTexture, i.texCoord);
+        float4 color = tex2D(_MainTex, i.texCoord.xy);
+        float4 backColor = tex2D(_BacklitTexture, i.texCoord.xy);
         // Combine material color with texture color and shadow
         color.xyz = _Color * shadow * (albedoStrength * color.xyz * dotLight + scatteringStrength * backColor.xyz * mieScattering);
         color.w = max(color.w, backColor.w * mieScattering);
+
+        // Apply detail noise.
+        color.w = lerp(color.w, color.w * detailCoarse, detailBands.x);
+        color.w = lerp(color.w, color.w * detailFine,   detailBands.y);
+
+        // Multiply alpha with proximity fadeout.
+        color.w *= proximityAlpha;
 
         // I'm kinda proud of this shader so far, it's short and clean
         return color;
