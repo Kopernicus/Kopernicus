@@ -1,17 +1,23 @@
 Kopernicus
 ==============================
-June 17th, 2024
+July 2nd, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-205:
+New in this latest version release-206:
 
-1.) Fixed Kittopia heightmap exporting to use the proper range, stopping some heightmaps from clipping and other oddities.
+1.) Fixed the new Jool 1.10.x cloud shader sometimes not being stripped from modded bodies that share the name "Jool"
 
-2.) Added/edited a lot of the Kittopia export descriptions in Orbit and Atmoshpere nodes with the help of our resident scienfic genius, OhioBob.
+2.) Ring shader now supports up to 2 detail layers that fade in/out based on distance.
+
+3.) Ring shader can now fade out on close camera proximity to avoid noticeable craft / near clip plane intersection.
+
+4.) Fixed an issue where rings would jitter slightly on rotations.
+
+5.) Thanks to @TheWhiteGuardian for these ringshader improvements.
 
 About
 -----

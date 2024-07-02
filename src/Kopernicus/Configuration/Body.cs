@@ -290,7 +290,7 @@ namespace Kopernicus.Configuration
                 {
                     if (Versioning.version_minor > 9)
                     {
-                        if ((!Name.Equals("Jool")) || (Name.Equals("Jool") && (Template.Body.celestialBody.Radius > 6000000))) // This is a Jool-clone, or resized Jool.  We have to handle it special.
+                        if ((!Name.Equals("Jool")) || (Name.Equals("Jool") && (CelestialBody.Radius != 6000000))) // This is a Jool-clone, or resized Jool.  We have to handle it special.
                         {
                             try
                             {
@@ -303,7 +303,7 @@ namespace Kopernicus.Configuration
                             }
                             catch
                             {
-                                UnityEngine.Debug.Log("[Kopernicus] Old Jool detected, leaving shaders alone!");
+                                UnityEngine.Debug.Log("[Kopernicus] Error stripping shaders!");
                             }
                         }
                         else
