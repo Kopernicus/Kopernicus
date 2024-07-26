@@ -39,10 +39,6 @@ namespace Kopernicus
 {
     public class KopernicusSolarPanelCurved : PartModule
     {
-        //Strings for Localization
-        private static readonly string SP_status_DirectSunlight = Localizer.Format("#Kopernicus_UI_DirectSunlight");  // "Direct Sunlight"
-        private static readonly string SP_status_Underwater = Localizer.Format("#Kopernicus_UI_Underwater");          // "Underwater"
-
         //panel power cached value
         private double _cachedFlowRate = 0;
         private float cachedFlowRate = 0;
@@ -301,7 +297,7 @@ namespace Kopernicus
 
             if (HighLogic.LoadedSceneIsFlight)
             {
-                sunTransform = FlightGlobals.Bodies[0].bodyTransform;
+                sunTransform = KopernicusStar.Current.sun.bodyTransform;
                 flight = true;
             }
             else
