@@ -33,7 +33,7 @@ namespace Kopernicus.Components
 {
 
     /// <summary>
-    /// This is the replacement Kopernicus Solar Panel extension.
+    /// This is the replacement Kopernicus Solar Panel extension for standard and stock-alike panels.
     /// </summary>
     public class KopernicusSolarPanel : ModuleDeployableSolarPanel
     {
