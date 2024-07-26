@@ -46,8 +46,6 @@ namespace Kopernicus.RuntimeUtility
 
         private BodyColliderTracker[] bodies;
 
-        private VesselColliderTracker[] vessels;
-
         void Start()
         {
             switch (HighLogic.LoadedScene)
@@ -73,29 +71,19 @@ namespace Kopernicus.RuntimeUtility
 
             for (int i = FlightGlobals.Bodies.Count; i-- > 0;)
                 bodies[i] = new BodyColliderTracker(FlightGlobals.Bodies[i]);
-
-            vessels = new VesselColliderTracker[FlightGlobals.Vessels.Count];
-
-            for (int i = FlightGlobals.Vessels.Count; i-- > 0;)
-                vessels[i] = new VesselColliderTracker(FlightGlobals.Vessels[i]);
         }
 
         void FixedUpdate()
         {
             foreach (BodyColliderTracker bodyColliders in bodies)
                 bodyColliders.CheckDistancesAndSetCollidersState();
-            foreach (VesselColliderTracker vesselColliders in vessels)
-                vesselColliders.CheckDistancesAndSetCollidersState();
         }
 
         void OnDestroy()
         {
             if (bodies != null)
-                foreach (BodyColliderTracker bodyColliders in bodies) 
+                foreach (BodyColliderTracker bodyColliders in bodies)
                     bodyColliders.RestoreStateOnDestroy();
-            if (vessels != null)
-                foreach (VesselColliderTracker vesselColliders in vessels)
-                    vesselColliders.RestoreStateOnDestroy();
         }
 
         private class BodyColliderTracker
@@ -183,71 +171,6 @@ namespace Kopernicus.RuntimeUtility
                 if (hasScaled && !scaledEnabled)
                 {
                     scaledSpaceCollider.enabled = true;
-                }
-            }
-        }
-        private class VesselColliderTracker
-        {
-            private Vessel vessel;
-            private List<Collider> disabledColliders;
-            private bool localEnabled = true;
-            private bool scaledEnabled = true;
-            private bool hasScaled;
-
-            public VesselColliderTracker(Vessel v)
-            {
-                this.vessel = v;
-            }
-
-            public void CheckDistancesAndSetCollidersState()
-            {
-                double localDistFromOrigin = vessel.transform.position.magnitude;
-                if (localEnabled && localDistFromOrigin > DISABLE_DIST)
-                {
-                    localEnabled = false;
-                    vessel.GetComponentsInChildren(true, colliderBuffer);
-
-                    if (disabledColliders == null)
-                        disabledColliders = new List<Collider>(colliderBuffer.Count);
-
-                    for (int i = colliderBuffer.Count; i-- > 0;)
-                    {
-                        Collider collider = colliderBuffer[i];
-                        if (collider.enabled)
-                        {
-                            disabledColliders.Add(collider);
-                            collider.enabled = false;
-                        }
-                    }
-
-                    colliderBuffer.Clear();
-                }
-                else if (!localEnabled && localDistFromOrigin < ENABLE_DIST)
-                {
-                    localEnabled = true;
-                    for (int i = disabledColliders.Count; i-- > 0;)
-                    {
-                        Collider collider = disabledColliders[i];
-                        if (!collider.IsDestroyed())
-                            collider.enabled = true;
-                    }
-
-                    disabledColliders.Clear();
-                }
-            }
-
-            public void RestoreStateOnDestroy()
-            {
-                if (!localEnabled)
-                {
-                    for (int i = disabledColliders.Count; i-- > 0;)
-                    {
-                        Collider collider = disabledColliders[i];
-                        if (collider.IsDestroyed())
-                            continue;
-
-                        collider.enabled = true;
-                    }
                 }
             }
         }
