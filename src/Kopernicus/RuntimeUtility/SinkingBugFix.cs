@@ -82,7 +82,7 @@ namespace Kopernicus.RuntimeUtility
         void OnDestroy()
         {
             if (bodies != null)
-                foreach (BodyColliderTracker bodyColliders in bodies) 
+                foreach (BodyColliderTracker bodyColliders in bodies)
                     bodyColliders.RestoreStateOnDestroy();
         }
 
