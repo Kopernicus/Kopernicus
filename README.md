@@ -11,7 +11,7 @@ New in this latest version release-207:
 
 1.) NearFutureSolar support added in Kopernicus Multistar code, in particular for their custom curved panels.
 
-2.) That's all for now, slow month all, sorry.
+2.) This month will be targeting mod support for the multistar system where it previously was broken, please post any mods you find where panels do not work in multistar and I will try to add support.
 
 About
 -----

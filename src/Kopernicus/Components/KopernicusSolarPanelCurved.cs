@@ -39,12 +39,25 @@ namespace Kopernicus
 {
     public class KopernicusSolarPanelCurved : PartModule
     {
+        //Strings for Localization
+        private static readonly string button_Auto = Localizer.Format("#Kopernicus_UI_AutoTracking");                 // "Auto"
+        private static readonly string SelectBody = Localizer.Format("#Kopernicus_UI_SelectBody");                    // "Select Tracking Body"
+        private static readonly string SelectBody_Msg = Localizer.Format("#Kopernicus_UI_SelectBody_Msg");            // "Please select the Body you want to track with this Solar Panel."
         //panel power cached value
         private double _cachedFlowRate = 0;
         private float cachedFlowRate = 0;
 
         //timer value
         private int frameTimer = 0;
+
+        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_UI_TrackingBody", isPersistant = true)]
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+        public String trackingBodyName = "";
+
+        [KSPField(isPersistant = true)]
+        private Boolean _manualTracking;
+
+        private CelestialBody trackingBody = null;
 
         //declare internal float curves
         private static readonly FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
@@ -117,7 +130,6 @@ namespace Kopernicus
         [KSPEvent(guiActive = false, guiName = "Toggle Panel", active = false)]
         public void TogglePanels()
         {
-
             Toggle();
             if (HighLogic.LoadedSceneIsEditor)
                 foreach (Part p in part.symmetryCounterparts)
@@ -183,13 +195,49 @@ namespace Kopernicus
         // Toggle Panels
         public void Toggle()
         {
-
             if (State == ModuleDeployablePart.DeployState.EXTENDED)
                 Retract();
             else if (State == ModuleDeployablePart.DeployState.RETRACTED)
                 Deploy();
             else
                 return;
+        }
+
+        [KSPEvent(active = true, guiActive = false, guiName = "#Kopernicus_UI_SelectBody")]
+        public void ManualTracking()
+        {
+            if (KopernicusStar.UseMultiStarLogic)
+            {
+                KopernicusStar[] orderedStars = KopernicusStar.Stars
+                    .OrderBy(s => Vector3.Distance(vessel.transform.position, s.sun.position)).ToArray();
+                Int32 stars = orderedStars.Count();
+                DialogGUIBase[] options = new DialogGUIBase[stars + 1];
+                // Assemble the buttons
+                options[0] = new DialogGUIButton(button_Auto, () => { _manualTracking = false; }, true); //Auto
+                for (Int32 i = 0; i < stars; i++)
+                {
+                    CelestialBody body = orderedStars[i].sun;
+                    options[i + 1] = new DialogGUIButton
+                    (
+                        body.bodyDisplayName.Replace("^N", ""),
+                        () => SetTrackingBody(body),
+                        true
+                    );
+                }
+
+                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new MultiOptionDialog(
+                    "SelectTrackingBody",
+                    SelectBody_Msg, //Please select the Body you want to track with this Solar Panel.
+                    SelectBody, //Select Tracking Body
+                    UISkinManager.GetSkin("MainMenuSkin"),
+                    options), false, UISkinManager.GetSkin("MainMenuSkin"));
+            }
+        }
+
+        public void SetTrackingBody(CelestialBody sun)
+        {
+            _manualTracking = true;
+            trackingBody = sun;
         }
 
         // Get the state
@@ -244,7 +292,6 @@ namespace Kopernicus
         }
         public void Start()
         {
-
             panelTransforms = part.FindModelTransforms(PanelTransformName);
             panelCount = panelTransforms.Length;
 
@@ -343,6 +390,30 @@ namespace Kopernicus
                 TemperatureEfficCurve.Add(1200f, 0.134f, -0.00035f, -0.00035f);
                 TemperatureEfficCurve.Add(1900f, 0.02f, -3.72E-05f, -3.72E-05f);
                 TemperatureEfficCurve.Add(2500f, 0.01f, 0f, 0f);
+                if (HighLogic.LoadedSceneIsFlight)
+                {
+                    Fields["trackingBodyName"].guiActive = true;
+                    Events["ManualTracking"].guiActive = true;
+                    if (!trackingBodyName.Equals(""))
+                    {
+                        trackingBody = GetTrackingBodyFromName(trackingBodyName);
+                    }
+                    if (trackingBody == null)
+                    {
+                        trackingBody = KopernicusStar.Current.sun;
+                    }
+                    if (_manualTracking)
+                    {
+                        if (trackingBody != null)
+                        {
+                            SetTrackingBody(trackingBody);
+                        }
+                        else
+                        {
+                            _manualTracking = false;
+                        }
+                    }
+                }
             }
         }
 
@@ -362,8 +433,9 @@ namespace Kopernicus
                         if (frameTimer >
                             (50 * Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate))
                         {
-                            CelestialBody trackingStar = KopernicusStar.Current.sun;
+                            CelestialBody trackingStar = trackingBody;
                             frameTimer = 0;
+                            KopernicusStar bestStar = KopernicusStar.CelestialBodies[trackingStar];
                             Double totalFlux = 0;
                             Double totalFlow = 0;
                             energyFlow = 0;
@@ -375,6 +447,9 @@ namespace Kopernicus
                                 KopernicusStar star = KopernicusStar.Stars[s];
                                 // Use this star
                                 star.shifter.ApplyPhysics();
+
+                                // Change the tracking body
+                                trackingBody = star.sun;
 
                                 //Calculate flux
                                 double starFluxAtHome = 0;
@@ -390,6 +465,7 @@ namespace Kopernicus
                                 if (bestFlux < starFlux)
                                 {
                                     bestFlux = starFlux;
+                                    bestStar = star;
                                 }
                                 // Add to TotalFlux and EC tally
                                 totalFlux += starFlux;
@@ -462,6 +538,9 @@ namespace Kopernicus
                                                  (1360 / PhysicsGlobals.SolarLuminosityAtHome);
                                 }
                             }
+                            // Restore the starting star
+                            trackingBody = trackingStar;
+                            KopernicusStar.CelestialBodies[trackingStar].shifter.ApplyPhysics();
                             vessel.solarFlux = totalFlux;
                             //Add to new output
                             energyFlow = (float)totalFlow;
@@ -482,6 +561,11 @@ namespace Kopernicus
                             //caching logic
                             cachedFlowRate = energyFlow;
                             _cachedFlowRate = _energyFlow;
+                            // Setup next tracking body
+                            if ((bestStar != null && bestStar != trackingBody) && (!_manualTracking))
+                            {
+                                trackingBody = bestStar.sun;
+                            }
                         }
                         else
                         {
@@ -512,6 +596,16 @@ namespace Kopernicus
 
                         // Restore The Current Star
                         KopernicusStar.Current.shifter.ApplyPhysics();
+                    }
+                    else if (Deployable && (State == ModuleDeployablePart.DeployState.BROKEN))
+                    {
+                        SunExposure = Localizer.Format("#LOC_NFSolar_ModuleCurvedSolarPanel_Field_SunExposure_Broken");
+                        EnergyFlow = Localizer.Format("#LOC_NFSolar_ModuleCurvedSolarPanel_Field_EnergyFlow_Broken");
+                    }
+                    else if (Deployable && (State == ModuleDeployablePart.DeployState.RETRACTED))
+                    {
+                        SunExposure = Localizer.Format("#LOC_NFSolar_ModuleCurvedSolarPanel_Field_SunExposure_Retracted");
+                        EnergyFlow = Localizer.Format("#LOC_NFSolar_ModuleCurvedSolarPanel_Field_EnergyFlow_Retracted");
                     }
                 }
                 else
@@ -614,7 +708,16 @@ namespace Kopernicus
         }
         public void Update()
         {
+            if (KopernicusStar.UseMultiStarLogic)
+            {
+                // Update the name
+                trackingBodyName = trackingBody.bodyDisplayName.Replace("^N", "");
 
+                if (!_manualTracking)
+                {
+                    trackingBodyName = Localizer.Format("#Kopernicus_UI_AutoTrackingBodyName", trackingBodyName);
+                }
+            }
             if (Deployable)
             {
                 for (int i = 0; i < deployStates.Length; i++)
@@ -639,6 +742,19 @@ namespace Kopernicus
                     Events["RetractPanels"].active = !Events["RetractPanels"].active;
                 }
             }
+        }
+
+        private CelestialBody GetTrackingBodyFromName(string name)
+        {
+            for (Int32 s = 0; s < FlightGlobals.Bodies.Count; s++)
+            {
+                CelestialBody body = FlightGlobals.Bodies[s];
+                if (body.bodyDisplayName.Replace("^N", "") == name)
+                {
+                    return body;
+                }
+            }
+            return null;
         }
 
         private bool PartLOS(Transform refXForm, out string obscuringPart, CelestialBody sun)
