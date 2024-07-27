@@ -1,17 +1,15 @@
 Kopernicus
 ==============================
-July 26th, 2024
+July 27th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-207:
+New in this latest version release-208:
 
-1.) NearFutureSolar support added in Kopernicus Multistar code, in particular for their custom curved panels.
-
-2.) This month will be targeting mod support for the multistar system where it previously was broken, please post any mods you find where panels do not work in multistar and I will try to add support.
+1.) Hotfix for previos solar support breaking KerbalismDefault profile with NearFutureSolar curved panels.
 
 About
 -----
