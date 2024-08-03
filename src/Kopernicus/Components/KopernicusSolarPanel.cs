@@ -212,10 +212,6 @@ namespace Kopernicus.Components
             if (SolarPanel == null && !GetSolarPanelModule())
                 return;
 
-            if (ROFlag)
-            {
-
-            }
             if (HighLogic.LoadedSceneIsEditor) return;
 
             // apply states changes we have done trough automation
