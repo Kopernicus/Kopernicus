@@ -207,10 +207,6 @@ namespace Kopernicus.Components
             if (SolarPanel == null && !GetSolarPanelModule())
                 return;
 
-            if (ROFlag)
-            {
-
-            }
             if (HighLogic.LoadedSceneIsEditor) return;
 
             // apply states changes we have done trough automation
@@ -287,7 +283,7 @@ namespace Kopernicus.Components
             Events["ManualTracking"].guiActive = state == PanelState.Extended || state == PanelState.ExtendedFixed || state == PanelState.Static;
 
             // setup target module animation for custom star tracking
-            SolarPanel.SetTrackedBody(FlightGlobals.Bodies[trackedSunIndex]);
+            SolarPanel.SetTrackedBody(trackedSun);
 
             // set how many decimal points are needed to show the panel Ec output in the UI
             if (nominalRate < 0.1) rateFormat = "F4";
