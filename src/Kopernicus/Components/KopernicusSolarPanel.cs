@@ -22,7 +22,6 @@
 * 
 * https://kerbalspaceprogram.com
 */
-// Thanks to Kerbalism for the source code
 
 using System.Collections.Generic;
 using System.Text;
@@ -104,17 +103,6 @@ namespace Kopernicus.Components
         private static StringBuilder sb=new StringBuilder(256);
 
         private double SunlightFactor;
-        /// <summary> similar to solar flux total but doesn't account for atmo absorbtion nor occlusion</summary>
-		private double rawSolarFluxTotal;
-        private double EnvSolarFluxTotal => solarFluxTotal; double solarFluxTotal;
-        /// <summary>
-        /// solar flux at vessel position in W/m², include atmospheric absorption if inside an atmosphere (atmo_factor)
-        /// <para/> zero when the vessel is in shadow while evaluation is non-analytic (low timewarp rates)
-        /// <para/> in analytic evaluation, this include fractional sunlight / atmo absorbtion
-        /// </summary>
-        private double SolarFlux => solarFlux; double solarFlux;
-        /// <summary> proportion of this sun flux in the total flux at the vessel position (ignoring atmoshere and occlusion) </summary>
-        private double FluxProportion => fluxProportion; double fluxProportion;
 
 
         public enum PanelState
@@ -163,6 +151,12 @@ namespace Kopernicus.Components
         private static string SolarPanelFixer_AutoTrack = GetLoc("SolarPanelFixer_AutoTrack"); // "[Auto] : "
 
         CelestialBody trackedSun;
+        //declare internal float curves
+        private static readonly FloatCurve temperatureEfficCurve= new FloatCurve();
+        private static readonly FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
+        private static readonly FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
+
+        double cacheExposureFactor;
         #endregion
 
         #region KSP/Unity methods + background update
@@ -184,6 +178,7 @@ namespace Kopernicus.Components
                     manualTracking = true;
                     trackedSunIndex = body.flightGlobalsIndex;
                     SolarPanel.SetTrackedBody(body);
+                    trackedSun = FlightGlobals.Bodies[trackedSunIndex];
                 }, true);
             }
 
@@ -212,6 +207,10 @@ namespace Kopernicus.Components
             if (SolarPanel == null && !GetSolarPanelModule())
                 return;
 
+            if (ROFlag)
+            {
+
+            }
             if (HighLogic.LoadedSceneIsEditor) return;
 
             // apply states changes we have done trough automation
@@ -229,6 +228,38 @@ namespace Kopernicus.Components
 
         public override void OnStart(StartState startState)
         {
+            temperatureEfficCurve.Add(4f, 1.2f, 0.0f, -0.0006f);
+            temperatureEfficCurve.Add(300f, 1f, -0.0008f, -0.0008f);
+            temperatureEfficCurve.Add(1200f, 0.134f, -0.00035f, -0.00035f);
+            temperatureEfficCurve.Add(1900f, 0.02f, -3.72E-05f, -3.72E-05f);
+            temperatureEfficCurve.Add(2500f, 0.01f, 0.0f, 0.0f);
+            AtmosphericAttenutationAirMassMultiplier.Add(0f, 1f, 0f, 0f);
+            AtmosphericAttenutationAirMassMultiplier.Add(5f, 0.982f, -0.010f, -0.010f);
+            AtmosphericAttenutationAirMassMultiplier.Add(10f, 0.891f, -0.032f, -0.032f);
+            AtmosphericAttenutationAirMassMultiplier.Add(15f, 0.746f, -0.025f, -0.025f);
+            AtmosphericAttenutationAirMassMultiplier.Add(20f, 0.657f, -0.014f, -0.014f);
+            AtmosphericAttenutationAirMassMultiplier.Add(30f, 0.550f, -0.0081f, -0.0081f);
+            AtmosphericAttenutationAirMassMultiplier.Add(40f, 0.484f, -0.0053f, -0.0053f);
+            AtmosphericAttenutationAirMassMultiplier.Add(50f, 0.439f, -0.0039f, -0.0039f);
+            AtmosphericAttenutationAirMassMultiplier.Add(60f, 0.405f, -0.0030f, -0.0030f);
+            AtmosphericAttenutationAirMassMultiplier.Add(80f, 0.357f, -0.0020f, -0.0020f);
+            AtmosphericAttenutationAirMassMultiplier.Add(100f, 0.324f, -0.0014f, -0.0014f);
+            AtmosphericAttenutationAirMassMultiplier.Add(150f, 0.271f, -0.00079f, -0.00079f);
+            AtmosphericAttenutationAirMassMultiplier.Add(200f, 0.239f, -0.00052f, -0.00052f);
+            AtmosphericAttenutationAirMassMultiplier.Add(300f, 0.200f, -0.00029f, -0.00029f);
+            AtmosphericAttenutationAirMassMultiplier.Add(500f, 0.159f, -0.00014f, -0.00014f);
+            AtmosphericAttenutationAirMassMultiplier.Add(800f, 0.130f, -0.00007f, -0.00007f);
+            AtmosphericAttenutationAirMassMultiplier.Add(1200f, 0.108f, -0.00004f, 0f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(0f, 1f, 0f, 0f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(15f, 0.985f, -0.0020f, -0.0020f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(30f, 0.940f, -0.0041f, -0.0041f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(45f, 0.862f, -0.0064f, -0.0064f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(60f, 0.746f, -0.0092f, -0.0092f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(75f, 0.579f, -0.0134f, -0.0134f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(90f, 0.336f, -0.0185f, -0.0185f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(105f, 0.100f, -0.008f, -0.008f);
+            AtmosphericAttenutationSolarAngleMultiplier.Add(120f, 0.050f, 0f, 0f);
+
             // don't break tutorial scenarios
             // TODO : does this actually work ?
             if (DisableScenario(this)) return;
@@ -263,6 +294,8 @@ namespace Kopernicus.Components
             else if (nominalRate < 1.0) rateFormat = "F3";
             else if (nominalRate < 10.0) rateFormat = "F2";
             else rateFormat = "F1";
+
+            rateFormat = "F2";
         }
 
         public void Update()
@@ -280,7 +313,7 @@ namespace Kopernicus.Components
             if (Events["ManualTracking"].active && (state == PanelState.Extended || state == PanelState.ExtendedFixed || state == PanelState.Static))
             {
                 Events["ManualTracking"].guiActive = true;
-                Events["ManualTracking"].guiName = BuildString(SolarPanelFixer_Trackedstar + " ", manualTracking ? ": " : SolarPanelFixer_AutoTrack, FlightGlobals.Bodies[trackedSunIndex].bodyDisplayName.Replace("^N", ""));//"Tracked star"[Auto] : "
+                Events["ManualTracking"].guiName = BuildString(SolarPanelFixer_Trackedstar + " ", manualTracking ? ":  " : SolarPanelFixer_AutoTrack, FlightGlobals.Bodies[trackedSunIndex].bodyDisplayName.Replace("^N", ""));//"Tracked star"[Auto] : "
             }
             else
             {
@@ -298,28 +331,21 @@ namespace Kopernicus.Components
                     panelStatusWear = "100 %".ToString();
                 }
             }
-
+            Fields["panelStatusEnergy"].guiActive = false;
+            Fields["panelStatusSunAOA"].guiActive = false;
             switch (exposureState)
             {
                 case ExposureState.InShadow:
                     panelStatus = "<color=#ff2222>" + SolarPanelFixer_inshadow + "</color>";//in shadow
-                    Fields["panelStatusEnergy"].guiActive = false;
-                    Fields["panelStatusSunAOA"].guiActive = false;
                     break;
                 case ExposureState.OccludedTerrain:
                     panelStatus = "<color=#ff2222>" + SolarPanelFixer_occludedbyterrain + "</color>";//occluded by terrain
-                    Fields["panelStatusEnergy"].guiActive = false;
-                    Fields["panelStatusSunAOA"].guiActive = false;
                     break;
                 case ExposureState.OccludedPart:
                     panelStatus = BuildString("<color=#ff2222>", Localizer.Format(SolarPanelFixer_occludedby, mainOccludingPart), "</color>");//occluded by 
-                    Fields["panelStatusEnergy"].guiActive = false;
-                    Fields["panelStatusSunAOA"].guiActive = false;
                     break;
                 case ExposureState.BadOrientation:
                     panelStatus = "<color=#ff2222>" + SolarPanelFixer_badorientation + "</color>";//bad orientation
-                    Fields["panelStatusEnergy"].guiActive = false;
-                    Fields["panelStatusSunAOA"].guiActive = false;
                     break;
                 case ExposureState.Disabled:
                     switch (state)
@@ -353,6 +379,7 @@ namespace Kopernicus.Components
                     }
                     else
                         num = currentOutput;
+
                     sb.Append(num.ToString(rateFormat));
                     sb.Append(" ");
                     sb.Append(EcUIUnit);
@@ -378,9 +405,6 @@ namespace Kopernicus.Components
             Vector3d direction;
             double distance;
 
-            rawSolarFluxTotal = 0;
-            solarFluxTotal = 0;
-
             if (SolarPanel == null)
             {
                 return;
@@ -388,8 +412,8 @@ namespace Kopernicus.Components
 
             if (HighLogic.LoadedSceneIsFlight && vessel != null && vessel.situation == Vessel.Situations.PRELAUNCH)
                 launchUT = Planetarium.GetUniversalTime();
-            // can't produce anything if not deployed, broken, etc
 
+            // can't produce anything if not deployed, broken, etc
             PanelState newState = SolarPanel.GetState();
             if (state != newState)
             {
@@ -412,7 +436,6 @@ namespace Kopernicus.Components
             Vector3d position = VesselPosition(vesselActive);
             KopernicusStar[] orderedStarsUse = KopernicusStar.Stars
                     .OrderBy(s => Vector3.Distance(vesselActive.transform.position, s.sun.position)).ToArray();
-            trackedSun = FlightGlobals.Bodies[trackedSunIndex];
 
             if (!manualTracking && trackedSun != orderedStarsUse[0])
             {
@@ -420,7 +443,8 @@ namespace Kopernicus.Components
                 trackedSun = orderedStarsUse[0].sun;
                 SolarPanel.SetTrackedBody(trackedSun);
             }
-            SunlightFactor = IsBodyVisible(FlightGlobals.ActiveVessel, position,
+
+            SunlightFactor = IsBodyVisible(vesselActive, position,
                 trackedSun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
 
             if (SunlightFactor == 0.0)
@@ -429,75 +453,94 @@ namespace Kopernicus.Components
                 exposureState = ExposureState.Exposed;
 
             exposureFactor = 0.0;
+            Double totalFlux = 0;
+            Double totalFlow = 0;
+            double _exposureFactor = 0;
             // iterate over all stars, compute the exposure factor
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
                 KopernicusStar star = KopernicusStar.Stars[s];
+                // Use this star
+                star.shifter.ApplyPhysics();
                 Vector3d sunDirection = (star.sun.position - position).normalized;
 
-                SunlightFactor = IsBodyVisible(FlightGlobals.ActiveVessel, position,
-                    star.sun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
+                // Add to TotalFlux and EC tally
+                float panelEffectivness = 0;
+                //Now for some fancy atmospheric math
+                float atmoDensityMult = 1;
+                float atmoAngleMult = 1;
+                float tempMult = 1;
+                if (vessel.atmDensity > 0)
+                {
+                    float horizonAngle = (float)Math.Acos(FlightGlobals.currentMainBody.Radius /
+                        (FlightGlobals.currentMainBody.Radius +FlightGlobals.ship_altitude));
+
+                    float sunZenithAngleDeg = Vector3.Angle(FlightGlobals.upAxis, star.sun.position);
+
+                    Double gravAccelParameter = (vessel.mainBody.gravParameter /
+                        Math.Pow(vessel.mainBody.Radius + FlightGlobals.ship_altitude, 2));
+
+                    float massOfAirColumn =(float)(FlightGlobals.getStaticPressure() / gravAccelParameter);
+
+                    tempMult = temperatureEfficCurve.Evaluate((float)vessel.atmosphericTemperature);
+                    atmoDensityMult = AtmosphericAttenutationAirMassMultiplier.Evaluate(massOfAirColumn);
+                    atmoAngleMult = AtmosphericAttenutationSolarAngleMultiplier.Evaluate(sunZenithAngleDeg);
+                }
+
+                double starFlux = 0;
+                //Calculate flux
+                double starFluxAtHome = 0;
+                if (PhysicsGlobals.SolarLuminosityAtHome != 0)
+                {
+                    starFluxAtHome = 1360 / PhysicsGlobals.SolarLuminosityAtHome;
+                }
+                starFlux = star.CalculateFluxAt(vessel) * starFluxAtHome;
+
+                totalFlux += starFlux;
+
                 double sunCosineFactor = 0.0;
                 double sunOccludedFactor = 0.0;
                 string occludingPart = null;
 
-                // Get the cosine factor (alignement between the sun and the panel surface)
-                sunCosineFactor = SolarPanel.GetCosineFactor(sunDirection);
+                // Compute final aggregate exposure factor
+                double sunExposureFactor = 0.0f;
 
-                if (sunCosineFactor == 0.0)
+                CalExposureAndCosin(star, sunDirection, out sunCosineFactor, out sunOccludedFactor, out occludingPart);
+                sunExposureFactor = sunCosineFactor * sunOccludedFactor * (starFlux / totalFlux);
+
+                // Only apply the exposure factor if not in shadow (body occlusion check)
+                if (SunlightFactor == 1.0 && star.sun == trackedSun) exposureFactor += sunExposureFactor;
+                else if (SunlightFactor == 0.0 && star.sun == trackedSun) exposureState = ExposureState.InShadow;
+
+                if (manualTracking && trackedSun != orderedStarsUse[0].sun)
                 {
-                    // If this is the tracked sun and the panel is not oriented toward the sun, update the gui info string.
-                    if (star.sun == trackedSun)
-                        exposureState = ExposureState.BadOrientation;
+                    Vector3d sunDirectionN = (orderedStarsUse[0].sun.position - position).normalized;
+                    double sunCosineFactorN = 0.0;
+                    double sunOccludedFactorN = 0.0;
+                    CalExposureAndCosin(orderedStarsUse[0], sunDirectionN, out sunCosineFactorN, out sunOccludedFactorN, out occludingPart);
+                    _exposureFactor = 0.0f;
+                    _exposureFactor = sunCosineFactorN * sunOccludedFactorN * (starFlux / totalFlux);
                 }
                 else
                 {
-                    // The panel is oriented toward the sun, do a physic raycast to check occlusion from parts, terrain, buildings...
-                    sunOccludedFactor = SolarPanel.GetOccludedFactor(sunDirection, out occludingPart);
-
-                    // If this is the tracked sun and the panel is occluded, update the gui info string. 
-                    if (star.sun == trackedSun && sunOccludedFactor == 0.0)
-                    {
-                        if (occludingPart != null)
-                        {
-                            exposureState = ExposureState.OccludedPart;
-                            mainOccludingPart = EllipsisMiddle(occludingPart, 15);
-                        }
-                        else
-                        {
-                            exposureState = ExposureState.OccludedTerrain;
-                        }
-                    }
+                    _exposureFactor = exposureFactor;
                 }
-                double rawSolarFlux = CaSolarFlux(distance,star.sun);
-                solarFlux = rawSolarFlux * SunlightFactor * AtmosphereFactor(FlightGlobals.ActiveVessel.mainBody, position, direction);
-                rawSolarFluxTotal += rawSolarFlux;
-                solarFluxTotal += solarFlux;
-                fluxProportion = rawSolarFlux / rawSolarFluxTotal;
-
-                // ignore insignifiant flux from distant stars
-                if (star.sun != trackedSun && solarFluxTotal < 1e-6)
-                    continue;
-
-                // Compute final aggregate exposure factor
-                double sunExposureFactor=0.0f;
-                if (!manualTracking && trackedSun == star.sun)
-                    sunExposureFactor = sunCosineFactor * sunOccludedFactor * FluxProportion;
-                else if (trackedSun != star.sun)
-                    sunExposureFactor = 0f;
 
 
-                // Only apply the exposure factor if not in shadow (body occlusion check)
-                if (SunlightFactor == 1.0) exposureFactor += sunExposureFactor;
-                else if (star.sun == trackedSun) exposureState = ExposureState.InShadow;
+                if ((_exposureFactor != 0) && (tempMult != 0) && (atmoAngleMult != 0) && (atmoDensityMult != 0))
+                {
+                    panelEffectivness = ((float)nominalRate / 24.3999996185303f) / 56.37091313591871f * (float)_exposureFactor * tempMult *
+                                            atmoAngleMult *
+                                            atmoDensityMult; //56.blabla is a weird constant we use to turn flux into EC
+                }
+                if (starFluxAtHome > 0)
+                {
+                    totalFlow += ((starFlux) * panelEffectivness) /
+                                 (1360 / PhysicsGlobals.SolarLuminosityAtHome);
+                }
             }
-
-            // get solar flux and deduce a scalar based on nominal flux at 1AU
-            // - this include atmospheric absorption if inside an atmosphere
-            // - at high timewarps speeds, atmospheric absorption is analytical (integrated over a full revolution)
-            double distanceFactor = EnvSolarFluxTotal / 1360;
-
-
+            KopernicusStar.CelestialBodies[trackedSun].shifter.ApplyPhysics();
+            vessel.solarFlux = totalFlux;
             // get wear factor (time based output degradation)
             wearFactor = 1.0;
             if (timeEfficCurve?.Curve.keys.Length > 1)
@@ -505,9 +548,9 @@ namespace Kopernicus.Components
 
             // get final output rate in EC/s
             if (ROFlag)
-                currentOutput = nominalRate * distanceFactor * exposureFactor * wearFactor;
+                currentOutput = totalFlow * wearFactor;
             else
-                currentOutput = nominalRate * distanceFactor * exposureFactor;
+                currentOutput = totalFlow;
 
             // ignore very small outputs
             if (currentOutput < 1e-10)
@@ -677,61 +720,6 @@ namespace Kopernicus.Components
             return visibleBodies;
         }
 
-        public static double AtmosphereFactor(CelestialBody body, Vector3d position, Vector3d sun_dir)
-        {
-            // get up vector & altitude
-            Vector3d up = position - body.position;
-            double altitude = up.magnitude;
-            up /= altitude;
-            altitude -= body.Radius;
-            altitude = Math.Abs(altitude); //< deal with underwater & fp precision issues
-
-            double static_pressure = body.GetPressure(altitude);
-            if (static_pressure > 0.0)
-            {
-                double density = body.GetDensity(static_pressure, body.GetTemperature(altitude));
-                body.GetSolarAtmosphericEffects(Vector3d.Dot(up, sun_dir), density, out _, out double stockFluxFactor);
-                return stockFluxFactor;
-            }
-            return 1.0;
-        }
-
-        static double au = 0.0;
-        /// <summary> Distance between the home body and its main sun</summary>
-		public static double AU
-        {
-            get
-            {
-                if (au == 0.0)
-                {
-                    CelestialBody home = FlightGlobals.GetHomeBody();
-                    au = (home.position - home.referenceBody.position).magnitude;
-                }
-                return au;
-            }
-        }
-        double starFluxAtHome;
-        public double CaSolarFlux(double distance, CelestialBody body, bool fromSunSurface = true)
-        {
-            foreach (var c in body.scaledBody.GetComponentsInChildren<MonoBehaviour>(true))
-            {
-                if (c.GetType().ToString().Contains("LightShifter"))
-                {
-                    starFluxAtHome = ReflectionValue<double>(c, "solarLuminosity");
-                }
-            }
-            // if nothing was found, assume the sun is the stock default
-            if (KopernicusStar.Stars.Count == 1)
-            {
-                starFluxAtHome = PhysicsGlobals.SolarLuminosityAtHome;
-            }
-            // note: for consistency we always consider distances to bodies to be relative to the surface
-            // however, flux, luminosity and irradiance consider distance to the sun center, and not surface
-            if (fromSunSurface) distance += body.Radius;
-            // calculate solar flux
-            return (starFluxAtHome * AU * AU * Math.PI * 4.0) / (Math.PI * 4 * distance * distance);
-        }
-
         public static Vector3d VesselPosition(Vessel v)
         {
             // the issue
@@ -777,18 +765,18 @@ namespace Kopernicus.Components
         }
 
         ///<summary>
-		/// set a value from a module using reflection
-		/// note: useful when the module is from another assembly, unknown at build time
-		/// note: useful when the value isn't persistent
-		/// note: this function break hard when external API change, by design
-		///</summary>
-		public static void ReflectionValue<T>(PartModule m, string value_name, T value)
+        /// set a value from a module using reflection
+        /// note: useful when the module is from another assembly, unknown at build time
+        /// note: useful when the value isn't persistent
+        /// note: this function break hard when external API change, by design
+        ///</summary>
+        public static void ReflectionValue<T>(PartModule m, string value_name, T value)
         {
             m.GetType().GetField(value_name, flags).SetValue(m, value);
         }
 
         ///<summary> Sets the value of a private field via reflection </summary>
-		public static void ReflectionValue<T>(object instance, string value_name, T value)
+        public static void ReflectionValue<T>(object instance, string value_name, T value)
         {
             instance.GetType().GetField(value_name, flags).SetValue(instance, value);
         }
@@ -800,7 +788,7 @@ namespace Kopernicus.Components
         }
 
         ///<summary>return true if a tutorial scenario or making history mission is active</summary>
-		public static bool IsScenario()
+        public static bool IsScenario()
         {
             return HighLogic.CurrentGame.Mode == Game.Modes.SCENARIO
                 || HighLogic.CurrentGame.Mode == Game.Modes.SCENARIO_NON_RESUMABLE
@@ -824,6 +812,43 @@ namespace Kopernicus.Components
         public static double Clamp(double value, double min, double max)
         {
             return Math.Max(min, Math.Min(value, max));
+        }
+
+        ///<summary>Calculate cosine factor and masking factor</summary>
+        public void CalExposureAndCosin(KopernicusStar star, Vector3d sunDirection, out double sunCosineFactor, out double sunOccludedFactor, out string occludingPart)
+        {
+            sunCosineFactor = 0.0;
+            sunOccludedFactor = 0.0;
+            occludingPart = null;
+
+            // Get the cosine factor (alignement between the sun and the panel surface)
+            sunCosineFactor = SolarPanel.GetCosineFactor(sunDirection);
+
+            if (sunCosineFactor == 0.0)
+            {
+                // If this is the tracked sun and the panel is not oriented toward the sun, update the gui info string.
+                if (star.sun == trackedSun)
+                    exposureState = ExposureState.BadOrientation;
+            }
+            else
+            {
+                // The panel is oriented toward the sun, do a physic raycast to check occlusion from parts, terrain, buildings...
+                sunOccludedFactor = SolarPanel.GetOccludedFactor(sunDirection, out occludingPart);
+
+                // If this is the tracked sun and the panel is occluded, update the gui info string. 
+                if (star.sun == trackedSun && sunOccludedFactor == 0.0)
+                {
+                    if (occludingPart != null)
+                    {
+                        exposureState = ExposureState.OccludedPart;
+                        mainOccludingPart = EllipsisMiddle(occludingPart, 15);
+                    }
+                    else
+                    {
+                        exposureState = ExposureState.OccludedTerrain;
+                    }
+                }
+            }
         }
         #endregion
 
@@ -931,6 +956,7 @@ namespace Kopernicus.Components
             public T panelModule;
             public override PartModule TargetModule => panelModule;
         }
+
         #endregion
 
         #region Stock module support (ModuleDeployableSolarPanel)
@@ -1625,8 +1651,8 @@ namespace Kopernicus.Components
         // Configs are here : https://github.com/KSP-RO/ROSolar
         // Require the following MM patch to work :
         /*
-		@PART:HAS[@MODULE[ModuleROSolar]]:AFTER[zKopernicus] { %MODULE[KopernicusSolarPanel]{} }
-		*/
+        @PART:HAS[@MODULE[ModuleROSolar]]:AFTER[zKopernicus] { %MODULE[KopernicusSolarPanel]{} }
+        */
         private class ROConfigurablePanel : StockPanel
         {
             // Note : this has been implemented in the base class (StockPanel) because
