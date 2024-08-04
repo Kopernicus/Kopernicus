@@ -161,6 +161,47 @@ namespace Kopernicus.Components
             }
         }
 
+        /// <summary>
+        /// Returns the brightest star near the given position.  More expensive, minimize use.
+        /// </summary>
+        public static KopernicusStar GetBrightest(Vector3d pos)
+        {
+            if (UseMultiStarLogic)
+            {
+
+                    double greatestLuminosity = 0;
+                    KopernicusStar BrightestStar = null;
+                    for (Int32 i = 0; i < Stars.Count; i++)
+                    {
+                        KopernicusStar star = Stars[i];
+                        double aparentLuminosity = 0;
+                        if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
+                        {
+                            Vector3d toStar = pos - star.sun.position;
+                            double distanceSq = Vector3d.SqrMagnitude(toStar);
+                            aparentLuminosity = star.shifter.solarLuminosity * (1 / distanceSq);
+                        }
+
+                        if (aparentLuminosity > greatestLuminosity)
+                        {
+                            greatestLuminosity = aparentLuminosity;
+                            BrightestStar = star;
+                        }
+                    }
+                    return BrightestStar;
+            }
+            else
+            {
+                if (Stars == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return KopernicusStar.Stars[0];
+                }
+            }
+        }
 
         /// <summary>
         /// Starts up fi instance
