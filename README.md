@@ -7,13 +7,9 @@ August 4th, 2024
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-209:
+New in this latest version release-210:
 
-1.) Added support for nearly all third party solar mods, with the notable exception of US2.
-
-2.) Fixed numerous solar panel bugs and improved performance. This is all thanks to github user @Aebestach be sure and thank them.
-
-3.) Since RC1 we have fixed singlestar mode not enabling configside.  Now singlestar systems will again not be burdened with any multistar extra code, automatically.
+1.) Hotfix for panel exposure in multistar mode sometimes listing over 100%.
 
 About
 -----

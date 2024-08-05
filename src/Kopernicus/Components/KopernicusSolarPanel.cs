@@ -462,16 +462,6 @@ namespace Kopernicus.Components
                 //determine this stars sunlightfactor
                 SunlightFactor = IsBodyVisible(vesselActive, position, trackedSun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
 
-                if (SunlightFactor == 0.0 && exposed == false)
-                {
-                    exposureState = ExposureState.InShadow;
-                }
-                else
-                {
-                    exposureState = ExposureState.Exposed;
-                    exposed = true;
-                }
-
                 Vector3d sunDirection = (star.sun.position - position).normalized;
 
                 // Add to TotalFlux and EC tally
@@ -521,10 +511,22 @@ namespace Kopernicus.Components
                     sunExposureFactor = sunCosineFactor * sunOccludedFactor * (starFlux / totalFlux);
                 }
 
-                exposureFactor += sunExposureFactor;
+                if (star.sun.Equals(trackedSun))
+                {
+                    exposureFactor = sunExposureFactor;
+                }
 
-                _exposureFactor = exposureFactor;
+                _exposureFactor += sunExposureFactor;
 
+                if (_exposureFactor == 0 && exposed == false)
+                {
+                    exposureState = ExposureState.InShadow;
+                }
+                else
+                {
+                    exposureState = ExposureState.Exposed;
+                    exposed = true;
+                }
 
                 if ((_exposureFactor != 0) && (tempMult != 0) && (atmoAngleMult != 0) && (atmoDensityMult != 0))
                 {
