@@ -15,6 +15,8 @@ New in this latest version release-209:
 
 3.) Since RC1 we have fixed singlestar mode not enabling configside.  Now singlestar systems will again not be burdened with any multistar extra code, automatically.
 
+4.) This update may reset solar panels assigned to action groups.  We apologize for this, but this code is more robust so it should never happen again. 
+
 About
 -----
 Kopernicus is a KSP add-on that allows for modification of stock planets and the creation of new planets via modification of the system prefab.  Why is this advantageous you might ask?  Previous planet adder mods, such as Planet Factory, modified the live planetary system and had to keep multiple hacks actively running to provide these worlds.  We strive to provide the least hacky solution by introducing planets into the game in the exact same manner Squad would.  
