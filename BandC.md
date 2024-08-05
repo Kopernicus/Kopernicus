@@ -20,14 +20,16 @@ Known Bugs:
 
 Known Caveats:
 
-1.) The 1.12.x release series works on 1.12.x. The 1.11.x,1.10.x,1.9.x and 1.8.x releases are no longer supported.  The last release to support those releases was [release-139](https://github.com/Kopernicus/Kopernicus/releases/tag/release-139)
+1.) Releases older than release-209 updating to a new release may reset solar panels assigned to action groups.  We apologize for this, but this code is more robust so it should never happen again. 
 
-2.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs. Some mods may need to adjust. Normally we'd not change things like this, but this is technically the correct stock behavior of the node so... if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
+2.) The 1.12.x release series works on 1.12.x. The 1.11.x,1.10.x,1.9.x and 1.8.x releases are no longer supported.  The last release to support those releases was [release-139](https://github.com/Kopernicus/Kopernicus/releases/tag/release-139)
 
-3.) As of release-151, polar generation behavior has changed slightly. Though it will be safer overall for new missions, be careful loading existing craft there. This is probably not lethal but I don't want you to be unaware. Maybe make a save just in case? ;)
+3.) As of release-107, scatter density underwent a bugfix on all bodies globally that results in densities acting more dense than before on some select configs. Some mods may need to adjust. Normally we'd not change things like this, but this is technically the correct stock behavior of the node so... if you need the old behavior, see config option UseIncorrectScatterDensityLogic.
 
-4.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default. If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
+4.) As of release-151, polar generation behavior has changed slightly. Though it will be safer overall for new missions, be careful loading existing craft there. This is probably not lethal but I don't want you to be unaware. Maybe make a save just in case? ;)
 
-5.) The particle system was hopelessly broken and has been since sometime past 1.10.x. Few mods used it, so it has been removed completely as of Release-146.
+5.) The "collider fix" as it's called, which fixes the event in which you sink into the terrain on distant bodies, is now on by default. If you really need distant colliders, turn this off, but you'd best have a good reason (I can't think of any).
 
-6.) Because we now unpack multipart PQSCity's correctly, you may rarely find some PQSCity structures in mods are in the earth or floating. Report such bugs to your planet pack author as this is an intended change (only cosmetic).
+6.) The particle system was hopelessly broken and has been since sometime past 1.10.x. Few mods used it, so it has been removed completely as of Release-146.
+
+7.) Because we now unpack multipart PQSCity's correctly, you may rarely find some PQSCity structures in mods are in the earth or floating. Report such bugs to your planet pack author as this is an intended change (only cosmetic).
