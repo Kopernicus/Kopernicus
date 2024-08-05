@@ -1,15 +1,19 @@
 Kopernicus
 ==============================
-July 27th, 2024
+August 4th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-208:
+New in this latest version release-209:
 
-1.) Hotfix for previos solar support breaking KerbalismDefault profile with NearFutureSolar curved panels.
+1.) Added support for nearly all third party solar mods, with the notable exception of US2.
+
+2.) Fixed numerous solar panel bugs and improved performance. This is all thanks to github user @Aebestach be sure and thank them.
+
+3.) Since RC1 we have fixed singlestar mode not enabling configside.  Now singlestar systems will again not be burdened with any multistar extra code, automatically.
 
 About
 -----
