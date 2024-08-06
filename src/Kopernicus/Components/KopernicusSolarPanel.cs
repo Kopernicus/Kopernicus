@@ -446,6 +446,7 @@ namespace Kopernicus.Components
             exposureFactor = 0.0;
             Double totalFlux = 0;
             Double totalFlow = 0;
+            double totalSunExposure = 0.0;
             // iterate over all stars, compute the exposure factor
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
@@ -493,11 +494,19 @@ namespace Kopernicus.Components
                 double sunOccludedFactor = 0.0;
                 string occludingPart = null;
                 // Compute final aggregate exposure factor
-                double sunExposureFactor = 0.0f;
+                double sunExposureFactor = 0.0;
+  
 
                 CalExposureAndCosin(star, sunDirection, out sunCosineFactor, out sunOccludedFactor, out occludingPart, out exposureStatus);
-                sunExposureFactor = sunCosineFactor;
-
+                if (occludingPart != null)
+                {
+                    sunExposureFactor = sunCosineFactor * sunOccludedFactor;
+                }
+                else
+                {
+                    sunExposureFactor = sunCosineFactor;
+                }
+                totalSunExposure += sunExposureFactor;
                 if (star.sun.Equals(trackedSun))
                 {
                     exposureFactor = sunExposureFactor;
@@ -515,13 +524,23 @@ namespace Kopernicus.Components
                                  (1360 / PhysicsGlobals.SolarLuminosityAtHome);
                 }
             }
-            if ((exposureStatus != ExposureState.Exposed) && (totalFlow < 0.1))
+            if ((exposureStatus != ExposureState.Exposed) && (totalSunExposure < 0.01))
             {
                 exposureState = exposureStatus;
             }
-            if (totalFlow > 0.1)
+            if (totalSunExposure > 0.1)
             {
-                exposureState = ExposureState.Exposed;
+                if (exposureState == ExposureState.OccludedPart)
+                {
+                    if (totalSunExposure > (KopernicusStar.Stars.Count()))
+                    {
+                        exposureState = ExposureState.Exposed;
+                    }
+                }
+                else
+                {
+                    exposureState = ExposureState.Exposed;
+                }
             }
             KopernicusStar.CelestialBodies[trackedSun].shifter.ApplyPhysics();
             vessel.solarFlux = totalFlux;
@@ -540,6 +559,14 @@ namespace Kopernicus.Components
             if (currentOutput < 1e-10)
             {
                 currentOutput = 0.0;
+                if (exposureStatus == ExposureState.OccludedPart)
+                {
+                    exposureState = exposureStatus;
+                }
+                else
+                {
+                    exposureState = ExposureState.NotVisible;
+                }
             }
             else
             {
