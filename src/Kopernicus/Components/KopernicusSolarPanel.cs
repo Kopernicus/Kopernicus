@@ -103,6 +103,7 @@ namespace Kopernicus.Components
         private string rateFormat;
         private static StringBuilder sb=new StringBuilder(256);
         private ExposureState exposureStatus;
+        private int exposureCountDown = 10;
 
 
         public enum PanelState
@@ -532,9 +533,16 @@ namespace Kopernicus.Components
             {
                 if (exposureState == ExposureState.OccludedPart)
                 {
-                    if (totalSunExposure / KopernicusStar.Stars.Count() > 0.25)
+                    if (totalSunExposure / KopernicusStar.Stars.Count() > 0.1)
                     {
-                        exposureState = ExposureState.Exposed;
+                        exposureCountDown--;
+                        if (exposureCountDown == 0)
+                        {
+                            exposureState = ExposureState.Exposed;
+                            //rearm
+                            exposureCountDown = 10;
+                        }
+
                     }
                 }
                 else
