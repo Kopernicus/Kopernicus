@@ -30,6 +30,7 @@ using UnityEngine;
 using KSP.Localization;
 using System.Linq;
 using System.Reflection;
+using static Kopernicus.Components.KopernicusSolarPanel;
 
 namespace Kopernicus.Components
 {
@@ -101,8 +102,7 @@ namespace Kopernicus.Components
         private string mainOccludingPart;
         private string rateFormat;
         private static StringBuilder sb=new StringBuilder(256);
-
-        private double SunlightFactor;
+        private ExposureState exposureStatus;
 
 
         public enum PanelState
@@ -123,7 +123,7 @@ namespace Kopernicus.Components
             Disabled,
             Exposed,
             InShadow,
-            OccludedTerrain,
+            NotVisible,
             OccludedPart,
             BadOrientation
         }
@@ -132,7 +132,7 @@ namespace Kopernicus.Components
         public static string GetLoc(string template) => Localizer.Format(prefix + template);
         private static string SolarPanelFixer_occludedby = GetLoc("SolarPanelFixer_occludedby"); // "occluded by <<1>>"
         private static string SolarPanelFixer_inshadow = GetLoc("SolarPanelFixer_inshadow"); // "in shadow"
-        private static string SolarPanelFixer_occludedbyterrain = GetLoc("SolarPanelFixer_occludedbyterrain"); // "occluded by terrain"
+        private static string SolarPanelFixer_notvisible = GetLoc("SolarPanelFixer_notvisible"); // "Not Visible"
         private static string SolarPanelFixer_badorientation = GetLoc("SolarPanelFixer_badorientation"); // "bad orientation"
         private static string SolarPanelFixer_exposure = GetLoc("SolarPanelFixer_exposure"); // "exposure"
         private static string SolarPanelFixer_wear = GetLoc("SolarPanelFixer_wear"); // "wear"
@@ -156,7 +156,6 @@ namespace Kopernicus.Components
         private static readonly FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
         private static readonly FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
 
-        double cacheExposureFactor;
         #endregion
 
         #region KSP/Unity methods + background update
@@ -343,8 +342,8 @@ namespace Kopernicus.Components
                 case ExposureState.InShadow:
                     panelStatus = "<color=#ff2222>" + SolarPanelFixer_inshadow + "</color>";//in shadow
                     break;
-                case ExposureState.OccludedTerrain:
-                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_occludedbyterrain + "</color>";//occluded by terrain
+                case ExposureState.NotVisible:
+                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_notvisible + "</color>";//not visible
                     break;
                 case ExposureState.OccludedPart:
                     panelStatus = BuildString("<color=#ff2222>", Localizer.Format(SolarPanelFixer_occludedby, mainOccludingPart), "</color>");//occluded by 
@@ -407,10 +406,6 @@ namespace Kopernicus.Components
 
         public void FixedUpdate()
         {
-            Vector3d direction;
-            double distance;
-
-
             if (SolarPanel == null)
             {
                 return;
@@ -451,16 +446,12 @@ namespace Kopernicus.Components
             exposureFactor = 0.0;
             Double totalFlux = 0;
             Double totalFlow = 0;
-            double _exposureFactor = 0;
-            bool exposed = false;
             // iterate over all stars, compute the exposure factor
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
                 KopernicusStar star = KopernicusStar.Stars[s];
                 // Use this star
                 star.shifter.ApplyPhysics();
-                //determine this stars sunlightfactor
-                SunlightFactor = IsBodyVisible(vesselActive, position, trackedSun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
 
                 Vector3d sunDirection = (star.sun.position - position).normalized;
 
@@ -501,36 +492,20 @@ namespace Kopernicus.Components
                 double sunCosineFactor = 0.0;
                 double sunOccludedFactor = 0.0;
                 string occludingPart = null;
-
                 // Compute final aggregate exposure factor
                 double sunExposureFactor = 0.0f;
 
-                CalExposureAndCosin(star, sunDirection, out sunCosineFactor, out sunOccludedFactor, out occludingPart);
-                if ((starFlux > 1) && (totalFlux > 1))
-                {
-                    sunExposureFactor = sunCosineFactor * sunOccludedFactor * (starFlux / totalFlux);
-                }
+                CalExposureAndCosin(star, sunDirection, out sunCosineFactor, out sunOccludedFactor, out occludingPart, out exposureStatus);
+                sunExposureFactor = sunCosineFactor;
 
                 if (star.sun.Equals(trackedSun))
                 {
                     exposureFactor = sunExposureFactor;
                 }
 
-                _exposureFactor += sunExposureFactor;
-
-                if (_exposureFactor == 0 && exposed == false)
+                if ((sunExposureFactor != 0) && (tempMult != 0) && (atmoAngleMult != 0) && (atmoDensityMult != 0))
                 {
-                    exposureState = ExposureState.InShadow;
-                }
-                else
-                {
-                    exposureState = ExposureState.Exposed;
-                    exposed = true;
-                }
-
-                if ((_exposureFactor != 0) && (tempMult != 0) && (atmoAngleMult != 0) && (atmoDensityMult != 0))
-                {
-                    panelEffectivness = ((float)nominalRate / 24.3999996185303f) / 56.37091313591871f * (float)_exposureFactor * tempMult *
+                    panelEffectivness = ((float)nominalRate / 24.3999996185303f) / 56.37091313591871f * (float)sunExposureFactor * tempMult *
                                             atmoAngleMult *
                                             atmoDensityMult; //56.blabla is a weird constant we use to turn flux into EC
                 }
@@ -539,6 +514,14 @@ namespace Kopernicus.Components
                     totalFlow += ((starFlux) * panelEffectivness) /
                                  (1360 / PhysicsGlobals.SolarLuminosityAtHome);
                 }
+            }
+            if ((exposureStatus != ExposureState.Exposed) && (totalFlow < 0.1))
+            {
+                exposureState = exposureStatus;
+            }
+            if (totalFlow > 0.1)
+            {
+                exposureState = ExposureState.Exposed;
             }
             KopernicusStar.CelestialBodies[trackedSun].shifter.ApplyPhysics();
             vessel.solarFlux = totalFlux;
@@ -557,9 +540,11 @@ namespace Kopernicus.Components
             if (currentOutput < 1e-10)
             {
                 currentOutput = 0.0;
-                return;
             }
-            part.RequestResource("ElectricCharge", (-currentOutput) * TimeWarp.fixedDeltaTime);
+            else
+            {
+                part.RequestResource("ElectricCharge", (-currentOutput) * TimeWarp.fixedDeltaTime);
+            }
         }
 
         #endregion
@@ -816,12 +801,12 @@ namespace Kopernicus.Components
         }
 
         ///<summary>Calculate cosine factor and masking factor</summary>
-        public void CalExposureAndCosin(KopernicusStar star, Vector3d sunDirection, out double sunCosineFactor, out double sunOccludedFactor, out string occludingPart)
+        public void CalExposureAndCosin(KopernicusStar star, Vector3d sunDirection, out double sunCosineFactor, out double sunOccludedFactor, out string occludingPart, out ExposureState exposureStats)
         {
             sunCosineFactor = 0.0;
             sunOccludedFactor = 0.0;
             occludingPart = null;
-
+            exposureStats = exposureStatus;
             // Get the cosine factor (alignement between the sun and the panel surface)
             sunCosineFactor = SolarPanel.GetCosineFactor(sunDirection);
 
@@ -829,7 +814,9 @@ namespace Kopernicus.Components
             {
                 // If this is the tracked sun and the panel is not oriented toward the sun, update the gui info string.
                 if (star.sun == trackedSun)
-                    exposureState = ExposureState.BadOrientation;
+                {
+                    exposureStats = ExposureState.BadOrientation;
+                }
             }
             else
             {
@@ -837,16 +824,16 @@ namespace Kopernicus.Components
                 sunOccludedFactor = SolarPanel.GetOccludedFactor(sunDirection, out occludingPart);
 
                 // If this is the tracked sun and the panel is occluded, update the gui info string. 
-                if (star.sun == trackedSun && sunOccludedFactor == 0.0)
+                if (star.sun == trackedSun)
                 {
                     if (occludingPart != null)
                     {
-                        exposureState = ExposureState.OccludedPart;
+                        exposureStats = ExposureState.OccludedPart;
                         mainOccludingPart = EllipsisMiddle(occludingPart, 15);
                     }
                     else
                     {
-                        exposureState = ExposureState.OccludedTerrain;
+                        exposureStats = ExposureState.NotVisible;
                     }
                 }
             }
