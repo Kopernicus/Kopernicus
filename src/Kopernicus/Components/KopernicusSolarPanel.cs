@@ -532,7 +532,7 @@ namespace Kopernicus.Components
             {
                 if (exposureState == ExposureState.OccludedPart)
                 {
-                    if (totalSunExposure > (KopernicusStar.Stars.Count()))
+                    if (totalSunExposure / KopernicusStar.Stars.Count() > 0.25)
                     {
                         exposureState = ExposureState.Exposed;
                     }
