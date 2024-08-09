@@ -428,7 +428,6 @@ namespace Kopernicus.Components
 
             Vector3d direction;
             double distance;
-            //string trackedPart;
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
                 KopernicusStar starL=KopernicusStar.Stars[s];
@@ -853,7 +852,6 @@ namespace Kopernicus.Components
             exposureStats = exposureStatus;
             // Get the cosine factor (alignement between the sun and the panel surface)
             sunCosineFactor = SolarPanel.GetCosineFactor(sunDirection);
-
             if (sunCosineFactor == 0.0)
             {
                 // If this is the tracked sun and the panel is not oriented toward the sun, update the gui info string.
@@ -866,7 +864,6 @@ namespace Kopernicus.Components
             {
                 // The panel is oriented toward the sun, do a physic raycast to check occlusion from parts, terrain, buildings...
                 sunOccludedFactor = SolarPanel.GetOccludedFactor(sunDirection, out occludingPart);
-
                 // If this is the tracked sun and the panel is occluded, update the gui info string. 
                 if (star.sun == trackedSun)
                 {
@@ -1244,7 +1241,8 @@ namespace Kopernicus.Components
 
                                 occludingPart = blockingPart.partInfo.title;
                             }
-                            occludedFactor -= 1.0 / sunCatchers.Length;
+                            //occludedFactor -= 1.0 / sunCatchers.Length;
+                            occludedFactor = 0;
                         }
                     }
                 }
@@ -1401,7 +1399,8 @@ namespace Kopernicus.Components
 
                                 occludingPart = blockingPart.partInfo.title;
                             }
-                            occludedFactor -= 1.0 / sunCatchers.Length;
+                            //occludedFactor -= 1.0 / sunCatchers.Length;
+                            occludedFactor = 0;
                         }
                     }
                 }
@@ -1621,7 +1620,8 @@ namespace Kopernicus.Components
                     }
                 }
                 occludingFactor = 1.0 - (occludingFactor / suncatcherTotalCount);
-                if (occludingFactor < 0.01) occludingFactor = 0.0; // avoid precison issues
+                //if (occludingFactor < 0.01) occludingFactor = 0.0; // avoid precison issues
+                if (occludingFactor > 0.0 && occludingFactor < 1.0) occludingFactor = 0.0; // avoid precison issues
                 return occludingFactor;
             }
 
