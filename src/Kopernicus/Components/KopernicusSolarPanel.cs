@@ -578,7 +578,8 @@ namespace Kopernicus.Components
                 }
                 if (wearFactor == 0)
                 {
-                    state = PanelState.Broken;
+                    exposureState = ExposureState.Disabled;
+                    state = PanelState.Failure;
                     Fields["panelStatusEnergy"].guiActive = false;
                     Fields["panelStatusSunAOA"].guiActive = false;
                 }
