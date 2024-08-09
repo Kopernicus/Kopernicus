@@ -142,6 +142,7 @@ namespace Kopernicus.Components
         private static string SolarPanelFixer_extending = GetLoc("SolarPanelFixer_extending"); // "extending"
         private static string SolarPanelFixer_retracting = GetLoc("SolarPanelFixer_retracting"); // "retracting"
         private static string SolarPanelFixer_broken = GetLoc("SolarPanelFixer_broken"); // "broken"
+        private static string SolarPanelFixer_failure = GetLoc("SolarPanelFixer_failure"); // "failure"
         private static string SolarPanelFixer_invalidstate = GetLoc("SolarPanelFixer_invalidstate"); // "invalid state"
         private static string SolarPanelFixer_Trackedstar = GetLoc("SolarPanelFixer_Trackedstar"); // "Tracked star"
         private static string SolarPanelFixer_AutoTrack = GetLoc("SolarPanelFixer_AutoTrack"); // "[Auto] : "
@@ -346,6 +347,7 @@ namespace Kopernicus.Components
                         case PanelState.Extending: panelStatus = SolarPanelFixer_extending; break;//"extending"
                         case PanelState.Retracting: panelStatus = SolarPanelFixer_retracting; break;//"retracting"
                         case PanelState.Broken: panelStatus = SolarPanelFixer_broken; break;//"broken"
+                        case PanelState.Failure: panelStatus = SolarPanelFixer_failure; break;//"failure"
                         case PanelState.Unknown: panelStatus = SolarPanelFixer_invalidstate; break;//"invalid state"
                     }
                     break;
