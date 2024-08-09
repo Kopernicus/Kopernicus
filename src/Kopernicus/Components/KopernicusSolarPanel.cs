@@ -129,7 +129,7 @@ namespace Kopernicus.Components
         private const string prefix = "#Kopernicus_";
         public static string GetLoc(string template) => Localizer.Format(prefix + template);
         private static string SolarPanelFixer_occludedby = GetLoc("SolarPanelFixer_occludedby"); // "occluded by <<1>>"
-        private static string SolarPanelFixer_notvisible  = GetLoc("SolarPanelFixer_notvisible"); // "No Visible Light"
+        private static string SolarPanelFixer_notvisible  = GetLoc("SolarPanelFixer_notvisible"); // "Not Visible"
         private static string SolarPanelFixer_badorientation = GetLoc("SolarPanelFixer_badorientation"); // "bad orientation"
         private static string SolarPanelFixer_exposure = GetLoc("SolarPanelFixer_exposure"); // "exposure"
         private static string SolarPanelFixer_wear = GetLoc("SolarPanelFixer_wear"); // "wear"
@@ -332,7 +332,7 @@ namespace Kopernicus.Components
             switch (exposureState)
             {
                 case ExposureState.NotVisible:
-                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_notvisible + "</color>";//occluded by terrain
+                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_notvisible + "</color>";//not visible
                     break;
                 case ExposureState.OccludedPart:
                     panelStatus = BuildString("<color=#ff2222>", Localizer.Format(SolarPanelFixer_occludedby, mainOccludingPart), "</color>");//occluded by 
