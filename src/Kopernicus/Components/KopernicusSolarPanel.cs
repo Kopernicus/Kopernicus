@@ -568,7 +568,7 @@ namespace Kopernicus.Components
                 currentOutput = 0.0;
                 if (exposureStatus == ExposureState.OccludedPart)
                 {
-                    if (trackedSunVisiblefactor == 0 && KopernicusStar.UseMultiStarLogic)
+                    if (trackedSunVisiblefactor == 0)
                         exposureStatus = ExposureState.NotVisible;
                     exposureState = exposureStatus;
                 }
