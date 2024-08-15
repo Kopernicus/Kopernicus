@@ -1,17 +1,15 @@
 Kopernicus
 ==============================
-August 5th, 2024
+August 15th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-211:
+New in this latest version release-212:
 
-1.) Hotfix for some math errors in multistar mode, resulting in some bodies being occuluded that should not be.
-
-2.) Blacklisted some WBI solar modules that we aren't ready for yet config side.  They'll still work, but may act oddly around a secondary Star.
+1.) More robust occulusion code when target switching, now you can't "cheat" to get free sunlight anymore. :(
 
 About
 -----
