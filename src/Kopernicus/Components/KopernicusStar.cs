@@ -170,12 +170,11 @@ namespace Kopernicus.Components
         {
             if (UseMultiStarLogic)
             {
-
                 double greatestLuminosity = 0;
-                KopernicusStar BrightestStar = null;
+                KopernicusStar BrightestStar = starList[0];
                 for (Int32 i = 0; i < starList.Count; i++)
                 {
-                    KopernicusStar star = Stars[i];
+                    KopernicusStar star = starList[i];
                     double aparentLuminosity = 0;
                     if ((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0))
                     {
