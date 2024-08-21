@@ -152,7 +152,8 @@ namespace Kopernicus.Components
         private static readonly FloatCurve temperatureEfficCurve= new FloatCurve();
         private static readonly FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
         private static readonly FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
-
+        
+        public static string resourceName=null;
         #endregion
 
         #region KSP/Unity methods + background update
@@ -372,7 +373,10 @@ namespace Kopernicus.Components
                     }
                     else
                         num = currentOutput;
-
+                    if (resourceName == "ThermalPower")
+                    {
+                        EcUIUnit = "TP/s";
+                    }
                     sb.Append(num.ToString(rateFormat));
                     sb.Append(" ");
                     sb.Append(EcUIUnit);
@@ -587,7 +591,11 @@ namespace Kopernicus.Components
             else
             {
                 exposureState = ExposureState.Exposed;
-                part.RequestResource("ElectricCharge", (-currentOutput) * TimeWarp.fixedDeltaTime);
+                if (resourceName == null)
+                {
+                    resourceName = "ElectricCharge";
+                }
+                part.RequestResource(resourceName, (-currentOutput) * TimeWarp.fixedDeltaTime);
             }
         }
 
@@ -1021,6 +1029,8 @@ namespace Kopernicus.Components
                 panelModule.Fields["flowRate"].guiActive = false;
                 panelModule.Fields["status"].guiActive = false;
 
+                resourceName = panelModule.resourceName;
+                
                 if (sunCatcherPivot == null)
                     sunCatcherPivot = panelModule.part.FindModelComponent<Transform>(panelModule.pivotName);
                 if (sunCatcherPosition == null)
