@@ -255,6 +255,6 @@ $RECYCLE.BIN/
 *.rej
 
 # Kopernicus
-build/GameData/Kopernicus/Cache/
+GameData/Kopernicus/Plugins/
 !dependencies/*
 !dependencies/*/*
