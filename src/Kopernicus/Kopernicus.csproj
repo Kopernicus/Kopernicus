@@ -150,6 +150,7 @@
     <Publicize Include="Assembly-CSharp:SpaceCenterCamera2.srfPivot" />
     <Publicize Include="Assembly-CSharp:PQSCity.planetRelativePosition" />
     <Publicize Include="Assembly-CSharp:PQS.PQSLandControl" />
+    <Publicize Include="Assembly-CSharp:PQS.mods" />
   </ItemGroup>
   <!--Source-->
   <ItemGroup>

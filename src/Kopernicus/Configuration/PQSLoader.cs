@@ -696,7 +696,7 @@ namespace Kopernicus.Configuration
             }
 
             // Load existing mods
-            PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            PQSMod[] mods = Utility.GetMods(Value);
             List<PQSCity> specialPQSCitys = new List<PQSCity>();
             for (Int32 i = 0; i < mods.Length; i++)
             {
@@ -820,7 +820,7 @@ namespace Kopernicus.Configuration
             }
 
             // Load existing mods
-            PQSMod[] mods = Utility.GetMods<PQSMod>(Value);
+            PQSMod[] mods = Utility.GetMods(Value);
             List<PQSCity> specialPQSCitys = new List<PQSCity>();
             for (Int32 i = 0; i < mods.Length; i++)
             {
