@@ -33,11 +33,16 @@
   <!--This must be done after the main project poperties are defined because it needs the target framework property to be defined -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="ModularFlightIntegrator.dll">
-      <HintPath>$(KSPRoot)/ModularFlightIntegrator/ModularFlightIntegrator.dll</HintPath>
+    <Reference Include="ModularFlightIntegrator">
+      <HintPath>$(KSPRoot)/GameData/ModularFlightIntegrator/ModularFlightIntegrator.dll</HintPath>
       <CKANIdentifier>ModularFlightIntegrator</CKANIdentifier>
       <Private>false</Private>
     </Reference>
+      <Reference Include="0Harmony">
+        <HintPath>$(KSPRoot)/GameData/000_Harmony/0Harmony.dll</HintPath>
+        <CKANIdentifier>Harmony2</CKANIdentifier>
+        <Private>false</Private>
+      </Reference>
   </ItemGroup>
   <!--Krafs.Publicizer items-->
   <ItemGroup>
@@ -384,6 +389,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\external\config-parser\src\Kopernicus.Parser.csproj">
+      <Project>{f9968d87-83da-453c-8e28-b632367eacd3}</Project>
+      <Name>Kopernicus.Parser</Name>
+    </ProjectReference>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
