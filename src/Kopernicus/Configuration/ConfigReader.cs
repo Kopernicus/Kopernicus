@@ -71,6 +71,8 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool RecomputeSOIAndHillSpheres = false;
         [Persistent]
+        public bool PrincipiaFriendlySOIComputation = false;
+        [Persistent]
         public bool LimitRWDensityToStockBodies = true;
         [Persistent] 
         public bool UseOlderRWScalingLogic = false;
@@ -120,6 +122,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("UseOnDemandLoader: " + UseOnDemandLoader);
                 Debug.Log("UseRealWorldDensity: " + UseRealWorldDensity);
                 Debug.Log("RecomputeSOIAndHillSpheres: " + RecomputeSOIAndHillSpheres);
+                Debug.Log("PrincipiaFriendlySOIComputation: " + PrincipiaFriendlySOIComputation);
                 Debug.Log("LimitRWDensityToStockBodies: " + LimitRWDensityToStockBodies);
                 Debug.Log("UseOlderRWScalingLogic: " + UseOlderRWScalingLogic);
                 Debug.Log("RescaleFactor: " + RescaleFactor);

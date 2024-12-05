@@ -92,7 +92,8 @@ namespace Kopernicus.RuntimeUtility
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class RuntimeUtility : MonoBehaviour
     {
-        private static int internalTimer = 0;
+        private static int setPQSTimer = 0;
+        private static int hillSphereRecomputeTimer = 0;
         public static PQSCache.PQSPreset pqsLow;
         public static PQSCache.PQSPreset pqsDefault;
         public static PQSCache.PQSPreset pqsHigh;
@@ -228,7 +229,7 @@ namespace Kopernicus.RuntimeUtility
                     try
                     {
                         PSystemManager.Instance.localBodies[i].sphereOfInfluence = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.4);
-                        PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.333333333333333);
+                        PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / (3 * (PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass + PSystemManager.Instance.localBodies[i].Mass)), 1.0 / 3.0);
                     }
                     catch { }
                 }
@@ -260,13 +261,32 @@ namespace Kopernicus.RuntimeUtility
 
         private void Update()
         {
+            if (RuntimeUtility.KopernicusConfig.PrincipiaFriendlySOIComputation)
+            {
+                RuntimeUtility.hillSphereRecomputeTimer++;
+            }
+            if (hillSphereRecomputeTimer > 2400)
+            {
+                hillSphereRecomputeTimer = 0;
+                for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
+                {
+                    if (!PSystemManager.Instance.localBodies[i].Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody))
+                    {
+                        try
+                        {
+                            PSystemManager.Instance.localBodies[i].sphereOfInfluence = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.4);
+                            PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / (3 * (PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass + PSystemManager.Instance.localBodies[i].Mass)), 1.0 / 3.0);
+                        }
+                        catch { }
+                    }
+                }
+            }
             if (HighLogic.LoadedScene.Equals(GameScenes.SETTINGS) || HighLogic.LoadedScene.Equals(GameScenes.MAINMENU))
             {
-                internalTimer++;
-                if (internalTimer > 120)
+                setPQSTimer++;
+                if (setPQSTimer > 120)
                 {
-                    internalTimer = 0;
-
+                    setPQSTimer = 0;
                     if (!PQSCache.PresetList.preset.Equals(Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality))
                     {
                         Kopernicus.RuntimeUtility.RuntimeUtility.KopernicusConfig.SelectedPQSQuality = PQSCache.PresetList.preset;
@@ -536,14 +556,12 @@ namespace Kopernicus.RuntimeUtility
                 // Calculations
                 if (!body.Has("sphereOfInfluence"))
                 {
-                    body.sphereOfInfluence = body.orbit.semiMajorAxis *
-                                             Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
+                    body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
                 }
 
                 if (!body.Has("hillSphere"))
                 {
-                    body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) *
-                                      Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.333333333333333);
+                    body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) * Math.Pow(body.Mass / (3 * (body.orbit.referenceBody.Mass + body.Mass)), 1.0 / 3.0);
                 }
 
                 if (!body.solarRotationPeriod)
@@ -1054,6 +1072,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader.ToString() + " //Boolean. Default False.  Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
                     configFile.WriteLine("	UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity.ToString() + " //Boolean. Default False.  Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body.  Don't turn this on unless you understand what it does.");
                     configFile.WriteLine("	RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres.ToString() + " //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");
+                    configFile.WriteLine("	PrincipiaFriendlySOIComputation = " + KopernicusConfig.PrincipiaFriendlySOIComputation.ToString() + " //Boolean. Default False.  Turning this on will recompute hill spheres and SOIs using standard math constantly at a scheduled cadence of about every 20-60 seconds (depending on FPS).  This has a performance penalty, and is only useful for Principia. Leave alone if you don't understand.");
                     configFile.WriteLine("	LimitRWDensityToStockBodies = " + KopernicusConfig.LimitRWDensityToStockBodies.ToString() + " //Boolean. Default True.  Turning this on will limit density corrections to stock/Kerbolar bodies only.  Don't mess with this unless you understand what it does.");
                     configFile.WriteLine("	UseOlderRWScalingLogic = " + KopernicusConfig.UseOlderRWScalingLogic.ToString() + " //Boolean. Default False.  Turning this on will use the old gas giant rescale logic that was less scientifically correct.  Don't mess with this unless you understand what it does.");
                     configFile.WriteLine("	RescaleFactor = " + KopernicusConfig.RescaleFactor.ToString() + " //Float. Default 1.0.  Set this to the rescale factor of your system if using UseRealWorldDensity, otherwise ignore.");

@@ -385,16 +385,19 @@ namespace Kopernicus.Configuration
                     // Only recalculate the SOI, if it's not forced
                     if (!body.Has("hillSphere"))
                     {
-                        body.hillSphere = body.orbit.semiMajorAxis * (1.0 - body.orbit.eccentricity) *
-                                          Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 1.0 / 3.0);
+                        body.hillSphere = body.orbit.semiMajorAxis * (1 - body.orbit.eccentricity) * Math.Pow(body.Mass / (3 * (body.orbit.referenceBody.Mass + body.Mass)), 1.0 / 3.0);
                     }
 
                     if (!body.Has("sphereOfInfluence"))
                     {
-                        body.sphereOfInfluence = Math.Max(
-                            body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4),
-                            Math.Max(body.Radius * Templates.SOI_MIN_RADIUS_MULTIPLIER,
-                                body.Radius + Templates.SOI_MIN_ALTITUDE));
+                        if (RuntimeUtility.RuntimeUtility.KopernicusConfig.PrincipiaFriendlySOIComputation || RuntimeUtility.RuntimeUtility.KopernicusConfig.RecomputeSOIAndHillSpheres)
+                        {
+                            body.sphereOfInfluence = body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4);
+                        }
+                        else
+                        {
+                            body.sphereOfInfluence = Math.Max(body.orbit.semiMajorAxis * Math.Pow(body.Mass / body.orbit.referenceBody.Mass, 0.4), Math.Max(body.Radius * Templates.SOI_MIN_RADIUS_MULTIPLIER, body.Radius + Templates.SOI_MIN_ALTITUDE));
+                        }
                     }
 
                     // this is unlike stock KSP, where only the reference body's mass is used.

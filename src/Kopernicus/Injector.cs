@@ -301,7 +301,7 @@ namespace Kopernicus
                             }
                         }
                     }
-                    if ((!body.name.Equals("Sun") && (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity)))
+                    if ((!body.isStar) && (RuntimeUtility.RuntimeUtility.KopernicusConfig.UseRealWorldDensity))
                     {
                         if ((!Utility.IsStockBody(body)) && (RuntimeUtility.RuntimeUtility.KopernicusConfig.LimitRWDensityToStockBodies))
                         {
