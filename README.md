@@ -7,19 +7,11 @@ December 10th, 2024
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-215:
+New in this latest version release-216:
 
-1.) Rings could sometimes wobble when lockedRotation was set, this has been fixed.
+1.) Added a new extended PQSCity class (can be declared under Mods with CityExtended and City2Extended), these extended classes support lethalRadius and may have more functions added in the future.
 
-2.) Added parameter to lethalRadius system called "lethalRadiusAntiSpamMult", default 30.  This is the number of seconds between which warning dialogs will display if you are in the "warning zone" of a lethal scatter.  This is a planet pack feature for authors and obviously won't effect anyone in stock or other environments.
-
-3.) Fixed Hillsphere and SOI recomputation code.  It was missing a part of the formula that had it close but not quite right.  Also added Kopernicus_Config.cfg parameter "PrincipiaFriendlySOIComputation."  This is for Principia users mainly, and recomputes the SOI regularly for bodies since Principia is an active n-body system.
-
-4.) Added 16-bit scaled space mesh support.
-
-5.) Minor performance improvements (Utility.GetMod was being slow so we sped it up).
-
-6.) We had a longstanding feature request to add lethalRadius support to PQS City and City2 type objects.  Unfortunately, no matter what we do with the config parser, it does not appear to load anything but the stock values for those objects, and I have no idea why.  PR's welcome, but until we figure that out this request is on hold.
+2.) Fixed PQSMod management of the Inland KSC AKA KSC2.
 
 
 About
