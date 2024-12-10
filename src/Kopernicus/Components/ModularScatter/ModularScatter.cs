@@ -170,10 +170,13 @@ namespace Kopernicus.Components.ModularScatter
 
         /// <summary>
         /// whether or not we have msg'd this kerbal already, to avoid spamming. Sets false again when out of danger.
+        /// antiSpamCounterMult is a user definable parameter to say how many seconds the delay should do to avoid "spamming"
+        /// antiSpamCounterMult is tied to the physics framerate so extremely low fps may affect it.
         /// </summary>
+        public int antiSpamCounterMult = 30; //default 30 seconds
         private static bool lethalMsgSent = false;
         private static bool lethalWarnMsgSent = false;
-        private static int antiSpamCounter = 1600;
+        private static int antiSpamCounter = 1500; //default 30 seconds
 
         public ModularScatter()
         {
@@ -250,6 +253,7 @@ namespace Kopernicus.Components.ModularScatter
             needsScatterPositions = heatEmitter != null || lethalRadius != 0;
             lethalSquareRadius = lethalRadius * lethalRadius;
             lethalWarnSquareRadius = (lethalRadius * 2) * (lethalRadius * 2);
+            antiSpamCounter = 50 * antiSpamCounterMult; //Set timer
         }
 
         /// <summary>
@@ -319,9 +323,9 @@ namespace Kopernicus.Components.ModularScatter
                     }
                 }
             }
-            if (antiSpamCounter < 1)
+            if (antiSpamCounter == 1)
             {
-                antiSpamCounter = 1600;
+                antiSpamCounter = 50 * antiSpamCounterMult;
                 lethalMsgSent = false;
                 lethalWarnMsgSent = false;
             }

@@ -23,8 +23,6 @@
  * https://kerbalspaceprogram.com
  */
 
-#define FIX_ROTATION_JITTER
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -714,9 +712,7 @@ namespace Kopernicus.Components
             }
 
             transform.localScale = transform.parent.localScale;
-#if !FIX_ROTATION_JITTER
             SetRotation();
-#endif
 
             if (useNewShader && ringMr.sharedMaterial != null
                              && brightestStar != null && brightestStar.sun.transform != null)
@@ -754,9 +750,7 @@ namespace Kopernicus.Components
         private void FixedUpdate()
         {
             transform.localScale = transform.parent.localScale;
-#if !FIX_ROTATION_JITTER
             SetRotation();
-#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -772,9 +766,7 @@ namespace Kopernicus.Components
         private void LateUpdate()
         {
             transform.localScale = transform.parent.localScale;
-#if !FIX_ROTATION_JITTER
             SetRotation();
-#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -783,38 +775,6 @@ namespace Kopernicus.Components
             }
         }
 
-#if FIX_ROTATION_JITTER
-        private void OnPreCull()
-        {
-            if (referenceBody == null)
-            {
-                return;
-            }
-
-            Double parentRotation = referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod;
-            // Setting transform.rotation does NOT give us a consistent
-            // absolute orientation as you would expect from the documentation.
-            // "World" coordinates seem to be set differently each time the
-            // game is loaded. Instead, we use localRotation to orient the ring
-            // relative to its parent body, subtract off the parent body's
-            // rotation at the current moment in time, then add the LAN.
-            // Note that eastward (prograde) rotation is negative in trigonometry.
-            if (lockRotation || Math.Abs(rotationPeriod) < 0.001)
-            {
-                Double angle = parentRotation - longitudeOfAscendingNode;
-                QuaternionD rotation = QuaternionD.Euler(0.0, angle, 0.0);
-                transform.localRotation = rotation * (QuaternionD)this.rotation;
-            }
-            else
-            {
-                Single degreesPerSecond = -360f / rotationPeriod;
-                transform.localRotation =
-                    QuaternionD.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
-                    * (QuaternionD)rotation
-                    * QuaternionD.Euler(0, Planetarium.GetUniversalTime() * degreesPerSecond, 0);
-            }
-        }
-#else
         /// <summary>
         /// Populate our transform's rotation quaternion
         /// </summary>
@@ -853,6 +813,5 @@ namespace Kopernicus.Components
                     * rotation;
             }
         }
-#endif
     }
 }

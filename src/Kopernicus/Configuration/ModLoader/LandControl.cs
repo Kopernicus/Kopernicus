@@ -337,6 +337,15 @@ namespace Kopernicus.Configuration.ModLoader
                 set { Scatter.lethalRadiusWarnMsg = value; }
             }
 
+            // lethalRadiusAntiSpamMult is a user definable parameter to say how many seconds the delay should do to avoid "spamming"
+            // lethalRadiusAntiSpamMult is tied to the physics framerate so extremely low fps may affect it.  Zero means disable.
+            [ParserTarget("lethalRadiusAntiSpamMult")]
+            public NumericParser<Int32> LethalRadiusAntiSpamMult
+            {
+                get { return Scatter.antiSpamCounterMult; }
+                set { Scatter.antiSpamCounterMult = value; }
+            }
+
             // The mesh
             [ParserTarget("mesh")]
             public MeshParser BaseMesh
