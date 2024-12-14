@@ -203,6 +203,15 @@ namespace Kopernicus.RuntimeUtility
             for (Int32 i = 0; i < PSystemManager.Instance.localBodies.Count; i++)
             {
                 ApplyStarPatches(PSystemManager.Instance.localBodies[i]);
+                if (!PSystemManager.Instance.localBodies[i].Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody) && (KopernicusConfig.RecomputeSOIAndHillSpheres))
+                {
+                    try
+                    {
+                        PSystemManager.Instance.localBodies[i].sphereOfInfluence = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.4);
+                        PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / (3 * (PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass + PSystemManager.Instance.localBodies[i].Mass)), 1.0 / 3.0);
+                    }
+                    catch { }
+                }
             }
 
             CalculateHomeBodySMA();
@@ -224,15 +233,6 @@ namespace Kopernicus.RuntimeUtility
             {
                 ApplyOrbitVisibility(PSystemManager.Instance.localBodies[i]);
                 AtmosphereLightPatch(PSystemManager.Instance.localBodies[i]);
-                if (!PSystemManager.Instance.localBodies[i].Equals(PSystemManager.Instance.systemPrefab.rootBody.celestialBody) && (KopernicusConfig.RecomputeSOIAndHillSpheres))
-                {
-                    try
-                    {
-                        PSystemManager.Instance.localBodies[i].sphereOfInfluence = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass, 0.4);
-                        PSystemManager.Instance.localBodies[i].hillSphere = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / (3 * (PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass + PSystemManager.Instance.localBodies[i].Mass)), 1.0 / 3.0);
-                    }
-                    catch { }
-                }
             }
         }
         // Run patches every time a new scene was loaded

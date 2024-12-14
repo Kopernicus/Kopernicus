@@ -1,15 +1,15 @@
 Kopernicus
 ==============================
-December 11th, 2024
+December 14th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-217:
+New in this latest version release-218:
 
-1.) Added Kopernicus MM version checking support, see file "00Version.cfg" in config folder.  This is to help planet modders featuregate based on version feature support.
+1.) Minor hotfix for duplicate commsites at KSC2/Inland KSC in Kerbin template.  This really has no major effect on anyone, but is a strange way to waste resources.
 
 
 About

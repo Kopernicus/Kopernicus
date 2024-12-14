@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using CommNet;
 using Kopernicus.Components;
 using Kopernicus.Components.MaterialWrapper;
 using Kopernicus.ConfigParser;
@@ -697,56 +698,21 @@ namespace Kopernicus.Configuration
 
             // Load existing mods
             PQSMod[] mods = Utility.GetMods(Value);
-            List<PQSCity> specialPQSCitys = new List<PQSCity>();
             for (Int32 i = 0; i < mods.Length; i++)
             {
                 Type modType = mods[i].GetType();
-                if (modType.Name.Equals("PQSCity") && mods[i].name.Equals("KSC2"))
+                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                 {
-                    specialPQSCitys.Add((PQSCity)mods[i]);
-                }
-                else
-                {
-                    Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-
-                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
                     {
-                        if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
-                        {
-                            continue;
-                        }
-
-                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                        loader.Create(mods[i], Value);
-                        Mods.Add(loader);
+                        continue;
                     }
+
+                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                    loader.Create(mods[i], Value);
+                    Mods.Add(loader);
                 }
-            }
-            foreach (PQSCity PQSC in specialPQSCitys)
-            {
-                PSystemBody worldTemplate;
-                PQSCity scTree;
-                try //this try ensure stock bodies are selected
-                {
-                    worldTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, Value.name);
-                }
-                catch
-                {
-                    worldTemplate = null;
-                    continue;
-                }
-                try //this try ensures only stock PQSCity's are selected
-                {
-                    scTree = worldTemplate.pqsVersion.GetComponentsInChildren<PQSCity>(true).First(m => m.name == PQSC.name);
-                }
-                catch
-                {
-                    scTree = null;
-                    continue;
-                }
-                PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
-                Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
-                newScTree.name = PQSC.name;
             }
         }
 
@@ -909,6 +875,8 @@ namespace Kopernicus.Configuration
                         loader.Create(newScTree, Value);
                         Mods.Add(loader);
                     }
+                    Object.DestroyImmediate(PQSC);
+                    Object.DestroyImmediate(scTree);
                 }
             }
         }
