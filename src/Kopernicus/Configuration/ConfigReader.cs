@@ -55,6 +55,8 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool DisableMainMenuMunScene = true;
         [Persistent]
+        public bool KSCLightsAlwaysOn = false;
+        [Persistent]
         public bool HandleHomeworldAtmosphericUnitDisplay = true;
         [Persistent]
         public bool UseIncorrectScatterDensityLogic = false;
@@ -114,6 +116,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("EnableKopernicusShadowManager: " + EnableKopernicusShadowManager);
                 Debug.Log("ShadowRangeCap: " + ShadowRangeCap);
                 Debug.Log("DisableMainMenuMunScene: " + DisableMainMenuMunScene);
+                Debug.Log("KSCLightsAlwaysOn: " + KSCLightsAlwaysOn);
                 Debug.Log("HandleHomeworldAtmosphericUnitDisplay: " + HandleHomeworldAtmosphericUnitDisplay);
                 Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);
                 Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);

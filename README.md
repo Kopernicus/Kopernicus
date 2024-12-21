@@ -1,15 +1,15 @@
 Kopernicus
 ==============================
-December 14th, 2024
+December 21st, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-218:
+New in this latest version release-219:
 
-1.) Minor hotfix for duplicate commsites at KSC2/Inland KSC in Kerbin template.  This really has no major effect on anyone, but is a strange way to waste resources.
+1.) A small holiday surprise!  Added GUI and Kopernicus_Config.cfg parameter "KSCLightsAlwaysOn," if you turn this on or MM patch it on, the KSC lights will always be on.  Useful if mod eclipses bother you because the lights are out, or for low light systems.
 
 
 About

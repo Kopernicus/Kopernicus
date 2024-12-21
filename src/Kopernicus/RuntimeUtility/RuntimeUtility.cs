@@ -930,7 +930,7 @@ namespace Kopernicus.RuntimeUtility
                 }
                 else
                 {
-                    //Stick with stock star
+                    //Stick with stock root star
                 }
             }
         }
@@ -1063,7 +1063,8 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	SolarRefreshRate = " + KopernicusConfig.SolarRefreshRate.ToString() + " //Integer.  A number defining the number of seconds between EC calculations when using the multistar cfg file.  Can be used to finetune performance (higher runs faster).  Otherwise irrelevant.");
                     configFile.WriteLine("	EnableKopernicusShadowManager = " + KopernicusConfig.EnableKopernicusShadowManager.ToString() + " //Boolean.  Whether or not to run the Internal Kopernicus Shadow System.  True by default, users using mods that do their own shadows (scatterer etc) may want to disable this to save a small bit of performance.");
                     configFile.WriteLine("	ShadowRangeCap = " + KopernicusConfig.ShadowRangeCap + " //Integer.  A number defining the maximum distance at which shadows may be cast.  Lower numbers yield less shadow cascading artifacts, but higher numbers cast shadows farther. Default at 50000 is an approximation of stock. Only works if EnableKopernicusShadowManager is true.");
-                    configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you actually have a Mun, and want that scene back.");
+                    configFile.WriteLine("	DisableMainMenuMunScene = " + KopernicusConfig.DisableMainMenuMunScene.ToString() + " //Boolean.  Whether or not to disable the Mun main menu scene.  Only set to false if you want that scene back.");
+                    configFile.WriteLine("	KSCLightsAlwaysOn = " + KopernicusConfig.KSCLightsAlwaysOn.ToString() + " //Boolean.  Whether or not to force the KSC Lights to always be on. Default false.");
                     configFile.WriteLine("	HandleHomeworldAtmosphericUnitDisplay = " + KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay.ToString() + " //Boolean.  This is for calculating 1atm unit at home world.  Normally should be true, but mods like PlanetaryInfoPlus may want to set this false.");
                     configFile.WriteLine("	UseIncorrectScatterDensityLogic = " + KopernicusConfig.UseIncorrectScatterDensityLogic.ToString() + " //Boolean.  This is a compatability option for old modpacks that were built with the old (wrong) density logic in mind.  Turn on if scatters seem too dense.  Please do not use in true in new releases.");
                     configFile.WriteLine("	DisableFarAwayColliders  = " + KopernicusConfig.DisableFarAwayColliders.ToString() + " //Boolean. Fix a raycast physics bug occuring in large systems, notably resulting in wheels and landing legs falling through the ground.");
