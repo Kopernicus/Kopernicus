@@ -1046,7 +1046,8 @@ namespace Kopernicus.RuntimeUtility
                 using (StreamWriter configFile = new StreamWriter(PluginPath + "/../Config/Kopernicus_Config.cfg"))
                 {
                     configFile.WriteLine("// Kopernicus base configuration. Provides ability to flag things and set user options. Generates at defaults for stock settings and warnings config.");
-                    configFile.WriteLine("// This file is rewritten/created when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit this file only with the game exited, please.");
+                    configFile.WriteLine("// This file is rewritten/created when the game exits. This means any manual (not in the in-game GUI) edits made to this file while playing the game will not be preserved. Edit this file only with the game exited, please.");
+                    configFile.WriteLine("// Some (but not all) of these settings can also be changed through the in-game GUI. Changes through the in-game GUI will be preserved.");
                     configFile.WriteLine("Kopernicus_config");
                     configFile.WriteLine("{");
                     configFile.WriteLine("	HomeWorldName = " + KopernicusConfig.HomeWorldName + " //String with the home bodies name. Allows for directly changing the home body to a differently named body. Default is Kerbin.");
