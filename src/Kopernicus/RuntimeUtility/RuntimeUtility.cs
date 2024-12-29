@@ -922,15 +922,18 @@ namespace Kopernicus.RuntimeUtility
         private static void PatchTimeOfDayAnimation()
         {
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
-            for (Int32 i = 0; i < animations.Length; i++)
+            if (KopernicusConfig.KSCLightsAlwaysOn)
             {
-                if (KopernicusStar.UseMultiStarLogic)
+                for (Int32 i = 0; i < animations.Length; i++)
                 {
-                    animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)).gameObject.transform;
+                    animations[i].target = FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).bodyTransform.parent;
                 }
-                else
+            }
+            else
+            {
+                for (Int32 i = 0; i < animations.Length; i++)
                 {
-                    //Stick with stock root star
+                    animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)).transform;
                 }
             }
         }

@@ -1,15 +1,15 @@
 Kopernicus
 ==============================
-December 21st, 2024
+December 29th, 2024
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-219:
+New in this latest version release-220:
 
-1.) A small holiday surprise!  Added GUI and Kopernicus_Config.cfg parameter "KSCLightsAlwaysOn," if you turn this on or MM patch it on, the KSC lights will always be on.  Useful if mod eclipses bother you because the lights are out, or for low light systems.
+1.) A small hotfix for the light intensity on setting "KSCLightsAlwaysOn."  previously they were only roughly "50% on" in brightness, now they are fully on.
 
 
 About
