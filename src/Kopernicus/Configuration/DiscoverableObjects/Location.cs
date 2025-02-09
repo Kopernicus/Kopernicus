@@ -30,7 +30,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus.Configuration.Asteroids
+namespace Kopernicus.Configuration.DiscoverableObjects
 {
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
@@ -39,7 +39,7 @@ namespace Kopernicus.Configuration.Asteroids
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Location
     {
-        // Loads the nearby-Orbits of this Asteroid
+        // Loads the nearby-Orbits of this DO
         [RequireConfigType(ConfigType.Node)]
         public class NearbyLoader
         {
@@ -79,7 +79,7 @@ namespace Kopernicus.Configuration.Asteroids
             public NumericParser<Boolean> Reached { get; set; }
         }
 
-        // Loads the flyby-Orbits of this Asteroid
+        // Loads the flyby-Orbits of this DO
         [RequireConfigType(ConfigType.Node)]
         public class FlybyLoader
         {
@@ -104,7 +104,7 @@ namespace Kopernicus.Configuration.Asteroids
             public NumericParser<Boolean> Reached { get; set; }
         }
 
-        // Loads the around-Orbits of this Asteroid
+        // Loads the around-Orbits of this DO
         [RequireConfigType(ConfigType.Node)]
         public class AroundLoader
         {

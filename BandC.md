@@ -33,3 +33,5 @@ Known Caveats:
 7.) Because we now unpack multipart PQSCity's correctly, you may rarely find some PQSCity structures in mods are in the earth or floating. Report such bugs to your planet pack author as this is an intended change (only cosmetic).
 
 8.) The Kopernicus_Config.cfg file is rewritten/created when the game exits. This means any manual (not in the GUI) edits made while playing the game will not be preserved. Edit the file only with the game exited, please.
+
+9.) Since time began, The KSC2 (AKA the "Old Space Center") has been an eccentric being requiring special support. It now displays correctly, and can be removed if you want for a planet, but it probably can't have many other properties changed due to how strange its supporting code is.

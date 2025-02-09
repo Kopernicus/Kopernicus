@@ -42,6 +42,7 @@ using Kopernicus.Configuration.Parsing;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using Object = UnityEngine.Object;
 
 namespace Kopernicus.Configuration
@@ -53,7 +54,6 @@ namespace Kopernicus.Configuration
     [SuppressMessage("ReSharper", "ForCanBeConvertedToForeach")]
     public class PQSLoader : BaseLoader, IParserEventSubscriber, ITypeParser<PQS>
     {
-
         // PQS we are creating
         public PQS Value { get; set; }
 
@@ -702,6 +702,7 @@ namespace Kopernicus.Configuration
             {
                 Type modType = mods[i].GetType();
                 Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+
                 for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
                 {
                     if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
@@ -813,15 +814,35 @@ namespace Kopernicus.Configuration
 
             // Load existing mods
             PQSMod[] mods = Utility.GetMods(Value);
-            List<PQSCity> specialPQSCitys = new List<PQSCity>();
             for (Int32 i = 0; i < mods.Length; i++)
             {
                 Type modType = mods[i].GetType();
                 if (modType.Name.Equals("PQSCity") && mods[i].name.Equals("KSC2"))
                 {
-                    specialPQSCitys.Add((PQSCity)mods[i]);
+                    PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
+                    PQSCity scTree = kerbinTemplate.pqsVersion.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC2");
+                    PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
+                    newScTree.transform.localPosition = scTree.transform.localPosition;
+                    newScTree.transform.localScale = scTree.transform.localScale;
+                    newScTree.transform.localRotation = scTree.transform.localRotation;
+                    Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
+                    newScTree.name = "KSC2";
+                    Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
+
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    {
+                        if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                        {
+                            continue;
+                        }
+
+                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(newScTree, Value);
+                        Mods.Add(loader);
+                    }
+                    GameObject.Destroy(mods[i]);
                 }
-                else 
+                else
                 {
                     Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
 
@@ -836,47 +857,6 @@ namespace Kopernicus.Configuration
                         loader.Create(mods[i], Value);
                         Mods.Add(loader);
                     }
-                }
-                foreach (PQSCity PQSC in specialPQSCitys)
-                {
-                    PSystemBody worldTemplate;
-                    PQSCity scTree;
-                    try //this try ensure stock bodies are selected
-                    {
-                        worldTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, Value.name);
-                    }
-                    catch
-                    {
-                        worldTemplate = null;
-                        continue;
-                    }
-                    try //this try ensures only stock PQSCity's are selected
-                    {
-                        scTree = worldTemplate.pqsVersion.GetComponentsInChildren<PQSCity>(true).First(m => m.name == PQSC.name);
-                    }
-                    catch
-                    {
-                        scTree = null;
-                        continue;
-                    }
-                    PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
-                    Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
-                    newScTree.name = PQSC.name;
-                    Type modTypePQSC = PQSC.GetType();
-                    Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modTypePQSC);
-                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
-                    {
-                        if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
-                        {
-                            continue;
-                        }
-
-                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
-                        loader.Create(newScTree, Value);
-                        Mods.Add(loader);
-                    }
-                    Object.DestroyImmediate(PQSC);
-                    Object.DestroyImmediate(scTree);
                 }
             }
         }

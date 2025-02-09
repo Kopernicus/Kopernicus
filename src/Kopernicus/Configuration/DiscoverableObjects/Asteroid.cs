@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 
-namespace Kopernicus.Configuration.Asteroids
+namespace Kopernicus.Configuration.DiscoverableObjects
 {
     [RequireConfigType(ConfigType.Node)]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]

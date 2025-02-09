@@ -27,7 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Kopernicus.Configuration.Asteroids;
+using Expansions.Missions.Actions;
+using Kopernicus.Configuration.DiscoverableObjects;
 using Kopernicus.Constants;
 using KSPAchievements;
 using UnityEngine;
@@ -85,7 +86,7 @@ namespace Kopernicus.RuntimeUtility
                 }
                 if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("true"))
                 {
-                    Debug.Log("[Kopernicus] Using Kopernicus Asteroid Spawner.");
+                    Debug.Log("[Kopernicus] Using Kopernicus Discoverable Object Spawner.");
                     AsteroidSetup();
                     foreach (var asteroidGroup in Asteroids)
                     {
@@ -94,7 +95,7 @@ namespace Kopernicus.RuntimeUtility
                 }
                 else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("false"))
                 {
-                    Debug.Log("[Kopernicus] Asteroid Spawners disabled.  Unless external spawner mod is installed no discoverable objects will be spawned.");
+                    Debug.Log("[Kopernicus] Discoverable Object Spawners disabled.  Unless external spawner mod is installed no discoverable objects will be spawned.");
                 }
                 else
                 {
@@ -105,7 +106,7 @@ namespace Kopernicus.RuntimeUtility
             }
             else if (RuntimeUtility.KopernicusConfig.UseKopernicusAsteroidSystem.ToLower().Equals("stock"))
             {
-                Debug.Log("[Kopernicus] Using stock Squad Asteroid Spawner.");
+                Debug.Log("[Kopernicus] Using stock Squad Discoverable Object Spawner.");
             }
         }
 

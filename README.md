@@ -1,15 +1,17 @@
 Kopernicus
 ==============================
-December 29th, 2024
+February 9th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-220:
+New in this latest version release-221:
 
-1.) A small hotfix for the light intensity on setting "KSCLightsAlwaysOn."  previously they were only roughly "50% on" in brightness, now they are fully on.
+1.) KSC2 handling code underwent a bugfix so it unpacks correctly again, rather than all inside itself (ick). KSC2 is still friggin' weird in how it's implemented, so I doubt you can do much more editing than to add/remove it. Testing welcome.
+
+2.) There might be some preliminary work in this build to support comets.  There might be bugs related to that framework being added, I dunno.  But there certainly isn't any comets (yet). Someday, there might be.
 
 
 About

@@ -253,8 +253,8 @@
     <Compile Include="Components\StorageComponent.cs" />
     <Compile Include="Components\UBI.cs" />
     <Compile Include="Components\Wiresphere.cs" />
-    <Compile Include="Configuration\Asteroids\Asteroid.cs" />
-    <Compile Include="Configuration\Asteroids\Location.cs" />
+    <Compile Include="Configuration\DiscoverableObjects\Asteroid.cs" />
+    <Compile Include="Configuration\DiscoverableObjects\Location.cs" />
     <Compile Include="Configuration\AtmosphereFromGroundLoader.cs" />
     <Compile Include="Configuration\ConfigReader.cs" />
     <Compile Include="Configuration\DebugLoader.cs" />

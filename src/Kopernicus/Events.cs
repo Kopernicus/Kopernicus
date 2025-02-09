@@ -29,7 +29,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Kopernicus.Components;
 using Kopernicus.Configuration;
-using Kopernicus.Configuration.Asteroids;
+using Kopernicus.Configuration.DiscoverableObjects;
 using Kopernicus.OnDemand;
 using ModularFI;
 using UnityEngine;

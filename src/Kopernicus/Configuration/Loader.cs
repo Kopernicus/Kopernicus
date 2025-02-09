@@ -33,7 +33,7 @@ using Kopernicus.ConfigParser.Attributes;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
-using Kopernicus.Configuration.Asteroids;
+using Kopernicus.Configuration.DiscoverableObjects;
 using Kopernicus.OnDemand;
 using Kopernicus.RuntimeUtility;
 using UnityEngine;
@@ -326,7 +326,7 @@ namespace Kopernicus.Configuration
                         // Attempt to create the Asteroid
                         Asteroid asteroid =
                         Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus"); //logs to active logger
-                        DiscoverableObjects.Asteroids.Add(asteroid);
+                        Kopernicus.RuntimeUtility.DiscoverableObjects.Asteroids.Add(asteroid);
                         Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.Name);
 
