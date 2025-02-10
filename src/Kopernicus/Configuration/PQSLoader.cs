@@ -42,7 +42,6 @@ using Kopernicus.Configuration.Parsing;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using Object = UnityEngine.Object;
 
 namespace Kopernicus.Configuration
@@ -827,6 +826,7 @@ namespace Kopernicus.Configuration
                     newScTree.transform.localRotation = scTree.transform.localRotation;
                     Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
                     newScTree.name = "KSC2";
+                    GameObject.Destroy(newScTree.gameObject.GetComponentInChildren<CommNetHome>());
                     Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
 
                     for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
@@ -840,8 +840,8 @@ namespace Kopernicus.Configuration
                         loader.Create(newScTree, Value);
                         Mods.Add(loader);
                     }
-                    GameObject.Destroy(mods[i].gameObject.GetComponentInChildren<CommNetHome>());
-                    GameObject.Destroy(mods[i]);
+                    mods[i].modEnabled = false;
+                    mods[i].enabled = false;
                 }
                 else
                 {

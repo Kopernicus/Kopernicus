@@ -7,11 +7,11 @@ February 10th, 2025
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-222:
+New in this latest version release-223:
 
-1.) KSC2 handling code hotfix for an additonal Commnet node spontanously appearing out of nowhere (again).
+1.) KSC2 has to keep it's duplicate commnet node as it causes SCANSAT to crash otherwise.  Thus, readded it and set it to zero range and removed it from lists as a compromise.
 
-2.) KSC2 is frickin' weird.
+2.) KSC2 is STILL frickin' weird.
 
 
 About
