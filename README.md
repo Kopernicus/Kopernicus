@@ -1,17 +1,17 @@
 Kopernicus
 ==============================
-February 9th, 2025
+February 10th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-221:
+New in this latest version release-222:
 
-1.) KSC2 handling code underwent a bugfix so it unpacks correctly again, rather than all inside itself (ick). KSC2 is still friggin' weird in how it's implemented, so I doubt you can do much more editing than to add/remove it. Testing welcome.
+1.) KSC2 handling code hotfix for an additonal Commnet node spontanously appearing out of nowhere (again).
 
-2.) There might be some preliminary work in this build to support comets.  There might be bugs related to that framework being added, I dunno.  But there certainly isn't any comets (yet). Someday, there might be.
+2.) KSC2 is frickin' weird.
 
 
 About

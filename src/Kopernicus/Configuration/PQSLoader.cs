@@ -840,6 +840,7 @@ namespace Kopernicus.Configuration
                         loader.Create(newScTree, Value);
                         Mods.Add(loader);
                     }
+                    GameObject.Destroy(mods[i].gameObject.GetComponentInChildren<CommNetHome>());
                     GameObject.Destroy(mods[i]);
                 }
                 else
