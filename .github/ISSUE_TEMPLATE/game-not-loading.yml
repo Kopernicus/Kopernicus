@@ -1,0 +1,13 @@
+name: Game Not Loading
+description: Failure to load the planet pack, infinite loading screen, etc.
+labels: [ "user support" ]
+
+body:
+  - type: textarea
+    id: log
+    attributes:
+      label: Upload your logs/logs-kopernicus.zip file
+      description: This folder can be found adjacent to your ksp executable
+    validations:
+      required: true
+
