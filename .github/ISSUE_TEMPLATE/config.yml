@@ -1,0 +1,8 @@
+blank_issues_enabled : true
+contact_links:
+  - name: Discord
+    url: https://discord.gg/uA69S3zZqf
+    about: Discord support server
+  - name: Forum
+    url: https://forum.kerbalspaceprogram.com/index.php?/topic/200143-*
+    about: KSP forum support thread
