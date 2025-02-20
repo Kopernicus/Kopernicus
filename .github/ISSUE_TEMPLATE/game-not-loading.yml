@@ -2,6 +2,7 @@ name: Game Not Loading
 description: Failure to load the planet pack, infinite loading screen, etc.
 labels: [ "user support" ]
 
+title: Game not loading
 body:
   - type: textarea
     id: log
@@ -10,4 +11,7 @@ body:
       description: This folder can be found adjacent to your ksp executable
     validations:
       required: true
-
+  - type: textarea
+    id: other
+    attributes:
+      label: Anything else you want to add
