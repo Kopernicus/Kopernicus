@@ -163,14 +163,21 @@ namespace Kopernicus.RuntimeUtility
                         Collider collider = disabledColliders[i];
                         if (collider.IsDestroyed())
                             continue;
-
-                        collider.enabled = true;
+                        try
+                        {
+                            collider.enabled = true;
+                        }
+                        catch { }
                     }
                 }
 
                 if (hasScaled && !scaledEnabled)
                 {
-                    scaledSpaceCollider.enabled = true;
+                    try
+                    {
+                        scaledSpaceCollider.enabled = true;
+                    }
+                    catch { }
                 }
             }
         }
