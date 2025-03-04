@@ -40,11 +40,11 @@ namespace Kopernicus.ShadowMan
             Vector3 point1 = vertices[p1];
             Vector3 point2 = vertices[p2];
             Vector3 middle = new Vector3
-                (
-                    (point1.x + point2.x) / 2f,
-                    (point1.y + point2.y) / 2f,
-                    (point1.z + point2.z) / 2f
-                    );
+            (
+                (point1.x + point2.x) / 2f,
+                (point1.y + point2.y) / 2f,
+                (point1.z + point2.z) / 2f
+            );
 
             // add vertex makes sure point is on unit sphere
             int i = vertices.Count;
@@ -59,7 +59,7 @@ namespace Kopernicus.ShadowMan
         //consider building this only once, same for the 32bit index plane
         public static Mesh CreateIcoSphereMesh()
         {
-            Mesh mesh = new Mesh ();
+            Mesh mesh = new Mesh();
             mesh.Clear();
 
             List<Vector3> vertList = new List<Vector3>();
@@ -140,7 +140,7 @@ namespace Kopernicus.ShadowMan
 
             mesh.vertices = vertList.ToArray();
 
-            List< int > triList = new List<int>();
+            List<int> triList = new List<int>();
             for (int i = 0; i < faces.Count; i++)
             {
                 triList.Add(faces[i].v1);
@@ -150,7 +150,7 @@ namespace Kopernicus.ShadowMan
             mesh.triangles = triList.ToArray();
             mesh.uv = new Vector2[mesh.vertices.Length];
 
-            Vector3[] normales = new Vector3[ vertList.Count];
+            Vector3[] normales = new Vector3[vertList.Count];
             for (int i = 0; i < normales.Length; i++)
                 normales[i] = vertList[i].normalized;
 
@@ -164,4 +164,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

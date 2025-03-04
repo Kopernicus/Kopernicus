@@ -1,6 +1,6 @@
 /**U
 * Kopernicus Planetary System Modifier
-* ------------------------------------------------------------- 
+* -------------------------------------------------------------
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
 * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 * MA 02110-1301  USA
-* 
+*
 * This library is intended to be used as a plugin for Kerbal Space Program
 * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
 * itself is governed by the terms of its EULA, not the license above.
-* 
+*
 * https://kerbalspaceprogram.com
 */
 
@@ -41,14 +41,14 @@ namespace Kopernicus.Components
         public string EcUIUnit = string.Empty;
 
         /// <summary>Main PAW info label</summary>
-        [KSPField(guiActive = true, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_solarPanelStatus")]//Solar Panel Status
-		public string panelStatus = string.Empty;
-        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_energy")]//Energy Output
-		public string panelStatusEnergy = string.Empty;
-        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_exposure")]//exposure
-		public string panelStatusSunAOA = string.Empty;
-        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_wear")]//wear
-		public string panelStatusWear = string.Empty;
+        [KSPField(guiActive = true, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_solarPanelStatus")] //Solar Panel Status
+        public string panelStatus = string.Empty;
+        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_energy")] //Energy Output
+        public string panelStatusEnergy = string.Empty;
+        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_exposure")] //exposure
+        public string panelStatusSunAOA = string.Empty;
+        [KSPField(guiActive = false, guiActiveEditor = false, guiName = "#Kopernicus_SolarPanelFixer_wear")] //wear
+        public string panelStatusWear = string.Empty;
 
         /// <summary>nominal rate at 1 UA (Kerbin distance from the sun)</summary>
         [KSPField(isPersistant = true)]
@@ -67,11 +67,11 @@ namespace Kopernicus.Components
         private bool manualTracking = false;
 
         /// <summary>
-		/// Time based output degradation curve. Keys in hours, values in [0;1] range.
-		/// Copied from the target solar panel module if supported and present.
-		/// If defined in the SolarPanelFixer config, the target module curve will be overriden.
-		/// </summary>
-		[KSPField(isPersistant = true)]
+        /// Time based output degradation curve. Keys in hours, values in [0;1] range.
+        /// Copied from the target solar panel module if supported and present.
+        /// If defined in the SolarPanelFixer config, the target module curve will be overriden.
+        /// </summary>
+        [KSPField(isPersistant = true)]
         public FloatCurve timeEfficCurve;
         private static FloatCurve teCurve = null;
         private bool prefabDefinesTimeEfficCurve = false;
@@ -100,7 +100,7 @@ namespace Kopernicus.Components
         private ExposureState exposureState;
         private string mainOccludingPart;
         private string rateFormat;
-        private static StringBuilder sb=new StringBuilder(256);
+        private static StringBuilder sb = new StringBuilder(256);
         private ExposureState exposureStatus;
 
 
@@ -129,7 +129,7 @@ namespace Kopernicus.Components
         private const string prefix = "#Kopernicus_";
         public static string GetLoc(string template) => Localizer.Format(prefix + template);
         private static string SolarPanelFixer_occludedby = GetLoc("SolarPanelFixer_occludedby"); // "occluded by <<1>>"
-        private static string SolarPanelFixer_notvisible  = GetLoc("SolarPanelFixer_notvisible"); // "Not Visible"
+        private static string SolarPanelFixer_notvisible = GetLoc("SolarPanelFixer_notvisible"); // "Not Visible"
         private static string SolarPanelFixer_badorientation = GetLoc("SolarPanelFixer_badorientation"); // "bad orientation"
         private static string SolarPanelFixer_exposure = GetLoc("SolarPanelFixer_exposure"); // "exposure"
         private static string SolarPanelFixer_wear = GetLoc("SolarPanelFixer_wear"); // "wear"
@@ -149,20 +149,19 @@ namespace Kopernicus.Components
 
         CelestialBody trackedSun;
         //declare internal float curves
-        private static readonly FloatCurve temperatureEfficCurve= new FloatCurve();
+        private static readonly FloatCurve temperatureEfficCurve = new FloatCurve();
         private static readonly FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
         private static readonly FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
-        
-        public static string resourceName=null;
+
+        public static string resourceName = null;
         #endregion
 
         #region KSP/Unity methods + background update
-
-        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_SolarPanelFixer_Selecttrackedstar")]//Select tracked star
+        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_SolarPanelFixer_Selecttrackedstar")] //Select tracked star
         public void ManualTracking()
         {
             KopernicusStar[] orderedStars = KopernicusStar.Stars
-                    .OrderBy(s => Vector3.Distance(vessel.transform.position, s.sun.position)).ToArray();
+                .OrderBy(s => Vector3.Distance(vessel.transform.position, s.sun.position)).ToArray();
             Int32 stars = orderedStars.Count();
             DialogGUIBase[] options = new DialogGUIBase[stars + 1];
             // Assemble the buttons
@@ -180,9 +179,9 @@ namespace Kopernicus.Components
             }
 
             PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new MultiOptionDialog(
-                SolarPanelFixer_SelectTrackingBody,//"Select Tracking Body"
-                SolarPanelFixer_SelectTrackedstar_msg,//"Select the star you want to track with this solar panel."
-                SolarPanelFixer_Selecttrackedstar,//"Select tracked star"
+                SolarPanelFixer_SelectTrackingBody, //"Select Tracking Body"
+                SolarPanelFixer_SelectTrackedstar_msg, //"Select the star you want to track with this solar panel."
+                SolarPanelFixer_Selecttrackedstar, //"Select tracked star"
                 UISkinManager.GetSkin("MainMenuSkin"),
                 options), false, UISkinManager.GetSkin("MainMenuSkin"));
         }
@@ -310,7 +309,7 @@ namespace Kopernicus.Components
             if (Events["ManualTracking"].active && (state == PanelState.Extended || state == PanelState.ExtendedFixed || state == PanelState.Static))
             {
                 Events["ManualTracking"].guiActive = true;
-                Events["ManualTracking"].guiName = BuildString(SolarPanelFixer_Trackedstar + " ", manualTracking ? ": " : SolarPanelFixer_AutoTrack, FlightGlobals.Bodies[trackedSunIndex].bodyDisplayName.Replace("^N", ""));//"Tracked star"[Auto] : "
+                Events["ManualTracking"].guiName = BuildString(SolarPanelFixer_Trackedstar + " ", manualTracking ? ": " : SolarPanelFixer_AutoTrack, FlightGlobals.Bodies[trackedSunIndex].bodyDisplayName.Replace("^N", "")); //"Tracked star"[Auto] : "
             }
             else
             {
@@ -333,29 +332,29 @@ namespace Kopernicus.Components
             switch (exposureState)
             {
                 case ExposureState.NotVisible:
-                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_notvisible + "</color>";//not visible
+                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_notvisible + "</color>"; //not visible
                     break;
                 case ExposureState.OccludedPart:
-                    panelStatus = BuildString("<color=#ff2222>", Localizer.Format(SolarPanelFixer_occludedby, mainOccludingPart), "</color>");//occluded by 
+                    panelStatus = BuildString("<color=#ff2222>", Localizer.Format(SolarPanelFixer_occludedby, mainOccludingPart), "</color>"); //occluded by 
                     break;
                 case ExposureState.BadOrientation:
-                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_badorientation + "</color>";//bad orientation
+                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_badorientation + "</color>"; //bad orientation
                     break;
                 case ExposureState.Disabled:
                     switch (state)
                     {
-                        case PanelState.Retracted: panelStatus = SolarPanelFixer_retracted; break;//"retracted"
-                        case PanelState.Extending: panelStatus = SolarPanelFixer_extending; break;//"extending"
-                        case PanelState.Retracting: panelStatus = SolarPanelFixer_retracting; break;//"retracting"
-                        case PanelState.Broken: panelStatus = SolarPanelFixer_broken; break;//"broken"
-                        case PanelState.Failure: panelStatus = SolarPanelFixer_failure; break;//"failure"
-                        case PanelState.Unknown: panelStatus = SolarPanelFixer_invalidstate; break;//"invalid state"
+                        case PanelState.Retracted: panelStatus = SolarPanelFixer_retracted; break; //"retracted"
+                        case PanelState.Extending: panelStatus = SolarPanelFixer_extending; break; //"extending"
+                        case PanelState.Retracting: panelStatus = SolarPanelFixer_retracting; break; //"retracting"
+                        case PanelState.Broken: panelStatus = SolarPanelFixer_broken; break; //"broken"
+                        case PanelState.Failure: panelStatus = SolarPanelFixer_failure; break; //"failure"
+                        case PanelState.Unknown: panelStatus = SolarPanelFixer_invalidstate; break; //"invalid state"
                     }
                     break;
                 case ExposureState.Exposed:
                     Fields["panelStatusEnergy"].guiActive = true;
                     Fields["panelStatusSunAOA"].guiActive = true;
-                    panelStatus = "<color=#eaff56>" + SolarPanelFixer_sunDirect + "</color>";//"Sun Direct"
+                    panelStatus = "<color=#eaff56>" + SolarPanelFixer_sunDirect + "</color>"; //"Sun Direct"
                     sb.Length = 0;
                     double num = 0;
                     if (ROFlag)
@@ -428,17 +427,17 @@ namespace Kopernicus.Components
 
             Vessel vesselActive = FlightGlobals.ActiveVessel;
             Vector3d position = VesselPosition(vesselActive);
-            List<KopernicusStar> starList=new List<KopernicusStar>();
+            List<KopernicusStar> starList = new List<KopernicusStar>();
 
             Vector3d direction;
             double distance;
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
-                KopernicusStar starL=KopernicusStar.Stars[s];
-                Vector3d dIRECTION=(starL.sun.position-position).normalized;
+                KopernicusStar starL = KopernicusStar.Stars[s];
+                Vector3d dIRECTION = (starL.sun.position - position).normalized;
                 /*double Block=SolarPanel.GetOccludedFactor(dIRECTION,out trackedPart);
                 double Cosine=SolarPanel.GetCosineFactor(dIRECTION);*/
-                double factor= IsBodyVisible(vessel, position, starL.sun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
+                double factor = IsBodyVisible(vessel, position, starL.sun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
                 //if (Cosine * Block == 0)
                 if (factor == 0.0)
                 {
@@ -494,14 +493,14 @@ namespace Kopernicus.Components
                 if (vessel.atmDensity > 0)
                 {
                     float horizonAngle = (float)Math.Acos(FlightGlobals.currentMainBody.Radius /
-                        (FlightGlobals.currentMainBody.Radius +FlightGlobals.ship_altitude));
+                                                          (FlightGlobals.currentMainBody.Radius + FlightGlobals.ship_altitude));
 
                     float sunZenithAngleDeg = Vector3.Angle(FlightGlobals.upAxis, star.sun.position);
 
                     Double gravAccelParameter = (vessel.mainBody.gravParameter /
-                        Math.Pow(vessel.mainBody.Radius + FlightGlobals.ship_altitude, 2));
+                                                 Math.Pow(vessel.mainBody.Radius + FlightGlobals.ship_altitude, 2));
 
-                    float massOfAirColumn =(float)(FlightGlobals.getStaticPressure() / gravAccelParameter);
+                    float massOfAirColumn = (float)(FlightGlobals.getStaticPressure() / gravAccelParameter);
 
                     tempMult = temperatureEfficCurve.Evaluate((float)vessel.atmosphericTemperature);
                     atmoDensityMult = AtmosphericAttenutationAirMassMultiplier.Evaluate(massOfAirColumn);
@@ -537,8 +536,8 @@ namespace Kopernicus.Components
                 if ((sunExposureFactor != 0) && (tempMult != 0) && (atmoAngleMult != 0) && (atmoDensityMult != 0))
                 {
                     panelEffectivness = ((float)nominalRate / 24.3999996185303f) / 56.37091313591871f * (float)sunExposureFactor * tempMult *
-                                            atmoAngleMult *
-                                            atmoDensityMult; //56.blabla is a weird constant we use to turn flux into EC
+                                        atmoAngleMult *
+                                        atmoDensityMult; //56.blabla is a weird constant we use to turn flux into EC
                 }
                 if (starFluxAtHome > 0)
                 {
@@ -565,7 +564,7 @@ namespace Kopernicus.Components
             else
                 currentOutput = totalFlow;
 
-            double trackedSunVisiblefactor= IsBodyVisible(vessel, position, trackedSun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
+            double trackedSunVisiblefactor = IsBodyVisible(vessel, position, trackedSun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
             // ignore very small outputs
             if (currentOutput < 1e-10)
             {
@@ -598,7 +597,6 @@ namespace Kopernicus.Components
                 part.RequestResource(resourceName, (-currentOutput) * TimeWarp.fixedDeltaTime);
             }
         }
-
         #endregion
 
         #region Other methods
@@ -638,7 +636,8 @@ namespace Kopernicus.Components
                     case "ModuleROSolarPanel": SolarPanel = new ROConfigurablePanel(); break;
                     default:
                         if (pm is ModuleDeployableSolarPanel)
-                            SolarPanel = new StockPanel(); break;
+                            SolarPanel = new StockPanel();
+                        break;
                 }
                 if (SolarPanel != null)
                 {
@@ -678,10 +677,10 @@ namespace Kopernicus.Components
         }
 
         /// <summary>return true if 'body' is visible from 'vesselPos'. Very fast method.</summary>
-		/// <param name="occludingBodies">the bodies that will be checked for occlusion</param>
-		/// <param name="bodyDir">normalized vector from vessel to body</param>
-		/// <param name="bodyDist">distance from vessel to body surface</param>
-		/// <returns></returns>
+        /// <param name="occludingBodies">the bodies that will be checked for occlusion</param>
+        /// <param name="bodyDir">normalized vector from vessel to body</param>
+        /// <param name="bodyDist">distance from vessel to body surface</param>
+        /// <returns></returns>
         public static bool IsBodyVisible(Vessel vessel, Vector3d vesselPos, CelestialBody body, List<CelestialBody> occludingBodies, out Vector3d bodyDir, out double bodyDist)
         {
             // generate ray parameters
@@ -753,7 +752,7 @@ namespace Kopernicus.Components
         /// <summary>return the list of bodies whose apparent diameter is greater than 10 arcmin from the 'position' POV</summary>
         public static List<CelestialBody> GetLargeBodies(Vector3d position)
         {
-            List <CelestialBody> visibleBodies = new List<CelestialBody>();
+            List<CelestialBody> visibleBodies = new List<CelestialBody>();
             foreach (CelestialBody occludingBody in FlightGlobals.Bodies)
             {
                 // if apparent diameter > ~10 arcmin (~0.003 radians), consider the body for occlusion checks
@@ -827,7 +826,7 @@ namespace Kopernicus.Components
 
         public static string GetString(ProtoPartModuleSnapshot m, string name, string def_value = "")
         {
-            string s = m.moduleValues.GetValue( name );
+            string s = m.moduleValues.GetValue(name);
             return s ?? def_value;
         }
 
@@ -835,9 +834,9 @@ namespace Kopernicus.Components
         public static bool IsScenario()
         {
             return HighLogic.CurrentGame.Mode == Game.Modes.SCENARIO
-                || HighLogic.CurrentGame.Mode == Game.Modes.SCENARIO_NON_RESUMABLE
-                || HighLogic.CurrentGame.Mode == Game.Modes.MISSION_BUILDER
-                || HighLogic.CurrentGame.Mode == Game.Modes.MISSION;
+                   || HighLogic.CurrentGame.Mode == Game.Modes.SCENARIO_NON_RESUMABLE
+                   || HighLogic.CurrentGame.Mode == Game.Modes.MISSION_BUILDER
+                   || HighLogic.CurrentGame.Mode == Game.Modes.MISSION;
         }
 
         ///<summary>disable the module and return true if a tutorial scenario is active</summary>
@@ -930,7 +929,13 @@ namespace Kopernicus.Components
             public abstract PanelState GetState();
 
             /// <summary>Can be overridden if the target module implement a time efficiency curve. Keys are in hours, values are a scalar in the [0:1] range.</summary>
-            public virtual FloatCurve GetTimeCurve() { return new FloatCurve(new Keyframe[] { new Keyframe(0f, 1f) }); }
+            public virtual FloatCurve GetTimeCurve()
+            {
+                return new FloatCurve(new Keyframe[]
+                {
+                    new Keyframe(0f, 1f)
+                });
+            }
 
             /// <summary>Called at Update(), can contain target module specific hacks</summary>
             public virtual void OnUpdate() { }
@@ -989,8 +994,12 @@ namespace Kopernicus.Components
             {
                 switch (state)
                 {
-                    case PanelState.Retracted: Extend(); return;
-                    case PanelState.Extended: Retract(); return;
+                    case PanelState.Retracted:
+                        Extend();
+                        return;
+                    case PanelState.Extended:
+                        Retract();
+                        return;
                 }
             }
         }
@@ -1000,7 +1009,6 @@ namespace Kopernicus.Components
             public T panelModule;
             public override PartModule TargetModule => panelModule;
         }
-
         #endregion
 
         #region Stock module support (ModuleDeployableSolarPanel)
@@ -1013,8 +1021,8 @@ namespace Kopernicus.Components
         // - we don't support cylindrical/spherical panel types
         private class StockPanel : SupportedPanel<ModuleDeployableSolarPanel>
         {
-            private Transform sunCatcherPosition;   // middle point of the panel surface (usually). Use only position, panel surface direction depend on the pivot transform, even for static panels.
-            private Transform sunCatcherPivot;      // If it's a tracking panel, "up" is the pivot axis and "position" is the pivot position. In any case "forward" is the panel surface normal.
+            private Transform sunCatcherPosition; // middle point of the panel surface (usually). Use only position, panel surface direction depend on the pivot transform, even for static panels.
+            private Transform sunCatcherPivot; // If it's a tracking panel, "up" is the pivot axis and "position" is the pivot position. In any case "forward" is the panel surface normal.
 
             public override void OnLoad(KopernicusSolarPanel fixerModule, PartModule targetModule)
             {
@@ -1030,7 +1038,7 @@ namespace Kopernicus.Components
                 panelModule.Fields["status"].guiActive = false;
 
                 resourceName = panelModule.resourceName;
-                
+
                 if (sunCatcherPivot == null)
                     sunCatcherPivot = panelModule.part.FindModelComponent<Transform>(panelModule.pivotName);
                 if (sunCatcherPosition == null)
@@ -1201,9 +1209,9 @@ namespace Kopernicus.Components
         // - We call its Update() method but we disable the KSPFields UI visibility.
         private class NFSCurvedPanel : SupportedPanel<PartModule>
         {
-            private Transform[] sunCatchers;    // model transforms named after the "PanelTransformName" field
-            private bool deployable;            // "Deployable" field
-            private Action panelModuleUpdate;   // delegate for the module Update() method
+            private Transform[] sunCatchers; // model transforms named after the "PanelTransformName" field
+            private bool deployable; // "Deployable" field
+            private Action panelModuleUpdate; // delegate for the module Update() method
 
             public override void OnLoad(KopernicusSolarPanel fixerModule, PartModule targetModule)
             {
@@ -1360,10 +1368,13 @@ namespace Kopernicus.Components
         // - We replicate the behavior by ourselves
         private class SSTUStaticPanel : SupportedPanel<PartModule>
         {
-            private Transform[] sunCatchers;    // model transforms named after the "PanelTransformName" field
+            private Transform[] sunCatchers; // model transforms named after the "PanelTransformName" field
 
             public override void OnLoad(KopernicusSolarPanel fixerModule, PartModule targetModule)
-            { this.fixerModule = fixerModule; panelModule = targetModule; }
+            {
+                this.fixerModule = fixerModule;
+                panelModule = targetModule;
+            }
 
             public override bool OnStart(bool initialized, ref double nominalRate)
             {
@@ -1496,7 +1507,10 @@ namespace Kopernicus.Components
             }
 
             public override void OnLoad(KopernicusSolarPanel fixerModule, PartModule targetModule)
-            { this.fixerModule = fixerModule; panelModule = targetModule; }
+            {
+                this.fixerModule = fixerModule;
+                panelModule = targetModule;
+            }
 
             public override bool OnStart(bool initialized, ref double nominalRate)
             {
@@ -1585,7 +1599,9 @@ namespace Kopernicus.Components
                 switch (panelModule.moduleName)
                 {
                     case "SSTUModularPart": panelModule.Fields["solarPanelStatus"].guiActive = false; break;
-                    case "SSTUSolarPanelDeployable": foreach (var field in panelModule.Fields) field.guiActive = false; break;
+                    case "SSTUSolarPanelDeployable":
+                        foreach (var field in panelModule.Fields) field.guiActive = false;
+                        break;
                 }
                 return true;
             }
@@ -1600,13 +1616,23 @@ namespace Kopernicus.Components
                     suncatcherTotalCount += panel.SuncatcherCount;
                     for (int i = 0; i < panel.SuncatcherCount; i++)
                     {
-                        if (!analytic) { cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0); continue; }
+                        if (!analytic)
+                        {
+                            cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
+                            continue;
+                        }
 
                         switch (trackingType)
                         {
-                            case TrackingType.Fixed: cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0); continue;
-                            case TrackingType.SinglePivot: cosineFactor += Math.Cos(1.57079632679 - Math.Acos(Vector3d.Dot(sunDir, panel.PivotAxisVector))); continue;
-                            case TrackingType.DoublePivot: cosineFactor += 1.0; continue;
+                            case TrackingType.Fixed:
+                                cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
+                                continue;
+                            case TrackingType.SinglePivot:
+                                cosineFactor += Math.Cos(1.57079632679 - Math.Acos(Vector3d.Dot(sunDir, panel.PivotAxisVector)));
+                                continue;
+                            case TrackingType.DoublePivot:
+                                cosineFactor += 1.0;
+                                continue;
                         }
                     }
                 }
@@ -1697,7 +1723,6 @@ namespace Kopernicus.Components
             // Note : this has been implemented in the base class (StockPanel) because
             // we have the same issue with NearFutureSolar B9PS-switching its MDSP modules.
         }
-
         #endregion
     }
 }

@@ -43,7 +43,6 @@ namespace Kopernicus.Constants
      * See this forum thread for details:
      * http://forum.kerbalspaceprogram.com/threads/65395-Voluntarily-Locking-Plugins-to-a-Particular-KSP-Version
      */
-
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class CompatibilityChecker : MonoBehaviour
     {
@@ -134,7 +133,7 @@ namespace Kopernicus.Constants
                     {
                         try
                         {
-                            return !(Boolean) m.Invoke(null, null);
+                            return !(Boolean)m.Invoke(null, null);
                         }
                         catch (Exception e)
                         {
@@ -158,7 +157,7 @@ namespace Kopernicus.Constants
                     {
                         try
                         {
-                            return !(Boolean) m.Invoke(null, null);
+                            return !(Boolean)m.Invoke(null, null);
                         }
                         catch (Exception e)
                         {

@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Vector3d2
 {
@@ -126,7 +125,7 @@ public class Vector3d2
 
     public void Normalize()
     {
-        double invLength = 1.0 / System.Math.Sqrt(x*x + y*y + z*z);
+        double invLength = 1.0 / System.Math.Sqrt(x * x + y * y + z * z);
         x *= invLength;
         y *= invLength;
         z *= invLength;
@@ -134,13 +133,13 @@ public class Vector3d2
 
     public Vector3d2 Normalized()
     {
-        double invLength = 1.0 / System.Math.Sqrt(x*x + y*y + z*z);
+        double invLength = 1.0 / System.Math.Sqrt(x * x + y * y + z * z);
         return new Vector3d2(x * invLength, y * invLength, z * invLength);
     }
 
     public Vector3d2 Normalized(double l)
     {
-        double length = System.Math.Sqrt(x*x + y*y + z*z);
+        double length = System.Math.Sqrt(x * x + y * y + z * z);
         double invLength = l / length;
         return new Vector3d2(x * invLength, y * invLength, z * invLength);
     }

@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -153,7 +153,7 @@ namespace Kopernicus.UI
                 return null;
             }
 
-            PropertyInfo info = (PropertyInfo) member;
+            PropertyInfo info = (PropertyInfo)member;
             return info.CanRead ? info.GetValue(reference, null) : null;
         }
 
@@ -172,7 +172,7 @@ namespace Kopernicus.UI
             {
                 return;
             }
-            PropertyInfo info = (PropertyInfo) member;
+            PropertyInfo info = (PropertyInfo)member;
             if (info.CanWrite)
             {
                 info.SetValue(reference, value, null);
@@ -249,7 +249,7 @@ namespace Kopernicus.UI
                     }
 
                     // Now we can parse the value
-                    IParsable parser = (IParsable) current;
+                    IParsable parser = (IParsable)current;
                     parser.SetFromString(value);
 
                     // Reapply
@@ -297,7 +297,7 @@ namespace Kopernicus.UI
                     }
 
                     // Now we can parse the value
-                    IParsable parser = (IParsable) current;
+                    IParsable parser = (IParsable)current;
                     parser.SetFromString(value);
 
                     // Reapply
@@ -370,7 +370,10 @@ namespace Kopernicus.UI
                         value = methods[i].Invoke(null);
                         break;
                     case KittopiaConstructor.ParameterType.CelestialBody:
-                        value = methods[i].Invoke(new Object[] { body });
+                        value = methods[i].Invoke(new Object[]
+                        {
+                            body
+                        });
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -385,12 +388,12 @@ namespace Kopernicus.UI
             // Check if the object implements other constructors
             if (typeof(ICreatable<CelestialBody>).IsAssignableFrom(type))
             {
-                ICreatable<CelestialBody> creatable = (ICreatable<CelestialBody>) value;
+                ICreatable<CelestialBody> creatable = (ICreatable<CelestialBody>)value;
                 creatable.Create(body);
             }
             else if (typeof(ICreatable).IsAssignableFrom(type))
             {
-                ICreatable creatable = (ICreatable) value;
+                ICreatable creatable = (ICreatable)value;
                 creatable.Create();
             }
 
@@ -437,7 +440,7 @@ namespace Kopernicus.UI
             // Is the method an enumerator?
             if (typeof(IEnumerator).IsAssignableFrom(method.ReturnType))
             {
-                IEnumerator coroutine = (IEnumerator) method.Invoke(reference, null);
+                IEnumerator coroutine = (IEnumerator)method.Invoke(reference, null);
                 HighLogic.fetch.StartCoroutine(CoroutineCallback(coroutine, callback));
             }
             else

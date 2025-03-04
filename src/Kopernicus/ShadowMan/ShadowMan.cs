@@ -24,7 +24,7 @@ namespace Kopernicus.ShadowMan
         public ShadowRemoveFadeCommandBuffer shadowFadeRemover;
         public TweakShadowCascades shadowCascadeTweaker;
 
-        public Light sunLight,scaledSpaceSunLight, mainMenuLight;
+        public Light sunLight, scaledSpaceSunLight, mainMenuLight;
         public Camera farCamera, scaledSpaceCamera, nearCamera;
         static float originalShadowDistance = 0f;
         public bool unifiedCameraMode = false;
@@ -76,12 +76,12 @@ namespace Kopernicus.ShadowMan
             {
                 // Note: Stock KSP dragCubes make a copy of components and removes them rom far/near cameras when rendering
                 // This can cause issues with renderTextures and commandBuffers, to keep in mind for when implementing godrays
-                bufferManager = scaledSpaceCamera.gameObject.AddComponent<BufferManager>();    // This doesn't need to be added to any camera anymore
-                                                                                                                    // TODO: move to appropriate gameObjec
+                bufferManager = scaledSpaceCamera.gameObject.AddComponent<BufferManager>(); // This doesn't need to be added to any camera anymore
+                // TODO: move to appropriate gameObjec
             }
 
             if (!unifiedCameraMode)
-                shadowFadeRemover = nearCamera.gameObject.AddComponent< ShadowRemoveFadeCommandBuffer>();
+                shadowFadeRemover = nearCamera.gameObject.AddComponent<ShadowRemoveFadeCommandBuffer>();
 
             //magically fix stupid issues when reverting to space center from map view
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
@@ -97,22 +97,22 @@ namespace Kopernicus.ShadowMan
             if (nearCamera)
                 nearCamera.gameObject.DestroyComponent<Wireframe>();
 
-            if (farCamera) 
+            if (farCamera)
                 farCamera.gameObject.DestroyComponent<Wireframe>();
 
             if (scaledSpaceCamera)
                 scaledSpaceCamera.gameObject.DestroyComponent<Wireframe>();
 
-            if (shadowFadeRemover) 
+            if (shadowFadeRemover)
                 Destroy(shadowFadeRemover);
 
-            if (shadowCascadeTweaker) 
+            if (shadowCascadeTweaker)
                 Destroy(shadowCascadeTweaker);
 
-            if (bufferManager) 
+            if (bufferManager)
                 Destroy(bufferManager);
 
-            if (instance == this) 
+            if (instance == this)
                 instance = null;
         }
 

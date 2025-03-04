@@ -959,7 +959,10 @@ namespace Kopernicus.Configuration.Parsing
             }
 
             Material m = new Material(material);
-            return new StockMaterialParser { Value = m };
+            return new StockMaterialParser
+            {
+                Value = m
+            };
         }
     }
 }

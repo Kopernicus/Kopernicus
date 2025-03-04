@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -76,9 +76,7 @@ namespace Kopernicus.Components
                 prefab.au = 13599840256;
                 prefab.brightnessCurve = new FloatCurve(new[]
                 {
-                    new Keyframe(-0.01573471f, 0.217353f, 1.706627f, 1.706627f),
-                    new Keyframe(5.084181f, 3.997075f, -0.001802375f, -0.001802375f),
-                    new Keyframe(38.56295f, 1.82142f, 0.0001713f, 0.0001713f)
+                    new Keyframe(-0.01573471f, 0.217353f, 1.706627f, 1.706627f), new Keyframe(5.084181f, 3.997075f, -0.001802375f, -0.001802375f), new Keyframe(38.56295f, 1.82142f, 0.0001713f, 0.0001713f)
                 });
                 prefab.givesOffLight = true;
                 prefab.solarInsolation = PhysicsGlobals.SolarInsolationAtHome;
@@ -87,18 +85,15 @@ namespace Kopernicus.Components
                 prefab.sunFlare = null;
                 prefab.intensityCurve = new FloatCurve(new[]
                 {
-                    new Keyframe(0, prefab.sunlightIntensity),
-                    new Keyframe(1, prefab.sunlightIntensity)
+                    new Keyframe(0, prefab.sunlightIntensity), new Keyframe(1, prefab.sunlightIntensity)
                 });
                 prefab.scaledIntensityCurve = new FloatCurve(new[]
                 {
-                    new Keyframe(0, prefab.scaledSunlightIntensity),
-                    new Keyframe(1, prefab.scaledSunlightIntensity)
+                    new Keyframe(0, prefab.scaledSunlightIntensity), new Keyframe(1, prefab.scaledSunlightIntensity)
                 });
                 prefab.ivaIntensityCurve = new FloatCurve(new[]
                 {
-                    new Keyframe(0, prefab.ivaSunIntensity),
-                    new Keyframe(1, prefab.ivaSunIntensity)
+                    new Keyframe(0, prefab.ivaSunIntensity), new Keyframe(1, prefab.ivaSunIntensity)
                 });
 
                 // Return the prefab

@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 #pragma warning disable 660, 661
 
@@ -7,30 +6,54 @@ public class Matrix4x4d
 {
     //Members varibles
 
-    public double[,] m = new double[4,4];
+    public double[,] m = new double[4, 4];
 
     //Constructors
 
     public Matrix4x4d() { }
 
     public Matrix4x4d(double m00, double m01, double m02, double m03,
-                      double m10, double m11, double m12, double m13,
-                      double m20, double m21, double m22, double m23,
-                      double m30, double m31, double m32, double m33)
+        double m10, double m11, double m12, double m13,
+        double m20, double m21, double m22, double m23,
+        double m30, double m31, double m32, double m33)
     {
-        m[0, 0] = m00; m[0, 1] = m01; m[0, 2] = m02; m[0, 3] = m03;
-        m[1, 0] = m10; m[1, 1] = m11; m[1, 2] = m12; m[1, 3] = m13;
-        m[2, 0] = m20; m[2, 1] = m21; m[2, 2] = m22; m[2, 3] = m23;
-        m[3, 0] = m30; m[3, 1] = m31; m[3, 2] = m32; m[3, 3] = m33;
+        m[0, 0] = m00;
+        m[0, 1] = m01;
+        m[0, 2] = m02;
+        m[0, 3] = m03;
+        m[1, 0] = m10;
+        m[1, 1] = m11;
+        m[1, 2] = m12;
+        m[1, 3] = m13;
+        m[2, 0] = m20;
+        m[2, 1] = m21;
+        m[2, 2] = m22;
+        m[2, 3] = m23;
+        m[3, 0] = m30;
+        m[3, 1] = m31;
+        m[3, 2] = m32;
+        m[3, 3] = m33;
 
     }
 
     public Matrix4x4d(Matrix4x4 mat)
     {
-        m[0, 0] = mat.m00; m[0, 1] = mat.m01; m[0, 2] = mat.m02; m[0, 3] = mat.m03;
-        m[1, 0] = mat.m10; m[1, 1] = mat.m11; m[1, 2] = mat.m12; m[1, 3] = mat.m13;
-        m[2, 0] = mat.m20; m[2, 1] = mat.m21; m[2, 2] = mat.m22; m[2, 3] = mat.m23;
-        m[3, 0] = mat.m30; m[3, 1] = mat.m31; m[3, 2] = mat.m32; m[3, 3] = mat.m33;
+        m[0, 0] = mat.m00;
+        m[0, 1] = mat.m01;
+        m[0, 2] = mat.m02;
+        m[0, 3] = mat.m03;
+        m[1, 0] = mat.m10;
+        m[1, 1] = mat.m11;
+        m[1, 2] = mat.m12;
+        m[1, 3] = mat.m13;
+        m[2, 0] = mat.m20;
+        m[2, 1] = mat.m21;
+        m[2, 2] = mat.m22;
+        m[2, 3] = mat.m23;
+        m[3, 0] = mat.m30;
+        m[3, 1] = mat.m31;
+        m[3, 2] = mat.m32;
+        m[3, 3] = mat.m33;
 
     }
 
@@ -81,9 +104,9 @@ public class Matrix4x4d
             {
 
                 kProd.m[iRow, iCol] = m1.m[iRow, 0] * m2.m[0, iCol] +
-                                     m1.m[iRow, 1] * m2.m[1, iCol] +
-                                     m1.m[iRow, 2] * m2.m[2, iCol] +
-                                     m1.m[iRow, 3] * m2.m[3, iCol];
+                                      m1.m[iRow, 1] * m2.m[1, iCol] +
+                                      m1.m[iRow, 2] * m2.m[2, iCol] +
+                                      m1.m[iRow, 3] * m2.m[3, iCol];
             }
         }
         return kProd;
@@ -93,7 +116,7 @@ public class Matrix4x4d
     {
         Vector3d2 kProd = new Vector3d2();
 
-        double fInvW = 1.0 / (m.m[3,0] * v.x + m.m[3,1] * v.y + m.m[3,2] * v.z + m.m[3,3]);
+        double fInvW = 1.0 / (m.m[3, 0] * v.x + m.m[3, 1] * v.y + m.m[3, 2] * v.z + m.m[3, 3]);
 
         kProd.x = (m.m[0, 0] * v.x + m.m[0, 1] * v.y + m.m[0, 2] * v.z + m.m[0, 3]) * fInvW;
         kProd.y = (m.m[1, 0] * v.x + m.m[1, 1] * v.y + m.m[1, 2] * v.z + m.m[1, 3]) * fInvW;
@@ -158,9 +181,9 @@ public class Matrix4x4d
     public override string ToString()
     {
         return m[0, 0] + "," + m[0, 1] + "," + m[0, 2] + "," + m[0, 3] + "\n" +
-                m[1, 0] + "," + m[1, 1] + "," + m[1, 2] + "," + m[1, 3] + "\n" +
-                m[2, 0] + "," + m[2, 1] + "," + m[2, 2] + "," + m[2, 3] + "\n" +
-                m[3, 0] + "," + m[3, 1] + "," + m[3, 2] + "," + m[3, 3];
+               m[1, 0] + "," + m[1, 1] + "," + m[1, 2] + "," + m[1, 3] + "\n" +
+               m[2, 0] + "," + m[2, 1] + "," + m[2, 2] + "," + m[2, 3] + "\n" +
+               m[3, 0] + "," + m[3, 1] + "," + m[3, 2] + "," + m[3, 3];
     }
 
     public Matrix4x4d Transpose()
@@ -194,25 +217,22 @@ public class Matrix4x4d
     private Matrix4x4d Adjoint()
     {
         return new Matrix4x4d(
-                MINOR(1, 2, 3, 1, 2, 3),
-                -MINOR(0, 2, 3, 1, 2, 3),
-                MINOR(0, 1, 3, 1, 2, 3),
-                -MINOR(0, 1, 2, 1, 2, 3),
-
-                -MINOR(1, 2, 3, 0, 2, 3),
-                MINOR(0, 2, 3, 0, 2, 3),
-                -MINOR(0, 1, 3, 0, 2, 3),
-                MINOR(0, 1, 2, 0, 2, 3),
-
-                MINOR(1, 2, 3, 0, 1, 3),
-                -MINOR(0, 2, 3, 0, 1, 3),
-                MINOR(0, 1, 3, 0, 1, 3),
-                -MINOR(0, 1, 2, 0, 1, 3),
-
-                -MINOR(1, 2, 3, 0, 1, 2),
-                MINOR(0, 2, 3, 0, 1, 2),
-                -MINOR(0, 1, 3, 0, 1, 2),
-                MINOR(0, 1, 2, 0, 1, 2));
+            MINOR(1, 2, 3, 1, 2, 3),
+            -MINOR(0, 2, 3, 1, 2, 3),
+            MINOR(0, 1, 3, 1, 2, 3),
+            -MINOR(0, 1, 2, 1, 2, 3),
+            -MINOR(1, 2, 3, 0, 2, 3),
+            MINOR(0, 2, 3, 0, 2, 3),
+            -MINOR(0, 1, 3, 0, 2, 3),
+            MINOR(0, 1, 2, 0, 2, 3),
+            MINOR(1, 2, 3, 0, 1, 3),
+            -MINOR(0, 2, 3, 0, 1, 3),
+            MINOR(0, 1, 3, 0, 1, 3),
+            -MINOR(0, 1, 2, 0, 1, 3),
+            -MINOR(1, 2, 3, 0, 1, 2),
+            MINOR(0, 2, 3, 0, 1, 2),
+            -MINOR(0, 1, 3, 0, 1, 2),
+            MINOR(0, 1, 2, 0, 1, 2));
     }
 
     public Matrix4x4d Inverse()
@@ -250,10 +270,22 @@ public class Matrix4x4d
     {
         Matrix4x4 mat = new Matrix4x4();
 
-        mat.m00 = (float)m[0, 0]; mat.m01 = (float)m[0, 1]; mat.m02 = (float)m[0, 2]; mat.m03 = (float)m[0, 3];
-        mat.m10 = (float)m[1, 0]; mat.m11 = (float)m[1, 1]; mat.m12 = (float)m[1, 2]; mat.m13 = (float)m[1, 3];
-        mat.m20 = (float)m[2, 0]; mat.m21 = (float)m[2, 1]; mat.m22 = (float)m[2, 2]; mat.m23 = (float)m[2, 3];
-        mat.m30 = (float)m[3, 0]; mat.m31 = (float)m[3, 1]; mat.m32 = (float)m[3, 2]; mat.m33 = (float)m[3, 3];
+        mat.m00 = (float)m[0, 0];
+        mat.m01 = (float)m[0, 1];
+        mat.m02 = (float)m[0, 2];
+        mat.m03 = (float)m[0, 3];
+        mat.m10 = (float)m[1, 0];
+        mat.m11 = (float)m[1, 1];
+        mat.m12 = (float)m[1, 2];
+        mat.m13 = (float)m[1, 3];
+        mat.m20 = (float)m[2, 0];
+        mat.m21 = (float)m[2, 1];
+        mat.m22 = (float)m[2, 2];
+        mat.m23 = (float)m[2, 3];
+        mat.m30 = (float)m[3, 0];
+        mat.m31 = (float)m[3, 1];
+        mat.m32 = (float)m[3, 2];
+        mat.m33 = (float)m[3, 3];
 
         return mat;
     }
@@ -262,9 +294,15 @@ public class Matrix4x4d
     {
         Matrix3x3d mat = new Matrix3x3d();
 
-        mat.m[0, 0] = m[0, 0]; mat.m[0, 1] = m[0, 1]; mat.m[0, 2] = m[0, 2];
-        mat.m[1, 0] = m[1, 0]; mat.m[1, 1] = m[1, 1]; mat.m[1, 2] = m[1, 2];
-        mat.m[2, 0] = m[2, 0]; mat.m[2, 1] = m[2, 1]; mat.m[2, 2] = m[2, 2];
+        mat.m[0, 0] = m[0, 0];
+        mat.m[0, 1] = m[0, 1];
+        mat.m[0, 2] = m[0, 2];
+        mat.m[1, 0] = m[1, 0];
+        mat.m[1, 1] = m[1, 1];
+        mat.m[1, 2] = m[1, 2];
+        mat.m[2, 0] = m[2, 0];
+        mat.m[2, 1] = m[2, 1];
+        mat.m[2, 2] = m[2, 2];
 
         return mat;
     }
@@ -275,10 +313,22 @@ public class Matrix4x4d
     {
         Matrix4x4d mat = new Matrix4x4d();
 
-        mat.m[0, 0] = matf.m00; mat.m[0, 1] = matf.m01; mat.m[0, 2] = matf.m02; mat.m[0, 3] = matf.m03;
-        mat.m[1, 0] = matf.m10; mat.m[1, 1] = matf.m11; mat.m[1, 2] = matf.m12; mat.m[1, 3] = matf.m13;
-        mat.m[2, 0] = matf.m20; mat.m[2, 1] = matf.m21; mat.m[2, 2] = matf.m22; mat.m[2, 3] = matf.m23;
-        mat.m[3, 0] = matf.m30; mat.m[3, 1] = matf.m31; mat.m[3, 2] = matf.m32; mat.m[3, 3] = matf.m33;
+        mat.m[0, 0] = matf.m00;
+        mat.m[0, 1] = matf.m01;
+        mat.m[0, 2] = matf.m02;
+        mat.m[0, 3] = matf.m03;
+        mat.m[1, 0] = matf.m10;
+        mat.m[1, 1] = matf.m11;
+        mat.m[1, 2] = matf.m12;
+        mat.m[1, 3] = matf.m13;
+        mat.m[2, 0] = matf.m20;
+        mat.m[2, 1] = matf.m21;
+        mat.m[2, 2] = matf.m22;
+        mat.m[2, 3] = matf.m23;
+        mat.m[3, 0] = matf.m30;
+        mat.m[3, 1] = matf.m31;
+        mat.m[3, 2] = matf.m32;
+        mat.m[3, 3] = matf.m33;
 
         return mat;
     }
@@ -286,33 +336,33 @@ public class Matrix4x4d
     static public Matrix4x4d Translate(Vector3d2 v)
     {
         return new Matrix4x4d(1, 0, 0, v.x,
-                                  0, 1, 0, v.y,
-                                  0, 0, 1, v.z,
-                                  0, 0, 0, 1);
+            0, 1, 0, v.y,
+            0, 0, 1, v.z,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d Translate(Vector3 v)
     {
         return new Matrix4x4d(1, 0, 0, v.x,
-                                0, 1, 0, v.y,
-                                  0, 0, 1, v.z,
-                                  0, 0, 0, 1);
+            0, 1, 0, v.y,
+            0, 0, 1, v.z,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d Scale(Vector3d2 v)
     {
         return new Matrix4x4d(v.x, 0, 0, 0,
-                                  0, v.y, 0, 0,
-                                  0, 0, v.z, 0,
-                                  0, 0, 0, 1);
+            0, v.y, 0, 0,
+            0, 0, v.z, 0,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d Scale(Vector3 v)
     {
         return new Matrix4x4d(v.x, 0, 0, 0,
-                                  0, v.y, 0, 0,
-                                  0, 0, v.z, 0,
-                                  0, 0, 0, 1);
+            0, v.y, 0, 0,
+            0, 0, v.z, 0,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d RotateX(double angle)
@@ -321,9 +371,9 @@ public class Matrix4x4d
         double sa = System.Math.Sin(angle * System.Math.PI / 180.0);
 
         return new Matrix4x4d(1, 0, 0, 0,
-                                  0, ca, -sa, 0,
-                                  0, sa, ca, 0,
-                                  0, 0, 0, 1);
+            0, ca, -sa, 0,
+            0, sa, ca, 0,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d RotateY(double angle)
@@ -332,9 +382,9 @@ public class Matrix4x4d
         double sa = System.Math.Sin(angle * System.Math.PI / 180.0);
 
         return new Matrix4x4d(ca, 0, sa, 0,
-                                  0, 1, 0, 0,
-                                  -sa, 0, ca, 0,
-                                  0, 0, 0, 1);
+            0, 1, 0, 0,
+            -sa, 0, ca, 0,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d RotateZ(double angle)
@@ -343,25 +393,25 @@ public class Matrix4x4d
         double sa = System.Math.Sin(angle * System.Math.PI / 180.0);
 
         return new Matrix4x4d(ca, -sa, 0, 0,
-                                  sa, ca, 0, 0,
-                                  0, 0, 1, 0,
-                                  0, 0, 0, 1);
+            sa, ca, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d Rotate(Vector3 rotation)
     {
-        Quat x = new Quat(new Vector3d2(1,0,0), rotation.x * MathUtility.Deg2Rad );
-        Quat y = new Quat(new Vector3d2(0,1,0), rotation.y * MathUtility.Deg2Rad );
-        Quat z = new Quat(new Vector3d2(0,0,1), rotation.z * MathUtility.Deg2Rad );
+        Quat x = new Quat(new Vector3d2(1, 0, 0), rotation.x * MathUtility.Deg2Rad);
+        Quat y = new Quat(new Vector3d2(0, 1, 0), rotation.y * MathUtility.Deg2Rad);
+        Quat z = new Quat(new Vector3d2(0, 0, 1), rotation.z * MathUtility.Deg2Rad);
 
         return (z * y * x).ToMatrix4x4d();
     }
 
     static public Matrix4x4d Rotate(Vector3d2 rotation)
     {
-        Quat x = new Quat(new Vector3d2(1,0,0), rotation.x * MathUtility.Deg2Rad );
-        Quat y = new Quat(new Vector3d2(0,1,0), rotation.y * MathUtility.Deg2Rad );
-        Quat z = new Quat(new Vector3d2(0,0,1), rotation.z * MathUtility.Deg2Rad );
+        Quat x = new Quat(new Vector3d2(1, 0, 0), rotation.x * MathUtility.Deg2Rad);
+        Quat y = new Quat(new Vector3d2(0, 1, 0), rotation.y * MathUtility.Deg2Rad);
+        Quat z = new Quat(new Vector3d2(0, 0, 1), rotation.z * MathUtility.Deg2Rad);
 
         return (z * y * x).ToMatrix4x4d();
     }
@@ -370,9 +420,9 @@ public class Matrix4x4d
     {
         double f = 1.0 / System.Math.Tan((fovy * System.Math.PI / 180.0) / 2.0);
         return new Matrix4x4d(f / aspect, 0, 0, 0,
-                                  0, f, 0, 0,
-                                  0, 0, (zFar + zNear) / (zNear - zFar), (2.0 * zFar * zNear) / (zNear - zFar),
-                                  0, 0, -1, 0);
+            0, f, 0, 0,
+            0, 0, (zFar + zNear) / (zNear - zFar), (2.0 * zFar * zNear) / (zNear - zFar),
+            0, 0, -1, 0);
     }
 
     static public Matrix4x4d Ortho(double xRight, double xLeft, double yTop, double yBottom, double zNear, double zFar)
@@ -382,42 +432,17 @@ public class Matrix4x4d
         ty = -(yTop + yBottom) / (yTop - yBottom);
         tz = -(zFar + zNear) / (zFar - zNear);
         return new Matrix4x4d(2.0 / (xRight - xLeft), 0, 0, tx,
-                                   0, 2.0 / (yTop - yBottom), 0, ty,
-                                   0, 0, -2.0 / (zFar - zNear), tz,
-                                   0, 0, 0, 1);
+            0, 2.0 / (yTop - yBottom), 0, ty,
+            0, 0, -2.0 / (zFar - zNear), tz,
+            0, 0, 0, 1);
     }
 
     static public Matrix4x4d Identity()
     {
         return new Matrix4x4d(1, 0, 0, 0,
-                                0, 1, 0, 0,
-                                0, 0, 1, 0,
-                                0, 0, 0, 1);
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1);
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

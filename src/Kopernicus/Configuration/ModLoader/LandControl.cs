@@ -503,9 +503,7 @@ namespace Kopernicus.Configuration.ModLoader
                 // Initialize default parameters
                 Value = new PQSLandControl.LandClassScatter
                 {
-                    maxCache = 512,
-                    maxCacheDelta = 32,
-                    maxSpeed = 1000
+                    maxCache = 512, maxCacheDelta = 32, maxSpeed = 1000
                 };
 
                 // Get the Scatter-Parent
@@ -570,7 +568,7 @@ namespace Kopernicus.Configuration.ModLoader
 
                         // We found our loader type
                         ComponentLoader<ModularScatter> loader =
-                            (ComponentLoader<ModularScatter>) Activator.CreateInstance(Parser.ModTypes[j]);
+                            (ComponentLoader<ModularScatter>)Activator.CreateInstance(Parser.ModTypes[j]);
                         loader.Create(Scatter.Components[i]);
                         Components.Add(loader);
                     }
@@ -909,7 +907,7 @@ namespace Kopernicus.Configuration.ModLoader
             [ParserTarget("noiseColor")]
             public ColorParser NoiseColor
             {
-                get 
+                get
                 {
                     return Value.noiseColor;
                 }
@@ -1004,40 +1002,28 @@ namespace Kopernicus.Configuration.ModLoader
                 {
                     Value =
                     {
-                        endEnd = 1,
-                        endStart = 1,
-                        startEnd = 0,
-                        startStart = 0
+                        endEnd = 1, endStart = 1, startEnd = 0, startStart = 0
                     }
                 };
                 LatitudeRange = new LerpRangeLoader
                 {
                     Value =
                     {
-                        endEnd = 1,
-                        endStart = 1,
-                        startEnd = 0,
-                        startStart = 0
+                        endEnd = 1, endStart = 1, startEnd = 0, startStart = 0
                     }
                 };
                 LatitudeDoubleRange = new LerpRangeLoader
                 {
                     Value =
                     {
-                        endEnd = 1,
-                        endStart = 1,
-                        startEnd = 0,
-                        startStart = 0
+                        endEnd = 1, endStart = 1, startEnd = 0, startStart = 0
                     }
                 };
                 LongitudeRange = new LerpRangeLoader
                 {
                     Value =
                     {
-                        endEnd = 2,
-                        endStart = 2,
-                        startEnd = -1,
-                        startStart = -1
+                        endEnd = 2, endStart = 2, startEnd = -1, startStart = -1
                     }
                 };
 
@@ -1061,10 +1047,7 @@ namespace Kopernicus.Configuration.ModLoader
                     {
                         Value =
                         {
-                            endEnd = 1,
-                            endStart = 1,
-                            startEnd = 0,
-                            startStart = 0
+                            endEnd = 1, endStart = 1, startEnd = 0, startStart = 0
                         }
                     };
                     AltitudeRange = range;
@@ -1076,10 +1059,7 @@ namespace Kopernicus.Configuration.ModLoader
                     {
                         Value =
                         {
-                            endEnd = 1,
-                            endStart = 1,
-                            startEnd = 0,
-                            startStart = 0
+                            endEnd = 1, endStart = 1, startEnd = 0, startStart = 0
                         }
                     };
                     LatitudeRange = range;
@@ -1091,10 +1071,7 @@ namespace Kopernicus.Configuration.ModLoader
                     {
                         Value =
                         {
-                            endEnd = 1,
-                            endStart = 1,
-                            startEnd = 0,
-                            startStart = 0
+                            endEnd = 1, endStart = 1, startEnd = 0, startStart = 0
                         }
                     };
                     LatitudeDoubleRange = range;
@@ -1106,10 +1083,7 @@ namespace Kopernicus.Configuration.ModLoader
                     {
                         Value =
                         {
-                            endEnd = 2,
-                            endStart = 2,
-                            startEnd = -1,
-                            startStart = -1
+                            endEnd = 2, endStart = 2, startEnd = -1, startStart = -1
                         }
                     };
                     LongitudeRange = range;

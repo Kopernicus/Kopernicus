@@ -11,16 +11,16 @@ namespace Kopernicus.ShadowMan
 
         public static Mesh MakePlane(int w, int h, PLANE plane, bool _01, bool cw, float UVoffset = 0f, float UVscale = 1f)
         {
-            Vector3[] vertices = new Vector3[w*h];
-            Vector2[] texcoords = new Vector2[w*h];
-            Vector3[] normals = new Vector3[w*h];
-            int[] indices = new int[w*h*6];
+            Vector3[] vertices = new Vector3[w * h];
+            Vector2[] texcoords = new Vector2[w * h];
+            Vector3[] normals = new Vector3[w * h];
+            int[] indices = new int[w * h * 6];
 
             for (int x = 0; x < w; x++)
             {
                 for (int y = 0; y < h; y++)
                 {
-                    Vector2 uv = new Vector3((float)x / (float)(w-1), (float)y / (float)(h-1));
+                    Vector2 uv = new Vector3((float)x / (float)(w - 1), (float)y / (float)(h - 1));
 
                     uv.y *= UVscale;
                     uv.y += UVoffset;
@@ -105,8 +105,8 @@ namespace Kopernicus.ShadowMan
         }
 
         public static Mesh MakePlaneWithFrustumIndexes() //basically the same above for w=2, h=2, XY, false, false + frustum corner indexes stored in the vertexes
-                                                         //the frustum corner indexes later allow to reconstruct world viewdir inexpensively in the shader
-                                                         //by passing the frustum corners directions in world space
+            //the frustum corner indexes later allow to reconstruct world viewdir inexpensively in the shader
+            //by passing the frustum corners directions in world space
         {
 
             Vector3[] vertices = new Vector3[4];
@@ -117,13 +117,13 @@ namespace Kopernicus.ShadowMan
             {
                 for (int y = 0; y < 2; y++)
                 {
-                    Vector2 uv = new Vector3((float)x , (float)y);
+                    Vector2 uv = new Vector3((float)x, (float)y);
                     Vector2 p = new Vector2();
 
                     p.x = (uv.x - 0.5f) * 2.0f;
                     p.y = (uv.y - 0.5f) * 2.0f;
 
-                    Vector3 pos = new Vector3(p.x, p.y, (float)(x + 2*y));
+                    Vector3 pos = new Vector3(p.x, p.y, (float)(x + 2 * y));
 
                     texcoords[x + y * 2] = uv;
                     vertices[x + y * 2] = pos;
@@ -151,15 +151,15 @@ namespace Kopernicus.ShadowMan
         public static Mesh MakePlane32BitIndexFormat(int w, int h, PLANE plane, bool _01, bool cw, float UVoffset = 0f, float UVscale = 1f)
         {
 
-            Vector3[] vertices = new Vector3[w*h];
-            Vector2[] texcoords = new Vector2[w*h];
-            int[] indices = new int[w*h*6];
+            Vector3[] vertices = new Vector3[w * h];
+            Vector2[] texcoords = new Vector2[w * h];
+            int[] indices = new int[w * h * 6];
 
             for (int x = 0; x < w; x++)
             {
                 for (int y = 0; y < h; y++)
                 {
-                    Vector2 uv = new Vector3((float)x / (float)(w-1), (float)y / (float)(h-1));
+                    Vector2 uv = new Vector3((float)x / (float)(w - 1), (float)y / (float)(h - 1));
 
                     uv.y *= UVscale;
                     uv.y += UVoffset;
@@ -240,4 +240,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -135,19 +135,19 @@ namespace Kopernicus.RuntimeUtility
             {
                 return;
             }
-            
+
             // If we're over the limit for the asteroid group, don't spawn anything.
             if (asteroidCount > Random.Range(asteroidGroup.SpawnGroupMinLimit, asteroidGroup.SpawnGroupMaxLimit)) return;
-                
+
             // An asteroid only gets spawned if it gets lucky.
             if (Random.Range(0f, 100f) < asteroidGroup.Probability) return;
-                
+
             // There was both room for the asteroid and it was lucky; spawn the asteroid.
             int seed = Random.Range(0, int.MaxValue);
             Random.InitState(seed);
             SpawnAsteroid(asteroidGroup, (uint)seed);
         }
-        
+
         private readonly Dictionary<string, CelestialBody> _bodyDictionary = new Dictionary<string, CelestialBody>();
 
         private CelestialBody GetCachedBody(string bodyName)
@@ -273,7 +273,8 @@ namespace Kopernicus.RuntimeUtility
                 return;
             }
 
-            double lifetime = Random.Range(asteroid.MinUntrackedLifetime, asteroid.MaxUntrackedLifetime) * 24d * 60d * 60d;;
+            double lifetime = Random.Range(asteroid.MinUntrackedLifetime, asteroid.MaxUntrackedLifetime) * 24d * 60d * 60d;
+            ;
             double maxLifetime = asteroid.MaxUntrackedLifetime * 24d * 60d * 60d;
             UntrackedObjectClass size = (UntrackedObjectClass)(Int32)(asteroid.Size.Evaluate(Random.Range(0f, 1f)) * Enum.GetNames(typeof(UntrackedObjectClass)).Length);
 
@@ -299,7 +300,10 @@ namespace Kopernicus.RuntimeUtility
                 )
             );
             OverrideNode(ref vessel, asteroid.Vessel);
-            ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame) { launchedFrom = LaunchedFromName(asteroid) };
+            ProtoVessel protoVessel = new ProtoVessel(vessel, HighLogic.CurrentGame)
+            {
+                launchedFrom = LaunchedFromName(asteroid)
+            };
             Kopernicus.Events.OnRuntimeUtilitySpawnAsteroid.Fire(asteroid, protoVessel);
             protoVessel.Load(HighLogic.CurrentGame.flightState);
             GameEvents.onNewVesselCreated.Fire(protoVessel.vesselRef);
@@ -387,7 +391,10 @@ namespace Kopernicus.RuntimeUtility
             // Get nodes that should get removed
             if (original.HasValue("removeNodes"))
             {
-                String[] names = original.GetValue("removeNodes").Split(new[] { ',', ' ', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                String[] names = original.GetValue("removeNodes").Split(new[]
+                {
+                    ',', ' ', ';'
+                }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String nodeName in names)
                 {
                     original.RemoveNodes(nodeName);

@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -175,7 +175,13 @@ namespace Kopernicus.Configuration
             NameSignificance = NameSignificance.Key)]
         public List<StringCollectionParser> RemoveLaunchSites
         {
-            get { return new List<StringCollectionParser> { new StringCollectionParser(Templates.RemoveLaunchSites) }; }
+            get
+            {
+                return new List<StringCollectionParser>
+                {
+                    new StringCollectionParser(Templates.RemoveLaunchSites)
+                };
+            }
             set { Templates.RemoveLaunchSites = value.SelectMany(v => v.Value).ToList(); }
         }
 
@@ -325,7 +331,7 @@ namespace Kopernicus.Configuration
 
                         // Attempt to create the Asteroid
                         Asteroid asteroid =
-                        Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus"); //logs to active logger
+                            Parser.CreateObjectFromConfigNode<Asteroid>(asteroidNode, "Kopernicus"); //logs to active logger
                         Kopernicus.RuntimeUtility.DiscoverableObjects.Asteroids.Add(asteroid);
                         Events.OnLoaderLoadAsteroid.Fire(asteroid, asteroidNode);
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Loaded Asteroid: " + asteroid.Name);
@@ -480,7 +486,10 @@ namespace Kopernicus.Configuration
                     .OrderBy(b => b.orbitDriver.orbit.semiMajorAxis * (1 + b.orbitDriver.orbit.eccentricity)).ToList());
 
                 // Fix doubled flightGlobals
-                List<Int32> numbers = new List<Int32> {0, 1};
+                List<Int32> numbers = new List<Int32>
+                {
+                    0, 1
+                };
                 Int32 index = bodies.Sum(b => b.GeneratedBody.flightGlobalsIndex);
                 Utility.DoRecursive(SystemPrefab.rootBody, body => body.children, body =>
                 {
@@ -510,4 +519,3 @@ namespace Kopernicus.Configuration
         }
     }
 }
-

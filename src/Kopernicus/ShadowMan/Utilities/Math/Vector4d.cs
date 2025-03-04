@@ -161,7 +161,7 @@ public class Vector4d
 
     public void Normalize()
     {
-        double invLength = 1.0 / System.Math.Sqrt(x*x + y*y + z*z + w*w);
+        double invLength = 1.0 / System.Math.Sqrt(x * x + y * y + z * z + w * w);
         x *= invLength;
         y *= invLength;
         z *= invLength;
@@ -170,7 +170,7 @@ public class Vector4d
 
     public Vector4d Normalized()
     {
-        double invLength = 1.0 / System.Math.Sqrt(x*x + y*y + z*z + w*w);
+        double invLength = 1.0 / System.Math.Sqrt(x * x + y * y + z * z + w * w);
         return new Vector4d(x * invLength, y * invLength, z * invLength, w * invLength);
     }
 
@@ -200,37 +200,3 @@ public class Vector4d
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

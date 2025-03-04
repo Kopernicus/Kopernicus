@@ -21,8 +21,8 @@ namespace Kopernicus.ShadowMan
             {
                 if (ReferenceEquals(null, pluginPath))
                 {
-                    string codeBase = Assembly.GetExecutingAssembly ().CodeBase;
-                    UriBuilder uri = new UriBuilder (codeBase);
+                    string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                    UriBuilder uri = new UriBuilder(codeBase);
                     pluginPath = Uri.UnescapeDataString(uri.Path);
                     pluginPath = Path.GetDirectoryName(pluginPath);
                 }
@@ -62,7 +62,7 @@ namespace Kopernicus.ShadowMan
         {
             string name = celestialBody.name.Equals(RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName) ? RuntimeUtility.RuntimeUtility.KopernicusConfig.HomeWorldName : celestialBody.name;
 
-            GameObject mainMenuObject = GameObject.FindObjectsOfType<GameObject>().FirstOrDefault(b => ( (b.name == name) && b.transform.parent.name.Contains("Scene")));
+            GameObject mainMenuObject = GameObject.FindObjectsOfType<GameObject>().FirstOrDefault(b => ((b.name == name) && b.transform.parent.name.Contains("Scene")));
 
             if (ReferenceEquals(mainMenuObject, null))
             {
@@ -103,7 +103,7 @@ namespace Kopernicus.ShadowMan
                     Transform scaledSunTransform = Utils.GetScaledTransform(Kopernicus.Components.KopernicusStar.GetBrightest(_scattererCB).sun.name);
                     foreach (Transform child in scaledSunTransform)
                     {
-                        MeshRenderer temp = child.gameObject.GetComponent<MeshRenderer> ();
+                        MeshRenderer temp = child.gameObject.GetComponent<MeshRenderer>();
                         if (temp != null)
                             temp.material.renderQueue = 2998;
                     }
@@ -114,7 +114,7 @@ namespace Kopernicus.ShadowMan
         public static RenderTexture CreateTexture(string name, int width, int height, int depth, RenderTextureFormat format, bool useMipmap, FilterMode filtermode, int antiAliasing)
         {
 
-            RenderTexture renderTexture = new RenderTexture ( width,height,depth, format);
+            RenderTexture renderTexture = new RenderTexture(width, height, depth, format);
             renderTexture.name = name;
             renderTexture.useMipMap = useMipmap;
             renderTexture.filterMode = filtermode;
@@ -158,7 +158,7 @@ namespace Kopernicus.ShadowMan
         //Thanks to linx for this snippet
         public static Texture2D LoadDDSTexture(byte[] data, string name)
         {
-            Texture2D texture=null;
+            Texture2D texture = null;
 
             byte ddsSizeCheck = data[4];
             if (ddsSizeCheck != 124)
@@ -183,7 +183,7 @@ namespace Kopernicus.ShadowMan
                 {
                     format = TextureFormat.DXT1;
                 }
-                else if (data[87] == 53)    //Also char '5'
+                else if (data[87] == 53) //Also char '5'
                 {
                     format = TextureFormat.DXT5;
                 }
@@ -220,4 +220,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

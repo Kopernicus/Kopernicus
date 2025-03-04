@@ -1,7 +1,7 @@
 ﻿/* This version of ObjImporter first reads through the entire file, getting a count of how large
  * the final arrays will be, and then uses standard arrays for everything (as opposed to ArrayLists
- * or any other fancy things). 
- * 
+ * or any other fancy things).
+ *
  * Based on code by el anónimo
  */
 
@@ -35,8 +35,8 @@ namespace Kopernicus.Configuration.Parsing
             Vector3[] newNormals = new Vector3[newMesh.FaceData.Length];
             Int32 i = 0;
             /* The following foreach loops through the face data and assigns the appropriate vertex, uv, or normal
-         * for the appropriate Unity mesh array.
-         */
+             * for the appropriate Unity mesh array.
+             */
             foreach (Vector3 v in newMesh.FaceData)
             {
                 newVerts[i] = newMesh.Vertices[(Int32)v.x - 1];
@@ -55,10 +55,7 @@ namespace Kopernicus.Configuration.Parsing
 
             Mesh mesh = new Mesh
             {
-                vertices = newVerts,
-                uv = newUVs,
-                normals = newNormals,
-                triangles = newMesh.Triangles
+                vertices = newVerts, uv = newUVs, normals = newNormals, triangles = newMesh.Triangles
             };
 
 
@@ -74,7 +71,10 @@ namespace Kopernicus.Configuration.Parsing
             Int32 vt = 0;
             Int32 vn = 0;
             Int32 face = 0;
-            MeshStruct mesh = new MeshStruct {FileName = filename};
+            MeshStruct mesh = new MeshStruct
+            {
+                FileName = filename
+            };
             using (StreamReader stream = File.OpenText(filename))
             {
                 String entireText = stream.ReadToEnd();
@@ -82,7 +82,10 @@ namespace Kopernicus.Configuration.Parsing
                 using (StringReader reader = new StringReader(entireText))
                 {
                     String currentText = reader.ReadLine();
-                    Char[] splitIdentifier = { ' ' };
+                    Char[] splitIdentifier =
+                    {
+                        ' '
+                    };
                     while (currentText != null)
                     {
                         if (!currentText.StartsWith("f ") && !currentText.StartsWith("v ") && !currentText.StartsWith("vt ")
@@ -93,7 +96,7 @@ namespace Kopernicus.Configuration.Parsing
                         }
                         else
                         {
-                            currentText = currentText.Trim();                           //Trim the current line
+                            currentText = currentText.Trim(); //Trim the current line
                             String[] brokenString = currentText.Split(splitIdentifier, 50);
                             // ReSharper disable once SwitchStatementMissingSomeCases
                             switch (brokenString[0])
@@ -138,8 +141,14 @@ namespace Kopernicus.Configuration.Parsing
                 {
                     String currentText = reader.ReadLine();
 
-                    Char[] splitIdentifier = { ' ' };
-                    Char[] splitIdentifier2 = { '/' };
+                    Char[] splitIdentifier =
+                    {
+                        ' '
+                    };
+                    Char[] splitIdentifier2 =
+                    {
+                        '/'
+                    };
                     Int32 f = 0;
                     Int32 f2 = 0;
                     Int32 v = 0;
@@ -205,9 +214,9 @@ namespace Kopernicus.Configuration.Parsing
                                         Vector3 temp = new Vector3();
                                         String[] brokenBrokenString = brokenString[j].Split(splitIdentifier2, 3);
                                         temp.x = Convert.ToInt32(brokenBrokenString[0]);
-                                        if (brokenBrokenString.Length > 1)                                  //Some .obj files skip UV and normal
+                                        if (brokenBrokenString.Length > 1) //Some .obj files skip UV and normal
                                         {
-                                            if (brokenBrokenString[1] != "")                                    //Some .obj files skip the uv and not the normal
+                                            if (brokenBrokenString[1] != "") //Some .obj files skip the uv and not the normal
                                             {
                                                 temp.y = Convert.ToInt32(brokenBrokenString[1]);
                                             }
@@ -220,7 +229,7 @@ namespace Kopernicus.Configuration.Parsing
                                         f2++;
                                     }
                                     j = 1;
-                                    while (j + 2 < brokenString.Length)     //Create triangles out of the face data.  There will generally be more than 1 triangle per face.
+                                    while (j + 2 < brokenString.Length) //Create triangles out of the face data.  There will generally be more than 1 triangle per face.
                                     {
                                         mesh.Triangles[f] = intArray[0];
                                         f++;
@@ -234,7 +243,7 @@ namespace Kopernicus.Configuration.Parsing
                                     break;
                             }
                             currentText = reader.ReadLine();
-                            currentText = currentText?.Replace("  ", " ");       //Some .obj files insert Double spaces, this removes them.
+                            currentText = currentText?.Replace("  ", " "); //Some .obj files insert Double spaces, this removes them.
                         }
                     }
                 }

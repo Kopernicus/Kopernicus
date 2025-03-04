@@ -380,7 +380,7 @@ namespace Kopernicus.Configuration
             if (Value.BiomeMap != null)
                 Logger.Active.Log($"Processed '{Value.BiomeMap.MapName}' in {watch.Elapsed.TotalMilliseconds:F3}ms");
 
-                // Debug the fields (TODO - remove)
+            // Debug the fields (TODO - remove)
             Utility.DumpObjectFields(Value.scienceValues, " Science Values ");
 
             // TODO - tentative fix, needs to be able to be configured (if it can be?)
@@ -422,7 +422,8 @@ namespace Kopernicus.Configuration
                 mapAttributes = null;
             }
 
-            KopernicusCBAttributeMapSO kopernicusBiomeMap = ScriptableObject.CreateInstance<KopernicusCBAttributeMapSO>(); ;
+            KopernicusCBAttributeMapSO kopernicusBiomeMap = ScriptableObject.CreateInstance<KopernicusCBAttributeMapSO>();
+            ;
 
             if (string.IsNullOrEmpty(_biomeMap))
             {

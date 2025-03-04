@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -157,7 +157,7 @@ namespace Kopernicus.Configuration
                 }
 
                 KopernicusOrbitRendererData data =
-                    (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                    (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                 return data.nodeColor;
             }
             set
@@ -169,7 +169,7 @@ namespace Kopernicus.Configuration
                 else
                 {
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                        (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                     data.nodeColor = value;
                     data.orbitColor = (value.Value * 0.5f).A(data.nodeColor.a);
                     PSystemManager.OrbitRendererDataCache[Value] = data;
@@ -191,7 +191,7 @@ namespace Kopernicus.Configuration
                 }
 
                 KopernicusOrbitRendererData data =
-                    (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                    (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                 return data.nodeColor;
             }
             set
@@ -203,7 +203,7 @@ namespace Kopernicus.Configuration
                 else
                 {
                     KopernicusOrbitRendererData data =
-                        (KopernicusOrbitRendererData) PSystemManager.OrbitRendererDataCache[Value];
+                        (KopernicusOrbitRendererData)PSystemManager.OrbitRendererDataCache[Value];
                     data.nodeColor = value;
                     PSystemManager.OrbitRendererDataCache[Value] = data;
                 }
@@ -238,13 +238,15 @@ namespace Kopernicus.Configuration
                 {
                     return new List<Single>
                     {
-                        generatedBody.orbitRenderer.lowerCamVsSmaRatio,
-                        generatedBody.orbitRenderer.upperCamVsSmaRatio
+                        generatedBody.orbitRenderer.lowerCamVsSmaRatio, generatedBody.orbitRenderer.upperCamVsSmaRatio
                     };
                 }
 
                 OrbitRendererData data = PSystemManager.OrbitRendererDataCache[Value];
-                return new List<Single> { data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio };
+                return new List<Single>
+                {
+                    data.lowerCamVsSmaRatio, data.upperCamVsSmaRatio
+                };
             }
             set
             {
@@ -403,7 +405,7 @@ namespace Kopernicus.Configuration
                     // this is unlike stock KSP, where only the reference body's mass is used.
                     body.orbit.period = 2 * Math.PI *
                                         Math.Sqrt(Math.Pow(body.orbit.semiMajorAxis, 2) / 6.67408e-11 *
-                                                  body.orbit.semiMajorAxis / (body.referenceBody.Mass + body.Mass));
+                                            body.orbit.semiMajorAxis / (body.referenceBody.Mass + body.Mass));
                     body.orbit.meanMotion =
                         2 * Math.PI / body.orbit.period; // in theory this should work but I haven't tested it
 

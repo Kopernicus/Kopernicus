@@ -15,7 +15,7 @@ namespace Kopernicus.ShadowMan
 {
     public class ScreenCopyCommandBuffer : MonoBehaviour
     {
-        private static Dictionary<Camera,ScreenCopyCommandBuffer> CameraToCommandBufferHandler = new Dictionary<Camera,ScreenCopyCommandBuffer>();
+        private static Dictionary<Camera, ScreenCopyCommandBuffer> CameraToCommandBufferHandler = new Dictionary<Camera, ScreenCopyCommandBuffer>();
 
         public static void EnableScreenCopyForFrame(Camera cam)
         {
@@ -30,7 +30,7 @@ namespace Kopernicus.ShadowMan
                     CameraToCommandBufferHandler[cam] = null;
                 else
                 {
-                    ScreenCopyCommandBuffer handler = (ScreenCopyCommandBuffer) cam.gameObject.AddComponent(typeof(ScreenCopyCommandBuffer));
+                    ScreenCopyCommandBuffer handler = (ScreenCopyCommandBuffer)cam.gameObject.AddComponent(typeof(ScreenCopyCommandBuffer));
                     handler.Initialize();
                     CameraToCommandBufferHandler[cam] = handler;
                 }
@@ -120,4 +120,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

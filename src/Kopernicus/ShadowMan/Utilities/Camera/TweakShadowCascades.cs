@@ -1,14 +1,11 @@
-
 using UnityEngine;
 using System.Collections;
 using System.IO;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
 using KSP.IO;
 
 namespace Kopernicus.ShadowMan
@@ -48,4 +45,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

@@ -55,9 +55,8 @@ namespace Kopernicus.ShadowMan
             string shaderspath;
 
             if (Application.platform == RuntimePlatform.WindowsPlayer && SystemInfo.graphicsDeviceVersion.StartsWith("OpenGL"))
-                shaderspath = path + "Kopernicus/Shaders/scatterershaders-linux";   //fixes openGL on windows
-            else
-                if (Application.platform == RuntimePlatform.WindowsPlayer)
+                shaderspath = path + "Kopernicus/Shaders/scatterershaders-linux"; //fixes openGL on windows
+            else if (Application.platform == RuntimePlatform.WindowsPlayer)
                 shaderspath = path + "Kopernicus/Shaders/scatterershaders-windows";
             else if (Application.platform == RuntimePlatform.LinuxPlayer)
                 shaderspath = path + "Kopernicus/Shaders/scatterershaders-linux";
@@ -105,7 +104,7 @@ namespace Kopernicus.ShadowMan
             Utils.LogDebug("Replacing EVE shaders");
 
             //find EVE shaderloader
-            Type EVEshaderLoaderType = getType ("ShaderLoader.ShaderLoaderClass");
+            Type EVEshaderLoaderType = getType("ShaderLoader.ShaderLoaderClass");
 
             if (EVEshaderLoaderType == null)
             {
@@ -117,8 +116,8 @@ namespace Kopernicus.ShadowMan
 
                 Utils.LogDebug("Eve shaderloader version: " + EVEshaderLoaderType.Assembly.GetName().ToString());
 
-                const BindingFlags flags =  BindingFlags.FlattenHierarchy |  BindingFlags.NonPublic | BindingFlags.Public |
-                    BindingFlags.Instance | BindingFlags.Static;
+                const BindingFlags flags = BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Public |
+                                           BindingFlags.Instance | BindingFlags.Static;
 
                 try
                 {
@@ -286,10 +285,10 @@ namespace Kopernicus.ShadowMan
         {
             Type type = null;
             AssemblyLoader.loadedAssemblies.TypeOperation(t =>
-            {
-                if (t.FullName == name)
-                    type = t;
-            }
+                {
+                    if (t.FullName == name)
+                        type = t;
+                }
             );
 
             if (type != null)

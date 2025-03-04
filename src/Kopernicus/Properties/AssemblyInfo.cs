@@ -18,4 +18,4 @@ using Kopernicus.RuntimeUtility;
 [assembly: AssemblyFileVersion("1.12." + CompatibilityChecker.KOPERNICUS + ".0")]
 [assembly: LogAggregator("GameData/ModuleManager.ConfigCache")]
 [assembly: LogAggregator("Logs/Kopernicus/")]
-[assembly: LogAggregator("KSP.log")] 
+[assembly: LogAggregator("KSP.log")]

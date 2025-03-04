@@ -21,7 +21,7 @@ namespace Kopernicus.ShadowMan
 
     public class EVEReflectionHandler
     {
-        public Dictionary<String, List<EVEClouds2d> > EVEClouds2dDictionary = new Dictionary<String, List<EVEClouds2d>>();
+        public Dictionary<String, List<EVEClouds2d>> EVEClouds2dDictionary = new Dictionary<String, List<EVEClouds2d>>();
 
         //how to make this detect when EVE re-applies though? need some kind of callback, is there one on EVE? maybe there is a C# way to add one?
         //doesn't seem to be a way to do this, just do it in the map eve clouds button
@@ -64,8 +64,8 @@ namespace Kopernicus.ShadowMan
 
             Utils.LogDebug("Eve assembly version: " + EVEType.Assembly.GetName().ToString());
 
-            const BindingFlags flags =  BindingFlags.FlattenHierarchy |  BindingFlags.NonPublic | BindingFlags.Public |
-                BindingFlags.Instance | BindingFlags.Static;
+            const BindingFlags flags = BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Public |
+                                       BindingFlags.Instance | BindingFlags.Static;
 
             try
             {
@@ -86,7 +86,7 @@ namespace Kopernicus.ShadowMan
                 Utils.LogInfo("Successfully grabbed EVE Instance");
             }
 
-            IList objectList = EVEType.GetField ("ObjectList", flags).GetValue (EVEinstance) as IList;
+            IList objectList = EVEType.GetField("ObjectList", flags).GetValue(EVEinstance) as IList;
 
             foreach (object _obj in objectList)
             {
@@ -208,12 +208,12 @@ namespace Kopernicus.ShadowMan
         public void invokeClouds2dReassign(string celestialBodyName)
         {
             const BindingFlags flags = BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Public |
-                BindingFlags.Instance | BindingFlags.Static;
+                                       BindingFlags.Instance | BindingFlags.Static;
 
             foreach (object _obj in ShadowMan.Instance.eveReflectionHandler.EVECloudObjects[celestialBodyName])
             {
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                object cloud2dObj = _obj.GetType ().GetField ("layer2D", flags).GetValue (_obj) as object;
+                object cloud2dObj = _obj.GetType().GetField("layer2D", flags).GetValue(_obj) as object;
 #pragma warning restore REFL009 // The referenced member is not known to exist
                 if (cloud2dObj == null)
                 {
@@ -222,25 +222,31 @@ namespace Kopernicus.ShadowMan
                 }
 
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                bool cloud2dScaled = (bool)cloud2dObj.GetType ().GetField ("isScaled", flags).GetValue (cloud2dObj);
+                bool cloud2dScaled = (bool)cloud2dObj.GetType().GetField("isScaled", flags).GetValue(cloud2dObj);
 #pragma warning restore REFL009 // The referenced member is not known to exist
 
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                MethodInfo scaledGetter = cloud2dObj.GetType ().GetProperty ("Scaled").GetGetMethod ();
+                MethodInfo scaledGetter = cloud2dObj.GetType().GetProperty("Scaled").GetGetMethod();
 #pragma warning restore REFL009 // The referenced member is not known to exist
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                MethodInfo scaledSetter = cloud2dObj.GetType ().GetProperty ("Scaled").GetSetMethod ();
+                MethodInfo scaledSetter = cloud2dObj.GetType().GetProperty("Scaled").GetSetMethod();
 #pragma warning restore REFL009 // The referenced member is not known to exist
 
                 //if in scaled mode, switch it to local then back to scaled, to set all the properties
                 if (cloud2dScaled)
-                    scaledSetter.Invoke(cloud2dObj, new object[] { !cloud2dScaled });
+                    scaledSetter.Invoke(cloud2dObj, new object[]
+                    {
+                        !cloud2dScaled
+                    });
 
-                scaledSetter.Invoke(cloud2dObj, new object[] { cloud2dScaled });
+                scaledSetter.Invoke(cloud2dObj, new object[]
+                {
+                    cloud2dScaled
+                });
 
                 //set the radius for use in the scatterer shader to have smooth scattering
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                float radius = (float) cloud2dObj.GetType ().GetField ("radius", flags).GetValue (cloud2dObj);
+                float radius = (float)cloud2dObj.GetType().GetField("radius", flags).GetValue(cloud2dObj);
 #pragma warning restore REFL009 // The referenced member is not known to exist
 #pragma warning disable REFL009 // The referenced member is not known to exist
                 GameObject cloudmesh = cloud2dObj.GetType().GetField("CloudMesh", flags).GetValue(cloud2dObj) as GameObject;
@@ -257,22 +263,22 @@ namespace Kopernicus.ShadowMan
 
             EVEvolumetrics.Clear();
 
-            const BindingFlags flags =  BindingFlags.FlattenHierarchy |  BindingFlags.NonPublic | BindingFlags.Public |
-                BindingFlags.Instance | BindingFlags.Static;
+            const BindingFlags flags = BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Public |
+                                       BindingFlags.Instance | BindingFlags.Static;
 
             if (EVECloudObjects.ContainsKey(celestialBodyName)) //EVECloudObjects contain both the 2d clouds and the volumetrics, here we extract the volumetrics
             {
-                List<object> cloudObjs = ShadowMan.Instance.eveReflectionHandler.EVECloudObjects [celestialBodyName];
+                List<object> cloudObjs = ShadowMan.Instance.eveReflectionHandler.EVECloudObjects[celestialBodyName];
 
                 foreach (object _obj in cloudObjs)
                 {
                     try
                     {
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                        object cloudsPQS = _obj.GetType ().GetField ("cloudsPQS", flags).GetValue (_obj) as object;
+                        object cloudsPQS = _obj.GetType().GetField("cloudsPQS", flags).GetValue(_obj) as object;
 #pragma warning restore REFL009 // The referenced member is not known to exist
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                        object layerVolume = cloudsPQS.GetType ().GetField ("layerVolume", flags).GetValue (cloudsPQS) as object;
+                        object layerVolume = cloudsPQS.GetType().GetField("layerVolume", flags).GetValue(cloudsPQS) as object;
 #pragma warning restore REFL009 // The referenced member is not known to exist
                         if (ReferenceEquals(layerVolume, null))
                         {
@@ -281,7 +287,7 @@ namespace Kopernicus.ShadowMan
                         }
 
 #pragma warning disable REFL009 // The referenced member is not known to exist
-                        Material ParticleMaterial = layerVolume.GetType ().GetField ("ParticleMaterial", flags).GetValue (layerVolume) as Material;
+                        Material ParticleMaterial = layerVolume.GetType().GetField("ParticleMaterial", flags).GetValue(layerVolume) as Material;
 #pragma warning restore REFL009 // The referenced member is not known to exist
 
                         if (ReferenceEquals(layerVolume, null))
@@ -306,4 +312,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

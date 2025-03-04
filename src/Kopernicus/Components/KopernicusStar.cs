@@ -49,7 +49,7 @@ namespace Kopernicus.Components
         /// The results of the latest flux calculation for each star
         /// </summary>
         public static Dictionary<String, Double> SolarFlux;
-        
+
         /// <summary>
         /// The results of the latest flux calculation for each star
         /// </summary>
@@ -477,7 +477,7 @@ namespace Kopernicus.Components
                 else
                 {
                     return 0;
-                }    
+                }
             }
 
             return 0;
@@ -613,7 +613,7 @@ namespace Kopernicus.Components
 
             PhysicsGlobals.Instance.solarLuminosity =
                 Math.Pow(HomeBodySMA, 2) * 4 * 3.14159265358979 *
-                    PhysicsGlobals.SolarLuminosityAtHome;
+                PhysicsGlobals.SolarLuminosityAtHome;
         }
 
 
@@ -684,7 +684,7 @@ namespace Kopernicus.Components
             Vector3d pos2 = Vector3d.Exclude(cb.angularVelocity, Current.sun.position - cb.position);
 #pragma warning disable 618
             Double angle = (Vector3d.Dot(Vector3d.Cross(pos2, pos1), cb.angularVelocity) < 0 ? -1 : 1) *
-                           Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
+                Vector3d.AngleBetween(pos1, pos2) / 6.28318530717959 + 0.5;
 #pragma warning restore 618
             if (angle > Math.PI * 2)
             {

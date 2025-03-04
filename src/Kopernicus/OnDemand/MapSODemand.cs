@@ -805,13 +805,25 @@ namespace Kopernicus.OnDemand
             switch (Depth)
             {
                 case MapDepth.Greyscale:
-                    return new[] { (Byte)c.r };
+                    return new[]
+                    {
+                        (Byte)c.r
+                    };
                 case MapDepth.HeightAlpha:
-                    return new[] { (Byte)c.r, (Byte)c.a };
+                    return new[]
+                    {
+                        (Byte)c.r, (Byte)c.a
+                    };
                 case MapDepth.RGB:
-                    return new[] { (Byte)c.r, (Byte)c.g, (Byte)c.b };
+                    return new[]
+                    {
+                        (Byte)c.r, (Byte)c.g, (Byte)c.b
+                    };
                 default:
-                    return new[] { (Byte)c.r, (Byte)c.g, (Byte)c.b, (Byte)c.a };
+                    return new[]
+                    {
+                        (Byte)c.r, (Byte)c.g, (Byte)c.b, (Byte)c.a
+                    };
             }
         }
 

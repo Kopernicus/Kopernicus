@@ -101,7 +101,9 @@ namespace Kopernicus
                 // Parser Config
                 ParserOptions.Register("Kopernicus",
                     new ParserOptions.Data
-                    { ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s) });
+                    {
+                        ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s)
+                    });
 
                 // Yo garbage collector - we have work to do man
                 DontDestroyOnLoad(this);
@@ -455,7 +457,10 @@ namespace Kopernicus
         }
     }
 
-    [HarmonyPatch(typeof(MapSO), "ConstructBilinearCoords", new Type[] { typeof(float), typeof(float) })]
+    [HarmonyPatch(typeof(MapSO), "ConstructBilinearCoords", new Type[]
+    {
+        typeof(float), typeof(float)
+    })]
     public static class MapSOPPatch_Float
     {
         private static bool Prefix(MapSO __instance, float x, float y)
@@ -485,7 +490,10 @@ namespace Kopernicus
             return false;
         }
     }
-    [HarmonyPatch(typeof(MapSO), "ConstructBilinearCoords", new Type[] { typeof(double), typeof(double) })]
+    [HarmonyPatch(typeof(MapSO), "ConstructBilinearCoords", new Type[]
+    {
+        typeof(double), typeof(double)
+    })]
     public static class MapSOPatch_Double
     {
         private static bool Prefix(MapSO __instance, double x, double y)
@@ -576,7 +584,7 @@ namespace Kopernicus
             for (int i = 0; i < code.Count - 1; i++)
             {
                 if (code[i].opcode == OpCodes.Ldfld && ReferenceEquals(code[i].operand, PQSMod_sphere_field)
-                    && code[i + 1].opcode == OpCodes.Ldfld && ReferenceEquals(code[i + 1].operand, PQS_sx_field))
+                                                    && code[i + 1].opcode == OpCodes.Ldfld && ReferenceEquals(code[i + 1].operand, PQS_sx_field))
                 {
                     code[i + 1].opcode = OpCodes.Call;
                     code[i + 1].operand = GetLongitudeFromSX_method;

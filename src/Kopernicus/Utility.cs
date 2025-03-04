@@ -45,7 +45,7 @@ namespace Kopernicus
     {
         // Static object representing the deactivator
         private static Transform _deactivator;
-        
+
         //internal floatcurves
         private static FloatCurve gasGiantMassVsRadiusCurve = null;
 
@@ -289,7 +289,7 @@ namespace Kopernicus
                 // is it because we need to include inactive components?
                 return sphere.GetComponentsInChildren<PQSMod>(true).Where(m => m.transform.parent == sphere.transform).ToArray();
             }
-            
+
             return sphere.mods;
         }
 
@@ -329,7 +329,7 @@ namespace Kopernicus
             const Single R_SCALED = 1000.0f;
 
             // Compute scale between Jool and this body
-            Single scale = (Single) (body.Radius / R_JOOL);
+            Single scale = (Single)(body.Radius / R_JOOL);
             scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
 
             // Attempt to load a cached version of the scale space
@@ -468,10 +468,7 @@ namespace Kopernicus
                     // Build the vertex data object for the PQS mods
                     PQS.VertexBuildData vertex = new PQS.VertexBuildData
                     {
-                        directionFromCenter = direction,
-                        vertHeight = body.Radius,
-                        u = uv.x,
-                        v = uv.y
+                        directionFromCenter = direction, vertHeight = body.Radius, u = uv.x, v = uv.y
                     };
 
                     // Build from the PQS
@@ -749,9 +746,7 @@ namespace Kopernicus
                     // Create the mesh
                     m = new Mesh
                     {
-                        vertices = vertices,
-                        triangles = triangles,
-                        uv = uvs
+                        vertices = vertices, triangles = triangles, uv = uvs
                     };
                     m.RecalculateNormals();
                     RecalculateTangents(m);
@@ -1191,7 +1186,11 @@ namespace Kopernicus
         // Runs a function recursively
         public static void DoRecursive<T>(T start, Func<T, IEnumerable<T>> selector, Action<T> action)
         {
-            DoRecursive<T, Object>(start, selector, tout => false, tin => { action(tin); return null; });
+            DoRecursive<T, Object>(start, selector, tout => false, tin =>
+            {
+                action(tin);
+                return null;
+            });
         }
 
         public static T Instantiate<T>(T original) where T : UnityEngine.Object
@@ -1310,7 +1309,10 @@ namespace Kopernicus
             for (Int32 i = 0; i < curve.Curve.length; i++)
             {
                 Keyframe key = curve.Curve.keys[i];
-                list.Add(new List<Single> { key.time, key.value, key.inTangent, key.outTangent });
+                list.Add(new List<Single>
+                {
+                    key.time, key.value, key.inTangent, key.outTangent
+                });
             }
 
             return list;
@@ -1324,7 +1326,10 @@ namespace Kopernicus
         public static Func<S, T> CreateGetter<S, T>(FieldInfo field)
         {
             string methodName = field.ReflectedType.FullName + ".get_" + field.Name;
-            DynamicMethod setterMethod = new DynamicMethod(methodName, typeof(T), new Type[1] { typeof(S) }, true);
+            DynamicMethod setterMethod = new DynamicMethod(methodName, typeof(T), new Type[1]
+            {
+                typeof(S)
+            }, true);
             ILGenerator gen = setterMethod.GetILGenerator();
             if (field.IsStatic)
             {
@@ -1341,8 +1346,11 @@ namespace Kopernicus
 
         public static Action<S, T> CreateSetter<S, T>(FieldInfo field)
         {
-            string methodName = field.ReflectedType.FullName+".set_"+field.Name;
-            DynamicMethod setterMethod = new DynamicMethod(methodName, null, new Type[2]{typeof(S),typeof(T)},true);
+            string methodName = field.ReflectedType.FullName + ".set_" + field.Name;
+            DynamicMethod setterMethod = new DynamicMethod(methodName, null, new Type[2]
+            {
+                typeof(S), typeof(T)
+            }, true);
             ILGenerator gen = setterMethod.GetILGenerator();
             if (field.IsStatic)
             {

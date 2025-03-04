@@ -1,23 +1,28 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Matrix3x3
 {
     //Members varibles
 
-    public float[,] m = new float[3,3];
+    public float[,] m = new float[3, 3];
 
     //Constructors
 
     public Matrix3x3() { }
 
     public Matrix3x3(float m00, float m01, float m02,
-                     float m10, float m11, float m12,
-                     float m20, float m21, float m22)
+        float m10, float m11, float m12,
+        float m20, float m21, float m22)
     {
-        m[0, 0] = m00; m[0, 1] = m01; m[0, 2] = m02;
-        m[1, 0] = m10; m[1, 1] = m11; m[1, 2] = m12;
-        m[2, 0] = m20; m[2, 1] = m21; m[2, 2] = m22;
+        m[0, 0] = m00;
+        m[0, 1] = m01;
+        m[0, 2] = m02;
+        m[1, 0] = m10;
+        m[1, 1] = m11;
+        m[1, 2] = m12;
+        m[2, 0] = m20;
+        m[2, 1] = m21;
+        m[2, 2] = m22;
 
     }
 
@@ -67,8 +72,8 @@ public class Matrix3x3
             for (int iCol = 0; iCol < 3; iCol++)
             {
                 kProd.m[iRow, iCol] = m1.m[iRow, 0] * m2.m[0, iCol] +
-                    m1.m[iRow, 1] * m2.m[1, iCol] +
-                        m1.m[iRow, 2] * m2.m[2, iCol];
+                                      m1.m[iRow, 1] * m2.m[1, iCol] +
+                                      m1.m[iRow, 2] * m2.m[2, iCol];
             }
         }
         return kProd;
@@ -103,8 +108,8 @@ public class Matrix3x3
     public override string ToString()
     {
         return m[0, 0] + "," + m[0, 1] + "," + m[0, 2] + "\n" +
-                m[1, 0] + "," + m[1, 1] + "," + m[1, 2] + "\n" +
-                m[2, 0] + "," + m[2, 1] + "," + m[2, 2];
+               m[1, 0] + "," + m[1, 1] + "," + m[1, 2] + "\n" +
+               m[2, 0] + "," + m[2, 1] + "," + m[2, 2];
     }
 
     public Matrix3x3 Transpose()
@@ -122,11 +127,11 @@ public class Matrix3x3
 
     private float Determinant()
     {
-        float fCofactor00 = m[1,1] * m[2,2] - m[1,2] * m[2,1];
-        float fCofactor10 = m[1,2] * m[2,0] - m[1,0] * m[2,2];
-        float fCofactor20 = m[1,0] * m[2,1] - m[1,1] * m[2,0];
+        float fCofactor00 = m[1, 1] * m[2, 2] - m[1, 2] * m[2, 1];
+        float fCofactor10 = m[1, 2] * m[2, 0] - m[1, 0] * m[2, 2];
+        float fCofactor20 = m[1, 0] * m[2, 1] - m[1, 1] * m[2, 0];
 
-        float fDet = m[0,0] * fCofactor00 + m[0,1] * fCofactor10 + m[0,2] * fCofactor20;
+        float fDet = m[0, 0] * fCofactor00 + m[0, 1] * fCofactor10 + m[0, 2] * fCofactor20;
 
         return fDet;
     }
@@ -146,7 +151,7 @@ public class Matrix3x3
         mInv.m[2, 1] = m[0, 1] * m[2, 0] - m[0, 0] * m[2, 1];
         mInv.m[2, 2] = m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0];
 
-        float fDet = m[0,0] * mInv.m[0,0] + m[0,1] * mInv.m[1,0] + m[0,2] * mInv.m[2,0];
+        float fDet = m[0, 0] * mInv.m[0, 0] + m[0, 1] * mInv.m[1, 0] + m[0, 2] * mInv.m[2, 0];
 
         if (System.Math.Abs(fDet) <= tolerance)
         {
@@ -200,18 +205,24 @@ public class Matrix3x3
     {
         Matrix4x4 mat = new Matrix4x4();
 
-        mat.m00 = m[0, 0]; mat.m01 = m[0, 1]; mat.m02 = m[0, 2];
-        mat.m10 = m[1, 0]; mat.m11 = m[1, 1]; mat.m12 = m[1, 2];
-        mat.m20 = m[2, 0]; mat.m21 = m[2, 1]; mat.m22 = m[2, 2];
+        mat.m00 = m[0, 0];
+        mat.m01 = m[0, 1];
+        mat.m02 = m[0, 2];
+        mat.m10 = m[1, 0];
+        mat.m11 = m[1, 1];
+        mat.m12 = m[1, 2];
+        mat.m20 = m[2, 0];
+        mat.m21 = m[2, 1];
+        mat.m22 = m[2, 2];
 
         return mat;
     }
 
     static public Matrix3x3 Rotate(Vector3 rotation)
     {
-        Quat x = new Quat(new Vector3d2(1,0,0), rotation.x * MathUtility.Deg2Rad );
-        Quat y = new Quat(new Vector3d2(0,1,0), rotation.y * MathUtility.Deg2Rad );
-        Quat z = new Quat(new Vector3d2(0,0,1), rotation.z * MathUtility.Deg2Rad );
+        Quat x = new Quat(new Vector3d2(1, 0, 0), rotation.x * MathUtility.Deg2Rad);
+        Quat y = new Quat(new Vector3d2(0, 1, 0), rotation.y * MathUtility.Deg2Rad);
+        Quat z = new Quat(new Vector3d2(0, 0, 1), rotation.z * MathUtility.Deg2Rad);
 
         return (z * y * x).ToMatrix3x3();
     }
@@ -222,28 +233,3 @@ public class Matrix3x3
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

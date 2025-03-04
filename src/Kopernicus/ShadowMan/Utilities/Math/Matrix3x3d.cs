@@ -1,23 +1,28 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Matrix3x3d
 {
     //Members varibles
 
-    public double[,] m = new double[3,3];
+    public double[,] m = new double[3, 3];
 
     //Constructors
 
     public Matrix3x3d() { }
 
     public Matrix3x3d(double m00, double m01, double m02,
-                      double m10, double m11, double m12,
-                      double m20, double m21, double m22)
+        double m10, double m11, double m12,
+        double m20, double m21, double m22)
     {
-        m[0, 0] = m00; m[0, 1] = m01; m[0, 2] = m02;
-        m[1, 0] = m10; m[1, 1] = m11; m[1, 2] = m12;
-        m[2, 0] = m20; m[2, 1] = m21; m[2, 2] = m22;
+        m[0, 0] = m00;
+        m[0, 1] = m01;
+        m[0, 2] = m02;
+        m[1, 0] = m10;
+        m[1, 1] = m11;
+        m[1, 2] = m12;
+        m[2, 0] = m20;
+        m[2, 1] = m21;
+        m[2, 2] = m22;
 
     }
 
@@ -67,8 +72,8 @@ public class Matrix3x3d
             for (int iCol = 0; iCol < 3; iCol++)
             {
                 kProd.m[iRow, iCol] = m1.m[iRow, 0] * m2.m[0, iCol] +
-                                     m1.m[iRow, 1] * m2.m[1, iCol] +
-                                     m1.m[iRow, 2] * m2.m[2, iCol];
+                                      m1.m[iRow, 1] * m2.m[1, iCol] +
+                                      m1.m[iRow, 2] * m2.m[2, iCol];
             }
         }
         return kProd;
@@ -103,8 +108,8 @@ public class Matrix3x3d
     public override string ToString()
     {
         return m[0, 0] + "," + m[0, 1] + "," + m[0, 2] + "\n" +
-                m[1, 0] + "," + m[1, 1] + "," + m[1, 2] + "\n" +
-                m[2, 0] + "," + m[2, 1] + "," + m[2, 2];
+               m[1, 0] + "," + m[1, 1] + "," + m[1, 2] + "\n" +
+               m[2, 0] + "," + m[2, 1] + "," + m[2, 2];
     }
 
     public Matrix3x3d Transpose()
@@ -122,11 +127,11 @@ public class Matrix3x3d
 
     private double Determinant()
     {
-        double fCofactor00 = m[1,1] * m[2,2] - m[1,2] * m[2,1];
-        double fCofactor10 = m[1,2] * m[2,0] - m[1,0] * m[2,2];
-        double fCofactor20 = m[1,0] * m[2,1] - m[1,1] * m[2,0];
+        double fCofactor00 = m[1, 1] * m[2, 2] - m[1, 2] * m[2, 1];
+        double fCofactor10 = m[1, 2] * m[2, 0] - m[1, 0] * m[2, 2];
+        double fCofactor20 = m[1, 0] * m[2, 1] - m[1, 1] * m[2, 0];
 
-        double fDet = m[0,0] * fCofactor00 + m[0,1] * fCofactor10 + m[0,2] * fCofactor20;
+        double fDet = m[0, 0] * fCofactor00 + m[0, 1] * fCofactor10 + m[0, 2] * fCofactor20;
 
         return fDet;
     }
@@ -146,7 +151,7 @@ public class Matrix3x3d
         mInv.m[2, 1] = m[0, 1] * m[2, 0] - m[0, 0] * m[2, 1];
         mInv.m[2, 2] = m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0];
 
-        double fDet = m[0,0] * mInv.m[0,0] + m[0,1] * mInv.m[1,0] + m[0,2] * mInv.m[2,0];
+        double fDet = m[0, 0] * mInv.m[0, 0] + m[0, 1] * mInv.m[1, 0] + m[0, 2] * mInv.m[2, 0];
 
         if (System.Math.Abs(fDet) <= tolerance)
         {
@@ -199,18 +204,24 @@ public class Matrix3x3d
     public Matrix4x4d ToMatrix4x4d()
     {
         return new Matrix4x4d(m[0, 0], m[0, 1], m[0, 2], 0.0,
-                              m[1, 0], m[1, 1], m[1, 2], 0.0,
-                              m[2, 0], m[2, 1], m[2, 2], 0.0,
-                              0.0, 0.0, 0.0, 0.0);
+            m[1, 0], m[1, 1], m[1, 2], 0.0,
+            m[2, 0], m[2, 1], m[2, 2], 0.0,
+            0.0, 0.0, 0.0, 0.0);
     }
 
     public Matrix4x4 ToMatrix4x4()
     {
         Matrix4x4 mat = new Matrix4x4();
 
-        mat.m00 = (float)m[0, 0]; mat.m01 = (float)m[0, 1]; mat.m02 = (float)m[0, 2];
-        mat.m10 = (float)m[1, 0]; mat.m11 = (float)m[1, 1]; mat.m12 = (float)m[1, 2];
-        mat.m20 = (float)m[2, 0]; mat.m21 = (float)m[2, 1]; mat.m22 = (float)m[2, 2];
+        mat.m00 = (float)m[0, 0];
+        mat.m01 = (float)m[0, 1];
+        mat.m02 = (float)m[0, 2];
+        mat.m10 = (float)m[1, 0];
+        mat.m11 = (float)m[1, 1];
+        mat.m12 = (float)m[1, 2];
+        mat.m20 = (float)m[2, 0];
+        mat.m21 = (float)m[2, 1];
+        mat.m22 = (float)m[2, 2];
 
         return mat;
     }
@@ -221,28 +232,3 @@ public class Matrix3x3d
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

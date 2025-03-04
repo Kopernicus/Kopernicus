@@ -6,7 +6,10 @@ namespace Kopernicus.ShadowMan
         internal static Type getType(string name)
         {
             Type type = null;
-            AssemblyLoader.loadedAssemblies.TypeOperation(t => { if (t.FullName == name) type = t; });
+            AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+            {
+                if (t.FullName == name) type = t;
+            });
 
             if (type != null)
             {
@@ -16,4 +19,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

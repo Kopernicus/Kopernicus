@@ -341,7 +341,7 @@ namespace Kopernicus.ShadowMan
         private static int LightDir;
 
         public static int PlanetOrigin_PROPERTY { get { return PlanetOrigin; } }
-        private static int PlanetOrigin ;
+        private static int PlanetOrigin;
 
         public static int refractionIndex_PROPERTY { get { return refractionIndex; } }
         private static int refractionIndex;

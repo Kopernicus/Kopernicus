@@ -8,10 +8,10 @@ namespace Kopernicus.ShadowMan
     //Pretty sure this class should be useless, change affected classes to static
     public class BufferManager : MonoBehaviour
     {
-        public RenderTexture depthTexture;          //full-scene depth texture, from merged built-in depth textures of the two local cameras
-                                                    //public RenderTexture occlusionTexture;	//for SSAO and eclipses, for now will just contain a copy of the screenspace shadowmask, probably not necessary
+        public RenderTexture depthTexture; //full-scene depth texture, from merged built-in depth textures of the two local cameras
+        //public RenderTexture occlusionTexture;	//for SSAO and eclipses, for now will just contain a copy of the screenspace shadowmask, probably not necessary
 
-        public bool depthTextureCleared = false;    //clear depth texture when away from PQS, for the sunflare shader
+        public bool depthTextureCleared = false; //clear depth texture when away from PQS, for the sunflare shader
 
         public void Awake()
         {

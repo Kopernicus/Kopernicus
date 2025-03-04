@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -143,7 +143,9 @@ namespace Kopernicus.Configuration
             get
             {
                 return new List<StringCollectionParser>
-                    {new StringCollectionParser(CelestialBody.Get("implements", new List<String>()))};
+                {
+                    new StringCollectionParser(CelestialBody.Get("implements", new List<String>()))
+                };
             }
             set { CelestialBody.Set("implements", value.SelectMany(v => v.Value).ToList()); }
         }
@@ -217,7 +219,6 @@ namespace Kopernicus.Configuration
 
         // Wrapper around Particle class for editing/loading
         [ParserTargetCollection("Particles", AllowMerge = true)]
-
         [ParserTargetCollection("HazardousBody", AllowMerge = true)]
         public List<HazardousBodyLoader> HazardousBody { get; set; }
 
@@ -338,7 +339,10 @@ namespace Kopernicus.Configuration
                 GeneratedBody.celestialBody.ocean = false;
 
                 // Create the scaled version
-                GeneratedBody.scaledVersion = new GameObject(Name) { layer = GameLayers.SCALED_SPACE };
+                GeneratedBody.scaledVersion = new GameObject(Name)
+                {
+                    layer = GameLayers.SCALED_SPACE
+                };
                 GeneratedBody.scaledVersion.transform.parent = Utility.Deactivator;
                 // Create accessors
                 Debug = new DebugLoader();

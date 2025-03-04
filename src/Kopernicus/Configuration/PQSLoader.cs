@@ -709,7 +709,7 @@ namespace Kopernicus.Configuration
                         continue;
                     }
 
-                    IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                    IModLoader loader = (IModLoader)Activator.CreateInstance(Parser.ModTypes[j]);
                     loader.Create(mods[i], Value);
                     Mods.Add(loader);
                 }
@@ -836,7 +836,7 @@ namespace Kopernicus.Configuration
                             continue;
                         }
 
-                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        IModLoader loader = (IModLoader)Activator.CreateInstance(Parser.ModTypes[j]);
                         loader.Create(newScTree, Value);
                         Mods.Add(loader);
                     }
@@ -854,7 +854,7 @@ namespace Kopernicus.Configuration
                             continue;
                         }
 
-                        IModLoader loader = (IModLoader) Activator.CreateInstance(Parser.ModTypes[j]);
+                        IModLoader loader = (IModLoader)Activator.CreateInstance(Parser.ModTypes[j]);
                         loader.Create(mods[i], Value);
                         Mods.Add(loader);
                     }

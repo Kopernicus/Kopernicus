@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -326,9 +326,7 @@ namespace Kopernicus.Components
             // Set mesh
             meshFilter.mesh = new Mesh
             {
-                vertices = vertices.ToArray(),
-                triangles = tris.ToArray(),
-                uv = uvs.ToArray()
+                vertices = vertices.ToArray(), triangles = tris.ToArray(), uv = uvs.ToArray()
             };
             meshFilter.mesh.RecalculateNormals();
             meshFilter.mesh.RecalculateBounds();
@@ -383,8 +381,8 @@ namespace Kopernicus.Components
                 if (innerShadeRotationPeriod > 0 && rotationPeriod > 0)
                 {
                     _innerShadeOffsetRate = innerShadeTiles * (
-                                               1 / innerShadeRotationPeriod
-                                               - 1 / rotationPeriod);
+                        1 / innerShadeRotationPeriod
+                        - 1 / rotationPeriod);
                 }
             }
 
@@ -454,7 +452,7 @@ namespace Kopernicus.Components
 
                 // Outer Radius
                 vertices.Add(outerScale * outerMultCurve.Evaluate(i) * eVert);
-                uvs.Add(Vector2.zero); 
+                uvs.Add(Vector2.zero);
             }
 
             for (Single i = 0f; i < 360f; i += degreeStep)
@@ -538,8 +536,8 @@ namespace Kopernicus.Components
             Vector3 thicknessOffset)
         {
             const Single SIDE_TEX_W = 0.2f,
-                INNER_TEX_W = 0.4f,
-                OUTER_TEX_W = 0.4f;
+                         INNER_TEX_W = 0.4f,
+                         OUTER_TEX_W = 0.4f;
             // Define coordinates for 3 textures:
             //   1. The "side" faces that point normal and antinormal
             //      (classic rings)
@@ -795,9 +793,9 @@ namespace Kopernicus.Components
             if (Math.Abs(rotationPeriod) > 0.01)
             {
                 Single degreesPerSecond = -360f / rotationPeriod;
-                Single parentRotation = (Single) (referenceBody.initialRotation +
-                                                  360 * Planetarium.GetUniversalTime() /
-                                                  referenceBody.rotationPeriod);
+                Single parentRotation = (Single)(referenceBody.initialRotation +
+                                                 360 * Planetarium.GetUniversalTime() /
+                                                 referenceBody.rotationPeriod);
                 transform.localRotation =
                     Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
                     * rotation
@@ -805,9 +803,9 @@ namespace Kopernicus.Components
             }
             else
             {
-                Single parentRotation = (Single) (referenceBody.initialRotation +
-                                                  360 * Planetarium.GetUniversalTime() /
-                                                  referenceBody.rotationPeriod);
+                Single parentRotation = (Single)(referenceBody.initialRotation +
+                                                 360 * Planetarium.GetUniversalTime() /
+                                                 referenceBody.rotationPeriod);
                 transform.localRotation =
                     Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
                     * rotation;

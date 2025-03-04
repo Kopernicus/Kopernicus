@@ -38,9 +38,9 @@ namespace Kopernicus.ShadowMan
             if ((name.Contains("PQS") && name.Contains("Terrain"))
                 || (name.Contains("PQS Main")))
 
-            //no longer need custom depth buffer for refractions or scattering, only for distant shadows, so disable these
-            //|| (name == "Legacy Shaders/Transparent/Specular")    //fixes kerbal visor leaking into water refraction
-            //|| (name == "KSP/Emissive/Diffuse")))    			  //fixes new mk1-3 pod
+                //no longer need custom depth buffer for refractions or scattering, only for distant shadows, so disable these
+                //|| (name == "Legacy Shaders/Transparent/Specular")    //fixes kerbal visor leaking into water refraction
+                //|| (name == "KSP/Emissive/Diffuse")))    			  //fixes new mk1-3 pod
 
             {
                 mat.SetOverrideTag("RenderType", "Opaque");

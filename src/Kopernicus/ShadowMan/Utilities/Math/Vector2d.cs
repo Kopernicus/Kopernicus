@@ -99,14 +99,14 @@ public class Vector2d
 
     public void Normalize()
     {
-        double invLength = 1.0 / System.Math.Sqrt(x*x + y*y);
+        double invLength = 1.0 / System.Math.Sqrt(x * x + y * y);
         x *= invLength;
         y *= invLength;
     }
 
     public Vector2d Normalized()
     {
-        double invLength = 1.0 / System.Math.Sqrt(x*x + y*y);
+        double invLength = 1.0 / System.Math.Sqrt(x * x + y * y);
         return new Vector2d(x * invLength, y * invLength);
     }
 
@@ -133,37 +133,3 @@ public class Vector2d
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -7,8 +7,8 @@
  * using the internal name. It does not impose the same restrictions, like
  * having fixed names for homeworld ("Kerbin") and center of the universe ("Sun").
  * It uses a different structure than normal names, it has to be a "system name"
- * and a "body name", combined with a forward slash "/". * 
- * 
+ * and a "body name", combined with a forward slash "/". *
+ *
  * This file is a reference implementation for UBI. Feel free to include and use
  * this file in your mods to make them compatible with UBI references.
  * It includes backwards compatibility with the internal names to maintain
@@ -230,10 +230,7 @@ public static class UBI
             String[] split = ident.name.Split(';');
             idents.Add(new UBIIdent
             {
-                System = split[0],
-                Body = split[1],
-                IsAbstract = Boolean.Parse(split[2]),
-                Object = ident.gameObject
+                System = split[0], Body = split[1], IsAbstract = Boolean.Parse(split[2]), Object = ident.gameObject
             });
         }
 

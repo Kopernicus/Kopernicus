@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -327,10 +327,7 @@ namespace System.IO.Compression
         {
             ZipStorer zip = new ZipStorer
             {
-                Comment = _comment,
-                ZipFileStream = _stream,
-                Access = FileAccess.Write,
-                leaveOpen = _leaveOpen
+                Comment = _comment, ZipFileStream = _stream, Access = FileAccess.Write, leaveOpen = _leaveOpen
             };
             return zip;
         }
@@ -365,11 +362,9 @@ namespace System.IO.Compression
 
             ZipStorer activeZip = null;
             using (ZipStorer zip = new ZipStorer
-            {
-                ZipFileStream = _stream,
-                Access = _access,
-                leaveOpen = _leaveOpen
-            })
+                {
+                    ZipFileStream = _stream, Access = _access, leaveOpen = _leaveOpen
+                })
             {
                 //zip.FileName = _filename;
 
@@ -424,7 +419,7 @@ namespace System.IO.Compression
                 FilenameInZip = NormalizedFilename(_filenameInZip),
                 Comment = _comment ?? "",
                 Crc32 = 0,
-                HeaderOffset = (UInt32) ZipFileStream.Position,
+                HeaderOffset = (UInt32)ZipFileStream.Position,
                 ModifyTime = _modTime
             };
 
@@ -521,7 +516,7 @@ namespace System.IO.Compression
 
                 ZipFileEntry zfe = new ZipFileEntry
                 {
-                    Method = (Compression) method,
+                    Method = (Compression)method,
                     FilenameInZip = encoder.GetString(CentralDirImage, pointer + 46, filenameSize),
                     FileOffset = GetFileOffset(headerOffset),
                     FileSize = fileSize,
@@ -758,11 +753,17 @@ namespace System.IO.Compression
             Encoding encoder = _zfe.EncodeUTF8 ? Encoding.UTF8 : DefaultEncoding;
             Byte[] encodedFilename = encoder.GetBytes(_zfe.FilenameInZip);
 
-            ZipFileStream.Write(new Byte[] { 80, 75, 3, 4, 20, 0 }, 0, 6); // No extra header
+            ZipFileStream.Write(new Byte[]
+            {
+                80, 75, 3, 4, 20, 0
+            }, 0, 6); // No extra header
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)(_zfe.EncodeUTF8 ? 0x0800 : 0)), 0, 2); // filename and comment encoding 
-            ZipFileStream.Write(BitConverter.GetBytes((UInt16)_zfe.Method), 0, 2);  // zipping method
+            ZipFileStream.Write(BitConverter.GetBytes((UInt16)_zfe.Method), 0, 2); // zipping method
             ZipFileStream.Write(BitConverter.GetBytes(DateTimeToDosTime(_zfe.ModifyTime)), 0, 4); // zipping date and time
-            ZipFileStream.Write(new Byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 0, 12); // unused CRC, un/compressed size, updated later
+            ZipFileStream.Write(new Byte[]
+            {
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            }, 0, 12); // unused CRC, un/compressed size, updated later
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)encodedFilename.Length), 0, 2); // filename length
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)0), 0, 2); // extra length
 
@@ -797,10 +798,13 @@ namespace System.IO.Compression
             Byte[] encodedFilename = encoder.GetBytes(_zfe.FilenameInZip);
             Byte[] encodedComment = encoder.GetBytes(_zfe.Comment);
 
-            ZipFileStream.Write(new Byte[] { 80, 75, 1, 2, 23, 0xB, 20, 0 }, 0, 8);
+            ZipFileStream.Write(new Byte[]
+            {
+                80, 75, 1, 2, 23, 0xB, 20, 0
+            }, 0, 8);
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)(_zfe.EncodeUTF8 ? 0x0800 : 0)), 0, 2); // filename and comment encoding 
-            ZipFileStream.Write(BitConverter.GetBytes((UInt16)_zfe.Method), 0, 2);  // zipping method
-            ZipFileStream.Write(BitConverter.GetBytes(DateTimeToDosTime(_zfe.ModifyTime)), 0, 4);  // zipping date and time
+            ZipFileStream.Write(BitConverter.GetBytes((UInt16)_zfe.Method), 0, 2); // zipping method
+            ZipFileStream.Write(BitConverter.GetBytes(DateTimeToDosTime(_zfe.ModifyTime)), 0, 4); // zipping date and time
             ZipFileStream.Write(BitConverter.GetBytes(_zfe.Crc32), 0, 4); // file CRC
             ZipFileStream.Write(BitConverter.GetBytes(_zfe.CompressedSize), 0, 4); // compressed file size
             ZipFileStream.Write(BitConverter.GetBytes(_zfe.FileSize), 0, 4); // uncompressed file size
@@ -812,7 +816,7 @@ namespace System.IO.Compression
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)0), 0, 2); // file type: binary
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)0), 0, 2); // Internal file attributes
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)0x8100), 0, 2); // External file attributes (normal/readable)
-            ZipFileStream.Write(BitConverter.GetBytes(_zfe.HeaderOffset), 0, 4);  // Offset of header
+            ZipFileStream.Write(BitConverter.GetBytes(_zfe.HeaderOffset), 0, 4); // Offset of header
 
             ZipFileStream.Write(encodedFilename, 0, encodedFilename.Length);
             ZipFileStream.Write(encodedComment, 0, encodedComment.Length);
@@ -838,7 +842,10 @@ namespace System.IO.Compression
             Encoding encoder = EncodeUTF8 ? Encoding.UTF8 : DefaultEncoding;
             Byte[] encodedComment = encoder.GetBytes(Comment);
 
-            ZipFileStream.Write(new Byte[] { 80, 75, 5, 6, 0, 0, 0, 0 }, 0, 8);
+            ZipFileStream.Write(new Byte[]
+            {
+                80, 75, 5, 6, 0, 0, 0, 0
+            }, 0, 8);
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)Files.Count + ExistingFiles), 0, 2);
             ZipFileStream.Write(BitConverter.GetBytes((UInt16)Files.Count + ExistingFiles), 0, 2);
             ZipFileStream.Write(BitConverter.GetBytes(_size), 0, 4);
@@ -906,14 +913,14 @@ namespace System.IO.Compression
         }
 
         /* DOS Date and time:
-            MS-DOS date. The date is a packed value with the following format. Bits Description 
-                0-4 Day of the month (131) 
-                5-8 Month (1 = January, 2 = February, and so on) 
-                9-15 Year offset from 1980 (add 1980 to get actual year) 
-            MS-DOS time. The time is a packed value with the following format. Bits Description 
-                0-4 Second divided by 2 
-                5-10 Minute (059) 
-                11-15 Hour (023 on a 24-hour clock) 
+            MS-DOS date. The date is a packed value with the following format. Bits Description
+                0-4 Day of the month (131)
+                5-8 Month (1 = January, 2 = February, and so on)
+                9-15 Year offset from 1980 (add 1980 to get actual year)
+            MS-DOS time. The time is a packed value with the following format. Bits Description
+                0-4 Second divided by 2
+                5-10 Minute (059)
+                11-15 Hour (023 on a 24-hour clock)
         */
         private static UInt32 DateTimeToDosTime(DateTime _dt)
         {
@@ -939,7 +946,7 @@ namespace System.IO.Compression
         }
 
         /* CRC32 algorithm
-          The 'magic number' for the CRC is 0xdebb20e3.  
+          The 'magic number' for the CRC is 0xdebb20e3.
           The proper CRC pre and post conditioning is used, meaning that the CRC register is
           pre-conditioned with all ones (a starting value of 0xffffffff) and the value is post-conditioned by
           taking the ones complement of the CRC residual.
@@ -948,17 +955,17 @@ namespace System.IO.Compression
         */
         private void UpdateCrcAndSizes(ref ZipFileEntry _zfe)
         {
-            Int64 lastPos = ZipFileStream.Position;  // remember position
+            Int64 lastPos = ZipFileStream.Position; // remember position
 
             ZipFileStream.Position = _zfe.HeaderOffset + 8;
-            ZipFileStream.Write(BitConverter.GetBytes((UInt16)_zfe.Method), 0, 2);  // zipping method
+            ZipFileStream.Write(BitConverter.GetBytes((UInt16)_zfe.Method), 0, 2); // zipping method
 
             ZipFileStream.Position = _zfe.HeaderOffset + 14;
-            ZipFileStream.Write(BitConverter.GetBytes(_zfe.Crc32), 0, 4);  // Update CRC
-            ZipFileStream.Write(BitConverter.GetBytes(_zfe.CompressedSize), 0, 4);  // Compressed size
-            ZipFileStream.Write(BitConverter.GetBytes(_zfe.FileSize), 0, 4);  // Uncompressed size
+            ZipFileStream.Write(BitConverter.GetBytes(_zfe.Crc32), 0, 4); // Update CRC
+            ZipFileStream.Write(BitConverter.GetBytes(_zfe.CompressedSize), 0, 4); // Compressed size
+            ZipFileStream.Write(BitConverter.GetBytes(_zfe.FileSize), 0, 4); // Uncompressed size
 
-            ZipFileStream.Position = lastPos;  // restore position
+            ZipFileStream.Position = lastPos; // restore position
         }
         // Replaces backslashes with slashes to store in zip header
         private static String NormalizedFilename(String _filename)

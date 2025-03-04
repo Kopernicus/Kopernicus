@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -237,7 +237,7 @@ namespace Kopernicus.OnDemand
                     throw new Exception("File too large");
                 }
 
-                Int32 fileBytes = (Int32) file.Length;
+                Int32 fileBytes = (Int32)file.Length;
 
                 if (_wholeFileBuffer == null || fileBytes > _sizeWholeFile)
                 {
@@ -294,7 +294,7 @@ namespace Kopernicus.OnDemand
             }
 
             // Otherwise we do cunning stuff
-            Int32 fileBytes = (Int32) chunkBytes;
+            Int32 fileBytes = (Int32)chunkBytes;
             if (_wholeFileBuffer == null || fileBytes > _sizeWholeFile)
             {
                 // Round it up to a 1MB multiple
@@ -351,7 +351,7 @@ namespace Kopernicus.OnDemand
         {
             fixed (Byte* ptr = &array[0])
             {
-                Int32* pLen = (Int32*) (ptr + _arrayLengthOffset);
+                Int32* pLen = (Int32*)(ptr + _arrayLengthOffset);
                 *pLen = len;
             }
         }
@@ -391,22 +391,22 @@ namespace Kopernicus.OnDemand
                                 Boolean alphapixel = (ddsHeader.ddspf.dwFlags & 0x00000001) != 0;
                                 Boolean luminance = (ddsHeader.ddspf.dwFlags & 0x00020000) != 0;
                                 Boolean rgb888 = ddsHeader.ddspf.dwRBitMask == 0x000000ff &&
-                                             ddsHeader.ddspf.dwGBitMask == 0x0000ff00 &&
-                                             ddsHeader.ddspf.dwBBitMask == 0x00ff0000;
+                                                 ddsHeader.ddspf.dwGBitMask == 0x0000ff00 &&
+                                                 ddsHeader.ddspf.dwBBitMask == 0x00ff0000;
                                 Boolean rgb565 = ddsHeader.ddspf.dwRBitMask == 0x0000F800 &&
-                                             ddsHeader.ddspf.dwGBitMask == 0x000007E0 &&
-                                             ddsHeader.ddspf.dwBBitMask == 0x0000001F;
+                                                 ddsHeader.ddspf.dwGBitMask == 0x000007E0 &&
+                                                 ddsHeader.ddspf.dwBBitMask == 0x0000001F;
                                 Boolean argb4444 = ddsHeader.ddspf.dwABitMask == 0x0000f000 &&
-                                               ddsHeader.ddspf.dwRBitMask == 0x00000f00 &&
-                                               ddsHeader.ddspf.dwGBitMask == 0x000000f0 &&
-                                               ddsHeader.ddspf.dwBBitMask == 0x0000000f;
+                                                   ddsHeader.ddspf.dwRBitMask == 0x00000f00 &&
+                                                   ddsHeader.ddspf.dwGBitMask == 0x000000f0 &&
+                                                   ddsHeader.ddspf.dwBBitMask == 0x0000000f;
                                 Boolean rbga4444 = ddsHeader.ddspf.dwABitMask == 0x0000000f &&
-                                               ddsHeader.ddspf.dwRBitMask == 0x0000f000 &&
-                                               ddsHeader.ddspf.dwGBitMask == 0x000000f0 &&
-                                               ddsHeader.ddspf.dwBBitMask == 0x00000f00;
+                                                   ddsHeader.ddspf.dwRBitMask == 0x0000f000 &&
+                                                   ddsHeader.ddspf.dwGBitMask == 0x000000f0 &&
+                                                   ddsHeader.ddspf.dwBBitMask == 0x00000f00;
 
                                 Boolean mipmap = (ddsHeader.dwCaps & DDSPixelFormatCaps.MIPMAP) !=
-                                             0u;
+                                                 0u;
                                 if (fourcc)
                                 {
                                     if (ddsHeader.ddspf.dwFourCC == DDSValues.uintDXT1)
@@ -494,10 +494,10 @@ namespace Kopernicus.OnDemand
                                     {
                                         try
                                         {
-                                            Int32 bpp = (Int32) ddsHeader.ddspf.dwRGBBitCount;
-                                            Int32 colors = (Int32) Math.Pow(2, bpp);
-                                            Int32 width = (Int32) ddsHeader.dwWidth;
-                                            Int32 height = (Int32) ddsHeader.dwHeight;
+                                            Int32 bpp = (Int32)ddsHeader.ddspf.dwRGBBitCount;
+                                            Int32 colors = (Int32)Math.Pow(2, bpp);
+                                            Int32 width = (Int32)ddsHeader.dwWidth;
+                                            Int32 height = (Int32)ddsHeader.dwHeight;
                                             Int64 length = new FileInfo(path).Length;
                                             Int32 pixels = width * height * bpp / 8 + 4 * colors;
 

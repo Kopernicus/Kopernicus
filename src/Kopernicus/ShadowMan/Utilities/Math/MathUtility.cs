@@ -71,8 +71,7 @@ public class MathUtility
                 x1 = 2.0f * UnityEngine.Random.value - 1.0f;
                 x2 = 2.0f * UnityEngine.Random.value - 1.0f;
                 w = x1 * x1 + x2 * x2;
-            }
-            while (w >= 1.0f);
+            } while (w >= 1.0f);
 
             w = Mathf.Sqrt((-2.0f * Mathf.Log(w)) / w);
             y1 = x1 * w;
@@ -84,23 +83,3 @@ public class MathUtility
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

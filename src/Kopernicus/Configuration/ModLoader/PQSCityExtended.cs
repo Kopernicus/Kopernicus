@@ -222,7 +222,10 @@ namespace Kopernicus.Configuration.ModLoader
                 }
                 set
                 {
-                    Value.objects = new[] { value.Value };
+                    Value.objects = new[]
+                    {
+                        value.Value
+                    };
                     Value.renderers = value.Value.GetComponentsInChildren<Renderer>().Select(r => r.gameObject)
                         .ToArray();
                 }
@@ -263,8 +266,7 @@ namespace Kopernicus.Configuration.ModLoader
                 // Initialize the LOD range
                 Value = new PQSCityExtended.LODRange
                 {
-                    objects = new GameObject[0],
-                    renderers = new GameObject[0]
+                    objects = new GameObject[0], renderers = new GameObject[0]
                 };
             }
 

@@ -81,7 +81,7 @@ namespace Kopernicus.ShadowMan
         private CommandBuffer CreateCopyCascadeCB(RenderTexture targetRt, float startX, float startY, float width, float height)
         {
             CommandBuffer cascadeCopyCB = new CommandBuffer();
-            Rect cascadeRect = new Rect ((int)(startX * targetRt.width), (int)(startY * targetRt.height), (int)(width * targetRt.width), (int)(height * targetRt.height));
+            Rect cascadeRect = new Rect((int)(startX * targetRt.width), (int)(startY * targetRt.height), (int)(width * targetRt.width), (int)(height * targetRt.height));
 
             cascadeCopyCB.EnableScissorRect(cascadeRect);
             cascadeCopyCB.SetShadowSamplingMode(BuiltinRenderTextureType.CurrentActive, ShadowSamplingMode.RawDepth);
@@ -163,4 +163,3 @@ namespace Kopernicus.ShadowMan
         }
     }
 }
-

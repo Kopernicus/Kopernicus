@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -109,7 +109,10 @@ namespace Kopernicus.Components.ModularScatter
         /// <summary>
         /// How much should the scatter be able to rotate
         /// </summary>
-        public List<Single> rotation = new List<Single> { 0, 360f };
+        public List<Single> rotation = new List<Single>
+        {
+            0, 360f
+        };
 
         /// <summary>
         /// A list of all meshes that can be used for the
@@ -329,7 +332,7 @@ namespace Kopernicus.Components.ModularScatter
                 lethalMsgSent = false;
                 lethalWarnMsgSent = false;
             }
-            else 
+            else
             {
                 antiSpamCounter--;
             }
@@ -347,39 +350,21 @@ namespace Kopernicus.Components.ModularScatter
                 defaultMesh = new Mesh();
                 defaultMesh.vertices = new Vector3[8]
                 {
-                    Vector3.zero,
-                    Vector3.right,
-                    Vector3.up,
-                    new Vector3(1f, 1f, 0f),
-                    Vector3.zero,
-                    Vector3.right,
-                    Vector3.up,
-                    new Vector3(1f, 1f, 0f)
+                    Vector3.zero, Vector3.right, Vector3.up, new Vector3(1f, 1f, 0f), Vector3.zero, Vector3.right, Vector3.up, new Vector3(1f, 1f, 0f)
                 };
 
-                defaultMesh.triangles = new int[12] { 0, 1, 2, 2, 1, 3, 4, 6, 5, 6, 7, 5 };
+                defaultMesh.triangles = new int[12]
+                {
+                    0, 1, 2, 2, 1, 3, 4, 6, 5, 6, 7, 5
+                };
 
                 defaultMesh.normals = new Vector3[8]
                 {
-                    Vector3.forward,
-                    Vector3.forward,
-                    Vector3.forward,
-                    Vector3.forward,
-                    Vector3.back,
-                    Vector3.back,
-                    Vector3.back,
-                    Vector3.back
+                    Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward, Vector3.back, Vector3.back, Vector3.back, Vector3.back
                 };
                 defaultMesh.uv = new Vector2[8]
                 {
-                    Vector2.zero,
-                    Vector2.right,
-                    Vector2.up,
-                    Vector2.one,
-                    Vector2.zero,
-                    Vector2.right,
-                    Vector2.up,
-                    Vector2.one
+                    Vector2.zero, Vector2.right, Vector2.up, Vector2.one, Vector2.zero, Vector2.right, Vector2.up, Vector2.one
                 };
 
                 defaultMesh.RecalculateBounds();

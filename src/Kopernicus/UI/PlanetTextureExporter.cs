@@ -130,12 +130,12 @@ namespace Kopernicus.UI
 
             // Get the mod building methods from the PQS
             Action<PQS.VertexBuildData, Boolean> modOnVertexBuildHeight =
-                (Action<PQS.VertexBuildData, Boolean>) Delegate.CreateDelegate(
+                (Action<PQS.VertexBuildData, Boolean>)Delegate.CreateDelegate(
                     typeof(Action<PQS.VertexBuildData, Boolean>),
                     pqsVersion,
                     typeof(PQS).GetMethod("Mod_OnVertexBuildHeight",
                         BindingFlags.NonPublic | BindingFlags.Instance));
-            Action<PQS.VertexBuildData> modOnVertexBuild = (Action<PQS.VertexBuildData>) Delegate.CreateDelegate(
+            Action<PQS.VertexBuildData> modOnVertexBuild = (Action<PQS.VertexBuildData>)Delegate.CreateDelegate(
                 typeof(Action<PQS.VertexBuildData>),
                 pqsVersion,
                 typeof(PQS).GetMethod("Mod_OnVertexBuild", BindingFlags.NonPublic | BindingFlags.Instance));

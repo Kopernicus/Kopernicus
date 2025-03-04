@@ -361,7 +361,9 @@ namespace Kopernicus.RuntimeUtility
             KopernicusStar.CelestialBodies =
                 new Dictionary<CelestialBody, KopernicusStar>
                 {
-                    { star.sun, star }
+                    {
+                        star.sun, star
+                    }
                 };
 
             // SunFlare
@@ -489,7 +491,7 @@ namespace Kopernicus.RuntimeUtility
             if (FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName) == null)
             {
                 return;
-        }
+            }
 
             MusicLogic.fetch.flightMusicSpaceAltitude = FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).atmosphereDepth;
         }
@@ -723,7 +725,10 @@ namespace Kopernicus.RuntimeUtility
                 FieldInfo castField = typeof(OrbitTargeter).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                     .FirstOrDefault(f => f.FieldType == typeof(OrbitRenderer.OrbitCastHit));
 
-                _fields = new[] { modeField, contextField, castField };
+                _fields = new[]
+                {
+                    modeField, contextField, castField
+                };
             }
 
             // Remove buttons in map view for barycenters
@@ -1007,26 +1012,26 @@ namespace Kopernicus.RuntimeUtility
             if (FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName) != null && FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).pqsController != null)
             {
                 PQSCity KSC = FlightGlobals
-                .GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)
-                .pqsController
-                .GetComponentsInChildren<PQSCity>(true)?
-                .FirstOrDefault(p => p.name == "KSC");
+                    .GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)
+                    .pqsController
+                    .GetComponentsInChildren<PQSCity>(true)?
+                    .FirstOrDefault(p => p.name == "KSC");
 
                 SkinnedMeshRenderer[] flags = KSC
-                .GetComponentsInChildren<SkinnedMeshRenderer>(true)
-                .Where(smr => smr.name == "Flag")?
-                .ToArray();
+                    .GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                    .Where(smr => smr.name == "Flag")?
+                    .ToArray();
 
-            flags.ToList().ForEach(flag =>
-            {
-                flag.rootBone = flag
-                    .rootBone
-                    .parent
-                    .gameObject
-                    .GetChild("bn_upper_flag_a01")
-                    .transform;
-            });
-        }
+                flags.ToList().ForEach(flag =>
+                {
+                    flag.rootBone = flag
+                        .rootBone
+                        .parent
+                        .gameObject
+                        .GetChild("bn_upper_flag_a01")
+                        .transform;
+                });
+            }
         }
 
         public static void WriteConfigIfNoneExists()

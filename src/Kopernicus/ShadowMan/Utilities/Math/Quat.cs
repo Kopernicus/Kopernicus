@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Quat
 {
@@ -116,9 +115,9 @@ public class Quat
     public static Quat operator *(Quat q1, Quat q2)
     {
         return new Quat(q2.w * q1.x + q2.x * q1.w + q2.y * q1.z - q2.z * q1.y,
-                        q2.w * q1.y - q2.x * q1.z + q2.y * q1.w + q2.z * q1.x,
-                        q2.w * q1.z + q2.x * q1.y - q2.y * q1.x + q2.z * q1.w,
-                        q2.w * q1.w - q2.x * q1.x - q2.y * q1.y - q2.z * q1.z);
+            q2.w * q1.y - q2.x * q1.z + q2.y * q1.w + q2.z * q1.x,
+            q2.w * q1.z + q2.x * q1.y - q2.y * q1.x + q2.z * q1.w,
+            q2.w * q1.w - q2.x * q1.x - q2.y * q1.y - q2.z * q1.z);
     }
 
     public static Vector3d2 operator *(Quat q, Vector3d2 v)
@@ -130,55 +129,55 @@ public class Quat
 
     public Matrix3x3 ToMatrix3x3()
     {
-        float   xx = (float)(x * x),
-                xy = (float)(x * y),
-                xz = (float)(x * z),
-                xw = (float)(x * w),
-                yy = (float)(y * y),
-                yz = (float)(y * z),
-                yw = (float)(y * w),
-                zz = (float)(z * z),
-                zw = (float)(z * w);
+        float xx = (float)(x * x),
+              xy = (float)(x * y),
+              xz = (float)(x * z),
+              xw = (float)(x * w),
+              yy = (float)(y * y),
+              yz = (float)(y * z),
+              yw = (float)(y * w),
+              zz = (float)(z * z),
+              zw = (float)(z * w);
 
         return new Matrix3x3
-            (
-                1.0f - 2.0f * (yy + zz), 2.0f * (xy - zw), 2.0f * (xz + yw),
-                2.0f * (xy + zw), 1.0f - 2.0f * (xx + zz), 2.0f * (yz - xw),
-                2.0f * (xz - yw), 2.0f * (yz + xw), 1.0f - 2.0f * (xx + yy)
-            );
+        (
+            1.0f - 2.0f * (yy + zz), 2.0f * (xy - zw), 2.0f * (xz + yw),
+            2.0f * (xy + zw), 1.0f - 2.0f * (xx + zz), 2.0f * (yz - xw),
+            2.0f * (xz - yw), 2.0f * (yz + xw), 1.0f - 2.0f * (xx + yy)
+        );
     }
 
     public Matrix3x3d ToMatrix3x3d()
     {
-        double  xx = x * x,
-                 xy = x * y,
-                xz = x * z,
-                 xw = x * w,
-                 yy = y * y,
-                 yz = y * z,
-                 yw = y * w,
-                 zz = z * z,
-                 zw = z * w;
+        double xx = x * x,
+               xy = x * y,
+               xz = x * z,
+               xw = x * w,
+               yy = y * y,
+               yz = y * z,
+               yw = y * w,
+               zz = z * z,
+               zw = z * w;
 
         return new Matrix3x3d
         (
-             1.0 - 2.0 * (yy + zz), 2.0 * (xy - zw), 2.0 * (xz + yw),
-             2.0 * (xy + zw), 1.0 - 2.0 * (xx + zz), 2.0 * (yz - xw),
-             2.0 * (xz - yw), 2.0 * (yz + xw), 1.0 - 2.0 * (xx + yy)
+            1.0 - 2.0 * (yy + zz), 2.0 * (xy - zw), 2.0 * (xz + yw),
+            2.0 * (xy + zw), 1.0 - 2.0 * (xx + zz), 2.0 * (yz - xw),
+            2.0 * (xz - yw), 2.0 * (yz + xw), 1.0 - 2.0 * (xx + yy)
         );
     }
 
     public Matrix4x4d ToMatrix4x4d()
     {
-        double  xx = x * x,
-                xy = x * y,
-                xz = x * z,
-                xw = x * w,
-                yy = y * y,
-                yz = y * z,
-                yw = y * w,
-                zz = z * z,
-                zw = z * w;
+        double xx = x * x,
+               xy = x * y,
+               xz = x * z,
+               xw = x * w,
+               yy = y * y,
+               yz = y * z,
+               yw = y * w,
+               zz = z * z,
+               zw = z * w;
 
         return new Matrix4x4d
         (
@@ -236,7 +235,7 @@ public class Quat
             if ((1 - absCosom) > 1e-6)
             {
                 double omega = MathUtility.Safe_Acos(absCosom);
-                double sinom = 1.0 / System.Math.Sin( omega );
+                double sinom = 1.0 / System.Math.Sin(omega);
                 scale0 = System.Math.Sin((1.0 - t) * omega) * sinom;
                 scale1 = System.Math.Sin(t * omega) * sinom;
             }
@@ -246,9 +245,9 @@ public class Quat
                 scale1 = t;
             }
             Quat res = new Quat(scale0 * _from.x + scale1 * to.x,
-                                scale0 * _from.y + scale1 * to.y,
-                                scale0 * _from.z + scale1 * to.z,
-                                scale0 * _from.w + scale1 * to.w);
+                scale0 * _from.y + scale1 * to.y,
+                scale0 * _from.z + scale1 * to.z,
+                scale0 * _from.w + scale1 * to.w);
 
             return res.Normalized();
         }
@@ -256,27 +255,3 @@ public class Quat
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

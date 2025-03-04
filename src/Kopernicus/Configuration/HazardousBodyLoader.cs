@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * ------------------------------------------------------------- 
+ * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- * 
+ *
  * https://kerbalspaceprogram.com
  */
 
@@ -127,9 +127,18 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = generatedBody.celestialBody.gameObject.AddComponent<HazardousBody>();
-            Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.altitudeCurve = new FloatCurve(new[]
+            {
+                new Keyframe(0, 1)
+            });
+            Value.latitudeCurve = new FloatCurve(new[]
+            {
+                new Keyframe(0, 1)
+            });
+            Value.longitudeCurve = new FloatCurve(new[]
+            {
+                new Keyframe(0, 1)
+            });
         }
 
         /// <summary>
@@ -146,9 +155,18 @@ namespace Kopernicus.Configuration
 
             // Store values
             Value = body.gameObject.AddComponent<HazardousBody>();
-            Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
-            Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+            Value.altitudeCurve = new FloatCurve(new[]
+            {
+                new Keyframe(0, 1)
+            });
+            Value.latitudeCurve = new FloatCurve(new[]
+            {
+                new Keyframe(0, 1)
+            });
+            Value.longitudeCurve = new FloatCurve(new[]
+            {
+                new Keyframe(0, 1)
+            });
         }
 
         /// <summary>
@@ -162,17 +180,26 @@ namespace Kopernicus.Configuration
             // Null safe
             if (Value.altitudeCurve == null)
             {
-                Value.altitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+                Value.altitudeCurve = new FloatCurve(new[]
+                {
+                    new Keyframe(0, 1)
+                });
             }
 
             if (Value.latitudeCurve == null)
             {
-                Value.latitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+                Value.latitudeCurve = new FloatCurve(new[]
+                {
+                    new Keyframe(0, 1)
+                });
             }
 
             if (Value.longitudeCurve == null)
             {
-                Value.longitudeCurve = new FloatCurve(new[] { new Keyframe(0, 1) });
+                Value.longitudeCurve = new FloatCurve(new[]
+                {
+                    new Keyframe(0, 1)
+                });
             }
         }
     }
