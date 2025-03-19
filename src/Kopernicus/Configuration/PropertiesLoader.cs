@@ -160,6 +160,14 @@ namespace Kopernicus.Configuration
             get { return Value.albedo; }
             set { Value.albedo = value; }
         }
+        
+        // isStar - Are we a star?
+        [ParserTarget("isStar")]
+        public NumericParser<Boolean> IsStar
+        {
+            get { return Value.isStar; }
+            set { Value.isStar = value; }
+        }
 
         // emissivity
         [ParserTarget("emissivity")]
