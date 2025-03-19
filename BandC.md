@@ -16,6 +16,8 @@ Known Bugs:
 
 8.) Some mods that used custom Terrain Presets may require you to delete your settings.cfg file and reset your settings with this release. This is rare, but can happen. See [this](https://forum.kerbalspaceprogram.com/index.php?/topic/200143-112x-kopernicus-stable-branch-last-updated-march-7th-2023/&do=findComment&comment=4258139) post for details.
 
+9.) There are numerous bugs involving the use of PQSCity2 nodes. I'd advise you avoid using this type if possible.
+
 Known Caveats:
 
 1.) Releases older than release-209 updating to a new release may reset solar panels assigned to action groups.  We apologize for this, but this code is more robust so it should never happen again. 

@@ -1,17 +1,19 @@
 Kopernicus
 ==============================
-February 10th, 2025
+March 18th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-223:
+New in this latest version release-224:
 
-1.) KSC2 has to keep it's duplicate commnet node as it causes SCANSAT to crash otherwise.  Thus, readded it and set it to zero range and removed it from lists as a compromise.
+1.) Added support for setting the isStar property of celestial bodies (property is isStar = true/false in the standard body properties node), for from scratch star creations.
 
-2.) KSC2 is STILL frickin' weird.
+2.) Fixed some occasional exceptions when exiting the game.
+
+3.) While unrelated to any changes here, it's probably worth noting R-T-B has switched to a complete linux dev environment, and now builds the Kopernicus project with mono.  This literally makes no difference to the end user, just recording it for posterity.
 
 
 About
