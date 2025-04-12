@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -651,7 +652,14 @@ namespace Kopernicus.Configuration.Parsing
             if (s.StartsWith("BUILTIN/"))
             {
                 String meshName = Regex.Replace(s, "BUILTIN/", "");
-                Value = Resources.FindObjectsOfTypeAll<Mesh>().First(mesh => mesh.name == meshName);
+                if (meshName.Equals("Cube"))
+                {
+                    Value = Resources.FindObjectsOfTypeAll<Mesh>().Last(mesh => mesh.name == meshName); //work around for weird pol "Cube" rock.
+                }
+                else
+                {
+                    Value = Resources.FindObjectsOfTypeAll<Mesh>().FirstOrDefault(mesh => mesh.name == meshName);
+                }
                 return;
             }
 
@@ -822,8 +830,7 @@ namespace Kopernicus.Configuration.Parsing
             if (s.StartsWith("BUILTIN/"))
             {
                 String objName = Regex.Replace(s, "BUILTIN/", "");
-                Value = UnityEngine.Object.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>()
-                    .First(obj => obj.name == objName));
+                Value = UnityEngine.Object.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>().FirstOrDefault(obj => obj.name == objName));
                 Value.name = objName;
                 return;
             }
@@ -906,8 +913,7 @@ namespace Kopernicus.Configuration.Parsing
         public void SetFromString(String s)
         {
             String materialName = Regex.Replace(s, "BUILTIN/", "");
-            Value = Resources.FindObjectsOfTypeAll<Material>()
-                .FirstOrDefault(material => material.name == materialName);
+            Value = Resources.FindObjectsOfTypeAll<Material>().FirstOrDefault(material => material.name == materialName);
         }
 
         /// <summary>

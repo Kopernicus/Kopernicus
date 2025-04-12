@@ -1,19 +1,17 @@
 Kopernicus
 ==============================
-March 18th, 2025
+April 12th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-224:
+New in this latest version release-225:
 
-1.) Added support for setting the isStar property of celestial bodies (property is isStar = true/false in the standard body properties node), for from scratch star creations.
+1.) Worked around a stock bug where the model/mesh for the spikey rock scatters was named by squad "Cube" resulting in the name being "BUILTIN/Cube" which conflicts with the Unity builtin cube model.  Obviously we don't want that, so calling "BUILTIN/Cube" in a config will now return the proper spikey rock model rather than a blank cube.  The Reason Squad did this are surely lost to the ancients.
 
-2.) Fixed some occasional exceptions when exiting the game.
-
-3.) While unrelated to any changes here, it's probably worth noting R-T-B has switched to a complete linux dev environment, and now builds the Kopernicus project with mono.  This literally makes no difference to the end user, just recording it for posterity.
+2.) Comets are still being worked on, but not quite ready.  More non-enabled infrastructure might have snuck it's way in though.  Stand by.
 
 
 About

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace scatterer
+namespace Kopernicus.ShadowMan
 {
     public class celestialBodySortableByDistance : IEquatable<celestialBodySortableByDistance>, IComparable<celestialBodySortableByDistance>
     {
