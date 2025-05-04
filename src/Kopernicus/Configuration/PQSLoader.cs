@@ -700,18 +700,34 @@ namespace Kopernicus.Configuration
             for (Int32 i = 0; i < mods.Length; i++)
             {
                 Type modType = mods[i].GetType();
-                Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-
-                for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                if ((modType.Name.Equals("PQSCity") && mods[i].name.Equals("KSC2")) && RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOriginalKSC2)
                 {
-                    if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
-                    {
-                        continue;
-                    }
+                    PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
+                    PQSCity scTree = kerbinTemplate.pqsVersion.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC2");
+                    PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
+                    newScTree.transform.localPosition = scTree.transform.localPosition;
+                    newScTree.transform.localScale = scTree.transform.localScale;
+                    newScTree.transform.localRotation = scTree.transform.localRotation;
+                    Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
+                    newScTree.name = "KSC2";
+                    GameObject.DestroyImmediate(mods[i].gameObject.GetComponentInChildren<CommNetHome>());
+                    GameObject.DestroyImmediate(mods[i]);
+                }
+                else
+                {
+                    Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
 
-                    IModLoader loader = (IModLoader)Activator.CreateInstance(Parser.ModTypes[j]);
-                    loader.Create(mods[i], Value);
-                    Mods.Add(loader);
+                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
+                    {
+                        if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
+                        {
+                            continue;
+                        }
+
+                        IModLoader loader = (IModLoader)Activator.CreateInstance(Parser.ModTypes[j]);
+                        loader.Create(mods[i], Value);
+                        Mods.Add(loader);
+                    }
                 }
             }
         }
@@ -816,32 +832,10 @@ namespace Kopernicus.Configuration
             for (Int32 i = 0; i < mods.Length; i++)
             {
                 Type modType = mods[i].GetType();
-                if (modType.Name.Equals("PQSCity") && mods[i].name.Equals("KSC2"))
+                if ((modType.Name.Equals("PQSCity") && mods[i].name.Equals("KSC2")) && RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOriginalKSC2)
                 {
-                    PSystemBody kerbinTemplate = Utility.FindBody(Injector.StockSystemPrefab.rootBody, "Kerbin");
-                    PQSCity scTree = kerbinTemplate.pqsVersion.GetComponentsInChildren<PQSCity>(true).First(m => m.name == "KSC2");
-                    PQSCity newScTree = Object.Instantiate(scTree, Value.transform, true);
-                    newScTree.transform.localPosition = scTree.transform.localPosition;
-                    newScTree.transform.localScale = scTree.transform.localScale;
-                    newScTree.transform.localRotation = scTree.transform.localRotation;
-                    Utility.CopyObjectFields<PQSCity>(scTree, newScTree);
-                    newScTree.name = "KSC2";
-                    GameObject.Destroy(newScTree.gameObject.GetComponentInChildren<CommNetHome>());
-                    Type modLoaderType = typeof(ModLoader<>).MakeGenericType(modType);
-
-                    for (Int32 j = 0; j < Parser.ModTypes.Count; j++)
-                    {
-                        if (!modLoaderType.IsAssignableFrom(Parser.ModTypes[j]))
-                        {
-                            continue;
-                        }
-
-                        IModLoader loader = (IModLoader)Activator.CreateInstance(Parser.ModTypes[j]);
-                        loader.Create(newScTree, Value);
-                        Mods.Add(loader);
-                    }
-                    mods[i].modEnabled = false;
-                    mods[i].enabled = false;
+                    GameObject.DestroyImmediate(mods[i].gameObject.GetComponentInChildren<CommNetHome>());
+                    GameObject.DestroyImmediate(mods[i]);
                 }
                 else
                 {

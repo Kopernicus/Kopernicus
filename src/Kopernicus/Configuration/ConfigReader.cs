@@ -57,6 +57,8 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool KSCLightsAlwaysOn = false;
         [Persistent]
+        public bool UseOriginalKSC2 = false;
+        [Persistent]
         public bool HandleHomeworldAtmosphericUnitDisplay = true;
         [Persistent]
         public bool UseIncorrectScatterDensityLogic = false;
@@ -117,6 +119,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("ShadowRangeCap: " + ShadowRangeCap);
                 Debug.Log("DisableMainMenuMunScene: " + DisableMainMenuMunScene);
                 Debug.Log("KSCLightsAlwaysOn: " + KSCLightsAlwaysOn);
+                Debug.Log("UseOriginalKS2: " + UseOriginalKSC2);
                 Debug.Log("HandleHomeworldAtmosphericUnitDisplay: " + HandleHomeworldAtmosphericUnitDisplay);
                 Debug.Log("UseIncorrectScatterDensityLogic: " + UseIncorrectScatterDensityLogic);
                 Debug.Log("DisableFarAwayColliders: " + DisableFarAwayColliders);
