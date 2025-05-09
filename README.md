@@ -1,17 +1,15 @@
 Kopernicus
 ==============================
-April 12th, 2025
+May 8th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-225:
+New in this latest version release-226:
 
-1.) Worked around a stock bug where the model/mesh for the spikey rock scatters was named by squad "Cube" resulting in the name being "BUILTIN/Cube" which conflicts with the Unity builtin cube model.  Obviously we don't want that, so calling "BUILTIN/Cube" in a config will now return the proper spikey rock model rather than a blank cube.  The Reason Squad did this are surely lost to the ancients.
-
-2.) Comets are still being worked on, but not quite ready.  More non-enabled infrastructure might have snuck it's way in though.  Stand by.
+1.) The KSC2 has been a major source of pain for devs, so we added a setting to choose between the two situations we are able to create.  One situation is the KSC2 is rendered correctly, but uneditable by Kopernicus in Kerbin or Kerbin templates.  The second situation is the the KSC2 is editable/removable/moveable/whateverable but rendered incorrectly with the buildings compacted inside each other.  This is the default mode for maximum flexibility, but if you wish to have a correctly rendered KSC2, you can set option UseOriginalKSC2 = True in the Kopernicus_Config.cfg or the GUI.
 
 
 About
