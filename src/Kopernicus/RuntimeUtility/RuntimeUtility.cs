@@ -944,7 +944,7 @@ namespace Kopernicus.RuntimeUtility
             {
                 for (Int32 i = 0; i < animations.Length; i++)
                 {
-                    animations[i].target = FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName).bodyTransform.parent;
+                    animations[i].target = KSC.Instance.transform.root;
                 }
             }
             else
