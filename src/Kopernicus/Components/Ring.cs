@@ -1,6 +1,6 @@
 ﻿/**
  * Kopernicus Planetary System Modifier
- * -------------------------------------------------------------
+ * ------------------------------------------------------------- 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,13 +15,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- *
+ * 
  * This library is intended to be used as a plugin for Kerbal Space Program
  * which is copyright of TakeTwo Interactive. Your usage of Kerbal Space Program
  * itself is governed by the terms of its EULA, not the license above.
- *
+ * 
  * https://kerbalspaceprogram.com
  */
+
+#define FIX_ROTATION_JITTER
 
 using System;
 using System.Collections.Generic;
@@ -326,7 +328,9 @@ namespace Kopernicus.Components
             // Set mesh
             meshFilter.mesh = new Mesh
             {
-                vertices = vertices.ToArray(), triangles = tris.ToArray(), uv = uvs.ToArray()
+                vertices = vertices.ToArray(),
+                triangles = tris.ToArray(),
+                uv = uvs.ToArray()
             };
             meshFilter.mesh.RecalculateNormals();
             meshFilter.mesh.RecalculateBounds();
@@ -381,8 +385,8 @@ namespace Kopernicus.Components
                 if (innerShadeRotationPeriod > 0 && rotationPeriod > 0)
                 {
                     _innerShadeOffsetRate = innerShadeTiles * (
-                        1 / innerShadeRotationPeriod
-                        - 1 / rotationPeriod);
+                                               1 / innerShadeRotationPeriod
+                                               - 1 / rotationPeriod);
                 }
             }
 
@@ -536,8 +540,8 @@ namespace Kopernicus.Components
             Vector3 thicknessOffset)
         {
             const Single SIDE_TEX_W = 0.2f,
-                         INNER_TEX_W = 0.4f,
-                         OUTER_TEX_W = 0.4f;
+                INNER_TEX_W = 0.4f,
+                OUTER_TEX_W = 0.4f;
             // Define coordinates for 3 textures:
             //   1. The "side" faces that point normal and antinormal
             //      (classic rings)
@@ -710,7 +714,9 @@ namespace Kopernicus.Components
             }
 
             transform.localScale = transform.parent.localScale;
+#if !FIX_ROTATION_JITTER
             SetRotation();
+#endif
 
             if (useNewShader && ringMr.sharedMaterial != null
                              && brightestStar != null && brightestStar.sun.transform != null)
@@ -748,7 +754,9 @@ namespace Kopernicus.Components
         private void FixedUpdate()
         {
             transform.localScale = transform.parent.localScale;
+#if !FIX_ROTATION_JITTER
             SetRotation();
+#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -764,7 +772,9 @@ namespace Kopernicus.Components
         private void LateUpdate()
         {
             transform.localScale = transform.parent.localScale;
+#if !FIX_ROTATION_JITTER
             SetRotation();
+#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -773,6 +783,38 @@ namespace Kopernicus.Components
             }
         }
 
+#if FIX_ROTATION_JITTER
+        private void OnPreCull()
+        {
+            if (referenceBody == null)
+            {
+                return;
+            }
+
+            Double parentRotation = referenceBody.initialRotation + 360 * Planetarium.GetUniversalTime() / referenceBody.rotationPeriod;
+            // Setting transform.rotation does NOT give us a consistent
+            // absolute orientation as you would expect from the documentation.
+            // "World" coordinates seem to be set differently each time the
+            // game is loaded. Instead, we use localRotation to orient the ring
+            // relative to its parent body, subtract off the parent body's
+            // rotation at the current moment in time, then add the LAN.
+            // Note that eastward (prograde) rotation is negative in trigonometry.
+            if (lockRotation || Math.Abs(rotationPeriod) < 0.001)
+            {
+                Double angle = parentRotation - longitudeOfAscendingNode;
+                QuaternionD rotation = QuaternionD.Euler(0.0, angle, 0.0);
+                transform.localRotation = rotation * (QuaternionD)this.rotation;
+            }
+            else
+            {
+                Single degreesPerSecond = -360f / rotationPeriod;
+                transform.localRotation =
+                    QuaternionD.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
+                    * (QuaternionD)rotation
+                    * QuaternionD.Euler(0, Planetarium.GetUniversalTime() * degreesPerSecond, 0);
+            }
+        }
+#else
         /// <summary>
         /// Populate our transform's rotation quaternion
         /// </summary>
@@ -793,9 +835,9 @@ namespace Kopernicus.Components
             if (Math.Abs(rotationPeriod) > 0.01)
             {
                 Single degreesPerSecond = -360f / rotationPeriod;
-                Single parentRotation = (Single)(referenceBody.initialRotation +
-                                                 360 * Planetarium.GetUniversalTime() /
-                                                 referenceBody.rotationPeriod);
+                Single parentRotation = (Single) (referenceBody.initialRotation +
+                                                  360 * Planetarium.GetUniversalTime() /
+                                                  referenceBody.rotationPeriod);
                 transform.localRotation =
                     Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
                     * rotation
@@ -803,13 +845,14 @@ namespace Kopernicus.Components
             }
             else
             {
-                Single parentRotation = (Single)(referenceBody.initialRotation +
-                                                 360 * Planetarium.GetUniversalTime() /
-                                                 referenceBody.rotationPeriod);
+                Single parentRotation = (Single) (referenceBody.initialRotation +
+                                                  360 * Planetarium.GetUniversalTime() /
+                                                  referenceBody.rotationPeriod);
                 transform.localRotation =
                     Quaternion.Euler(0, parentRotation - longitudeOfAscendingNode, 0)
                     * rotation;
             }
         }
+#endif
     }
 }
