@@ -940,16 +940,15 @@ namespace Kopernicus.RuntimeUtility
         private static void PatchTimeOfDayAnimation()
         {
             TimeOfDayAnimation[] animations = Resources.FindObjectsOfTypeAll<TimeOfDayAnimation>();
-            if (KopernicusConfig.KSCLightsAlwaysOn)
+            for (Int32 i = 0; i < animations.Length; i++)
             {
-                for (Int32 i = 0; i < animations.Length; i++)
+                if (KopernicusConfig.KSCLightsAlwaysOn)
                 {
-                    animations[i].target = KSC.Instance.transform.root;
+                    animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)).transform;
+                    animations[i].emissivesCurve = new AnimationCurve();
+                    animations[i].emissivesCurve.AddKey(1f, 1f);
                 }
-            }
-            else
-            {
-                for (Int32 i = 0; i < animations.Length; i++)
+                else
                 {
                     animations[i].target = KopernicusStar.GetBrightest(FlightGlobals.GetBodyByName(RuntimeUtility.KopernicusConfig.HomeWorldName)).transform;
                 }
