@@ -98,7 +98,6 @@ namespace Kopernicus.RuntimeUtility
         public static PQSCache.PQSPreset pqsDefault;
         public static PQSCache.PQSPreset pqsHigh;
 
-        private static bool shadowsFixed = false;
         //old mockbody for compat
         public static CelestialBody mockBody = null;
         //Plugin Path finding logic
@@ -242,21 +241,6 @@ namespace Kopernicus.RuntimeUtility
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
-            shadowsFixed = false;
-        }
-
-        private static void FixShadows()
-        {
-            try
-            {
-                GameObject.Destroy(DynamicShadowSettings.Instance);
-                DynamicShadowSettings.Instance = null;
-            }
-            catch
-            {
-                //dont need to do this then
-            }
-            shadowsFixed = true;
         }
 
         private void Update()
@@ -303,10 +287,6 @@ namespace Kopernicus.RuntimeUtility
                         PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Kopernicus", "Kopernicus", "You have changed the Terrain Detail setting.  Do note that can slightly change terrain altitudes, potentially affecting landed vessels!  Revert this setting back if unsure.", "OK", true, UISkinManager.GetSkin("MainMenuSkin"));
                     }
                 }
-            }
-            if (!shadowsFixed)
-            {
-                FixShadows();
             }
         }
 
@@ -363,10 +343,6 @@ namespace Kopernicus.RuntimeUtility
             // Sun
             GameObject gob = Sun.Instance.gameObject;
             KopernicusStar star = gob.AddComponent<KopernicusStar>();
-            if (!shadowsFixed)
-            {
-                FixShadows();
-            }
             Utility.CopyObjectFields(Sun.Instance, star, false);
             DestroyImmediate(Sun.Instance);
             Sun.Instance = star;
