@@ -67,35 +67,33 @@ namespace Kopernicus.ShadowMan
             LoadedComputeShaders.Clear();
             LoadedTextures.Clear();
 
-            using (WWW www = new WWW("file://" + shaderspath)) //this shader loader is ancient and should probably be updated
+
+            AssetBundleCreateRequest bundleLoadRequest = AssetBundle.LoadFromFileAsync(shaderspath);
+            AssetBundle bundle = bundleLoadRequest.assetBundle;
+            Shader[] shaders = bundle.LoadAllAssets<Shader>();
+
+            foreach (Shader shader in shaders)
             {
-                AssetBundle bundle = www.assetBundle;
-                Shader[] shaders = bundle.LoadAllAssets<Shader>();
-
-                foreach (Shader shader in shaders)
-                {
-                    //Utils.Log (""+shader.name+" loaded. Supported?"+shader.isSupported.ToString());
-                    LoadedShaders.Add(shader.name, shader);
-                }
-
-                ComputeShader[] computeShaders = bundle.LoadAllAssets<ComputeShader>();
-
-                foreach (ComputeShader computeShader in computeShaders)
-                {
-                    //Utils.LogInfo ("Compute shader "+computeShader.name+" loaded.");
-                    LoadedComputeShaders.Add(computeShader.name, computeShader);
-                }
-
-                Texture[] textures = bundle.LoadAllAssets<Texture>();
-
-                foreach (Texture texture in textures)
-                {
-                    LoadedTextures.Add(texture.name, texture);
-                }
-
-                bundle.Unload(false); // unload the raw asset bundle
-                www.Dispose();
+                //Utils.Log (""+shader.name+" loaded. Supported?"+shader.isSupported.ToString());
+                LoadedShaders.Add(shader.name, shader);
             }
+
+            ComputeShader[] computeShaders = bundle.LoadAllAssets<ComputeShader>();
+
+            foreach (ComputeShader computeShader in computeShaders)
+            {
+                //Utils.LogInfo ("Compute shader "+computeShader.name+" loaded.");
+                LoadedComputeShaders.Add(computeShader.name, computeShader);
+            }
+
+            Texture[] textures = bundle.LoadAllAssets<Texture>();
+
+            foreach (Texture texture in textures)
+            {
+                LoadedTextures.Add(texture.name, texture);
+            }
+
+            bundle.Unload(false); // unload the raw asset bundle
         }
 
         public void replaceEVEshaders()
