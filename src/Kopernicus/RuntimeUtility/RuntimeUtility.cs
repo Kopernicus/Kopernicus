@@ -262,11 +262,11 @@ namespace Kopernicus.RuntimeUtility
                             double newHS = PSystemManager.Instance.localBodies[i].orbit.semiMajorAxis * (1 - PSystemManager.Instance.localBodies[i].orbit.eccentricity) * Math.Pow(PSystemManager.Instance.localBodies[i].Mass / (3 * (PSystemManager.Instance.localBodies[i].orbit.referenceBody.Mass + PSystemManager.Instance.localBodies[i].Mass)), 1.0 / 3.0);
                             double newHSvsOld = PSystemManager.Instance.localBodies[i].hillSphere / newHS;
                             double newSOIvsOld = PSystemManager.Instance.localBodies[i].sphereOfInfluence / newSOI;
-                            if ((newSOIvsOld > 1.05) || (newSOIvsOld < 0.95))
+                            if ((newSOIvsOld > 1.025) || (newSOIvsOld < 0.975))
                             {
                                 PSystemManager.Instance.localBodies[i].sphereOfInfluence = newSOI;
                             }
-                            if ((newHSvsOld > 1.05) || (newHSvsOld < 0.95))
+                            if ((newHSvsOld > 1.025) || (newHSvsOld < 0.975))
                             {
                                 PSystemManager.Instance.localBodies[i].hillSphere = newHS;
                             }
