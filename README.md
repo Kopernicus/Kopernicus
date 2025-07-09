@@ -1,16 +1,25 @@
 Kopernicus
 ==============================
-May 8th, 2025
+July 7th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-226:
+New in this latest version release-227:
 
-1.) The KSC2 has been a major source of pain for devs, so we added a setting to choose between the two situations we are able to create.  One situation is the KSC2 is rendered correctly, but uneditable by Kopernicus in Kerbin or Kerbin templates.  The second situation is the the KSC2 is editable/removable/moveable/whateverable but rendered incorrectly with the buildings compacted inside each other.  This is the default mode for maximum flexibility, but if you wish to have a correctly rendered KSC2, you can set option UseOriginalKSC2 = True in the Kopernicus_Config.cfg or the GUI.
+1.) This release represents a multitude of accumulated bugfixes we wanted to get out before focusing on the next big thing in earnest, which is comet support.  This aims to be the last release until those are done, which will most likely take until years end at this rate, so...  it's basically an attempt to fix all currently known bugs.  They are listed below in order of severity.  All of them should be fixed, or mostly fixed to the point said feature is at least usable.  Enjoy!
 
+2.) Improved ring "jitter" behavior in the ring shader when using some of the new features recently added.  I am aware there are still some issues with tilted rings, but those will have to wait for the big comet release to looka at, sorry (ring shader code really isn't my thing).  At least most conventional rings behave well now.
+
+3.) Fixed KSCLightsAlwaysOn sometimes not uh...  keeping the lights on?  Now they always stay on with this setting, not just 99% of the time, or when they feel like it.
+
+4.) Removed some dead Shadow Manager code.  Doubt it will do much for the end user, but it makes the codebase more maintainable. Fun fact for those who don't know, Kopernicus Shadow Mananager is actually just scatterer 0.7xx series without the scattering, donated by blackrack.
+
+5.) Improved the extremely poor performance in the "PrincipiaFriendlySOIComputation" option.  Now it only performs moderately bad!  Still only really needed if you want a very strictly acurate SOI in a Principia environment, instead of an estimate.  ie, not worth the performance hit fot 99% of users.
+
+6.) Removed the use of the deprecated UnityEngine function "www" in the Shadow Manager shader loader.  It now uses a file based shader loader, instead of a web request.  Why it was ever using a web request to a disk based shader file is a question for the ancients of Unity lore.
 
 About
 -----
