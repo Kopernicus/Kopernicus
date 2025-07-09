@@ -1,6 +1,6 @@
 Kopernicus
 ==============================
-July 7th, 2025
+July 9th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
@@ -17,7 +17,7 @@ New in this latest version release-227:
 
 4.) Removed some dead Shadow Manager code.  Doubt it will do much for the end user, but it makes the codebase more maintainable. Fun fact for those who don't know, Kopernicus Shadow Mananager is actually just scatterer 0.7xx series without the scattering, donated by blackrack.
 
-5.) Improved the extremely poor performance in the "PrincipiaFriendlySOIComputation" option.  Now it only performs moderately bad!  Still only really needed if you want a very strictly acurate SOI in a Principia environment, instead of an estimate.  ie, not worth the performance hit fot 99% of users.
+5.) Improved the extremely poor performance in the "PrincipiaFriendlySOIComputation" option.  Now it only performs moderately bad!  Still only really needed if you want a very strictly acurate SOI in a Principia environment, instead of an estimate.  ie, not worth the performance hit for 99% of users.
 
 6.) Removed the use of the deprecated UnityEngine function "www" in the Shadow Manager shader loader.  It now uses a file based shader loader, instead of a web request.  Why it was ever using a web request to a disk based shader file is a question for the ancients of Unity lore.
 
