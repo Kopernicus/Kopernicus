@@ -7,15 +7,9 @@ October 24th, 2025
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-228:
+New in this latest version release-229:
 
-1.) This release represents a few lingering bugfixes I wanted to get out rather than wait until next year for the "big comets" release.  They are nice bugfixes that fix some longstanding bugs, you should install them.
-
-2.) Fixed the stock shadow code (finally!).  Kopernicus ShadowManager is thus removed, and no longer relevant as a setting.  Your configs will autoupdate.
-
-3.) Fixed stock non-root suns not properly doing extinction of sunlight (looking at you, transparent gas giants).
-
-4.) Fixed ring rotation in the ring shader (I think it is somewhat usable now).
+1.) Hotfix reimplementing sunflares for non-stock stars (oops).
 
 About
 -----
