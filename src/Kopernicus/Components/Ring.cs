@@ -23,8 +23,6 @@
  * https://kerbalspaceprogram.com
  */
 
-#define FIX_ROTATION_JITTER
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -714,9 +712,7 @@ namespace Kopernicus.Components
             }
 
             transform.localScale = transform.parent.localScale;
-#if !FIX_ROTATION_JITTER
             SetRotation();
-#endif
 
             if (useNewShader && ringMr.sharedMaterial != null
                              && brightestStar != null && brightestStar.sun.transform != null)
@@ -754,9 +750,7 @@ namespace Kopernicus.Components
         private void FixedUpdate()
         {
             transform.localScale = transform.parent.localScale;
-#if !FIX_ROTATION_JITTER
             SetRotation();
-#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -772,9 +766,7 @@ namespace Kopernicus.Components
         private void LateUpdate()
         {
             transform.localScale = transform.parent.localScale;
-#if !FIX_ROTATION_JITTER
             SetRotation();
-#endif
 
             // Call Modules
             for (int i = 0; i < Components.Count; i++)
@@ -782,8 +774,6 @@ namespace Kopernicus.Components
                 Components[i].Update(this);
             }
         }
-
-#if FIX_ROTATION_JITTER
         private void OnPreCull()
         {
             if (referenceBody == null)
@@ -814,7 +804,6 @@ namespace Kopernicus.Components
                     * QuaternionD.Euler(0, Planetarium.GetUniversalTime() * degreesPerSecond, 0);
             }
         }
-#else
         /// <summary>
         /// Populate our transform's rotation quaternion
         /// </summary>
@@ -853,6 +842,5 @@ namespace Kopernicus.Components
                     * rotation;
             }
         }
-#endif
     }
 }
