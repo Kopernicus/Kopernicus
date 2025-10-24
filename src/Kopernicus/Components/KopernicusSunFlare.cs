@@ -123,7 +123,6 @@ namespace Kopernicus.Components
                                       (Single)(1.0 / (Vector3d.Distance(position,
                                                           ScaledSpace.LocalToScaledSpace(sun.position)) /
                                                       (AU * ScaledSpace.InverseScaleFactor))));
-            sunFlare.enabled = true;
 
             if (PlanetariumCamera.fetch.target == null ||
                 HighLogic.LoadedScene != GameScenes.TRACKSTATION && HighLogic.LoadedScene != GameScenes.FLIGHT)
