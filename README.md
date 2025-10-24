@@ -1,25 +1,21 @@
 Kopernicus
 ==============================
-July 9th, 2025
+October 24th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-227:
+New in this latest version release-228:
 
-1.) This release represents a multitude of accumulated bugfixes we wanted to get out before focusing on the next big thing in earnest, which is comet support.  This aims to be the last release until those are done, which will most likely take until years end at this rate, so...  it's basically an attempt to fix all currently known bugs.  They are listed below in order of severity.  All of them should be fixed, or mostly fixed to the point said feature is at least usable.  Enjoy!
+1.) This release represents a few lingering bugfixes I wanted to get out rather than wait until next year for the "big comets" release.  They are nice bugfixes that fix some longstanding bugs, you should install them.
 
-2.) Improved ring "jitter" behavior in the ring shader when using some of the new features recently added.  I am aware there are still some issues with tilted rings, but those will have to wait for the big comet release to looka at, sorry (ring shader code really isn't my thing).  At least most conventional rings behave well now.
+2.) Fixed the stock shadow code (finally!).  Kopernicus ShadowManager is thus removed, and no longer relevant as a setting.  Your configs will autoupdate.
 
-3.) Fixed KSCLightsAlwaysOn sometimes not uh...  keeping the lights on?  Now they always stay on with this setting, not just 99% of the time, or when they feel like it.
+3.) Fixed stock non-root suns not properly doing extinction of sunlight (looking at you, transparent gas giants).
 
-4.) Removed some dead Shadow Manager code.  Doubt it will do much for the end user, but it makes the codebase more maintainable. Fun fact for those who don't know, Kopernicus Shadow Mananager is actually just scatterer 0.7xx series without the scattering, donated by blackrack.
-
-5.) Improved the extremely poor performance in the "PrincipiaFriendlySOIComputation" option.  Now it only performs moderately bad!  Still only really needed if you want a very strictly acurate SOI in a Principia environment, instead of an estimate.  ie, not worth the performance hit for 99% of users.
-
-6.) Removed the use of the deprecated UnityEngine function "www" in the Shadow Manager shader loader.  It now uses a file based shader loader, instead of a web request.  Why it was ever using a web request to a disk based shader file is a question for the ancients of Unity lore.
+4.) Fixed ring rotation in the ring shader (I think it is somewhat usable now).
 
 About
 -----
