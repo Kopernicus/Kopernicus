@@ -1,0 +1,59 @@
+#pragma kernel CSMain
+
+Texture2D _Spectrum01;
+Texture2D _Spectrum23;
+float4 _GridSizes;
+float _SlopeVarianceDelta;
+float _Size;
+float _VarianceSize;
+
+RWTexture3D<float> des;
+
+float getSlopeVariances(float2 k, float A, float B, float C, float2 spectrumSample) 
+{
+    float w = 1.0 - exp(A * k.x * k.x + B * k.x * k.y + C * k.y * k.y);
+    float2 kw = k * w;
+    return dot(kw, kw) * dot(spectrumSample, spectrumSample) * 2.0;
+}
+
+[numthreads(4,4,4)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    const float SCALE = 10.0;
+    const float M_PI = 3.14159265;
+    
+    float a = id.x;
+    float b = id.y;
+    float c = id.z;
+    
+    float A = pow(a / (_VarianceSize - 1.0), 4.0) * SCALE;
+    float C = pow(c / (_VarianceSize - 1.0), 4.0) * SCALE;
+    float B = (2.0 * b / (_VarianceSize - 1.0) - 1.0) * sqrt(A * C);
+    A = -0.5 * A;
+    B = -B;
+    C = -0.5 * C;
+    
+    float slopeVariances = _SlopeVarianceDelta;
+    
+    int size = _Size;
+    for (int x = 0; x < size; x++) 
+    {
+        for (int y = 0; y < size; y++)
+         {
+            int i = x >= _Size / 2.0 ? x - size : x;
+            int j = y >= _Size / 2.0 ? y - size : y;
+            float2 k = 2.0 * M_PI * float2(i, j);
+
+            float4 spectrum01 = _Spectrum01[uint2(x,y)];
+            float4 spectrum23 = _Spectrum23[uint2(x,y)];
+
+            slopeVariances += getSlopeVariances(k / _GridSizes.x, A, B, C, spectrum01.xy);
+            slopeVariances += getSlopeVariances(k / _GridSizes.y, A, B, C, spectrum01.zw);
+            slopeVariances += getSlopeVariances(k / _GridSizes.z, A, B, C, spectrum23.xy);
+            slopeVariances += getSlopeVariances(k / _GridSizes.w, A, B, C, spectrum23.zw);
+        }
+    }
+    
+  
+    des[id] = slopeVariances;
+}

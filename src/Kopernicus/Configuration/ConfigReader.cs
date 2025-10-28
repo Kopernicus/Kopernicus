@@ -49,6 +49,10 @@ namespace Kopernicus.Configuration
         [Persistent]
         public int SolarRefreshRate = 1;
         [Persistent]
+        public bool EnableKopernicusShadowManager = true;
+        [Persistent]
+        public int ShadowRangeCap = 50000;
+        [Persistent]
         public bool DisableMainMenuMunScene = true;
         [Persistent]
         public bool KSCLightsAlwaysOn = false;
@@ -111,6 +115,8 @@ namespace Kopernicus.Configuration
                 Debug.Log("EnforcedShaderLevel: " + EnforcedShaderLevel);
                 Debug.Log("UseKopernicusAsteroidSystem: " + UseKopernicusAsteroidSystem);
                 Debug.Log("SolarRefreshRate: " + SolarRefreshRate);
+                Debug.Log("EnableKopernicusShadowManager: " + EnableKopernicusShadowManager);
+                Debug.Log("ShadowRangeCap: " + ShadowRangeCap);
                 Debug.Log("DisableMainMenuMunScene: " + DisableMainMenuMunScene);
                 Debug.Log("KSCLightsAlwaysOn: " + KSCLightsAlwaysOn);
                 Debug.Log("UseOriginalKS2: " + UseOriginalKSC2);

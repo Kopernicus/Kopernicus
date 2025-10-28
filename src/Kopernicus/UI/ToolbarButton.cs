@@ -103,6 +103,7 @@ namespace Kopernicus.UI
             boxStyle.wordWrap = false;
             boxStyle.fontSize = (int)Math.Round((double)((float)fontSize * GameSettings.UI_SCALE));
             GUILayout.Label("Kopernicus_Config.cfg Editor", labelStyle);
+            RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.EnableKopernicusShadowManager, "EnableKopernicusShadowManager: Whether or not to run the Internal Kopernicus Shadow System. True by default.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.DisableMainMenuMunScene, " DisableMainMenuMunScene: Whether or not to disable the Mun main menu scene. Only uncheck this if you want that scene back.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.KSCLightsAlwaysOn = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.KSCLightsAlwaysOn, " KSCLightsAlwaysOn: Whether or not to force the KSC Lights to always be on. Requires game restart to take effect.", toggleStyle);
             RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOriginalKSC2 = GUILayout.Toggle(RuntimeUtility.RuntimeUtility.KopernicusConfig.UseOriginalKSC2, " UseOriginalKSC2: Whether or not to force the original, uncompacted KSC2 to load.  Will not be editable in any form by Kopernicus.", toggleStyle);
@@ -126,6 +127,21 @@ namespace Kopernicus.UI
             {
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate = 1;
                 RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.SolarRefreshRate.ToString()));
+            }
+            GUILayout.Label("ShadowRangeCap: A number defining the maximum distance at which shadows may be cast. Lower numbers yield less shadow cascading artifacts.", labelStyle);
+            try
+            {
+                GUILayout.BeginHorizontal();
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap = (int)Convert.ToInt32(GUILayout.TextField(RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap.ToString()));
+                GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING", labelStyle);
+                GUILayout.EndHorizontal();
+            }
+            catch
+            {
+                GUILayout.BeginHorizontal();
+                RuntimeUtility.RuntimeUtility.KopernicusConfig.ShadowRangeCap = 50000;
+                GUILayout.Label("SCENE SWITCH REQUIRED WHEN CHANGING THIS SETTING", labelStyle);
+                GUILayout.EndHorizontal();
             }
             GUI.DragWindow();
             RuntimeUtility.RuntimeUtility.KopernicusConfig.SettingsWindowXcoord = windowRect.x;

@@ -1,0 +1,63 @@
+﻿#pragma kernel CSMain
+
+float4 _Ocean_Choppyness;
+float4 _Ocean_GridSizes;
+
+sampler2D _Ocean_Map0;
+sampler2D _Ocean_Map3;
+sampler2D _Ocean_Map4;
+
+RWStructuredBuffer<float2> positions;
+RWStructuredBuffer<float> result;
+
+float SampleHeight(float2 oceanPos)
+{
+	float height = 0;
+
+	height += tex2Dlod(_Ocean_Map0, float4(oceanPos / _Ocean_GridSizes.x,0.0, 0.0) ).x;
+	height += tex2Dlod(_Ocean_Map0, float4(oceanPos / _Ocean_GridSizes.y,0.0, 0.0) ).y;
+	height += tex2Dlod(_Ocean_Map0, float4(oceanPos / _Ocean_GridSizes.z,0.0, 0.0) ).z;
+	height += tex2Dlod(_Ocean_Map0, float4(oceanPos / _Ocean_GridSizes.w,0.0, 0.0) ).w;
+
+	return height;
+}
+
+float2 SampleDisplacement(float2 oceanPos)
+{
+	float2 displacement = 0;
+
+	displacement += _Ocean_Choppyness.x * tex2Dlod(_Ocean_Map3, float4(oceanPos / _Ocean_GridSizes.x,0.0, 0.0) ).xy;
+	displacement += _Ocean_Choppyness.y * tex2Dlod(_Ocean_Map3, float4(oceanPos / _Ocean_GridSizes.y,0.0, 0.0) ).zw;
+	displacement += _Ocean_Choppyness.z * tex2Dlod(_Ocean_Map4, float4(oceanPos / _Ocean_GridSizes.z,0.0, 0.0) ).xy;
+	displacement += _Ocean_Choppyness.w * tex2Dlod(_Ocean_Map4, float4(oceanPos / _Ocean_GridSizes.w,0.0, 0.0) ).zw;
+
+	return displacement;
+}
+
+//Essentially a search method to find which point on the ocean is displaced sideways to end up at our part's position, so we can sample the correct height
+//Thanks to Scrawk (Justin Hawkins) for the tip
+//Original source: Water technology of uncharted p.126 https://www.gdcvault.com/play/1015309/Water-Technology-of
+[numthreads(1,1,1)]
+void CSMain (uint id : SV_DispatchThreadID)
+{
+    float precisionRequired = 0.02;
+
+	float2 currentPosition = positions[id];
+	float2 displacement = SampleDisplacement (currentPosition);
+	float2 resultingPosition = currentPosition + displacement;
+
+	for (int i = 0; i < 40; i++)
+	{
+		if (length(resultingPosition - positions[id]) <= precisionRequired)
+			break;
+
+		float2 newPosition = currentPosition - (resultingPosition - positions[id]);
+		float2 newDisplacement = SampleDisplacement (newPosition);
+		float2 newResultingPosition = newPosition + newDisplacement;
+
+		currentPosition = newPosition;
+		resultingPosition = newResultingPosition;
+	}
+
+	result[id] = SampleHeight(currentPosition);
+}
