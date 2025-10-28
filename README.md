@@ -1,15 +1,15 @@
 Kopernicus
 ==============================
-October 24th, 2025
+October 27th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-229:
+New in this latest version release-230:
 
-1.) Hotfix reimplementing sunflares for non-stock stars (oops).
+1.) Reimplement Kopernicus ShadowManager, since it actually provides far better shadows than stock.  Defaults to on, as before.
 
 About
 -----
