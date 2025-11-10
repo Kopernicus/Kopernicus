@@ -6,7 +6,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using KSP.UI;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace Kopernicus.Components
@@ -509,35 +511,61 @@ namespace Kopernicus.Components
 
         public override Texture2D CompileToTexture() => CompileRGB();
 
-        public override Texture2D CompileRGB()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static byte RoundToPixelValue(float v)
+        {
+            return (byte)(v * 255f + 0.5f);
+        }
+
+        public unsafe override Texture2D CompileRGB()
         {
             Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGB24, mipChain: false);
             NativeArray<byte> textureData = texture2D.GetRawTextureData<byte>();
-            for (int i = _data.Length; i-- > 0;)
+
+            if (_data.Length * 3 != textureData.Length)
+                throw new IndexOutOfRangeException("texture size did not match data size");
+
+            fixed (byte* data = _data)
             {
-                Color pixelColor = Attributes[_data[i]].mapColor;
-                int texIndex = i * 3;
-                textureData[texIndex] = (byte)Math.Round(pixelColor.r * 255f);
-                textureData[texIndex + 1] = (byte)Math.Round(pixelColor.g * 255f);
-                textureData[texIndex + 2] = (byte)Math.Round(pixelColor.b * 255f);
+                byte* texData = (byte*)textureData.GetUnsafePtr();
+
+                for (int i = _data.Length; i >= 0; --i)
+                {
+                    Color pixelColor = Attributes[data[i]].mapColor;
+                    
+                    int texIndex = i * 3;
+                    texData[texIndex + 0] = RoundToPixelValue(pixelColor.r);
+                    texData[texIndex + 1] = RoundToPixelValue(pixelColor.g);
+                    texData[texIndex + 2] = RoundToPixelValue(pixelColor.b);
+                }
             }
 
             texture2D.Apply(updateMipmaps: false, makeNoLongerReadable: true);
             return texture2D;
         }
 
-        public override Texture2D CompileRGBA()
+        public unsafe override Texture2D CompileRGBA()
         {
             Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGBA32, mipChain: false);
             NativeArray<Color32> textureData = texture2D.GetRawTextureData<Color32>();
-            for (int i = _data.Length; i-- > 0;)
+
+            if (textureData.Length != _data.Length)
+                throw new IndexOutOfRangeException("texture length did not match data length");
+
+            fixed(byte* data = _data)
             {
-                Color pixelColor = Attributes[_data[i]].mapColor;
-                textureData[i] = new Color32(
-                    (byte)Math.Round(pixelColor.r * 255f),
-                    (byte)Math.Round(pixelColor.g * 255f),
-                    (byte)Math.Round(pixelColor.b * 255f),
-                    255);
+                Color32* texData = (Color32*)textureData.GetUnsafePtr();
+                Color32 color = new Color32(0, 0, 0, 255);
+
+                for (int i = _data.Length; i >= 0; --i)
+                {
+                    Color pixelColor = Attributes[data[i]].mapColor;
+
+                    color.r = RoundToPixelValue(pixelColor.r);
+                    color.g = RoundToPixelValue(pixelColor.g);
+                    color.b = RoundToPixelValue(pixelColor.b);
+                    texData[i] = color;
+                }
             }
 
             texture2D.Apply(updateMipmaps: false, makeNoLongerReadable: true);
