@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using KSP.UI;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 namespace Kopernicus.Components
 {
@@ -519,7 +521,8 @@ namespace Kopernicus.Components
 
         public unsafe override Texture2D CompileRGB()
         {
-            Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGB24, mipChain: false);
+                    // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGB24, mipChain: false);
+            Texture2D texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGB24, mipChain: false);
             NativeArray<byte> textureData = texture2D.GetRawTextureData<byte>();
 
             if (_data.Length * 3 != textureData.Length)
@@ -546,7 +549,8 @@ namespace Kopernicus.Components
 
         public unsafe override Texture2D CompileRGBA()
         {
-            Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGBA32, mipChain: false);
+            Texture2D texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGBA32, mipChain: false);
+            // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGBA32, mipChain: false);
             NativeArray<Color32> textureData = texture2D.GetRawTextureData<Color32>();
 
             if (textureData.Length != _data.Length)
@@ -619,6 +623,64 @@ namespace Kopernicus.Components
             public bool Equals(RGBA32 other) => rgba == other.rgba;
             public override bool Equals(object obj) => obj is RGBA32 other && rgba == other.rgba;
             public override int GetHashCode() => rgba;
+        }
+    
+    
+        // This reflects the actual creation flags in
+        // https://github.com/Unity-Technologies/UnityCsReference/blob/59b03b8a0f179c0b7e038178c90b6c80b340aa9f/Runtime/Export/Graphics/GraphicsEnums.cs#L626
+        //
+        // Most of the extra ones here are completely undocumented.
+        [Flags]
+        enum TextureCreationFlags
+        {
+            None,
+            MipChain = 1 << 0,
+            DontInitializePixels = 1 << 2,
+            DontDestroyTexture = 1 << 3,
+            DontCreateSharedTextureData = 1 << 4,
+            APIShareable = 1 << 5,
+            Crunch = 1 << 6,
+        }
+
+        /// <summary>
+        /// Create a <see cref="Texture2D"/> without initializing its data.
+        /// </summary>
+        static Texture2D CreateUninitializedTexture(
+            int width,
+            int height,
+            TextureFormat format = TextureFormat.RGBA32,
+            bool mipChain = false,
+            bool linear = false
+        )
+        {
+            // The code in here exactly matches the behaviour of the Texture2D
+            // constructors which directly take a TextureFormat, with one
+            // difference: it includes the DontInitializePixels flag.
+            //
+            // This is necessary because the Texture2D constructors that take
+            // GraphicsFormat validate the format differently than those that take
+            // TextureFormat, and only the GraphicsFormat constructors allow you to
+            // pass TextureCreationFlags.
+            //
+            // I (@Phantomical) have taken at look at decompiled implementation for
+            // Internal_Create_Impl and validated that this works as you would expect.
+
+            var tex = (Texture2D)FormatterServices.GetUninitializedObject(typeof(Texture2D));
+            if (!tex.ValidateFormat(format))
+                return tex;
+
+            var gformat = GraphicsFormatUtility.GetGraphicsFormat(format, isSRGB: !linear);
+            var flags = TextureCreationFlags.DontInitializePixels;
+            int mipCount = !mipChain ? 1 : -1;
+
+            if (mipCount != 1)
+                flags |= TextureCreationFlags.MipChain;
+            if (GraphicsFormatUtility.IsCrunchFormat(format))
+                flags |= TextureCreationFlags.Crunch;
+
+            var uflags = (UnityEngine.Experimental.Rendering.TextureCreationFlags)flags;
+            Texture2D.Internal_Create(tex, width, height, mipCount, gformat, uflags, IntPtr.Zero);
+            return tex;
         }
     }
 }
