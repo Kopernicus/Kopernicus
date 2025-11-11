@@ -102,6 +102,8 @@
   <!--Krafs.Publicizer items-->
   <ItemGroup>
     <Publicize Include="UnityEngine.CoreModule:UnityEngine.Object.m_CachedPtr" />
+    <Publicize Include="UnityEngine.CoreModule:UnityEngine.Texture.ValidateFormat" />
+    <Publicize Include="UnityEngine.CoreModule:UnityEngine.Texture2D.Internal_Create" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheUnassigned" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.cacheAssigned" />
     <Publicize Include="Assembly-CSharp:PQSLandControl+LandClassScatter.sphere" />
