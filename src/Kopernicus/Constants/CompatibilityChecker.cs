@@ -55,7 +55,7 @@ namespace Kopernicus.Constants
 #endif
         internal const string VERSION_MINOR_LOWER_LIMIT = "8";
         internal const string REVISION = "1";
-        internal const string KOPERNICUS = "230";
+        internal const string KOPERNICUS = "231";
         public static Boolean IsCompatible()
         {
             /*-----------------------------------------------*\

@@ -1,15 +1,19 @@
 Kopernicus
 ==============================
-October 27th, 2025
+November 23rd, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: Prestja and R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-230:
+New in this latest version release-231:
 
-1.) Reimplement Kopernicus ShadowManager, since it actually provides far better shadows than stock.  Defaults to on, as before.
+1.) Added many control hooks to Kopernicus for detecting Asteroid AND comet spawns.  We can't control comet spawns yet, but we are moving closer.  Probably by years end.
+
+2.) These hooks enabled the RealisticDensityFacilities to apply to asteroids as well, for the one person who uses them (me lol).
+
+3.) Improved scene switch time by nearly half a second thanks to a generous optimized PR by @Phantomical
 
 About
 -----
