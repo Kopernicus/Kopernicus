@@ -137,6 +137,8 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
+            GameEvents.onAsteroidSpawned.Add(v => OnAsteroidSpawn(v));
+            GameEvents.onCometSpawned.Add(v => OnCometSpawn(v));
             // Add Callback only if necessary
             if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay)
             {
@@ -241,6 +243,30 @@ namespace Kopernicus.RuntimeUtility
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
+        }
+
+        private void OnAsteroidSpawn(Vessel v)
+        {
+            if (RuntimeUtility.KopernicusConfig.ApplyRealWorldDensityToMinorObjects)
+            {
+                PerformAsteroidMassUpgrade(v);
+            }
+        }
+
+        private void OnCometSpawn(Vessel v)
+        {
+            if (RuntimeUtility.KopernicusConfig.ApplyRealWorldDensityToMinorObjects)
+            {
+                PerformAsteroidMassUpgrade(v);
+            }
+        }
+
+        private void PerformAsteroidMassUpgrade(Vessel v)
+        {
+            foreach (Part p in v.parts)
+            {
+                p.mass = p.mass * 50;
+            }
         }
 
         private void Update()
@@ -1071,6 +1097,7 @@ namespace Kopernicus.RuntimeUtility
                     configFile.WriteLine("	UseStockMohoTemplate = " + KopernicusConfig.UseStockMohoTemplate.ToString() + " //Boolean. This uses the stock Moho template with the Mohole bug/feature. Planet packs may customize this as desired. Be aware disabling this disables the Mohole.");
                     configFile.WriteLine("	UseOnDemandLoader = " + KopernicusConfig.UseOnDemandLoader.ToString() + " //Boolean. Default False. Turning this on can save ram and thus improve perforamnce situationally but will break some mods requiring long distance viewing and also increase stutter.");
                     configFile.WriteLine("	UseRealWorldDensity = " + KopernicusConfig.UseRealWorldDensity.ToString() + " //Boolean. Default False. Turning this on will calculate realistic body gravity and densities for all or Kerbolar/stock bodies based on size of said body. Don't turn this on unless you understand what it does.");
+                    configFile.WriteLine("	ApplyRealWorldDensityToMinorObjects = " + KopernicusConfig.ApplyRealWorldDensityToMinorObjects.ToString() + " //Boolean. Default False. Turning this on will calculate realistic body densities for all asteroids and/or comet type objects that spawn. It does not apply to already spawned objects. Don't turn this on unless you understand what it does.");
                     configFile.WriteLine("	RecomputeSOIAndHillSpheres = " + KopernicusConfig.RecomputeSOIAndHillSpheres.ToString() + " //Boolean. Default False. Turning this on will recompute hill spheres and SOIs using standard math for bodies that have been modified for density in anyway by UseRealWorldDensity. Global effect/Not affected by LimitRWDensityToStockBodies. Leave alone if you don't understand.");
                     configFile.WriteLine("	PrincipiaFriendlySOIComputation = " + KopernicusConfig.PrincipiaFriendlySOIComputation.ToString() + " //Boolean. Default False. Turning this on will recompute hill spheres and SOIs using standard math constantly, updating them when they hit a deviation of more than 5%. This has a performance penalty, and is only useful for Principia. Leave alone if you don't understand.");
                     configFile.WriteLine("	LimitRWDensityToStockBodies = " + KopernicusConfig.LimitRWDensityToStockBodies.ToString() + " //Boolean. Default True. Turning this on will limit density corrections to stock/Kerbolar bodies only. Don't mess with this unless you understand what it does.");
