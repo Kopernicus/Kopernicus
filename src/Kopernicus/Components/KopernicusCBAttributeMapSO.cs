@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using KSP.UI;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 
@@ -519,28 +520,44 @@ namespace Kopernicus.Components
             return (byte)(v * 255f + 0.5f);
         }
 
+        // Custom 24-bit struct matching the expected data layout.
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RGB
+        {
+            public byte r;
+            public byte g;
+            public byte b;
+        }
+
         public unsafe override Texture2D CompileRGB()
         {
-                    // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGB24, mipChain: false);
+            // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGB24, mipChain: false);
             Texture2D texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGB24, mipChain: false);
-            NativeArray<byte> textureData = texture2D.GetRawTextureData<byte>();
+            NativeArray<RGB> textureData = texture2D.GetRawTextureData<RGB>();
 
-            if (_data.Length * 3 != textureData.Length)
+            if (_data.Length != textureData.Length)
                 throw new IndexOutOfRangeException("texture size did not match data size");
+
+            // By just allocating 256 entries we don't need to worry about
+            // possibly accessing out of bounds.
+            RGB* attributeColors = stackalloc RGB[byte.MaxValue];
+            for (int i = 0; i < Attributes.Length; ++i)
+            {
+                Color pixelColor = Attributes[i].mapColor;
+                attributeColors[i] = new RGB
+                {
+                    r = RoundToPixelValue(pixelColor.r),
+                    g = RoundToPixelValue(pixelColor.g),
+                    b = RoundToPixelValue(pixelColor.b)
+                };
+            }
 
             fixed (byte* data = _data)
             {
-                byte* texData = (byte*)textureData.GetUnsafePtr();
+                RGB* texData = (RGB*)textureData.GetUnsafePtr();
 
                 for (int i = _data.Length; i >= 0; --i)
-                {
-                    Color pixelColor = Attributes[data[i]].mapColor;
-                    
-                    int texIndex = i * 3;
-                    texData[texIndex + 0] = RoundToPixelValue(pixelColor.r);
-                    texData[texIndex + 1] = RoundToPixelValue(pixelColor.g);
-                    texData[texIndex + 2] = RoundToPixelValue(pixelColor.b);
-                }
+                    texData[i] = attributeColors[data[i]];
             }
 
             texture2D.Apply(updateMipmaps: false, makeNoLongerReadable: true);
