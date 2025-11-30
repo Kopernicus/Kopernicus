@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using KSP.UI;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering;
 
 namespace Kopernicus.Components
 {
@@ -529,14 +526,44 @@ namespace Kopernicus.Components
             public byte b;
         }
 
+        unsafe struct CompileRGBJob : IJobParallelFor
+        {
+            [ReadOnly]
+            public RGB* attributeColors;
+
+            [ReadOnly]
+            public byte* data;
+
+            [WriteOnly]
+            public RGB* textureData;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void Execute(int index)
+            {
+                textureData[index] = attributeColors[data[index]];
+            }
+        }
+
+        struct JobCompleteGuard : IDisposable
+        {
+            JobHandle handle;
+
+            public JobCompleteGuard(JobHandle handle) => this.handle = handle;
+
+            public void Dispose()
+            {
+                if (!handle.IsCompleted)
+                    handle.Complete();
+            }
+        }
+
         public unsafe override Texture2D CompileRGB()
         {
-            // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGB24, mipChain: false);
-            Texture2D texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGB24, mipChain: false);
-            NativeArray<RGB> textureData = texture2D.GetRawTextureData<RGB>();
-
-            if (_data.Length != textureData.Length)
-                throw new IndexOutOfRangeException("texture size did not match data size");
+            var pixelData = new NativeArray<RGB>(
+                _data.Length,
+                Allocator.TempJob,
+                NativeArrayOptions.UninitializedMemory
+            );
 
             // By just allocating 256 entries we don't need to worry about
             // possibly accessing out of bounds.
@@ -552,15 +579,46 @@ namespace Kopernicus.Components
                 };
             }
 
+            Texture2D texture2D;
+            NativeArray<RGB> textureData;
             fixed (byte* data = _data)
             {
-                RGB* texData = (RGB*)textureData.GetUnsafePtr();
+                var job = new CompileRGBJob
+                {
+                    attributeColors = attributeColors,
+                    data = data,
+                    textureData = (RGB*)pixelData.GetUnsafePtr()
+                };
 
-                for (int i = _data.Length; i >= 0; --i)
-                    texData[i] = attributeColors[data[i]];
+                var batchSize = Math.Max(_data.Length / 128, 4096);
+                var handle = job.Schedule(_data.Length, batchSize);
+                // In case of any exceptions we want to make sure that the
+                // job completes before any of the data it is using is
+                // deallocated.
+                using (var guard = new JobCompleteGuard(handle))
+                {
+                    // Make sure the jobs actually start.
+                    JobHandle.ScheduleBatchedJobs();
+
+                    texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGB24, mipChain: false);
+
+                    // This is the single slowest operation in this whole thing, dwarfing
+                    // literally anything else. We try and hide the latency a bit by doing
+                    // it in parallel with the job.
+                    textureData = texture2D.GetRawTextureData<RGB>();
+                }
             }
 
+            if (textureData.Length != pixelData.Length)
+                throw new IndexOutOfRangeException("texture length did not match data length");
+
+            textureData.CopyFrom(pixelData);
             texture2D.Apply(updateMipmaps: false, makeNoLongerReadable: true);
+
+            // Disposing of this takes some time so let another thread deal with it.
+            pixelData.Dispose(default);
+            JobHandle.ScheduleBatchedJobs();
+
             return texture2D;
         }
 
