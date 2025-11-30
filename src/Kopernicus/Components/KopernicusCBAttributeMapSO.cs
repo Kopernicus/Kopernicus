@@ -567,7 +567,7 @@ namespace Kopernicus.Components
 
             // By just allocating 256 entries we don't need to worry about
             // possibly accessing out of bounds.
-            RGB* attributeColors = stackalloc RGB[byte.MaxValue];
+            RGB* attributeColors = stackalloc RGB[256];
             for (int i = 0; i < Attributes.Length; ++i)
             {
                 Color pixelColor = Attributes[i].mapColor;
@@ -631,20 +631,25 @@ namespace Kopernicus.Components
             if (textureData.Length != _data.Length)
                 throw new IndexOutOfRangeException("texture length did not match data length");
 
+            Color32* attributeColors = stackalloc Color32[256];
+            for (int i = 0; i < Attributes.Length; ++i)
+            {
+                Color pixelColor = Attributes[i].mapColor;
+                attributeColors[i] = new Color32
+                {
+                    r = RoundToPixelValue(pixelColor.r),
+                    g = RoundToPixelValue(pixelColor.g),
+                    b = RoundToPixelValue(pixelColor.b),
+                    a = 255
+                };
+            }
+
             fixed(byte* data = _data)
             {
                 Color32* texData = (Color32*)textureData.GetUnsafePtr();
-                Color32 color = new Color32(0, 0, 0, 255);
 
                 for (int i = _data.Length; i >= 0; --i)
-                {
-                    Color pixelColor = Attributes[data[i]].mapColor;
-
-                    color.r = RoundToPixelValue(pixelColor.r);
-                    color.g = RoundToPixelValue(pixelColor.g);
-                    color.b = RoundToPixelValue(pixelColor.b);
-                    texData[i] = color;
-                }
+                    texData[i] = attributeColors[data[i]];
             }
 
             texture2D.Apply(updateMipmaps: false, makeNoLongerReadable: true);
