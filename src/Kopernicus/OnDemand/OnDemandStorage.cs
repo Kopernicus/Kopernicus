@@ -376,13 +376,13 @@ namespace Kopernicus.OnDemand
                             UInt32 num = binaryReader.ReadUInt32();
                             if (num == DDSValues.uintMagic)
                             {
-
                                 DDSHeader ddsHeader = new DDSHeader(binaryReader);
 
+                                DDSHeaderDX10 ddsHeader10 = null;
                                 if (ddsHeader.ddspf.dwFourCC == DDSValues.uintDX10)
                                 {
-                                    // ReSharper disable once ObjectCreationAsStatement
-                                    new DDSHeaderDX10(binaryReader);
+                                    ddsHeader10 = new DDSHeaderDX10(binaryReader);
+                                    Debug.Log($"parsed dds10 header for {path} -  {ddsHeader10.dxgiFormat}");
                                 }
 
                                 Boolean alpha = (ddsHeader.ddspf.dwFlags & 0x00000002) != 0;
@@ -437,7 +437,29 @@ namespace Kopernicus.OnDemand
                                     }
                                     else if (ddsHeader.ddspf.dwFourCC == DDSValues.uintDX10)
                                     {
-                                        Debug.Log("[Kopernicus]: DX10 dds not supported: " + path);
+                                        switch (ddsHeader10.dxgiFormat)
+                                        {
+                                            //TODO?: Add support for BC1/BC3/BC4 textures that have the DX10 header.
+                                            case DXGI_FORMAT.DXGI_FORMAT_BC5_UNORM:
+                                                Debug.Log($"[Kopernicus]: Loading {path} with format {ddsHeader10.dxgiFormat}");
+                                                map = new Texture2D((int)ddsHeader.dwWidth, (int)ddsHeader.dwHeight, TextureFormat.BC5, mipmap, linear: false);
+                                                map.LoadRawTextureData(LoadRestOfReader(binaryReader));
+                                                Debug.Log($"[Kopernicus]: Loaded {path} with format {ddsHeader10.dxgiFormat}");
+                                                break;
+                                            case DXGI_FORMAT.DXGI_FORMAT_BC7_UNORM:
+                                            case DXGI_FORMAT.DXGI_FORMAT_BC7_UNORM_SRGB:
+                                                Debug.Log($"[Kopernicus]: Loading {path} with format {ddsHeader10.dxgiFormat}");
+                                                map = new Texture2D((int)ddsHeader.dwWidth, (int)ddsHeader.dwHeight, TextureFormat.BC7, mipmap, linear: false);
+                                                map.LoadRawTextureData(LoadRestOfReader(binaryReader));
+                                                Debug.Log($"[Kopernicus]: Loaded {path} with format {ddsHeader10.dxgiFormat}");
+                                                break;
+                                            case DXGI_FORMAT.DXGI_FORMAT_BC7_TYPELESS:
+                                                break;
+                                            default:
+                                                Debug.LogError($"[Kopernicus]: DDS format {ddsHeader10.dxgiFormat} not supported: " + path);
+                                                break;
+
+                                        }
                                     }
                                     else if (ddsHeader.ddspf.dwFourCC == DDSValues.uintMagic)
                                     {
