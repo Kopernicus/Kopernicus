@@ -26,6 +26,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Kopernicus.Components;
+using KSPTextureLoader;
 using UnityEngine;
 
 namespace Kopernicus.OnDemand
@@ -36,9 +37,10 @@ namespace Kopernicus.OnDemand
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "SwitchStatementMissingSomeCases")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class MapSODemand : MapSO, ILoadOnDemand
+    public class MapSODemand : MapSO, ILoadOnDemand, IPreloadOnDemand
     {
         // Representation of the map
+        private TextureHandle<Texture2D> Handle { get; set; }
         private Texture2D Data { get; set; }
         private NativeByteArray Image { get; set; }
 
@@ -59,6 +61,23 @@ namespace Kopernicus.OnDemand
             set { name = value; }
         }
 
+        public void Preload()
+        {
+            if (IsLoaded)
+                return;
+
+            // We already have a handle, loading is already in progress or completed.
+            if (Handle != null)
+                return;
+
+            var options = new TextureLoadOptions
+            {
+                Hint = TextureLoadHint.BatchSynchronous,
+                Unreadable = false
+            };
+            Handle = TextureLoader.LoadTexture<Texture2D>(Path, options);
+        }
+
         /// <summary>
         /// Load the Map
         /// </summary>
@@ -66,25 +85,39 @@ namespace Kopernicus.OnDemand
         {
             // Check if the Map is already loaded
             if (IsLoaded)
-            {
                 return;
+
+            if (Handle is null)
+            {
+                var options = new TextureLoadOptions
+                {
+                    Hint = TextureLoadHint.Synchronous,
+                    Unreadable = false
+                };
+                Handle = TextureLoader.LoadTexture<Texture2D>(Path, options);
             }
 
             // Load the Map
-            Texture2D map = OnDemandStorage.LoadTexture(Path, false, false, false);
-
-            // If the map isn't null
-            if (map != null)
+            Texture2D map;
+            try
             {
-                CreateMap(Depth, map);
-                IsLoaded = true;
-                Events.OnMapSOLoad.Fire(this);
-                Debug.Log("[OD] ---> Map " + name + " enabling self. Path = " + Path);
+                map = Handle.GetTexture();
+            }
+            catch(Exception e)
+            {
+                Debug.Log($"[OD] ERROR: Failed to load map {name} at path {Path}");
+                Debug.LogException(e);
+
+                Handle?.Dispose();
+                Handle = null;
                 return;
             }
 
-            // Return nothing
-            Debug.Log("[OD] ERROR: Failed to load map " + name + " at path " + Path);
+            // If the map isn't null
+            CreateMap(Depth, map);
+            IsLoaded = true;
+            Events.OnMapSOLoad.Fire(this);
+            Debug.Log("[OD] ---> Map " + name + " enabling self. Path = " + Path);
         }
 
         /// <summary>
@@ -92,6 +125,10 @@ namespace Kopernicus.OnDemand
         /// </summary>
         public void Unload()
         {
+            // Clear the texture handle regardless of whether we are loaded or not.
+            Handle?.Dispose();
+            Handle = null;
+
             // We can only destroy the map, if it is loaded
             if (!IsLoaded)
             {
@@ -100,13 +137,7 @@ namespace Kopernicus.OnDemand
 
             // Nuke the map
             if (OnDemandStorage.UseManualMemoryManagement)
-            {
                 Image.Free();
-            }
-            else
-            {
-                DestroyImmediate(Data);
-            }
 
             // Set flags
             IsLoaded = false;
@@ -178,7 +209,8 @@ namespace Kopernicus.OnDemand
                 _isCompiled = true;
 
                 // Clean up what we don't need anymore
-                DestroyImmediate(tex);
+                Handle.Dispose();
+                Handle = null;
             }
             else
             {

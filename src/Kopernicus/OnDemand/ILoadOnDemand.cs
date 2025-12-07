@@ -25,6 +25,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using KSPTextureLoader;
 
 namespace Kopernicus.OnDemand
 {
@@ -53,5 +54,14 @@ namespace Kopernicus.OnDemand
 
         // AutoLoad
         Boolean AutoLoad { get; set; }
+    }
+
+    public interface IPreloadOnDemand : ILoadOnDemand
+    {
+        /// <summary>
+        /// Kick off a load of the texture in the background, in advance of
+        /// <see cref="ILoadOnDemand.Load"/> being called.
+        /// </summary>
+        void Preload();
     }
 }

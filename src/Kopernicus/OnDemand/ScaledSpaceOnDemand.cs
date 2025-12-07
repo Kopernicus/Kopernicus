@@ -24,6 +24,9 @@
  */
 
 using System;
+using System.IO;
+using Kopernicus.Configuration;
+using KSPTextureLoader;
 using UnityEngine;
 
 namespace Kopernicus.OnDemand
@@ -52,6 +55,10 @@ namespace Kopernicus.OnDemand
         private Int64 _unloadDelay;
         private static readonly Int32 BumpMap = Shader.PropertyToID("_BumpMap");
         private static readonly Int32 MainTex = Shader.PropertyToID("_MainTex");
+
+        // Texture handles
+        private TextureHandle<Texture2D> bumpMapHandle;
+        private TextureHandle<Texture2D> mainTexHandle;
 
         // Start(), get the scaled Mesh renderer
         public void Start()
@@ -110,18 +117,38 @@ namespace Kopernicus.OnDemand
         {
             Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
 
-            // Load Diffuse
-            if (OnDemandStorage.TextureExists(texture))
+            var options = new TextureLoadOptions
             {
-                scaledRenderer.sharedMaterial.SetTexture(MainTex,
-                    OnDemandStorage.LoadTexture(texture, false, true, true));
-            }
+                Unreadable = true,
+                Hint = TextureLoadHint.BatchSynchronous, 
+            };
+            mainTexHandle = TextureLoader.LoadTexture<Texture2D>(texture, options);
+            bumpMapHandle = TextureLoader.LoadTexture<Texture2D>(normals, options);
 
-            // Load Normals
-            if (OnDemandStorage.TextureExists(normals))
+            // Load Diffuse
+            try
             {
-                scaledRenderer.sharedMaterial.SetTexture(BumpMap,
-                    OnDemandStorage.LoadTexture(normals, false, true, true));
+                scaledRenderer.sharedMaterial.SetTexture(MainTex, mainTexHandle.GetTexture());
+            }
+            // Ignore cases where the texture did not exist.
+            catch (FileNotFoundException) {}
+            catch (Exception ex)
+            {
+                Debug.LogError($"[OD] Failed to load texture {texture}");
+                Debug.LogException(ex);
+            }
+            
+            // Load Normals
+            try
+            {
+                scaledRenderer.sharedMaterial.SetTexture(BumpMap, bumpMapHandle.GetTexture());
+            }
+            // Ignore cases where the texture did not exist.
+            catch (FileNotFoundException) {}
+            catch (Exception ex)
+            {
+                Debug.LogError($"[OD] Failed to load texture {texture}");
+                Debug.LogException(ex);
             }
 
             // Events
@@ -136,16 +163,12 @@ namespace Kopernicus.OnDemand
             Debug.Log("[OD] <--- ScaledSpaceDemand.UnloadTextures destroying " + texture + " and " + normals);
 
             // Kill Diffuse
-            if (OnDemandStorage.TextureExists(texture))
-            {
-                DestroyImmediate(scaledRenderer.sharedMaterial.GetTexture(MainTex));
-            }
+            mainTexHandle?.Dispose();
+            mainTexHandle = null;
 
             // Kill Normals
-            if (OnDemandStorage.TextureExists(normals))
-            {
-                DestroyImmediate(scaledRenderer.sharedMaterial.GetTexture(BumpMap));
-            }
+            bumpMapHandle?.Dispose();
+            bumpMapHandle = null;
 
             // Events
             Events.OnScaledSpaceUnload.Fire(this);
