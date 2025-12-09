@@ -117,7 +117,10 @@ namespace Kopernicus.OnDemand
             CreateMap(Depth, map);
             IsLoaded = true;
             Events.OnMapSOLoad.Fire(this);
-            Debug.Log("[OD] ---> Map " + name + " enabling self. Path = " + Path);
+            if (Handle.AssetBundle is null)
+                Debug.Log($"[OD] ---> Map {name} enabling self. Path = {Path}");
+            else
+                Debug.Log($"[OD] ---> Map {name} enabling self. Path = {Path}, Asset Bundle = {Handle.AssetBundle}");
         }
 
         /// <summary>
