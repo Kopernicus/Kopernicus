@@ -371,6 +371,7 @@ namespace Kopernicus.OnDemand
         }
 
         // Loads a texture
+        [Obsolete]
         public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
         {
             Texture2D map = null;
@@ -648,6 +649,7 @@ namespace Kopernicus.OnDemand
         }
 
         // Checks if a Texture exists
+        [Obsolete]
         public static Boolean TextureExists(String path)
         {
             path = KSPUtil.ApplicationRootPath + "GameData/" + path;

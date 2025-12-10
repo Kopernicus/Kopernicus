@@ -35,6 +35,7 @@ using System.Text.RegularExpressions;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.OnDemand;
 using Kopernicus.RuntimeUtility;
+using KSPTextureLoader;
 using UnityEngine;
 using Object = System.Object;
 
@@ -899,10 +900,10 @@ namespace Kopernicus
 
         public static Boolean TextureExists(String path)
         {
-            path = KSPUtil.ApplicationRootPath + "GameData/" + path;
-            return File.Exists(path);
+            return TextureLoader.TextureExists(path);
         }
 
+        [Obsolete]
         public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
         {
             return OnDemandStorage.LoadTexture(path, compress, upload, unreadable);

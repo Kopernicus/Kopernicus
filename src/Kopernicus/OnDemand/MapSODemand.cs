@@ -113,14 +113,17 @@ namespace Kopernicus.OnDemand
                 return;
             }
 
+            // CreateMap may unload the texture so we should get the asset bundle path first
+            var assetBundle = Handle?.AssetBundle;
+
             // If the map isn't null
             CreateMap(Depth, map);
             IsLoaded = true;
             Events.OnMapSOLoad.Fire(this);
-            if (Handle.AssetBundle is null)
+            if (assetBundle is null)
                 Debug.Log($"[OD] ---> Map {name} enabling self. Path = {Path}");
             else
-                Debug.Log($"[OD] ---> Map {name} enabling self. Path = {Path}, Asset Bundle = {Handle.AssetBundle}");
+                Debug.Log($"[OD] ---> Map {name} enabling self. Path = {Path}, Asset Bundle = {assetBundle}");
         }
 
         /// <summary>

@@ -32,6 +32,7 @@ using Kopernicus.Configuration.Parsing;
 using Kopernicus.OnDemand;
 using Kopernicus.UI;
 using KSPAchievements;
+using KSPTextureLoader;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -287,7 +288,7 @@ namespace Kopernicus.Configuration
                     if (runtimeName == null)
                         return null;
 
-                    if (GameDatabase.Instance.ExistsTexture(runtimeName) || OnDemandStorage.TextureExists(runtimeName))
+                    if (GameDatabase.Instance.ExistsTexture(runtimeName) || TextureLoader.TextureExists(runtimeName))
                         return runtimeName;
 
                     return "BUILTIN/" + runtimeName;
@@ -468,15 +469,27 @@ namespace Kopernicus.Configuration
                     return null;
                 }
 
-                Texture2D texture = Utility.LoadTexture(_biomeMap, false, false, false);
-                if (texture == null)
+                var options = new TextureLoadOptions
                 {
-                    Logger.Active.Log($"Failed to load biomeMap '{_biomeMap}'");
-                    return null;
-                }
+                    Hint = TextureLoadHint.Synchronous,
+                    Unreadable = false
+                };
+                using (var handle = TextureLoader.LoadTexture<Texture2D>(_biomeMap, options))
+                {
+                    Texture2D texture;
+                    try
+                    {
+                        texture = handle.GetTexture();
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Active.Log($"Failed to load biomeMap '{_biomeMap}'");
+                        Logger.Active.LogException(ex);
+                        return null;
+                    }
 
-                kopernicusBiomeMap.CreateMapWithAttributes(texture, mapAttributes);
-                UnityEngine.Object.DestroyImmediate(texture);
+                    kopernicusBiomeMap.CreateMapWithAttributes(texture, mapAttributes);
+                }
             }
 
             return kopernicusBiomeMap;
