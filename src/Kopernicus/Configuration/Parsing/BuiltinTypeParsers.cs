@@ -128,24 +128,19 @@ namespace Kopernicus.Configuration.Parsing
                 Hint = TextureLoadHint.Synchronous,
                 Unreadable = true
             };
-            using (var handle = TextureLoader.LoadTexture<Texture2D>(s))
+            var handle = TextureLoader.LoadTexture<Texture2D>(s);
+            try
             {
-                try
-                {
-                    Value = handle.GetTexture();
-                }
-                // Do nothing if the texture doesn't exist
-                catch (FileNotFoundException)
-                {
-                    Value = null;
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError($"[Kopernicus] Failed to load texture {s}");
-                    Logger.Active.Log($"Failed load texture {s}");
-                    Logger.Active.LogException(e);
-                    Value = null;
-                }
+                Value = handle.TakeTexture();
+                return;
+            }
+            // Do nothing if the texture doesn't exist
+            catch (FileNotFoundException) { }
+            catch (Exception e)
+            {
+                Debug.LogError($"[Kopernicus] Failed to load texture {s}");
+                Logger.Active.Log($"Failed load texture {s}");
+                Logger.Active.LogException(e);
             }
 
             // Texture was not found
@@ -250,24 +245,22 @@ namespace Kopernicus.Configuration.Parsing
                         Hint = TextureLoadHint.Synchronous,
                         Unreadable = false
                     };
-                    using (var handle = TextureLoader.LoadTexture<Texture2D>(s, options))
+                    var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+                    Texture2D map;
+                    try
                     {
-                        Texture2D map;
-                        try
-                        {
-                            map = handle.GetTexture();
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Active.Log($"Failed to load texture {s}");
-                            Logger.Active.LogException(e);
-                            return;
-                        }
-
-                        // Create a new map script object
-                        Value = ScriptableObject.CreateInstance<T>();
-                        Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                        map = handle.TakeTexture();
                     }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log($"Failed to load texture {s}");
+                        Logger.Active.LogException(e);
+                        return;
+                    }
+
+                    // Create a new map script object
+                    Value = ScriptableObject.CreateInstance<T>();
+                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
                 }
             }
 
@@ -377,24 +370,22 @@ namespace Kopernicus.Configuration.Parsing
                         Hint = TextureLoadHint.Synchronous,
                         Unreadable = false
                     };
-                    using (var handle = TextureLoader.LoadTexture<Texture2D>(s, options))
+                    var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+                    Texture2D map;
+                    try
                     {
-                        Texture2D map;
-                        try
-                        {
-                            map = handle.GetTexture();
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Active.Log($"Failed to load texture {s}");
-                            Logger.Active.LogException(e);
-                            return;
-                        }
-
-                        // Create a new map script object
-                        Value = ScriptableObject.CreateInstance<T>();
-                        Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                        map = handle.TakeTexture();
                     }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log($"Failed to load texture {s}");
+                        Logger.Active.LogException(e);
+                        return;
+                    }
+
+                    // Create a new map script object
+                    Value = ScriptableObject.CreateInstance<T>();
+                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
                 }
             }
 
@@ -504,24 +495,22 @@ namespace Kopernicus.Configuration.Parsing
                         Hint = TextureLoadHint.Synchronous,
                         Unreadable = false
                     };
-                    using (var handle = TextureLoader.LoadTexture<Texture2D>(s, options))
+                    var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+                    Texture2D map;
+                    try
                     {
-                        Texture2D map;
-                        try
-                        {
-                            map = handle.GetTexture();
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Active.Log($"Failed to load texture {s}");
-                            Logger.Active.LogException(e);
-                            return;
-                        }
-
-                        // Create a new map script object
-                        Value = ScriptableObject.CreateInstance<T>();
-                        Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                        map = handle.TakeTexture();
                     }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log($"Failed to load texture {s}");
+                        Logger.Active.LogException(e);
+                        return;
+                    }
+
+                    // Create a new map script object
+                    Value = ScriptableObject.CreateInstance<T>();
+                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
                 }
             }
 
