@@ -186,42 +186,103 @@ namespace Kopernicus.Components
             for (int i = biomeCount; i-- > 0;)
                 biomeColors[i] = Attributes[i].mapColor;
 
-            int badPixelsCount = 0;
             int size = _height * _width;
 
             Color32[] colorData = tex.GetPixels32();
             _data = new byte[size];
-
-            Parallel.For(0, _width, x =>
+            
+            var shared = new ConvertFromTextureJob.SharedData();
+            var job = new ConvertFromTextureJob
             {
-                for (int y = _height; y-- > 0;)
-                {
-                    int biomeIndex = -1;
-                    RGBA32 pixelColor = colorData[x + y * _width];
-                    pixelColor.ClearAlpha();
+                output = new ObjectHandle<byte[]>(_data),
+                input = new ObjectHandle<Color32[]>(colorData),
+                biomeColors = new ObjectHandle<RGBA32[]>(biomeColors),
+                shared = new ObjectHandle<ConvertFromTextureJob.SharedData>(shared),
 
-                    for (int i = biomeCount; i-- > 0;)
+                width = _width,
+                height = _height,
+                nonExactThreshold = nonExactThreshold
+            };
+            job.Schedule().Complete();
+
+            var badPixelsCount = shared.badPixelsCount;
+            if (badPixelsCount > 0)
+            {
+                Logger.Active.Log($"Loading {_name} : {badPixelsCount} ({(badPixelsCount / (float)size):P3}) pixels not matching a biome color, check the biome texture and biome definitions.");
+            }
+        }
+
+
+        struct ConvertFromTextureJob : IJobParallelFor
+        {
+            public class SharedData
+            {
+                public int badPixelsCount;
+            }
+
+            public ObjectHandle<byte[]> output;
+            public ObjectHandle<Color32[]> input;
+            public ObjectHandle<RGBA32[]> biomeColors;
+            public ObjectHandle<SharedData> shared;
+
+            public int width;
+            public int height;
+            public float nonExactThreshold;
+
+            public void Execute(int y)
+            {
+                var output = this.output.Target;
+                var input = this.input.Target;
+                var biomeColors = this.biomeColors.Target;
+                var shared = this.shared.Target;
+
+                int baseIndex = y * width;
+
+                for (int x = 0; x < width; ++x)
+                {
+                    int inputIndex = baseIndex + x;
+                    RGBA32 pixelColor = input[inputIndex];
+
+                    int biomeIndex = -1;
+                    for (int i = 0; i < biomeColors.Length; ++i)
                     {
-                        if (biomeColors[i] == pixelColor)
-                        {
-                            biomeIndex = i;
-                            break;
-                        }
+                        if (biomeColors[i] != pixelColor)
+                            continue;
+                        biomeIndex = i;
+                        break;
                     }
 
                     if (biomeIndex == -1)
                     {
-                        Interlocked.Increment(ref badPixelsCount);
-                        biomeIndex = GetBiomeIndexFromTexture((double)x / _width, (double)y / _height, biomeColors, colorData, _width, _height, nonExactThreshold);
+                        Interlocked.Increment(ref shared.badPixelsCount);
+                        biomeIndex = GetBiomeIndexFromTexture(
+                            (double)x / width,
+                            (double)y / height,
+                            biomeColors,
+                            input,
+                            width,
+                            height,
+                            nonExactThreshold
+                        );
                     }
 
-                    _data[x + y * _width] = (byte)biomeIndex;
+                    output[baseIndex + x] = (byte)biomeIndex;
                 }
-            });
+            }
 
-            if (badPixelsCount > 0)
+            public JobHandle Schedule(JobHandle dependsOn = default)
             {
-                Logger.Active.Log($"Loading {_name} : {badPixelsCount} ({(badPixelsCount / (float)size):P3}) pixels not matching a biome color, check the biome texture and biome definitions.");
+                var batchCount = Math.Max(height / 128, 1);
+                var handle = IJobParallelForExtensions.Schedule(this, height, batchCount, dependsOn);
+
+                // We can't do this in Execute since it runs multiple times so
+                // instead we schedule dispose jobs for them afterwards.
+                output.Dispose(handle);
+                input.Dispose(handle);
+                biomeColors.Dispose(handle);
+                shared.Dispose(handle);
+
+                return handle;
             }
         }
 
@@ -276,45 +337,108 @@ namespace Kopernicus.Components
             for (int i = biomeCount; i-- > 0;)
                 biomeColors[i] = Attributes[i].mapColor;
 
-            int badPixelsCount = 0;
             int size = _height * _width;
-            int fromDataRowWidth = stockMap.RowWidth;
             byte[] fromData = stockMap._data;
             _data = new byte[size];
 
-            Parallel.For(0, _width, x =>
+            var shared = new ConvertFromStockMapJob.SharedData();
+            var job = new ConvertFromStockMapJob
             {
-                for (int y = _height; y-- > 0;)
-                {
-                    int fromDataIndex = x * 3 + y * fromDataRowWidth;
-                    RGBA32 pixelColor = new RGBA32(fromData[fromDataIndex], fromData[fromDataIndex + 1], fromData[fromDataIndex + 2]);
+                output = new ObjectHandle<byte[]>(_data),
+                input = new ObjectHandle<byte[]>(fromData),
+                biomeColors = new ObjectHandle<RGBA32[]>(biomeColors),
+                shared = new ObjectHandle<ConvertFromStockMapJob.SharedData>(shared),
 
-                    int biomeIndex = -1;
-                    for (int i = biomeCount; i-- > 0;)
-                    {
-                        if (biomeColors[i] == pixelColor)
-                        {
-                            biomeIndex = i;
-                            break;
-                        }
-                    }
+                width = _width,
+                height = _height,
+                inputRowWidth = stockMap.RowWidth,
+                nonExactThreshold = stockMap.nonExactThreshold
+            };
+            job.Schedule().Complete();
 
-                    if (biomeIndex == -1)
-                    {
-                        Interlocked.Increment(ref badPixelsCount);
-                        biomeIndex = GetBiomeIndexFromStockBiomeMap((double)x / _width, (double)y / _height, biomeColors, fromData, _width, _height, stockMap.RowWidth, stockMap.nonExactThreshold);
-                    }
-
-                    _data[x + y * _width] = (byte)biomeIndex;
-                }
-            });
-
-            if (badPixelsCount > 0)
+            var badPixelsCount = shared.badPixelsCount;
+            if (shared.badPixelsCount > 0)
             {
                 Logger.Active.Log($"Converting {stockMap.MapName} : {badPixelsCount} ({(badPixelsCount / (float)size):P3}) pixels not matching a biome color, check the biome texture and biome definitions.");
             }
 
             return true;
+        }
+
+        struct ConvertFromStockMapJob : IJobParallelFor
+        {
+            public class SharedData
+            {
+                public int badPixelsCount;
+            }
+
+            public ObjectHandle<byte[]> output;
+            public ObjectHandle<byte[]> input;
+            public ObjectHandle<RGBA32[]> biomeColors;
+            public ObjectHandle<SharedData> shared;
+
+            public int width;
+            public int height;
+            public int inputRowWidth;
+            public float nonExactThreshold;
+
+            public void Execute(int y)
+            {
+                var output = this.output.Target;
+                var input = this.input.Target;
+                var biomeColors = this.biomeColors.Target;
+                var shared = this.shared.Target;
+
+                int inputBaseIndex = y * inputRowWidth;
+                int outputBaseIndex = y * width;
+
+                for (int x = 0; x < width; ++x)
+                {
+                    int inputIndex = x * 3 + inputBaseIndex;
+                    var pixelColor = new RGBA32(input[inputIndex], input[inputIndex + 1], input[inputIndex + 2]);
+
+                    int biomeIndex = -1;
+                    for (int i = 0; i < biomeColors.Length; ++i)
+                    {
+                        if (biomeColors[i] != pixelColor)
+                            continue;
+                        biomeIndex = i;
+                        break;
+                    }
+
+                    if (biomeIndex == -1)
+                    {
+                        Interlocked.Increment(ref shared.badPixelsCount);
+                        biomeIndex = GetBiomeIndexFromStockBiomeMap(
+                            (double)x / width,
+                            (double)y / height,
+                            biomeColors,
+                            input,
+                            width,
+                            height,
+                            inputRowWidth,
+                            nonExactThreshold
+                        );
+                    }
+
+                    output[outputBaseIndex + x] = (byte)biomeIndex;
+                }
+            }
+
+            public JobHandle Schedule(JobHandle dependsOn = default)
+            {
+                var batchCount = Math.Max(height / 128, 1);
+                var handle = IJobParallelForExtensions.Schedule(this, height, batchCount, dependsOn);
+
+                // We can't do this in Execute since it runs multiple times so
+                // instead we schedule dispose jobs for them afterwards.
+                output.Dispose(handle);
+                input.Dispose(handle);
+                biomeColors.Dispose(handle);
+                shared.Dispose(handle);
+
+                return handle;
+            }
         }
 
         private static int GetBiomeIndexFromStockBiomeMap(double x, double y, RGBA32[] biomeColors, byte[] rgbData, int width, int height, int rowWidth, float nonExactThreshold)
