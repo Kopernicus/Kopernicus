@@ -81,7 +81,8 @@
       <HintPath>..\..\packages\Lib.Harmony.2.2.2\lib\net48\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="KSPTextureLoader">
-      <HintPath>$(ReferencePath)\GameData\KSPTextureLoader\KSPTextureLoader.dll</HintPath>
+      <HintPath>..\..\dependencies\KSPTextureLoader.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <Choose>
