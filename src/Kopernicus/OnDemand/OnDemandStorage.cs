@@ -124,23 +124,37 @@ namespace Kopernicus.OnDemand
         // Enable a list of maps
         public static void EnableMapList(List<ILoadOnDemand> maps, List<ILoadOnDemand> exclude = null)
         {
-            // If the excludes are null, create an empty list
-            if (exclude == null)
+            if (exclude is null)
             {
-                exclude = new List<ILoadOnDemand>();
-            }
-
-            // Go through all maps
-            for (Int32 i = maps.Count - 1; i >= 0; --i)
-            {
-                // If excluded...
-                if (exclude.Contains(maps[i]))
+                foreach (var map in maps)
                 {
-                    continue;
+                    if (map is IPreloadOnDemand preload)
+                        preload.Preload();
                 }
 
-                // Load the map
-                maps[i].Load();
+                foreach (var map in maps)
+                    map.Load();
+            }
+            else
+            {
+                foreach (var map in maps)
+                {
+                    if (!(map is IPreloadOnDemand preload))
+                        continue;
+
+                    if (exclude.Contains(map))
+                        continue;
+
+                    preload.Preload();
+                }
+
+                foreach (var map in maps)
+                {
+                    if (exclude.Contains(map))
+                        continue;
+
+                    map.Load();
+                }
             }
         }
 
@@ -357,6 +371,7 @@ namespace Kopernicus.OnDemand
         }
 
         // Loads a texture
+        [Obsolete]
         public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
         {
             Texture2D map = null;
@@ -634,6 +649,7 @@ namespace Kopernicus.OnDemand
         }
 
         // Checks if a Texture exists
+        [Obsolete]
         public static Boolean TextureExists(String path)
         {
             path = KSPUtil.ApplicationRootPath + "GameData/" + path;

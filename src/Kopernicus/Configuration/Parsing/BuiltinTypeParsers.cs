@@ -36,6 +36,7 @@ using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.ConfigParser.Enumerations;
 using Kopernicus.ConfigParser.Interfaces;
 using Kopernicus.OnDemand;
+using KSPTextureLoader;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -122,26 +123,24 @@ namespace Kopernicus.Configuration.Parsing
             }
 
             // Or load the texture directly
-            if (OnDemandStorage.TextureExists(s))
+            var options = new TextureLoadOptions
             {
-                Value = OnDemandStorage.LoadTexture(s, false, true, false);
-
-                // Upload it to the GPU if the parser could load something
-                if (Value == null)
-                {
-                    return;
-                }
-                try
-                {
-                    Value.Apply(false, true);
-                }
-                catch
-                {
-                    Debug.LogError("[Kopernicus] Failed to upload texture " + Value.name + " to the GPU");
-                    Logger.Active.Log("Failed to upload texture " + Value.name + " to the GPU");
-                }
-
+                Hint = TextureLoadHint.Synchronous,
+                Unreadable = true
+            };
+            var handle = TextureLoader.LoadTexture<Texture2D>(s);
+            try
+            {
+                Value = handle.TakeTexture();
                 return;
+            }
+            // Do nothing if the texture doesn't exist
+            catch (FileNotFoundException) { }
+            catch (Exception e)
+            {
+                Debug.LogError($"[Kopernicus] Failed to load texture {s}");
+                Logger.Active.Log($"Failed load texture {s}");
+                Logger.Active.LogException(e);
             }
 
             // Texture was not found
@@ -158,7 +157,7 @@ namespace Kopernicus.Configuration.Parsing
                 return null;
             }
 
-            if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+            if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
             {
                 return Value.name;
             }
@@ -241,16 +240,27 @@ namespace Kopernicus.Configuration.Parsing
                 }
                 else // Load the texture
                 {
-                    Texture2D map = OnDemandStorage.LoadTexture(s, false, false, false);
-                    if (map == null)
+                    var options = new TextureLoadOptions
                     {
+                        Hint = TextureLoadHint.Synchronous,
+                        Unreadable = false
+                    };
+                    var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+                    Texture2D map;
+                    try
+                    {
+                        map = handle.TakeTexture();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log($"Failed to load texture {s}");
+                        Logger.Active.LogException(e);
                         return;
                     }
 
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
-                    Value.CreateMap(MapSO.MapDepth.Greyscale, map);
-                    Object.DestroyImmediate(map);
+                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
                 }
             }
 
@@ -270,7 +280,7 @@ namespace Kopernicus.Configuration.Parsing
                 return null;
             }
 
-            if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+            if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
             {
                 return Value.name;
             }
@@ -355,17 +365,27 @@ namespace Kopernicus.Configuration.Parsing
                 }
                 else
                 {
-                    // Load the texture
-                    Texture2D map = Utility.LoadTexture(s, false, false, false);
-                    if (map == null)
+                    var options = new TextureLoadOptions
                     {
+                        Hint = TextureLoadHint.Synchronous,
+                        Unreadable = false
+                    };
+                    var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+                    Texture2D map;
+                    try
+                    {
+                        map = handle.TakeTexture();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log($"Failed to load texture {s}");
+                        Logger.Active.LogException(e);
                         return;
                     }
 
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
-                    Value.CreateMap(MapSO.MapDepth.RGB, map);
-                    Object.DestroyImmediate(map);
+                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
                 }
             }
 
@@ -385,7 +405,7 @@ namespace Kopernicus.Configuration.Parsing
                 return null;
             }
 
-            if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+            if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
             {
                 return Value.name;
             }
@@ -470,17 +490,27 @@ namespace Kopernicus.Configuration.Parsing
                 }
                 else
                 {
-                    // Load the texture
-                    Texture2D map = Utility.LoadTexture(s, false, false, false);
-                    if (map == null)
+                    var options = new TextureLoadOptions
                     {
+                        Hint = TextureLoadHint.Synchronous,
+                        Unreadable = false
+                    };
+                    var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+                    Texture2D map;
+                    try
+                    {
+                        map = handle.TakeTexture();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log($"Failed to load texture {s}");
+                        Logger.Active.LogException(e);
                         return;
                     }
 
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
                     Value.CreateMap(MapSO.MapDepth.RGBA, map);
-                    Object.DestroyImmediate(map);
                 }
             }
 
@@ -500,7 +530,7 @@ namespace Kopernicus.Configuration.Parsing
                 return null;
             }
 
-            if (GameDatabase.Instance.ExistsTexture(Value.name) || OnDemandStorage.TextureExists(Value.name))
+            if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
             {
                 return Value.name;
             }
