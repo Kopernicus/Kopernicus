@@ -31,11 +31,13 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Kopernicus.ConfigParser.BuiltinTypeParsers;
 using Kopernicus.OnDemand;
 using Kopernicus.RuntimeUtility;
 using KSPTextureLoader;
+using Unity.Jobs;
 using UnityEngine;
 using Object = System.Object;
 
@@ -1575,6 +1577,37 @@ namespace Kopernicus
         }
     }
 #pragma warning restore IDE0041 // Use 'is null' check
+
+    /// <summary>
+    /// A helper struct that allows you to pass managed objects to jobs.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    internal struct ObjectHandle<T> : IDisposable
+        where T : class
+    {
+        GCHandle handle;
+
+        public T Target => (T)handle.Target;
+
+        public ObjectHandle(T value)
+        {
+            handle = GCHandle.Alloc(value);
+        }
+
+        public void Dispose() => handle.Free();
+
+        public void Dispose(JobHandle job)
+        {
+            new DisposeJob { handle = this }.Schedule(job);
+        }
+
+        struct DisposeJob : IJob
+        {
+            public ObjectHandle<T> handle;
+
+            public void Execute() => handle.Dispose();
+        }
+    }
 }
 
 namespace Kopernicus.Components
