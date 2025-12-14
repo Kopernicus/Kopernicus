@@ -192,7 +192,15 @@ namespace Kopernicus.OnDemand
 
                     case MapDepth.HeightAlpha:
                         {
-                            CreateHeightAlpha(tex);
+                            if (tex.format == TextureFormat.R16)
+                            {
+                                CreateHeightAlphaR16(tex);
+                            }
+                            else
+                            {
+                                CreateHeightAlpha(tex);
+                            }
+
                             break;
                         }
 
@@ -255,7 +263,7 @@ namespace Kopernicus.OnDemand
             }
         }
 
-        private new void CreateHeightAlpha(Texture2D tex)
+        private void CreateHeightAlphaR16(Texture2D tex)
         {
             Color[] pixels = tex.GetPixels();
             Image = new NativeByteArray(pixels.Length * 2);
@@ -267,6 +275,17 @@ namespace Kopernicus.OnDemand
 
                 Image[i * 2] = height;
                 Image[i * 2 + 1] = alpha;
+            }
+        }
+
+        private new void CreateHeightAlpha(Texture2D tex)
+        {
+            Color32[] pixels32 = tex.GetPixels32();
+            Image = new NativeByteArray(pixels32.Length * 2);
+            for (Int32 i = 0; i < pixels32.Length; i++)
+            {
+                Image[i * 2] = pixels32[i].r;
+                Image[i * 2 + 1] = pixels32[i].a;
             }
         }
 
