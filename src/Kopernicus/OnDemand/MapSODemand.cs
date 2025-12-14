@@ -257,7 +257,6 @@ namespace Kopernicus.OnDemand
 
         private new void CreateHeightAlpha(Texture2D tex)
         {
-            Debug.Log("Loading HeightAlpha Texture");
             Color[] pixels = tex.GetPixels();
             Image = new NativeByteArray(pixels.Length * 2);
             for (Int32 i = 0; i < pixels.Length; i++)
