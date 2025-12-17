@@ -323,6 +323,131 @@ namespace Kopernicus.Configuration.Parsing
         }
     }
 
+    // Parser for a MapSO
+    [RequireConfigType(ConfigType.Value)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public class MapSOParserHeightAlpha<T> : BaseLoader, IParsable, ITypeParser<T> where T : MapSO
+    {
+        /// <summary>
+        /// The value that is being parsed
+        /// </summary>
+        public T Value { get; set; }
+
+        /// <summary>
+        /// Parse the Value from a string
+        /// </summary>
+        public void SetFromString(String s)
+        {
+            // Should we use OnDemand?
+            Boolean useOnDemand = OnDemandStorage.UseOnDemand;
+
+            if (s.StartsWith("BUILTIN/"))
+            {
+                s = s.Substring(8);
+                Value = Utility.FindMapSO<T>(s);
+            }
+            else
+            {
+                // are we on-demand? Don't load now.
+                if (useOnDemand && typeof(T) == typeof(MapSO))
+                {
+                    if (!Utility.TextureExists(s))
+                    {
+                        return;
+                    }
+
+                    MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
+                    map.Path = s;
+                    map.Depth = MapSO.MapDepth.HeightAlpha;
+                    map.AutoLoad = OnDemandStorage.OnDemandLoadOnMissing;
+                    OnDemandStorage.AddMap(generatedBody.name, map);
+                    Value = map as T;
+                }
+                else // Load the texture
+                {
+                    var options = new TextureLoadOptions
+                    {
+                        Hint = TextureLoadHint.Synchronous,
+                        Unreadable = false
+                    };
+                    var handle = TextureLoader.LoadTexture<Texture2D>(s, options);
+                    Texture2D map;
+                    try
+                    {
+                        map = handle.TakeTexture();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Active.Log($"Failed to load texture {s}");
+                        Logger.Active.LogException(e);
+                        return;
+                    }
+
+                    // Create a new map script object
+                    Value = ScriptableObject.CreateInstance<T>();
+                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                }
+            }
+
+            if (Value != null)
+            {
+                Value.name = s;
+            }
+        }
+
+        /// <summary>
+        /// Convert the value to a parsable String
+        /// </summary>
+        public String ValueToString()
+        {
+            if (Value == null)
+            {
+                return null;
+            }
+
+            if (GameDatabase.Instance.ExistsTexture(Value.name) || TextureLoader.TextureExists(Value.name))
+            {
+                return Value.name;
+            }
+
+            return "BUILTIN/" + Value.name;
+        }
+
+        /// <summary>
+        /// Create a new MapSOParser_GreyScale
+        /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public MapSOParserHeightAlpha()
+        {
+
+        }
+
+        /// <summary>
+        /// Create a new MapSOParser_GreyScale from an already existing Texture
+        /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public MapSOParserHeightAlpha(T value)
+        {
+            Value = value;
+        }
+
+        /// <summary>
+        /// Convert Parser to Value
+        /// </summary>
+        public static implicit operator T(MapSOParserHeightAlpha<T> parser)
+        {
+            return parser.Value;
+        }
+
+        /// <summary>
+        /// Convert Value to Parser
+        /// </summary>
+        public static implicit operator MapSOParserHeightAlpha<T>(T value)
+        {
+            return new MapSOParserHeightAlpha<T>(value);
+        }
+    }
+
     // Parser for a MapSO RGB
     [RequireConfigType(ConfigType.Value)]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
