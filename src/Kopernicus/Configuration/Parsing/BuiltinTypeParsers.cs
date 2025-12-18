@@ -134,8 +134,6 @@ namespace Kopernicus.Configuration.Parsing
                 Value = handle.TakeTexture();
                 return;
             }
-            // Do nothing if the texture doesn't exist
-            catch (FileNotFoundException) { }
             catch (Exception e)
             {
                 Debug.LogError($"[Kopernicus] Failed to load texture {s}");
@@ -226,10 +224,7 @@ namespace Kopernicus.Configuration.Parsing
                 // are we on-demand? Don't load now.
                 if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
-                    if (!Utility.TextureExists(s))
-                    {
-                        return;
-                    }
+                    Utility.ValidateOnDemandTexture(s);
 
                     MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                     map.Path = s;
@@ -351,10 +346,7 @@ namespace Kopernicus.Configuration.Parsing
                 // are we on-demand? Don't load now.
                 if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
-                    if (!Utility.TextureExists(s))
-                    {
-                        return;
-                    }
+                    Utility.ValidateOnDemandTexture(s);
 
                     MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                     map.Path = s;
@@ -476,10 +468,7 @@ namespace Kopernicus.Configuration.Parsing
                 // check if OnDemand.
                 if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
-                    if (!Utility.TextureExists(s))
-                    {
-                        return;
-                    }
+                    Utility.ValidateOnDemandTexture(s);
 
                     MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                     map.Path = s;
@@ -601,10 +590,7 @@ namespace Kopernicus.Configuration.Parsing
                 // check if OnDemand.
                 if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
-                    if (!Utility.TextureExists(s))
-                    {
-                        return;
-                    }
+                    Utility.ValidateOnDemandTexture(s);
 
                     MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                     map.Path = s;
