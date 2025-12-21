@@ -920,17 +920,23 @@ namespace Kopernicus
             {
                 if (path.ToLower().Contains(".dds"))
                 {
-                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
                     path = path.Trim(".dds".ToCharArray());
                     path = path + ".png";
-                    return path;
+                    if (TextureLoader.TextureExists(path))
+                    {
+                        Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                        return path;
+                    }
                 }
                 else if (path.ToLower().Contains(".png"))
                 {
-                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
-                    path = path.Trim(".dds".ToCharArray());
+                    path = path.Trim(".png".ToCharArray());
                     path = path + ".dds";
-                    return path;
+                    if (TextureLoader.TextureExists(path))
+                    {
+                        Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                        return path;
+                    }
                 }
             }
 
