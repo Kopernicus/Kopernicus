@@ -256,13 +256,17 @@ namespace Kopernicus.RuntimeUtility
             }
             else
             {
+#if DEBUG
                 Debug.Log("[Kopernicus] No new objects this time. (Probability is " + asteroid.Probability.Value + "%)");
+#endif
                 return;
             }
 
             if (orbit is null)
             {
+#if DEBUG
                 Debug.Log("[Kopernicus] No new objects this time. (Probability is " + asteroid.Probability.Value + "%)");
+#endif
                 return;
             }
 
