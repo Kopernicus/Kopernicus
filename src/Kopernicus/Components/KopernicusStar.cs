@@ -164,6 +164,26 @@ namespace Kopernicus.Components
         }
 
         /// <summary>
+        /// Returns the nearest star to the given body.  This is super expensive and should be used sparingly, mostly here for compatability.
+        /// </summary>
+        public static KopernicusStar GetNearest(CelestialBody body)
+        {
+            KopernicusStar nearestStar = null;
+            double greatestDistance = 0;
+            for (Int32 i = 0; i < KopernicusStar.Stars.Count; i++)
+            {
+                KopernicusStar star = KopernicusStar.Stars[i];
+                double distance = Vector3d.Distance(body.position, star.sun.position);
+                if (((star.shifter.givesOffLight) && (star.shifter.solarLuminosity > 0)) && distance < greatestDistance)
+                {
+                    greatestDistance = distance;
+                    nearestStar = star;
+                }
+            }
+            return nearestStar;
+        }
+
+        /// <summary>
         /// Returns the brightest star near the given position.  Uses a list of stars to chose from.  More expensive.  Minimize use.
         /// </summary>
         public static KopernicusStar GetBrightest(Vector3d pos, List<KopernicusStar> starList)
