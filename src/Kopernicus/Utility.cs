@@ -905,6 +905,27 @@ namespace Kopernicus
             return TextureLoader.TextureExists(path);
         }
 
+        /// <summary>
+        /// Validate that the texture at the reqested path actually exists and
+        /// throw a useful error message if it does not.
+        /// </summary>
+        /// <param name="path"></param>
+        public static void ValidateOnDemandTexture(string path)
+        {
+            if (TextureLoader.TextureExists(path))
+                return;
+
+            string[] abs = TextureLoader.GetAssetBundlesForPath(path);
+            if (abs.Length == 0)
+            {
+                throw new Exception($"OnDemand texture {path} does not exist on disk");
+            }
+            else
+            {
+                throw new Exception($"OnDemand texture {path} does not exist on disk or in any applicable asset bundle");
+            }
+        }
+
         [Obsolete]
         public static Texture2D LoadTexture(String path, Boolean compress, Boolean upload, Boolean unreadable)
         {
