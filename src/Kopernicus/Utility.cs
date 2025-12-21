@@ -910,12 +910,32 @@ namespace Kopernicus
         /// throw a useful error message if it does not.
         /// </summary>
         /// <param name="path"></param>
-        public static void ValidateOnDemandTexture(string path)
+        public static string ValidateOnDemandTexture(string path)
         {
             if (TextureLoader.TextureExists(path))
-                return;
+            {
+                return path;
+            }
+            else
+            {
+                if (path.ToLower().Contains(".dds"))
+                {
+                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                    path = path.Trim(".dds".ToCharArray());
+                    path = path + ".png";
+                    return path;
+                }
+                else if (path.ToLower().Contains(".png"))
+                {
+                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                    path = path.Trim(".dds".ToCharArray());
+                    path = path + ".dds";
+                    return path;
+                }
+            }
 
-            string[] abs = TextureLoader.GetAssetBundlesForPath(path);
+
+                string[] abs = TextureLoader.GetAssetBundlesForPath(path);
             if (abs.Length == 0)
             {
                 throw new Exception($"OnDemand texture {path} does not exist on disk");
@@ -924,6 +944,7 @@ namespace Kopernicus
             {
                 throw new Exception($"OnDemand texture {path} does not exist on disk or in any applicable asset bundle");
             }
+            return path;
         }
 
         [Obsolete]
