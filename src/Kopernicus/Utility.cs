@@ -916,30 +916,26 @@ namespace Kopernicus
             {
                 return path;
             }
-            else
+            else if (Path.GetExtension(path.ToLower()).Equals(".dds"))
             {
-                if (Path.GetExtension(path.ToLower()).Equals(".dds"))
+                path = Path.GetFileNameWithoutExtension(path);
+                path = path + ".png";
+                if (TextureLoader.TextureExists(path))
                 {
-                    path = Path.GetFileNameWithoutExtension(path);
-                    path = path + ".png";
-                    if (TextureLoader.TextureExists(path))
-                    {
-                        Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
-                        return path;
-                    }
-                }
-                else if (Path.GetExtension(path.ToLower()).Equals(".png"))
-                {
-                    path = Path.GetFileNameWithoutExtension(path);
-                    path = path + ".dds";
-                    if (TextureLoader.TextureExists(path))
-                    {
-                        Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
-                        return path;
-                    }
+                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                    return path;
                 }
             }
-
+            else if (Path.GetExtension(path.ToLower()).Equals(".png"))
+            {
+                path = Path.GetFileNameWithoutExtension(path);
+                path = path + ".dds";
+                if (TextureLoader.TextureExists(path))
+                {
+                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                    return path;
+                }
+            }
 
             string[] abs = TextureLoader.GetAssetBundlesForPath(path);
             if (abs.Length == 0)
