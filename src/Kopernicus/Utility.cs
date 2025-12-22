@@ -916,23 +916,21 @@ namespace Kopernicus
             {
                 return path;
             }
-            else if (Path.GetExtension(path.ToLower()).Equals(".dds"))
+            else if (path.EndsWith(".dds", StringComparison.OrdinalIgnoreCase))
             {
-                path = Path.GetFileNameWithoutExtension(path);
-                path = path + ".png";
+                path = Path.GetFileNameWithoutExtension(path) + ".png";
                 if (TextureLoader.TextureExists(path))
                 {
-                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                    UnityEngine.Debug.LogWarning("[Kopernicus] filename has inappropriate extension, this should be fixed by the planetpack author!");
                     return path;
                 }
             }
-            else if (Path.GetExtension(path.ToLower()).Equals(".png"))
+            else if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
             {
-                path = Path.GetFileNameWithoutExtension(path);
-                path = path + ".dds";
+                path = Path.GetFileNameWithoutExtension(path) + ".dds";
                 if (TextureLoader.TextureExists(path))
                 {
-                    Kopernicus.Logger.Active.Log("WARNING: filename has inappropriate extension, this should be fixed by the planetpack author!");
+                    UnityEngine.Debug.LogWarning("[Kopernicus] filename has inappropriate extension, this should be fixed by the planetpack author!");
                     return path;
                 }
             }
