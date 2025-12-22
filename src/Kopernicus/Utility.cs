@@ -918,7 +918,7 @@ namespace Kopernicus
             }
             else if (path.EndsWith(".dds", StringComparison.OrdinalIgnoreCase))
             {
-                path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path), ".png");
+                path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".png";
                 if (TextureLoader.TextureExists(path))
                 {
                     string warningpath = Path.GetFileNameWithoutExtension(path);
@@ -928,7 +928,7 @@ namespace Kopernicus
             }
             else if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
             {
-                path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path), ".dds");
+                path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".dds";
                 if (TextureLoader.TextureExists(path))
                 {
                     string warningpath = Path.GetFileNameWithoutExtension(path);
