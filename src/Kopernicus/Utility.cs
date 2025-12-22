@@ -918,9 +918,9 @@ namespace Kopernicus
             }
             else
             {
-                if (path.ToLower().Contains(".dds"))
+                if (Path.GetExtension(path.ToLower()).Equals(".dds"))
                 {
-                    path = path.Trim(".dds".ToCharArray());
+                    path = Path.GetFileNameWithoutExtension(path);
                     path = path + ".png";
                     if (TextureLoader.TextureExists(path))
                     {
@@ -928,9 +928,9 @@ namespace Kopernicus
                         return path;
                     }
                 }
-                else if (path.ToLower().Contains(".png"))
+                else if (Path.GetExtension(path.ToLower()).Equals(".png"))
                 {
-                    path = path.Trim(".png".ToCharArray());
+                    path = Path.GetFileNameWithoutExtension(path);
                     path = path + ".dds";
                     if (TextureLoader.TextureExists(path))
                     {
@@ -941,7 +941,7 @@ namespace Kopernicus
             }
 
 
-                string[] abs = TextureLoader.GetAssetBundlesForPath(path);
+            string[] abs = TextureLoader.GetAssetBundlesForPath(path);
             if (abs.Length == 0)
             {
                 throw new Exception($"OnDemand texture {path} does not exist on disk");
@@ -950,7 +950,6 @@ namespace Kopernicus
             {
                 throw new Exception($"OnDemand texture {path} does not exist on disk or in any applicable asset bundle");
             }
-            return path;
         }
 
         [Obsolete]
