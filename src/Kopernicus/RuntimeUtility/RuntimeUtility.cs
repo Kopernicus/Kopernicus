@@ -265,6 +265,18 @@ namespace Kopernicus.RuntimeUtility
         {
             foreach (Part p in v.parts)
             {
+                try
+                {
+                    foreach (ModuleAsteroid MA in p.Modules)
+                    {
+                        MA.SetAsteroidMass(p.mass * 50);
+                        MA.density = MA.density * 50;
+                    }
+                }
+                catch
+                {
+                    Debug.LogWarning("[Kopernicus]" + "Asteroid: " + p.name + "failed to find ModuleAsteroid, mass upgrade may be incomplete!");
+                }
                 p.mass = p.mass * 50;
             }
         }
