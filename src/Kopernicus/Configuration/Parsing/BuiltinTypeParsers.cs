@@ -255,7 +255,7 @@ namespace Kopernicus.Configuration.Parsing
 
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
-                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                    Value.CreateMap(MapSO.MapDepth.Greyscale, map);
                 }
             }
 
@@ -377,7 +377,7 @@ namespace Kopernicus.Configuration.Parsing
 
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
-                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                    Value.CreateMap(MapSO.MapDepth.HeightAlpha, map);
                 }
             }
 
@@ -499,7 +499,7 @@ namespace Kopernicus.Configuration.Parsing
 
                     // Create a new map script object
                     Value = ScriptableObject.CreateInstance<T>();
-                    Value.CreateMap(MapSO.MapDepth.RGBA, map);
+                    Value.CreateMap(MapSO.MapDepth.RGB, map);
                 }
             }
 
