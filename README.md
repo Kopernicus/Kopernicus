@@ -23,8 +23,11 @@ New in this latest version release-232:
 
 Dependencies: We depend on HarmonyKSP, ModuleManager, ModularFlightIntegrator, and KSPTextureLoader.
 https://github.com/KSPModdingLibs/HarmonyKSP/releases
+
 https://ksp.sarbian.com/jenkins/job/ModuleManager/
+
 https://ksp.sarbian.com/jenkins/job/ModularFlightIntegrator/
+
 https://github.com/Phantomical/KSPTextureLoader/releases
 
 About
