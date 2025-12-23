@@ -11,7 +11,7 @@ New in this latest version release-232:
 
 1.) This is sadly not the comet release I promised, that will come by the end of January.  Still, it's a very potent release with optimizations galore to scene switch times, load times, OnDemand performance, the works.  Read on below, because there are some changes...
 
-2.) Starting with this release, Kopernicus no longer bundles it's dependencies in the zip.  They were often outdated and this was just a kind of silly practice.  We will list the dependencies on githun and the parent thread to help users who are not on CKAN navigate this, but you really should be using CKAN.
+2.) Starting with this release, Kopernicus no longer bundles it's dependencies in the zip.  They were often outdated and this was just a kind of silly practice.  We will list the dependencies on github and the parent thread to help users who are not on CKAN navigate this, but you really should be using CKAN.
 
 3.) On that note, this release adds a dependency to KSPTextureLoader, a high performance async loading texture library that really speeds up the mod in general.  Please grab it here: https://github.com/Phantomical/KSPTextureLoader/releases
 
@@ -20,6 +20,8 @@ New in this latest version release-232:
 5.) In addition to all that, there were foundational changes to the asteroid code, and some bugfixes to the density scaling code (if anyone uses that).  None of this should affect users but mentioning it for completeness sake.
 
 6.) A couple final notes...  one this should be considered a "major" release and is slightly more likely to bug out than most updates given the complexity of the changes.  We tested it this one better than nearly any release before to be frank, but still, if you have issues, report them, as we are eager to help!  Oh, and this would not be possible without the help of github contributors @Phantomical and @ballisticfox, thank you so much. 
+
+Dependencies: We depend on HarmonyKSP, ModuleManager, ModularFlightIntegrator, and KSPTextureLoader.
 
 About
 -----
