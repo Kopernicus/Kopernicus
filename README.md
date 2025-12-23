@@ -22,6 +22,10 @@ New in this latest version release-232:
 6.) A couple final notes...  one this should be considered a "major" release and is slightly more likely to bug out than most updates given the complexity of the changes.  We tested it this one better than nearly any release before to be frank, but still, if you have issues, report them, as we are eager to help!  Oh, and this would not be possible without the help of github contributors @Phantomical and @ballisticfox, thank you so much. 
 
 Dependencies: We depend on HarmonyKSP, ModuleManager, ModularFlightIntegrator, and KSPTextureLoader.
+https://github.com/KSPModdingLibs/HarmonyKSP/releases
+https://ksp.sarbian.com/jenkins/job/ModuleManager/
+https://ksp.sarbian.com/jenkins/job/ModularFlightIntegrator/
+https://github.com/Phantomical/KSPTextureLoader/releases
 
 About
 -----
