@@ -1,19 +1,25 @@
 Kopernicus
 ==============================
-November 23rd, 2025
+December 22nd, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
-* Actively maintained by: Prestja and R-T-B.
+* Actively maintained by: R-T-B.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-231:
+New in this latest version release-232:
 
-1.) Added many control hooks to Kopernicus for detecting Asteroid AND comet spawns.  We can't control comet spawns yet, but we are moving closer.  Probably by years end.
+1.) This is sadly not the comet release I promised, that will come by the end of January.  Still, it's a very potent release with optimizations galore to scene switch times, load times, OnDemand performance, the works.  Read on below, because there are some changes...
 
-2.) These hooks enabled the RealisticDensityFacilities to apply to asteroids as well, for the one person who uses them (me lol).
+2.) Starting with this release, Kopernicus no longer bundles it's dependencies in the zip.  They were often outdated and this was just a kind of silly practice.  We will list the dependencies on githun and the parent thread to help users who are not on CKAN navigate this, but you really should be using CKAN.
 
-3.) Improved scene switch time by nearly half a second thanks to a generous optimized PR by @Phantomical
+3.) On that note, this release adds a dependency to KSPTextureLoader, a high performance async loading texture library that really speeds up the mod in general.  Please grab it here: https://github.com/Phantomical/KSPTextureLoader/releases
+
+4.) In addition to being faster, this enabled Kopernicus to support more formats, and we do now.  New format support includes .dds BC7 (a better option than DXT1 and DXT5) and BC5 (a better option than DXT5nm).
+
+5.) In addition to all that, there were foundational changes to the asteroid code, and some bugfixes to the density scaling code (if anyone uses that).  None of this should affect users but mentioning it for completeness sake.
+
+6.) A couple final notes...  one this should be considered a "major" release and is slightly more likely to bug out than most updates given the complexity of the changes.  We tested it this one better than nearly any release before to be frank, but still, if you have issues, report them, as we are eager to help!  Oh, and this would not be possible without the help of github contributors @Phantomical and @ballisticfox, thank you so much. 
 
 About
 -----
