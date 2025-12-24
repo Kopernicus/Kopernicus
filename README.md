@@ -2,7 +2,7 @@ Kopernicus
 ==============================
 December 23rd, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
-* Actively maintained by: R-T-B.
+* Actively maintained by: R-T-B & Phantomical.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
