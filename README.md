@@ -15,14 +15,11 @@ New in this latest version release-233:
 
 3.) Nothing else, overall this release has been surprisingly smooth.  Happy holidays everyone.
 
-Dependencies: We depend on HarmonyKSP, ModuleManager, ModularFlightIntegrator, and KSPTextureLoader.
-https://github.com/KSPModdingLibs/HarmonyKSP/releases
-
-https://ksp.sarbian.com/jenkins/job/ModuleManager/
-
-https://ksp.sarbian.com/jenkins/job/ModularFlightIntegrator/
-
-https://github.com/Phantomical/KSPTextureLoader/releases
+Dependencies: We depend on
+* [HarmonyKSP](https://github.com/KSPModdingLibs/HarmonyKSP/releases)
+* [ModuleManager](https://ksp.sarbian.com/jenkins/job/ModuleManager/)
+* [ModularFlightIntegrator](https://ksp.sarbian.com/jenkins/job/ModularFlightIntegrator/)
+* [KSPTextureLoader](https://github.com/Phantomical/KSPTextureLoader/releases)
 
 About
 -----
