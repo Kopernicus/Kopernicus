@@ -913,27 +913,28 @@ namespace Kopernicus
         public static string ValidateOnDemandTexture(string path)
         {
             if (TextureLoader.TextureExists(path))
-            {
                 return path;
-            }
-            else if (path.EndsWith(".dds", StringComparison.OrdinalIgnoreCase))
+
+            var ext = Path.GetExtension(path);
+            var dir = Path.GetDirectoryName(path);
+            var basename = Path.GetFileNameWithoutExtension(path);
+
+            if (ext.Equals(".dds", StringComparison.OrdinalIgnoreCase))
             {
-                path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".png";
-                if (TextureLoader.TextureExists(path))
+                var altpath = Path.Combine(dir, basename + ".png");
+                if (TextureLoader.TextureExists(altpath))
                 {
-                    string warningpath = Path.GetFileNameWithoutExtension(path);
-                    UnityEngine.Debug.LogWarning($"[Kopernicus] {warningpath} config entry has inappropriate extension, .dds that is actually a .png on disk, this should be fixed by the planetpack author!");
-                    return path;
+                    Debug.LogWarning($"[Kopernicus] {path} config entry has inappropriate extension, .dds that is actually a .png on disk, this should be fixed by the planetpack author!");
+                    return altpath;
                 }
             }
-            else if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+            else if (ext.Equals(".png", StringComparison.OrdinalIgnoreCase))
             {
-                path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".dds";
-                if (TextureLoader.TextureExists(path))
+                var altpath = Path.Combine(dir, basename + ".dds");
+                if (TextureLoader.TextureExists(altpath))
                 {
-                    string warningpath = Path.GetFileNameWithoutExtension(path);
-                    UnityEngine.Debug.LogWarning($"[Kopernicus] {warningpath} config entry has inappropriate extension, .png that is actually a .dds on disk, this should be fixed by the planetpack author!");
-                    return path;
+                    Debug.LogWarning($"[Kopernicus] {path} config entry has inappropriate extension, .png that is actually a .dds on disk, this should be fixed by the planetpack author!");
+                    return altpath;
                 }
             }
 
