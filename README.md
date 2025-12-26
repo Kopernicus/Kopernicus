@@ -1,19 +1,15 @@
 Kopernicus
 ==============================
-December 23rd, 2025
+December 26th, 2025
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: R-T-B & Phantomical.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-233:
+New in this latest version release-234:
 
-1.) Fix a bad texture mapping bit of code that broke MKRI, now it should load fine.
-
-2.) As of the last update, you may have noticed texture load errors are now considered a critical "stop" error type bug.  This is to prevent you from loading into an incomplete world or worse, getting stuck in an infinite loading loop. Just an FYI, as this was absent from the last release notes and it IS a notable change in behavior.
-
-3.) Nothing else, overall this release has been surprisingly smooth.  Happy holidays everyone.
+1.) Fix a error message that would mistakenly identify a nonexisting .png file as a .dds, or vice versa.
 
 Dependencies: We depend on
 * [HarmonyKSP](https://github.com/KSPModdingLibs/HarmonyKSP/releases)
