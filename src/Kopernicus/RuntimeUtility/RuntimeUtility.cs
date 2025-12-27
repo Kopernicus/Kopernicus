@@ -137,8 +137,6 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
-            GameEvents.onAsteroidSpawned.Add(v => OnAsteroidSpawn(v));
-            GameEvents.onCometSpawned.Add(v => OnCometSpawn(v));
             // Add Callback only if necessary
             if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay)
             {
@@ -243,42 +241,6 @@ namespace Kopernicus.RuntimeUtility
             PatchTimeOfDayAnimation();
             StartCoroutine(CallbackUtil.DelayedCallback(3, FixFlags));
             PatchContracts();
-        }
-
-        private void OnAsteroidSpawn(Vessel v)
-        {
-            if (RuntimeUtility.KopernicusConfig.ApplyRealWorldDensityToMinorObjects)
-            {
-                PerformAsteroidMassUpgrade(v);
-            }
-        }
-
-        private void OnCometSpawn(Vessel v)
-        {
-            if (RuntimeUtility.KopernicusConfig.ApplyRealWorldDensityToMinorObjects)
-            {
-                PerformAsteroidMassUpgrade(v);
-            }
-        }
-
-        private void PerformAsteroidMassUpgrade(Vessel v)
-        {
-            foreach (Part p in v.parts)
-            {
-                try
-                {
-                    foreach (ModuleAsteroid MA in p.Modules)
-                    {
-                        MA.SetAsteroidMass(p.mass * 50);
-                        MA.density = MA.density * 50;
-                    }
-                }
-                catch
-                {
-                    Debug.LogWarning("[Kopernicus]" + "Asteroid: " + p.name + "failed to find ModuleAsteroid, mass upgrade may be incomplete!");
-                }
-                p.mass = p.mass * 50;
-            }
         }
 
         private void Update()
