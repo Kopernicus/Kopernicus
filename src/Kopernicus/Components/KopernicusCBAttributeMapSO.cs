@@ -2,14 +2,14 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security.Policy;
 using System.Threading;
-using System.Threading.Tasks;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering;
 
 namespace Kopernicus.Components
 {
@@ -23,6 +23,7 @@ namespace Kopernicus.Components
     /// - Fixed a bug in the stock bilinear interpolation, causing incorrect results in a specific direction
     /// on biome transitions.
     /// </summary>
+    [BurstCompile]
     public class KopernicusCBAttributeMapSO : CBAttributeMapSO
     {
         private static readonly double lessThanOneDouble = Utility.BitDecrement(1.0);
@@ -165,7 +166,7 @@ namespace Kopernicus.Components
         /// Create a "compiled" biome map from a texture. Attributes **must** be populated prior to calling this.
         /// Note that the depth param is ignored, as we always encode biomes in a 1 Bpp array.
         /// </summary>
-        public override void CreateMap(MapDepth depth, Texture2D tex)
+        public override unsafe void CreateMap(MapDepth depth, Texture2D tex)
         {
             _name = tex.name;
             _width = tex.width;
@@ -181,7 +182,7 @@ namespace Kopernicus.Components
                 throw new Exception("Can't have more than 256 biomes !");
 
             int biomeCount = Attributes.Length;
-            RGBA32[] biomeColors = new RGBA32[biomeCount];
+            var biomeColors = new NativeArray<RGBA32>(biomeCount, Allocator.Temp);
 
             for (int i = biomeCount; i-- > 0;)
                 biomeColors[i] = Attributes[i].mapColor;
@@ -190,40 +191,43 @@ namespace Kopernicus.Components
 
             Color32[] colorData = tex.GetPixels32();
             _data = new byte[size];
+
+            int badPixelsCount = 0;
             
-            var shared = new ConvertFromTextureJob.SharedData();
-            var job = new ConvertFromTextureJob
+            fixed (Color32* pcolorData = colorData)
+            fixed (byte* pdata = _data)
             {
-                output = new ObjectHandle<byte[]>(_data),
-                input = new ObjectHandle<Color32[]>(colorData),
-                biomeColors = new ObjectHandle<RGBA32[]>(biomeColors),
-                shared = new ObjectHandle<ConvertFromTextureJob.SharedData>(shared),
+                var ncolorData = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(pcolorData, colorData.Length, Allocator.Invalid);
+                var ndata = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
 
-                width = _width,
-                height = _height,
-                nonExactThreshold = nonExactThreshold
-            };
-            job.Schedule().Complete();
+                var job = new ConvertFromTextureJob
+                {
+                    badPixelsCount = &badPixelsCount,
+                    output = ndata,
+                    input = ncolorData,
+                    biomeColors = biomeColors,
+                    
+                    width = _width,
+                    height = _height,
+                    nonExactThreshold = nonExactThreshold
+                };
 
-            var badPixelsCount = shared.badPixelsCount;
+                job.Schedule().Complete();
+            }
+
             if (badPixelsCount > 0)
             {
                 Logger.Active.Log($"Loading {_name} : {badPixelsCount} ({(badPixelsCount / (float)size):P3}) pixels not matching a biome color, check the biome texture and biome definitions.");
             }
         }
 
-
-        struct ConvertFromTextureJob : IJobParallelFor
+        [BurstCompile]
+        unsafe struct ConvertFromTextureJob : IJobParallelFor
         {
-            public class SharedData
-            {
-                public int badPixelsCount;
-            }
-
-            public ObjectHandle<byte[]> output;
-            public ObjectHandle<Color32[]> input;
-            public ObjectHandle<RGBA32[]> biomeColors;
-            public ObjectHandle<SharedData> shared;
+            public int* badPixelsCount;
+            public NativeArray<byte> output;
+            public NativeArray<Color32> input;
+            public NativeArray<RGBA32> biomeColors;
 
             public int width;
             public int height;
@@ -231,11 +235,7 @@ namespace Kopernicus.Components
 
             public void Execute(int y)
             {
-                var output = this.output.Target;
-                var input = this.input.Target;
-                var biomeColors = this.biomeColors.Target;
-                var shared = this.shared.Target;
-
+                ref int badPixelsCount = ref *this.badPixelsCount;
                 int baseIndex = y * width;
 
                 for (int x = 0; x < width; ++x)
@@ -254,7 +254,7 @@ namespace Kopernicus.Components
 
                     if (biomeIndex == -1)
                     {
-                        Interlocked.Increment(ref shared.badPixelsCount);
+                        Interlocked.Increment(ref badPixelsCount);
                         biomeIndex = GetBiomeIndexFromTexture(
                             (double)x / width,
                             (double)y / height,
@@ -273,22 +273,13 @@ namespace Kopernicus.Components
             public JobHandle Schedule(JobHandle dependsOn = default)
             {
                 var batchCount = Math.Max(height / 128, 1);
-                var handle = IJobParallelForExtensions.Schedule(this, height, batchCount, dependsOn);
-
-                // We can't do this in Execute since it runs multiple times so
-                // instead we schedule dispose jobs for them afterwards.
-                output.Dispose(handle);
-                input.Dispose(handle);
-                biomeColors.Dispose(handle);
-                shared.Dispose(handle);
-
-                return handle;
+                return IJobParallelForExtensions.Schedule(this, height, batchCount, dependsOn);
             }
         }
 
-        private static int GetBiomeIndexFromTexture(double x, double y, RGBA32[] biomeColors, Color32[] colorData, int width, int height, float nonExactThreshold)
+        private static int GetBiomeIndexFromTexture(double x, double y, NativeArray<RGBA32> biomeColors, NativeArray<Color32> colorData, int width, int height, float nonExactThreshold)
         {
-            GetBilinearCoordinates(x, y, width, height, out int minX, out int maxX, out int minY, out int maxY, out double midX, out double midY);
+                        GetBilinearCoordinates(x, y, width, height, out int minX, out int maxX, out int minY, out int maxY, out double midX, out double midY);
 
             // Get 4 samples pixels for bilinear interpolation
             RGBA32 c00 = GetRGBA32AtTextureCoords(minX, minY, colorData, width);
@@ -317,7 +308,7 @@ namespace Kopernicus.Components
         /// <param name="stockMap">Already compiled stock map</param>
         /// <param name="replacementAttributes">optional replacement for the biome definitions</param>
         /// <returns>true if successful</returns>
-        public bool ConvertFromStockMap(CBAttributeMapSO stockMap, MapAttribute[] replacementAttributes = null)
+        public unsafe bool ConvertFromStockMap(CBAttributeMapSO stockMap, MapAttribute[] replacementAttributes = null)
         {
             if (stockMap.BitsPerPixel != 3)
                 return false;
@@ -332,7 +323,7 @@ namespace Kopernicus.Components
             _isCompiled = true;
 
             int biomeCount = Attributes.Length;
-            RGBA32[] biomeColors = new RGBA32[biomeCount];
+            var biomeColors = new NativeArray<RGBA32>(biomeCount, Allocator.Temp);
 
             for (int i = biomeCount; i-- > 0;)
                 biomeColors[i] = Attributes[i].mapColor;
@@ -341,23 +332,31 @@ namespace Kopernicus.Components
             byte[] fromData = stockMap._data;
             _data = new byte[size];
 
-            var shared = new ConvertFromStockMapJob.SharedData();
-            var job = new ConvertFromStockMapJob
+            int badPixelsCount = 0;
+
+            fixed (byte* pfromData = fromData)
+            fixed (byte* pdata = _data)
             {
-                output = new ObjectHandle<byte[]>(_data),
-                input = new ObjectHandle<byte[]>(fromData),
-                biomeColors = new ObjectHandle<RGBA32[]>(biomeColors),
-                shared = new ObjectHandle<ConvertFromStockMapJob.SharedData>(shared),
+                var nfrom = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pfromData, fromData.Length, Allocator.Invalid);
+                var ndata = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
 
-                width = _width,
-                height = _height,
-                inputRowWidth = stockMap.RowWidth,
-                nonExactThreshold = stockMap.nonExactThreshold
-            };
-            job.Schedule().Complete();
+                
+                var job = new ConvertFromStockMapJob
+                {
+                    badPixelsCount = &badPixelsCount,
+                    output = ndata,
+                    input = nfrom,
+                    biomeColors = biomeColors,
 
-            var badPixelsCount = shared.badPixelsCount;
-            if (shared.badPixelsCount > 0)
+                    width = _width,
+                    height = _height,
+                    inputRowWidth = stockMap.RowWidth,
+                    nonExactThreshold = stockMap.nonExactThreshold
+                };
+                job.Schedule().Complete();
+            }
+
+            if (badPixelsCount > 0)
             {
                 Logger.Active.Log($"Converting {stockMap.MapName} : {badPixelsCount} ({(badPixelsCount / (float)size):P3}) pixels not matching a biome color, check the biome texture and biome definitions.");
             }
@@ -365,17 +364,13 @@ namespace Kopernicus.Components
             return true;
         }
 
-        struct ConvertFromStockMapJob : IJobParallelFor
+        [BurstCompile]
+        unsafe struct ConvertFromStockMapJob : IJobParallelFor
         {
-            public class SharedData
-            {
-                public int badPixelsCount;
-            }
-
-            public ObjectHandle<byte[]> output;
-            public ObjectHandle<byte[]> input;
-            public ObjectHandle<RGBA32[]> biomeColors;
-            public ObjectHandle<SharedData> shared;
+            public int* badPixelsCount;
+            public NativeArray<byte> output;
+            public NativeArray<byte> input;
+            public NativeArray<RGBA32> biomeColors;
 
             public int width;
             public int height;
@@ -384,11 +379,9 @@ namespace Kopernicus.Components
 
             public void Execute(int y)
             {
-                var output = this.output.Target;
-                var input = this.input.Target;
-                var biomeColors = this.biomeColors.Target;
-                var shared = this.shared.Target;
-
+                ref int badPixelsCount = ref *this.badPixelsCount;
+                int baseIndex = y * width;
+                
                 int inputBaseIndex = y * inputRowWidth;
                 int outputBaseIndex = y * width;
 
@@ -408,7 +401,7 @@ namespace Kopernicus.Components
 
                     if (biomeIndex == -1)
                     {
-                        Interlocked.Increment(ref shared.badPixelsCount);
+                        Interlocked.Increment(ref badPixelsCount);
                         biomeIndex = GetBiomeIndexFromStockBiomeMap(
                             (double)x / width,
                             (double)y / height,
@@ -428,20 +421,20 @@ namespace Kopernicus.Components
             public JobHandle Schedule(JobHandle dependsOn = default)
             {
                 var batchCount = Math.Max(height / 128, 1);
-                var handle = IJobParallelForExtensions.Schedule(this, height, batchCount, dependsOn);
-
-                // We can't do this in Execute since it runs multiple times so
-                // instead we schedule dispose jobs for them afterwards.
-                output.Dispose(handle);
-                input.Dispose(handle);
-                biomeColors.Dispose(handle);
-                shared.Dispose(handle);
-
-                return handle;
+                return IJobParallelForExtensions.Schedule(this, height, batchCount, dependsOn);
             }
         }
 
-        private static int GetBiomeIndexFromStockBiomeMap(double x, double y, RGBA32[] biomeColors, byte[] rgbData, int width, int height, int rowWidth, float nonExactThreshold)
+        private static int GetBiomeIndexFromStockBiomeMap(
+            double x,
+            double y,
+            NativeArray<RGBA32> biomeColors,
+            NativeArray<byte> rgbData,
+            int width,
+            int height,
+            int rowWidth,
+            float nonExactThreshold
+        )
         {
             GetBilinearCoordinates(x, y, width, height, out int minX, out int maxX, out int minY, out int maxY, out double midX, out double midY);
 
@@ -507,6 +500,18 @@ namespace Kopernicus.Components
         /// Reimplementation of the stock biome sampler (CBAttributeMapSO.GetAtt()), including all the stock sampling stuff handling incorrect pixel colors in the base texture.
         /// </summary>
         private static unsafe int GetBiomeIndexStockBilinearSampling(RGBA32[] biomeColors, RGBA32 c00, RGBA32 c10, RGBA32 c01, RGBA32 c11, double midX, double midY, int nonExactThreshold)
+        {
+            fixed (RGBA32* pbiomeColors = biomeColors)
+            {
+                var nbiomeColors = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<RGBA32>(pbiomeColors, biomeColors.Length, Allocator.Invalid);
+                return GetBiomeIndexStockBilinearSampling(nbiomeColors, c00, c10, c01, c11, midX, midY, nonExactThreshold);
+            }
+        }
+
+        /// <summary>
+        /// Reimplementation of the stock biome sampler (CBAttributeMapSO.GetAtt()), including all the stock sampling stuff handling incorrect pixel colors in the base texture.
+        /// </summary>
+        private static unsafe int GetBiomeIndexStockBilinearSampling(NativeArray<RGBA32> biomeColors, RGBA32 c00, RGBA32 c10, RGBA32 c01, RGBA32 c11, double midX, double midY, int nonExactThreshold)
         {
             int biomeCount = biomeColors.Length;
             bool flag = true; // I still don't understand the logic behind this...
@@ -593,14 +598,14 @@ namespace Kopernicus.Components
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static RGBA32 GetRGB3BppAtTextureCoords(int x, int y, byte[] rgbData, int rowWidth)
+        private static RGBA32 GetRGB3BppAtTextureCoords(int x, int y, NativeArray<byte> rgbData, int rowWidth)
         {
             int index = x * 3 + y * rowWidth;
             return new RGBA32(rgbData[index], rgbData[index + 1], rgbData[index + 2]);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static RGBA32 GetRGBA32AtTextureCoords(int x, int y, Color32[] colorData, int width)
+        private static RGBA32 GetRGBA32AtTextureCoords(int x, int y, NativeArray<Color32> colorData, int width)
         {
             Color32 color32 = colorData[x + y * width];
             color32.a = 255;

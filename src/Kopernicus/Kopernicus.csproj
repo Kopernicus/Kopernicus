@@ -436,6 +436,7 @@
     <Compile Include="Configuration\MaterialLoader\PQSProjectionFallbackLoader.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSProjectionSurfaceQuadLoader.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="MiniBurst.cs" />
     <Compile Include="Configuration\MaterialLoader\PQSMainShaderLoader.cs" />
     <Compile Include="Configuration\ModLoader\VertexColorMap.cs" />
     <Compile Include="Configuration\ModLoader\ModLoader.cs" />
