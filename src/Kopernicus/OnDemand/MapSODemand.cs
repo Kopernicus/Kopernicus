@@ -58,6 +58,13 @@ namespace Kopernicus.OnDemand
             RGBA32 = 0x04,
         }
 
+        enum MapState : byte
+        {
+            Unloaded = 0,
+            Loaded,
+            Error
+        }
+
         // A non-allocating HeightAlpha for internal use.
         struct ValueHeightAlpha
         {
@@ -78,21 +85,32 @@ namespace Kopernicus.OnDemand
         private Texture2D Data { get; set; }
         private NativeByteArray Image { get; set; }
 
+        private MapState State { get; set; }
         private MemoryFormat Format { get; set; }
         private int Stride => (int)Format & 0xF;
 
         // States
-        public Boolean IsLoaded { get; set; }
-        public Boolean AutoLoad { get; set; }
+        public bool IsLoaded
+        {
+            get => State == MapState.Loaded;
+
+            // Setting this externally never worked, but we need to keep it for back-compat.
+            [Obsolete("Setting IsLoaded is not supported and is now a no-op")]
+            set
+            {
+                Debug.LogWarning($"[Kopernicus] Setting MapSODemand.IsLoaded externally is not supported");
+            }
+        }
+        public bool AutoLoad { get; set; }
 
         // Path of the Texture
-        public String Path { get; set; }
+        public string Path { get; set; }
 
         // MapDepth
         public new MapDepth Depth { get; set; }
 
         // Name
-        String ILoadOnDemand.Name
+        string ILoadOnDemand.Name
         {
             get { return name; }
             set { name = value; }
@@ -147,6 +165,7 @@ namespace Kopernicus.OnDemand
 
                 Handle?.Dispose();
                 Handle = null;
+                State = MapState.Error;
                 return;
             }
 
@@ -155,7 +174,7 @@ namespace Kopernicus.OnDemand
 
             // If the map isn't null
             CreateMap(Depth, map);
-            IsLoaded = true;
+            State = MapState.Loaded;
             Events.OnMapSOLoad.Fire(this);
             if (assetBundle is null)
                 Debug.Log($"[OD] ---> Map {name} enabling self. Path = {Path}");
@@ -171,6 +190,7 @@ namespace Kopernicus.OnDemand
             // Clear the texture handle regardless of whether we are loaded or not.
             Handle?.Dispose();
             Handle = null;
+            State = MapState.Unloaded;
 
             // We can only destroy the map, if it is loaded
             if (!IsLoaded)
@@ -183,7 +203,6 @@ namespace Kopernicus.OnDemand
                 Image.Free();
 
             // Set flags
-            IsLoaded = false;
             Format = MemoryFormat.None;
 
             // Event
@@ -410,6 +429,10 @@ namespace Kopernicus.OnDemand
 
         private bool EnsureLoaded()
         {
+            // We failed to load once, prevent spamming the log and/or emitting NREs repeatedly.
+            if (State == MapState.Error)
+                return false;
+
             if (OnDemandStorage.OnDemandLogOnMissing)
                 Debug.Log($"[OD] ERROR: read from unloaded map {name} with path {Path}, autoload = {AutoLoad}");
 
