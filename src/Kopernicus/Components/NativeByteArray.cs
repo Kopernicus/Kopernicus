@@ -25,6 +25,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Kopernicus.Components
@@ -54,6 +55,8 @@ namespace Kopernicus.Components
 
             // Allocate a pointer to the custom array
             _items = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Byte)) * Size);
+            if (_items == IntPtr.Zero)
+                throw new OutOfMemoryException("failed to allocate native array");
         }
 
         /// <summary>
@@ -72,6 +75,8 @@ namespace Kopernicus.Components
         {
             // Allocate a new array
             IntPtr newItems = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Byte)) * newSize);
+            if (newItems == IntPtr.Zero)
+                throw new OutOfMemoryException("failed to allocate native array");
 
             // Copy the old one
             for (Int32 i = 0; i < Size; i++)
@@ -87,9 +92,25 @@ namespace Kopernicus.Components
             _items = newItems;
         }
 
-        public ref Byte this[Int32 index]
+        /// <summary>
+        /// Get a raw pointer to the underlying buffer.
+        /// </summary>
+        /// <returns></returns>
+        public byte* GetUnsafePtr() => (byte*)_items;
+
+        public ref byte this[int index]
         {
-            get { return ref ((Byte*)_items)[index]; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            { 
+                if ((uint)index >= (uint)Size)
+                    ThrowOutOfRangeException(index);
+                
+                return ref ((byte*)_items)[index];
+            }
         }
+
+        private void ThrowOutOfRangeException(int index) =>
+            throw new IndexOutOfRangeException($"index {index} was out of range for native array of size {Size}");
     }
 }
