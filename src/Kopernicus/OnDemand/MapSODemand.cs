@@ -25,8 +25,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Kopernicus.Components;
 using KSPTextureLoader;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace Kopernicus.OnDemand
@@ -39,10 +41,45 @@ namespace Kopernicus.OnDemand
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class MapSODemand : MapSO, ILoadOnDemand, IPreloadOnDemand
     {
+        new const float Byte2Float = 0.003921569f;
+        new const float Float2Byte = 255f;
+        const float Ushort2Float = 1f / 65535f;
+
+        enum MemoryFormat : byte
+        {
+            None = 0,
+
+            // Numbers are chosen here so that the lower 4 bits contain the stride in memory
+            R8     = 0x01,
+            A8     = 0x11,
+            R16    = 0x02,
+            RA16   = 0x12,
+            RGB24  = 0x03,
+            RGBA32 = 0x04,
+        }
+
+        // A non-allocating HeightAlpha for internal use.
+        struct ValueHeightAlpha
+        {
+            public float height;
+            public float alpha;
+
+            public ValueHeightAlpha(float height, float alpha)
+            {
+                this.height = height;
+                this.alpha = alpha;
+            }
+
+            public static implicit operator HeightAlpha(ValueHeightAlpha ha) => new HeightAlpha(ha.height, ha.alpha);
+        }
+
         // Representation of the map
         private TextureHandle<Texture2D> Handle { get; set; }
         private Texture2D Data { get; set; }
         private NativeByteArray Image { get; set; }
+
+        private MemoryFormat Format { get; set; }
+        private int Stride => (int)Format & 0xF;
 
         // States
         public Boolean IsLoaded { get; set; }
@@ -147,6 +184,7 @@ namespace Kopernicus.OnDemand
 
             // Set flags
             IsLoaded = false;
+            Format = MemoryFormat.None;
 
             // Event
             Events.OnMapSOUnload.Fire(this);
@@ -155,6 +193,7 @@ namespace Kopernicus.OnDemand
             Debug.Log("[OD] <--- Map " + name + " disabling self. Path = " + Path);
         }
 
+        #region CreateMap
         /// <summary>
         /// Create a map from a Texture2D
         /// </summary>
@@ -173,53 +212,86 @@ namespace Kopernicus.OnDemand
                 _width = tex.width;
                 _height = tex.height;
                 _bpp = (Int32)depth;
-                _rowWidth = _width * _bpp;
                 switch (depth)
                 {
                     case MapDepth.Greyscale:
+                        switch (tex.format)
                         {
-                            if (tex.format != TextureFormat.Alpha8)
-                            {
-                                CreateGreyscaleFromRgb(tex);
-                            }
-                            else
-                            {
-                                CreateGreyscaleFromAlpha(tex);
-                            }
+                            case TextureFormat.R8:
+                            case TextureFormat.R16:
+                            case TextureFormat.Alpha8:
+                                CreateDirectlyFromTexture(tex);
+                                break;
 
-                            break;
+                            default:
+                                CreateGreyscaleFromRGB(tex);
+                                break;
                         }
+
+                        break;
 
                     case MapDepth.HeightAlpha:
+                        switch (tex.format)
                         {
-                            if (tex.format == TextureFormat.R16)
-                            {
-                                CreateHeightAlphaR16(tex);
-                            }
-                            else
-                            {
-                                CreateHeightAlpha(tex);
-                            }
+                            case TextureFormat.R16:
+                                // R16 gets treated as R8A8 for HeightAlpha maps for compat with
+                                // the broader planet modding ecosystem.
+                                CreateDirectlyFromTexture(tex);
+                                Format = MemoryFormat.RA16;
+                                break;
 
-                            break;
+                            case TextureFormat.R8:
+                            case TextureFormat.Alpha8:
+                                CreateDirectlyFromTexture(tex);
+                                break;
+
+                            default:
+                                CreateHeightAlpha(tex);
+                                break;
                         }
+
+                        break;
 
                     case MapDepth.RGB:
+                        switch (tex.format)
                         {
-                            CreateRgb(tex);
-                            break;
+                            case TextureFormat.R8:
+                            case TextureFormat.R16:
+                            case TextureFormat.Alpha8:
+                            case TextureFormat.RGB24:
+                                CreateDirectlyFromTexture(tex);
+                                break;
+
+                            default:
+                                CreateRgb(tex);
+                                break;
                         }
 
+                        break;
+
                     case MapDepth.RGBA:
+                        switch (tex.format)
                         {
-                            CreateRgba(tex);
-                            break;
+                            case TextureFormat.R8:
+                            case TextureFormat.R16:
+                            case TextureFormat.Alpha8:
+                            case TextureFormat.RGB24:
+                            case TextureFormat.RGBA32:
+                                CreateDirectlyFromTexture(tex);
+                                break;
+
+                            default:
+                                CreateRgba(tex);
+                                break;
                         }
+
+                        break;
 
                     default:
                         throw new ArgumentOutOfRangeException(nameof(depth), depth, null);
                 }
 
+                _rowWidth = _width * Stride;
                 _isCompiled = true;
 
                 // Clean up what we don't need anymore
@@ -230,6 +302,7 @@ namespace Kopernicus.OnDemand
             {
                 // Set _data
                 Data = tex;
+                Format = MemoryFormat.None;
 
                 // Variables
                 _width = tex.width;
@@ -243,38 +316,52 @@ namespace Kopernicus.OnDemand
             }
         }
 
-        private new void CreateGreyscaleFromAlpha(Texture2D tex)
+        private unsafe void CreateDirectlyFromTexture(Texture2D tex)
         {
-            Color32[] pixels32 = tex.GetPixels32();
-            Image = new NativeByteArray(pixels32.Length);
-            for (Int32 i = 0; i < pixels32.Length; i++)
+            switch (tex.format)
             {
-                Image[i] = pixels32[i].a;
+                case TextureFormat.R8:
+                    Format = MemoryFormat.R8;
+                    break;
+
+                case TextureFormat.Alpha8:
+                    Format = MemoryFormat.A8;
+                    break;
+
+                case TextureFormat.R16:
+                    Format = MemoryFormat.R16;
+                    break;
+
+                case TextureFormat.RGB24:
+                    Format = MemoryFormat.RGB24;
+                    break;
+
+                case TextureFormat.RGBA32:
+                    Format = MemoryFormat.RGBA32;
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"texture format {tex.format} cannot be compiled directly to a memory texture");
             }
+
+            Image = new NativeByteArray(tex.width * tex.height * Stride);
+            
+            var data = tex.GetRawTextureData<byte>();
+            if (data.Length < Image.Size)
+                throw new InvalidOperationException("image data was too small for destination array");
+
+            UnsafeUtility.MemCpy(Image.GetUnsafePtr(), data.GetUnsafePtr(), Image.Size);
         }
 
-        private void CreateGreyscaleFromRgb(Texture2D tex)
+        private new void CreateGreyscaleFromRGB(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length);
+            Format = MemoryFormat.R8;
+
             for (Int32 i = 0; i < pixels32.Length; i++)
             {
                 Image[i] = pixels32[i].r;
-            }
-        }
-
-        private void CreateHeightAlphaR16(Texture2D tex)
-        {
-            Color[] pixels = tex.GetPixels();
-            Image = new NativeByteArray(pixels.Length * 2);
-            for (Int32 i = 0; i < pixels.Length; i++)
-            {
-                int value = (int)(pixels[i].r * 65535.0f);
-                byte height  = (byte)(value & 0xFF);
-                byte alpha = (byte)((value >> 8) & 0xFF);
-
-                Image[i * 2] = height;
-                Image[i * 2 + 1] = alpha;
             }
         }
 
@@ -282,6 +369,8 @@ namespace Kopernicus.OnDemand
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length * 2);
+            Format = MemoryFormat.RA16;
+
             for (Int32 i = 0; i < pixels32.Length; i++)
             {
                 Image[i * 2] = pixels32[i].r;
@@ -293,6 +382,8 @@ namespace Kopernicus.OnDemand
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length * 3);
+            Format = MemoryFormat.RGB24;
+
             for (Int32 i = 0; i < pixels32.Length; i++)
             {
                 Image[i * 3] = pixels32[i].r;
@@ -305,6 +396,8 @@ namespace Kopernicus.OnDemand
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length * 4);
+            Format = MemoryFormat.RGBA32;
+
             for (Int32 i = 0; i < pixels32.Length; i++)
             {
                 Image[i * 3] = pixels32[i].r;
@@ -313,36 +406,25 @@ namespace Kopernicus.OnDemand
                 Image[i * 3 + 3] = pixels32[i].a;
             }
         }
+        #endregion
 
-        // GetPixelByte
-        public override Byte GetPixelByte(Int32 x, Int32 y)
+        private bool EnsureLoaded()
         {
-            // If we aren't loaded....
-            if (!IsLoaded)
-            {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: getting pixelbyte with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
-                }
+            if (OnDemandStorage.OnDemandLogOnMissing)
+                Debug.Log($"[OD] ERROR: read from unloaded map {name} with path {Path}, autoload = {AutoLoad}");
 
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return 0;
-                }
-            }
+            if (AutoLoad)
+                Load();
 
-            if (!OnDemandStorage.UseManualMemoryManagement)
-            {
-                return (Byte)(Data.GetPixel(x, y).r * Float2Byte);
-            }
+            return IsLoaded;
+        }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int WrapWidth(int x)
+        {
             if (x < 0)
             {
+                // TODO: This seems wrong?
                 x = Width - x;
             }
             else if (x >= Width)
@@ -350,6 +432,12 @@ namespace Kopernicus.OnDemand
                 x -= Width;
             }
 
+            return x;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int WrapHeight(int y)
+        {
             if (y < 0)
             {
                 y = Height - y;
@@ -359,562 +447,431 @@ namespace Kopernicus.OnDemand
                 y -= Height;
             }
 
-            return Image[PixelIndex(x, y)];
+            return y;
         }
 
-        // GetPixelColor - Double
-        public override Color GetPixelColor(Double x, Double y)
+        #region GetPixelByte
+        public override byte GetPixelByte(int x, int y)
         {
-            if (IsLoaded)
+            if (!IsLoaded)
             {
-                return base.GetPixelColor(x, y);
+                if (!EnsureLoaded())
+                    return 0;
             }
 
-            if (OnDemandStorage.OnDemandLogOnMissing)
+            if (!OnDemandStorage.UseManualMemoryManagement)
+                return (byte)(Data.GetPixel(x, y).r * Float2Byte);
+
+            x = WrapWidth(x);
+            y = WrapHeight(y);
+            var index = PixelIndex(x, y);
+
+            switch (Format)
             {
-                Debug.Log("[OD] ERROR: getting pixelColD with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
+                case MemoryFormat.R16:
+                    // We use the high byte for R16 because this is equivalent to rescaling the
+                    // actual u16 value to a byte value.
+                    return Image[index + 1];
+
+                default:
+                    // Otherwise use the first byte.
+                    return Image[index];
+            }
+        }
+        #endregion
+
+        #region GetPixelColor
+        public override Color GetPixelColor(int x, int y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return Color.black;
             }
 
-            if (AutoLoad)
+            if (!OnDemandStorage.UseManualMemoryManagement)
+                return Data.GetPixel(x, y);
+
+            x = WrapWidth(x);
+            y = WrapHeight(y);
+            var index = PixelIndex(x, y);
+
+            float r, a;
+            switch (Format)
             {
-                Load();
+                case MemoryFormat.R8:
+                    r = Byte2Float * Image[index];
+                    return new Color(r, r, r, 1f);
+                    
+                case MemoryFormat.A8:
+                    a = Byte2Float * Image[index];
+                    return new Color(0f, 0f, 0f, a);
+
+                case MemoryFormat.R16:
+                    r = Ushort2Float * (Image[index] + Image[index + 1] << 8);
+                    return new Color(r, r, r, 1f);
+
+                case MemoryFormat.RA16:
+                    r = Byte2Float * Image[index];
+                    a = Byte2Float * Image[index + 1];
+                    return new Color(r, r, r, a);
+
+                case MemoryFormat.RGB24:
+                    return new Color(
+                        Byte2Float * Image[index],
+                        Byte2Float * Image[index + 1],
+                        Byte2Float * Image[index + 2],
+                        1f
+                    );
+
+                case MemoryFormat.RGBA32:
+                    return new Color(
+                        Byte2Float * Image[index],
+                        Byte2Float * Image[index + 1],
+                        Byte2Float * Image[index + 2],
+                        Byte2Float * Image[index + 3]
+                    );
+
+                default:
+                    return Color.black;
             }
-            else
+        }
+
+        public override Color GetPixelColor(double x, double y)
+        {
+            if (!IsLoaded)
             {
-                return Color.black;
+                if (!EnsureLoaded())
+                    return Color.black;
             }
 
             return base.GetPixelColor(x, y);
         }
 
-        // GetPixelColor - Float
         public override Color GetPixelColor(Single x, Single y)
         {
-            if (IsLoaded)
+            if (!IsLoaded)
             {
-                return base.GetPixelColor(x, y);
-            }
-
-            if (OnDemandStorage.OnDemandLogOnMissing)
-            {
-                Debug.Log("[OD] ERROR: getting pixelColF with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
-            }
-
-            if (AutoLoad)
-            {
-                Load();
-            }
-            else
-            {
-                return Color.black;
+                if (!EnsureLoaded())
+                    return Color.black;
             }
 
             return base.GetPixelColor(x, y);
         }
+        #endregion
 
-        // GetPixelColor - Int
-        public override Color GetPixelColor(Int32 x, Int32 y)
+        #region GetPixelColor32
+        public override Color32 GetPixelColor32(int x, int y)
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: getting pixelColI with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return Color.black;
-                }
+                if (!EnsureLoaded())
+                    return default;
             }
 
             if (!OnDemandStorage.UseManualMemoryManagement)
-            {
                 return Data.GetPixel(x, y);
-            }
 
-            index = PixelIndex(x, y);
-            switch (_bpp)
+            x = WrapWidth(x);
+            y = WrapHeight(y);
+            var index = PixelIndex(x, y);
+
+            byte r, a;
+            switch (Format)
             {
-                case 3:
-                    return new Color(Byte2Float * Image[index], Byte2Float * Image[index + 1],
-                        Byte2Float * Image[index + 2], 1f);
-                case 4:
-                    return new Color(Byte2Float * Image[index], Byte2Float * Image[index + 1],
-                        Byte2Float * Image[index + 2], Byte2Float * Image[index + 3]);
-            }
+                case MemoryFormat.R8:
+                    r = Image[index];
+                    return new Color32(r, r, r, 255);
+                    
+                case MemoryFormat.A8:
+                    a = Image[index];
+                    return new Color32(0, 0, 0, a);
 
-            if (_bpp != 2)
-            {
-                retVal = Byte2Float * Image[index];
-                return new Color(retVal, retVal, retVal, 1f);
-            }
+                case MemoryFormat.R16:
+                    r = Image[index + 1];
+                    return new Color32(r, r, r, 255);
 
-            retVal = Byte2Float * Image[index];
-            return new Color(retVal, retVal, retVal, Byte2Float * Image[index + 1]);
+                case MemoryFormat.RA16:
+                    r = Image[index];
+                    a = Image[index + 1];
+                    return new Color32(r, r, r, a);
+
+                case MemoryFormat.RGB24:
+                    return new Color32(
+                        Image[index],
+                        Image[index + 1],
+                        Image[index + 2],
+                        255
+                    );
+
+                case MemoryFormat.RGBA32:
+                    return new Color32(
+                        Image[index],
+                        Image[index + 1],
+                        Image[index + 2],
+                        Image[index + 3]
+                    );
+
+                default:
+                    return default;
+            }
         }
 
-        // GetPixelColor32 - Double
+        // Honestly Squad, why are they named GetPixelColor32, but return normal Colors instead of Color32?
         public override Color GetPixelColor32(Double x, Double y)
         {
-            if (IsLoaded)
+            if (!IsLoaded)
             {
-                return base.GetPixelColor32(x, y);
-            }
-
-            if (OnDemandStorage.OnDemandLogOnMissing)
-            {
-                Debug.Log("[OD] ERROR: getting pixelCol32D with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
-            }
-
-            if (AutoLoad)
-            {
-                Load();
-            }
-            else
-            {
-                return Color.black;
+                if (!EnsureLoaded())
+                    return default;
             }
 
             return base.GetPixelColor32(x, y);
         }
-
-        // GetPixelColor32 - Float - Honestly Squad, why are they named GetPixelColor32, but return normal Colors instead of Color32?
+    
         public override Color GetPixelColor32(Single x, Single y)
-        {
-            if (IsLoaded)
-            {
-                return base.GetPixelColor32(x, y);
-            }
-
-            if (OnDemandStorage.OnDemandLogOnMissing)
-            {
-                Debug.Log("[OD] ERROR: getting pixelCol32F with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
-            }
-
-            if (AutoLoad)
-            {
-                Load();
-            }
-            else
-            {
-                return Color.black;
-            }
-
-            return base.GetPixelColor32(x, y);
-        }
-
-        // GetPixelColor32 - Int
-        public override Color32 GetPixelColor32(Int32 x, Int32 y)
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: getting pixelCol32I with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
-                }
+                if (!EnsureLoaded())
+                    return default;
+            }
 
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return new Color32();
-                }
+            return base.GetPixelColor32(x, y);
+        }
+        #endregion
+
+        #region GetPixelFloat
+        public override float GetPixelFloat(int x, int y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return 0f;
             }
 
             if (!OnDemandStorage.UseManualMemoryManagement)
             {
-                return Data.GetPixel(x, y);
-            }
+                var pixel = Data.GetPixel(x, y);
 
-            index = PixelIndex(x, y);
-            switch (_bpp)
-            {
-                case 3:
-                    return new Color32(Image[index], Image[index + 1], Image[index + 2], 255);
-                case 4:
-                    return new Color32(Image[index], Image[index + 1], Image[index + 2], Image[index + 3]);
-            }
+                if (Data.format == TextureFormat.Alpha8)
+                    return pixel.a;
 
-            if (_bpp != 2)
-            {
-                val = Image[index];
-                return new Color32(val, val, val, 255);
-            }
-
-            val = Image[index];
-            return new Color32(val, val, val, Image[index + 1]);
-        }
-
-        // GetPixelFloat - Double
-        public override Single GetPixelFloat(Double x, Double y)
-        {
-            if (IsLoaded)
-            {
-                return base.GetPixelFloat(x, y);
-            }
-
-            if (OnDemandStorage.OnDemandLogOnMissing)
-            {
-                Debug.Log("[OD] ERROR: getting pixelFloatD with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
-            }
-
-            if (AutoLoad)
-            {
-                Load();
-            }
-            else
-            {
-                return 0f;
-            }
-
-            return base.GetPixelFloat(x, y);
-        }
-
-        // GetPixelFloat - Float
-        public override Single GetPixelFloat(Single x, Single y)
-        {
-            if (IsLoaded)
-            {
-                return base.GetPixelFloat(x, y);
-            }
-
-            if (OnDemandStorage.OnDemandLogOnMissing)
-            {
-                Debug.Log("[OD] ERROR: getting pixelFloatF with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
-            }
-
-            if (AutoLoad)
-            {
-                Load();
-            }
-            else
-            {
-                return 0f;
-            }
-
-            return base.GetPixelFloat(x, y);
-        }
-
-        // GetPixelFloat - Integer
-        public override Single GetPixelFloat(Int32 x, Int32 y)
-        {
-            if (!IsLoaded)
-            {
-                if (OnDemandStorage.OnDemandLogOnMissing)
+                switch (Depth)
                 {
-                    Debug.Log("[OD] ERROR: getting pixelFloatI with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return 0f;
+                    case MapDepth.Greyscale:
+                        return pixel.r;
+                    case MapDepth.HeightAlpha:
+                        return 0.5f * (pixel.r + pixel.a);
+                    case MapDepth.RGB:
+                        return (1f / 3f) * (pixel.r + pixel.g * pixel.b);
+                    case MapDepth.RGBA:
+                        return 0.25f * (pixel.r + pixel.g + pixel.b + pixel.a);
+                    default:
+                        return 0f;
                 }
             }
 
-            if (OnDemandStorage.UseManualMemoryManagement)
+            x = WrapWidth(x);
+            y = WrapHeight(y);
+            var index = PixelIndex(x, y);
+
+            switch (Format)
             {
-                retVal = 0f;
-                index = PixelIndex(x, y);
-                for (Int32 i = 0; i < _bpp; i++)
-                {
-                    retVal += Image[index + i];
-                }
+                case MemoryFormat.R8:
+                case MemoryFormat.A8:
+                    return Byte2Float * Image[index];
 
-                retVal /= _bpp;
-                retVal *= Byte2Float;
-                return retVal;
-            }
+                case MemoryFormat.R16:
+                    return Ushort2Float * (Image[index] + Image[index + 1] << 8);
 
-            Color pixel = Data.GetPixel(x, y);
-            Single value = 0f;
-            switch (Depth)
-            {
-                case MapDepth.Greyscale:
-                    value = pixel.r;
-                    break;
-                case MapDepth.HeightAlpha:
-                    value = pixel.r + pixel.a;
-                    break;
-                case MapDepth.RGB:
-                    value = pixel.r + pixel.g + pixel.b;
-                    break;
-                case MapDepth.RGBA:
-                    value = pixel.r + pixel.g + pixel.b + pixel.a;
-                    break;
-            }
+                case MemoryFormat.RA16:
+                    return (Byte2Float / 2f) * (Image[index] + Image[index + 1]);
 
-            // Enhanced support for L8 .dds
-            if (Data.format == TextureFormat.Alpha8)
-            {
-                value = pixel.a;
-            }
+                case MemoryFormat.RGB24:
+                    return (Byte2Float / 3f) * (Image[index] + Image[index + 1] + Image[index + 2]);
 
-            return value / (Int32)Depth;
-        }
+                case MemoryFormat.RGBA32:
+                    return (Byte2Float / 4f) * (Image[index] + Image[index + 1] + Image[index + 2]);
 
-        // GetPixelHeightAlpha - Double
-        public override HeightAlpha GetPixelHeightAlpha(Double x, Double y)
-        {
-            if (IsLoaded)
-            {
-                return base.GetPixelHeightAlpha(x, y);
-            }
-
-            if (OnDemandStorage.OnDemandLogOnMissing)
-            {
-                Debug.Log("[OD] ERROR: getting pixelHeightAlphaD with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
-            }
-
-            if (AutoLoad)
-            {
-                Load();
-            }
-            else
-            {
-                return new HeightAlpha(0f, 0f);
-            }
-
-            return base.GetPixelHeightAlpha(x, y);
-        }
-
-        // GetPixelHeightAlpha - Float
-        public override HeightAlpha GetPixelHeightAlpha(Single x, Single y)
-        {
-            if (IsLoaded)
-            {
-                return base.GetPixelHeightAlpha(x, y);
-            }
-
-            if (OnDemandStorage.OnDemandLogOnMissing)
-            {
-                Debug.Log("[OD] ERROR: getting pixelHeightAlphaF with unloaded map " + name + " of path " + Path +
-                          ", autoload = " + AutoLoad);
-            }
-
-            if (AutoLoad)
-            {
-                Load();
-            }
-            else
-            {
-                return new HeightAlpha(0f, 0f);
-            }
-
-            return base.GetPixelHeightAlpha(x, y);
-        }
-
-        // GetPixelHeightAlpha - Int
-        public override HeightAlpha GetPixelHeightAlpha(Int32 x, Int32 y)
-        {
-            if (!IsLoaded)
-            {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: getting pixelHeightAlphaI with unloaded map " + name + " of path " +
-                              Path + ", autoload = " + AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return new HeightAlpha(0f, 0f);
-                }
-            }
-
-            if (OnDemandStorage.UseManualMemoryManagement)
-            {
-                index = PixelIndex(x, y);
-                if (_bpp == 2)
-                {
-                    return new HeightAlpha(Byte2Float * Image[index], Byte2Float * Image[index + 1]);
-                }
-
-                if (_bpp != 4)
-                {
-                    return new HeightAlpha(Byte2Float * Image[index], 1f);
-                }
-
-                val = Image[index];
-                return new HeightAlpha(Byte2Float * Image[index], Byte2Float * Image[index + 3]);
-            }
-
-            Color pixel = Data.GetPixel(x, y);
-            if (Depth == MapDepth.HeightAlpha || Depth == MapDepth.RGBA)
-            {
-                return new HeightAlpha(pixel.r, pixel.a);
-            }
-
-            return new HeightAlpha(pixel.r, 1f);
-        }
-
-        // GreyByte
-        public override Byte GreyByte(Int32 x, Int32 y)
-        {
-            if (!IsLoaded)
-            {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: getting GreyByteI with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-
-            if (OnDemandStorage.UseManualMemoryManagement)
-            {
-                return Image[PixelIndex(x, y)];
-            }
-
-            return (Byte)(Float2Byte * Data.GetPixel(x, y).r);
-        }
-
-        // GreyFloat
-        public override Single GreyFloat(Int32 x, Int32 y)
-        {
-            if (!IsLoaded)
-            {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: getting GreyFloat with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return 0f;
-                }
-            }
-
-            if (OnDemandStorage.UseManualMemoryManagement)
-            {
-                return Byte2Float * Image[PixelIndex(x, y)];
-            }
-
-            return Data.GetPixel(x, y).grayscale;
-        }
-
-        // PixelByte
-        public override Byte[] PixelByte(Int32 x, Int32 y)
-        {
-            if (!IsLoaded)
-            {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: getting pixelByte with unloaded map " + name + " of path " + Path +
-                              ", autoload = " + AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
-                    return new Byte[_bpp];
-                }
-            }
-
-            if (OnDemandStorage.UseManualMemoryManagement)
-            {
-                Byte[] numArray = new Byte[_bpp];
-                index = PixelIndex(x, y);
-                for (Int32 i = 0; i < _bpp; i++)
-                {
-                    numArray[i] = Image[index + i];
-                }
-
-                return numArray;
-            }
-
-            Color c = Data.GetPixel(x, y);
-            switch (Depth)
-            {
-                case MapDepth.Greyscale:
-                    return new[]
-                    {
-                        (Byte)c.r
-                    };
-                case MapDepth.HeightAlpha:
-                    return new[]
-                    {
-                        (Byte)c.r, (Byte)c.a
-                    };
-                case MapDepth.RGB:
-                    return new[]
-                    {
-                        (Byte)c.r, (Byte)c.g, (Byte)c.b
-                    };
                 default:
-                    return new[]
-                    {
-                        (Byte)c.r, (Byte)c.g, (Byte)c.b, (Byte)c.a
-                    };
+                    return 0f;
             }
         }
+
+        public override float GetPixelFloat(double x, double y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return 0f;
+            }
+
+            return base.GetPixelFloat(x, y);
+        }
+
+        public override float GetPixelFloat(float x, float y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return 0f;
+            }
+
+            return base.GetPixelFloat(x, y);
+        }
+        #endregion
+
+        #region GetPixelHeightAlpha
+        private ValueHeightAlpha GetPixelValueHeightAlpha(int x, int y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return new ValueHeightAlpha(0f, 0f);
+            }
+
+            if (!OnDemandStorage.UseManualMemoryManagement)
+            {
+                var pixel = Data.GetPixel(x, y);
+                
+                switch (Depth)
+                {
+                    case MapDepth.HeightAlpha:
+                    case MapDepth.RGBA:
+                        return new ValueHeightAlpha(pixel.r, pixel.a);
+
+                    default:
+                        return new ValueHeightAlpha(pixel.r, 1f);
+                }
+            }
+
+            x = WrapWidth(x);
+            y = WrapHeight(y);
+            var index = PixelIndex(x, y);
+
+            switch (Format)
+            {
+                case MemoryFormat.R8:
+                case MemoryFormat.RGB24:
+                    return new ValueHeightAlpha(Byte2Float * Image[index], 1f);
+
+                case MemoryFormat.A8:
+                    return new ValueHeightAlpha(0f, Byte2Float * Image[index]);
+
+                case MemoryFormat.R16:
+                    return new ValueHeightAlpha(Ushort2Float * (Image[index] + Image[index + 1] << 8), 1f);
+
+                case MemoryFormat.RA16:
+                    return new ValueHeightAlpha(Byte2Float * Image[index], Byte2Float * Image[index + 1]);
+
+                case MemoryFormat.RGBA32:
+                    return new ValueHeightAlpha(Byte2Float * Image[index], Byte2Float * Image[index + 3]);
+
+                default:
+                    return new ValueHeightAlpha(0f, 0f);
+            }
+        }
+
+        public override HeightAlpha GetPixelHeightAlpha(int x, int y) => GetPixelValueHeightAlpha(x, y);
+
+        public override HeightAlpha GetPixelHeightAlpha(double x, double y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return new HeightAlpha(0f, 0f);
+            }
+
+            return base.GetPixelHeightAlpha(x, y);
+        }
+
+        public override HeightAlpha GetPixelHeightAlpha(float x, float y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return new HeightAlpha(0f, 0f);
+            }
+
+            return base.GetPixelHeightAlpha(x, y);
+        }
+        #endregion
+
+        #region GreyByte
+        public override byte GreyByte(int x, int y) => GetPixelByte(x, y);
+        #endregion
+
+        #region GreyFloat
+        public override float GreyFloat(int x, int y)
+        {
+            
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return 0f;
+            }
+
+            if (!OnDemandStorage.UseManualMemoryManagement)
+                return Data.GetPixel(x, y).grayscale;
+
+            x = WrapWidth(x);
+            y = WrapHeight(y);
+            var index = PixelIndex(x, y);
+
+            switch (Format)
+            {
+                case MemoryFormat.R8:
+                case MemoryFormat.A8:
+                case MemoryFormat.RA16:
+                case MemoryFormat.RGB24:
+                case MemoryFormat.RGBA32:
+                    return Byte2Float * Image[index];
+
+                case MemoryFormat.R16:
+                    return Ushort2Float * (Image[index] + Image[index + 1] << 8);
+
+                default:
+                    return 0f;
+            }
+        }
+        #endregion
+
+        #region PixelByte
+        public override byte[] PixelByte(int x, int y)
+        {
+            var c = GetPixelColor32(x, y);
+
+            switch (Depth)
+            {
+                case MapDepth.Greyscale:
+                    return new[] { c.r };
+                case MapDepth.HeightAlpha:
+                    return new[] { c.r, c.a };
+                case MapDepth.RGB:
+                    return new[] { c.r, c.g, c.b };
+                default:
+                    return new[] { c.r, c.g, c.b, c.a };
+            }
+        }
+        #endregion
 
         // CompileToTexture
-        public override Texture2D CompileToTexture(Byte filter)
+        public override Texture2D CompileToTexture(byte filter)
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
-                              AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
+                if (!EnsureLoaded())
                     return new Texture2D(_width, _height);
-                }
             }
 
             if (OnDemandStorage.UseManualMemoryManagement)
             {
+                int stride = Stride;
                 Color32[] color32 = new Color32[Size];
                 for (Int32 i = 0; i < Size; i++)
                 {
-                    val = (Byte)((Image[i] & filter) == 0 ? 0 : 255);
+                    val = (byte)((Image[i * stride] & filter) == 0 ? 0 : 255);
                     color32[i] = new Color32(val, val, val, 255);
                 }
 
@@ -936,29 +893,20 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
-                              AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
+                if (!EnsureLoaded())
                     return new Texture2D(_width, _height);
-                }
             }
 
             if (OnDemandStorage.UseManualMemoryManagement)
             {
-                Color32[] color32 = new Color32[Size];
-                for (Int32 i = 0; i < Size; i++)
+                var color32 = new Color32[Size];
+                for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    val = Image[i];
-                    color32[i] = new Color32(val, val, val, 255);
+                    for (int x = 0; x < _width; ++x)
+                    {
+                        var v = GetPixelByte(x, y);
+                        color32[i] = new Color32(v, v, v, byte.MaxValue);
+                    }
                 }
 
                 Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
@@ -979,32 +927,23 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
-                              AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
+                if (!EnsureLoaded())
                     return new Texture2D(_width, _height);
-                }
             }
 
             if (OnDemandStorage.UseManualMemoryManagement)
             {
-                Color32[] color32 = new Color32[Width * Height];
-                for (Int32 i = 0; i < Width * Height; i++)
+                var color32 = new Color32[Size];
+                for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    val = Image[i * 2];
-                    color32[i] = new Color32(val, val, val, Image[i * 2 + 1]);
+                    for (int x = 0; x < _width; ++x)
+                    {
+                        var ha = GetPixelValueHeightAlpha(x, y);
+                        color32[i] = new Color(ha.height, ha.height, ha.height, ha.alpha);
+                    }
                 }
 
-                Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGBA32, false);
                 compiled.SetPixels32(color32);
                 compiled.Apply(false, true);
                 return compiled;
@@ -1022,28 +961,17 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
-                              AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
+                if (!EnsureLoaded())
                     return new Texture2D(_width, _height);
-                }
             }
 
             if (OnDemandStorage.UseManualMemoryManagement)
             {
-                Color32[] color32 = new Color32[Width * Height];
-                for (Int32 i = 0; i < Width * Height; i++)
+                var color32 = new Color32[Size];
+                for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    color32[i] = new Color32(Image[i * 3], Image[i * 3 + 1], Image[i * 3 + 2], 255);
+                    for (int x = 0; x < _width; ++x)
+                        color32[i] = GetPixelColor32(x, y);
                 }
 
                 Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
@@ -1064,31 +992,20 @@ namespace Kopernicus.OnDemand
         {
             if (!IsLoaded)
             {
-                if (OnDemandStorage.OnDemandLogOnMissing)
-                {
-                    Debug.Log("[OD] ERROR: compiling with unloaded map " + name + " of path " + Path + ", autoload = " +
-                              AutoLoad);
-                }
-
-                if (AutoLoad)
-                {
-                    Load();
-                }
-                else
-                {
+                if (!EnsureLoaded())
                     return new Texture2D(_width, _height);
-                }
             }
 
             if (OnDemandStorage.UseManualMemoryManagement)
             {
-                Color32[] color32 = new Color32[Width * Height];
-                for (Int32 i = 0; i < Width * Height; i++)
+                var color32 = new Color32[Size];
+                for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    color32[i] = new Color32(Image[i * 3], Image[i * 3 + 1], Image[i * 3 + 2], Image[i * 3 + 3]);
+                    for (int x = 0; x < _width; ++x)
+                        color32[i] = GetPixelColor32(x, y);
                 }
 
-                Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
+                Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGBA32, false);
                 compiled.SetPixels32(color32);
                 compiled.Apply(false, true);
                 return compiled;
