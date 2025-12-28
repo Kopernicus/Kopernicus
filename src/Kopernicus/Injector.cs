@@ -753,7 +753,8 @@ namespace Kopernicus
     }
 
     [HarmonyPatch(typeof(SentinelUtilities))]
-    [HarmonyPatch("FindInnerAndOuterBodies",typeof(double),typeof(CelestialBody),typeof(CelestialBody))]
+    [HarmonyPatch("FindInnerAndOuterBodies")]
+    [HarmonyPatch(new Type[] { typeof(double), typeof(CelestialBody), typeof(CelestialBody) }, new ArgumentType[] {ArgumentType.Normal, ArgumentType.Out,ArgumentType.Out })]
     public static class SentinelUtilities_FindInnerAndOuterBodies
     {
         static bool Prefix(ref bool __result, double SMA, out CelestialBody innerBody, out CelestialBody outerBody)
