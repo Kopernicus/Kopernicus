@@ -27,6 +27,7 @@ using HarmonyLib;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
+using SentinelMission;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -747,6 +748,46 @@ namespace Kopernicus
                 __instance.baseMod.SetAsteroidMass((float)__instance.currentMassVal);
                 __instance.part.mass = (float)__instance.currentMassVal;
             }
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(SentinelUtilities), "FindInnerAndOuterBodies")]
+    public static class SentinelUtilities_FindInnerAndOuterBodies
+    {
+        static bool Prefix(ref bool __result, double SMA, out CelestialBody innerBody, out CelestialBody outerBody)
+        {
+            Dictionary<double, CelestialBody> dictionary = new Dictionary<double, CelestialBody>();
+            for (int i = 0; i < FlightGlobals.Bodies.Count; i++)
+            {
+                CelestialBody celestialBody = FlightGlobals.Bodies[i];
+                if (celestialBody == Planetarium.fetch.Sun)
+                {
+                    dictionary.TryAdd(0.0, celestialBody);
+                }
+                else if (celestialBody.referenceBody == Planetarium.fetch.Sun)
+                {
+                    dictionary.TryAdd(celestialBody.orbit.semiMajorAxis, celestialBody);
+                }
+            }
+            List<double> list = dictionary.Keys.ToList<double>();
+            list.Sort();
+            for (int j = 0; j < list.Count; j++)
+            {
+                if (list[j] <= SMA)
+                {
+                    if (list[j + 1] > SMA)
+                    {
+                        innerBody = dictionary[list[j]];
+                        outerBody = dictionary[list[j + 1]];
+                        __result = true;
+                        return false;
+                    }
+                }
+            }
+            innerBody = dictionary[list[0]];
+            outerBody = dictionary[list[list.Count - 1]];
+            __result = false;
             return false;
         }
     }
