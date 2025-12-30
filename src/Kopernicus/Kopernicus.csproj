@@ -29,8 +29,9 @@
     <KSPBT_GenerateAssemblyAttribute>false</KSPBT_GenerateAssemblyAttribute>
     <KSPBT_GenerateDependencyAttributes>false</KSPBT_GenerateDependencyAttributes>
 
-    <!-- ThisAssembly.Constants -->
-    <ThisAssemblyNamespace>Kopernicus</ThisAssemblyNamespace>
+    <!-- Configurations and Platforms  -->
+    <Configurations>Debug;ReleaseKSP18;ReleaseKSP19Plus</Configurations>
+    <Platforms>Any CPU;x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == '' ">
@@ -199,13 +200,7 @@ internal static class BuildInfo
       </BuildInfoFileContent>
     </PropertyGroup>
 
-    <WriteLinesToFile
-      File="$(IntermediateOutputPath)/Kopernicus.BuildInfo.cs"
-      Lines="$(BuildInfoFileContent)"
-      Overwrite="true"
-      Encoding="UTF-8"
-      WriteOnlyWhenDifferent="true"
-    />
+    <WriteLinesToFile File="$(IntermediateOutputPath)/Kopernicus.BuildInfo.cs" Lines="$(BuildInfoFileContent)" Overwrite="true" Encoding="UTF-8" WriteOnlyWhenDifferent="true" />
 
     <ItemGroup>
       <Compile Include="$(IntermediateOutputPath)/Kopernicus.BuildInfo.cs" />
