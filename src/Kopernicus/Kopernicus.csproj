@@ -107,14 +107,6 @@
   <!-- Version Files -->
   <ItemGroup>
     <KSPVersionFile Include="Kopernicus.version">
-      <Destination>$(RepoRootPath)\build\KSP18\GameData\$(MSBuildProjectName)\Plugins\Kopernicus.version</Destination>
-      <URL>https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP18/GameData/Kopernicus/Plugins/Kopernicus.version</URL>
-      <Version>1.8.1.$(KopernicusRelease)</Version>
-      <KSP_Version_Min>1.8.0</KSP_Version_Min>
-      <KSP_Version_Max>1.8.1</KSP_Version_Max>
-    </KSPVersionFile>
-
-    <KSPVersionFile Include="Kopernicus.version">
       <Destination>$(RepoRootPath)\build\KSP19PLUS\GameData\$(MSBuildProjectName)\Plugins\Kopernicus.version</Destination>
       <URL>https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version</URL>
       <Version>1.12.1.$(KopernicusRelease)</Version>
