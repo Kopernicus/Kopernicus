@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.props" Condition="Exists('..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.props')" />
+  <Import Project="..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props" Condition="Exists('..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F9968D87-83DA-453C-8E28-B632367EACD3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kopernicus.ConfigParser</RootNamespace>
+    <AssemblyName>Kopernicus.Parser</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\ParserTarget.cs" />
+    <Compile Include="Attributes\ParserTargetCollection.cs" />
+    <Compile Include="Attributes\PreApply.cs" />
+    <Compile Include="Attributes\RequireConfigType.cs" />
+    <Compile Include="BuiltinTypeParsers\ColorParser.cs" />
+    <Compile Include="BuiltinTypeParsers\EnumParser.cs" />
+    <Compile Include="BuiltinTypeParsers\NumericCollectionParser.cs" />
+    <Compile Include="BuiltinTypeParsers\NumericParser.cs" />
+    <Compile Include="BuiltinTypeParsers\QuaternionParser.cs" />
+    <Compile Include="BuiltinTypeParsers\StringCollectionParser.cs" />
+    <Compile Include="BuiltinTypeParsers\VectorParser.cs" />
+    <Compile Include="Enumerations\ConfigType.cs" />
+    <Compile Include="Enumerations\NameSignificance.cs" />
+    <Compile Include="Exceptions\ParserTargetMissingException.cs" />
+    <Compile Include="Exceptions\ParserTargetTypeMismatchException.cs" />
+    <Compile Include="Attributes\ParserTargetExternal.cs" />
+    <Compile Include="Interfaces\ICreatable.cs" />
+    <Compile Include="Interfaces\IParsable.cs" />
+    <Compile Include="Interfaces\IParserApplyEventSubscriber.cs" />
+    <Compile Include="Interfaces\IParserEventSubscriber.cs" />
+    <Compile Include="Interfaces\IParserPostApplyEventSubscriber.cs" />
+    <Compile Include="Interfaces\IPatchable.cs" />
+    <Compile Include="Interfaces\ITypeParser.cs" />
+    <Compile Include="Interfaces\IWritable.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="ParserOptions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.props'))" />
+    <Error Condition="!Exists('..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.props'))" />
+    <Error Condition="!Exists('..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.targets'))" />
+  </Target>
+  <Import Project="..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets" Condition="Exists('..\..\..\..\packages\JsonPoke.1.2.0\build\JsonPoke.targets')" />
+  <Import Project="..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.targets" Condition="Exists('..\..\..\..\packages\KSPBuildTools.0.0.2-alpha.7\build\KSPBuildTools.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
