@@ -377,7 +377,7 @@ namespace Kopernicus.OnDemand
         }
 
         [BurstCompile]
-        struct CreateGreyscaleFromRGBJob : IJobParallelFor
+        struct CreateGreyscaleJob : IJobParallelFor
         {
             [ReadOnly]
             public NativeArray<Color32> pixels;
@@ -402,7 +402,7 @@ namespace Kopernicus.OnDemand
                 var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
                 var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
 
-                var job = new CreateGreyscaleFromRGBJob
+                var job = new CreateGreyscaleJob
                 {
                     pixels = pixels,
                     image = image
