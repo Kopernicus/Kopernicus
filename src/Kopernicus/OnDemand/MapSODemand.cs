@@ -28,10 +28,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Kopernicus.Components;
 using KSPTextureLoader;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace Kopernicus.OnDemand
@@ -42,7 +39,6 @@ namespace Kopernicus.OnDemand
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     [SuppressMessage("ReSharper", "SwitchStatementMissingSomeCases")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [BurstCompile]
     public class MapSODemand : MapSO, ILoadOnDemand, IPreloadOnDemand
     {
         new const float Byte2Float = 0.003921569f;
@@ -376,141 +372,57 @@ namespace Kopernicus.OnDemand
             UnsafeUtility.MemCpy(Image.GetUnsafePtr(), data.GetUnsafePtr(), Image.Size);
         }
 
-        [BurstCompile]
-        struct CreateGreyscaleFromRGBJob : IJobParallelFor
-        {
-            [ReadOnly]
-            public NativeArray<Color32> pixels;
-
-            [WriteOnly]
-            public NativeArray<byte> image;
-
-            public void Execute(int index)
-            {
-                image[index] = pixels[index].r;
-            }
-        }
-
-        private unsafe new void CreateGreyscaleFromRGB(Texture2D tex)
+        private new void CreateGreyscaleFromRGB(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length);
             Format = MemoryFormat.R8;
 
-            fixed (Color32* ppixels = pixels32)
+            for (Int32 i = 0; i < pixels32.Length; i++)
             {
-                var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
-                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
-
-                var job = new CreateGreyscaleFromRGBJob
-                {
-                    pixels = pixels,
-                    image = image
-                };
-
-                job.Schedule(pixels32.Length, 16384)
-                    .Complete();
+                Image[i] = pixels32[i].r;
             }
         }
 
-        [BurstCompile]
-        struct CreateHeightAlphaJob : IJobParallelFor
-        {
-            [ReadOnly]
-            public NativeArray<Color32> pixels;
-
-            [WriteOnly]
-            public NativeArray<byte> image;
-
-            public void Execute(int index)
-            {
-                var pixel = pixels[index];
-
-                image[index * 2 + 0] = pixel.r;
-                image[index * 2 + 1] = pixel.a;
-            }
-        }
-
-        private unsafe new void CreateHeightAlpha(Texture2D tex)
+        private new void CreateHeightAlpha(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length * 2);
             Format = MemoryFormat.RA16;
 
-            fixed (Color32* ppixels = pixels32)
+            for (Int32 i = 0; i < pixels32.Length; i++)
             {
-                var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
-                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
-
-                var job = new CreateHeightAlphaJob
-                {
-                    pixels = pixels,
-                    image = image
-                };
-
-                job.Schedule(pixels32.Length, 16384)
-                    .Complete();
-            }
-        }
-        
-
-        [BurstCompile]
-        struct CreateRgbJob : IJobParallelFor
-        {
-            [ReadOnly]
-            public NativeArray<Color32> pixels;
-
-            [WriteOnly]
-            public NativeArray<byte> image;
-
-            public void Execute(int index)
-            {
-                var pixel = pixels[index];
-
-                image[index * 3 + 0] = pixel.r;
-                image[index * 3 + 1] = pixel.g;
-                image[index * 3 + 2] = pixel.b;
+                Image[i * 2] = pixels32[i].r;
+                Image[i * 2 + 1] = pixels32[i].a;
             }
         }
 
-        private unsafe void CreateRgb(Texture2D tex)
+        private void CreateRgb(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length * 3);
             Format = MemoryFormat.RGB24;
 
-            fixed (Color32* ppixels = pixels32)
+            for (Int32 i = 0; i < pixels32.Length; i++)
             {
-                var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
-                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
-
-                var job = new CreateHeightAlphaJob
-                {
-                    pixels = pixels,
-                    image = image
-                };
-
-                job.Schedule(pixels32.Length, 16384)
-                    .Complete();
+                Image[i * 3] = pixels32[i].r;
+                Image[i * 3 + 1] = pixels32[i].g;
+                Image[i * 3 + 2] = pixels32[i].b;
             }
         }
 
-        private unsafe void CreateRgba(Texture2D tex)
+        private void CreateRgba(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length * 4);
             Format = MemoryFormat.RGBA32;
 
-            if (sizeof(Color32) != 4)
-                throw new InvalidOperationException("sizeof(Color32) is not 4. This should never happen.");
-
-            fixed (Color32* pixels = pixels32)
+            for (Int32 i = 0; i < pixels32.Length; i++)
             {
-                UnsafeUtility.MemCpy(
-                    Image.GetUnsafePtr(),
-                    pixels,
-                    Image.Size
-                );
+                Image[i * 3] = pixels32[i].r;
+                Image[i * 3 + 1] = pixels32[i].g;
+                Image[i * 3 + 2] = pixels32[i].b;
+                Image[i * 3 + 3] = pixels32[i].a;
             }
         }
         #endregion
