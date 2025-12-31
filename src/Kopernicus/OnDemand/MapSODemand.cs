@@ -484,7 +484,7 @@ namespace Kopernicus.OnDemand
                 var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
                 var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
 
-                var job = new CreateHeightAlphaJob
+                var job = new CreateRgbJob
                 {
                     pixels = pixels,
                     image = image
@@ -495,22 +495,45 @@ namespace Kopernicus.OnDemand
             }
         }
 
+        [BurstCompile]
+        struct CreateRgbaJob : IJobParallelFor
+        {
+            [ReadOnly]
+            public NativeArray<Color32> pixels;
+
+            [WriteOnly]
+            public NativeArray<byte> image;
+
+            public void Execute(int index)
+            {
+                var pixel = pixels[index];
+                
+                image[index * 4 + 0] = pixel.r;
+                image[index * 4 + 1] = pixel.g;
+                image[index * 4 + 2] = pixel.b;
+                image[index * 4 + 3] = pixel.a;
+            }
+        }
+
         private unsafe void CreateRgba(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeByteArray(pixels32.Length * 4);
-            Format = MemoryFormat.RGBA32;
+            Format = MemoryFormat.RGB24;
 
-            if (sizeof(Color32) != 4)
-                throw new InvalidOperationException("sizeof(Color32) is not 4. This should never happen.");
-
-            fixed (Color32* pixels = pixels32)
+            fixed (Color32* ppixels = pixels32)
             {
-                UnsafeUtility.MemCpy(
-                    Image.GetUnsafePtr(),
-                    pixels,
-                    Image.Size
-                );
+                var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
+                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
+
+                var job = new CreateRgbaJob
+                {
+                    pixels = pixels,
+                    image = image
+                };
+
+                job.Schedule(pixels32.Length, 16384)
+                    .Complete();
             }
         }
         #endregion
