@@ -87,7 +87,7 @@ namespace Kopernicus.OnDemand
         // Representation of the map
         private TextureHandle<Texture2D> Handle { get; set; }
         private Texture2D Data { get; set; }
-        private NativeByteArray Image { get; set; }
+        private NativeArray<byte> Image;
 
         private MapState State { get; set; }
         private MemoryFormat Format { get; set; }
@@ -176,6 +176,9 @@ namespace Kopernicus.OnDemand
             // CreateMap may unload the texture so we should get the asset bundle path first
             var assetBundle = Handle?.AssetBundle;
 
+            // Make sure we're in an error state if CreateMap throws.
+            State = MapState.Error;
+
             // If the map isn't null
             CreateMap(Depth, map);
             State = MapState.Loaded;
@@ -191,6 +194,10 @@ namespace Kopernicus.OnDemand
         /// </summary>
         public void Unload()
         {
+            // Nuke the map, does nothing if the map is default
+            Image.Dispose();
+            Image = default;
+
             // Clear the texture handle regardless of whether we are loaded or not.
             Handle?.Dispose();
             Handle = null;
@@ -201,10 +208,6 @@ namespace Kopernicus.OnDemand
             {
                 return;
             }
-
-            // Nuke the map
-            if (OnDemandStorage.UseManualMemoryManagement)
-                Image.Free();
 
             // Set flags
             Format = MemoryFormat.None;
@@ -228,13 +231,14 @@ namespace Kopernicus.OnDemand
                 Debug.Log("[OD] ERROR: Failed to load map");
                 return;
             }
+            
+            _name = tex.name;
+            _width = tex.width;
+            _height = tex.height;
+            _bpp = (int)depth;
 
             if (OnDemandStorage.UseManualMemoryManagement)
             {
-                _name = tex.name;
-                _width = tex.width;
-                _height = tex.height;
-                _bpp = (Int32)depth;
                 switch (depth)
                 {
                     case MapDepth.Greyscale:
@@ -323,20 +327,54 @@ namespace Kopernicus.OnDemand
             }
             else
             {
-                // Set _data
                 Data = tex;
-                Format = MemoryFormat.None;
-
-                // Variables
+                Depth = depth;
+                _name = tex.name;
                 _width = tex.width;
                 _height = tex.height;
-                Depth = depth;
-                _bpp = 4;
-                _rowWidth = _width * _bpp;
+                _bpp = (int)depth;
+
+                switch (tex.format)
+                {
+                    case TextureFormat.R8:
+                    case TextureFormat.Alpha8:
+                    case TextureFormat.RGB24:
+                    case TextureFormat.RGBA32:
+                        UseRawTextureData(tex);
+                        _rowWidth = _width * Stride;
+                        break;
+
+                    case TextureFormat.R16:
+                        UseRawTextureData(tex);
+                        if (depth == MapDepth.HeightAlpha)
+                            Format = MemoryFormat.RA16;
+                        _rowWidth = _width * Stride;
+                        break;
+
+                    default:
+                        Format = MemoryFormat.None;
+                        _bpp = 4;
+                        _rowWidth = _width * _bpp;
+                        break;
+                }
 
                 // We're compiled
                 _isCompiled = true;
             }
+        }
+
+        private void UseRawTextureData(Texture2D tex)
+        {
+            Format = tex.format switch
+            {
+                TextureFormat.R8 => MemoryFormat.R8,
+                TextureFormat.Alpha8 => MemoryFormat.A8,
+                TextureFormat.R16 => MemoryFormat.R16,
+                TextureFormat.RGB24 => MemoryFormat.RGB24,
+                TextureFormat.RGBA32 => MemoryFormat.RGBA32,
+                _ => throw new InvalidOperationException($"texture format {tex.format} cannot be compiled directly to a memory texture"),
+            };
+            Image = tex.GetRawTextureData<byte>();
         }
 
         private unsafe void CreateDirectlyFromTexture(Texture2D tex)
@@ -367,13 +405,13 @@ namespace Kopernicus.OnDemand
                     throw new InvalidOperationException($"texture format {tex.format} cannot be compiled directly to a memory texture");
             }
 
-            Image = new NativeByteArray(tex.width * tex.height * Stride);
+            Image = new NativeArray<byte>(tex.width * tex.height * Stride, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             
             var data = tex.GetRawTextureData<byte>();
-            if (data.Length < Image.Size)
+            if (data.Length < Image.Length)
                 throw new InvalidOperationException("image data was too small for destination array");
 
-            UnsafeUtility.MemCpy(Image.GetUnsafePtr(), data.GetUnsafePtr(), Image.Size);
+            UnsafeUtility.MemCpy(Image.GetUnsafePtr(), data.GetUnsafePtr(), Image.Length);
         }
 
         [BurstCompile]
@@ -394,18 +432,17 @@ namespace Kopernicus.OnDemand
         private unsafe new void CreateGreyscaleFromRGB(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
-            Image = new NativeByteArray(pixels32.Length);
+            Image = new NativeArray<byte>(pixels32.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             Format = MemoryFormat.R8;
 
             fixed (Color32* ppixels = pixels32)
             {
                 var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
-                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
 
                 var job = new CreateGreyscaleJob
                 {
                     pixels = pixels,
-                    image = image
+                    image = Image
                 };
 
                 job.Schedule(pixels32.Length, 16384)
@@ -434,18 +471,17 @@ namespace Kopernicus.OnDemand
         private unsafe new void CreateHeightAlpha(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
-            Image = new NativeByteArray(pixels32.Length * 2);
+            Image = new NativeArray<byte>(pixels32.Length * 2, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             Format = MemoryFormat.RA16;
 
             fixed (Color32* ppixels = pixels32)
             {
                 var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
-                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
 
                 var job = new CreateHeightAlphaJob
                 {
                     pixels = pixels,
-                    image = image
+                    image = Image
                 };
 
                 job.Schedule(pixels32.Length, 16384)
@@ -476,18 +512,17 @@ namespace Kopernicus.OnDemand
         private unsafe void CreateRgb(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
-            Image = new NativeByteArray(pixels32.Length * 3);
+            Image = new NativeArray<byte>(pixels32.Length * 3, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             Format = MemoryFormat.RGB24;
 
             fixed (Color32* ppixels = pixels32)
             {
                 var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
-                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
 
                 var job = new CreateRgbJob
                 {
                     pixels = pixels,
-                    image = image
+                    image = Image
                 };
 
                 job.Schedule(pixels32.Length, 16384)
@@ -518,18 +553,17 @@ namespace Kopernicus.OnDemand
         private unsafe void CreateRgba(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
-            Image = new NativeByteArray(pixels32.Length * 4);
+            Image = new NativeArray<byte>(pixels32.Length * 4, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
             Format = MemoryFormat.RGB24;
 
             fixed (Color32* ppixels = pixels32)
             {
                 var pixels = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<Color32>(ppixels, pixels32.Length, Allocator.Invalid);
-                var image = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(Image.GetUnsafePtr(), Image.Size, Allocator.Invalid);
 
                 var job = new CreateRgbaJob
                 {
                     pixels = pixels,
-                    image = image
+                    image = Image
                 };
 
                 job.Schedule(pixels32.Length, 16384)
@@ -593,7 +627,7 @@ namespace Kopernicus.OnDemand
                     return 0;
             }
 
-            if (!OnDemandStorage.UseManualMemoryManagement)
+            if (!Image.IsCreated)
                 return (byte)(Data.GetPixel(x, y).r * Float2Byte);
 
             x = WrapWidth(x);
@@ -623,7 +657,7 @@ namespace Kopernicus.OnDemand
                     return Color.black;
             }
 
-            if (!OnDemandStorage.UseManualMemoryManagement)
+            if (!Image.IsCreated)
                 return Data.GetPixel(x, y);
 
             x = WrapWidth(x);
@@ -703,7 +737,7 @@ namespace Kopernicus.OnDemand
                     return default;
             }
 
-            if (!OnDemandStorage.UseManualMemoryManagement)
+            if (!Image.IsCreated)
                 return Data.GetPixel(x, y);
 
             x = WrapWidth(x);
@@ -784,7 +818,7 @@ namespace Kopernicus.OnDemand
                     return 0f;
             }
 
-            if (!OnDemandStorage.UseManualMemoryManagement)
+            if (!Image.IsCreated)
             {
                 var pixel = Data.GetPixel(x, y);
 
@@ -865,7 +899,7 @@ namespace Kopernicus.OnDemand
                     return new ValueHeightAlpha(0f, 0f);
             }
 
-            if (!OnDemandStorage.UseManualMemoryManagement)
+            if (!Image.IsCreated)
             {
                 var pixel = Data.GetPixel(x, y);
                 
@@ -946,7 +980,7 @@ namespace Kopernicus.OnDemand
                     return 0f;
             }
 
-            if (!OnDemandStorage.UseManualMemoryManagement)
+            if (!Image.IsCreated)
                 return Data.GetPixel(x, y).grayscale;
 
             x = WrapWidth(x);
@@ -999,7 +1033,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            if (OnDemandStorage.UseManualMemoryManagement)
+            if (Data is null)
             {
                 int stride = Stride;
                 Color32[] color32 = new Color32[Size];
@@ -1031,7 +1065,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            if (OnDemandStorage.UseManualMemoryManagement)
+            if (Data is null)
             {
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
@@ -1065,7 +1099,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            if (OnDemandStorage.UseManualMemoryManagement)
+            if (Data is null)
             {
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
@@ -1099,7 +1133,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            if (OnDemandStorage.UseManualMemoryManagement)
+            if (Data is null)
             {
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
@@ -1130,7 +1164,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            if (OnDemandStorage.UseManualMemoryManagement)
+            if (Data is null)
             {
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
