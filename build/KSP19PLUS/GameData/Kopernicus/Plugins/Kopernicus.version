@@ -1,25 +1,10 @@
 {
-	"NAME": "Kopernicus",
-	"URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version",
-	"DOWNLOAD": "https://github.com/Kopernicus/Kopernicus/releases/latest",
-	"CHANGE_LOG_URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/README.md",
-	"VERSION":
-	{
-		"MAJOR": 1,
-		"MINOR": 12,
-		"PATCH": 1,
-		"BUILD": 234
-	},
-	"KSP_VERSION_MIN":
-	{
-		"MAJOR": 1,
-		"MINOR": 12,
-		"PATCH": 0
-	},
-	"KSP_VERSION_MAX":
-	{
-		"MAJOR": 1,
-		"MINOR": 12,
-		"PATCH": 99
-	}
+  "NAME": "Kopernicus",
+  "DOWNLOAD": "https://github.com/Kopernicus/Kopernicus/releases/latest",
+  "CHANGE_LOG_URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/README.md",
+  "VERSION": "1.12.1.234",
+  "URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version",
+  "KSP_VERSION": "1.12",
+  "KSP_VERSION_MIN": "1.12.0",
+  "KSP_VERSION_MAX": "1.12.99"
 }

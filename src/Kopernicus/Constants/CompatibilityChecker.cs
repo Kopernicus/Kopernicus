@@ -51,11 +51,11 @@ namespace Kopernicus.Constants
 #if !KSP_VERSION_1_8
         internal const string VERSION_MINOR = "12";
 #else
-        internal String Int32 VERSION_MINOR = "8";
+        internal const string VERSION_MINOR = "8";
 #endif
         internal const string VERSION_MINOR_LOWER_LIMIT = "8";
         internal const string REVISION = "1";
-        internal const string KOPERNICUS = "234";
+        internal const string KOPERNICUS = BuildInfo.KopernicusRelease;
         public static Boolean IsCompatible()
         {
             /*-----------------------------------------------*\
