@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>1.0.0.0</Version>
+    <Description>A parsing library for ConfigNodes that uses Reflection and Attribution.</Description>
+    <Copyright>Copyright (c) Nathaniel R. Lewis (Teknoman117), Thomas P.</Copyright>
+    <Product>Kopernicus.Parser</Product>
+
+    <!-- Other configuration -->
+    <TargetFramework>net4.8</TargetFramework>
+    <LangVersion>13</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RootNamespace>Kopernicus.ConfigParser</RootNamespace>
+
+    <!-- KSPBuildTools -->
+    <!-- Don't copy anything to any GameData folders -->
+    <KSPBT_CopyDLLsToPluginFolder>false</KSPBT_CopyDLLsToPluginFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="KSPBuildTools" Version="1.1.1" />
+  </ItemGroup>
+</Project>

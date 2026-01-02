@@ -76,17 +76,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Kopernicus.Parser/Kopernicus.Parser.csproj" />
+
     <PackageReference Include="KSPBuildTools" Version="1.1.1" />
 
     <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-
-    <Reference Include="Kopernicus.Parser">
-      <HintPath>$(DepDirPath)\Kopernicus.Parser.dll</HintPath>
-      <!-- <Private>false</Private> -->
-    </Reference>
 
     <Reference Include="HarmonyKSP">
       <HintPath>$(DepDirPath)\Harmony\0Harmony.dll</HintPath>

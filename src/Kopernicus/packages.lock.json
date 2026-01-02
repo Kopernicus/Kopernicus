@@ -21,6 +21,12 @@
         "type": "Transitive",
         "resolved": "1.2.0",
         "contentHash": "AW7iyzudTA4VzW3pYjTzy+MucrF+wUWKQulqx/EnqvlqLwVseNk2nqlWpTRySItQCgBv0w7o/dqTN4wj0tWJhA=="
+      },
+      "kopernicus.parser": {
+        "type": "Project",
+        "dependencies": {
+          "KSPBuildTools": "[1.1.1, )"
+        }
       }
     }
   }
