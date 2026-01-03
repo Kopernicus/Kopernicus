@@ -730,6 +730,7 @@ namespace Kopernicus.Components
                     JobHandle.ScheduleBatchedJobs();
 
                     texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGB24, mipChain: false);
+                    texture2D.name = _name;
 
                     // This is the single slowest operation in this whole thing, dwarfing
                     // literally anything else. We try and hide the latency a bit by doing
@@ -754,6 +755,7 @@ namespace Kopernicus.Components
         public unsafe override Texture2D CompileRGBA()
         {
             Texture2D texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGBA32, mipChain: false);
+            texture2D.name = _name;
             // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGBA32, mipChain: false);
             NativeArray<Color32> textureData = texture2D.GetRawTextureData<Color32>();
 
