@@ -193,7 +193,7 @@ namespace Kopernicus.Components
             _data = new byte[size];
 
             int badPixelsCount = 0;
-            
+
             fixed (Color32* pcolorData = colorData)
             fixed (byte* pdata = _data)
             {
@@ -206,7 +206,7 @@ namespace Kopernicus.Components
                     output = ndata,
                     input = ncolorData,
                     biomeColors = biomeColors,
-                    
+
                     width = _width,
                     height = _height,
                     nonExactThreshold = nonExactThreshold
@@ -279,7 +279,7 @@ namespace Kopernicus.Components
 
         private static int GetBiomeIndexFromTexture(double x, double y, NativeArray<RGBA32> biomeColors, NativeArray<Color32> colorData, int width, int height, float nonExactThreshold)
         {
-                        GetBilinearCoordinates(x, y, width, height, out int minX, out int maxX, out int minY, out int maxY, out double midX, out double midY);
+            GetBilinearCoordinates(x, y, width, height, out int minX, out int maxX, out int minY, out int maxY, out double midX, out double midY);
 
             // Get 4 samples pixels for bilinear interpolation
             RGBA32 c00 = GetRGBA32AtTextureCoords(minX, minY, colorData, width);
@@ -340,7 +340,7 @@ namespace Kopernicus.Components
                 var nfrom = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pfromData, fromData.Length, Allocator.Invalid);
                 var ndata = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(pdata, _data.Length, Allocator.Invalid);
 
-                
+
                 var job = new ConvertFromStockMapJob
                 {
                     badPixelsCount = &badPixelsCount,
@@ -381,7 +381,7 @@ namespace Kopernicus.Components
             {
                 ref int badPixelsCount = ref *this.badPixelsCount;
                 int baseIndex = y * width;
-                
+
                 int inputBaseIndex = y * inputRowWidth;
                 int outputBaseIndex = y * width;
 
@@ -833,8 +833,7 @@ namespace Kopernicus.Components
             public override bool Equals(object obj) => obj is RGBA32 other && rgba == other.rgba;
             public override int GetHashCode() => rgba;
         }
-    
-    
+
         // This reflects the actual creation flags in
         // https://github.com/Unity-Technologies/UnityCsReference/blob/59b03b8a0f179c0b7e038178c90b6c80b340aa9f/Runtime/Export/Graphics/GraphicsEnums.cs#L626
         //
