@@ -255,6 +255,7 @@ $RECYCLE.BIN/
 *.rej
 
 # Kopernicus
-build/GameData/Kopernicus/Cache/
+build/KSP18/GameData/Kopernicus/Cache/
+build/KSP19PLUS/GameData/Kopernicus/Cache/
 !dependencies/*
 !dependencies/*/*
