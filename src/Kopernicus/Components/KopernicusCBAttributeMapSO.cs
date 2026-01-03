@@ -655,6 +655,7 @@ namespace Kopernicus.Components
             public byte b;
         }
 
+        [BurstCompile]
         unsafe struct CompileRGBJob : IJobParallelFor
         {
             [ReadOnly]
@@ -686,7 +687,7 @@ namespace Kopernicus.Components
             }
         }
 
-        public unsafe override Texture2D CompileRGB()
+        public override unsafe Texture2D CompileRGB()
         {
             var pixelData = new NativeArray<RGB>(
                 _data.Length,
@@ -751,7 +752,7 @@ namespace Kopernicus.Components
             return texture2D;
         }
 
-        public unsafe override Texture2D CompileRGBA()
+        public override unsafe Texture2D CompileRGBA()
         {
             Texture2D texture2D = CreateUninitializedTexture(_width, _height, TextureFormat.RGBA32, mipChain: false);
             // Texture2D texture2D = new Texture2D(_width, _height, TextureFormat.RGBA32, mipChain: false);
@@ -773,7 +774,7 @@ namespace Kopernicus.Components
                 };
             }
 
-            fixed(byte* data = _data)
+            fixed (byte* data = _data)
             {
                 Color32* texData = (Color32*)textureData.GetUnsafePtr();
 
