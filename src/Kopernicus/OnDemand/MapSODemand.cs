@@ -162,7 +162,7 @@ namespace Kopernicus.OnDemand
             {
                 map = Handle.GetTexture();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.Log($"[OD] ERROR: Failed to load map {name} at path {Path}");
                 Debug.LogException(e);
@@ -231,7 +231,7 @@ namespace Kopernicus.OnDemand
                 Debug.Log("[OD] ERROR: Failed to load map");
                 return;
             }
-            
+
             _name = tex.name;
             _width = tex.width;
             _height = tex.height;
@@ -406,7 +406,7 @@ namespace Kopernicus.OnDemand
             }
 
             Image = new NativeArray<byte>(tex.width * tex.height * Stride, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            
+
             var data = tex.GetRawTextureData<byte>();
             if (data.Length < Image.Length)
                 throw new InvalidOperationException("image data was too small for destination array");
@@ -468,7 +468,7 @@ namespace Kopernicus.OnDemand
             }
         }
 
-        private unsafe new void CreateHeightAlpha(Texture2D tex)
+        private new unsafe void CreateHeightAlpha(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeArray<byte>(pixels32.Length * 2, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
@@ -488,7 +488,7 @@ namespace Kopernicus.OnDemand
                     .Complete();
             }
         }
-        
+
 
         [BurstCompile]
         struct CreateRgbJob : IJobParallelFor
@@ -542,7 +542,7 @@ namespace Kopernicus.OnDemand
             public void Execute(int index)
             {
                 var pixel = pixels[index];
-                
+
                 image[index * 4 + 0] = pixel.r;
                 image[index * 4 + 1] = pixel.g;
                 image[index * 4 + 2] = pixel.b;
@@ -670,7 +670,7 @@ namespace Kopernicus.OnDemand
                 case MemoryFormat.R8:
                     r = Byte2Float * Image[index];
                     return new Color(r, r, r, 1f);
-                    
+
                 case MemoryFormat.A8:
                     a = Byte2Float * Image[index];
                     return new Color(0f, 0f, 0f, a);
@@ -750,7 +750,7 @@ namespace Kopernicus.OnDemand
                 case MemoryFormat.R8:
                     r = Image[index];
                     return new Color32(r, r, r, 255);
-                    
+
                 case MemoryFormat.A8:
                     a = Image[index];
                     return new Color32(0, 0, 0, a);
@@ -796,7 +796,7 @@ namespace Kopernicus.OnDemand
 
             return base.GetPixelColor32(x, y);
         }
-    
+
         public override Color GetPixelColor32(Single x, Single y)
         {
             if (!IsLoaded)
@@ -902,7 +902,7 @@ namespace Kopernicus.OnDemand
             if (!Image.IsCreated)
             {
                 var pixel = Data.GetPixel(x, y);
-                
+
                 switch (Depth)
                 {
                     case MapDepth.HeightAlpha:
@@ -973,7 +973,7 @@ namespace Kopernicus.OnDemand
         #region GreyFloat
         public override float GreyFloat(int x, int y)
         {
-            
+
             if (!IsLoaded)
             {
                 if (!EnsureLoaded())
