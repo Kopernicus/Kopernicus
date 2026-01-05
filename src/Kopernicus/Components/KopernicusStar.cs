@@ -30,8 +30,6 @@ using System.Linq;
 using System.Reflection;
 using ModularFI;
 using UnityEngine;
-using static iT;
-using UnityEngine.UIElements;
 
 namespace Kopernicus.Components
 {
