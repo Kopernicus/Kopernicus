@@ -319,6 +319,7 @@ namespace Kopernicus.OnDemand
                 }
 
                 _rowWidth = _width * Stride;
+                _bpp = Stride;
                 _isCompiled = true;
 
                 // Clean up what we don't need anymore
@@ -676,7 +677,7 @@ namespace Kopernicus.OnDemand
                     return new Color(0f, 0f, 0f, a);
 
                 case MemoryFormat.R16:
-                    r = Ushort2Float * (Image[index] + Image[index + 1] << 8);
+                    r = Ushort2Float * (Image[index] + (Image[index + 1] << 8));
                     return new Color(r, r, r, 1f);
 
                 case MemoryFormat.RA16:
@@ -851,7 +852,7 @@ namespace Kopernicus.OnDemand
                     return Byte2Float * Image[index];
 
                 case MemoryFormat.R16:
-                    return Ushort2Float * (Image[index] + Image[index + 1] << 8);
+                    return Ushort2Float * (Image[index] + (Image[index + 1] << 8));
 
                 case MemoryFormat.RA16:
                     return (Byte2Float / 2f) * (Image[index] + Image[index + 1]);
@@ -928,7 +929,7 @@ namespace Kopernicus.OnDemand
                     return new ValueHeightAlpha(0f, Byte2Float * Image[index]);
 
                 case MemoryFormat.R16:
-                    return new ValueHeightAlpha(Ushort2Float * (Image[index] + Image[index + 1] << 8), 1f);
+                    return new ValueHeightAlpha(Ushort2Float * (Image[index] + (Image[index + 1] << 8)), 1f);
 
                 case MemoryFormat.RA16:
                     return new ValueHeightAlpha(Byte2Float * Image[index], Byte2Float * Image[index + 1]);
@@ -997,7 +998,7 @@ namespace Kopernicus.OnDemand
                     return Byte2Float * Image[index];
 
                 case MemoryFormat.R16:
-                    return Ushort2Float * (Image[index] + Image[index + 1] << 8);
+                    return Ushort2Float * (Image[index] + (Image[index + 1] << 8));
 
                 default:
                     return 0f;
