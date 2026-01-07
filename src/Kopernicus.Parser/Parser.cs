@@ -1006,23 +1006,21 @@ namespace Kopernicus.ConfigParser
                     nameToType.Add(name, potentialTypes);
                 }
 
-                if (!potentialTypes.TryGetValue(targetType, out Type elementType))
+                if (potentialTypes.TryGetValue(targetType, out Type elementType))
+                    return elementType;
+
+                foreach (Type potentialType in ModTypes)
                 {
-                    elementType = null;
-                    foreach (Type potentialType in ModTypes)
+                    if (potentialType.Name == name
+                        && !Equals(potentialType.Assembly, typeof(HighLogic).Assembly)
+                        && targetType.IsAssignableFrom(potentialType))
                     {
-                        if (potentialType.Name == name
-                            && !Equals(potentialType.Assembly, typeof(HighLogic).Assembly)
-                            && targetType.IsAssignableFrom(potentialType))
-                        {
-                            elementType = potentialType;
-                            break;
-                        }
+                        potentialTypes.Add(targetType, potentialType);
+                        return potentialType;
                     }
-                    potentialTypes.Add(targetType, elementType);
                 }
 
-                return elementType;
+                throw new Exception($"Type {name} does not exist");
             }
         }
 
