@@ -318,6 +318,18 @@ namespace Kopernicus.Components
         // MaterialFixer
         private class MaterialFixer : MonoBehaviour
         {
+            static readonly int _NearGrassTexture = Shader.PropertyToID("_NearGrassTexture");
+            static readonly int _NearGrassTiling = Shader.PropertyToID("_NearGrassTiling");
+            static readonly int _FarGrassTexture = Shader.PropertyToID("_FarGrassTexture");
+            static readonly int _FarGrassTiling = Shader.PropertyToID("_FarGrassTiling");
+            static readonly int _FarGrassBlendDistance = Shader.PropertyToID("_FarGrassBlendDistance");
+            static readonly int _GrassColor = Shader.PropertyToID("_GrassColor");
+            static readonly int _TarmacTexture = Shader.PropertyToID("_TarmacTexture");
+            static readonly int _Opacity = Shader.PropertyToID("_Opacity");
+            static readonly int _RimColor = Shader.PropertyToID("_RimColor");
+            static readonly int _RimFalloff = Shader.PropertyToID("_RimFalloff");
+            static readonly int _UnderwaterFogFactor = Shader.PropertyToID("_UnderwaterFogFactor");
+
             private void Update()
             {
                 if (HighLogic.LoadedScene != GameScenes.SPACECENTER)
@@ -326,28 +338,46 @@ namespace Kopernicus.Components
                 }
 
                 Material[] materials = Resources.FindObjectsOfTypeAll<Material>().Where(m => (m.shader.name.Contains("Ground KSC"))).ToArray();
-                for (int i = materials.Length; i > 0; i--)
+                foreach (var material in materials)
                 {
-                    var material = materials[i - 1];
-
                     // Grass
-                    if (Instance.mainTexture) material.SetTexture("_NearGrassTexture", Instance.mainTexture);
-                    if (Instance.Material.nearGrassTexture) material.SetTexture("_NearGrassTexture", Instance.Material.nearGrassTexture);
-                    if (Instance.Material.nearGrassTiling.HasValue) material.SetFloat("_NearGrassTiling", material.GetFloat("_NearGrassTiling") * Instance.Material.nearGrassTiling.Value);
-                    if (Instance.Material.farGrassTexture) material.SetTexture("_FarGrassTexture", Instance.Material.farGrassTexture);
-                    if (Instance.Material.farGrassTiling.HasValue) material.SetFloat("_FarGrassTiling", material.GetFloat("_FarGrassTiling") * Instance.Material.farGrassTiling.Value);
-                    if (Instance.Material.farGrassBlendDistance.HasValue) material.SetFloat("_FarGrassBlendDistance", Instance.Material.farGrassBlendDistance.Value);
-                    if (Instance.color.HasValue) material.SetColor("_GrassColor", Instance.color.Value);
-                    if (Instance.Material.grassColor.HasValue) material.SetColor("_GrassColor", Instance.Material.grassColor.Value);
+                    if (Instance.mainTexture && material.HasProperty(_NearGrassTexture))
+                        material.SetTexture(_NearGrassTexture, Instance.mainTexture);
+                    if (Instance.Material.nearGrassTexture && material.HasProperty(_NearGrassTexture))
+                        material.SetTexture(_NearGrassTexture, Instance.Material.nearGrassTexture);
+                    if (Instance.Material.nearGrassTiling is float nearGrassTiling && material.HasProperty(_NearGrassTiling))
+                        material.SetFloat(_NearGrassTiling, material.GetFloat(_NearGrassTiling) * nearGrassTiling);
+                    if (Instance.Material.farGrassTexture && material.HasProperty(_FarGrassTexture))
+                        material.SetTexture(_FarGrassTexture, Instance.Material.farGrassTexture);
+                    if (Instance.Material.farGrassTiling is float farGrassTiling && material.HasProperty(_FarGrassTiling))
+                        material.SetFloat(_FarGrassTiling, material.GetFloat(_FarGrassTiling) * farGrassTiling);
+                    if (Instance.Material.farGrassBlendDistance is float farGrassBlendDistance && material.HasProperty(_FarGrassBlendDistance))
+                        material.SetFloat(_FarGrassBlendDistance, farGrassBlendDistance);
+                    if (Instance.color is Color color && material.HasProperty(_GrassColor))
+                        material.SetColor(_GrassColor, color);
+                    if (Instance.Material.grassColor is Color grassColor && material.HasProperty(_GrassColor))
+                        material.SetColor(_GrassColor, grassColor);
+
                     // Tarmac
-                    if (Instance.Material.tarmacTexture) material.SetTexture("_TarmacTexture", Instance.Material.tarmacTexture);
-                    if (Instance.Material.tarmacTextureOffset.HasValue) material.SetTextureOffset("_TarmacTexture", Instance.Material.tarmacTextureOffset.Value);
-                    if (Instance.Material.tarmacTextureScale.HasValue) material.SetTextureScale("_TarmacTexture", material.GetTextureScale("_TarmacTexture") * Instance.Material.tarmacTextureScale.Value);
+                    if (material.HasProperty(_TarmacTexture))
+                    {
+                        if (Instance.Material.tarmacTexture)
+                            material.SetTexture(_TarmacTexture, Instance.Material.tarmacTexture);
+                        if (Instance.Material.tarmacTextureOffset.HasValue)
+                            material.SetTextureOffset(_TarmacTexture, Instance.Material.tarmacTextureOffset.Value);
+                        if (Instance.Material.tarmacTextureScale.HasValue)
+                            material.SetTextureScale(_TarmacTexture, material.GetTextureScale(_TarmacTexture) * Instance.Material.tarmacTextureScale.Value);
+                    }
+
                     // Other
-                    if (Instance.Material.opacity.HasValue) material.SetFloat("_Opacity", Instance.Material.opacity.Value);
-                    if (Instance.Material.rimColor.HasValue) material.SetColor("_RimColor", Instance.Material.rimColor.Value);
-                    if (Instance.Material.rimFalloff.HasValue) material.SetFloat("_RimFalloff", Instance.Material.rimFalloff.Value);
-                    if (Instance.Material.underwaterFogFactor.HasValue) material.SetFloat("_UnderwaterFogFactor", Instance.Material.underwaterFogFactor.Value);
+                    if (Instance.Material.opacity is float opacity && material.HasProperty(_Opacity))
+                        material.SetFloat(_Opacity, opacity);
+                    if (Instance.Material.rimColor is Color rimColor && material.HasProperty(_RimColor))
+                        material.SetColor(_RimColor, rimColor);
+                    if (Instance.Material.rimFalloff is float rimFalloff && material.HasProperty(_RimFalloff))
+                        material.SetFloat(_RimFalloff, rimFalloff);
+                    if (Instance.Material.underwaterFogFactor is float underwaterFogFactor && material.HasProperty(_UnderwaterFogFactor))
+                        material.SetFloat(_UnderwaterFogFactor, underwaterFogFactor);
                 }
 
                 Destroy(this);
