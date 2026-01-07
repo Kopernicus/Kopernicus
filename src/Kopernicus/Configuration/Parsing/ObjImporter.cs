@@ -55,7 +55,10 @@ namespace Kopernicus.Configuration.Parsing
 
             Mesh mesh = new Mesh
             {
-                vertices = newVerts, uv = newUVs, normals = newNormals, triangles = newMesh.Triangles
+                vertices = newVerts,
+                uv = newUVs,
+                normals = newNormals,
+                triangles = newMesh.Triangles
             };
 
 

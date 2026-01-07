@@ -102,10 +102,10 @@ namespace Kopernicus.Components
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
-            { 
+            {
                 if ((uint)index >= (uint)Size)
                     ThrowOutOfRangeException(index);
-                
+
                 return ref ((byte*)_items)[index];
             }
         }

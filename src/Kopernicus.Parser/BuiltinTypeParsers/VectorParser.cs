@@ -44,7 +44,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public Vector2 Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -60,7 +60,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return ConfigNode.WriteVector(Value);
         }
-        
+
         /// <summary>
         /// Create a new Vector2Parser
         /// </summary>
@@ -68,7 +68,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
 
         }
-        
+
         /// <summary>
         /// Create a new Vector2Parser from an already existing value
         /// </summary>
@@ -84,7 +84,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>
@@ -106,7 +106,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public Vector3 Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -122,7 +122,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return ConfigNode.WriteVector(Value);
         }
-        
+
         /// <summary>
         /// Create a new Vector3Parser
         /// </summary>
@@ -130,7 +130,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
 
         }
-        
+
         /// <summary>
         /// Create a new Vector3Parser from an already existing value
         /// </summary>
@@ -146,7 +146,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>
@@ -168,7 +168,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public Vector3d Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -184,7 +184,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return ConfigNode.WriteVector(Value);
         }
-        
+
         /// <summary>
         /// Create a new Vector3DParser
         /// </summary>
@@ -192,7 +192,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
 
         }
-        
+
         /// <summary>
         /// Create a new Vector3DParser from an already existing value
         /// </summary>
@@ -208,7 +208,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>
@@ -230,7 +230,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public Vector4 Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -246,7 +246,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return ConfigNode.WriteVector(Value);
         }
-        
+
         /// <summary>
         /// Create a new Vector4Parser
         /// </summary>
@@ -254,7 +254,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
 
         }
-        
+
         /// <summary>
         /// Create a new Vector4Parser from an already existing value
         /// </summary>
@@ -270,7 +270,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>

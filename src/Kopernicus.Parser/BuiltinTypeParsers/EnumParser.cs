@@ -43,7 +43,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public T Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -59,7 +59,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return Value.ToString(CultureInfo.InvariantCulture);
         }
-        
+
         /// <summary>
         /// Create a new EnumParser
         /// </summary>
@@ -67,7 +67,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
 
         }
-        
+
         /// <summary>
         /// Create a new EnumParser from an already existing value
         /// </summary>
@@ -83,7 +83,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>

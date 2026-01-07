@@ -37,7 +37,7 @@ namespace Kopernicus.ConfigParser.Interfaces
         /// </summary>
         String ValueToString();
     }
-    
+
     /// <summary>
     /// Interface a class can implement to support conversion to a ConfigNode
     /// </summary>

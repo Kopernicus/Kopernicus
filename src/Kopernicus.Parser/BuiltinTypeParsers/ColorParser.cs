@@ -142,7 +142,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
                     BindingFlags.Static | BindingFlags.Public);
                 if (color != null)
                 {
-                    Value = (Color) color.GetValue(null, null);
+                    Value = (Color)color.GetValue(null, null);
                 }
             }
             else if (str.StartsWith("#"))

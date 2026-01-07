@@ -43,7 +43,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public Quaternion Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -59,7 +59,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return ConfigNode.WriteQuaternion(Value);
         }
-        
+
         /// <summary>
         /// Create a new QuaternionParser
         /// </summary>
@@ -67,7 +67,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
 
         }
-        
+
         /// <summary>
         /// Create a new QuaternionParser from an already existing value
         /// </summary>
@@ -83,7 +83,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>
@@ -104,7 +104,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public QuaternionD Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -120,7 +120,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return ConfigNode.WriteQuaternion(Value);
         }
-        
+
         /// <summary>
         /// Create a new QuaternionDParser
         /// </summary>
@@ -128,7 +128,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
 
         }
-        
+
         /// <summary>
         /// Create a new QuaternionDParser from an already existing value
         /// </summary>
@@ -144,7 +144,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>

@@ -46,7 +46,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public T Value { get; set; }
-        
+
         /// <summary>
         /// The method that is used to parse the string
         /// </summary>
@@ -67,7 +67,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return Value == null ? null : Value.ToString();
         }
-        
+
         /// <summary>
         /// Create a new NumericParser
         /// </summary>
@@ -81,7 +81,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
             _parserDelegate = (Func<string, T>)Delegate.CreateDelegate(typeof(Func<string, T>), methodInfo);
             parsers.Add(t, _parserDelegate);
         }
-        
+
         /// <summary>
         /// Create a new NumericParser from an already existing value
         /// </summary>
@@ -97,7 +97,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>

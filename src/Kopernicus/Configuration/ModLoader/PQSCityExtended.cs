@@ -266,7 +266,8 @@ namespace Kopernicus.Configuration.ModLoader
                 // Initialize the LOD range
                 Value = new PQSCityExtended.LODRange
                 {
-                    objects = new GameObject[0], renderers = new GameObject[0]
+                    objects = new GameObject[0],
+                    renderers = new GameObject[0]
                 };
             }
 

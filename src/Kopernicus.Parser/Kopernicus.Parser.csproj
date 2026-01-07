@@ -17,6 +17,13 @@
     <!-- KSPBuildTools -->
     <!-- Don't copy anything to any GameData folders -->
     <KSPBT_CopyDLLsToPluginFolder>false</KSPBT_CopyDLLsToPluginFolder>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

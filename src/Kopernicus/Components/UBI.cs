@@ -230,7 +230,10 @@ public static class UBI
             String[] split = ident.name.Split(';');
             idents.Add(new UBIIdent
             {
-                System = split[0], Body = split[1], IsAbstract = Boolean.Parse(split[2]), Object = ident.gameObject
+                System = split[0],
+                Body = split[1],
+                IsAbstract = Boolean.Parse(split[2]),
+                Object = ident.gameObject
             });
         }
 

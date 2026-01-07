@@ -145,7 +145,8 @@ namespace Kopernicus.Components.ModularScatter
                 // We use the Unity CombineMeshes feature instead, this is easier and a little bit faster.
                 combineInstances.Add(new CombineInstance()
                 {
-                    mesh = modularScatter.hasMultipleMeshes ? modularScatter.meshes[Random.Range(0, modularScatter.meshes.Count)] : modularScatter.baseMesh, transform = Matrix4x4.TRS(scatterPos, scatterRot, scatterScaleVector)
+                    mesh = modularScatter.hasMultipleMeshes ? modularScatter.meshes[Random.Range(0, modularScatter.meshes.Count)] : modularScatter.baseMesh,
+                    transform = Matrix4x4.TRS(scatterPos, scatterRot, scatterScaleVector)
                 });
                 // Some components require having a per scatter sub-object
                 // We instantiate them on-demand and reuse them. They aren't destroyed, even on scene switches

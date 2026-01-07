@@ -161,7 +161,7 @@ namespace Kopernicus.Configuration
             get { return Value.albedo; }
             set { Value.albedo = value; }
         }
-        
+
         // isStar - Are we a star?
         [ParserTarget("isStar")]
         public NumericParser<Boolean> IsStar
@@ -483,7 +483,7 @@ namespace Kopernicus.Configuration
                     {
                         texture = handle.GetTexture();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Logger.Active.Log($"Failed to load biomeMap '{_biomeMap}'");
                         Logger.Active.LogException(ex);

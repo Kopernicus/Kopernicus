@@ -346,7 +346,7 @@ namespace Kopernicus.Configuration.Parsing
                 // are we on-demand? Don't load now.
                 if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
-                    s =Utility.ValidateOnDemandTexture(s);
+                    s = Utility.ValidateOnDemandTexture(s);
 
                     MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                     map.Path = s;
@@ -590,7 +590,7 @@ namespace Kopernicus.Configuration.Parsing
                 // check if OnDemand.
                 if (useOnDemand && typeof(T) == typeof(MapSO))
                 {
-                    s =Utility.ValidateOnDemandTexture(s);
+                    s = Utility.ValidateOnDemandTexture(s);
 
                     MapSODemand map = ScriptableObject.CreateInstance<MapSODemand>();
                     map.Path = s;

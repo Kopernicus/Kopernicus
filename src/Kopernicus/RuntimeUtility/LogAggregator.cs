@@ -327,7 +327,10 @@ namespace System.IO.Compression
         {
             ZipStorer zip = new ZipStorer
             {
-                Comment = _comment, ZipFileStream = _stream, Access = FileAccess.Write, leaveOpen = _leaveOpen
+                Comment = _comment,
+                ZipFileStream = _stream,
+                Access = FileAccess.Write,
+                leaveOpen = _leaveOpen
             };
             return zip;
         }
@@ -362,9 +365,11 @@ namespace System.IO.Compression
 
             ZipStorer activeZip = null;
             using (ZipStorer zip = new ZipStorer
-                {
-                    ZipFileStream = _stream, Access = _access, leaveOpen = _leaveOpen
-                })
+            {
+                ZipFileStream = _stream,
+                Access = _access,
+                leaveOpen = _leaveOpen
+            })
             {
                 //zip.FileName = _filename;
 

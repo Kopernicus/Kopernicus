@@ -103,7 +103,8 @@ namespace Kopernicus
                 ParserOptions.Register("Kopernicus",
                     new ParserOptions.Data
                     {
-                        ErrorCallback = e => Logger.Active.LogException(e), LogCallback = s => Logger.Active.Log(s)
+                        ErrorCallback = e => Logger.Active.LogException(e),
+                        LogCallback = s => Logger.Active.Log(s)
                     });
 
                 // Yo garbage collector - we have work to do man
@@ -731,14 +732,7 @@ namespace Kopernicus
                 __instance.baseMod.OnStart(state);
                 if (__instance.currentMassVal <= 1E-09)
                 {
-                    if (RuntimeUtility.RuntimeUtility.KopernicusConfig.ApplyRealWorldDensityToMinorObjects)
-                    {
-                        __instance.currentMassVal = (double)__instance.part.mass * 50.0;
-                    }
-                    else
-                    {
-                        __instance.currentMassVal = (double)__instance.part.mass;
-                    }
+                    __instance.currentMassVal = (double)__instance.part.mass * RuntimeUtility.RuntimeUtility.KopernicusConfig.ApplyDensityMultToMinorObjects;
                 }
                 if (__instance.massThresholdVal <= 1E-09)
                 {
@@ -752,9 +746,34 @@ namespace Kopernicus
         }
     }
 
+    [HarmonyPatch(typeof(ModuleCometInfo), "OnStart")]
+    public static class ModuleCometInfo_OnStart
+    {
+        static bool Prefix(ModuleCometInfo __instance, PartModule.StartState state)
+        {
+            __instance.baseMod = __instance.part.Modules.GetModule<ModuleComet>(0);
+            if (__instance.baseMod != null)
+            {
+                __instance.baseMod.OnStart(state);
+                if (__instance.currentMassVal <= 1E-09)
+                {
+                    __instance.currentMassVal = (double)__instance.part.mass * RuntimeUtility.RuntimeUtility.KopernicusConfig.ApplyDensityMultToMinorObjects;
+                }
+                if (__instance.massThresholdVal <= 1E-09)
+                {
+                    __instance.SetupCometResources();
+                }
+                __instance.part.force_activate();
+                __instance.baseMod.SetCometMass((float)__instance.currentMassVal);
+                __instance.part.mass = (float)__instance.currentMassVal;
+            }
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(SentinelUtilities))]
     [HarmonyPatch("FindInnerAndOuterBodies")]
-    [HarmonyPatch(new Type[] { typeof(double), typeof(CelestialBody), typeof(CelestialBody) }, new ArgumentType[] {ArgumentType.Normal, ArgumentType.Out,ArgumentType.Out })]
+    [HarmonyPatch(new Type[] { typeof(double), typeof(CelestialBody), typeof(CelestialBody) }, new ArgumentType[] { ArgumentType.Normal, ArgumentType.Out, ArgumentType.Out })]
     public static class SentinelUtilities_FindInnerAndOuterBodies
     {
         static bool Prefix(ref bool __result, double SMA, out CelestialBody innerBody, out CelestialBody outerBody)

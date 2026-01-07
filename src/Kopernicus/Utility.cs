@@ -471,7 +471,10 @@ namespace Kopernicus
                     // Build the vertex data object for the PQS mods
                     PQS.VertexBuildData vertex = new PQS.VertexBuildData
                     {
-                        directionFromCenter = direction, vertHeight = body.Radius, u = uv.x, v = uv.y
+                        directionFromCenter = direction,
+                        vertHeight = body.Radius,
+                        u = uv.x,
+                        v = uv.y
                     };
 
                     // Build from the PQS
@@ -749,7 +752,9 @@ namespace Kopernicus
                     // Create the mesh
                     m = new Mesh
                     {
-                        vertices = vertices, triangles = triangles, uv = uvs
+                        vertices = vertices,
+                        triangles = triangles,
+                        uv = uvs
                     };
                     m.RecalculateNormals();
                     RecalculateTangents(m);

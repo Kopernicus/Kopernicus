@@ -77,7 +77,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return Value == null ? null : String.Join(" ", Value.Select(v => v.ToString()).ToArray());
         }
-        
+
         /// <summary>
         /// Create a new NumericCollectionParser
         /// </summary>
@@ -93,7 +93,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
             _parserDelegate = (Func<string, T>)Delegate.CreateDelegate(typeof(Func<string, T>), methodInfo);
             parsers.Add(t, _parserDelegate);
         }
-        
+
         /// <summary>
         /// Create a new NumericCollectionParser from already existing values
         /// </summary>
@@ -109,7 +109,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>

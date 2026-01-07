@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -120,7 +120,7 @@ namespace Kopernicus.OnDemand
             var options = new TextureLoadOptions
             {
                 Unreadable = true,
-                Hint = TextureLoadHint.BatchSynchronous, 
+                Hint = TextureLoadHint.BatchSynchronous,
             };
             mainTexHandle = TextureLoader.LoadTexture<Texture2D>(texture, options);
             bumpMapHandle = TextureLoader.LoadTexture<Texture2D>(normals, options);
@@ -131,20 +131,20 @@ namespace Kopernicus.OnDemand
                 scaledRenderer.sharedMaterial.SetTexture(MainTex, mainTexHandle.GetTexture());
             }
             // Ignore cases where the texture did not exist.
-            catch (FileNotFoundException) {}
+            catch (FileNotFoundException) { }
             catch (Exception ex)
             {
                 Debug.LogError($"[OD] Failed to load texture {texture}");
                 Debug.LogException(ex);
             }
-            
+
             // Load Normals
             try
             {
                 scaledRenderer.sharedMaterial.SetTexture(BumpMap, bumpMapHandle.GetTexture());
             }
             // Ignore cases where the texture did not exist.
-            catch (FileNotFoundException) {}
+            catch (FileNotFoundException) { }
             catch (Exception ex)
             {
                 Debug.LogError($"[OD] Failed to load texture {texture}");

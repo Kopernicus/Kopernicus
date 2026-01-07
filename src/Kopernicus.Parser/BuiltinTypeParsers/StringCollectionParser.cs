@@ -45,7 +45,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         /// The value that is being parsed
         /// </summary>
         public List<String> Value { get; set; }
-        
+
         /// <summary>
         /// Parse the Value from a string
         /// </summary>
@@ -62,15 +62,15 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return Value == null ? null : String.Join(",", Value.ToArray());
         }
-        
+
         /// <summary>
         /// Create a new StringCollectionParser
         /// </summary>
         public StringCollectionParser()
         {
-            
+
         }
-        
+
         /// <summary>
         /// Create a new StringCollectionParser from already existing values
         /// </summary>
@@ -86,7 +86,7 @@ namespace Kopernicus.ConfigParser.BuiltinTypeParsers
         {
             return parser.Value;
         }
-        
+
         /// <summary>
         /// Convert Value to Parser
         /// </summary>

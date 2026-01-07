@@ -73,7 +73,7 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool UseRealWorldDensity = false;
         [Persistent]
-        public bool ApplyRealWorldDensityToMinorObjects = false;
+        public float ApplyDensityMultToMinorObjects = 1.0f;
         [Persistent]
         public bool RecomputeSOIAndHillSpheres = false;
         [Persistent]
@@ -129,7 +129,7 @@ namespace Kopernicus.Configuration
                 Debug.Log("UseStockMohoTemplate: " + UseStockMohoTemplate);
                 Debug.Log("UseOnDemandLoader: " + UseOnDemandLoader);
                 Debug.Log("UseRealWorldDensity: " + UseRealWorldDensity);
-                Debug.Log("ApplyRealWorldDensityToMinorObjects: " + ApplyRealWorldDensityToMinorObjects);
+                Debug.Log("ApplyDensityMultToMinorObjects: " + ApplyDensityMultToMinorObjects);
                 Debug.Log("RecomputeSOIAndHillSpheres: " + RecomputeSOIAndHillSpheres);
                 Debug.Log("PrincipiaFriendlySOIComputation: " + PrincipiaFriendlySOIComputation);
                 Debug.Log("LimitRWDensityToStockBodies: " + LimitRWDensityToStockBodies);

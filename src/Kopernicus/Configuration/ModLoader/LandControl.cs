@@ -503,7 +503,9 @@ namespace Kopernicus.Configuration.ModLoader
                 // Initialize default parameters
                 Value = new PQSLandControl.LandClassScatter
                 {
-                    maxCache = 512, maxCacheDelta = 32, maxSpeed = 1000
+                    maxCache = 512,
+                    maxCacheDelta = 32,
+                    maxSpeed = 1000
                 };
 
                 // Get the Scatter-Parent
