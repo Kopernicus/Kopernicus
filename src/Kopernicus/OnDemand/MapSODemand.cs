@@ -201,15 +201,16 @@ namespace Kopernicus.OnDemand
             // Clear the texture handle regardless of whether we are loaded or not.
             Handle?.Dispose();
             Handle = null;
-            State = MapState.Unloaded;
 
             // We can only destroy the map, if it is loaded
             if (!IsLoaded)
             {
+                State = MapState.Unloaded;
                 return;
             }
 
             // Set flags
+            State = MapState.Unloaded;
             Format = MemoryFormat.None;
 
             // Event
