@@ -27,6 +27,7 @@ using HarmonyLib;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
+using KSPTextureLoader;
 using SentinelMission;
 using System;
 using System.Collections.Generic;
@@ -184,6 +185,11 @@ namespace Kopernicus
 
                 // Open the Warning popup
                 DisplayWarning();
+            }
+            finally
+            {
+                // Attempt to reduce memory usage by immediately unloading unused textures
+                TextureLoader.ImmediatelyDestroyUnusedTextures();
             }
         }
 
@@ -812,4 +818,24 @@ namespace Kopernicus
             return false;
         }
     }
+
+    [HarmonyPatch(typeof(PQS), "Start")]
+    internal static class PQS_Start
+    {
+        static void Postfix(PQS __instance)
+        {
+            if (HighLogic.LoadedScene != GameScenes.LOADING)
+                return;
+
+            // Immediately unload textures durign PSystem setup.
+            //
+            // If we don't do this then we end up loading every single heightmap in the game during
+            // PSystem setup. This ends up being more memory than we'd need at any other point in
+            // the game, and may be more memory than users' machines actually have.
+
+            OnDemandStorage.DisableBodyPqs(__instance.name);
+            TextureLoader.ImmediatelyDestroyUnusedTextures();
+        }
+    }
+
 }
