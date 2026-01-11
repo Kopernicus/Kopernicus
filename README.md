@@ -15,6 +15,8 @@ New in this latest version release-235:
 
 3.)  No comets but we are very close.  Months end is the goal.
 
+4.) R16 heightmaps are now natively supported by `MapSODemand`.
+
 Dependencies: We depend on
 * [HarmonyKSP](https://github.com/KSPModdingLibs/HarmonyKSP/releases)
 * [ModuleManager](https://ksp.sarbian.com/jenkins/job/ModuleManager/)
@@ -60,3 +62,4 @@ If you want to set it manually, create a `Kopernicus.csproj.user` file next to t
   </PropertyGroup>
 </Project>
 ```
+
