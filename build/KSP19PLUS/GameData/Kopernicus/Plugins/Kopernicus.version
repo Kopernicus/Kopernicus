@@ -2,7 +2,7 @@
   "NAME": "Kopernicus",
   "DOWNLOAD": "https://github.com/Kopernicus/Kopernicus/releases/latest",
   "CHANGE_LOG_URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/README.md",
-  "VERSION": "1.12.1.234",
+  "VERSION": "1.12.1.235",
   "URL": "https://raw.githubusercontent.com/Kopernicus/Kopernicus/master/build/KSP19PLUS/GameData/Kopernicus/Plugins/Kopernicus.version",
   "KSP_VERSION": "1.12",
   "KSP_VERSION_MIN": "1.12.0",
