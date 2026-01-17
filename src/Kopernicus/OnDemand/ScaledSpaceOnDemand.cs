@@ -24,6 +24,7 @@
  */
 
 using System;
+using System.Collections;
 using System.IO;
 using Kopernicus.Configuration;
 using KSPTextureLoader;
@@ -36,6 +37,9 @@ namespace Kopernicus.OnDemand
     /// </summary>
     public class ScaledSpaceOnDemand : MonoBehaviour
     {
+        private static readonly Int32 BumpMap = Shader.PropertyToID("_BumpMap");
+        private static readonly Int32 MainTex = Shader.PropertyToID("_MainTex");
+
         // Path to the Texture
         public String texture;
 
@@ -53,12 +57,13 @@ namespace Kopernicus.OnDemand
 
         // The number of timestamp ticks in a second
         private Int64 _unloadDelay;
-        private static readonly Int32 BumpMap = Shader.PropertyToID("_BumpMap");
-        private static readonly Int32 MainTex = Shader.PropertyToID("_MainTex");
 
         // Texture handles
         private TextureHandle<Texture2D> bumpMapHandle;
         private TextureHandle<Texture2D> mainTexHandle;
+
+        // Active loading coroutine
+        private IEnumerator loaderCoroutine;
 
         // Start(), get the scaled Mesh renderer
         public void Start()
@@ -73,15 +78,11 @@ namespace Kopernicus.OnDemand
         {
             // If we aren't loaded or we're not wanting to unload then do nothing
             if (!isLoaded || _unloadTime == 0)
-            {
                 return;
-            }
 
             // If we're past the unload time then unload
             if (System.Diagnostics.Stopwatch.GetTimestamp() > _unloadTime)
-            {
                 UnloadTextures();
-            }
         }
 
         // OnBecameVisible(), load the texture
@@ -92,22 +93,18 @@ namespace Kopernicus.OnDemand
 
             // If it is already loaded then do nothing
             if (isLoaded)
-            {
                 return;
-            }
 
             // Otherwise we load it
-            LoadTextures();
+            LoadTexturesAsync();
         }
 
         // OnBecameInvisible(), kill the texture
         private void OnBecameInvisible()
         {
-            // If it's not loaded then do nothing
-            if (!isLoaded)
-            {
+            // If it's not loaded or in the process of loading then do nothing
+            if (!isLoaded && loaderCoroutine is null)
                 return;
-            }
 
             // Set the time at which to unload
             _unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() + _unloadDelay;
@@ -115,23 +112,52 @@ namespace Kopernicus.OnDemand
 
         public void LoadTextures()
         {
+            if (loaderCoroutine is null)
+                LoadTexturesAsync();
+
+            while (loaderCoroutine?.MoveNext() ?? false) { }
+        }
+
+        /// <summary>
+        /// Start loading the scaled-space textures for this body.
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// To wait until the textures are loaded wait until <see cref="isLoaded"/>
+        /// is true. If you need the textures to be loaded synchronously then you
+        /// can call <see cref="LoadTextures"/>, be aware that this will result
+        /// in significant stutter when doing so.
+        /// </remarks>
+        public void LoadTexturesAsync()
+        {
+            if (isLoaded || loaderCoroutine is not null)
+                return;
+
+            loaderCoroutine = DoLoadTexturesAsync();
+            StartCoroutine(loaderCoroutine);
+        }
+
+        IEnumerator DoLoadTexturesAsync()
+        {
             Debug.Log("[OD] --> ScaledSpaceDemand.LoadTextures loading " + texture + " and " + normals);
+
+            using var guard = new ClearEnumeratorGuard(this);
 
             var options = new TextureLoadOptions
             {
                 Unreadable = true,
-                Hint = TextureLoadHint.BatchSynchronous,
+                Hint = TextureLoadHint.BatchAsynchronous,
             };
             mainTexHandle = TextureLoader.LoadTexture<Texture2D>(texture, options);
             bumpMapHandle = TextureLoader.LoadTexture<Texture2D>(normals, options);
 
             // Load Diffuse
+            yield return mainTexHandle;
+
             try
             {
                 scaledRenderer.sharedMaterial.SetTexture(MainTex, mainTexHandle.GetTexture());
             }
-            // Ignore cases where the texture did not exist.
-            catch (FileNotFoundException) { }
             catch (Exception ex)
             {
                 Debug.LogError($"[OD] Failed to load texture {texture}");
@@ -139,12 +165,12 @@ namespace Kopernicus.OnDemand
             }
 
             // Load Normals
+            yield return bumpMapHandle;
+
             try
             {
                 scaledRenderer.sharedMaterial.SetTexture(BumpMap, bumpMapHandle.GetTexture());
             }
-            // Ignore cases where the texture did not exist.
-            catch (FileNotFoundException) { }
             catch (Exception ex)
             {
                 Debug.LogError($"[OD] Failed to load texture {texture}");
@@ -180,12 +206,26 @@ namespace Kopernicus.OnDemand
         // Unload all textures when we switch to a new scene
         private void OnGameSceneLoadRequested(GameScenes scene)
         {
-            UnloadTextures();
+            if (!isLoaded && loaderCoroutine is null)
+                return;
+
+            // Schedule the texture for destruction in LateUpdate. If we get
+            // loaded again then there won't be need to reload anything.
+            _unloadTime = System.Diagnostics.Stopwatch.GetTimestamp();
         }
 
         private void OnDestroy()
         {
+            // Ensure textures get cleaned up if not done already
+            mainTexHandle?.Dispose();
+            bumpMapHandle?.Dispose();
+
             GameEvents.onGameSceneLoadRequested.Remove(OnGameSceneLoadRequested);
+        }
+
+        struct ClearEnumeratorGuard(ScaledSpaceOnDemand parent) : IDisposable
+        {
+            public void Dispose() => parent.loaderCoroutine = null;
         }
     }
 }
