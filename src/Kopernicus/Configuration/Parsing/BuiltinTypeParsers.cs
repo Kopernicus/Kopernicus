@@ -29,6 +29,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Kopernicus.ConfigParser;
 using Kopernicus.ConfigParser.Attributes;
@@ -131,7 +132,15 @@ namespace Kopernicus.Configuration.Parsing
             var handle = TextureLoader.LoadTexture<Texture2D>(s);
             try
             {
-                Value = handle.TakeTexture();
+                // We leak the handle below so we can hold onto the texture object indefinitely.
+                Value = handle.GetTexture();
+
+                // Explicitly leak the handle.
+                //
+                // This keeps its value alive in KSPTextureLoader's internal cache. Otherwise the
+                // texture won't be reused if garbage collection happens to run between now and the
+                // next time the same texture is requested.
+                GCHandle.Alloc(handle);
                 return;
             }
             catch (Exception e)
