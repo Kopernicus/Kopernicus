@@ -1,4 +1,4 @@
-/**U
+/**
 * Kopernicus Planetary System Modifier
 * -------------------------------------------------------------
 * This library is free software; you can redistribute it and/or
@@ -23,13 +23,13 @@
 * https://kerbalspaceprogram.com
 */
 
-using System.Collections.Generic;
-using System.Text;
-using System;
-using UnityEngine;
 using KSP.Localization;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using UnityEngine;
 
 namespace Kopernicus.Components
 {
@@ -121,30 +121,32 @@ namespace Kopernicus.Components
         {
             Disabled,
             Exposed,
-            NotVisible,
+            InShadow,
+            OccludedTerrain,
             OccludedPart,
-            BadOrientation
+            BadOrientation,
+            Eclipse
         }
 
         private const string prefix = "#Kopernicus_";
         public static string GetLoc(string template) => Localizer.Format(prefix + template);
-        private static string SolarPanelFixer_occludedby = GetLoc("SolarPanelFixer_occludedby"); // "occluded by <<1>>"
-        private static string SolarPanelFixer_notvisible = GetLoc("SolarPanelFixer_notvisible"); // "Not Visible"
-        private static string SolarPanelFixer_badorientation = GetLoc("SolarPanelFixer_badorientation"); // "bad orientation"
-        private static string SolarPanelFixer_exposure = GetLoc("SolarPanelFixer_exposure"); // "exposure"
-        private static string SolarPanelFixer_wear = GetLoc("SolarPanelFixer_wear"); // "wear"
+        private static string SolarPanelFixer_occludedby = GetLoc("SolarPanelFixer_occludedby"); // "Occluded By <<1>>"
+        private static string SolarPanelFixer_inshadow = GetLoc("SolarPanelFixer_inshadow"); // "In Shadow"
+        private static string SolarPanelFixer_occludedbyenvironment = GetLoc("SolarPanelFixer_occludedbyenvironment"); // "Occluded By Environment"
+        private static string SolarPanelFixer_eclipse = GetLoc("SolarPanelFixer_eclipse"); // "Astronomical Eclipse"
+        private static string SolarPanelFixer_badorientation = GetLoc("SolarPanelFixer_badorientation"); // "Bad Orientation"
         private static string SolarPanelFixer_sunDirect = GetLoc("SolarPanelFixer_sunDirect"); // "Sun Direct"
-        private static string SolarPanelFixer_Selecttrackedstar = GetLoc("SolarPanelFixer_Selecttrackedstar"); // "Select tracked star"
+        private static string SolarPanelFixer_Selecttrackedstar = GetLoc("SolarPanelFixer_Selecttrackedstar"); // "Select Tracked Star"
         private static string SolarPanelFixer_SelectTrackingBody = GetLoc("SolarPanelFixer_SelectTrackingBody"); // "Select Tracking Body"
         private static string SolarPanelFixer_SelectTrackedstar_msg = GetLoc("SolarPanelFixer_SelectTrackedstar_msg"); // "Select the star you want to track with this solar panel."
         private static string SolarPanelFixer_Automatic = GetLoc("SolarPanelFixer_Automatic"); // "Automatic"
-        private static string SolarPanelFixer_retracted = GetLoc("SolarPanelFixer_retracted"); // "retracted"
-        private static string SolarPanelFixer_extending = GetLoc("SolarPanelFixer_extending"); // "extending"
-        private static string SolarPanelFixer_retracting = GetLoc("SolarPanelFixer_retracting"); // "retracting"
-        private static string SolarPanelFixer_broken = GetLoc("SolarPanelFixer_broken"); // "broken"
-        private static string SolarPanelFixer_failure = GetLoc("SolarPanelFixer_failure"); // "failure"
-        private static string SolarPanelFixer_invalidstate = GetLoc("SolarPanelFixer_invalidstate"); // "invalid state"
-        private static string SolarPanelFixer_Trackedstar = GetLoc("SolarPanelFixer_Trackedstar"); // "Tracked star"
+        private static string SolarPanelFixer_retracted = GetLoc("SolarPanelFixer_retracted"); // "Retracted"
+        private static string SolarPanelFixer_extending = GetLoc("SolarPanelFixer_extending"); // "Extending"
+        private static string SolarPanelFixer_retracting = GetLoc("SolarPanelFixer_retracting"); // "Retracting"
+        private static string SolarPanelFixer_broken = GetLoc("SolarPanelFixer_broken"); // "Broken"
+        private static string SolarPanelFixer_failure = GetLoc("SolarPanelFixer_failure"); // "Failure"
+        private static string SolarPanelFixer_invalidstate = GetLoc("SolarPanelFixer_invalidstate"); // "Invalid State"
+        private static string SolarPanelFixer_Trackedstar = GetLoc("SolarPanelFixer_Trackedstar"); // "Tracked Star"
         private static string SolarPanelFixer_AutoTrack = GetLoc("SolarPanelFixer_AutoTrack"); // "[Auto] : "
 
         CelestialBody trackedSun;
@@ -152,12 +154,12 @@ namespace Kopernicus.Components
         private static readonly FloatCurve temperatureEfficCurve = new FloatCurve();
         private static readonly FloatCurve AtmosphericAttenutationAirMassMultiplier = new FloatCurve();
         private static readonly FloatCurve AtmosphericAttenutationSolarAngleMultiplier = new FloatCurve();
-
+        private static int occlusionLayerMask = ~(1 << 10);
         public static string resourceName = null;
         #endregion
 
         #region KSP/Unity methods + background update
-        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_SolarPanelFixer_Selecttrackedstar")] //Select tracked star
+        [KSPEvent(active = true, guiActive = true, guiName = "#Kopernicus_SolarPanelFixer_Selecttrackedstar")] //Select Tracked Star
         public void ManualTracking()
         {
             KopernicusStar[] orderedStars = KopernicusStar.Stars
@@ -331,14 +333,20 @@ namespace Kopernicus.Components
             Fields["panelStatusSunAOA"].guiActive = false;
             switch (exposureState)
             {
-                case ExposureState.NotVisible:
-                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_notvisible + "</color>"; //not visible
+                case ExposureState.InShadow:
+                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_inshadow + "</color>";//In Shadow
+                    break;
+                case ExposureState.OccludedTerrain:
+                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_occludedbyenvironment + "</color>";//Occluded By Environment
                     break;
                 case ExposureState.OccludedPart:
                     panelStatus = BuildString("<color=#ff2222>", Localizer.Format(SolarPanelFixer_occludedby, mainOccludingPart), "</color>"); //occluded by 
                     break;
                 case ExposureState.BadOrientation:
                     panelStatus = "<color=#ff2222>" + SolarPanelFixer_badorientation + "</color>"; //bad orientation
+                    break;
+                case ExposureState.Eclipse:
+                    panelStatus = "<color=#ff2222>" + SolarPanelFixer_eclipse + "</color>";//Astronomical Eclipse
                     break;
                 case ExposureState.Disabled:
                     switch (state)
@@ -431,14 +439,12 @@ namespace Kopernicus.Components
 
             Vector3d direction;
             double distance;
+            List<CelestialBody> occludingBodies = GetLargeBodies(position);
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
                 KopernicusStar starL = KopernicusStar.Stars[s];
                 Vector3d dIRECTION = (starL.sun.position - position).normalized;
-                /*double Block=SolarPanel.GetOccludedFactor(dIRECTION,out trackedPart);
-                double Cosine=SolarPanel.GetCosineFactor(dIRECTION);*/
-                double factor = IsBodyVisible(vessel, position, starL.sun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
-                //if (Cosine * Block == 0)
+                double factor = IsBodyVisible(vessel, position, starL.sun, occludingBodies, out direction, out distance) ? 1.0 : 0.0;
                 if (factor == 0.0)
                 {
                     continue;
@@ -475,6 +481,7 @@ namespace Kopernicus.Components
             Double totalFlux = 0;
             Double totalFlow = 0;
             double totalSunExposure = 0.0;
+            string occludingPart = null;
             // iterate over all stars, compute the exposure factor
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
@@ -520,7 +527,7 @@ namespace Kopernicus.Components
 
                 double sunCosineFactor = 0.0;
                 double sunOccludedFactor = 0.0;
-                string occludingPart = null;
+                occludingPart = null;
                 // Compute final aggregate exposure factor
                 double sunExposureFactor = 0.0;
 
@@ -544,7 +551,7 @@ namespace Kopernicus.Components
                     totalFlow += ((starFlux) * panelEffectivness) /
                                  (1360 / PhysicsGlobals.SolarLuminosityAtHome);
                 }
-
+                
             }
             if ((exposureStatus != ExposureState.Exposed) && (totalSunExposure < 0.01))
             {
@@ -564,21 +571,32 @@ namespace Kopernicus.Components
             else
                 currentOutput = totalFlow;
 
-            double trackedSunVisiblefactor = IsBodyVisible(vessel, position, trackedSun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
+            bool trackedSunVisiblefactor = IsBodyVisible(vessel, position, trackedSun, occludingBodies, out direction, out distance);
+            // sunNotVisible = true:  The star is occluded (in shadow, cannot see the sun)
+            // sunNotVisible = false: The star is visible (in sunlight, clear line of sight)
+            bool sunNotVisible = trackedSunVisiblefactor == false;
+
             // ignore very small outputs
             if (currentOutput < 1e-10)
             {
                 currentOutput = 0.0;
-                if (exposureStatus == ExposureState.OccludedPart)
+                Vector3d up = (position - vessel.mainBody.position).normalized;
+                bool sunBelowHorizon = Vector3d.Dot(direction, up) <= 0;
+
+                if (sunNotVisible && !sunBelowHorizon)
                 {
-                    if (trackedSunVisiblefactor == 0)
-                        exposureStatus = ExposureState.NotVisible;
-                    exposureState = exposureStatus;
+                    exposureStatus = ExposureState.Eclipse;
                 }
-                else
+                else if (sunNotVisible && sunBelowHorizon && occludingPart == null)
                 {
-                    exposureState = ExposureState.NotVisible;
+                    exposureStatus = ExposureState.InShadow;
                 }
+                else if (sunNotVisible)
+                {
+                    exposureStatus = ExposureState.InShadow;
+                }
+                exposureState = exposureStatus;
+
                 if (wearFactor == 0)
                 {
                     exposureState = ExposureState.Disabled;
@@ -589,6 +607,10 @@ namespace Kopernicus.Components
             }
             else
             {
+                if (sunNotVisible)
+                {
+                    exposureFactor = 0;
+                }
                 exposureState = ExposureState.Exposed;
                 if (resourceName == null)
                 {
@@ -879,16 +901,19 @@ namespace Kopernicus.Components
                 // The panel is oriented toward the sun, do a physic raycast to check occlusion from parts, terrain, buildings...
                 sunOccludedFactor = SolarPanel.GetOccludedFactor(sunDirection, out occludingPart);
                 // If this is the tracked sun and the panel is occluded, update the gui info string. 
-                if (star.sun == trackedSun)
+                if (star.sun == trackedSun && sunOccludedFactor == 0.0)
                 {
                     if (occludingPart != null)
                     {
-                        exposureStats = ExposureState.OccludedPart;
-                        mainOccludingPart = EllipsisMiddle(occludingPart, 15);
-                    }
-                    else
-                    {
-                        exposureStats = ExposureState.NotVisible;
+                        if (occludingPart == "Environment")
+                        {
+                            exposureStats = ExposureState.OccludedTerrain;
+                        }
+                        else
+                        {
+                            exposureStats = ExposureState.OccludedPart;
+                            mainOccludingPart = EllipsisMiddle(occludingPart, 15);
+                        }
                     }
                 }
             }
@@ -923,7 +948,7 @@ namespace Kopernicus.Components
 
             /// <summary>Must return a [0;1] scalar evaluating the angle of the given sunDir on the panel surface (usually a dot product clamped to [0;1])</summary>
             /// <param name="analytic">if true and the panel is orientable, the returned scalar must be the best possible output (must use the rotation around the pivot)</param>
-            public abstract double GetCosineFactor(Vector3d sunDir, bool analytic = false);
+            public abstract double GetCosineFactor(Vector3d sunDir);
 
             /// <summary>must return the state of the panel, must be able to work before OnStart has been called</summary>
             public abstract PanelState GetState();
@@ -1089,7 +1114,7 @@ namespace Kopernicus.Components
                 if (sunCatcherPosition == null)
                     sunCatcherPosition = panelModule.part.FindModelTransform(panelModule.secondaryTransformName);
 
-                Physics.Raycast(sunCatcherPosition.position + (sunDir * panelModule.raycastOffset), sunDir, out raycastHit, 10000f);
+                Physics.Raycast(sunCatcherPosition.position + (sunDir * panelModule.raycastOffset), sunDir, out raycastHit, 10000f, occlusionLayerMask);
 
                 if (raycastHit.collider != null)
                 {
@@ -1102,25 +1127,22 @@ namespace Kopernicus.Components
 
                         occludingPart = blockingPart.partInfo.title;
                     }
+                    else
+                    {
+                        occludingPart = "Environment";
+                    }
                     occludingFactor = 0.0;
                 }
                 return occludingFactor;
             }
 
             // we use the current panel orientation, only doing it ourself when analytic = true
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 switch (panelModule.panelType)
                 {
                     case ModuleDeployableSolarPanel.PanelType.FLAT:
-                        if (!analytic)
-                            return Math.Max(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward), 0.0);
-
-                        if (panelModule.isTracking)
-                            return Math.Cos(1.57079632679 - Math.Acos(Vector3d.Dot(sunDir, sunCatcherPivot.up)));
-                        else
-                            return Math.Max(Vector3d.Dot(sunDir, sunCatcherPivot.forward), 0.0);
-
+                        return Math.Max(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward), 0.0);
                     case ModuleDeployableSolarPanel.PanelType.CYLINDRICAL:
                         return Math.Max((1.0 - Math.Abs(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward))) * (1.0 / Math.PI), 0.0);
                     case ModuleDeployableSolarPanel.PanelType.SPHERICAL:
@@ -1253,7 +1275,7 @@ namespace Kopernicus.Components
                 RaycastHit raycastHit;
                 foreach (Transform panel in sunCatchers)
                 {
-                    if (Physics.Raycast(panel.position + (sunDir * 0.25), sunDir, out raycastHit, 10000f))
+                    if (Physics.Raycast(panel.position + (sunDir * 0.25), sunDir, out raycastHit, 10000f, occlusionLayerMask))
                     {
                         if (occludingPart == null && raycastHit.collider != null)
                         {
@@ -1266,8 +1288,11 @@ namespace Kopernicus.Components
 
                                 occludingPart = blockingPart.partInfo.title;
                             }
-                            //occludedFactor -= 1.0 / sunCatchers.Length;
-                            occludedFactor = 0;
+                            else
+                            {
+                                occludingPart = "Environment";
+                            }
+                            occludedFactor -= 1.0 / sunCatchers.Length;
                         }
                     }
                 }
@@ -1276,7 +1301,7 @@ namespace Kopernicus.Components
                 return occludedFactor;
             }
 
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 double cosineFactor = 0.0;
 
@@ -1393,7 +1418,7 @@ namespace Kopernicus.Components
             }
 
             // exactly the same code as NFS curved panel
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 double cosineFactor = 0.0;
 
@@ -1414,7 +1439,7 @@ namespace Kopernicus.Components
                 RaycastHit raycastHit;
                 foreach (Transform panel in sunCatchers)
                 {
-                    if (Physics.Raycast(panel.position + (sunDir * 0.25), sunDir, out raycastHit, 10000f))
+                    if (Physics.Raycast(panel.position + (sunDir * 0.25), sunDir, out raycastHit, 10000f, occlusionLayerMask))
                     {
                         if (occludingPart == null && raycastHit.collider != null)
                         {
@@ -1427,8 +1452,11 @@ namespace Kopernicus.Components
 
                                 occludingPart = blockingPart.partInfo.title;
                             }
-                            //occludedFactor -= 1.0 / sunCatchers.Length;
-                            occludedFactor = 0;
+                            else
+                            {
+                                occludingPart = "Environment";
+                            }
+                            occludedFactor -= 1.0 / sunCatchers.Length;
                         }
                     }
                 }
@@ -1606,7 +1634,7 @@ namespace Kopernicus.Components
                 return true;
             }
 
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 double cosineFactor = 0.0;
                 int suncatcherTotalCount = 0;
@@ -1616,24 +1644,7 @@ namespace Kopernicus.Components
                     suncatcherTotalCount += panel.SuncatcherCount;
                     for (int i = 0; i < panel.SuncatcherCount; i++)
                     {
-                        if (!analytic)
-                        {
-                            cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
-                            continue;
-                        }
-
-                        switch (trackingType)
-                        {
-                            case TrackingType.Fixed:
-                                cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
-                                continue;
-                            case TrackingType.SinglePivot:
-                                cosineFactor += Math.Cos(1.57079632679 - Math.Acos(Vector3d.Dot(sunDir, panel.PivotAxisVector)));
-                                continue;
-                            case TrackingType.DoublePivot:
-                                cosineFactor += 1.0;
-                                continue;
-                        }
+                        cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
                     }
                 }
                 return cosineFactor / suncatcherTotalCount;
@@ -1651,20 +1662,26 @@ namespace Kopernicus.Components
                     for (int i = 0; i < panel.SuncatcherCount; i++)
                     {
                         RaycastHit raycastHit;
-                        Physics.Raycast(panel.SuncatcherPosition(i) + (sunDir * 0.25), sunDir, out raycastHit, 10000f);
+                        raycastHit = panel.SuncatcherHit(i);
 
                         if (raycastHit.collider != null)
                         {
                             occludingFactor += 1.0; // in case of multiple panels per part, it is perfectly valid for panels to occlude themselves so we don't do the usual check
                             Part blockingPart = Part.GetComponentUpwards<Part>(raycastHit.transform.gameObject);
-                            if (occludingPart == null && blockingPart != null) // don't update if occlusion is from multiple parts
+                            if (occludingPart == null && blockingPart != null)
+                            {
+                                // don't update if occlusion is from multiple parts
                                 occludingPart = blockingPart.partInfo.title;
+                            }
+                            else
+                            {
+                                occludingPart = "Environment";
+                            }
                         }
                     }
                 }
                 occludingFactor = 1.0 - (occludingFactor / suncatcherTotalCount);
-                //if (occludingFactor < 0.01) occludingFactor = 0.0; // avoid precison issues
-                if (occludingFactor > 0.0 && occludingFactor < 1.0) occludingFactor = 0.0; // avoid precison issues
+                if (occludingFactor < 0.01) occludingFactor = 0.0; // avoid precison issues
                 return occludingFactor;
             }
 
