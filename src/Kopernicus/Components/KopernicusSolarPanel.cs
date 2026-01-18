@@ -439,13 +439,12 @@ namespace Kopernicus.Components
 
             Vector3d direction;
             double distance;
+            List<CelestialBody> occludingBodies = GetLargeBodies(position);
             for (Int32 s = 0; s < KopernicusStar.Stars.Count; s++)
             {
                 KopernicusStar starL = KopernicusStar.Stars[s];
                 Vector3d dIRECTION = (starL.sun.position - position).normalized;
-                /*double Block=SolarPanel.GetOccludedFactor(dIRECTION,out trackedPart);
-                double Cosine=SolarPanel.GetCosineFactor(dIRECTION);*/
-                double factor = IsBodyVisible(vessel, position, starL.sun, GetLargeBodies(position), out direction, out distance) ? 1.0 : 0.0;
+                double factor = IsBodyVisible(vessel, position, starL.sun, occludingBodies, out direction, out distance) ? 1.0 : 0.0;
                 if (factor == 0.0)
                 {
                     continue;
@@ -552,7 +551,7 @@ namespace Kopernicus.Components
                     totalFlow += ((starFlux) * panelEffectivness) /
                                  (1360 / PhysicsGlobals.SolarLuminosityAtHome);
                 }
-
+                
             }
             if ((exposureStatus != ExposureState.Exposed) && (totalSunExposure < 0.01))
             {
@@ -572,7 +571,7 @@ namespace Kopernicus.Components
             else
                 currentOutput = totalFlow;
 
-            bool trackedSunVisiblefactor = IsBodyVisible(vessel, position, trackedSun, GetLargeBodies(position), out direction, out distance);
+            bool trackedSunVisiblefactor = IsBodyVisible(vessel, position, trackedSun, occludingBodies, out direction, out distance);
             // sunNotVisible = true:  The star is occluded (in shadow, cannot see the sun)
             // sunNotVisible = false: The star is visible (in sunlight, clear line of sight)
             bool sunNotVisible = trackedSunVisiblefactor == false;
@@ -949,7 +948,7 @@ namespace Kopernicus.Components
 
             /// <summary>Must return a [0;1] scalar evaluating the angle of the given sunDir on the panel surface (usually a dot product clamped to [0;1])</summary>
             /// <param name="analytic">if true and the panel is orientable, the returned scalar must be the best possible output (must use the rotation around the pivot)</param>
-            public abstract double GetCosineFactor(Vector3d sunDir, bool analytic = false);
+            public abstract double GetCosineFactor(Vector3d sunDir);
 
             /// <summary>must return the state of the panel, must be able to work before OnStart has been called</summary>
             public abstract PanelState GetState();
@@ -1138,19 +1137,12 @@ namespace Kopernicus.Components
             }
 
             // we use the current panel orientation, only doing it ourself when analytic = true
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 switch (panelModule.panelType)
                 {
                     case ModuleDeployableSolarPanel.PanelType.FLAT:
-                        if (!analytic)
-                            return Math.Max(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward), 0.0);
-
-                        if (panelModule.isTracking)
-                            return Math.Cos(1.57079632679 - Math.Acos(Vector3d.Dot(sunDir, sunCatcherPivot.up)));
-                        else
-                            return Math.Max(Vector3d.Dot(sunDir, sunCatcherPivot.forward), 0.0);
-
+                        return Math.Max(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward), 0.0);
                     case ModuleDeployableSolarPanel.PanelType.CYLINDRICAL:
                         return Math.Max((1.0 - Math.Abs(Vector3d.Dot(sunDir, panelModule.trackingDotTransform.forward))) * (1.0 / Math.PI), 0.0);
                     case ModuleDeployableSolarPanel.PanelType.SPHERICAL:
@@ -1309,7 +1301,7 @@ namespace Kopernicus.Components
                 return occludedFactor;
             }
 
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 double cosineFactor = 0.0;
 
@@ -1426,7 +1418,7 @@ namespace Kopernicus.Components
             }
 
             // exactly the same code as NFS curved panel
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 double cosineFactor = 0.0;
 
@@ -1642,7 +1634,7 @@ namespace Kopernicus.Components
                 return true;
             }
 
-            public override double GetCosineFactor(Vector3d sunDir, bool analytic = false)
+            public override double GetCosineFactor(Vector3d sunDir)
             {
                 double cosineFactor = 0.0;
                 int suncatcherTotalCount = 0;
@@ -1652,24 +1644,7 @@ namespace Kopernicus.Components
                     suncatcherTotalCount += panel.SuncatcherCount;
                     for (int i = 0; i < panel.SuncatcherCount; i++)
                     {
-                        if (!analytic)
-                        {
-                            cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
-                            continue;
-                        }
-
-                        switch (trackingType)
-                        {
-                            case TrackingType.Fixed:
-                                cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
-                                continue;
-                            case TrackingType.SinglePivot:
-                                cosineFactor += Math.Cos(1.57079632679 - Math.Acos(Vector3d.Dot(sunDir, panel.PivotAxisVector)));
-                                continue;
-                            case TrackingType.DoublePivot:
-                                cosineFactor += 1.0;
-                                continue;
-                        }
+                        cosineFactor += Math.Max(Vector3d.Dot(sunDir, panel.SuncatcherAxisVector(i)), 0.0);
                     }
                 }
                 return cosineFactor / suncatcherTotalCount;
@@ -1687,7 +1662,7 @@ namespace Kopernicus.Components
                     for (int i = 0; i < panel.SuncatcherCount; i++)
                     {
                         RaycastHit raycastHit;
-                        Physics.Raycast(panel.SuncatcherPosition(i) + (sunDir * 0.25), sunDir, out raycastHit, 10000f);
+                        raycastHit = panel.SuncatcherHit(i);
 
                         if (raycastHit.collider != null)
                         {
