@@ -1687,7 +1687,7 @@ namespace Kopernicus.Components
                     for (int i = 0; i < panel.SuncatcherCount; i++)
                     {
                         RaycastHit raycastHit;
-                        raycastHit = panel.SuncatcherHit(i);
+                        Physics.Raycast(panel.SuncatcherPosition(i) + (sunDir * 0.25), sunDir, out raycastHit, 10000f);
 
                         if (raycastHit.collider != null)
                         {
