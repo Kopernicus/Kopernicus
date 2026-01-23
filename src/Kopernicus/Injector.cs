@@ -819,7 +819,6 @@ namespace Kopernicus
         }
     }
 
-    [HarmonyDebug]
     [HarmonyPatch(typeof(PQS), "UpdateVisual")]
     internal static class PQS_UpdateVisual
     {
