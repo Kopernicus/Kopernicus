@@ -306,7 +306,7 @@ namespace Kopernicus.Configuration
                         logger.Close(); //implicit flush
                         Logger.Default.Log("[Kopernicus]: Configuration.Loader: Failed to load Body: " + name + ": " +
                                            e.Message);
-                        throw new Exception("Failed to load Body: " + name);
+                        throw new Exception($"Failed to load Body: {name}: {e.Message}");
                     }
                 }
 
