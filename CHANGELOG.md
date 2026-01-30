@@ -1,6 +1,6 @@
 # Kopernicus Changelog
 
-## Unreleased
+## 236
 1. Minor improvements to load time and memory usage (#754, #748).
 2. Improve tracking of solar panel state (#759 by @aebestach).
 3. Make supported MapSO features consistent no matter whether on-demand storage

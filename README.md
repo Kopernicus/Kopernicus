@@ -7,7 +7,7 @@ January 11th, 2026
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
 
-New in this latest version release-235:
+New in this latest version release-236:
 
 1.) Major performance improvements in loading time and elsewhere courtesy KSPTextureLoader.  Please update KSPTextureLoader as well for best results.
 
