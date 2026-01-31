@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## 238
+1. Revert PR #760 as well since it was also causing inflated memory usage.
+
 ## 237
 1. Revert PR #766 since it was causing inflated memory usage.
 
