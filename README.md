@@ -1,21 +1,10 @@
 Kopernicus
 ==============================
-January 11th, 2026
 * Created by: BryceSchroeder and Nathaniel R. Lewis (Teknoman117)
 * Actively maintained by: R-T-B & Phantomical.
 * Formerly maintained by: Thomas P., NathanKell and KillAshley
 * Additional Content by: Democat3457, Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace, Sigma88, Majiir (CompatibilityChecker), blackrack/LGHassen (shaders/GPL'd scatterer code)
 * Much thanks to Sarbian for ModuleManager and ModularFlightIntegrator
-
-New in this latest version release-236:
-
-1.) Major performance improvements in loading time and elsewhere courtesy KSPTextureLoader.  Please update KSPTextureLoader as well for best results.
-
-2.) Fixed broken asteroid density rescaling facilities for stock and Kopernicus generator (it only worked with CustomAsteroids before, lol).
-
-3.)  No comets but we are very close.  Months end is the goal.
-
-4.) R16 heightmaps are now natively supported by `MapSODemand`.
 
 Dependencies: We depend on
 * [HarmonyKSP](https://github.com/KSPModdingLibs/HarmonyKSP/releases)

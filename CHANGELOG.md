@@ -1,5 +1,8 @@
 # Kopernicus Changelog
 
+## 237
+1. Revert PR #766 since it was causing inflated memory usage.
+
 ## 236
 1. Minor improvements to load time and memory usage (#754, #748).
 2. Improve tracking of solar panel state (#759 by @aebestach).
