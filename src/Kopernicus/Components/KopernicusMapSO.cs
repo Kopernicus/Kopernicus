@@ -117,11 +117,13 @@ public class KopernicusMapSO : MapSO
     /// <returns></returns>
     /// 
     /// <remarks>
-    /// This does not take ownership of the provided handle. You are responsible
-    /// for disposing of it yourself.
+    /// This takes ownership of the provided handle, so if you want to keep
+    /// using your handle then pass in <c>handle.Acquire()</c> instead.
     /// </remarks>
     public void CreateMap(MapDepth depth, TextureHandle<Texture2D> handle)
     {
+        using var guard = handle;
+
         // Unload ourselves if we are loaded.
         Unload();
 
