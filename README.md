@@ -27,6 +27,7 @@ We have yet to see if removing or rearranging the other bodies causes any sort o
 
 Instructions
 ------------
+- Ensure you have the Dependencies listed above installed.
 - Copy the contents of the GameData/ folder to KSP’s GameData/ folder
 - Launch KSP and enjoy!
 - Please report any bugs you may find to either or both of the email addresses above.
@@ -52,4 +53,5 @@ window and then in the `Reference Path` tab. If you want to set it manually, cre
   </PropertyGroup>
 </Project>
 ```
+
 
