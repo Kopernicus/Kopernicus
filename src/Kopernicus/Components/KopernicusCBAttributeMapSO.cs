@@ -780,7 +780,7 @@ namespace Kopernicus.Components
             {
                 Color32* texData = (Color32*)textureData.GetUnsafePtr();
 
-                for (int i = _data.Length; i >= 0; --i)
+                for (int i = 0; i < _data.Length; ++i)
                     texData[i] = attributeColors[data[i]];
             }
 
