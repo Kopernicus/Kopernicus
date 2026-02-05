@@ -834,7 +834,7 @@ namespace Kopernicus.OnDemand
                     case MapDepth.HeightAlpha:
                         return 0.5f * (pixel.r + pixel.a);
                     case MapDepth.RGB:
-                        return (1f / 3f) * (pixel.r + pixel.g * pixel.b);
+                        return (1f / 3f) * (pixel.r + pixel.g + pixel.b);
                     case MapDepth.RGBA:
                         return 0.25f * (pixel.r + pixel.g + pixel.b + pixel.a);
                     default:
