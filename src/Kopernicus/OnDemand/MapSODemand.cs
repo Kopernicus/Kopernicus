@@ -592,31 +592,18 @@ namespace Kopernicus.OnDemand
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int WrapWidth(int x)
         {
+            x %= Width;
             if (x < 0)
-            {
-                // TODO: This seems wrong?
-                x = Width - x;
-            }
-            else if (x >= Width)
-            {
-                x -= Width;
-            }
-
+                x += Width;
             return x;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int WrapHeight(int y)
         {
+            y %= Height;
             if (y < 0)
-            {
-                y = Height - y;
-            }
-            else if (y >= Height)
-            {
-                y -= Height;
-            }
-
+                y += Height;
             return y;
         }
 
