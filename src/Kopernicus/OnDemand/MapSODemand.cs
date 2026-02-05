@@ -862,7 +862,7 @@ namespace Kopernicus.OnDemand
                     return (Byte2Float / 3f) * (Image[index] + Image[index + 1] + Image[index + 2]);
 
                 case MemoryFormat.RGBA32:
-                    return (Byte2Float / 4f) * (Image[index] + Image[index + 1] + Image[index + 2]);
+                    return (Byte2Float / 4f) * (Image[index] + Image[index + 1] + Image[index + 2] + Image[index + 3]);
 
                 default:
                     return 0f;
