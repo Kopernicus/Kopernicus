@@ -1072,7 +1072,7 @@ namespace Kopernicus.OnDemand
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    for (int x = 0; x < _width; ++x)
+                    for (int x = 0; x < _width; ++x, ++i)
                     {
                         var v = GetPixelByte(x, y);
                         color32[i] = new Color32(v, v, v, byte.MaxValue);
@@ -1106,7 +1106,7 @@ namespace Kopernicus.OnDemand
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    for (int x = 0; x < _width; ++x)
+                    for (int x = 0; x < _width; ++x, ++i)
                     {
                         var ha = GetPixelValueHeightAlpha(x, y);
                         color32[i] = new Color(ha.height, ha.height, ha.height, ha.alpha);
@@ -1140,7 +1140,7 @@ namespace Kopernicus.OnDemand
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    for (int x = 0; x < _width; ++x)
+                    for (int x = 0; x < _width; ++x, ++i)
                         color32[i] = GetPixelColor32(x, y);
                 }
 
@@ -1171,7 +1171,7 @@ namespace Kopernicus.OnDemand
                 var color32 = new Color32[Size];
                 for (int i = 0, y = 0; y < _height; ++y)
                 {
-                    for (int x = 0; x < _width; ++x)
+                    for (int x = 0; x < _width; ++x, ++i)
                         color32[i] = GetPixelColor32(x, y);
                 }
 
