@@ -556,7 +556,7 @@ namespace Kopernicus.OnDemand
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeArray<byte>(pixels32.Length * 4, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-            Format = MemoryFormat.RGB24;
+            Format = MemoryFormat.RGBA32;
 
             fixed (Color32* ppixels = pixels32)
             {
