@@ -69,7 +69,7 @@ namespace Kopernicus.Configuration
         [Persistent]
         public bool UseStockMohoTemplate = true;
         [Persistent]
-        public bool UseOnDemandLoader = false;
+        public bool UseOnDemandLoader = true;
         [Persistent]
         public bool UseRealWorldDensity = false;
         [Persistent]
