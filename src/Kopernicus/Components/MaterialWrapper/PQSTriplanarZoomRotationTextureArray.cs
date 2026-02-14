@@ -14,11 +14,17 @@ namespace Kopernicus.Components.MaterialWrapper
         protected class Properties
         {
             // Return the shader for this wrapper
-            private const String SHADER_NAME = "Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array";
+            internal const String SHADER_NAME = "Terrain/PQS/PQS Triplanar Zoom Rotation Texture Array";
 
+            private static Shader _shader = null;
             public static Shader Shader
             {
-                get { return Shader.Find(SHADER_NAME); }
+                get
+                {
+                    if (_shader.IsNullOrDestroyed())
+                        _shader = Shader.Find(SHADER_NAME);
+                    return _shader;
+                }
             }
 
             // Color Lerp Modifier, default = 1
@@ -161,7 +167,11 @@ namespace Kopernicus.Components.MaterialWrapper
                 return false;
             }
 
-            return m.shader.name == Properties.Shader.name;
+            // Avoid allocating a name string if we don't have to.
+            if (m.shader.GetInstanceID() == Properties.Shader.GetInstanceID())
+                return true;
+
+            return m.shader.name == Properties.SHADER_NAME;
         }
 
         // Color Lerp Modifier, default = 1
