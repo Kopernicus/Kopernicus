@@ -3,7 +3,7 @@ using Kopernicus;
 using Kopernicus.Constants;
 using Kopernicus.RuntimeUtility;
 
-[assembly: KSPAssembly("Kopernicus", 1, 0)]
+[assembly: KSPAssembly("Kopernicus", 1, 0, BuildInfo.KopernicusVersion)]
 [assembly: KSPAssemblyDependency("Kopernicus.Parser", 1, 0)]
 [assembly: KSPAssemblyDependency("ModularFlightIntegrator", 1, 0)]
 [assembly: KSPAssemblyDependency("0Harmony", 0, 0)]

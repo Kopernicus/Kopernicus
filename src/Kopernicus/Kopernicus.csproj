@@ -5,7 +5,7 @@
     <KopernicusRelease>238</KopernicusRelease>
 
     <!-- Assembly metadata -->
-    <Version>1.0.0</Version>
+    <Version>1.0.$(KopernicusRelease)</Version>
     <FileVersion>1.12.$(KopernicusRelease).0</FileVersion>
     <Description>Planetary System Modifier for Kerbal Space Program</Description>
     <Company>Kopernicus Project</Company>
@@ -186,6 +186,7 @@ namespace Kopernicus%3B
 
 internal static class BuildInfo
 {
+    internal const int KopernicusVersion = $(KopernicusRelease)%3B
     internal const string KopernicusRelease = "$(KopernicusRelease)"%3B
 }
       </BuildInfoFileContent>
