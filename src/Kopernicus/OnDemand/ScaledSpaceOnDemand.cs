@@ -173,7 +173,7 @@ namespace Kopernicus.OnDemand
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[OD] Failed to load texture {texture}");
+                Debug.LogError($"[OD] Failed to load texture {normals}");
                 Debug.LogException(ex);
             }
 
