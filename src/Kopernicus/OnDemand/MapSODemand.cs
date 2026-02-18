@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Kopernicus Planetary System Modifier
  * -------------------------------------------------------------
  * This library is free software; you can redistribute it and/or
@@ -25,13 +25,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using Kopernicus.Components;
 using KSPTextureLoader;
 using Unity.Burst;
-using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.Jobs;
 using UnityEngine;
 
 namespace Kopernicus.OnDemand
@@ -43,7 +39,7 @@ namespace Kopernicus.OnDemand
     [SuppressMessage("ReSharper", "SwitchStatementMissingSomeCases")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     [BurstCompile]
-    public class MapSODemand : MapSO, ILoadOnDemand, IPreloadOnDemand
+    public class MapSODemand : KopernicusMapSO, ILoadOnDemand, IPreloadOnDemand
     {
         enum MapState : byte
         {
@@ -52,26 +48,18 @@ namespace Kopernicus.OnDemand
             Error
         }
 
-        // A non-allocating HeightAlpha for internal use.
-        struct ValueHeightAlpha
-        {
-            public float height;
-            public float alpha;
-
-            public ValueHeightAlpha(float height, float alpha)
-            {
-                this.height = height;
-                this.alpha = alpha;
-            }
-
-            public static implicit operator HeightAlpha(ValueHeightAlpha ha) => new HeightAlpha(ha.height, ha.alpha);
-        }
-
         // Representation of the map
         private CPUTextureHandle Handle { get; set; }
-        private CPUTexture2D Data { get; set; }
 
         private MapState State { get; set; }
+
+        // This exists solely for backwards compatibility, so that code compiled
+        // against the old version of kopernicus continues to work.
+        public new MapDepth Depth
+        {
+            get => base.Depth;
+            set => base.Depth = value;
+        }
 
         // States
         public bool IsLoaded
@@ -89,9 +77,6 @@ namespace Kopernicus.OnDemand
 
         // Path of the Texture
         public string Path { get; set; }
-
-        // MapDepth
-        public new MapDepth Depth { get; set; }
 
         // Name
         string ILoadOnDemand.Name
@@ -172,12 +157,12 @@ namespace Kopernicus.OnDemand
         /// <summary>
         /// Unload the map
         /// </summary>
-        public void Unload()
+        public new void Unload()
         {
             // Clear the texture handle regardless of whether we are loaded or not.
             Handle?.Dispose();
             Handle = null;
-            Data = null;
+            base.Unload();
 
             // We can only destroy the map, if it is loaded
             bool loaded = IsLoaded;
@@ -192,37 +177,6 @@ namespace Kopernicus.OnDemand
             // Log
             Debug.Log("[OD] <--- Map " + name + " disabling self. Path = " + Path);
         }
-
-        #region CreateMap
-        void CreateMap(MapDepth depth, CPUTexture2D tex)
-        {
-            // If the Texture is null, abort
-            if (tex == null)
-            {
-                Debug.Log("[OD] ERROR: Failed to load map");
-                return;
-            }
-
-            _width = tex.Width;
-            _height = tex.Height;
-            _bpp = (int)depth;
-
-            if (tex.Format == TextureFormat.R16 && depth == MapDepth.HeightAlpha)
-                Data = new RA16Texture(tex);
-            else
-                Data = tex;
-
-            _isCompiled = true;
-        }
-
-        /// <summary>
-        /// Create a map from a Texture2D
-        /// </summary>
-        public override void CreateMap(MapDepth depth, Texture2D tex)
-        {
-            throw new NotSupportedException();
-        }
-        #endregion
 
         private bool EnsureLoaded()
         {
@@ -239,24 +193,6 @@ namespace Kopernicus.OnDemand
             return IsLoaded;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int WrapWidth(int x)
-        {
-            x %= Width;
-            if (x < 0)
-                x += Width;
-            return x;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int WrapHeight(int y)
-        {
-            y %= Height;
-            if (y < 0)
-                y += Height;
-            return y;
-        }
-
         #region GetPixelByte
         public override byte GetPixelByte(int x, int y)
         {
@@ -266,11 +202,7 @@ namespace Kopernicus.OnDemand
                     return 0;
             }
 
-            var pixel = Data.GetPixel32(x, y);
-            if (Data.Format == TextureFormat.Alpha8)
-                return pixel.a;
-            else
-                return pixel.r;
+            return base.GetPixelByte(x, y);
         }
         #endregion
 
@@ -283,7 +215,7 @@ namespace Kopernicus.OnDemand
                     return Color.black;
             }
 
-            return Data.GetPixel(x, y);
+            return base.GetPixelColor(x, y);
         }
 
         public override Color GetPixelColor(double x, double y)
@@ -318,7 +250,7 @@ namespace Kopernicus.OnDemand
                     return default;
             }
 
-            return Data.GetPixel32(x, y);
+            return base.GetPixelColor32(x, y);
         }
 
         // Honestly Squad, why are they named GetPixelColor32, but return normal Colors instead of Color32?
@@ -354,24 +286,7 @@ namespace Kopernicus.OnDemand
                     return 0f;
             }
 
-            var pixel = Data.GetPixel(x, y);
-
-            if (Data.Format == TextureFormat.Alpha8)
-                return pixel.a;
-
-            switch (Depth)
-            {
-                case MapDepth.Greyscale:
-                    return pixel.r;
-                case MapDepth.HeightAlpha:
-                    return 0.5f * (pixel.r + pixel.a);
-                case MapDepth.RGB:
-                    return (1f / 3f) * (pixel.r + pixel.g + pixel.b);
-                case MapDepth.RGBA:
-                    return 0.25f * (pixel.r + pixel.g + pixel.b + pixel.a);
-                default:
-                    return 0f;
-            }
+            return base.GetPixelFloat(x, y);
         }
 
         public override float GetPixelFloat(double x, double y)
@@ -398,27 +313,16 @@ namespace Kopernicus.OnDemand
         #endregion
 
         #region GetPixelHeightAlpha
-        private ValueHeightAlpha GetPixelValueHeightAlpha(int x, int y)
+        public override HeightAlpha GetPixelHeightAlpha(int x, int y)
         {
             if (!IsLoaded)
             {
                 if (!EnsureLoaded())
-                    return new ValueHeightAlpha(0f, 0f);
+                    return new HeightAlpha(0f, 0f);
             }
 
-            var pixel = Data.GetPixel(x, y);
-            switch (Depth)
-            {
-                case MapDepth.HeightAlpha:
-                case MapDepth.RGBA:
-                    return new ValueHeightAlpha(pixel.r, pixel.a);
-
-                default:
-                    return new ValueHeightAlpha(pixel.r, 1f);
-            }
+            return base.GetPixelHeightAlpha(x, y);
         }
-
-        public override HeightAlpha GetPixelHeightAlpha(int x, int y) => GetPixelValueHeightAlpha(x, y);
 
         public override HeightAlpha GetPixelHeightAlpha(double x, double y)
         {
@@ -444,42 +348,41 @@ namespace Kopernicus.OnDemand
         #endregion
 
         #region GreyByte
-        public override byte GreyByte(int x, int y) => GetPixelByte(x, y);
+        public override byte GreyByte(int x, int y)
+        {
+            if (!IsLoaded)
+            {
+                if (!EnsureLoaded())
+                    return 0;
+            }
+
+            return base.GreyByte(x, y);
+        }
         #endregion
 
         #region GreyFloat
         public override float GreyFloat(int x, int y)
         {
-
             if (!IsLoaded)
             {
                 if (!EnsureLoaded())
                     return 0f;
             }
 
-            var pixel = Data.GetPixel(x, y);
-            if (Data.Format == TextureFormat.Alpha8)
-                return pixel.a;
-            return pixel.r;
+            return base.GreyFloat(x, y);
         }
         #endregion
 
         #region PixelByte
         public override byte[] PixelByte(int x, int y)
         {
-            var c = GetPixelColor32(x, y);
-
-            switch (Depth)
+            if (!IsLoaded)
             {
-                case MapDepth.Greyscale:
-                    return new[] { c.r };
-                case MapDepth.HeightAlpha:
-                    return new[] { c.r, c.a };
-                case MapDepth.RGB:
-                    return new[] { c.r, c.g, c.b };
-                default:
-                    return new[] { c.r, c.g, c.b, c.a };
+                if (!EnsureLoaded())
+                    return new byte[_bpp];
             }
+
+            return base.PixelByte(x, y);
         }
         #endregion
 
@@ -492,11 +395,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            var data = Data.GetRawTextureData<byte>();
-            var texture = new Texture2D(Width, Height, Data.Format, Data.MipCount, false);
-            texture.LoadRawTextureData(data);
-            texture.Apply(false, true);
-            return texture;
+            return base.CompileToTexture(filter);
         }
 
         // Generate a greyscale texture from the stored data
@@ -508,20 +407,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            var color32 = new Color32[Size];
-            for (int i = 0, y = 0; y < _height; ++y)
-            {
-                for (int x = 0; x < _width; ++x, ++i)
-                {
-                    var v = GetPixelByte(x, y);
-                    color32[i] = new Color32(v, v, v, byte.MaxValue);
-                }
-            }
-
-            Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
-            compiled.SetPixels32(color32);
-            compiled.Apply(false, true);
-            return compiled;
+            return base.CompileGreyscale();
         }
 
         // Generate a height/alpha texture from the stored data
@@ -533,20 +419,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            var color32 = new Color32[Size];
-            for (int i = 0, y = 0; y < _height; ++y)
-            {
-                for (int x = 0; x < _width; ++x, ++i)
-                {
-                    var ha = GetPixelValueHeightAlpha(x, y);
-                    color32[i] = new Color(ha.height, ha.height, ha.height, ha.alpha);
-                }
-            }
-
-            Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGBA32, false);
-            compiled.SetPixels32(color32);
-            compiled.Apply(false, true);
-            return compiled;
+            return base.CompileHeightAlpha();
         }
 
         // Generate an RGB texture from the stored data
@@ -558,17 +431,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            var color32 = new Color32[Size];
-            for (int i = 0, y = 0; y < _height; ++y)
-            {
-                for (int x = 0; x < _width; ++x, ++i)
-                    color32[i] = GetPixelColor32(x, y);
-            }
-
-            Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGB24, false);
-            compiled.SetPixels32(color32);
-            compiled.Apply(false, true);
-            return compiled;
+            return base.CompileRGB();
         }
 
         // Generate an RGBA texture from the stored data
@@ -580,71 +443,7 @@ namespace Kopernicus.OnDemand
                     return new Texture2D(_width, _height);
             }
 
-            var color32 = new Color32[Size];
-            for (int i = 0, y = 0; y < _height; ++y)
-            {
-                for (int x = 0; x < _width; ++x, ++i)
-                    color32[i] = GetPixelColor32(x, y);
-            }
-
-            Texture2D compiled = new Texture2D(Width, Height, TextureFormat.RGBA32, false);
-            compiled.SetPixels32(color32);
-            compiled.Apply(false, true);
-            return compiled;
-        }
-
-        sealed class RA16Texture(CPUTexture2D tex) : CPUTexture2D
-        {
-            readonly CPUTexture2D tex = tex;
-            readonly CPUTexture2D.RG16 wrap = new(tex.GetRawTextureData<byte>(), tex.Width, tex.Height, tex.MipCount);
-
-            public override int Width => tex.Width;
-
-            public override int Height => tex.Height;
-
-            public override int MipCount => tex.MipCount;
-
-            public override TextureFormat Format => tex.Format;
-
-            public override Color GetPixel(int x, int y, int mipLevel = 0)
-            {
-                var pixel = tex.GetPixel(x, y, mipLevel);
-                return new(pixel.r, 1f, 1f, pixel.g);
-            }
-            public override Color32 GetPixel32(int x, int y, int mipLevel = 0)
-            {
-                var pixel = tex.GetPixel32(x, y, mipLevel);
-                return new(pixel.r, 255, 255, pixel.g);
-            }
-            public override Color GetPixelBilinear(float u, float v, int mipLevel = 0)
-            {
-                var pixel = tex.GetPixelBilinear(u, v, mipLevel);
-                return new(pixel.r, 1f, 1f, pixel.g);
-            }
-
-            public override NativeArray<byte> GetRawTextureData() => tex.GetRawTextureData();
-
-            public override NativeArray<Color> GetPixels(int mipLevel = 0, Allocator allocator = Allocator.Temp)
-            {
-                var pixels = tex.GetPixels(mipLevel, allocator);
-                for (int i = 0; i < pixels.Length; ++i)
-                {
-                    var p = pixels[i];
-                    pixels[i] = new(p.r, p.a, p.b, p.g);
-                }
-                return pixels;
-            }
-
-            public override NativeArray<Color32> GetPixels32(int mipLevel = 0, Allocator allocator = Allocator.Temp)
-            {
-                var pixels = tex.GetPixels32(mipLevel, allocator);
-                for (int i = 0; i < pixels.Length; ++i)
-                {
-                    var p = pixels[i];
-                    pixels[i] = new(p.r, p.a, p.b, p.g);
-                }
-                return pixels;
-            }
+            return base.CompileRGBA();
         }
     }
 }
