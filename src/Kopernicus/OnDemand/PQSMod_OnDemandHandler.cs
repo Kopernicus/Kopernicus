@@ -26,6 +26,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Kopernicus.OnDemand
 {
@@ -34,12 +35,45 @@ namespace Kopernicus.OnDemand
     {
         // Delayed unload
         // If non-zero the textures will be unloaded once the timer exceeds the value
-        private Int64 _unloadTime;
+        private long _unloadTime;
+
+        private int _lastCheckFrame = 0;
 
         // State
-        private Boolean _isLoaded;
+        private bool _isLoaded;
 
         private static CelestialBody activeBody;
+
+        static long GetUnloadTime()
+        {
+            return Stopwatch.GetTimestamp() +
+                   Stopwatch.Frequency * OnDemandStorage.OnDemandUnloadDelay;
+        }
+
+        internal void Activate()
+        {
+            if (_isLoaded)
+            {
+                if (_unloadTime == 0)
+                    return;
+
+                // Refresh unload time at most once every 5 frames per OnDemandHandler.
+                if (_lastCheckFrame + 5 < Time.frameCount)
+                    _unloadTime = GetUnloadTime();
+
+                return;
+            }
+
+            // Occasionally KSP or other mods will call GetSurfaceHeight on an
+            // inactive celestial body. This starts a timer so any MapSOs loaded
+            // as a result of that will get unloaded eventually instead of
+            // hanging around forever.
+
+            _isLoaded = true;
+            _unloadTime = GetUnloadTime();
+            _lastCheckFrame = Time.frameCount;
+            Debug.Log($"[OD] Enabling Body {sphere.name}");
+        }
 
         // Disabling
         public override void OnSphereInactive()
@@ -51,8 +85,7 @@ namespace Kopernicus.OnDemand
             }
 
             // Set the time at which to unload
-            _unloadTime = System.Diagnostics.Stopwatch.GetTimestamp() +
-                          System.Diagnostics.Stopwatch.Frequency * OnDemandStorage.OnDemandUnloadDelay;
+            _unloadTime = GetUnloadTime();
         }
 
         // Enabling
@@ -63,19 +96,18 @@ namespace Kopernicus.OnDemand
 
             // Don't update, if the Injector is still running
             if (_isLoaded)
-            {
                 return;
-            }
 
             // Enable the maps
             if (!OnDemandStorage.EnableBodyPqs(sphere.name))
-            {
                 return;
-            }
 
             _isLoaded = true;
-            Debug.Log("[OD] Enabling Body " + sphere.name + ": " + _isLoaded);
+            Debug.Log($"[OD] Enabling Body {sphere.name}");
         }
+
+        public override void OnVertexBuildHeight(PQS.VertexBuildData data) =>
+            Activate();
 
         private void LateUpdate()
         {
@@ -89,28 +121,20 @@ namespace Kopernicus.OnDemand
             if (sphere.IsNotNullOrDestroyed())
             {
                 if (activeBody.RefEquals(sphere.GetCelestialBody()))
-                {
                     return;
-                }
             }
 
             // If we aren't loaded or we're not wanting to unload then do nothing
             if (!_isLoaded || _unloadTime == 0)
-            {
                 return;
-            }
 
             // If we're past the unload time then unload
-            if (System.Diagnostics.Stopwatch.GetTimestamp() <= _unloadTime)
-            {
+            if (Stopwatch.GetTimestamp() <= _unloadTime)
                 return;
-            }
 
             // Disable the maps
             if (OnDemandStorage.DisableBodyPqs(sphere.name))
-            {
-                Debug.Log("[OD] Disabling Body " + sphere.name + ": " + _isLoaded);
-            }
+                Debug.Log($"[OD] Disabling Body {sphere.name}");
 
             _isLoaded = false;
         }

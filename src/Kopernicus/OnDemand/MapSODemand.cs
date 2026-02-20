@@ -431,7 +431,7 @@ namespace Kopernicus.OnDemand
             }
         }
 
-        private unsafe new void CreateGreyscaleFromRGB(Texture2D tex)
+        private new unsafe void CreateGreyscaleFromRGB(Texture2D tex)
         {
             Color32[] pixels32 = tex.GetPixels32();
             Image = new NativeArray<byte>(pixels32.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);

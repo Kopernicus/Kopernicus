@@ -29,6 +29,7 @@ using Kopernicus.Components;
 using Kopernicus.ConfigParser;
 using Kopernicus.Configuration;
 using Kopernicus.Constants;
+using Kopernicus.OnDemand;
 using KSP.Localization;
 using KSP.UI;
 using KSP.UI.Screens;
@@ -137,6 +138,8 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Add(s => OnLevelLoaded(s));
             GameEvents.onProtoVesselLoad.Add(d => TransformBodyReferencesOnLoad(d));
             GameEvents.onProtoVesselSave.Add(d => TransformBodyReferencesOnSave(d));
+            Events.OnMapSOLoad.Add(ActivateOnDemandStorage);
+
             // Add Callback only if necessary
             if (KopernicusConfig.HandleHomeworldAtmosphericUnitDisplay)
             {
@@ -1087,6 +1090,10 @@ namespace Kopernicus.RuntimeUtility
                 }
             }
         }
+
+        private void ActivateOnDemandStorage(ILoadOnDemand map) =>
+            OnDemandStorage.ActivateMap(map);
+
         // Remove the Handlers
         private void OnDestroy()
         {
@@ -1095,6 +1102,7 @@ namespace Kopernicus.RuntimeUtility
             GameEvents.onLevelWasLoaded.Remove(OnLevelLoaded);
             GameEvents.onProtoVesselLoad.Remove(TransformBodyReferencesOnLoad);
             GameEvents.onProtoVesselSave.Remove(TransformBodyReferencesOnSave);
+            Events.OnMapSOLoad.Remove(ActivateOnDemandStorage);
         }
     }
 }

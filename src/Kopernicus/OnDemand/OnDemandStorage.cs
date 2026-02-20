@@ -28,7 +28,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using DDSHeaders;
+using Kopernicus.ConfigParser;
+using Kopernicus.Configuration;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -40,8 +43,9 @@ namespace Kopernicus.OnDemand
     public static class OnDemandStorage
     {
         // Lists
-        private static readonly Dictionary<String, List<ILoadOnDemand>> Maps =
-            new Dictionary<String, List<ILoadOnDemand>>();
+        private static readonly Dictionary<String, List<ILoadOnDemand>> Maps = [];
+        private static readonly Dictionary<ILoadOnDemand, PQS> MapBodies =
+            new(ReferenceEqualityComparer.Instance);
 
         // Whole file buffer management
         private static Byte[] _wholeFileBuffer;
@@ -62,20 +66,22 @@ namespace Kopernicus.OnDemand
         {
             // If the map is null, abort
             if (map == null)
-            {
                 return;
-            }
 
             // Create the sublist
-            if (!Maps.ContainsKey(body))
+            if (!Maps.TryGetValue(body, out var list))
             {
-                Maps[body] = new List<ILoadOnDemand>();
+                list = [];
+                Maps[body] = list;
             }
 
             // Add the map
-            if (!Maps[body].Contains(map))
+            if (!list.Contains(map))
             {
-                Maps[body].Add(map);
+                list.Add(map);
+
+                var generatedBody = Parser.GetState<Body>("Kopernicus:currentBody")?.GeneratedBody;
+                MapBodies[map] = generatedBody?.pqsVersion;
 
                 // Log
                 Debug.Log("[OD] Adding for body " + body + " map named " + map.Name + " of path = " + map.Path);
@@ -227,6 +233,21 @@ namespace Kopernicus.OnDemand
             Debug.Log("[OD] <--- OnDemandStorage.DisableBodyPQS destroying " + body);
             DisableMapList(Maps[body].Where(m => m is MapSODemand).ToList());
             return true;
+        }
+
+        internal static void ActivateMap(ILoadOnDemand map)
+        {
+            if (!MapBodies.TryGetValue(map, out var pqs))
+                return;
+
+            if (pqs.IsNullOrDestroyed())
+                return;
+
+            var ondemand = Utility.GetMod<PQSMod_OnDemandHandler>(pqs);
+            if (ondemand.IsNullOrDestroyed())
+                return;
+
+            ondemand.Activate();
         }
 
         public static Byte[] LoadWholeFile(String path)
@@ -654,6 +675,19 @@ namespace Kopernicus.OnDemand
         {
             path = KSPUtil.ApplicationRootPath + "GameData/" + path;
             return File.Exists(path);
+        }
+
+        /// <summary>
+        /// Identity-based equality comparer using RuntimeHelpers.GetHashCode,
+        /// safe for use with objects that may override Equals or GetHashCode.
+        /// </summary>
+        sealed class ReferenceEqualityComparer : IEqualityComparer<object>
+        {
+            public static readonly ReferenceEqualityComparer Instance = new();
+
+            bool IEqualityComparer<object>.Equals(object x, object y) => ReferenceEquals(x, y);
+
+            int IEqualityComparer<object>.GetHashCode(object obj) => RuntimeHelpers.GetHashCode(obj);
         }
     }
 }
