@@ -61,6 +61,23 @@ public abstract class MapSOParserBase<T> : BaseLoader, IParsable, ITypeParser<T>
     /// </summary>
     public void SetFromString(string s)
     {
+        // Empty strings get treated as a regular MapSO and initialized with an
+        // appropriate default texture.
+        if (string.IsNullOrEmpty(s))
+        {
+            var texture = Depth switch
+            {
+                MapSO.MapDepth.Greyscale => Texture2D.blackTexture,
+                MapSO.MapDepth.HeightAlpha => Texture2D.blackTexture,
+                _ => Texture2DParser.InvalidTexture
+            };
+
+            Value = ScriptableObject.CreateInstance<T>();
+            Value.CreateMap(Depth, texture);
+            Value.name = "<invalid MapSO>";
+            return;
+        }
+
         using var guard = new SetNameGuard(this, s);
 
         if (s.StartsWith("BUILTIN/"))
